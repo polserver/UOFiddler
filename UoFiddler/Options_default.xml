@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Options>
+  <!--ItemSize controls the size of images in items tab-->
+  <ItemSize width="48" height="48" />
+  <!--ItemClip images in items tab shrinked or clipped-->
+  <ItemClip active="True" />
+  <!--CacheData should mul entries be cached for faster load-->
+  <CacheData active="True" />
+  <!--NewMapSize Felucca/Trammel width 7168?-->
+  <NewMapSize active="False" />
+  <!--UseMapDiff should mapdiff files be used-->
+  <UseMapDiff active="True" />
+  <!--Alternative layout in item/landtile/texture tab?-->
+  <AlternativeDesign active="False" />
+  <!--Use Hashfile to speed up load?-->
+  <UseHashFile active="True" />
+  <!--Should an Update Check be done on startup?-->
+  <UpdateCheck active="False" />
+  <!--Definies the cmd to send Client to loc-->
+  <!--{1} = x, {2} = y, {3} = z, {4} = mapid, {5} = mapname-->
+  <SendCharToLoc cmd=".goforce" args="{1} {2} {3} {4}" />
+  <!--Definies the map names-->
+  <MapNames map0="Felucca" map1="Trammel" map2="Ilshenar" map3="Malas" map4="Tokuno" map5="Ter Mur" />
+  <!--Extern Tools settings-->
+  <!--Loaded Plugins-->
+  <!--Pathsettings-->
+  <!--Disabled Tab Views-->
+</Options>

@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Multis>
+  <!--Entries in Multi tab-->
+  <!--Name=Displayed name-->
+  <!--ID=Multi Slot-->
+  <!--type=0:Boat, 1:House, 2:Decoration, 3:Other-->
+  <!--ToolTips:
+  <ToolTip id="MultiSlot" text="Your Text here" />
+  -->
+  <Multi name="Small Boat [north]" id="0" type="0" />
+  <Multi name="Small Boat [east]" id="1" type="0" />
+  <Multi name="Small Boat [south]" id="2" type="0" />
+  <Multi name="Small Boat [west]" id="3" type="0" />
+  <Multi name="Small Dragon Boat [north]" id="4" type="0" />
+  <Multi name="Small Dragon Boat [east]" id="5" type="0" />
+  <Multi name="Small Dragon Boat [south]" id="6" type="0" />
+  <Multi name="Small Dragon Boat [west]" id="7" type="0" />
+  <Multi name="Medium Boat [north]" id="8" type="0" />
+  <Multi name="Medium Boat [east]" id="9" type="0" />
+  <Multi name="Medium Boat [south]" id="10" type="0" />
+  <Multi name="Medium Boat [west]" id="11" type="0" />
+  <Multi name="Medium Dragon Boat [north]" id="12" type="0" />
+  <Multi name="Medium Dragon [east]" id="13" type="0" />
+  <Multi name="Medium Dragon [south]" id="14" type="0" />
+  <Multi name="Medium Dragon [west]" id="15" type="0" />
+  <Multi name="Large Boat [north]" id="16" type="0" />
+  <Multi name="Large Boat [east]" id="17" type="0" />
+  <Multi name="Large Boat [south]" id="18" type="0" />
+  <Multi name="Large Boat [west]" id="19" type="0" />
+  <Multi name="Large Dragon Boat [north]" id="20" type="0" />
+  <Multi name="Large Dragon Boat [east]" id="21" type="0" />
+  <Multi name="Large Dragon Boat [south]" id="22" type="0" />
+  <Multi name="Large Dragon Boat [west]" id="23" type="0" />
+  <Multi name="Small Stone and Plaster House" id="100" type="1" />
+  <Multi name="Small Stone and Plaster House" id="101" type="1" />
+  <Multi name="Small Fieldstone House" id="102" type="1" />
+  <Multi name="Small Fieldstone House" id="103" type="1" />
+  <Multi name="Small Brick House" id="104" type="1" />
+  <Multi name="Small Brick House" id="105" type="1" />
+  <Multi name="Small Wood House" id="106" type="1" />
+  <Multi name="Small Wood House" id="107" type="1" />
+  <Multi name="Small Wood and Plaster House" id="108" type="1" />
+  <Multi name="Small Wood and Plaster House" id="109" type="1" />
+  <Multi name="Small Thatched Roof Cottage" id="110" type="1" />
+  <Multi name="Small Thatched Roof Cottage" id="111" type="1" />
+  <Multi name="Tent [blue]" id="112" type="1" />
+  <Multi name="Tent [blue]" id="113" type="1" />
+  <Multi name="Tent [green]" id="114" type="1" />
+  <Multi name="Tent [green]" id="115" type="1" />
+  <Multi name="Large Brick House" id="116" type="1" />
+  <Multi name="Large Brick House" id="117" type="1" />
+  <Multi name="Two Story Wood and Plaster House" id="118" type="1" />
+  <Multi name="Two Story Wood and Plaster House" id="119" type="1" />
+  <Multi name="Two Story Stone and Plaster House" id="120" type="1" />
+  <Multi name="Two Story Stone and Plaster House" id="121" type="1" />
+  <Multi name="Large Tower" id="122" type="1" />
+  <Multi name="Large Tower" id="123" type="1" />
+  <Multi name="Stone Keep" id="124" type="1" />
+  <Multi name="Stone Keep" id="125" type="1" />
+  <Multi name="Castle" id="126" type="1" />
+  <Multi name="Castle" id="127" type="1" />
+  <Multi name="Large Patio House" id="135" type="1" />
+  <Multi name="Large Patio House" id="140" type="1" />
+  <Multi name="Large Patio House" id="141" type="1" />
+  <Multi name="Large Marble Patio House" id="150" type="1" />
+  <Multi name="Small Tower" id="152" type="1" />
+  <Multi name="Log Cabin" id="154" type="1" />
+  <Multi name="Sandstone Patio House" id="156" type="1" />
+  <Multi name="Two-Story Villa" id="158" type="1" />
+  <Multi name="Small Stone Workshop" id="160" type="1" />
+  <Multi name="Small Marble Workshop" id="162" type="1" />
+  <Multi name="Wandering Healer Camp" id="500" type="1" />
+  <Multi name="Wandering Mage Camp" id="501" type="1" />
+  <Multi name="Wandering Bank Camp" id="502" type="1" />
+  <Multi name="Treasure Pile" id="1000" type="2" />
+  <Multi name="Treasure Pile" id="1001" type="2" />
+  <Multi name="Treasure Pile" id="1002" type="2" />
+  <Multi name="Treasure Pile" id="1003" type="2" />
+  <Multi name="Wooden Supports" id="2000" type="3" />
+  <Multi name="Wooden Supports" id="2001" type="3" />
+  <Multi name="Wooden Supports" id="2002" type="3" />
+  <Multi name="Wooden Supports" id="2003" type="3" />
+  <Multi name="Wooden Supports" id="2004" type="3" />
+  <Multi name="Wooden Supports" id="2005" type="3" />
+  <Multi name="Wooden Supports" id="2006" type="3" />
+  <Multi name="Wooden Supports" id="2007" type="3" />
+  <Multi name="Farmer's Cabin" id="3000" type="1" />
+  <Multi name="Exodus Generator" id="4000" type="2" />
+  <Multi name="Exodus Generator" id="4001" type="2" />
+  <Multi name="Exodus Control Pylon" id="4002" type="2" />
+  <Multi name="Nystul's Tower (stage 1)" id="4003" type="2" />
+  <Multi name="Nystul's Tower (stage 2)" id="4004" type="2" />
+  <Multi name="Nystul's Tower (stage 3)" id="4005" type="2" />
+  <Multi name="Nystul's Tower (stage 4)" id="4006" type="2" />
+  <Multi name="Nystul's Tower (stage 5)" id="4007" type="2" />
+  <Multi name="Nystul's Tower (stage 6)" id="4008" type="2" />
+  <Multi name="Scaffold and Trailer" id="4009" type="2" />
+  <Multi name="Exodus Energy Tower" id="4010" type="2" />
+  <Multi name="Exodus Barrier" id="4011" type="3" />
+  <Multi name="Exodus Control Device" id="4012" type="2" />
+  <Multi name="Minax Stronghold" id="5000" type="2" />
+  <Multi name="Foundation [7x7]" id="5100" type="3" />
+  <Multi name="Foundation [7x8]" id="5101" type="3" />
+  <Multi name="Foundation [7x9]" id="5102" type="3" />
+  <Multi name="Foundation [7x10]" id="5103" type="3" />
+  <Multi name="Foundation [7x11]" id="5104" type="3" />
+  <Multi name="Foundation [7x12]" id="5105" type="3" />
+  <Multi name="Foundation [8x7]" id="5112" type="3" />
+  <Multi name="Foundation [8x8]" id="5113" type="3" />
+  <Multi name="Foundation [8x9]" id="5114" type="3" />
+  <Multi name="Foundation [8x10]" id="5115" type="3" />
+  <Multi name="Foundation [8x11]" id="5116" type="3" />
+  <Multi name="Foundation [8x12]" id="5117" type="3" />
+  <Multi name="Foundation [8x13]" id="5118" type="3" />
+  <Multi name="Foundation [9x7]" id="5124" type="3" />
+  <Multi name="Foundation [9x8]" id="5125" type="3" />
+  <Multi name="Foundation [9x9]" id="5126" type="3" />
+  <Multi name="Foundation [9x10]" id="5127" type="3" />
+  <Multi name="Foundation [9x11]" id="5128" type="3" />
+  <Multi name="Foundation [9x12]" id="5129" type="3" />
+  <Multi name="Foundation [9x13]" id="5130" type="3" />
+  <Multi name="Foundation [9x14]" id="5131" type="3" />
+  <Multi name="Foundation [10x7]" id="5136" type="3" />
+  <Multi name="Foundation [10x8]" id="5137" type="3" />
+  <Multi name="Foundation [10x9]" id="5138" type="3" />
+  <Multi name="Foundation [10x10]" id="5139" type="3" />
+  <Multi name="Foundation [10x11]" id="5140" type="3" />
+  <Multi name="Foundation [10x12]" id="5141" type="3" />
+  <Multi name="Foundation [10x13]" id="5142" type="3" />
+  <Multi name="Foundation [10x14]" id="5143" type="3" />
+  <Multi name="Foundation [10x15]" id="5144" type="3" />
+  <Multi name="Foundation [11x7]" id="5148" type="3" />
+  <Multi name="Foundation [11x8]" id="5149" type="3" />
+  <Multi name="Foundation [11x9]" id="5150" type="3" />
+  <Multi name="Foundation [11x10]" id="5151" type="3" />
+  <Multi name="Foundation [11x11]" id="5152" type="3" />
+  <Multi name="Foundation [11x12]" id="5153" type="3" />
+  <Multi name="Foundation [11x13]" id="5154" type="3" />
+  <Multi name="Foundation [11x14]" id="5155" type="3" />
+  <Multi name="Foundation [11x15]" id="5156" type="3" />
+  <Multi name="Foundation [11x16]" id="5157" type="3" />
+  <Multi name="Foundation [12x7]" id="5160" type="3" />
+  <Multi name="Foundation [12x8]" id="5161" type="3" />
+  <Multi name="Foundation [12x9]" id="5162" type="3" />
+  <Multi name="Foundation [12x10]" id="5163" type="3" />
+  <Multi name="Foundation [12x11]" id="5164" type="3" />
+  <Multi name="Foundation [12x12]" id="5165" type="3" />
+  <Multi name="Foundation [12x13]" id="5166" type="3" />
+  <Multi name="Foundation [12x14]" id="5167" type="3" />
+  <Multi name="Foundation [12x15]" id="5168" type="3" />
+  <Multi name="Foundation [12x16]" id="5169" type="3" />
+  <Multi name="Foundation [12x17]" id="5170" type="3" />
+  <Multi name="Foundation [13x8]" id="5173" type="3" />
+  <Multi name="Foundation [13x9]" id="5174" type="3" />
+  <Multi name="Foundation [13x10]" id="5175" type="3" />
+  <Multi name="Foundation [13x11]" id="5176" type="3" />
+  <Multi name="Foundation [13x12]" id="5177" type="3" />
+  <Multi name="Foundation [13x13]" id="5178" type="3" />
+  <Multi name="Foundation [13x14]" id="5179" type="3" />
+  <Multi name="Foundation [13x15]" id="5180" type="3" />
+  <Multi name="Foundation [13x16]" id="5181" type="3" />
+  <Multi name="Foundation [13x17]" id="5182" type="3" />
+  <Multi name="Foundation [13x18]" id="5183" type="3" />
+  <Multi name="Foundation [14x9]" id="5186" type="3" />
+  <Multi name="Foundation [14x10]" id="5187" type="3" />
+  <Multi name="Foundation [14x11]" id="5188" type="3" />
+  <Multi name="Foundation [14x12]" id="5189" type="3" />
+  <Multi name="Foundation [14x13]" id="5190" type="3" />
+  <Multi name="Foundation [14x14]" id="5191" type="3" />
+  <Multi name="Foundation [14x15]" id="5192" type="3" />
+  <Multi name="Foundation [14x16]" id="5193" type="3" />
+  <Multi name="Foundation [14x17]" id="5194" type="3" />
+  <Multi name="Foundation [14x18]" id="5195" type="3" />
+  <Multi name="Foundation [15x10]" id="5199" type="3" />
+  <Multi name="Foundation [15x11]" id="5200" type="3" />
+  <Multi name="Foundation [15x12]" id="5201" type="3" />
+  <Multi name="Foundation [15x13]" id="5202" type="3" />
+  <Multi name="Foundation [15x14]" id="5203" type="3" />
+  <Multi name="Foundation [15x15]" id="5204" type="3" />
+  <Multi name="Foundation [15x16]" id="5205" type="3" />
+  <Multi name="Foundation [15x17]" id="5206" type="3" />
+  <Multi name="Foundation [15x18]" id="5207" type="3" />
+  <Multi name="Foundation [16x11]" id="5212" type="3" />
+  <Multi name="Foundation [16x12]" id="5213" type="3" />
+  <Multi name="Foundation [16x13]" id="5214" type="3" />
+  <Multi name="Foundation [16x14]" id="5215" type="3" />
+  <Multi name="Foundation [16x15]" id="5216" type="3" />
+  <Multi name="Foundation [16x16]" id="5217" type="3" />
+  <Multi name="Foundation [16x17]" id="5218" type="3" />
+  <Multi name="Foundation [16x18]" id="5219" type="3" />
+  <Multi name="Foundation [17x12]" id="5225" type="3" />
+  <Multi name="Foundation [17x13]" id="5226" type="3" />
+  <Multi name="Foundation [17x14]" id="5227" type="3" />
+  <Multi name="Foundation [17x15]" id="5228" type="3" />
+  <Multi name="Foundation [17x16]" id="5229" type="3" />
+  <Multi name="Foundation [17x17]" id="5230" type="3" />
+  <Multi name="Foundation [17x18]" id="5231" type="3" />
+  <Multi name="Foundation [18x13]" id="5238" type="3" />
+  <Multi name="Foundation [18x14]" id="5239" type="3" />
+  <Multi name="Foundation [18x15]" id="5240" type="3" />
+  <Multi name="Foundation [18x16]" id="5241" type="3" />
+  <Multi name="Foundation [18x17]" id="5242" type="3" />
+  <Multi name="Foundation [18x18]" id="5243" type="3" />
+  <Multi name="New Player Quest Cam" id="7500" type="2" />
+</Multis>
+
