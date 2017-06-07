@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.7
+    <value>Version 4.7 (aka. Alathair Fiddler 4.6.1.4 Merge)
 Fixed Art saving hash algorithm for duplicate finding was applied to odd data.
 Improved search usability: multiple enter results in search next
 Added Shortcut CTRL+F to open search dialog
