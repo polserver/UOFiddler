@@ -326,12 +326,14 @@ namespace FiddlerControls
                     namelabel.Text = "Name: FREE";
                     graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", listView1.SelectedIndices[0]);
                     UpdateDetail(listView1.SelectedIndices[0]);
+                    selectInGumpsTabToolStripMenuItem.Enabled = false;
                 }
                 else
                 {
                     namelabel.Text = String.Format("Name: {0}", TileData.ItemTable[i].Name);
                     graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", i);
                     UpdateDetail(i);
+                    selectInGumpsTabToolStripMenuItem.Enabled = TileData.ItemTable[i].Animation != 0;
                 }
             }
         }
@@ -524,7 +526,7 @@ namespace FiddlerControls
                     dialog.Multiselect = false;
                     dialog.Title = "Choose image file to replace";
                     dialog.CheckFileExists = true;
-                    dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         Bitmap bmp = new Bitmap(dialog.FileName);
@@ -572,7 +574,7 @@ namespace FiddlerControls
                         dialog.Multiselect = false;
                         dialog.Title = String.Format("Choose image file to insert at 0x{0:X}", index);
                         dialog.CheckFileExists = true;
-                        dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
                             Bitmap bmp = new Bitmap(dialog.FileName);
@@ -698,6 +700,8 @@ namespace FiddlerControls
 
         private void onClickShowFreeSlots(object sender, EventArgs e)
         {
+            this.SuspendLayout();
+            listView1.View = View.Details; // that works fascinating
             listView1.BeginUpdate();
             ShowFreeSlots = !ShowFreeSlots;
             if (ShowFreeSlots)
@@ -727,7 +731,8 @@ namespace FiddlerControls
                 Reload();
             }
             listView1.EndUpdate();
-            listView1.View = View.Details; // that works fascinating
+            this.ResumeLayout(false);
+            
             listView1.View = View.Tile;
         }
 
@@ -813,6 +818,19 @@ namespace FiddlerControls
                 if (id == -1)
                     id = listView1.SelectedItems[0].Index;
                 FiddlerControls.RadarColor.Select(id, false);
+            }
+        }
+
+        private void OnClickSelectGump(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                int id = (int)listView1.SelectedItems[0].Tag;
+                if (id == -1)
+                    id = listView1.SelectedItems[0].Index;
+
+                Ultima.ItemData item = Ultima.TileData.ItemTable[id];
+                FiddlerControls.Gump.Select(item.Animation + 50000);
             }
         }
 
@@ -940,5 +958,13 @@ namespace FiddlerControls
             ProgressBar.Visible = false;
         }
         #endregion
+
+        private void ItemShow_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F && e.Control)
+            {
+                Search_Click(sender, e);
+            }
+        }
     }
 }

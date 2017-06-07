@@ -39,7 +39,7 @@ namespace FiddlerControls
                         "Result",
                         MessageBoxButtons.OKCancel,
                         MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button2);
+                        MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Cancel)
                         Close();
                 }
@@ -48,6 +48,7 @@ namespace FiddlerControls
 
         private void SearchName(object sender, EventArgs e)
         {
+            lastSearchedName = textBoxItemName.Text;
             bool res;
             if (Options.DesignAlternative)
                 res = LandTilesAlternative.SearchName(textBoxItemName.Text, false);
@@ -60,7 +61,7 @@ namespace FiddlerControls
                     "Result",
                     MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button2);
+                    MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
                     Close();
             }
@@ -80,21 +81,35 @@ namespace FiddlerControls
                     "Result",
                     MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button2);
+                    MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
                     Close();
             }
         }
 
+        private string lastSearchedName = null;
         private void onKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
-                    SearchGraphic(this, null);
+                    SearchGraphic(sender, e);
                 else
-                    SearchName(this, null);
+                {
+                    if (textBoxItemName.Text != lastSearchedName)
+                    {
+                        SearchName(sender, e);
+                    }
+                    else
+                    {
+                        SearchNextName(sender, e);
+                    }
+                }
                 e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
             }
         }
     }

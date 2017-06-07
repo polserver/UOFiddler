@@ -118,7 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.6
+    <value>Version 4.7
+Fixed Art saving hash algorithm for duplicate finding was applied to odd data.
+Improved search usability: multiple enter results in search next
+Added Shortcut CTRL+F to open search dialog
+Added Cliloc import for current TileData
+Complete Rework of Sounds Tab for more usability
+Fixed sound indexes to correct game indexes
+Fixed translation indexes also support 4 digits
+Fixed sound name sorting with multiple whitespaces
+Fixed exporting sounds ensures extension
+Added showing translated sounds (marked blue and underlined)
+Added sound file cleaning from unsupported wave headers and format checks
+Added sound playback progress and stop-button
+Added capability for renaming sounds
+Fixed a possible crash condition when loading profiles
+Fixed light index files were saved invalid and caused client crashes for empty indexes
+Fixed light resolution was saved in wrong order so non-quadratic lights are supported now.
+Fixed light transparency saving should now work correctly.
+Added tif files in file selectors
+Fixed tile selection in tile data when tile data was not already open
+Fixed performance issue with showing free slots in Items Tab
+Added TileData Save directly on Change state now is saved in settings
+Fixed TileData save directly on change performance issue when changing name
+Added jump to gump option at items tab
+Added Search to gump tab
+Added Quick switch between Male/Female Gumps in Gump Tab
+Added some keyboard tweaks
+
+Version 4.6
 Switched to .NET 4
 Added option Outputpath
 Fiddler now uses %APPDATA%\uofiddler for the xml files

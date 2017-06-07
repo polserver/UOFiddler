@@ -42,6 +42,10 @@ namespace FiddlerControls
             checkedListBox2.Items.Add(System.Enum.GetName(typeof(TileFlag), TileFlag.Unknown3), false);
             checkedListBox2.EndUpdate();
             refMarker = this;
+
+            treeViewItem.BeforeSelect += TreeViewItemOnBeforeSelect;
+            saveDirectlyOnChangesToolStripMenuItem.Checked = Options.TileDataDirectlySaveOnChange;
+            saveDirectlyOnChangesToolStripMenuItem.CheckedChanged += SaveDirectlyOnChangesToolStripMenuItemOnCheckedChanged;
         }
 
         private static TileDatas refMarker = null;
@@ -51,10 +55,17 @@ namespace FiddlerControls
         public bool isLoaded { get { return Loaded; } }
 
 
+        private int? reselectGraphic = null;
+        private bool? reselectGraphicLand = null;
         public static void Select(int graphic, bool land)
         {
             if (!refMarker.isLoaded)
+            {
                 refMarker.OnLoad(refMarker, EventArgs.Empty);
+                refMarker.reselectGraphic = graphic;
+                refMarker.reselectGraphicLand = land;
+            }
+
             SearchGraphic(graphic, land);
         }
         public static bool SearchGraphic(int graphic, bool land)
@@ -304,6 +315,13 @@ namespace FiddlerControls
         }
         public void OnLoad(object sender, EventArgs e)
         {
+            if (reselectGraphic != null && reselectGraphicLand != null)
+            {
+                SearchGraphic(reselectGraphic.Value, reselectGraphicLand.Value);
+                reselectGraphic = null;
+                reselectGraphicLand = null;
+            }
+
             MyEventArgs _args = e as MyEventArgs;
             if (Loaded && (_args == null || _args.Type != MyEventArgs.TYPES.FORCERELOAD))
                 return;
@@ -635,6 +653,11 @@ namespace FiddlerControls
             }
         }
 
+        private void SaveDirectlyOnChangesToolStripMenuItemOnCheckedChanged(object sender, EventArgs eventArgs)
+        {
+            Options.TileDataDirectlySaveOnChange = saveDirectlyOnChangesToolStripMenuItem.Checked;
+        }
+
         #region SaveDirectEvents
         private void OnFlagItemCheckItems(object sender, ItemCheckEventArgs e)
         {
@@ -715,11 +738,28 @@ namespace FiddlerControls
                 if (name.Length > 20)
                     name = name.Substring(0, 20);
                 item.Name = name;
-                treeViewItem.SelectedNode.Text = String.Format("0x{0:X4} ({0}) {1}", index, name);
+                //treeViewItem.SelectedNode.Text = String.Format("0x{0:X4} ({0}) {1}", index, name);
                 TileData.ItemTable[index] = item;
                 treeViewItem.SelectedNode.ForeColor = Color.Red;
                 Options.ChangedUltimaClass["TileData"] = true;
                 FiddlerControls.Events.FireTileDataChangeEvent(this, index + 0x4000);
+            }
+        }
+
+        private void TreeViewItemOnBeforeSelect(object sender, TreeViewCancelEventArgs treeViewCancelEventArgs)
+        {
+            if (!saveDirectlyOnChangesToolStripMenuItem.Checked) return;
+
+            if (treeViewItem.SelectedNode == null || treeViewItem.SelectedNode.Tag == null)
+            return;
+
+            int index = (int)treeViewItem.SelectedNode.Tag;
+            ItemData item = TileData.ItemTable[index];
+
+            var itemText = String.Format("0x{0:X4} ({0}) {1}", index, item.Name);
+            if (treeViewItem.SelectedNode.Text != itemText)
+            {
+                treeViewItem.SelectedNode.Text = String.Format("0x{0:X4} ({0}) {1}", index, item.Name);
             }
         }
 
@@ -1208,6 +1248,14 @@ namespace FiddlerControls
         {
             if(treeViewItem.Nodes.Count == 3) // workaround for 65536 items'microsoft bug
                 treeViewItem.CollapseAll();
+        }
+
+        private void TileData_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F && e.Control)
+            {
+                this.OnClickSearch(sender, e);
+            }
         }
     }
 }

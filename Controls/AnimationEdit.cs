@@ -587,7 +587,7 @@ namespace FiddlerControls
                     dialog.Multiselect = false;
                     dialog.Title = String.Format("Choose image file to replace at {0}", frameindex);
                     dialog.CheckFileExists = true;
-                    dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         Bitmap bmp = new Bitmap(dialog.FileName);
@@ -614,7 +614,7 @@ namespace FiddlerControls
                     dialog.Multiselect = true;
                     dialog.Title = "Choose image file to add";
                     dialog.CheckFileExists = true;
-                    dialog.Filter = "Gif files (*.gif;)|*.gif; |Bitmap files (*.bmp;)|*.bmp; |Tiff files (*.tiff;)|*tiff; |Png files (*.png;)|*.png; |Jpeg files (*.jpeg;*.jpg;)|*.jpeg;*.jpg;";
+                    dialog.Filter = "Gif files (*.gif;)|*.gif; |Bitmap files (*.bmp;)|*.bmp; |Tiff files (*.tif;*.tiff)|*.tif;*.tiff; |Png files (*.png;)|*.png; |Jpeg files (*.jpeg;*.jpg;)|*.jpeg;*.jpg;";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         listView1.BeginUpdate();
@@ -2279,7 +2279,7 @@ namespace FiddlerControls
                 dialog.Multiselect = true;
                 dialog.Title = "Choose images to generate from";
                 dialog.CheckFileExists = true;
-                dialog.Filter = "image files (*.tiff;*.bmp;*.png;*.jpg;*.jpeg)|*.tiff;*.bmp;*.png;*.jpg;*.jpeg";
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp;*.png;*.jpg;*.jpeg)|*.tif;*.tiff;*.bmp;*.png;*.jpg;*.jpeg";
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
 

@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 
@@ -29,8 +30,11 @@ namespace FiddlerControls
             if (!Files.CacheData)
                 Preload.Visible = false;
             ProgressBar.Visible = false;
+
+            refMarker = this;
         }
 
+        private static Gump refMarker;
         private bool Loaded = false;
         private bool ShowFreeSlots = false;
 
@@ -40,11 +44,17 @@ namespace FiddlerControls
         private void Reload()
         {
             if (Loaded)
+            {
+                Loaded = false;
                 OnLoad(EventArgs.Empty);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
         {
+            if (Loaded)
+                return;
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Gumps"] = true;
             ShowFreeSlots = false;
@@ -157,10 +167,10 @@ namespace FiddlerControls
                 fontBrush = BrushRed;
             }
 
-            e.Graphics.DrawString(String.Format("0x{0:X}", i), Font, fontBrush,
+            e.Graphics.DrawString(String.Format("0x{0:X} ({1})", i, i), Font, fontBrush,
                 new PointF((float)105,
                 e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString(String.Format("0x{0:X}", i), Font).Height / 2))));
+                (e.Graphics.MeasureString(String.Format("0x{0:X} ({1})", i, i), Font).Height / 2))));
         }
 
         private void listBox_MeasureItem(object sender, MeasureItemEventArgs e)
@@ -189,6 +199,33 @@ namespace FiddlerControls
             else
                 pictureBox.BackgroundImage = null;
             listBox.Invalidate();
+            jumpToMaleFemaleInvalidate();
+        }
+
+        private void jumpToMaleFemaleInvalidate()
+        {
+            if (listBox.SelectedIndex == -1)
+                return;
+
+            var gumpId = (int)this.listBox.SelectedItem;
+            if (gumpId >= 50000)
+            {
+                if (gumpId >= 60000)
+                {
+                    this.jumpToMaleFemale.Text = "Jump to Male";
+                    jumpToMaleFemale.Enabled = this.HasGumpId(gumpId-10000);
+                }
+                else
+                {
+                    this.jumpToMaleFemale.Text = "Jump to Female";
+                    jumpToMaleFemale.Enabled = this.HasGumpId(gumpId+10000);
+                }
+            }
+            else
+            {
+                jumpToMaleFemale.Enabled = false;
+                jumpToMaleFemale.Text = "Jump to Male/Female";
+            }
         }
 
         private void onClickReplace(object sender, EventArgs e)
@@ -200,7 +237,7 @@ namespace FiddlerControls
                     dialog.Multiselect = false;
                     dialog.Title = "Choose image file to replace";
                     dialog.CheckFileExists = true;
-                    dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         Bitmap bmp = new Bitmap(dialog.FileName);
@@ -307,7 +344,7 @@ namespace FiddlerControls
                     dialog.Multiselect = false;
                     dialog.Title = String.Format("Choose image file to insert at 0x{0:X}", index);
                     dialog.CheckFileExists = true;
-                    dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         Bitmap bmp = new Bitmap(dialog.FileName);
@@ -525,6 +562,76 @@ namespace FiddlerControls
         {
             ProgressBar.Visible = false;
         }
+
+        internal static void Select(int gumpId)
+        {
+            if (!refMarker.Loaded)
+                refMarker.OnLoad(EventArgs.Empty);
+
+            Search(gumpId);
+        }
+
+        private bool HasGumpId(int gumpId)
+        {
+            return refMarker.listBox.Items.Cast<object>().Any(id => (int)id == gumpId);
+        }
+
         #endregion
+
+        private void jumpToMaleFemale_Click(object sender, EventArgs e)
+        {
+            if (listBox.SelectedIndex == -1)
+                return;
+
+            var gumpId = (int)this.listBox.SelectedItem;
+            if (gumpId < 60000)
+            {
+                gumpId = (gumpId % 10000) + 60000;
+            }
+            else
+            {
+                gumpId = (gumpId % 10000) + 50000;
+            }
+
+            Select(gumpId);
+        }
+
+        private GumpSearch showform;
+        private void search_Click(object sender, EventArgs e)
+        {
+            if ((showform == null) || (showform.IsDisposed))
+            {
+                showform = new GumpSearch();
+                showform.TopMost = true;
+                showform.Show();
+            }
+        }
+
+        public static bool Search(int graphic)
+        {
+            if (!refMarker.Loaded)
+                refMarker.OnLoad(EventArgs.Empty);
+
+            for (int i = 0; i < refMarker.listBox.Items.Count; ++i)
+            {
+                object id = refMarker.listBox.Items[i];
+                if ((int)id == graphic)
+                {
+                    refMarker.listBox.SelectedIndex = i;
+                    refMarker.listBox.TopIndex = i;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void Gump_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F && e.Control)
+            {
+                this.search_Click(sender, e);
+            }
+        }
     }
 }

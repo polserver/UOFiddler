@@ -181,8 +181,8 @@ namespace Ultima
                         if ((bmp == null) || (m_Removed[index]))
                         {
                             binidx.Write((int)-1); // lookup
-                            binidx.Write((int)-1); // length
-                            binidx.Write((int)-1); // extra
+                            binidx.Write((int)0); // length
+                            binidx.Write((int)0); // extra
                         }
                         else
                         {
@@ -199,7 +199,11 @@ namespace Ultima
                                 ushort* end = cur + bmp.Width;
                                 while (cur < end)
                                 {
-                                    sbyte value = (sbyte)(((*cur++ >> 10) & 0xffff) - 0x1f);
+                                    ushort ccur = *cur++;
+                                    sbyte value = 0;
+                                    
+                                    if (ccur > 0) // Zero should stay zero cause it means transparence
+                                        value = (sbyte)(((ccur >> 10) & 0xffff) - 0x1f);
                                     if (value > 0) // wtf? but it works...
                                         --value;
                                     binmul.Write(value);
@@ -207,7 +211,7 @@ namespace Ultima
                             }
                             length = (int)fsmul.Position - length;
                             binidx.Write(length);
-                            binidx.Write((int)(bmp.Width << 16) + bmp.Height);
+                            binidx.Write((int)(bmp.Height << 16) + bmp.Width);
                             bmp.UnlockBits(bd);
                         }
                     }

@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -383,6 +384,7 @@ namespace FiddlerControls
                 using (StreamReader sr = new StreamReader(dialog.FileName))
                 {
                     string line;
+                    var count = 0;
                     while ((line = sr.ReadLine()) != null)
                     {
                         if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
@@ -403,26 +405,157 @@ namespace FiddlerControls
                             {
                                 if (entry.Number == id)
                                 {
-                                    entry.Text = text;
-                                    entry.Flag = StringEntry.CliLocFlag.Modified;
-                                    Options.ChangedUltimaClass["CliLoc"] = true;
+                                    if (entry.Text != text)
+                                    {
+                                        entry.Text = text;
+                                        entry.Flag = StringEntry.CliLocFlag.Modified;
+                                        count++;
+                                    }
                                     break;
                                 }
                                 else if (entry.Number > id)
                                 {
                                     cliloc.Entries.Insert(index, new StringEntry(id, text, StringEntry.CliLocFlag.Custom));
-                                    Options.ChangedUltimaClass["CliLoc"] = true;
+                                    count++;
                                     break;
                                 }
                                 ++index;
                             }
+
                             dataGridView1.Invalidate();
                         }
                         catch { }
                     }
+
+                    if (count > 0)
+                    {
+                        Options.ChangedUltimaClass["CliLoc"] = true;
+                        MessageBox.Show(this, $"{count} entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(this, "No entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
             }
             dialog.Dispose();
+        }
+
+        private void tileDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int count = 0;
+            for (int index = 0; index < TileData.ItemTable.Length; index++)
+            {
+                var itemData = TileData.ItemTable[index];
+                var baseClilocId = GetCliLocBaseId(index);
+                var id = index + baseClilocId;
+
+                if (string.IsNullOrWhiteSpace(itemData.Name))
+                {
+                    var i = cliloc.Entries.FindIndex(x => x.Number == id);
+                    if (i >= 0)
+                    {
+                        //Debug.WriteLine($"Removing {id} at {i} for {itemData.Name}.");
+                        cliloc.Entries.RemoveAt(i);
+                        count++;
+                    }
+                }
+                else
+                {
+                    int entryIndex = 0;
+                    foreach (StringEntry entry in cliloc.Entries)
+                    {
+                        if (entry.Number == id)
+                        {
+                            if (entry.Text != itemData.Name)
+                            {
+                                //Debug.WriteLine($"Changing {id} from {entry.Text} to {itemData.Name}.");
+                                entry.Text = itemData.Name;
+                                entry.Flag = StringEntry.CliLocFlag.Modified;
+                                count++;
+                            }
+                            break;
+                        }
+                        else if (entry.Number > id)
+                        {
+                            //Debug.WriteLine($"Adding {id} before {entry.Number} for {itemData.Name}.");
+                            cliloc.Entries.Insert(entryIndex, new StringEntry(id, itemData.Name, StringEntry.CliLocFlag.Modified));
+                            count++;
+                            break;
+                        }
+
+                        entryIndex++;
+                    }
+                }
+            }
+
+            if (count > 0)
+            {
+                Options.ChangedUltimaClass["CliLoc"] = true;
+                MessageBox.Show(this, $"{count} entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show(this, "No entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private static int GetCliLocBaseId(int tileId)
+        {
+            if (tileId >= 0x4000u)
+            {
+                if (tileId >= 0x8000u)
+                {
+                    if (tileId < 0x10000)
+                        return 1084024;
+                }
+                else
+                {
+                    return 1078872;
+                }
+            }
+            else
+            {
+                return 1020000;
+            }
+
+            throw new ArgumentException("Tile id out of range.", nameof(tileId));
+        }
+
+        private void GotoEntry_Enter(object sender, EventArgs e)
+        {
+            if (GotoEntry.Text == "Enter Number")
+            {
+                GotoEntry.Text = "";
+            }
+        }
+
+        private void FindEntry_Enter(object sender, EventArgs e)
+        {
+            if (FindEntry.Text == "Enter Text")
+            {
+                FindEntry.Text = "";
+            }
+        }
+
+        private void GotoEntry_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.GotoNr(sender, e);
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+            }
+        }
+
+        private void FindEntry_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.FindEntryClick(sender, e);
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+            }
         }
     }
 }

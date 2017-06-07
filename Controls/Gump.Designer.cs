@@ -49,6 +49,7 @@ namespace FiddlerControls
             this.asJpgToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.jumpToMaleFemale = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceGumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,11 +57,13 @@ namespace FiddlerControls
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.IDLabel = new System.Windows.Forms.ToolStripLabel();
@@ -69,7 +72,7 @@ namespace FiddlerControls
             this.Preload = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.PreLoader = new System.ComponentModel.BackgroundWorker();
-            this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -113,6 +116,7 @@ namespace FiddlerControls
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
             this.listBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.listBox_MeasureItem);
             this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
+            this.listBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Gump_KeyUp);
             // 
             // contextMenuStrip1
             // 
@@ -120,6 +124,7 @@ namespace FiddlerControls
             this.extractImageToolStripMenuItem,
             this.toolStripSeparator2,
             this.findNextFreeSlotToolStripMenuItem,
+            this.jumpToMaleFemale,
             this.replaceGumpToolStripMenuItem,
             this.removeToolStripMenuItem,
             this.insertToolStripMenuItem,
@@ -171,6 +176,13 @@ namespace FiddlerControls
             this.findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
             this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.onClickFindFree);
             // 
+            // jumpToMaleFemale
+            // 
+            this.jumpToMaleFemale.Name = "jumpToMaleFemale";
+            this.jumpToMaleFemale.Size = new System.Drawing.Size(175, 22);
+            this.jumpToMaleFemale.Text = "Jump to Male/Female";
+            this.jumpToMaleFemale.Click += new System.EventHandler(this.jumpToMaleFemale_Click);
+            // 
             // replaceGumpToolStripMenuItem
             // 
             this.replaceGumpToolStripMenuItem.Name = "replaceGumpToolStripMenuItem";
@@ -216,6 +228,7 @@ namespace FiddlerControls
             // 
             this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1,
             this.toolStripDropDownButton1});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
@@ -223,6 +236,15 @@ namespace FiddlerControls
             this.toolStrip2.Size = new System.Drawing.Size(205, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "toolStrip2";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(44, 22);
+            this.toolStripButton1.Text = "Search";
+            this.toolStripButton1.Click += new System.EventHandler(this.search_Click);
             // 
             // toolStripDropDownButton1
             // 
@@ -265,6 +287,14 @@ namespace FiddlerControls
             this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllJpg);
+            // 
+            // showFreeSlotsToolStripMenuItem
+            // 
+            this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
+            this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.showFreeSlotsToolStripMenuItem.Text = "Show Free Slots";
+            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.OnClickShowFreeSlots);
             // 
             // pictureBox
             // 
@@ -337,16 +367,8 @@ namespace FiddlerControls
             // 
             this.PreLoader.WorkerReportsProgress = true;
             this.PreLoader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.PreLoaderDoWork);
-            this.PreLoader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoaderCompleted);
             this.PreLoader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.PreLoaderProgressChanged);
-            // 
-            // showFreeSlotsToolStripMenuItem
-            // 
-            this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
-            this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
-            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.showFreeSlotsToolStripMenuItem.Text = "Show Free Slots";
-            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.OnClickShowFreeSlots);
+            this.PreLoader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoaderCompleted);
             // 
             // Gump
             // 
@@ -355,9 +377,11 @@ namespace FiddlerControls
             this.Controls.Add(this.splitContainer1);
             this.Name = "Gump";
             this.Size = new System.Drawing.Size(619, 324);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Gump_KeyUp);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip2.ResumeLayout(false);
@@ -401,5 +425,7 @@ namespace FiddlerControls
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem jumpToMaleFemale;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }

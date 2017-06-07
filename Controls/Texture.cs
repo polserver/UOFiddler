@@ -258,7 +258,7 @@ namespace FiddlerControls
                     dialog.Multiselect = false;
                     dialog.Title = "Choose image file to replace";
                     dialog.CheckFileExists = true;
-                    dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         Bitmap bmp = new Bitmap(dialog.FileName);
@@ -309,7 +309,7 @@ namespace FiddlerControls
                         dialog.Multiselect = false;
                         dialog.Title = String.Format("Choose image file to insert at 0x{0:X}", index);
                         dialog.CheckFileExists = true;
-                        dialog.Filter = "image files (*.tiff;*.bmp)|*.tiff;*.bmp";
+                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
                             Bitmap bmp = new Bitmap(dialog.FileName);
@@ -397,6 +397,14 @@ namespace FiddlerControls
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
+        }
+
+        private void Texture_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F && e.Control)
+            {
+                this.OnClickSearch(sender, e);
+            }
         }
 
     }

@@ -81,6 +81,7 @@ namespace FiddlerControls
             this.listView1.View = System.Windows.Forms.View.Tile;
             this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.drawitem);
             this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView_SelectedIndexChanged);
+            this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Texture_KeyUp);
             // 
             // contextMenuStrip1
             // 
@@ -237,6 +238,7 @@ namespace FiddlerControls
             this.Name = "Texture";
             this.Size = new System.Drawing.Size(619, 324);
             this.Load += new System.EventHandler(this.OnLoad);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Texture_KeyUp);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

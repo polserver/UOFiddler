@@ -247,6 +247,7 @@ namespace FiddlerControls
 
         public static string AppDataPath { get; set; }
         public static string OutputPath { get; set; }
+        public static bool TileDataDirectlySaveOnChange { get; set; }
 
         public static string ProfileName { get; set; }
 

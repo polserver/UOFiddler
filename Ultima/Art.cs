@@ -5,6 +5,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 
+using Ultima.Helpers;
+
 namespace Ultima
 {
     public sealed class Art
@@ -514,9 +516,7 @@ namespace Ultima
                         }
                         else if (index < 0x4000)
                         {
-                            MemoryStream ms = new MemoryStream();
-                            bmp.Save(ms, ImageFormat.Bmp);
-                            byte[] checksum = sha.ComputeHash(ms.ToArray());
+                            byte[] checksum = bmp.ToArray(PixelFormat.Format16bppArgb1555).ToSha256();
                             CheckSums sum;
                             if (compareSaveImagesLand(checksum, out sum))
                             {
@@ -565,9 +565,7 @@ namespace Ultima
                         }
                         else
                         {
-                            MemoryStream ms = new MemoryStream();
-                            bmp.Save(ms, ImageFormat.Bmp);
-                            byte[] checksum = sha.ComputeHash(ms.ToArray());
+                            byte[] checksum = bmp.ToArray(PixelFormat.Format16bppArgb1555).ToSha256();
                             CheckSums sum;
                             if (compareSaveImagesStatic(checksum,out sum))
                             {

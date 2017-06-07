@@ -47,10 +47,18 @@ namespace UoFiddler
 
         private void OnClickLoad(object sender, EventArgs e)
         {
-            FiddlerControls.Options.ProfileName = profiles[comboBoxLoad.SelectedIndex] + ".xml";
-            Options.LoadProfile(profiles[comboBoxLoad.SelectedIndex] + ".xml");
-            Exit = false;
-            Close();
+            this.LoadSelectedProfile();
+        }
+
+        private void LoadSelectedProfile()
+        {
+            if(this.comboBoxLoad.SelectedIndex == -1)
+                return;
+
+            FiddlerControls.Options.ProfileName = this.profiles[this.comboBoxLoad.SelectedIndex] + ".xml";
+            Options.LoadProfile(this.profiles[this.comboBoxLoad.SelectedIndex] + ".xml");
+            this.Exit = false;
+            this.Close();
         }
 
         private void OnClickCreate(object sender, EventArgs e)
@@ -64,6 +72,24 @@ namespace UoFiddler
             Options.LoadProfile(profiles[comboBoxBasedOn.SelectedIndex] + ".xml");
             Exit = false;
             Close();
+        }
+
+        private void comboBoxLoad_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.LoadSelectedProfile();
+            }
+        }
+
+        private void comboBoxLoad_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.button1.Enabled = this.comboBoxLoad.SelectedIndex != -1;
+        }
+
+        private void comboBoxLoad_KeyUp(object sender, KeyEventArgs e)
+        {
+            this.button1.Enabled = this.comboBoxLoad.SelectedIndex != -1;
         }
     }
 }

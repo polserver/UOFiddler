@@ -59,7 +59,9 @@ namespace FiddlerControls
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.ClilocExportButton = new System.Windows.Forms.ToolStripButton();
-            this.ClilocImportButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tileDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -79,8 +81,8 @@ namespace FiddlerControls
             this.dataGridView1.RowHeadersWidth = 30;
             this.dataGridView1.Size = new System.Drawing.Size(619, 299);
             this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.onCell_dbClick);
+            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
             // 
             // contextMenuStrip1
             // 
@@ -91,38 +93,38 @@ namespace FiddlerControls
             this.addEntryToolStripMenuItem,
             this.deleteEntryToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 98);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 98);
             // 
             // copyCliLocNumberToolStripMenuItem
             // 
             this.copyCliLocNumberToolStripMenuItem.Name = "copyCliLocNumberToolStripMenuItem";
-            this.copyCliLocNumberToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyCliLocNumberToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.copyCliLocNumberToolStripMenuItem.Text = "Copy CliLoc Number";
             this.copyCliLocNumberToolStripMenuItem.Click += new System.EventHandler(this.OnCLick_CopyClilocNumber);
             // 
             // copyCliLocTextToolStripMenuItem
             // 
             this.copyCliLocTextToolStripMenuItem.Name = "copyCliLocTextToolStripMenuItem";
-            this.copyCliLocTextToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyCliLocTextToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.copyCliLocTextToolStripMenuItem.Text = "Copy CliLoc Text";
             this.copyCliLocTextToolStripMenuItem.Click += new System.EventHandler(this.OnCLick_CopyClilocText);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(166, 6);
             // 
             // addEntryToolStripMenuItem
             // 
             this.addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
-            this.addEntryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addEntryToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.addEntryToolStripMenuItem.Text = "Add Entry";
             this.addEntryToolStripMenuItem.Click += new System.EventHandler(this.OnClick_AddEntry);
             // 
             // deleteEntryToolStripMenuItem
             // 
             this.deleteEntryToolStripMenuItem.Name = "deleteEntryToolStripMenuItem";
-            this.deleteEntryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteEntryToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.deleteEntryToolStripMenuItem.Text = "Delete Entry";
             this.deleteEntryToolStripMenuItem.Click += new System.EventHandler(this.OnClick_DeleteEntry);
             // 
@@ -139,7 +141,7 @@ namespace FiddlerControls
             this.toolStripButton1,
             this.toolStripSeparator5,
             this.ClilocExportButton,
-            this.ClilocImportButton});
+            this.toolStripDropDownButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -168,7 +170,9 @@ namespace FiddlerControls
             this.GotoEntry.MaxLength = 10;
             this.GotoEntry.Name = "GotoEntry";
             this.GotoEntry.Size = new System.Drawing.Size(100, 25);
-            this.GotoEntry.Text = "Goto Nr..";
+            this.GotoEntry.Text = "Enter Number";
+            this.GotoEntry.Enter += new System.EventHandler(this.GotoEntry_Enter);
+            this.GotoEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GotoEntry_KeyDown);
             // 
             // GotoButton
             // 
@@ -185,7 +189,9 @@ namespace FiddlerControls
             this.FindEntry.Name = "FindEntry";
             this.FindEntry.ShortcutsEnabled = false;
             this.FindEntry.Size = new System.Drawing.Size(100, 25);
-            this.FindEntry.Text = "Entry";
+            this.FindEntry.Text = "Enter Text";
+            this.FindEntry.Enter += new System.EventHandler(this.FindEntry_Enter);
+            this.FindEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindEntry_KeyDown);
             // 
             // FindButton
             // 
@@ -224,15 +230,33 @@ namespace FiddlerControls
             this.ClilocExportButton.Text = "Export";
             this.ClilocExportButton.Click += new System.EventHandler(this.OnClickExportCSV);
             // 
-            // ClilocImportButton
+            // toolStripDropDownButton1
             // 
-            this.ClilocImportButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.ClilocImportButton.Image = ((System.Drawing.Image)(resources.GetObject("ClilocImportButton.Image")));
-            this.ClilocImportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ClilocImportButton.Name = "ClilocImportButton";
-            this.ClilocImportButton.Size = new System.Drawing.Size(43, 22);
-            this.ClilocImportButton.Text = "Import";
-            this.ClilocImportButton.Click += new System.EventHandler(this.OnClickImportCSV);
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cSVToolStripMenuItem,
+            this.tileDataToolStripMenuItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(52, 22);
+            this.toolStripDropDownButton1.Text = "Import";
+            // 
+            // cSVToolStripMenuItem
+            // 
+            this.cSVToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.cSVToolStripMenuItem.Name = "cSVToolStripMenuItem";
+            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cSVToolStripMenuItem.Text = "CSV";
+            this.cSVToolStripMenuItem.Click += new System.EventHandler(this.OnClickImportCSV);
+            // 
+            // tileDataToolStripMenuItem
+            // 
+            this.tileDataToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tileDataToolStripMenuItem.Name = "tileDataToolStripMenuItem";
+            this.tileDataToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.tileDataToolStripMenuItem.Text = "TileData";
+            this.tileDataToolStripMenuItem.Click += new System.EventHandler(this.tileDataToolStripMenuItem_Click);
             // 
             // Cliloc
             // 
@@ -273,6 +297,8 @@ namespace FiddlerControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton ClilocExportButton;
-        private System.Windows.Forms.ToolStripButton ClilocImportButton;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem cSVToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tileDataToolStripMenuItem;
     }
 }

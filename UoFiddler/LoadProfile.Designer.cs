@@ -34,8 +34,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.comboBoxBasedOn = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.comboBoxBasedOn = new System.Windows.Forms.ComboBox();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,6 +46,9 @@
             this.comboBoxLoad.Name = "comboBoxLoad";
             this.comboBoxLoad.Size = new System.Drawing.Size(121, 21);
             this.comboBoxLoad.TabIndex = 0;
+            this.comboBoxLoad.SelectedIndexChanged += new System.EventHandler(this.comboBoxLoad_SelectedIndexChanged);
+            this.comboBoxLoad.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboBoxLoad_KeyDown);
+            this.comboBoxLoad.KeyUp += new System.Windows.Forms.KeyEventHandler(this.comboBoxLoad_KeyUp);
             // 
             // button1
             // 
@@ -96,14 +99,6 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create";
             // 
-            // comboBoxBasedOn
-            // 
-            this.comboBoxBasedOn.FormattingEnabled = true;
-            this.comboBoxBasedOn.Location = new System.Drawing.Point(66, 46);
-            this.comboBoxBasedOn.Name = "comboBoxBasedOn";
-            this.comboBoxBasedOn.Size = new System.Drawing.Size(121, 21);
-            this.comboBoxBasedOn.TabIndex = 4;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -112,6 +107,14 @@
             this.label1.Size = new System.Drawing.Size(54, 13);
             this.label1.TabIndex = 5;
             this.label1.Text = "Based On";
+            // 
+            // comboBoxBasedOn
+            // 
+            this.comboBoxBasedOn.FormattingEnabled = true;
+            this.comboBoxBasedOn.Location = new System.Drawing.Point(66, 46);
+            this.comboBoxBasedOn.Name = "comboBoxBasedOn";
+            this.comboBoxBasedOn.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxBasedOn.TabIndex = 4;
             // 
             // LoadProfile
             // 

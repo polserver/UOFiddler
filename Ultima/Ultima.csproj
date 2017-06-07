@@ -156,6 +156,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BinaryExtensions.cs" />
     <Compile Include="CalibrationInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -170,6 +171,7 @@
     <Compile Include="Gumps.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Hues.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -218,6 +220,8 @@
     <Compile Include="Verdata.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WaveFormat.cs" />
+    <Compile Include="WaveFormatException.cs" />
     <Compile Include="WindowProcessStream.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -35,7 +35,7 @@ namespace FiddlerControls
                 if (!res)
                 {
                     DialogResult result = MessageBox.Show("No item found", "Result",
-                        MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Cancel)
                         Close();
                 }
@@ -44,6 +44,7 @@ namespace FiddlerControls
 
         private void Search_ItemName(object sender, EventArgs e)
         {
+            lastSearchedName = textBoxItemName.Text;
             bool res;
             if (Options.DesignAlternative)
                 res = ItemShowAlternative.SearchName(textBoxItemName.Text, false);
@@ -52,7 +53,7 @@ namespace FiddlerControls
             if (!res)
             {
                 DialogResult result = MessageBox.Show("No item found", "Result",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
                     Close();
             }
@@ -68,21 +69,35 @@ namespace FiddlerControls
             if (!res)
             {
                 DialogResult result = MessageBox.Show("No item found", "Result",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
                     Close();
             }
         }
 
+        private string lastSearchedName = null;
         private void onKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
-                    Search_Graphic(this, null);
+                    Search_Graphic(sender, e);
                 else
-                    Search_ItemName(this, null);
+                {
+                    if (textBoxItemName.Text != lastSearchedName)
+                    {
+                        Search_ItemName(sender, e);
+                    }
+                    else
+                    {
+                        SearchNextName(sender, e);
+                    }
+                }
                 e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
             }
         }
     }

@@ -93,7 +93,7 @@ namespace UoFiddler
             // TextBoxRoot
             // 
             this.TextBoxRoot.Name = "TextBoxRoot";
-            this.TextBoxRoot.Size = new System.Drawing.Size(130, 25);
+            this.TextBoxRoot.Size = new System.Drawing.Size(150, 21);
             this.TextBoxRoot.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownDir);
             // 
             // PathSettings
@@ -105,7 +105,7 @@ namespace UoFiddler
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "PathSettings";
-            this.Text = "PathSettings";
+            this.Text = "Path Settings";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

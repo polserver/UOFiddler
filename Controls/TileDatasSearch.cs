@@ -41,10 +41,11 @@ namespace FiddlerControls
 
         private void SearchName(object sender, EventArgs e)
         {
+            lastSearchedName = textBoxItemName.Text;
             bool res = TileDatas.SearchName(textBoxItemName.Text, false, land);
             if (!res)
             {
-                DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
                     Close();
             }
@@ -55,21 +56,35 @@ namespace FiddlerControls
             bool res = TileDatas.SearchName(textBoxItemName.Text, true, land);
             if (!res)
             {
-                DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
                     Close();
             }
         }
 
+        private string lastSearchedName = null;
         private void onKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
-                    SearchGraphic(this, null);
+                    SearchGraphic(sender, e);
                 else
-                    SearchName(this, null);
+                {
+                    if (textBoxItemName.Text != lastSearchedName)
+                    {
+                        this.SearchName(sender, e);
+                    }
+                    else
+                    {
+                        SearchNextName(sender, e);
+                    }
+                }
                 e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
             }
         }
     }

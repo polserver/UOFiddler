@@ -24,7 +24,7 @@ namespace UoFiddler
 {
     public static class Options
     {
-        private static bool m_UpdateCheckOnStart = false;
+        private static bool m_UpdateCheckOnStart = true;
         private static List<ExternTool> m_ExternTools;
 
         public static List<ExternTool> ExternTools
@@ -241,6 +241,12 @@ namespace UoFiddler
             elem.SetAttribute("Width", FormSize.Width.ToString());
             sr.AppendChild(elem);
 
+            comment = dom.CreateComment("TileData Options");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("TileDataDirectlySaveOnChange");
+            elem.SetAttribute("value", FiddlerControls.Options.TileDataDirectlySaveOnChange.ToString());
+            sr.AppendChild(elem);
+
             dom.Save(FileName);
         }
 
@@ -380,7 +386,9 @@ namespace UoFiddler
                 FormPosition = new Point(int.Parse(elem.GetAttribute("PositionX")), int.Parse(elem.GetAttribute("PositionY")));
                 FormSize = new Size(int.Parse(elem.GetAttribute("Width")), int.Parse(elem.GetAttribute("Height")));
             }
-            
+
+            elem = (XmlElement)xOptions.SelectSingleNode("TileDataDirectlySaveOnChange");
+            FiddlerControls.Options.TileDataDirectlySaveOnChange = elem != null && (elem.GetAttribute("value") ?? "").Equals("true", StringComparison.OrdinalIgnoreCase);
 
             Files.CheckForNewMapSize();
         }
@@ -454,8 +462,8 @@ namespace UoFiddler
                 if (VersionCheck(match[0]))
                 {
                     DialogResult result =
-                        MessageBox.Show(String.Format(@"A new version was found: {1} your version: {0}"
-                        , UoFiddler.Version, match[0]) + "\nDownload now?", "Check for Update", MessageBoxButtons.YesNo);
+                        MessageBox.Show(String.Format("A new version was found: {1}\nYour version: {0}", UoFiddler.Version, match[0]) 
+                        + "\n\nDownload now?", "Check for Update", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                         DownloadFile(match[1]);
                 }
@@ -466,28 +474,12 @@ namespace UoFiddler
 
         public static bool VersionCheck(string newversion)
         {
-            if (newversion.Length < 4)
-                return false;
-            char ver1major = UoFiddler.Version[0];
-            char ver1minor = UoFiddler.Version[2];
-            char ver1rev = UoFiddler.Version[3];
-            char ver2major = newversion[0];
-            char ver2minor = newversion[2];
-            char ver2rev = newversion[3];
-            if (ver1major > ver2major)
-                return false;
-            else if (ver1major < ver2major)
-                return true;
-            else if (ver1minor > ver2minor)
-                return false;
-            else if (ver1minor < ver2minor)
-                return true;
-            else if (ver1rev > ver2rev)
-                return false;
-            else if (ver1rev < ver2rev)
-                return true;
-            else
-                return false;
+            Version currentVersion;
+            Version.TryParse(UoFiddler.Version, out currentVersion);
+            Version newVersion;
+            Version.TryParse(newversion, out newVersion);
+
+            return newVersion > currentVersion;
         }
 
         #region Downloader

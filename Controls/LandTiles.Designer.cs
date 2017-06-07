@@ -315,6 +315,7 @@ namespace FiddlerControls
             this.listView1.View = System.Windows.Forms.View.Tile;
             this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.drawitem);
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
+            this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LandTiles_KeyUp);
             // 
             // LandTiles
             // 
@@ -325,6 +326,7 @@ namespace FiddlerControls
             this.Name = "LandTiles";
             this.Size = new System.Drawing.Size(619, 324);
             this.Load += new System.EventHandler(this.OnLoad);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LandTiles_KeyUp);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStripLandTile.ResumeLayout(false);
             this.toolStripLandTile.PerformLayout();
