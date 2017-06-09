@@ -110,6 +110,8 @@ namespace FiddlerControls
             else if (e.KeyCode == Keys.Escape)
             {
                 this.Close();
+                e.SuppressKeyPress = true;
+                e.Handled = true;
             }
         }
     }

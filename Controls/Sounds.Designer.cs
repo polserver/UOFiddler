@@ -81,7 +81,6 @@ namespace FiddlerControls
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.afterSelect);
             this.treeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClick);
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView_KeyDown);
-            this.treeView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Sound_KeyUp);
             // 
             // contextMenuStrip1
             // 
@@ -287,7 +286,6 @@ namespace FiddlerControls
             this.Name = "Sounds";
             this.Size = new System.Drawing.Size(619, 324);
             this.Load += new System.EventHandler(this.OnLoad);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Sound_KeyUp);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

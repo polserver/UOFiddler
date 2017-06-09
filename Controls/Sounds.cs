@@ -529,6 +529,12 @@ namespace FiddlerControls
                     e.SuppressKeyPress = true;
                 }
             }
+          else  if (e.KeyCode == Keys.F && e.Control)
+            {
+                this.SearchClick(sender, e);
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+            }
         }
 
         private void TreeViewOnAfterLabelEdit(object sender, NodeLabelEditEventArgs e)
@@ -575,14 +581,6 @@ namespace FiddlerControls
             else
             {
                 e.CancelEdit = true;
-            }
-        }
-
-        private void Sound_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.F && e.Control)
-            {
-                this.SearchClick(sender, e);
             }
         }
     }

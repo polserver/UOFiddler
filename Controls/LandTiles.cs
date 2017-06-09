@@ -570,6 +570,8 @@ namespace FiddlerControls
             if (e.KeyCode == Keys.F && e.Control)
             {
                 this.OnClickSearch(sender, e);
+                e.SuppressKeyPress = true;
+                e.Handled = true;
             }
         }
     }
