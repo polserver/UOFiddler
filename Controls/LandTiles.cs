@@ -32,6 +32,7 @@ namespace FiddlerControls
         private static LandTiles refMarker = null;
         private bool Loaded = false;
         public bool isLoaded { get { return Loaded; } }
+        private bool ShowFreeSlots = false;
 
         /// <summary>
         /// Searches Objtype and Select
@@ -46,7 +47,7 @@ namespace FiddlerControls
             for (int i = index; i < refMarker.listView1.Items.Count; ++i)
             {
                 ListViewItem item = refMarker.listView1.Items[i];
-                if ((int)item.Tag == graphic)
+                if (((int)item.Tag == graphic) || ((int)item.Tag == -1 && i == graphic))
                 {
                     if (refMarker.listView1.SelectedItems.Count == 1)
                         refMarker.listView1.SelectedItems[0].Selected = false;
@@ -80,6 +81,8 @@ namespace FiddlerControls
             for (int i = index; i < refMarker.listView1.Items.Count; ++i)
             {
                 ListViewItem item = refMarker.listView1.Items[i];
+                if ((int)item.Tag == -1)
+                    continue;
                 if (regex.IsMatch(TileData.LandTable[(int)item.Tag].Name))
                 {
                     if (refMarker.listView1.SelectedItems.Count == 1)
@@ -173,36 +176,49 @@ namespace FiddlerControls
             {
                 ListViewItem item = new ListViewItem(index.ToString(), 0);
                 item.Tag = index;
-                bool done = false;
-                foreach (ListViewItem i in listView1.Items)
+                if (ShowFreeSlots)
                 {
-                    if ((int)i.Tag > index)
-                    {
-                        listView1.Items.Insert(i.Index, item);
-                        done = true;
-                        break;
-                    }
-                    if ((int)i.Tag == index)
-                    {
-                        done = true;
-                        break;
-                    }
+                    listView1.Items[index] = item;
+                    listView1.Invalidate();
                 }
-                if (!done)
-                    listView1.Items.Add(item);
+                else
+                {
+                    bool done = false;
+                    foreach (ListViewItem i in listView1.Items)
+                    {
+                        if ((int)i.Tag > index)
+                        {
+                            listView1.Items.Insert(i.Index, item);
+                            done = true;
+                            break;
+                        }
+                        if ((int)i.Tag == index)
+                        {
+                            done = true;
+                            break;
+                        }
+                    }
+                    if (!done)
+                        listView1.Items.Add(item);
+                }
                 listView1.View = View.Details; // that works faszinating
                 listView1.View = View.Tile;
             }
             else
             {
-                foreach (ListViewItem i in listView1.Items)
+                if (!ShowFreeSlots)
                 {
-                    if ((int)i.Tag == index)
+                    foreach (ListViewItem i in listView1.Items)
                     {
-                        listView1.Items.RemoveAt(i.Index);
-                        break;
+                        if ((int)i.Tag == index)
+                        {
+                            listView1.Items.RemoveAt(i.Index);
+                            break;
+                        }
                     }
                 }
+                else
+                    listView1.Items[index].Tag = -1;
                 listView1.Invalidate();
             }
         }
@@ -212,16 +228,39 @@ namespace FiddlerControls
             if (listView1.SelectedItems.Count == 1)
             {
                 int i = (int)listView1.SelectedItems[0].Tag;
-                namelabel.Text = String.Format("Name: {0}", TileData.LandTable[i].Name);
-                graphiclabel.Text = String.Format("ID: 0x{0:X4} ({0})", i);
-                FlagsLabel.Text = String.Format("Flags: {0}", TileData.LandTable[i].Flags);
+                if (i == -1)
+                {
+                    namelabel.Text = "Name: FREE";
+                    graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", listView1.SelectedIndices[0]);
+                    selectInTileDataTabToolStripMenuItem.Enabled = false;
+                }
+                else
+                {
+                    namelabel.Text = String.Format("Name: {0}", TileData.LandTable[i].Name);
+                    graphiclabel.Text = String.Format("ID: 0x{0:X4} ({0})", i);
+                    FlagsLabel.Text = String.Format("Flags: {0}", TileData.LandTable[i].Flags);
+                }
             }
         }
+
+        static Brush BrushWhite = Brushes.White;
+        static Brush BrushLightBlue = Brushes.LightBlue;
+        static Brush BrushLightCoral = Brushes.LightCoral;
+        static Brush BrushRed = Brushes.Red;
+        static Pen PenGray = Pens.Gray;
 
         private void drawitem(object sender, DrawListViewItemEventArgs e)
         {
             int i = (int)listView1.Items[e.ItemIndex].Tag;
-
+            if (i == -1)
+            {
+                if (e.Item.Selected)
+                    e.Graphics.FillRectangle(BrushLightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                else
+                    e.Graphics.DrawRectangle(PenGray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                e.Graphics.FillRectangle(BrushRed, e.Bounds.X + 5, e.Bounds.Y + 5, e.Bounds.Width - 10, e.Bounds.Height - 10);
+                return;
+            }
             bool patched;
             Bitmap bmp = Art.GetLand(i, out patched);
 
@@ -286,8 +325,11 @@ namespace FiddlerControls
                         }
                         if (dialog.FileName.Contains(".bmp"))
                             bmp = Utils.ConvertBmp(bmp);
-                        Art.ReplaceLand((int)listView1.SelectedItems[0].Tag, bmp);
-                        FiddlerControls.Events.FireLandTileChangeEvent(this, (int)listView1.SelectedItems[0].Tag);
+                        int id = (int)listView1.SelectedItems[0].Tag;
+                        if (id == -1)
+                            listView1.SelectedItems[0].Tag = id = listView1.SelectedItems[0].Index;
+                        Art.ReplaceLand(id, bmp);
+                        FiddlerControls.Events.FireLandTileChangeEvent(this, id);
                         listView1.Invalidate();
                         Options.ChangedUltimaClass["Art"] = true;
                     }
@@ -359,18 +401,26 @@ namespace FiddlerControls
                             Options.ChangedUltimaClass["Art"] = true;
                             ListViewItem item = new ListViewItem(index.ToString(), 0);
                             item.Tag = index;
-                            bool done = false;
-                            foreach (ListViewItem i in listView1.Items)
+                            if (ShowFreeSlots)
                             {
-                                if ((int)i.Tag > index)
-                                {
-                                    listView1.Items.Insert(i.Index, item);
-                                    done = true;
-                                    break;
-                                }
+                                listView1.Items[index] = item;
+                                listView1.Invalidate();
                             }
-                            if (!done)
-                                listView1.Items.Add(item);
+                            else
+                            {
+                                bool done = false;
+                                foreach (ListViewItem i in listView1.Items)
+                                {
+                                    if ((int)i.Tag > index)
+                                    {
+                                        listView1.Items.Insert(i.Index, item);
+                                        done = true;
+                                        break;
+                                    }
+                                }
+                                if (!done)
+                                    listView1.Items.Add(item);
+                            }
                             listView1.View = View.Details; // that works faszinating
                             listView1.View = View.Tile;
                             if (listView1.SelectedItems.Count == 1)
@@ -395,8 +445,13 @@ namespace FiddlerControls
                 Art.RemoveLand(i);
                 FiddlerControls.Events.FireLandTileChangeEvent(this, i);
                 i = listView1.SelectedItems[0].Index;
-                listView1.SelectedItems[0].Selected = false;
-                listView1.Items.RemoveAt(i);
+                if (!ShowFreeSlots)
+                {
+                    listView1.SelectedItems[0].Selected = false;
+                    listView1.Items.RemoveAt(i);
+                }
+                else
+                    listView1.Items[i].Tag = -1;
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Art"] = true;
             }
@@ -404,30 +459,92 @@ namespace FiddlerControls
 
         private void onClickFindFree(object sender, EventArgs e)
         {
-            int id, i;
-            if (listView1.SelectedItems.Count > 0)
+            if (ShowFreeSlots)
             {
-                id = (int)listView1.SelectedItems[0].Tag + 1;
-                i = listView1.SelectedItems[0].Index + 1;
+                int i;
+                if (listView1.SelectedItems.Count > 0)
+                    i = listView1.SelectedItems[0].Index + 1;
+                else
+                    i = 0;
+                for (; i < listView1.Items.Count; ++i)
+                {
+                    if ((int)listView1.Items[i].Tag == -1)
+                    {
+                        ListViewItem item = listView1.Items[i];
+                        if (listView1.SelectedItems.Count == 1)
+                            listView1.SelectedItems[0].Selected = false;
+                        item.Selected = true;
+                        item.Focused = true;
+                        item.EnsureVisible();
+                        break;
+                    }
+                }
             }
             else
             {
-                id = 0;
-                i = 0;
-            }
-            for (; i < listView1.Items.Count; ++i, ++id)
-            {
-                if (id < (int)listView1.Items[i].Tag)
+                int id, i;
+                if (listView1.SelectedItems.Count > 0)
                 {
-                    ListViewItem item = listView1.Items[i];
-                    if (listView1.SelectedItems.Count == 1)
-                        listView1.SelectedItems[0].Selected = false;
-                    item.Selected = true;
-                    item.Focused = true;
-                    item.EnsureVisible();
-                    break;
+                    id = (int)listView1.SelectedItems[0].Tag + 1;
+                    i = listView1.SelectedItems[0].Index + 1;
+                }
+                else
+                {
+                    id = 0;
+                    i = 0;
+                }
+                for (; i < listView1.Items.Count; ++i, ++id)
+                {
+                    if (id < (int)listView1.Items[i].Tag)
+                    {
+                        ListViewItem item = listView1.Items[i];
+                        if (listView1.SelectedItems.Count == 1)
+                            listView1.SelectedItems[0].Selected = false;
+                        item.Selected = true;
+                        item.Focused = true;
+                        item.EnsureVisible();
+                        break;
+                    }
                 }
             }
+        }
+
+        private void onClickShowFreeSlots(object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+            listView1.View = View.Details; // that works fascinating
+            listView1.BeginUpdate();
+            ShowFreeSlots = !ShowFreeSlots;
+            if (ShowFreeSlots)
+            {
+                ListViewItem item;
+                for (int j = 0; j < 0x4000; ++j)
+                {
+                    if (listView1.Items.Count > j)
+                    {
+                        if ((int)listView1.Items[j].Tag != j)
+                        {
+                            item = new ListViewItem(j.ToString(), 0);
+                            item.Tag = -1;
+                            listView1.Items.Insert(j, item);
+                        }
+                    }
+                    else
+                    {
+                        item = new ListViewItem(j.ToString(), 0);
+                        item.Tag = -1;
+                        listView1.Items.Insert(j, item);
+                    }
+                }
+            }
+            else
+            {
+                Reload();
+            }
+            listView1.EndUpdate();
+            this.ResumeLayout(false);
+
+            listView1.View = View.Tile;
         }
 
         private void onClickExportBmp(object sender, EventArgs e)
@@ -436,6 +553,8 @@ namespace FiddlerControls
             {
                 string path = FiddlerControls.Options.OutputPath;
                 int i = (int)listView1.SelectedItems[0].Tag;
+                if (i == -1)
+                    return;
                 string FileName = Path.Combine(path, String.Format("Landtile {0}.bmp", i));
                 Bitmap bit = new Bitmap(Ultima.Art.GetLand(i));
                 if (bit != null)
@@ -452,6 +571,8 @@ namespace FiddlerControls
             {
                 string path = FiddlerControls.Options.OutputPath;
                 int i = (int)listView1.SelectedItems[0].Tag;
+                if (i == -1)
+                    return;
                 string FileName = Path.Combine(path, String.Format("Landtile {0}.tiff", i));
                 Bitmap bit = new Bitmap(Ultima.Art.GetLand(i));
                 if (bit != null)
@@ -468,6 +589,8 @@ namespace FiddlerControls
             {
                 string path = FiddlerControls.Options.OutputPath;
                 int i = (int)listView1.SelectedItems[0].Tag;
+                if (i == -1)
+                    return;
                 string FileName = Path.Combine(path, String.Format("Landtile {0}.jpg", i));
                 Bitmap bit = new Bitmap(Ultima.Art.GetLand(i));
                 if (bit != null)
@@ -480,14 +603,20 @@ namespace FiddlerControls
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 1)
-                FiddlerControls.TileDatas.Select((int)listView1.SelectedItems[0].Tag, true);
+            int id = (int)listView1.SelectedItems[0].Tag;
+            if (id == -1)
+                id = listView1.SelectedItems[0].Index;
+           
+                FiddlerControls.TileDatas.Select(id, true);
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 1)
-                FiddlerControls.RadarColor.Select((int)listView1.SelectedItems[0].Tag, true);
+            int id = (int)listView1.SelectedItems[0].Tag;
+            if (id == -1)
+                id = listView1.SelectedItems[0].Index;
+            
+                FiddlerControls.RadarColor.Select(id, true);
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)

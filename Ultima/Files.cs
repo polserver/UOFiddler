@@ -57,8 +57,10 @@ namespace Ultima
             "animdata.mul",
 			"art.mul",
 			"artidx.mul",
+			"artlegacymul.uop",
 			"body.def",
 			"bodyconv.def",
+			"client.exe",
             "cliloc.custom1",
             "cliloc.custom2",
             "cliloc.deu",
@@ -74,6 +76,7 @@ namespace Ultima
             "gump.def",
 			"gumpart.mul",
 			"gumpidx.mul",
+			"gumpartlegacymul.uop",
 			"hues.mul",
             "light.mul",
             "lightidx.mul",
@@ -83,6 +86,12 @@ namespace Ultima
 			"map3.mul",
 			"map4.mul",
             "map5.mul",
+			"map0legacymul.uop",
+			"map1legacymul.uop",
+			"map2legacymul.uop",
+			"map3legacymul.uop",
+			"map4legacymul.uop",
+			"map5legacymul.uop",
 			"mapdif0.mul",
 			"mapdif1.mul",
 			"mapdif2.mul",
@@ -104,6 +113,7 @@ namespace Ultima
             "sound.def",
             "sound.mul",
             "soundidx.mul",
+			"soundlegacymul.uop",
             "speech.mul",
 			"stadif0.mul",
 			"stadif1.mul",
@@ -148,6 +158,7 @@ namespace Ultima
             "unifont10.mul",
             "unifont11.mul",
             "unifont12.mul",
+			"uotd.exe",
 			"verdata.mul"
         };
 
@@ -267,7 +278,9 @@ namespace Ultima
             @"Origin Worlds Online\Ultima Online Samurai Empire BETA\3d\1.0", 
             @"Origin Worlds Online\Ultima Online Samurai Empire\2d\1.0", 
             @"Origin Worlds Online\Ultima Online Samurai Empire\3d\1.0",
-            @"Electronic Arts\EA Games\Ultima Online Stygian Abyss Classic",
+			@"Origin Worlds Online\Ultima Online\KR Legacy Beta",
+			@"Electronic Arts\EA Games\Ultima Online Stygian Abyss Classic",
+			@"Electronic Arts\EA Games\Ultima Online Classic",
         };
 
         static readonly string[] knownRegPathkeys = new string[] { 

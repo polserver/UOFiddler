@@ -11,7 +11,7 @@ namespace Ultima
 {
     public sealed class Art
     {
-        private static FileIndex m_FileIndex = new FileIndex("Artidx.mul", "Art.mul", 0x10000/*0x13FDC*/, 4);
+        private static FileIndex m_FileIndex = new FileIndex("Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x10000/*0x13FDC*/, 4, ".tga", 0x13FDC, false);
         private static Bitmap[] m_Cache;
         private static bool[] m_Removed;
         private static Hashtable m_patched = new Hashtable();
@@ -76,7 +76,7 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("Artidx.mul", "Art.mul", 0x10000/*0x13FDC*/, 4);
+            m_FileIndex = new FileIndex("Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x10000/*0x13FDC*/, 4, ".tga", 0x13FDC, false);
             m_Cache = new Bitmap[GetIdxLength()];
             m_Removed = new bool[GetIdxLength()];
             m_patched.Clear();

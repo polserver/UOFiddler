@@ -43,7 +43,7 @@ namespace Ultima
         {
             m_Cache = new UOSound[0xFFF];
             m_Removed = new bool[0xFFF];
-            m_FileIndex = new FileIndex("soundidx.mul", "sound.mul", 0xFFF, 8);
+			m_FileIndex = new FileIndex("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
             Regex reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
 
             m_Translations = new Dictionary<int, int>();

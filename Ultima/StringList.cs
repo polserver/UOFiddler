@@ -13,6 +13,8 @@ namespace Ultima
         public List<StringEntry> Entries { get; set; }
         public string Language { get; private set; }
 
+		private Dictionary<int, string> m_StringTable;
+		private Dictionary<int, StringEntry> m_EntryTable;
         private static byte[] m_Buffer = new byte[1024];
 
         /// <summary>
@@ -43,6 +45,8 @@ namespace Ultima
                 return;
             }
             Entries = new List<StringEntry>();
+			m_StringTable = new Dictionary<int, string>();
+			m_EntryTable = new Dictionary<int, StringEntry>();
 
             using (BinaryReader bin = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
@@ -61,7 +65,11 @@ namespace Ultima
                     bin.Read(m_Buffer, 0, length);
                     string text = Encoding.UTF8.GetString(m_Buffer, 0, length);
 
-                    Entries.Add(new StringEntry(number, text, flag));
+					StringEntry se = new StringEntry(number, text, flag);
+					Entries.Add(se);
+
+					m_StringTable[number] = text;
+					m_EntryTable[number] = se;
                 }
             }
         }
@@ -92,6 +100,21 @@ namespace Ultima
             }
         }
 
+		public string GetString(int number)
+		{
+			if (m_StringTable == null || !m_StringTable.ContainsKey(number))
+				return null;
+
+			return m_StringTable[number];
+		}
+
+		public StringEntry GetEntry(int number)
+		{
+			if (m_EntryTable == null || !m_EntryTable.ContainsKey(number))
+				return null;
+
+			return m_EntryTable[number];
+		}
         #region SortComparer
 
         public class NumberComparer : IComparer<StringEntry>

@@ -16,6 +16,7 @@ namespace Ultima
         public static HuedTile[][][] EmptyStaticBlock { get; private set; }
 
         private FileStream m_Map;
+		private BinaryReader m_UOPReader;
         private FileStream m_Statics;
         private Entry3D[] m_StaticIndex;
         public Entry3D[] StaticIndex { get { if (!StaticIndexInit) InitStatics(); return m_StaticIndex; } }
@@ -39,6 +40,8 @@ namespace Ultima
         {
             if (m_Map != null)
                 m_Map.Close();
+			if (m_UOPReader != null)
+				m_UOPReader.Close();
             if (m_Statics != null)
                 m_Statics.Close();
         }
@@ -51,12 +54,23 @@ namespace Ultima
             BlockHeight = height >> 3;
 
             if (path == null)
+            { 
                 mapPath = Files.GetFilePath("map{0}.mul", fileIndex);
+				if (String.IsNullOrEmpty(mapPath) || !File.Exists(mapPath))
+					mapPath = Files.GetFilePath("map{0}LegacyMUL.uop", fileIndex);
+
+				if (mapPath != null && mapPath.EndsWith(".uop"))
+					IsUOPFormat = true;
+			}
             else
             {
                 mapPath = Path.Combine(path, String.Format("map{0}.mul", fileIndex));
+				if (!File.Exists(mapPath))
+					mapPath = Path.Combine(path, String.Format("map{0}LegacyMUL.uop", fileIndex));
                 if (!File.Exists(mapPath))
                     mapPath = null;
+				else if (mapPath != null && mapPath.EndsWith(".uop"))
+					IsUOPFormat = true;
             }
 
             if (path == null)
@@ -308,6 +322,112 @@ namespace Ultima
             }
         }
 
+		/* UOP map files support code, written by Wyatt (c) www.ruosi.org
+		 * It's not possible if some entry has unknown hash. Throwed exception
+		 * means that EA changed maps UOPs again.
+		 */
+		#region UOP
+		public bool IsUOPFormat { get; set; }
+		public bool IsUOPAlreadyRead { get; set; }
+
+		private struct UOPFile
+		{
+			public long Offset;
+			public int Length;
+
+			public UOPFile(long offset, int length)
+			{
+				Offset = offset;
+				Length = length;
+			}
+		}
+
+		private UOPFile[] UOPFiles { get; set; }
+		private long UOPLength { get { return m_Map.Length; } }
+
+		private void ReadUOPFiles(string pattern)
+		{
+			m_UOPReader = new BinaryReader(m_Map);
+
+			m_UOPReader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+			if (m_UOPReader.ReadInt32() != 0x50594D)
+				throw new ArgumentException("Bad UOP file.");
+
+			m_UOPReader.ReadInt64(); // version + signature
+			long nextBlock = m_UOPReader.ReadInt64();
+			m_UOPReader.ReadInt32(); // block capacity
+			int count = m_UOPReader.ReadInt32();
+
+			UOPFiles = new UOPFile[count];
+
+			Dictionary<ulong, int> hashes = new Dictionary<ulong, int>();
+
+			for (int i = 0; i < count; i++)
+			{
+				string file = string.Format("build/{0}/{1:D8}.dat", pattern, i);
+				ulong hash = FileIndex.HashFileName(file);
+
+				if (!hashes.ContainsKey(hash))
+					hashes.Add(hash, i);
+			}
+
+			m_UOPReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
+
+			do
+			{
+				int filesCount = m_UOPReader.ReadInt32();
+				nextBlock = m_UOPReader.ReadInt64();
+
+				for (int i = 0; i < filesCount; i++)
+				{
+					long offset = m_UOPReader.ReadInt64();
+					int headerLength = m_UOPReader.ReadInt32();
+					int compressedLength = m_UOPReader.ReadInt32();
+					int decompressedLength = m_UOPReader.ReadInt32();
+					ulong hash = m_UOPReader.ReadUInt64();
+					m_UOPReader.ReadUInt32(); // Adler32
+					short flag = m_UOPReader.ReadInt16();
+
+					int length = flag == 1 ? compressedLength : decompressedLength;
+
+					if (offset == 0)
+						continue;
+
+					int idx;
+					if (hashes.TryGetValue(hash, out idx))
+					{
+						if (idx < 0 || idx > UOPFiles.Length)
+							throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+
+						UOPFiles[idx] = new UOPFile(offset + headerLength, length);
+					}
+					else
+					{
+						throw new ArgumentException(string.Format("File with hash 0x{0:X8} was not found in hashes dictionary! EA Mythic changed UOP format!", hash));
+					}
+				}
+			}
+			while (m_UOPReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+		}
+
+		private long CalculateOffsetFromUOP(long offset)
+		{
+			long pos = 0;
+
+			foreach (UOPFile t in UOPFiles)
+			{
+				long currPos = pos + t.Length;
+
+				if (offset < currPos)
+					return t.Offset + (offset - pos);
+
+				pos = currPos;
+			}
+
+			return UOPLength;
+		}
+		#endregion
         private unsafe Tile[] ReadLandBlock(int x, int y)
         {
             if (m_Map == null || !m_Map.CanRead || !m_Map.CanSeek)
@@ -316,11 +436,24 @@ namespace Ultima
                     m_Map = null;
                 else
                     m_Map = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+				if (IsUOPFormat && mapPath != null && !IsUOPAlreadyRead)
+				{
+					FileInfo fi = new FileInfo(mapPath);
+					string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
+
+					ReadUOPFiles(uopPattern);
+					IsUOPAlreadyRead = true;
+				}
             }
             Tile[] tiles = new Tile[64];
             if (m_Map != null)
             {
-                m_Map.Seek(((x * BlockHeight) + y) * 196 + 4, SeekOrigin.Begin);
+				long offset = ((x * BlockHeight) + y) * 196 + 4;
+
+				if (IsUOPFormat)
+					offset = CalculateOffsetFromUOP(offset);
+
+				m_Map.Seek(offset, SeekOrigin.Begin);
 
                 GCHandle gc = GCHandle.Alloc(tiles, GCHandleType.Pinned);
                 try
@@ -402,6 +535,8 @@ namespace Ultima
             if (m_Map != null)
                 m_Map.Close();
 
+			if (m_UOPReader != null)
+				m_UOPReader.Close();
             if (m_Statics != null)
                 m_Statics.Close();
         }

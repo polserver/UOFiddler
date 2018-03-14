@@ -8,7 +8,7 @@ namespace Ultima
 {
     public sealed class Gumps
     {
-        private static FileIndex m_FileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", 12);
+		private static FileIndex m_FileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, 12, ".tga", -1, true);
 
         private static Bitmap[] m_Cache;
         private static bool[] m_Removed;
@@ -37,7 +37,7 @@ namespace Ultima
         {
             try
             {
-                m_FileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", 12);
+				m_FileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 12, -1, ".tga", -1, true);
                 m_Cache = new Bitmap[m_FileIndex.Index.Length];
                 m_Removed = new bool[m_FileIndex.Index.Length];
             }
