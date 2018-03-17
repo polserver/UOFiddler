@@ -13,12 +13,15 @@ namespace Ultima
         private static FileIndex m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
         private static FileIndex m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
         private static FileIndex m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
+  
 
         private static AnimIdx[] animcache;
         private static AnimIdx[] animcache2;
         private static AnimIdx[] animcache3;
         private static AnimIdx[] animcache4;
         private static AnimIdx[] animcache5;
+    
+
         static AnimationEdit()
         {
             if (m_FileIndex.IdxLength > 0)
@@ -31,6 +34,7 @@ namespace Ultima
                 animcache4 = new AnimIdx[m_FileIndex4.IdxLength / 12];
             if (m_FileIndex5.IdxLength > 0)
                 animcache5 = new AnimIdx[m_FileIndex5.IdxLength / 12];
+
         }
         /// <summary>
         /// Rereads AnimX files
@@ -42,6 +46,7 @@ namespace Ultima
             m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
             m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
             m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
+  
             if (m_FileIndex.IdxLength > 0)
                 animcache = new AnimIdx[m_FileIndex.IdxLength / 12];
             if (m_FileIndex2.IdxLength > 0)
@@ -52,6 +57,7 @@ namespace Ultima
                 animcache = new AnimIdx[m_FileIndex4.IdxLength / 12];
             if (m_FileIndex5.IdxLength > 0)
                 animcache = new AnimIdx[m_FileIndex5.IdxLength / 12];
+
         }
 
         private static void GetFileIndex(int body, int fileType, int action, int direction, out FileIndex fileIndex, out int index)
@@ -102,6 +108,7 @@ namespace Ultima
                     else
                         index = 35000 + ((body - 400) * 175);
                     break;
+
             }
 
             index += action * 5;
@@ -126,6 +133,7 @@ namespace Ultima
                     return animcache4;
                 case 5:
                     return animcache5;
+
                 default:
                     return animcache;
             }
@@ -258,6 +266,7 @@ namespace Ultima
                 case 3: filename = "anim3"; cache = animcache3; fileindex = m_FileIndex3; break;
                 case 4: filename = "anim4"; cache = animcache4; fileindex = m_FileIndex4; break;
                 case 5: filename = "anim5"; cache = animcache5; fileindex = m_FileIndex5; break;
+
                 default: filename = "anim"; cache = animcache; fileindex = m_FileIndex; break;
             }
             string idx = Path.Combine(path, filename + ".idx");

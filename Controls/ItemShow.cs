@@ -540,6 +540,7 @@ namespace FiddlerControls
                         listView1.Invalidate();
                         UpdateDetail(id);
                         Options.ChangedUltimaClass["Art"] = true;
+                        bmp.Dispose();
                     }
                 }
             }
