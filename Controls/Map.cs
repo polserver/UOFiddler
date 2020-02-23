@@ -1124,7 +1124,7 @@ namespace FiddlerControls
                         line = line.Remove(0, 2);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        newTile.m_ID = Art.GetLegalItemId(Convert.ToUInt16(line));
+                        newTile.m_ID = Art.GetLegalItemID(Convert.ToUInt16(line));
                     }
                     else if (line.StartsWith("X"))
                     {

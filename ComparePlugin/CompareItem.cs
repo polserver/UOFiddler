@@ -36,7 +36,7 @@ namespace ComparePlugin
             listBoxOrg.Items.Clear();
             listBoxOrg.BeginUpdate();
             List<object> cache = new List<object>();
-            int staticsLength = Art.GetMaxItemId() + 1;
+            int staticsLength = Art.GetMaxItemID() + 1;
             for (int i = 0; i < staticsLength; i++)
             {
                 cache.Add(i);
@@ -253,7 +253,7 @@ namespace ComparePlugin
             listBoxOrg.Items.Clear();
             listBoxSec.Items.Clear();
             List<object> cache = new List<object>();
-            int staticLength = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
+            int staticLength = Math.Max(Art.GetMaxItemID(), SecondArt.GetMaxItemId());
             if (checkBox1.Checked)
             {
                 for (int i = 0; i < staticLength; i++)
@@ -338,7 +338,7 @@ namespace ComparePlugin
                 return;
             }
 
-            int staticLength = Art.GetMaxItemId() + 1;
+            int staticLength = Art.GetMaxItemID() + 1;
             if (i >= staticLength)
             {
                 return;

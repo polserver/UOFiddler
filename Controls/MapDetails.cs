@@ -26,13 +26,13 @@ namespace FiddlerControls
             richTextBox.AppendText($"X: {point.X} Y: {point.Y}\n\n");
             richTextBox.AppendText("LandTile:\n");
             richTextBox.AppendText(
-                $"{TileData.LandTable[currtile.Id].Name}: 0x{currtile.Id:X} Altitute: {currtile.Z}\n\n");
+                $"{TileData.LandTable[currtile.ID].Name}: 0x{currtile.ID:X} Altitute: {currtile.Z}\n\n");
             HuedTile[] currStatics = currmap.Tiles.GetStaticTiles(point.X, point.Y);
             richTextBox.AppendText("Statics:\n");
 
             foreach (HuedTile currstatic in currStatics)
             {
-                ushort id = currstatic.Id;
+                ushort id = currstatic.ID;
                 richTextBox.AppendText(
                     $"{TileData.ItemTable[id].Name}: 0x{id:X} Hue: {currstatic.Hue} Altitute: {currstatic.Z}\n");
             }

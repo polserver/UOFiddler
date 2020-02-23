@@ -75,7 +75,7 @@ namespace FiddlerControls
                 Tag = 0
             };
             treeView.Nodes.Add(node);
-            for (int i = 0; i < AsciiText.Fonts.Length; ++i)
+            for (int i = 0; i < ASCIIText.Fonts.Length; ++i)
             {
                 node = new TreeNode(i.ToString())
                 {
@@ -144,14 +144,14 @@ namespace FiddlerControls
             else
             {
                 setOffsetsToolStripMenuItem.Visible = false;
-                if (AsciiText.Fonts[font] != null)
+                if (ASCIIText.Fonts[font] != null)
                 {
-                    ListViewItem[] cache = new ListViewItem[AsciiText.Fonts[font].Characters.Length];
-                    for (int i = 0; i < AsciiText.Fonts[font].Characters.Length; ++i)
+                    ListViewItem[] cache = new ListViewItem[ASCIIText.Fonts[font].Characters.Length];
+                    for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
                     {
                         cache[i] = new ListViewItem((i + 32).ToString(), 0)
                         {
-                            Tag = AsciiText.Fonts[font].Characters[i]
+                            Tag = ASCIIText.Fonts[font].Characters[i]
                         };
                     }
                     listView1.Items.AddRange(cache);
@@ -276,7 +276,7 @@ namespace FiddlerControls
                 }
                 else
                 {
-                    AsciiText.Fonts[font].ReplaceCharacter(character, import);
+                    ASCIIText.Fonts[font].ReplaceCharacter(character, import);
                     listView1.SelectedItems[0].Tag = import;
                     Options.ChangedUltimaClass["ASCIIFont"] = true;
                 }
@@ -301,7 +301,7 @@ namespace FiddlerControls
             else
             {
                 string fileName = Path.Combine(path, "fonts.mul");
-                AsciiText.Save(fileName);
+                ASCIIText.Save(fileName);
                 MessageBox.Show(
                     $"Fonts saved to {fileName}",
                     "Save",

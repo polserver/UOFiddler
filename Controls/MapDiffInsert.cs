@@ -131,9 +131,9 @@ namespace FiddlerControls
                                         Tile[] patchtile = _workingmap.Tiles.Patch.GetLandBlock(x, y);
                                         for (int i = 0; i < 64; ++i)
                                         {
-                                            tileid = patchtile[i].Id;
+                                            tileid = patchtile[i].ID;
                                             z = (sbyte)patchtile[i].Z;
-                                            tileid = Art.GetLegalItemId(tileid);
+                                            tileid = Art.GetLegalItemID(tileid);
                                             if (z < -128)
                                             {
                                                 z = -128;
@@ -156,7 +156,7 @@ namespace FiddlerControls
                                     {
                                         tileid = mMapReader.ReadUInt16();
                                         z = mMapReader.ReadSByte();
-                                        tileid = Art.GetLegalItemId(tileid);
+                                        tileid = Art.GetLegalItemID(tileid);
                                         if (z < -128)
                                         {
                                             z = -128;
@@ -273,14 +273,14 @@ namespace FiddlerControls
                                                     {
                                                         StaticTile tile = new StaticTile
                                                         {
-                                                            m_ID = htile.Id,
+                                                            m_ID = htile.ID,
                                                             m_Z = (sbyte)htile.Z,
                                                             m_X = (byte)i,
                                                             m_Y = (byte)j,
                                                             m_Hue = (short)htile.Hue
                                                         };
 
-                                                        if (tile.m_ID < 0 || tile.m_ID > Art.GetMaxItemId())
+                                                        if (tile.m_ID < 0 || tile.m_ID > Art.GetMaxItemID())
                                                         {
                                                             continue;
                                                         }
@@ -329,11 +329,11 @@ namespace FiddlerControls
                                                 {
                                                     foreach (HuedTile tile in patchstat[i][j])
                                                     {
-                                                        ushort graphic = tile.Id;
+                                                        ushort graphic = tile.ID;
                                                         sbyte sz = (sbyte)tile.Z;
                                                         short sHue = (short)tile.Hue;
 
-                                                        if (graphic < 0 || graphic > Art.GetMaxItemId())
+                                                        if (graphic < 0 || graphic > Art.GetMaxItemID())
                                                         {
                                                             continue;
                                                         }
@@ -400,7 +400,7 @@ namespace FiddlerControls
                                                     m_Hue = mStaticsReader.ReadInt16()
                                                 };
 
-                                                if (tile.m_ID >= 0 && tile.m_ID <= Art.GetMaxItemId())
+                                                if (tile.m_ID >= 0 && tile.m_ID <= Art.GetMaxItemID())
                                                 {
                                                     if (tile.m_Hue < 0)
                                                     {
@@ -450,7 +450,7 @@ namespace FiddlerControls
                                                 sz = mStaticsReader.ReadSByte();
                                                 shue = mStaticsReader.ReadInt16();
 
-                                                if (graphic >= 0 && graphic <= Art.GetMaxItemId())
+                                                if (graphic >= 0 && graphic <= Art.GetMaxItemID())
                                                 {
                                                     if (shue < 0)
                                                     {

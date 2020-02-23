@@ -188,13 +188,13 @@ namespace FiddlerControls
                 return;
             }
 
-            UoSound s = Ultima.Sounds.GetSound(id);
+            UOSound s = Ultima.Sounds.GetSound(id);
             if (s == null)
             {
                 return;
             }
 
-            using (MemoryStream m = new MemoryStream(s.Buffer))
+            using (MemoryStream m = new MemoryStream(s.buffer))
             {
                 _sp.Stream = m;
                 _sp.Play();
@@ -314,7 +314,7 @@ namespace FiddlerControls
                 fileName += ".wav";
             }
 
-            using (MemoryStream stream = new MemoryStream(Ultima.Sounds.GetSound(id).Buffer))
+            using (MemoryStream stream = new MemoryStream(Ultima.Sounds.GetSound(id).buffer))
             {
                 using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
@@ -373,7 +373,7 @@ namespace FiddlerControls
         private void OnClickExtractSoundList(object sender, EventArgs e)
         {
             string fileName = Path.Combine(Options.OutputPath, "SoundList.csv");
-            Ultima.Sounds.SaveSoundListToCsv(fileName);
+            Ultima.Sounds.SaveSoundListToCSV(fileName);
             MessageBox.Show($"SoundList saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
@@ -566,7 +566,7 @@ namespace FiddlerControls
         private void TreeViewOnAfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             int id = (int)e.Node.Tag - 1;
-            UoSound sound = Ultima.Sounds.GetSound(id);
+            UOSound sound = Ultima.Sounds.GetSound(id);
             if (sound != null && e.Label != null)
             {
                 string newName = e.Label;

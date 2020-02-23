@@ -131,27 +131,27 @@ namespace FiddlerControls
             MobTypes();
 
             TreeNode node;
-            foreach (DictionaryEntry key in BodyTable.MEntries) //body.def
+            foreach (DictionaryEntry key in BodyTable.m_Entries) //body.def
             {
                 BodyTableEntry entry = (BodyTableEntry)key.Value;
-                if (AlreadyFound(entry.NewId))
+                if (AlreadyFound(entry.NewID))
                 {
                     continue;
                 }
 
-                if (_form.IsAlreadyDefined(entry.NewId))
+                if (_form.IsAlreadyDefined(entry.NewID))
                 {
                     continue;
                 }
 
-                node = new TreeNode(entry.NewId.ToString())
+                node = new TreeNode(entry.NewID.ToString())
                 {
-                    Tag = entry.NewId,
-                    ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewId)}"
+                    Tag = entry.NewID,
+                    ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewID)}"
                 };
-                node.Tag = new[] { entry.NewId, 0 };
+                node.Tag = new[] { entry.NewID, 0 };
                 treeView1.Nodes.Add(node);
-                SetActionType(node, entry.NewId, 0);
+                SetActionType(node, entry.NewID, 0);
             }
 
             if (BodyConverter.Table1 != null)

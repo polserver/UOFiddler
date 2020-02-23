@@ -142,7 +142,7 @@ namespace UoFiddler
 
             if (FiddlerControls.Options.LoadedUltimaClass["ASCIIFont"])
             {
-                Ultima.AsciiText.Initialize();
+                Ultima.ASCIIText.Initialize();
             }
 
             if (FiddlerControls.Options.LoadedUltimaClass["UnicodeFont"])

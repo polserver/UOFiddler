@@ -307,7 +307,7 @@ namespace FiddlerControls
                                         short sHue = mStaticsReader.ReadInt16();
                                         int temp = ModArea.IsStaticReplace(_toReplace, graphic, x, y, i);
                                         // TODO: first expression always false?
-                                        if (graphic < 0 || graphic > Art.GetMaxItemId())
+                                        if (graphic < 0 || graphic > Art.GetMaxItemID())
                                         {
                                             continue;
                                         }

@@ -2,29 +2,29 @@ namespace Ultima
 {
     public class WindowProcessStream : ProcessStream
     {
-        private ClientWindowHandle _mWindow;
-        private ClientProcessHandle _mProcessId;
+        private ClientWindowHandle m_Window;
+        private ClientProcessHandle m_ProcessID;
 
-        public ClientWindowHandle Window { get => _mWindow;
-            set => _mWindow = value;
-        }
+        public ClientWindowHandle Window { get { return m_Window; } set { m_Window = value; } }
 
         public WindowProcessStream(ClientWindowHandle window)
         {
-            _mWindow = window;
-            _mProcessId = ClientProcessHandle.Invalid;
+            m_Window = window;
+            m_ProcessID = ClientProcessHandle.Invalid;
         }
 
-        public override ClientProcessHandle ProcessId
+        public override ClientProcessHandle ProcessID
         {
             get
             {
-                if (NativeMethods.IsWindow(_mWindow) != 0 && !_mProcessId.IsInvalid)
-                    return _mProcessId;
+                if (NativeMethods.IsWindow(m_Window) != 0 && !m_ProcessID.IsInvalid)
+                {
+                    return m_ProcessID;
+                }
 
-                NativeMethods.GetWindowThreadProcessId(_mWindow, ref _mProcessId);
+                NativeMethods.GetWindowThreadProcessId(m_Window, ref m_ProcessID);
 
-                return _mProcessId;
+                return m_ProcessID;
             }
         }
     }

@@ -1,13 +1,13 @@
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System;
 
 namespace Ultima
 {
     public sealed class MultiMap
     {
-        private static byte[] _mStreamBuffer;
+        private static byte[] m_StreamBuffer;
         static MultiMap()
         {
         }
@@ -21,9 +21,9 @@ namespace Ultima
             string path = Files.GetFilePath("Multimap.rle");
             if (path != null)
             {
-                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    using (BinaryReader bin = new BinaryReader(fs))
+                    using (var bin = new BinaryReader(fs))
                     {
                         int width, height;
                         byte pixel;
@@ -33,26 +33,35 @@ namespace Ultima
                         ushort c = 0;
                         width = bin.ReadInt32();
                         height = bin.ReadInt32();
-                        Bitmap multimap = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
-                        BitmapData bd = multimap.LockBits(new Rectangle(0, 0, multimap.Width, multimap.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                        ushort* line = (ushort*)bd.Scan0;
+                        var multimap = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
+                        BitmapData bd = multimap.LockBits(
+                            new Rectangle(0, 0, multimap.Width, multimap.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                        var line = (ushort*)bd.Scan0;
                         int delta = bd.Stride >> 1;
 
                         ushort* cur = line;
-                        int len = (int)(bin.BaseStream.Length - bin.BaseStream.Position);
-                        if (_mStreamBuffer == null || _mStreamBuffer.Length < len)
-                            _mStreamBuffer = new byte[len];
-                        bin.Read(_mStreamBuffer, 0, len);
+                        var len = (int)(bin.BaseStream.Length - bin.BaseStream.Position);
+                        if (m_StreamBuffer == null || m_StreamBuffer.Length < len)
+                        {
+                            m_StreamBuffer = new byte[len];
+                        }
+
+                        bin.Read(m_StreamBuffer, 0, len);
                         int j = 0;
                         while (j != len)
                         {
-                            pixel = _mStreamBuffer[j++];
+                            pixel = m_StreamBuffer[j++];
                             count = (pixel & 0x7f);
 
                             if ((pixel & 0x80) != 0)
+                            {
                                 c = 0x8000;//Color.Black;
+                            }
                             else
+                            {
                                 c = 0xffff;//Color.White;
+                            }
+
                             for (i = 0; i < count; ++i)
                             {
                                 cur[x++] = c;
@@ -83,8 +92,9 @@ namespace Ultima
             byte data = 1;
             byte mask = 0x0;
             ushort curcolor = 0;
-            BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
+            BitmapData bd = image.LockBits(
+                new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
             ushort* cur = line;
             curcolor = cur[0]; //init
@@ -101,9 +111,14 @@ namespace Ultima
                         if (data == 0x7f)
                         {
                             if (curcolor == 0xffff)
+                            {
                                 mask = 0x0;
+                            }
                             else
+                            {
                                 mask = 0x80;
+                            }
+
                             data |= mask;
                             bin.Write(data);
                             data = 1;
@@ -112,9 +127,14 @@ namespace Ultima
                     else
                     {
                         if (curcolor == 0xffff)
+                        {
                             mask = 0x0;
+                        }
                         else
+                        {
                             mask = 0x80;
+                        }
+
                         data |= mask;
                         bin.Write(data);
                         curcolor = c;
@@ -123,9 +143,14 @@ namespace Ultima
                 }
             }
             if (curcolor == 0xffff)
+            {
                 mask = 0x0;
+            }
             else
+            {
                 mask = 0x80;
+            }
+
             data |= mask;
             bin.Write(data);
             image.UnlockBits(bd);
@@ -139,17 +164,18 @@ namespace Ultima
         public static unsafe Bitmap GetFacetImage(int id)
         {
             Bitmap bmp;
-            string path=Files.GetFilePath($"facet0{id}.mul");
+            string path=Files.GetFilePath(String.Format("facet0{0}.mul", id));
             if (path != null)
             {
-                using (BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                using (var reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
                     int width = reader.ReadInt16();
                     int height = reader.ReadInt16();
 
                     bmp = new Bitmap(width, height);
-                    BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                    ushort* line = (ushort*)bd.Scan0;
+                    BitmapData bd = bmp.LockBits(
+                        new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                    var line = (ushort*)bd.Scan0;
                     int delta = bd.Stride >> 1;
 
                     for (int y = 0; y < height; y++, line += delta)
@@ -166,7 +192,10 @@ namespace Ultima
                             while (cur < end)
                             {
                                 if (cur > endline)
+                                {
                                     break;
+                                }
+
                                 *cur++ = (ushort)(color ^ 0x8000);
                             }
                         }
@@ -188,12 +217,14 @@ namespace Ultima
             int width = sourceBitmap.Width;
             int height = sourceBitmap.Height;
 
-            using (BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)))
+            using (
+                var writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)))
             {
                 writer.Write((short)width);
                 writer.Write((short)height);
-                BitmapData bd = sourceBitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-                ushort* line = (ushort*)bd.Scan0;
+                BitmapData bd = sourceBitmap.LockBits(
+                    new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                var line = (ushort*)bd.Scan0;
                 int delta = bd.Stride >> 1;
                 for (int y = 0; y < height; y++, line += delta)
                 {

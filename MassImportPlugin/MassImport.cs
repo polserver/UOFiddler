@@ -316,7 +316,7 @@ namespace MassImport
 
     public class ImportEntryItem : ImportEntry
     {
-        public override int MaxIndex => Ultima.Art.GetMaxItemId();
+        public override int MaxIndex => Ultima.Art.GetMaxItemID();
 
         public override string Name => "Item";
 
@@ -439,7 +439,7 @@ namespace MassImport
     {
         private string[] _tiledata;
 
-        public override int MaxIndex => Ultima.Art.GetMaxItemId();
+        public override int MaxIndex => Ultima.Art.GetMaxItemID();
 
         public override string Name => "TileDataItem";
 

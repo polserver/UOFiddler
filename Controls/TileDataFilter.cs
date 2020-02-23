@@ -128,7 +128,7 @@ namespace FiddlerControls
             land.Name = name;
             if (short.TryParse(textBoxTexID.Text, out short shortres))
             {
-                land.TextureId = shortres;
+                land.TextureID = shortres;
             }
 
             land.Flags = TileFlag.None;

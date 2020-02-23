@@ -172,7 +172,7 @@ namespace MultiEditor
             string path = FiddlerControls.Options.OutputPath;
             string fileName = Path.Combine(path, $"{textBox_Export.Text}.uoa");
             MultiComponentList sdkList = _compList.ConvertToSdk();
-            sdkList.ExportToUoaFile(fileName);
+            sdkList.ExportToUOAFile(fileName);
         }
 
         private void BTN_Export_WSC_OnClick(object sender, EventArgs e)

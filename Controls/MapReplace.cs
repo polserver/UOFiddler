@@ -217,7 +217,7 @@ namespace FiddlerControls
                                         z = mMapReader.ReadSByte();
                                     }
 
-                                    tileId = Art.GetLegalItemId(tileId);
+                                    tileId = Art.GetLegalItemID(tileId);
 
                                     if (z < -128)
                                     {
@@ -364,7 +364,7 @@ namespace FiddlerControls
                                                 tile.m_Hue = mStaticsReader.ReadInt16();
                                             }
 
-                                            if (tile.m_ID < 0 || tile.m_ID > Art.GetMaxItemId())
+                                            if (tile.m_ID < 0 || tile.m_ID > Art.GetMaxItemID())
                                             {
                                                 continue;
                                             }
@@ -427,7 +427,7 @@ namespace FiddlerControls
                                                 sHue = mStaticsReader.ReadInt16();
                                             }
 
-                                            if (graphic < 0 || graphic > Art.GetMaxItemId())
+                                            if (graphic < 0 || graphic > Art.GetMaxItemID())
                                             {
                                                 continue;
                                             }

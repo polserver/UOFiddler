@@ -229,11 +229,11 @@ namespace FiddlerControls
             }
             else
             {
-                HeightChangeMulti.Maximum = multi.MaxHeight;
+                HeightChangeMulti.Maximum = multi.maxHeight;
                 toolTip.SetToolTip(HeightChangeMulti,
                     $"MaxHeight: {HeightChangeMulti.Maximum - HeightChangeMulti.Value}");
                 StatusMultiText.Text =
-                    $"Size: {multi.Width},{multi.Height} MaxHeight: {multi.MaxHeight} MultiRegion: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} Surface: {multi.Surface}";
+                    $"Size: {multi.Width},{multi.Height} MaxHeight: {multi.maxHeight} MultiRegion: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} Surface: {multi.Surface}";
             }
             ChangeComponentList(multi);
             MultiPictureBox.Invalidate();
@@ -305,7 +305,7 @@ namespace FiddlerControls
                 return;
             }
 
-            bool isUohsa = Art.IsUoahs();
+            bool isUohsa = Art.IsUOAHS();
             for (int x = 0; x < multi.Width; ++x)
             {
                 for (int y = 0; y < multi.Height; ++y)
@@ -316,12 +316,12 @@ namespace FiddlerControls
                         if (isUohsa)
                         {
                             MultiComponentBox.AppendText(
-                                $"0x{tiles[i].Id:X4} {x,3} {y,3} {tiles[i].Z,2} {tiles[i].Flag,2} {tiles[i].Unk1,2}\n");
+                                $"0x{tiles[i].ID:X4} {x,3} {y,3} {tiles[i].Z,2} {tiles[i].Flag,2} {tiles[i].Unk1,2}\n");
                         }
                         else
                         {
                             MultiComponentBox.AppendText(
-                                $"0x{tiles[i].Id:X4} {x,3} {y,3} {tiles[i].Z,2} {tiles[i].Flag,2}\n");
+                                $"0x{tiles[i].ID:X4} {x,3} {y,3} {tiles[i].Z,2} {tiles[i].Flag,2}\n");
                         }
                     }
                 }
@@ -497,7 +497,7 @@ namespace FiddlerControls
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.uoa");
-            multi.ExportToUoaFile(fileName);
+            multi.ExportToUOAFile(fileName);
             MessageBox.Show($"Multi saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
@@ -725,7 +725,7 @@ namespace FiddlerControls
                     }
 
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.uoa");
-                    multi.ExportToUoaFile(fileName);
+                    multi.ExportToUOAFile(fileName);
                 }
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }

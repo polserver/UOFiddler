@@ -19,7 +19,7 @@ namespace Ultima
     {
         public static List<SkillGroup> List { get; private set; }
         public static List<int> SkillList { get; private set; }
-        private static bool _unicode = false;
+        private static bool unicode;
         static SkillGroups()
         {
             Initialize();
@@ -34,16 +34,16 @@ namespace Ultima
 
             if (path != null)
             {
-                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    using (BinaryReader bin = new BinaryReader(fs))
+                    using (var bin = new BinaryReader(fs))
                     {
                         int start = 4;
                         int strlen = 17;
                         int count = bin.ReadInt32();
                         if (count == -1)
                         {
-                            _unicode = true;
+                            unicode = true;
                             count = bin.ReadInt32();
                             start *= 2;
                             strlen *= 2;
@@ -53,29 +53,34 @@ namespace Ultima
                         for (int i = 0; i < count - 1; ++i)
                         {
                             int strbuild;
-                            fs.Seek(start + (i * strlen), SeekOrigin.Begin);
-                            StringBuilder builder2 = new StringBuilder(17);
-                            if (_unicode)
+                            fs.Seek((start + (i * strlen)), SeekOrigin.Begin);
+                            var builder2 = new StringBuilder(17);
+                            if (unicode)
                             {
                                 while ((strbuild = bin.ReadInt16()) != 0)
+                                {
                                     builder2.Append((char)strbuild);
+                                }
                             }
                             else
                             {
                                 while ((strbuild = bin.ReadByte()) != 0)
+                                {
                                     builder2.Append((char)strbuild);
+                                }
                             }
                             List.Add(new SkillGroup(builder2.ToString()));
                         }
-                        fs.Seek(start + ((count - 1) * strlen), SeekOrigin.Begin);
+                        fs.Seek((start + ((count - 1) * strlen)), SeekOrigin.Begin);
                         try
                         {
                             while (bin.BaseStream.Length != bin.BaseStream.Position)
+                            {
                                 SkillList.Add(bin.ReadInt32());
+                            }
                         }
                         catch // just for safety
-                        {
-                        }
+                        { }
                     }
                 }
             }
@@ -84,44 +89,63 @@ namespace Ultima
         public static void Save(string path)
         {
             string mul = Path.Combine(path, "skillgrp.mul");
-            using (FileStream fs = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var fs = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                using (BinaryWriter bin = new BinaryWriter(fs))
+                using (var bin = new BinaryWriter(fs))
                 {
-                    if (_unicode)
+                    if (unicode)
+                    {
                         bin.Write(-1);
+                    }
+
                     bin.Write(List.Count);
 
                     foreach (SkillGroup group in List)
                     {
                         if (group.Name == "Misc")
+                        {
                             continue;
+                        }
+
                         byte[] name;
-                        if (_unicode)
+                        if (unicode)
+                        {
                             name = new byte[34];
+                        }
                         else
+                        {
                             name = new byte[17];
+                        }
+
                         if (group.Name != null)
                         {
-                            if (_unicode)
+                            if (unicode)
                             {
                                 byte[] bb = Encoding.Unicode.GetBytes(group.Name);
                                 if (bb.Length > 34)
+                                {
                                     Array.Resize(ref bb, 34);
+                                }
+
                                 bb.CopyTo(name, 0);
                             }
                             else
                             {
                                 byte[] bb = Encoding.Default.GetBytes(group.Name);
                                 if (bb.Length > 17)
+                                {
                                     Array.Resize(ref bb, 17);
+                                }
+
                                 bb.CopyTo(name, 0);
                             }
                         }
                         bin.Write(name);
                     }
                     foreach (int group in SkillList)
+                    {
                         bin.Write(group);
+                    }
                 }
             }
         }

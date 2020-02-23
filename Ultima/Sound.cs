@@ -2,34 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Ultima
 {
-    public sealed class UoSound
+    public sealed class UOSound
     {
         public string Name;
-        public int Id;
-        public byte[] Buffer;
+        public int ID;
+        public byte[] buffer;
 
-        public UoSound(string name, int id, byte[] buff)
+        public UOSound(string name, int id, byte[] buff)
         {
             Name = name;
-            Id = id;
-            Buffer = buff;
+            ID = id;
+            buffer = buff;
         }
     };
 
     public static class Sounds
     {
-        private static Dictionary<int, int> _mTranslations;
-        private static FileIndex _mFileIndex;
-        private static UoSound[] _mCache;
-        private static bool[] _mRemoved;
+        private static Dictionary<int, int> m_Translations;
+        private static FileIndex m_FileIndex;
+        private static UOSound[] m_Cache;
+        private static bool[] m_Removed;
 
         static Sounds()
         {
@@ -41,18 +38,21 @@ namespace Ultima
         /// </summary>
         public static void Initialize()
         {
-            _mCache = new UoSound[0xFFF];
-            _mRemoved = new bool[0xFFF];
-			_mFileIndex = new FileIndex("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
-            Regex reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
+            m_Cache = new UOSound[0xFFF];
+            m_Removed = new bool[0xFFF];
+			m_FileIndex = new FileIndex("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
+            var reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
 
-            _mTranslations = new Dictionary<int, int>();
+            m_Translations = new Dictionary<int, int>();
 
             string line;
             string path = Files.GetFilePath("Sound.def");
             if (path == null)
+            {
                 return;
-            using (StreamReader reader = new StreamReader(path))
+            }
+
+            using (var reader = new StreamReader(path))
             {
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -61,79 +61,98 @@ namespace Ultima
                         Match match = reg.Match(line);
 
                         if (match.Success)
-                            _mTranslations.Add(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+                        {
+                            m_Translations.Add(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+                        }
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Returns <see cref="UoSound"/> of ID
+        /// Returns <see cref="UOSound"/> of ID
         /// </summary>
-        /// <param name="soundId"></param>
+        /// <param name="soundID"></param>
         /// <returns></returns>
-        public static UoSound GetSound(int soundId)
+        public static UOSound GetSound(int soundID)
         {
             bool translated;
-            return GetSound(soundId, out translated);
+            return GetSound(soundID, out translated);
         }
 
         /// <summary>
-        /// Returns <see cref="UoSound"/> of ID with bool translated in .def
+        /// Returns <see cref="UOSound"/> of ID with bool translated in .def
         /// </summary>
-        /// <param name="soundId"></param>
+        /// <param name="soundID"></param>
         /// <param name="translated"></param>
         /// <returns></returns>
-        public static UoSound GetSound(int soundId, out bool translated)
+        public static UOSound GetSound(int soundID, out bool translated)
         {
             translated = false;
-            if (soundId < 0)
+            if (soundID < 0)
+            {
                 return null;
-            if (_mRemoved[soundId])
+            }
+
+            if (m_Removed[soundID])
+            {
                 return null;
-            if (_mCache[soundId] != null)
-                return _mCache[soundId];
+            }
+
+            if (m_Cache[soundID] != null)
+            {
+                return m_Cache[soundID];
+            }
 
             int length, extra;
             bool patched;
-            Stream stream = _mFileIndex.Seek(soundId, out length, out extra, out patched);
+            Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 
-            if ((_mFileIndex.Index[soundId].lookup < 0) || (length <= 0))
+            if ((m_FileIndex.Index[soundID].lookup < 0) || (length <= 0))
             {
-                if (!_mTranslations.TryGetValue(soundId, out soundId))
+                if (!m_Translations.TryGetValue(soundID, out soundID))
+                {
                     return null;
+                }
 
                 translated = true;
-                stream = _mFileIndex.Seek(soundId, out length, out extra, out patched);
+                stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
             }
 
             if (stream == null)
+            {
                 return null;
+            }
 
             length -= 32;
             int[] waveHeader = WaveHeader(length);
 
-            byte[] stringBuffer = new byte[32];
-            byte[] buffer = new byte[length];
+            var stringBuffer = new byte[32];
+            var buffer = new byte[length];
 
             stream.Read(stringBuffer, 0, 32);
             stream.Read(buffer, 0, length);
             stream.Close();
 
-            byte[] resultBuffer = new byte[buffer.Length + (waveHeader.Length << 2)];
+            var resultBuffer = new byte[buffer.Length + (waveHeader.Length << 2)];
 
             Buffer.BlockCopy(waveHeader, 0, resultBuffer, 0, (waveHeader.Length << 2));
             Buffer.BlockCopy(buffer, 0, resultBuffer, (waveHeader.Length << 2), buffer.Length);
 
-            string str = Encoding.ASCII.GetString(stringBuffer); // seems that the null terminator's not being properly recognized :/
+            string str = Encoding.ASCII.GetString(stringBuffer); 
+                // seems that the null terminator's not being properly recognized :/
             if (str.IndexOf('\0') > 0)
+            {
                 str = str.Substring(0, str.IndexOf('\0'));
-            UoSound sound = new UoSound(str, soundId, resultBuffer);
+            }
+            var sound = new UOSound(str, soundID, resultBuffer);
 
             if (Files.CacheData)
             {
                 if (!translated) // no .def definition
-                    _mCache[soundId] = sound;
+                {
+                    m_Cache[soundID] = sound;
+                }
             }
 
             return sound;
@@ -160,86 +179,112 @@ namespace Ultima
              * short[..] - data /
              * ====================
              * */
-            return new int[] { 0x46464952, (length + 36), 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length };
+            return new[] 
+            { 0x46464952, (length + 36), 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length };
         }
 
         /// <summary>
         /// Returns Soundname and tests if valid
         /// </summary>
-        /// <param name="soundId"></param>
+        /// <param name="soundID"></param>
         /// <returns></returns>
-        public static bool IsValidSound(int soundId, out string name, out bool translated)
+        public static bool IsValidSound(int soundID, out string name, out bool translated)
         {
             translated = false;
             name = "";
-            if (soundId < 0)
-                return false;
-            if (_mRemoved[soundId])
-                return false;
-            if (_mCache[soundId] != null)
+            if (soundID < 0)
             {
-                name = _mCache[soundId].Name;
+                return false;
+            }
+
+            if (m_Removed[soundID])
+            {
+                return false;
+            }
+
+            if (m_Cache[soundID] != null)
+            {
+                name = m_Cache[soundID].Name;
                 return true;
             }
 
             int length, extra;
             bool patched;
-            Stream stream = _mFileIndex.Seek(soundId, out length, out extra, out patched);
+            Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 
-            if ((_mFileIndex.Index[soundId].lookup < 0) || (length <= 0))
+            if ((m_FileIndex.Index[soundID].lookup < 0) || (length <= 0))
             {
-                if (!_mTranslations.TryGetValue(soundId, out soundId))
+                if (!m_Translations.TryGetValue(soundID, out soundID))
+                {
                     return false;
+                }
                 else
+                {
                     translated = true;
+                }
 
-                stream = _mFileIndex.Seek(soundId, out length, out extra, out patched);
+                stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
             }
             if (stream == null)
+            {
                 return false;
+            }
 
-            byte[] stringBuffer = new byte[32];
+            var stringBuffer = new byte[32];
             stream.Read(stringBuffer, 0, 32);
             stream.Close();
             name = Encoding.ASCII.GetString(stringBuffer); // seems that the null terminator's not being properly recognized :/
             if (name.IndexOf('\0') > 0)
+            {
                 name = name.Substring(0, name.IndexOf('\0'));
+            }
+
             return true;
         }
 
         /// <summary>
         /// Returns length of SoundID
         /// </summary>
-        /// <param name="soundId"></param>
+        /// <param name="soundID"></param>
         /// <returns></returns>
-        public static double GetSoundLength(int soundId)
+        public static double GetSoundLength(int soundID)
         {
-            if (soundId < 0)
+            if (soundID < 0)
+            {
                 return 0;
-            if (_mRemoved[soundId])
+            }
+
+            if (m_Removed[soundID])
+            {
                 return 0;
+            }
 
             double len;
-            if (_mCache[soundId] != null)
+            if (m_Cache[soundID] != null)
             {
-                len = _mCache[soundId].Buffer.Length;
+                len = m_Cache[soundID].buffer.Length;
                 len -= 44; //wavheaderlength
             }
             else
             {
                 int length, extra;
                 bool patched;
-                Stream stream = _mFileIndex.Seek(soundId, out length, out extra, out patched);
-                if ((_mFileIndex.Index[soundId].lookup < 0) || (length <= 0))
+                Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
+                if ((m_FileIndex.Index[soundID].lookup < 0) || (length <= 0))
                 {
-                    if (!_mTranslations.TryGetValue(soundId, out soundId))
+                    if (!m_Translations.TryGetValue(soundID, out soundID))
+                    {
                         return 0;
+                    }
 
-                    stream = _mFileIndex.Seek(soundId, out length, out extra, out patched);
+                    stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
                 }
 
                 if (stream == null)
+                {
                     return 0;
+                }
+
                 stream.Close();
                 length -= 32; //mulheaderlength
                 len = length;
@@ -259,41 +304,45 @@ namespace Ultima
 
                 resultBuffer = CheckAndFixWave(resultBuffer);
 
-                _mCache[id] = new UoSound(name, id, resultBuffer);
-                _mRemoved[id] = false;
+                m_Cache[id] = new UOSound(name, id, resultBuffer);
+                m_Removed[id] = false;
             }
         }
 
         public static void Remove(int id)
         {
-            _mRemoved[id] = true;
-            _mCache[id] = null;
+            m_Removed[id] = true;
+            m_Cache[id] = null;
         }
 
         public static void Save(string path)
         {
             string idx = Path.Combine(path, "soundidx.mul");
             string mul = Path.Combine(path, "sound.mul");
-            int headerlength = 44;
-            using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
+            int Headerlength = 44;
+            using (
+                FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
                               fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                using (BinaryWriter binidx = new BinaryWriter(fsidx),
-                                    binmul = new BinaryWriter(fsmul))
+                using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
                 {
-                    for (int i = 0; i < _mCache.Length; ++i)
+                    for (int i = 0; i < m_Cache.Length; ++i)
                     {
-                        UoSound sound = _mCache[i];
-                        if ((sound == null) && (!_mRemoved[i]))
+                        UOSound sound = m_Cache[i];
+                        if ((sound == null) && (!m_Removed[i]))
                         {
                             bool trans;
                             sound = GetSound(i, out trans);
                             if (!trans)
-                                _mCache[i] = sound;
+                            {
+                                m_Cache[i] = sound;
+                            }
                             else
+                            {
                                 sound = null;
+                            }
                         }
-                        if ((sound == null) || (_mRemoved[i]))
+                        if ((sound == null) || (m_Removed[i]))
                         {
                             binidx.Write(-1); // lookup
                             binidx.Write(-1); // length
@@ -302,22 +351,25 @@ namespace Ultima
                         else
                         {
                             binidx.Write((int)fsmul.Position); //lookup
-                            int length = (int)fsmul.Position;
+                            var length = (int)fsmul.Position;
 
-                            byte[] b = new byte[32];
+                            var b = new byte[32];
                             if (sound.Name != null)
                             {
                                 byte[] bb = Encoding.Default.GetBytes(sound.Name);
                                 if (bb.Length > 32)
+                                {
                                     Array.Resize(ref bb, 32);
+                                }
+
                                 bb.CopyTo(b, 0);
                             }
                             binmul.Write(b);
-                            using (MemoryStream m = new MemoryStream(sound.Buffer))
+                            using (var m = new MemoryStream(sound.buffer))
                             {
-                                m.Seek(headerlength, SeekOrigin.Begin);
-                                byte[] resultBuffer = new byte[m.Length - headerlength];
-                                m.Read(resultBuffer, 0, (int)m.Length - headerlength);
+                                m.Seek(Headerlength, SeekOrigin.Begin);
+                                var resultBuffer = new byte[m.Length - Headerlength];
+                                m.Read(resultBuffer, 0, (int)m.Length - Headerlength);
                                 binmul.Write(resultBuffer);
                             }
 
@@ -330,31 +382,35 @@ namespace Ultima
             }
         }
 
-        public static void SaveSoundListToCsv(string fileName)
+        public static void SaveSoundListToCSV(string FileName)
         {
-            using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            using (
+                var Tex = new StreamWriter(
+                    new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
             {
-                tex.WriteLine("ID;Name;Length");
+                Tex.WriteLine("ID;Name;Length");
                 string name = "";
                 bool translated = false;
                 for (int i = 1; i <= 0xFFF; ++i)
                 {
                     if (IsValidSound(i - 1, out name, out translated))
                     {
-                        tex.Write($"0x{i:X3}");
-                        tex.Write($";{name}");
-                        tex.WriteLine($";{GetSoundLength(i - 1):f}");
+                        Tex.Write(String.Format("0x{0:X3}", i));
+                        Tex.Write(String.Format(";{0}", name));
+                        Tex.WriteLine(String.Format(";{0:f}", GetSoundLength(i - 1)));
                     }
                 }
             }
         }
 
-        public static bool IsRemovedSound(int soundId)
+        public static bool IsRemovedSound(int soundID)
         {
-            if (soundId < 0)
+            if (soundID < 0)
+            {
                 return true;
+            }
 
-            return _mRemoved[soundId];
+            return m_Removed[soundID];
         }
 
         private static byte[] CheckAndFixWave(byte[] inputBuffer)
@@ -366,14 +422,14 @@ namespace Ultima
 
             try
             {
-                int croppedByteCount = 0;
-                using (MemoryStream outputMemoryStream = new MemoryStream())
+                var croppedByteCount = 0;
+                using (var outputMemoryStream = new MemoryStream())
                 {
-                    using (BinaryWriter output = new BinaryWriter(outputMemoryStream))
+                    using (var output = new BinaryWriter(outputMemoryStream))
                     {
-                        using (MemoryStream inputMemoryStream = new MemoryStream(inputBuffer))
+                        using (var inputMemoryStream = new MemoryStream(inputBuffer))
                         {
-                            using (BinaryReader input = new BinaryReader(inputMemoryStream))
+                            using (var input = new BinaryReader(inputMemoryStream))
                             {
                                 // RIFF HEADER
                                 if (input.ReadString(4) != "RIFF")
@@ -382,7 +438,7 @@ namespace Ultima
                                 }
                                 output.WriteString("RIFF");
 
-                                uint riffLength = input.ReadUInt32();
+                                var riffLength = input.ReadUInt32();
                                 output.Write(riffLength);
                                 Debug.WriteLine("RIFF length: " + riffLength + " bytes");
 
@@ -392,11 +448,11 @@ namespace Ultima
                                 }
                                 output.WriteString("WAVE");
 
-                                bool fmtWritten = false;
+                                var fmtWritten = false;
                                 while (inputMemoryStream.Position < inputMemoryStream.Length)
                                 {
-                                    string currentHeader = input.ReadString(4);
-                                    int currentLength = input.ReadInt32();
+                                    var currentHeader = input.ReadString(4);
+                                    var currentLength = input.ReadInt32();
 
                                     /////////////////////////////////////////////////////////////////////////
                                     if (currentHeader == "fmt ")
@@ -409,35 +465,35 @@ namespace Ultima
                                         output.WriteString(currentHeader);
                                         output.Write(currentLength);
 
-                                        WaveFormat waveFormat = (WaveFormat)input.ReadInt16();
+                                        var waveFormat = (WaveFormat)input.ReadInt16();
                                         if (waveFormat != WaveFormat.PCM)
                                         {
                                             throw new WaveFormatException("Format not supported: PCM expected but " + waveFormat + " given!");
                                         }
                                         output.Write((short)waveFormat);
 
-                                        ushort channels = input.ReadUInt16();
+                                        var channels = input.ReadUInt16();
                                         if (channels != 1)
                                         {
                                             throw new WaveFormatException("Only Mono supported, but " + channels + " channels given!");
                                         }
                                         output.Write(channels);
 
-                                        uint frequency = input.ReadUInt32();
+                                        var frequency = input.ReadUInt32();
                                         if (frequency != 22050)
                                         {
                                             throw new WaveFormatException("Only 22050Hz supported, but " + frequency + "Hz given!");
                                         }
                                         output.Write(frequency);
 
-                                        uint rate = input.ReadUInt32();
+                                        var rate = input.ReadUInt32();
                                         output.Write(rate);
                                         Debug.WriteLine("Rate: " + rate + " byte/s");
-                                        ushort align = input.ReadUInt16();
+                                        var align = input.ReadUInt16();
                                         output.Write(align);
                                         Debug.WriteLine("Align: " + align);
 
-                                        ushort depth = input.ReadUInt16();
+                                        var depth = input.ReadUInt16();
                                         if (depth != 16)
                                         {
                                             throw new WaveFormatException("Only 16 bits supported, but " + depth + " bits given!");
@@ -459,7 +515,7 @@ namespace Ultima
                                         output.Write(currentLength);
 
                                         Debug.WriteLine("Data length: " + currentLength + " bytes");
-                                        byte[] data = input.ReadBytes(currentLength);
+                                        var data = input.ReadBytes(currentLength);
 
                                         output.Write(data);
                                     }

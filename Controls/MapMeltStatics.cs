@@ -86,7 +86,7 @@ namespace FiddlerControls
                                     tex.WriteLine("SECTION WORLDITEM {0}", count);
                                     tex.WriteLine("{");
                                     tex.WriteLine("  NAME #");
-                                    tex.WriteLine("  ID {0}", tile.Id);
+                                    tex.WriteLine("  ID {0}", tile.ID);
                                     tex.WriteLine("  X {0}", (x << 3) + ix);
                                     tex.WriteLine("  Y {0}", (y << 3) + iy);
                                     tex.WriteLine("  Z {0}", tile.Z);

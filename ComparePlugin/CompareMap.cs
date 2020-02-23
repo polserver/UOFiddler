@@ -160,9 +160,9 @@ namespace ComparePlugin
                 {
                     Tile customTile = _currMap.Tiles.GetLandTile(xDelta, yDelta);
                     Tile origTile = _origMap.Tiles.GetLandTile(xDelta, yDelta);
-                    if (customTile.Id != origTile.Id || customTile.Z != origTile.Z)
+                    if (customTile.ID != origTile.ID || customTile.Z != origTile.Z)
                     {
-                        diff = $"Tile:\n\r0x{origTile.Id:X} {origTile.Z} -> 0x{customTile.Id:X} {customTile.Z}\n\r";
+                        diff = $"Tile:\n\r0x{origTile.ID:X} {origTile.Z} -> 0x{customTile.ID:X} {customTile.Z}\n\r";
                     }
 
                     HuedTile[] customStatics = _currMap.Tiles.GetStaticTiles(xDelta, yDelta);
@@ -173,14 +173,14 @@ namespace ComparePlugin
 
                         foreach (HuedTile tile in origStatics)
                         {
-                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
+                            diff += $"0x{tile.ID:X} {tile.Z} {tile.Hue}\n\r";
                         }
 
                         diff += "new:\n\r";
 
                         foreach (HuedTile tile in customStatics)
                         {
-                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
+                            diff += $"0x{tile.ID:X} {tile.Z} {tile.Hue}\n\r";
                         }
                     }
                     else
@@ -188,7 +188,7 @@ namespace ComparePlugin
                         bool changed = false;
                         for (int i = 0; i < customStatics.Length; i++)
                         {
-                            if (customStatics[i].Id != origStatics[i].Id
+                            if (customStatics[i].ID != origStatics[i].ID
                                 || customStatics[i].Z != origStatics[i].Z
                                 || customStatics[i].Hue != origStatics[i].Hue)
                             {
@@ -198,7 +198,7 @@ namespace ComparePlugin
                                     changed = true;
                                 }
                                 diff +=
-                                    $"0x{origStatics[i].Id:X} {origStatics[i].Z} {origStatics[i].Hue} -> 0x{customStatics[i].Id:X} {customStatics[i].Z} {customStatics[i].Hue}\n\r";
+                                    $"0x{origStatics[i].ID:X} {origStatics[i].Z} {origStatics[i].Hue} -> 0x{customStatics[i].ID:X} {customStatics[i].Z} {customStatics[i].Hue}\n\r";
                             }
                         }
                     }
@@ -219,7 +219,7 @@ namespace ComparePlugin
                     {
                         Tile patchTile = drawMap.Tiles.Patch.GetLandTile(xDelta, yDelta);
                         Tile origTile = drawMap.Tiles.GetLandTile(xDelta, yDelta, false);
-                        diff = $"Tile:\n\r0x{origTile.Id:X} {origTile.Z} -> 0x{patchTile.Id:X} {patchTile.Z}\n\r";
+                        diff = $"Tile:\n\r0x{origTile.ID:X} {origTile.Z} -> 0x{patchTile.ID:X} {patchTile.Z}\n\r";
                     }
                 }
                 if (drawMap.Tiles.Patch.StaticBlocksCount > 0)
@@ -233,14 +233,14 @@ namespace ComparePlugin
 
                         foreach (HuedTile tile in origStatics)
                         {
-                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
+                            diff += $"0x{tile.ID:X} {tile.Z} {tile.Hue}\n\r";
                         }
 
                         diff += "patch:\n\r";
 
                         foreach (HuedTile tile in patchStatics)
                         {
-                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
+                            diff += $"0x{tile.ID:X} {tile.Z} {tile.Hue}\n\r";
                         }
                     }
                 }
@@ -677,7 +677,7 @@ namespace ComparePlugin
                         _diffs[x][y][xb] = new bool[8];
                         for (int yb = 0; yb < 8; yb++)
                         {
-                            if (customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Id != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Id
+                            if (customTiles[((yb & 0x7) << 3) + (xb & 0x7)].ID != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].ID
                              || customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z)
                             {
                                 _diffs[x][y][xb][yb] = true;
@@ -692,7 +692,7 @@ namespace ComparePlugin
                                 {
                                     for (int i = 0; i < customStatics[xb][yb].Length; i++)
                                     {
-                                        if (customStatics[xb][yb][i].Id != origStatics[xb][yb][i].Id
+                                        if (customStatics[xb][yb][i].ID != origStatics[xb][yb][i].ID
                                             || customStatics[xb][yb][i].Z != origStatics[xb][yb][i].Z
                                             || customStatics[xb][yb][i].Hue != origStatics[xb][yb][i].Hue)
                                         {

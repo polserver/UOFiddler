@@ -38,7 +38,7 @@ namespace FiddlerControls
         {
             pictureBox1.Image = _type == 1
                 ? UnicodeFonts.WriteText(_font, textBox1.Text)
-                : AsciiText.DrawText(_font, textBox1.Text);
+                : ASCIIText.DrawText(_font, textBox1.Text);
         }
     }
 }

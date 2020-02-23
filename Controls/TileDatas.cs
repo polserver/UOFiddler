@@ -305,7 +305,7 @@ namespace FiddlerControls
                     continue;
                 }
 
-                if (land.TextureId != 0 && TileData.LandTable[i].TextureId != land.TextureId)
+                if (land.TextureID != 0 && TileData.LandTable[i].TextureID != land.TextureID)
                 {
                     continue;
                 }
@@ -571,7 +571,7 @@ namespace FiddlerControls
             LandData data = TileData.LandTable[index];
             _changingIndex = true;
             textBoxNameLand.Text = data.Name;
-            textBoxTexID.Text = data.TextureId.ToString();
+            textBoxTexID.Text = data.TextureID.ToString();
             textBoxUnkLandHSA.Text = data.Unk1.ToString();
 
             checkedListBox2.SetItemChecked(0, (data.Flags & TileFlag.Damaging) != 0);
@@ -716,7 +716,7 @@ namespace FiddlerControls
                 treeViewLand.SelectedNode.Text = $"0x{index:X4} {name}";
                 if (short.TryParse(textBoxTexID.Text, out short shortRes))
                 {
-                    land.TextureId = shortRes;
+                    land.TextureID = shortRes;
                 }
 
                 if (int.TryParse(textBoxUnkLandHSA.Text, out int intRes))
@@ -1299,7 +1299,7 @@ namespace FiddlerControls
             LandData land = TileData.LandTable[index];
             if (short.TryParse(textBoxTexID.Text, out short shortRes))
             {
-                land.TextureId = shortRes;
+                land.TextureID = shortRes;
                 TileData.LandTable[index] = land;
                 treeViewLand.SelectedNode.ForeColor = Color.Red;
                 Options.ChangedUltimaClass["TileData"] = true;
@@ -1417,13 +1417,13 @@ namespace FiddlerControls
             if (tabcontrol.SelectedIndex == 0) // items
             {
                 string fileName = Path.Combine(path, "ItemData.csv");
-                TileData.ExportItemDataToCsv(fileName);
+                TileData.ExportItemDataToCSV(fileName);
                 MessageBox.Show($"ItemData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
             else
             {
                 string fileName = Path.Combine(path, "LandData.csv");
-                TileData.ExportLandDataToCsv(fileName);
+                TileData.ExportLandDataToCSV(fileName);
                 MessageBox.Show($"LandData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
@@ -1533,12 +1533,12 @@ namespace FiddlerControls
                 Options.ChangedUltimaClass["TileData"] = true;
                 if (tabcontrol.SelectedIndex == 0) // items
                 {
-                    TileData.ImportItemDataFromCsv(dialog.FileName);
+                    TileData.ImportItemDataFromCSV(dialog.FileName);
                     AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
                 }
                 else
                 {
-                    TileData.ImportLandDataFromCsv(dialog.FileName);
+                    TileData.ImportLandDataFromCSV(dialog.FileName);
                     AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
                 }
             }

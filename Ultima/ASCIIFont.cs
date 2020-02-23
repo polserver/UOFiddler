@@ -5,15 +5,15 @@ using System.IO;
 // ascii text support written by arul
 namespace Ultima
 {
-    public sealed class AsciiFont
+    public sealed class ASCIIFont
     {
-        public byte Header { get; }
+        public byte Header { get; private set; }
         public byte[] Unk { get; set; }
         public Bitmap[] Characters { get; set; }
         public int Height { get; set; }
 
 
-        public AsciiFont(byte header)
+        public ASCIIFont(byte header)
         {
             Header = header;
             Height = 0;
@@ -28,12 +28,15 @@ namespace Ultima
         /// <returns></returns>
         public Bitmap GetBitmap(char character)
         {
-            return Characters[(((character - 0x20) & 0x7FFFFFFF) % 224)];
+            return Characters[((((character) - 0x20) & 0x7FFFFFFF) % 224)];
         }
 
         public int GetWidth(string text)
         {
-            if (text == null || text.Length == 0) { return 0; }
+            if (text == null || text.Length == 0)
+            {
+                return 0;
+            }
 
             int width = 0;
 
@@ -51,22 +54,22 @@ namespace Ultima
             Height = import.Height;
         }
 
-        public static AsciiFont GetFixed(int font)
+        public static ASCIIFont GetFixed(int font)
         {
             if (font < 0 || font > 9)
             {
-                return AsciiText.Fonts[3];
+                return ASCIIText.Fonts[3];
             }
 
-            return AsciiText.Fonts[font];
+            return ASCIIText.Fonts[font];
         }
     }
 
-    public static class AsciiText
+    public static class ASCIIText
     {
-        public static AsciiFont[] Fonts = new AsciiFont[10];
+        public static ASCIIFont[] Fonts = new ASCIIFont[10];
 
-        static AsciiText()
+        static ASCIIText()
         {
             Initialize();
         }
@@ -80,9 +83,9 @@ namespace Ultima
 
             if (path != null)
             {
-                using (FileStream reader = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var reader = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    byte[] buffer = new byte[(int)reader.Length];
+                    var buffer = new byte[(int)reader.Length];
                     reader.Read(buffer, 0, (int)reader.Length);
                     fixed (byte* bin = buffer)
                     {
@@ -90,7 +93,7 @@ namespace Ultima
                         for (int i = 0; i < 10; ++i)
                         {
                             byte header = *read++;
-                            Fonts[i] = new AsciiFont(header);
+                            Fonts[i] = new ASCIIFont(header);
 
                             for (int k = 0; k < 224; ++k)
                             {
@@ -101,11 +104,14 @@ namespace Ultima
                                 if (width > 0 && height > 0)
                                 {
                                     if (height > Fonts[i].Height && k < 96)
+                                    {
                                         Fonts[i].Height = height;
+                                    }
 
-                                    Bitmap bmp = new Bitmap(width, height);
-                                    BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                                    ushort* line = (ushort*)bd.Scan0;
+                                    var bmp = new Bitmap(width, height);
+                                    BitmapData bd = bmp.LockBits(
+                                        new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                                    var line = (ushort*)bd.Scan0;
                                     int delta = bd.Stride >> 1;
 
                                     for (int y = 0; y < height; ++y, line += delta)
@@ -113,11 +119,15 @@ namespace Ultima
                                         ushort* cur = line;
                                         for (int x = 0; x < width; ++x)
                                         {
-                                            ushort pixel = (ushort)(*read++ | (*read++ << 8));
+                                            var pixel = (ushort)(*read++ | (*read++ << 8));
                                             if (pixel == 0)
+                                            {
                                                 cur[x] = pixel;
+                                            }
                                             else
+                                            {
                                                 cur[x] = (ushort)(pixel ^ 0x8000);
+                                            }
                                         }
                                     }
                                     bmp.UnlockBits(bd);
@@ -131,11 +141,11 @@ namespace Ultima
             }
         }
 
-        public static unsafe void Save(string fileName)
+        public static unsafe void Save(string FileName)
         {
-            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                using (BinaryWriter bin = new BinaryWriter(fs))
+                using (var bin = new BinaryWriter(fs))
                 {
                     for (int i = 0; i < 10; ++i)
                     {
@@ -146,8 +156,9 @@ namespace Ultima
                             bin.Write((byte)Fonts[i].Characters[k].Height);
                             bin.Write(Fonts[i].Unk[k]);
                             Bitmap bmp = Fonts[i].Characters[k];
-                            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-                            ushort* line = (ushort*)bd.Scan0;
+                            BitmapData bd = bmp.LockBits(
+                                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                            var line = (ushort*)bd.Scan0;
                             int delta = bd.Stride >> 1;
                             for (int y = 0; y < bmp.Height; ++y, line += delta)
                             {
@@ -155,9 +166,13 @@ namespace Ultima
                                 for (int x = 0; x < bmp.Width; ++x)
                                 {
                                     if (cur[x] == 0)
+                                    {
                                         bin.Write(cur[x]);
+                                    }
                                     else
+                                    {
                                         bin.Write((ushort)(cur[x] ^ 0x8000));
+                                    }
                                 }
                             }
                             bmp.UnlockBits(bd);
@@ -175,8 +190,8 @@ namespace Ultima
         /// <returns></returns>
         public static Bitmap DrawText(int fontId, string text)
         {
-            AsciiFont font = AsciiFont.GetFixed(fontId);
-            Bitmap result = new Bitmap(font.GetWidth(text) + 2, font.Height + 2);
+            ASCIIFont font = ASCIIFont.GetFixed(fontId);
+            var result = new Bitmap(font.GetWidth(text) + 2, font.Height + 2);
 
             int dx = 2;
             int dy = font.Height + 2;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using Microsoft.Win32;
 
 namespace Ultima
@@ -11,47 +12,40 @@ namespace Ultima
         public static event FileSaveHandler FileSaveEvent;
         public static void FireFileSaveEvent()
         {
-            FileSaveEvent?.Invoke();
+            if (FileSaveEvent != null)
+            {
+                FileSaveEvent();
+            }
         }
 
-        private static bool _mCacheData = true;
-        private static bool _mUseHashFile = false;
-        private static Dictionary<string, string> _mMulPath;
-        private static string _mDirectory;
-        private static string _mRootDir;
+        private static bool m_CacheData = true;
+        private static bool m_UseHashFile;
+        private static Dictionary<string, string> m_MulPath;
+        private static string m_Directory;
+        private static string m_RootDir;
 
         /// <summary>
         /// Should loaded Data be cached
         /// </summary>
-        public static bool CacheData { get => _mCacheData;
-            set => _mCacheData = value;
-        }
+        public static bool CacheData { get { return m_CacheData; } set { m_CacheData = value; } }
         /// <summary>
         /// Should a Hashfile be used to speed up loading
         /// </summary>
-        public static bool UseHashFile { get => _mUseHashFile;
-            set => _mUseHashFile = value;
-        }
+        public static bool UseHashFile { get { return m_UseHashFile; } set { m_UseHashFile = value; } }
         /// <summary>
         /// Contains the path infos
         /// </summary>
-        public static Dictionary<string, string> MulPath { get => _mMulPath;
-            set => _mMulPath = value;
-        }
+        public static Dictionary<string, string> MulPath { get { return m_MulPath; } set { m_MulPath = value; } }
         /// <summary>
         /// Gets a list of paths to the Client's data files.
         /// </summary>
-        public static string Directory => _mDirectory;
-
+        public static string Directory { get { return m_Directory; } }
         /// <summary>
         /// Contains the rootDir (so relative values are possible for <see cref="MulPath"/>
         /// </summary>
-        public static string RootDir { get => _mRootDir;
-            set => _mRootDir = value;
-        }
+        public static string RootDir { get { return m_RootDir; } set { m_RootDir = value; } }
 
-        private static readonly string[] _mFiles = new string[]
-		{
+        private readonly static string[] m_Files = {
 			"anim.idx",
 			"anim.mul",
 			"anim2.idx",
@@ -172,7 +166,7 @@ namespace Ultima
 
         static Files()
         {
-            _mDirectory = LoadDirectory();
+            m_Directory = LoadDirectory();
             LoadMulPath();
         }
 
@@ -181,7 +175,7 @@ namespace Ultima
         /// </summary>
         public static void ReLoadDirectory()
         {
-            _mDirectory = LoadDirectory();
+            m_Directory = LoadDirectory();
         }
 
         /// <summary>
@@ -189,17 +183,24 @@ namespace Ultima
         /// </summary>
         public static void LoadMulPath()
         {
-            _mMulPath = new Dictionary<string, string>();
-            _mRootDir = Directory;
-            if (_mRootDir == null)
-                _mRootDir = "";
-            foreach (string file in _mFiles)
+            m_MulPath = new Dictionary<string, string>();
+            m_RootDir = Directory;
+            if (m_RootDir == null)
             {
-                string filePath = Path.Combine(_mRootDir, file);
+                m_RootDir = "";
+            }
+
+            foreach (string file in m_Files)
+            {
+                string filePath = Path.Combine(m_RootDir, file);
                 if (File.Exists(filePath))
-                    _mMulPath[file] = file;
+                {
+                    m_MulPath[file] = file;
+                }
                 else
-                    _mMulPath[file] = "";
+                {
+                    m_MulPath[file] = "";
+                }
             }
         }
 
@@ -209,29 +210,35 @@ namespace Ultima
         /// <param name="path"></param>
         public static void SetMulPath(string path)
         {
-            _mRootDir = path;
-            foreach (string file in _mFiles)
+            m_RootDir = path;
+            foreach (string file in m_Files)
             {
                 string filePath;
-                if (!string.IsNullOrEmpty(_mMulPath[file])) //file was set
+                if (!String.IsNullOrEmpty(m_MulPath[file])) //file was set
                 {
-                    if (string.IsNullOrEmpty(Path.GetDirectoryName(_mMulPath[file]))) //and relative
+                    if (String.IsNullOrEmpty(Path.GetDirectoryName(m_MulPath[file]))) //and relative
                     {
-                        filePath = Path.Combine(_mRootDir, _mMulPath[file]);
+                        filePath = Path.Combine(m_RootDir, m_MulPath[file]);
                         if (File.Exists(filePath)) // exists in new Root?
                         {
-                            _mMulPath[file] = filePath;
+                            m_MulPath[file] = filePath;
                             continue;
                         }
                     }
                     else // absolut dir ignore
+                    {
                         continue;
+                    }
                 }
-                filePath = Path.Combine(_mRootDir, file); //file was not set, or relative and non existent
+                filePath = Path.Combine(m_RootDir, file); //file was not set, or relative and non existent
                 if (File.Exists(filePath))
-                    _mMulPath[file] = file;
+                {
+                    m_MulPath[file] = file;
+                }
                 else
-                    _mMulPath[file] = "";
+                {
+                    m_MulPath[file] = "";
+                }
             }
         }
 
@@ -246,32 +253,45 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Looks up a given <paramref name="file" /> in <see cref="Files.MulPath"/>
+        ///     Looks up a given <paramref name="file" /> in <see cref="Files.MulPath" />
         /// </summary>
-        /// <returns>The absolute path to <paramref name="file" /> -or- <c>null</c> if <paramref name="file" /> was not found.</returns>
+        /// <returns>
+        ///     The absolute path to <paramref name="file" /> -or- <c>null</c> if <paramref name="file" /> was not found.
+        /// </returns>
         public static string GetFilePath(string file)
         {
             if (MulPath.Count > 0)
             {
                 string path = "";
                 if (MulPath.ContainsKey(file.ToLower()))
+                {
                     path = MulPath[file.ToLower()];
-                if (string.IsNullOrEmpty(path))
+                }
+
+                if (String.IsNullOrEmpty(path))
+                {
                     return null;
-                if (string.IsNullOrEmpty(Path.GetDirectoryName(path)))
-                    path = Path.Combine(_mRootDir, path);
+                }
+
+                if (String.IsNullOrEmpty(Path.GetDirectoryName(path)))
+                {
+                    path = Path.Combine(m_RootDir, path);
+                }
+
                 if (File.Exists(path))
+                {
                     return path;
+                }
             }
             return null;
         }
 
         internal static string GetFilePath(string format, params object[] args)
         {
-            return GetFilePath(string.Format(format, args));
+            return GetFilePath(String.Format(format, args));
         }
 
-        static readonly string[] KnownRegkeys = new string[] { 
+        static readonly string[] knownRegkeys = { 
             @"Origin Worlds Online\Ultima Online\1.0", 
             @"Origin Worlds Online\Ultima Online Third Dawn\1.0",
             @"EA GAMES\Ultima Online Samurai Empire", 
@@ -288,10 +308,10 @@ namespace Ultima
             @"Origin Worlds Online\Ultima Online Samurai Empire\3d\1.0",
 			@"Origin Worlds Online\Ultima Online\KR Legacy Beta",
 			@"Electronic Arts\EA Games\Ultima Online Stygian Abyss Classic",
-			@"Electronic Arts\EA Games\Ultima Online Classic",
+			@"Electronic Arts\EA Games\Ultima Online Classic"
         };
 
-        static readonly string[] KnownRegPathkeys = new string[] { 
+        static readonly string[] knownRegPathkeys = { 
             "ExePath",
             "Install Dir",
             "InstallDir"
@@ -300,14 +320,18 @@ namespace Ultima
         private static string LoadDirectory()
         {
             string dir = null;
-            for (int i = 0; i < KnownRegkeys.Length; ++i)
+            for (int i = 0; i < knownRegkeys.Length; ++i)
             {
                 string exePath;
 
-                if (IntPtr.Size == 8)
-                    exePath = GetPath($@"Wow6432Node\{KnownRegkeys[i]}");
+                if (Environment.Is64BitOperatingSystem)
+                {
+                    exePath = GetPath(string.Format(@"Wow6432Node\{0}", knownRegkeys[i]));
+                }
                 else
-                    exePath = GetPath(KnownRegkeys[i]);
+                {
+                    exePath = GetPath(knownRegkeys[i]);
+                }
 
                 if (exePath != null)
                 {
@@ -322,33 +346,56 @@ namespace Ultima
         {
             try
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\{regkey}");
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(string.Format(@"SOFTWARE\{0}", regkey));
 
                 if (key == null)
                 {
-                    key = Registry.CurrentUser.OpenSubKey($@"SOFTWARE\{regkey}");
+                    key = Registry.CurrentUser.OpenSubKey(string.Format(@"SOFTWARE\{0}", regkey));
 
                     if (key == null)
+                    {
                         return null;
+                    }
                 }
 
                 string path = null;
-                foreach (string pathkey in KnownRegPathkeys)
+                foreach (string pathkey in knownRegPathkeys)
                 {
                     path = key.GetValue(pathkey) as string;
-                    if (((path == null) || (path.Length <= 0)) || (!System.IO.Directory.Exists(path) && !File.Exists(path)))
+                    
+                    if ((path == null) || (path.Length <= 0))
+                    {
                         continue;
+                    }
+
+                    if (pathkey == "InstallDir")
+                    {
+                        path = path + @"\";
+                    }
+
+                    if (!System.IO.Directory.Exists(path) && !File.Exists(path))
+                    {
+                        continue;
+                    }
+
+                    
                     break;
                 }
 
                 if (path == null)
+                {
                     return null;
+                }
 
                 if (!System.IO.Directory.Exists(path))
+                {
                     path = Path.GetDirectoryName(path);
+                }
 
                 if ((path == null) || (!System.IO.Directory.Exists(path)))
+                {
                     return null;
+                }
 
                 return path;
             }
@@ -364,20 +411,27 @@ namespace Ultima
         /// <param name="file"></param>
         /// <param name="hash"></param>
         /// <returns></returns>
-        public static bool CompareMd5(string file, string hash)
+        public static bool CompareMD5(string file, string hash)
         {
             if (file == null)
-                return false;
-            FileStream fileCheck = File.OpenRead(file);
-            using (System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
             {
-                byte[] md5Hash = md5.ComputeHash(fileCheck);
-                fileCheck.Close();
-                string md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
-                if (md5String == hash)
+                return false;
+            }
+
+            FileStream FileCheck = File.OpenRead(file);
+            using (MD5 md5 = new MD5CryptoServiceProvider())
+            {
+                byte[] md5Hash = md5.ComputeHash(FileCheck);
+                FileCheck.Close();
+                string md5string = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
+                if (md5string == hash)
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
         }
 
@@ -386,15 +440,18 @@ namespace Ultima
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        public static byte[] GetMd5(string file)
+        public static byte[] GetMD5(string file)
         {
             if (file == null)
-                return null;
-            FileStream fileCheck = File.OpenRead(file);
-            using (System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
             {
-                byte[] md5Hash = md5.ComputeHash(fileCheck);
-                fileCheck.Close();
+                return null;
+            }
+
+            FileStream FileCheck = File.OpenRead(file);
+            using (MD5 md5 = new MD5CryptoServiceProvider())
+            {
+                byte[] md5Hash = md5.ComputeHash(FileCheck);
+                FileCheck.Close();
                 return md5Hash;
             }
         }
@@ -406,18 +463,18 @@ namespace Ultima
         /// <returns></returns>
         public static bool CompareHashFile(string what,string path)
         {
-            string fileName = Path.Combine(path, $"UOFiddler{what}.hash");
-            if (File.Exists(fileName))
+            string FileName = Path.Combine(path, String.Format("UOFiddler{0}.hash", what));
+            if (File.Exists(FileName))
             {
                 try
                 {
-                    using (BinaryReader bin = new BinaryReader(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                    using (var bin = new BinaryReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read)))
                     {
                         int length = bin.ReadInt32();
-                        byte[] buffer = new byte[length];
+                        var buffer = new byte[length];
                         bin.Read(buffer, 0, length);
                         string hashold = BitConverter.ToString(buffer).Replace("-", "").ToLower();
-                        return CompareMd5(GetFilePath($"{what}.mul"), hashold);
+                        return CompareMD5(GetFilePath(String.Format("{0}.mul", what)), hashold);
                     }
                 }
                 catch
@@ -436,16 +493,24 @@ namespace Ultima
             if (GetFilePath("map1.mul") != null)
             {
                 if (Map.Trammel.Width == 7168)
+                {
                     Map.Trammel = new Map(1, 1, 7168, 4096);
+                }
                 else
+                {
                     Map.Trammel = new Map(1, 1, 6144, 4096);
+                }
             }
             else
             {
                 if (Map.Trammel.Width == 7168)
+                {
                     Map.Trammel = new Map(0, 1, 7168, 4096);
+                }
                 else
+                {
                     Map.Trammel = new Map(0, 1, 6144, 4096);
+                }
             }
         }
     }

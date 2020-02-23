@@ -7,43 +7,67 @@ namespace Ultima
 {
     public sealed class TileMatrix
     {
-        private readonly HuedTile[][][][][] _mStaticTiles;
-        private readonly Tile[][][] _mLandTiles;
-        private bool[][] _mRemovedStaticBlock;
-        private List<StaticTile>[][] _mStaticTilesToAdd;
+        private readonly HuedTile[][][][][] m_StaticTiles;
+        private readonly Tile[][][] m_LandTiles;
+        private bool[][] m_RemovedStaticBlock;
+        private List<StaticTile>[][] m_StaticTiles_ToAdd;
 
         public static Tile[] InvalidLandBlock { get; private set; }
         public static HuedTile[][][] EmptyStaticBlock { get; private set; }
 
-        private FileStream _mMap;
-		private BinaryReader _mUopReader;
-        private FileStream _mStatics;
-        private Entry3D[] _mStaticIndex;
-        public Entry3D[] StaticIndex { get { if (!StaticIndexInit) InitStatics(); return _mStaticIndex; } }
+        private FileStream m_Map;
+		private BinaryReader m_UOPReader;
+        private FileStream m_Statics;
+        private Entry3D[] m_StaticIndex;
+
+        public Entry3D[] StaticIndex
+        {
+            get
+            {
+                if (!StaticIndexInit)
+                {
+                    InitStatics();
+                }
+
+                return m_StaticIndex;
+            }
+        }
+        
         public bool StaticIndexInit;
 
-        public TileMatrixPatch Patch { get; }
+        public TileMatrixPatch Patch { get; private set; }
 
-        public int BlockWidth { get; }
+        public int BlockWidth { get; private set; }
 
-        public int BlockHeight { get; }
+        public int BlockHeight { get; private set; }
 
-        public int Width { get; }
+        public int Width { get; private set; }
 
-        public int Height { get; }
+        public int Height { get; private set; }
 
-        private readonly string _mapPath;
-        private readonly string _indexPath;
-        private readonly string _staticsPath;
+        private readonly string mapPath;
+        private readonly string indexPath;
+        private readonly string staticsPath;
 
         public void CloseStreams()
         {
-            _mMap?.Close();
-            _mUopReader?.Close();
-            _mStatics?.Close();
+            if (m_Map != null)
+            {
+                m_Map.Close();
+            }
+
+            if (m_UOPReader != null)
+            {
+                m_UOPReader.Close();
+            }
+
+            if (m_Statics != null)
+            {
+                m_Statics.Close();
+            }
         }
 
-        public TileMatrix(int fileIndex, int mapId, int width, int height, string path)
+        public TileMatrix(int fileIndex, int mapID, int width, int height, string path)
         {
             Width = width;
             Height = height;
@@ -52,40 +76,59 @@ namespace Ultima
 
             if (path == null)
             { 
-                _mapPath = Files.GetFilePath("map{0}.mul", fileIndex);
-				if (string.IsNullOrEmpty(_mapPath) || !File.Exists(_mapPath))
-					_mapPath = Files.GetFilePath("map{0}LegacyMUL.uop", fileIndex);
+                mapPath = Files.GetFilePath("map{0}.mul", fileIndex);
+				if (String.IsNullOrEmpty(mapPath) || !File.Exists(mapPath))
+                {
+                    mapPath = Files.GetFilePath("map{0}LegacyMUL.uop", fileIndex);
+                }
 
-				if (_mapPath != null && _mapPath.EndsWith(".uop"))
-					IsUopFormat = true;
-			}
+                if (mapPath != null && mapPath.EndsWith(".uop"))
+                {
+                    IsUOPFormat = true;
+                }
+            }
             else
             {
-                _mapPath = Path.Combine(path, $"map{fileIndex}.mul");
-				if (!File.Exists(_mapPath))
-					_mapPath = Path.Combine(path, $"map{fileIndex}LegacyMUL.uop");
-                if (!File.Exists(_mapPath))
-                    _mapPath = null;
-				else if (_mapPath != null && _mapPath.EndsWith(".uop"))
-					IsUopFormat = true;
+                mapPath = Path.Combine(path, String.Format("map{0}.mul", fileIndex));
+				if (!File.Exists(mapPath))
+                {
+                    mapPath = Path.Combine(path, String.Format("map{0}LegacyMUL.uop", fileIndex));
+                }
+
+                if (!File.Exists(mapPath))
+                {
+                    mapPath = null;
+                }
+                else if (mapPath != null && mapPath.EndsWith(".uop"))
+                {
+                    IsUOPFormat = true;
+                }
             }
 
             if (path == null)
-                _indexPath = Files.GetFilePath("staidx{0}.mul", fileIndex);
+            {
+                indexPath = Files.GetFilePath("staidx{0}.mul", fileIndex);
+            }
             else
             {
-                _indexPath = Path.Combine(path, $"staidx{fileIndex}.mul");
-                if (!File.Exists(_indexPath))
-                    _indexPath = null;
+                indexPath = Path.Combine(path, String.Format("staidx{0}.mul", fileIndex));
+                if (!File.Exists(indexPath))
+                {
+                    indexPath = null;
+                }
             }
 
             if (path == null)
-                _staticsPath = Files.GetFilePath("statics{0}.mul", fileIndex);
+            {
+                staticsPath = Files.GetFilePath("statics{0}.mul", fileIndex);
+            }
             else
             {
-                _staticsPath = Path.Combine(path, $"statics{fileIndex}.mul");
-                if (!File.Exists(_staticsPath))
-                    _staticsPath = null;
+                staticsPath = Path.Combine(path, String.Format("statics{0}.mul", fileIndex));
+                if (!File.Exists(staticsPath))
+                {
+                    staticsPath = null;
+                }
             }
 
             EmptyStaticBlock = new HuedTile[8][][];
@@ -102,22 +145,26 @@ namespace Ultima
 
             InvalidLandBlock = new Tile[196];
 
-            _mLandTiles = new Tile[BlockWidth][][];
-            _mStaticTiles = new HuedTile[BlockWidth][][][][];
+            m_LandTiles = new Tile[BlockWidth][][];
+            m_StaticTiles = new HuedTile[BlockWidth][][][][];
 
-            Patch = new TileMatrixPatch(this, mapId, path);
+            Patch = new TileMatrixPatch(this, mapID, path);
         }
 
 
         public void SetStaticBlock(int x, int y, HuedTile[][][] value)
         {
             if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            {
                 return;
+            }
 
-            if (_mStaticTiles[x] == null)
-                _mStaticTiles[x] = new HuedTile[BlockHeight][][][];
+            if (m_StaticTiles[x] == null)
+            {
+                m_StaticTiles[x] = new HuedTile[BlockHeight][][][];
+            }
 
-            _mStaticTiles[x][y] = value;
+            m_StaticTiles[x][y] = value;
         }
 
         public HuedTile[][][] GetStaticBlock(int x, int y)
@@ -127,15 +174,21 @@ namespace Ultima
         public HuedTile[][][] GetStaticBlock(int x, int y, bool patch)
         {
             if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            {
                 return EmptyStaticBlock;
+            }
 
-            if (_mStaticTiles[x] == null)
-                _mStaticTiles[x] = new HuedTile[BlockHeight][][][];
+            if (m_StaticTiles[x] == null)
+            {
+                m_StaticTiles[x] = new HuedTile[BlockHeight][][][];
+            }
 
-            HuedTile[][][] tiles = _mStaticTiles[x][y];
+            HuedTile[][][] tiles = m_StaticTiles[x][y];
 
             if (tiles == null)
-                tiles = _mStaticTiles[x][y] = ReadStaticBlock(x, y);
+            {
+                tiles = m_StaticTiles[x][y] = ReadStaticBlock(x, y);
+            }
 
             if ((Map.UseDiff) && (patch))
             {
@@ -144,7 +197,9 @@ namespace Ultima
                     if (Patch.StaticBlocks[x] != null)
                     {
                         if (Patch.StaticBlocks[x][y] != null)
+                        {
                             tiles = Patch.StaticBlocks[x][y];
+                        }
                     }
                 }
             }
@@ -162,12 +217,16 @@ namespace Ultima
         public void SetLandBlock(int x, int y, Tile[] value)
         {
             if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            {
                 return;
+            }
 
-            if (_mLandTiles[x] == null)
-                _mLandTiles[x] = new Tile[BlockHeight][];
+            if (m_LandTiles[x] == null)
+            {
+                m_LandTiles[x] = new Tile[BlockHeight][];
+            }
 
-            _mLandTiles[x][y] = value;
+            m_LandTiles[x][y] = value;
         }
 
         public Tile[] GetLandBlock(int x, int y)
@@ -177,15 +236,21 @@ namespace Ultima
         public Tile[] GetLandBlock(int x, int y, bool patch)
         {
             if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            {
                 return InvalidLandBlock;
+            }
 
-            if (_mLandTiles[x] == null)
-                _mLandTiles[x] = new Tile[BlockHeight][];
+            if (m_LandTiles[x] == null)
+            {
+                m_LandTiles[x] = new Tile[BlockHeight][];
+            }
 
-            Tile[] tiles = _mLandTiles[x][y];
+            Tile[] tiles = m_LandTiles[x][y];
 
             if (tiles == null)
-                tiles = _mLandTiles[x][y] = ReadLandBlock(x, y);
+            {
+                tiles = m_LandTiles[x][y] = ReadLandBlock(x, y);
+            }
 
             if ((Map.UseDiff) && (patch))
             {
@@ -194,7 +259,9 @@ namespace Ultima
                     if (Patch.LandBlocks[x] != null)
                     {
                         if (Patch.LandBlocks[x][y] != null)
+                        {
                             tiles = Patch.LandBlocks[x][y];
+                        }
                     }
                 }
             }
@@ -211,97 +278,117 @@ namespace Ultima
         }
 
 
-        private unsafe void InitStatics()
+        private void InitStatics()
         {
-            _mStaticIndex = new Entry3D[BlockHeight * BlockWidth];
-            if (_indexPath == null)
-                return;
-            using (FileStream index = new FileStream(_indexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            m_StaticIndex = new Entry3D[BlockHeight * BlockWidth];
+            if (indexPath == null)
             {
-                _mStatics = new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                int count = (int)(index.Length / 12);
-                GCHandle gc = GCHandle.Alloc(_mStaticIndex, GCHandleType.Pinned);
-                byte[] buffer = new byte[index.Length];
+                return;
+            }
+
+            using (var index = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                m_Statics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var count = (int)(index.Length / 12);
+                GCHandle gc = GCHandle.Alloc(m_StaticIndex, GCHandleType.Pinned);
+                var buffer = new byte[index.Length];
                 index.Read(buffer, 0, (int)index.Length);
                 Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(index.Length, BlockHeight * BlockWidth * 12));
                 gc.Free();
-                for (int i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
+                for (var i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
                 {
-                    _mStaticIndex[i].lookup = -1;
-                    _mStaticIndex[i].length = -1;
-                    _mStaticIndex[i].extra = -1;
+                    m_StaticIndex[i].lookup = -1;
+                    m_StaticIndex[i].length = -1;
+                    m_StaticIndex[i].extra = -1;
                 }
                 StaticIndexInit = true;
             }
-
         }
-        private static HuedTileList[][] _mLists;
-        private static byte[] _mBuffer;
+        
+        private static HuedTileList[][] m_Lists;
+        private static byte[] m_Buffer;
         private unsafe HuedTile[][][] ReadStaticBlock(int x, int y)
         {
             try
             {
                 if (!StaticIndexInit)
-                    InitStatics();
-                if (_mStatics == null || !_mStatics.CanRead || !_mStatics.CanSeek)
                 {
-                    if (_staticsPath == null)
-                        _mStatics = null;
-                    else
-                        _mStatics = new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    InitStatics();
                 }
-                if (_mStatics == null)
-                    return EmptyStaticBlock;
 
-                int lookup = _mStaticIndex[(x * BlockHeight) + y].lookup;
-                int length = _mStaticIndex[(x * BlockHeight) + y].length;
+                if (m_Statics == null || !m_Statics.CanRead || !m_Statics.CanSeek)
+                {
+                    if (staticsPath == null)
+                    {
+                        m_Statics = null;
+                    }
+                    else
+                    {
+                        m_Statics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    }
+                }
+                if (m_Statics == null)
+                {
+                    return EmptyStaticBlock;
+                }
+
+                int lookup = m_StaticIndex[(x * BlockHeight) + y].lookup;
+                int length = m_StaticIndex[(x * BlockHeight) + y].length;
 
                 if (lookup < 0 || length <= 0)
+                {
                     return EmptyStaticBlock;
+                }
                 else
                 {
                     int count = length / 7;
 
-                    _mStatics.Seek(lookup, SeekOrigin.Begin);
+                    m_Statics.Seek(lookup, SeekOrigin.Begin);
 
-                    if (_mBuffer == null || _mBuffer.Length < length)
-                        _mBuffer = new byte[length];
+                    if (m_Buffer == null || m_Buffer.Length < length)
+                    {
+                        m_Buffer = new byte[length];
+                    }
 
-                    GCHandle gc = GCHandle.Alloc(_mBuffer, GCHandleType.Pinned);
+                    GCHandle gc = GCHandle.Alloc(m_Buffer, GCHandleType.Pinned);
                     try
                     {
-                        _mStatics.Read(_mBuffer, 0, length);
+                        m_Statics.Read(m_Buffer, 0, length);
 
-                        if (_mLists == null)
+                        if (m_Lists == null)
                         {
-                            _mLists = new HuedTileList[8][];
+                            m_Lists = new HuedTileList[8][];
 
                             for (int i = 0; i < 8; ++i)
                             {
-                                _mLists[i] = new HuedTileList[8];
+                                m_Lists[i] = new HuedTileList[8];
 
                                 for (int j = 0; j < 8; ++j)
-                                    _mLists[i][j] = new HuedTileList();
+                                {
+                                    m_Lists[i][j] = new HuedTileList();
+                                }
                             }
                         }
 
-                        HuedTileList[][] lists = _mLists;
+                        HuedTileList[][] lists = m_Lists;
 
                         for (int i = 0; i < count; ++i)
                         {
-                            IntPtr ptr = new IntPtr((long)gc.AddrOfPinnedObject() + i * sizeof(StaticTile));
-                            StaticTile cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
-                            lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemId(cur.m_ID), cur.m_Hue, cur.m_Z);
+                            var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + i * sizeof(StaticTile));
+                            var cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
+                            lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
                         }
 
-                        HuedTile[][][] tiles = new HuedTile[8][][];
+                        var tiles = new HuedTile[8][][];
 
                         for (int i = 0; i < 8; ++i)
                         {
                             tiles[i] = new HuedTile[8][];
 
                             for (int j = 0; j < 8; ++j)
+                            {
                                 tiles[i][j] = lists[i][j].ToArray();
+                            }
                         }
 
                         return tiles;
@@ -324,144 +411,164 @@ namespace Ultima
 		 * means that EA changed maps UOPs again.
 		 */
 		#region UOP
-		public bool IsUopFormat { get; set; }
-		public bool IsUopAlreadyRead { get; set; }
+		public bool IsUOPFormat { get; set; }
+		public bool IsUOPAlreadyRead { get; set; }
 
-		private struct UopFile
+		private struct UOPFile
 		{
 			public readonly long Offset;
 			public readonly int Length;
 
-			public UopFile(long offset, int length)
+			public UOPFile(long offset, int length)
 			{
 				Offset = offset;
 				Length = length;
 			}
 		}
 
-		private UopFile[] UopFiles { get; set; }
-		private long UopLength => _mMap.Length;
+		private UOPFile[] UOPFiles { get; set; }
+		private long UOPLength { get { return m_Map.Length; } }
 
-        private void ReadUopFiles(string pattern)
+		private void ReadUOPFiles(string pattern)
 		{
-			_mUopReader = new BinaryReader(_mMap);
+			m_UOPReader = new BinaryReader(m_Map);
 
-			_mUopReader.BaseStream.Seek(0, SeekOrigin.Begin);
+			m_UOPReader.BaseStream.Seek(0, SeekOrigin.Begin);
 
-			if (_mUopReader.ReadInt32() != 0x50594D)
-				throw new ArgumentException("Bad UOP file.");
+			if (m_UOPReader.ReadInt32() != 0x50594D)
+            {
+                throw new ArgumentException("Bad UOP file.");
+            }
 
-			_mUopReader.ReadInt64(); // version + signature
-			long nextBlock = _mUopReader.ReadInt64();
-			_mUopReader.ReadInt32(); // block capacity
-			int count = _mUopReader.ReadInt32();
+            m_UOPReader.ReadInt64(); // version + signature
+			long nextBlock = m_UOPReader.ReadInt64();
+			m_UOPReader.ReadInt32(); // block capacity
+			int count = m_UOPReader.ReadInt32();
 
-			UopFiles = new UopFile[count];
+			UOPFiles = new UOPFile[count];
 
-			Dictionary<ulong, int> hashes = new Dictionary<ulong, int>();
+			var hashes = new Dictionary<ulong, int>();
 
 			for (int i = 0; i < count; i++)
 			{
-				string file = $"build/{pattern}/{i:D8}.dat";
+				string file = string.Format("build/{0}/{1:D8}.dat", pattern, i);
 				ulong hash = FileIndex.HashFileName(file);
 
 				if (!hashes.ContainsKey(hash))
-					hashes.Add(hash, i);
-			}
+                {
+                    hashes.Add(hash, i);
+                }
+            }
 
-			_mUopReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
+			m_UOPReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
 
 			do
 			{
-				int filesCount = _mUopReader.ReadInt32();
-				nextBlock = _mUopReader.ReadInt64();
+				int filesCount = m_UOPReader.ReadInt32();
+				nextBlock = m_UOPReader.ReadInt64();
 
 				for (int i = 0; i < filesCount; i++)
 				{
-					long offset = _mUopReader.ReadInt64();
-					int headerLength = _mUopReader.ReadInt32();
-					int compressedLength = _mUopReader.ReadInt32();
-					int decompressedLength = _mUopReader.ReadInt32();
-					ulong hash = _mUopReader.ReadUInt64();
-					_mUopReader.ReadUInt32(); // Adler32
-					short flag = _mUopReader.ReadInt16();
+					long offset = m_UOPReader.ReadInt64();
+					int headerLength = m_UOPReader.ReadInt32();
+					int compressedLength = m_UOPReader.ReadInt32();
+					int decompressedLength = m_UOPReader.ReadInt32();
+					ulong hash = m_UOPReader.ReadUInt64();
+					m_UOPReader.ReadUInt32(); // Adler32
+					short flag = m_UOPReader.ReadInt16();
 
 					int length = flag == 1 ? compressedLength : decompressedLength;
 
 					if (offset == 0)
-						continue;
+                    {
+                        continue;
+                    }
 
-					int idx;
+                    int idx;
 					if (hashes.TryGetValue(hash, out idx))
 					{
-						if (idx < 0 || idx > UopFiles.Length)
-							throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+						if (idx < 0 || idx > UOPFiles.Length)
+                        {
+                            throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+                        }
 
-						UopFiles[idx] = new UopFile(offset + headerLength, length);
+                        UOPFiles[idx] = new UOPFile(offset + headerLength, length);
 					}
 					else
 					{
 						throw new ArgumentException(
-                            $"File with hash 0x{hash:X8} was not found in hashes dictionary! EA Mythic changed UOP format!");
+                            string.Format("File with hash 0x{0:X8} was not found in hashes dictionary! EA Mythic changed UOP format!", hash));
 					}
 				}
 			}
-			while (_mUopReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+			while (m_UOPReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
 		}
 
-		private long CalculateOffsetFromUop(long offset)
+		private long CalculateOffsetFromUOP(long offset)
 		{
 			long pos = 0;
 
-			foreach (UopFile t in UopFiles)
+			foreach (UOPFile t in UOPFiles)
 			{
 				long currPos = pos + t.Length;
 
 				if (offset < currPos)
-					return t.Offset + (offset - pos);
+                {
+                    return t.Offset + (offset - pos);
+                }
 
-				pos = currPos;
+                pos = currPos;
 			}
 
-			return UopLength;
+			return UOPLength;
 		}
 		#endregion
-        private unsafe Tile[] ReadLandBlock(int x, int y)
+        
+        private Tile[] ReadLandBlock(int x, int y)
         {
-            if (_mMap == null || !_mMap.CanRead || !_mMap.CanSeek)
+            if (m_Map == null || !m_Map.CanRead || !m_Map.CanSeek)
             {
-                if (_mapPath == null)
-                    _mMap = null;
+                if (mapPath == null)
+                {
+                    m_Map = null;
+                }
                 else
-                    _mMap = new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-				if (IsUopFormat && _mapPath != null && !IsUopAlreadyRead)
+                {
+                    m_Map = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                }
+
+                if (IsUOPFormat && mapPath != null && !IsUOPAlreadyRead)
 				{
-					FileInfo fi = new FileInfo(_mapPath);
+					var fi = new FileInfo(mapPath);
 					string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
 
-					ReadUopFiles(uopPattern);
-					IsUopAlreadyRead = true;
+					ReadUOPFiles(uopPattern);
+					IsUOPAlreadyRead = true;
 				}
             }
-            Tile[] tiles = new Tile[64];
-            if (_mMap != null)
+            var tiles = new Tile[64];
+            if (m_Map != null)
             {
 				long offset = ((x * BlockHeight) + y) * 196 + 4;
 
-				if (IsUopFormat)
-					offset = CalculateOffsetFromUop(offset);
+				if (IsUOPFormat)
+                {
+                    offset = CalculateOffsetFromUOP(offset);
+                }
 
-				_mMap.Seek(offset, SeekOrigin.Begin);
+                m_Map.Seek(offset, SeekOrigin.Begin);
 
                 GCHandle gc = GCHandle.Alloc(tiles, GCHandleType.Pinned);
                 try
                 {
-                    if (_mBuffer == null || _mBuffer.Length < 192)
-                        _mBuffer = new byte[192];
+                    if (m_Buffer == null || m_Buffer.Length < 192)
+                    {
+                        m_Buffer = new byte[192];
+                    }
 
-                    _mMap.Read(_mBuffer, 0, 192);
+                    m_Map.Read(m_Buffer, 0, 192);
 
-                    Marshal.Copy(_mBuffer, 0, gc.AddrOfPinnedObject(), 192);
+                    Marshal.Copy(m_Buffer, 0, gc.AddrOfPinnedObject(), 192);
                 }
                 finally
                 {
@@ -475,59 +582,116 @@ namespace Ultima
 
         public void RemoveStaticBlock(int blockx, int blocky)
         {
-            if (_mRemovedStaticBlock == null)
-                _mRemovedStaticBlock = new bool[BlockWidth][];
-            if (_mRemovedStaticBlock[blockx] == null)
-                _mRemovedStaticBlock[blockx] = new bool[BlockHeight];
-            _mRemovedStaticBlock[blockx][blocky] = true;
-            if (_mStaticTiles[blockx] == null)
-                _mStaticTiles[blockx] = new HuedTile[BlockHeight][][][];
-            _mStaticTiles[blockx][blocky] = EmptyStaticBlock;
+            if (m_RemovedStaticBlock == null)
+            {
+                m_RemovedStaticBlock = new bool[BlockWidth][];
+            }
+
+            if (m_RemovedStaticBlock[blockx] == null)
+            {
+                m_RemovedStaticBlock[blockx] = new bool[BlockHeight];
+            }
+
+            m_RemovedStaticBlock[blockx][blocky] = true;
+            if (m_StaticTiles[blockx] == null)
+            {
+                m_StaticTiles[blockx] = new HuedTile[BlockHeight][][][];
+            }
+
+            m_StaticTiles[blockx][blocky] = EmptyStaticBlock;
         }
 
         public bool IsStaticBlockRemoved(int blockx, int blocky)
         {
-            if (_mRemovedStaticBlock?[blockx] == null)
+            if (m_RemovedStaticBlock == null)
+            {
                 return false;
-            return _mRemovedStaticBlock[blockx][blocky];
+            }
+
+            if (m_RemovedStaticBlock[blockx] == null)
+            {
+                return false;
+            }
+
+            return m_RemovedStaticBlock[blockx][blocky];
         }
 
         public bool PendingStatic(int blockx, int blocky)
         {
-            if (_mStaticTilesToAdd?[blocky] == null)
+            if (m_StaticTiles_ToAdd == null)
+            {
                 return false;
-            if (_mStaticTilesToAdd[blocky][blockx] == null)
+            }
+
+            if (m_StaticTiles_ToAdd[blocky] == null)
+            {
                 return false;
+            }
+
+            if (m_StaticTiles_ToAdd[blocky][blockx] == null)
+            {
+                return false;
+            }
+
             return true;
         }
 
         public void AddPendingStatic(int blockx, int blocky, StaticTile toadd)
         {
-            if (_mStaticTilesToAdd == null)
-                _mStaticTilesToAdd = new List<StaticTile>[BlockHeight][];
-            if (_mStaticTilesToAdd[blocky] == null)
-                _mStaticTilesToAdd[blocky] = new List<StaticTile>[BlockWidth];
-            if (_mStaticTilesToAdd[blocky][blockx] == null)
-                _mStaticTilesToAdd[blocky][blockx] = new List<StaticTile>();
-            _mStaticTilesToAdd[blocky][blockx].Add(toadd);
+            if (m_StaticTiles_ToAdd == null)
+            {
+                m_StaticTiles_ToAdd = new List<StaticTile>[BlockHeight][];
+            }
+
+            if (m_StaticTiles_ToAdd[blocky] == null)
+            {
+                m_StaticTiles_ToAdd[blocky] = new List<StaticTile>[BlockWidth];
+            }
+
+            if (m_StaticTiles_ToAdd[blocky][blockx] == null)
+            {
+                m_StaticTiles_ToAdd[blocky][blockx] = new List<StaticTile>();
+            }
+
+            m_StaticTiles_ToAdd[blocky][blockx].Add(toadd);
         }
 
         public StaticTile[] GetPendingStatics(int blockx, int blocky)
         {
-            if (_mStaticTilesToAdd?[blocky] == null)
+            if (m_StaticTiles_ToAdd == null)
+            {
                 return null;
-            if (_mStaticTilesToAdd[blocky][blockx] == null)
-                return null;
+            }
 
-            return _mStaticTilesToAdd[blocky][blockx].ToArray();
+            if (m_StaticTiles_ToAdd[blocky] == null)
+            {
+                return null;
+            }
+
+            if (m_StaticTiles_ToAdd[blocky][blockx] == null)
+            {
+                return null;
+            }
+
+            return m_StaticTiles_ToAdd[blocky][blockx].ToArray();
         }
 
         public void Dispose()
         {
-            _mMap?.Close();
+            if (m_Map != null)
+            {
+                m_Map.Close();
+            }
 
-            _mUopReader?.Close();
-            _mStatics?.Close();
+            if (m_UOPReader != null)
+            {
+                m_UOPReader.Close();
+            }
+
+            if (m_Statics != null)
+            {
+                m_Statics.Close();
+            }
         }
     }
 
@@ -548,15 +712,9 @@ namespace Ultima
         internal ushort m_ID;
         internal int m_Hue;
 
-        public ushort Id { get => m_ID;
-            set => m_ID = value;
-        }
-        public int Hue { get => m_Hue;
-            set => m_Hue = value;
-        }
-        public int Z { get => m_Z;
-            set => m_Z = (sbyte)value;
-        }
+        public ushort ID { get { return m_ID; } set { m_ID = value; } }
+        public int Hue { get { return m_Hue; } set { m_Hue = value; } }
+        public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
 
         public HuedTile(ushort id, short hue, sbyte z)
         {
@@ -575,108 +733,122 @@ namespace Ultima
 
     public struct MTile : IComparable
     {
-        internal ushort MId;
-        internal sbyte MZ;
-        internal sbyte MFlag;
-        internal int MUnk1;
-        internal int MSolver;
+        internal ushort m_ID;
+        internal sbyte m_Z;
+        internal sbyte m_Flag;
+        internal int m_Unk1;
+        internal int m_Solver;
 
-        public ushort Id => MId;
-        public int Z { get => MZ;
-            set => MZ = (sbyte)value;
-        }
+        public ushort ID { get { return m_ID; } }
+        public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
 
-        public int Flag { get => MFlag;
-            set => MFlag = (sbyte)value;
-        }
-        public int Unk1 { get => MUnk1;
-            set => MUnk1 = value;
-        }
-        public int Solver { get => MSolver;
-            set => MSolver = value;
-        }
+        public int Flag { get { return m_Flag; } set { m_Flag = (sbyte)value; } }
+        public int Unk1 { get { return m_Unk1; } set { m_Unk1 = value; } }
+        public int Solver { get { return m_Solver; } set { m_Solver = value; } }
 
         public MTile(ushort id, sbyte z)
         {
-            MId = Art.GetLegalItemId(id);
-            MZ = z;
-            MFlag = 1;
-            MSolver = 0;
-            MUnk1 = 0;
+            m_ID = Art.GetLegalItemID(id);
+            m_Z = z;
+            m_Flag = 1;
+            m_Solver = 0;
+            m_Unk1 = 0;
         }
 
         public MTile(ushort id, sbyte z, sbyte flag)
         {
-            MId = Art.GetLegalItemId(id);
-            MZ = z;
-            MFlag = flag;
-            MSolver = 0;
-            MUnk1 = 0;
+            m_ID = Art.GetLegalItemID(id);
+            m_Z = z;
+            m_Flag = flag;
+            m_Solver = 0;
+            m_Unk1 = 0;
         }
 
         public MTile(ushort id, sbyte z, sbyte flag, int unk1)
         {
-            MId = Art.GetLegalItemId(id);
-            MZ = z;
-            MFlag = flag;
-            MSolver = 0;
-            MUnk1 = unk1;
+            m_ID = Art.GetLegalItemID(id);
+            m_Z = z;
+            m_Flag = flag;
+            m_Solver = 0;
+            m_Unk1 = unk1;
         }
 
         public void Set(ushort id, sbyte z)
         {
-            MId = Art.GetLegalItemId(id);
-            MZ = z;
+            m_ID = Art.GetLegalItemID(id);
+            m_Z = z;
         }
 
         public void Set(ushort id, sbyte z, sbyte flag)
         {
-            MId = Art.GetLegalItemId(id);
-            MZ = z;
-            MFlag = flag;
+            m_ID = Art.GetLegalItemID(id);
+            m_Z = z;
+            m_Flag = flag;
         }
 
         public void Set(ushort id, sbyte z, sbyte flag, int unk1)
         {
-            MId = Art.GetLegalItemId(id);
-            MZ = z;
-            MFlag = flag;
-            MUnk1 = unk1;
+            m_ID = Art.GetLegalItemID(id);
+            m_Z = z;
+            m_Flag = flag;
+            m_Unk1 = unk1;
         }
 
         public int CompareTo(object x)
         {
             if (x == null)
+            {
                 return 1;
+            }
 
             if (!(x is MTile))
+            {
                 throw new ArgumentNullException();
+            }
 
-            MTile a = (MTile)x;
+            var a = (MTile)x;
 
-            ItemData ourData = TileData.ItemTable[MId];
-            ItemData theirData = TileData.ItemTable[a.Id];
+            ItemData ourData = TileData.ItemTable[m_ID];
+            ItemData theirData = TileData.ItemTable[a.ID];
 
             int ourTreshold = 0;
             if (ourData.Height > 0)
+            {
                 ++ourTreshold;
+            }
+
             if (!ourData.Background)
+            {
                 ++ourTreshold;
+            }
+
             int ourZ = Z;
             int theirTreshold = 0;
             if (theirData.Height > 0)
+            {
                 ++theirTreshold;
+            }
+
             if (!theirData.Background)
+            {
                 ++theirTreshold;
+            }
+
             int theirZ = a.Z;
 
             ourZ += ourTreshold;
             theirZ += theirTreshold;
             int res = ourZ - theirZ;
             if (res == 0)
+            {
                 res = ourTreshold - theirTreshold;
+            }
+
             if (res == 0)
-                res = MSolver - a.Solver;
+            {
+                res = m_Solver - a.Solver;
+            }
+
             return res;
         }
     }
@@ -686,10 +858,8 @@ namespace Ultima
         internal ushort m_ID;
         internal sbyte m_Z;
 
-        public ushort Id => m_ID;
-        public int Z { get => m_Z;
-            set => m_Z = (sbyte)value;
-        }
+        public ushort ID { get { return m_ID; } }
+        public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
 
         public Tile(ushort id, sbyte z)
         {
@@ -718,30 +888,46 @@ namespace Ultima
         public int CompareTo(object x)
         {
             if (x == null)
+            {
                 return 1;
+            }
 
             if (!(x is Tile))
+            {
                 throw new ArgumentNullException();
+            }
 
-            Tile a = (Tile)x;
+            var a = (Tile)x;
 
             if (m_Z > a.m_Z)
+            {
                 return 1;
+            }
             else if (a.m_Z > m_Z)
+            {
                 return -1;
+            }
 
             ItemData ourData = TileData.ItemTable[m_ID];
             ItemData theirData = TileData.ItemTable[a.m_ID];
 
             if (ourData.Height > theirData.Height)
+            {
                 return 1;
+            }
             else if (theirData.Height > ourData.Height)
+            {
                 return -1;
+            }
 
             if (ourData.Background && !theirData.Background)
+            {
                 return -1;
+            }
             else if (theirData.Background && !ourData.Background)
+            {
                 return 1;
+            }
 
             return 0;
         }

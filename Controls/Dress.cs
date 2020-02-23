@@ -1207,7 +1207,7 @@ namespace FiddlerControls
                 {
                     int tmp = i;
                     animEntries[i].TranslateAnim[0] = new TranslateAnimEntry();
-                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyDef = BodyTable.MEntries.ContainsKey(tmp);
+                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyDef = BodyTable.m_Entries.ContainsKey(tmp);
                     Animations.Translate(ref tmp);
                     ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).FileIndex = BodyConverter.Convert(ref tmp);
                     ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyAndConf = tmp;
@@ -1218,7 +1218,7 @@ namespace FiddlerControls
                     {
                         int tmp = ((EquipTableEntry)itr.Value).NewAnim;
                         animEntries[i].TranslateAnim[itr.Key] = new TranslateAnimEntry();
-                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyDef = BodyTable.MEntries.ContainsKey(tmp);
+                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyDef = BodyTable.m_Entries.ContainsKey(tmp);
                         Animations.Translate(ref tmp);
                         ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).FileIndex = BodyConverter.Convert(ref tmp);
                         ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyAndConf = tmp;

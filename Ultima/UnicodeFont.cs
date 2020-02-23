@@ -22,7 +22,10 @@ namespace Ultima
         public int GetWidth(string text)
         {
             if (text == null || text.Length == 0)
+            {
                 return 0;
+            }
+
             int width = 0;
             for (int i = 0; i < text.Length; ++i)
             {
@@ -41,7 +44,10 @@ namespace Ultima
         public int GetHeight(string text)
         {
             if (text == null || text.Length == 0)
+            {
                 return 0;
+            }
+
             int height = 0;
             for (int i = 0; i < text.Length; ++i)
             {
@@ -60,11 +66,6 @@ namespace Ultima
         public int Height { get; set; }
         public int Width { get; set; }
 
-        public UnicodeChar()
-        {
-
-        }
-
         /// <summary>
         /// Gets Bitmap of Char
         /// </summary>
@@ -82,10 +83,13 @@ namespace Ultima
         public unsafe Bitmap GetImage(bool fill)
         {
             if ((Width == 0) || (Height == 0))
+            {
                 return null;
-            Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format16bppArgb1555);
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
+            }
+            var bmp = new Bitmap(Width, Height, PixelFormat.Format16bppArgb1555);
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+            var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
             for (int y = 0; y < Height; ++y, line += delta)
             {
@@ -93,9 +97,13 @@ namespace Ultima
                 for (int x = 0; x < Width; ++x)
                 {
                     if (IsPixelSet(Bytes, Width, x, y))
+                    {
                         cur[x] = 0x8000;
+                    }
                     else if (fill)
+                    {
                         cur[x] = 0xffff;
+                    }
                 }
             }
             bmp.UnlockBits(bd);
@@ -106,7 +114,10 @@ namespace Ultima
         {
             int offset = x / 8 + y * ((width + 7) / 8);
             if (offset > data.Length)
+            {
                 return false;
+            }
+
             return (data[offset] & (1 << (7 - (x % 8)))) != 0;
         }
 
@@ -117,8 +128,9 @@ namespace Ultima
         public unsafe void SetBuffer(Bitmap bmp)
         {
             Bytes = new byte[bmp.Height * (((bmp.Width - 1) / 8) + 1)];
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+            var line = (ushort*)bd.Scan0;
             //int delta = bd.Stride >> 1;
             for (int y = 0; y < bmp.Height; ++y)
             {
@@ -138,21 +150,10 @@ namespace Ultima
 
     public static class UnicodeFonts
     {
-        private static readonly string[] _mFiles = new string[]
+        private static readonly string[] m_files = new[]
         {
-            "unifont.mul",
-            "unifont1.mul",
-            "unifont2.mul",
-            "unifont3.mul",
-            "unifont4.mul",
-            "unifont5.mul",
-            "unifont6.mul",
-            "unifont7.mul",
-            "unifont8.mul",
-            "unifont9.mul",
-            "unifont10.mul",
-            "unifont11.mul",
-            "unifont12.mul"
+            "unifont.mul", "unifont1.mul", "unifont2.mul", "unifont3.mul", "unifont4.mul", "unifont5.mul", "unifont6.mul",
+            "unifont7.mul", "unifont8.mul", "unifont9.mul", "unifont10.mul", "unifont11.mul", "unifont12.mul"
         };
         public static UnicodeFont[] Fonts = new UnicodeFont[13];
 
@@ -166,34 +167,42 @@ namespace Ultima
         /// </summary>
         public static void Initialize()
         {
-            for (int i = 0; i < _mFiles.Length; i++)
+            for (int i = 0; i < m_files.Length; i++)
             {
-                string filePath = Files.GetFilePath(_mFiles[i]);
+                string filePath = Files.GetFilePath(m_files[i]);
                 if (filePath == null)
-                    continue;
-                Fonts[i] = new UnicodeFont();
-                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    using (BinaryReader bin = new BinaryReader(fs))
+                    continue;
+                }
+
+                Fonts[i] = new UnicodeFont();
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    using (var bin = new BinaryReader(fs))
                     {
                         for (int c = 0; c < 0x10000; ++c)
                         {
                             Fonts[i].Chars[c] = new UnicodeChar();
-                            fs.Seek((c) * 4, SeekOrigin.Begin);
+                            fs.Seek(((c) * 4), SeekOrigin.Begin);
                             int num2 = bin.ReadInt32();
                             if ((num2 >= fs.Length) || (num2 <= 0))
+                            {
                                 continue;
+                            }
                             fs.Seek(num2, SeekOrigin.Begin);
+                            
                             sbyte xOffset = bin.ReadSByte();
                             sbyte yOffset = bin.ReadSByte();
-                            int width = bin.ReadByte();
-                            int height = bin.ReadByte();
+                            int Width = bin.ReadByte();
+                            int Height = bin.ReadByte();
                             Fonts[i].Chars[c].XOffset = xOffset;
                             Fonts[i].Chars[c].YOffset = yOffset;
-                            Fonts[i].Chars[c].Width = width;
-                            Fonts[i].Chars[c].Height = height;
-                            if (!((width == 0) || (height == 0)))
-                                Fonts[i].Chars[c].Bytes = bin.ReadBytes(height * (((width - 1) / 8) + 1));
+                            Fonts[i].Chars[c].Width = Width;
+                            Fonts[i].Chars[c].Height = Height;
+                            if (!((Width == 0) || (Height == 0)))
+                            {
+                                Fonts[i].Chars[c].Bytes = bin.ReadBytes(Height * (((Width - 1) / 8) + 1));
+                            }
                         }
                     }
                 }
@@ -208,7 +217,7 @@ namespace Ultima
         /// <returns></returns>
         public static Bitmap WriteText(int fontId, string text)
         {
-            Bitmap result = new Bitmap(Fonts[fontId].GetWidth(text) + 2, Fonts[fontId].GetHeight(text) + 2);
+            var result = new Bitmap(Fonts[fontId].GetWidth(text) + 2, Fonts[fontId].GetHeight(text) + 2);
 
             int dx = 2;
             int dy = 2;
@@ -234,10 +243,10 @@ namespace Ultima
         /// <returns></returns>
         public static string Save(string path, int filetype)
         {
-            string fileName = Path.Combine(path, _mFiles[filetype]);
-            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            string FileName = Path.Combine(path, m_files[filetype]);
+            using (var fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                using (BinaryWriter bin = new BinaryWriter(fs))
+                using (var bin = new BinaryWriter(fs))
                 {
                     fs.Seek(0x10000 * 4, SeekOrigin.Begin);
                     bin.Write(0);
@@ -245,8 +254,11 @@ namespace Ultima
                     for (int c = 0; c < 0x10000; ++c)
                     {
                         if (Fonts[filetype].Chars[c].Bytes == null)
+                        {
                             continue;
-                        fs.Seek((c) * 4, SeekOrigin.Begin);
+                        }
+                        fs.Seek(((c) * 4), SeekOrigin.Begin);
+                        
                         bin.Write((int)fs.Length);
                         fs.Seek(fs.Length, SeekOrigin.Begin);
                         bin.Write(Fonts[filetype].Chars[c].XOffset);
@@ -257,7 +269,7 @@ namespace Ultima
                     }
                 }
             }
-            return fileName;
+            return FileName;
         }
     }
 }

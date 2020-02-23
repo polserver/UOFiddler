@@ -24,7 +24,7 @@ namespace FiddlerControls
 
         private void Search_Graphic(object sender, EventArgs e)
         {
-            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemID()))
             {
                 return;
             }

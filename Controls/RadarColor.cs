@@ -119,8 +119,8 @@ namespace FiddlerControls
             treeViewItem.Nodes.Clear();
             if (TileData.ItemTable != null)
             {
-                TreeNode[] nodes = new TreeNode[Art.GetMaxItemId() + 1];
-                for (int i = 0; i < Art.GetMaxItemId() + 1; ++i)
+                TreeNode[] nodes = new TreeNode[Art.GetMaxItemID() + 1];
+                for (int i = 0; i < Art.GetMaxItemID() + 1; ++i)
                 {
                     nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
                     {
@@ -439,7 +439,7 @@ namespace FiddlerControls
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 Options.ChangedUltimaClass["RadarCol"] = true;
-                RadarCol.ImportFromCsv(dialog.FileName);
+                RadarCol.ImportFromCSV(dialog.FileName);
                 if (tabControl2.SelectedTab == tabControl2.TabPages[0])
                 {
                     if (treeViewItem.SelectedNode != null)
@@ -462,7 +462,7 @@ namespace FiddlerControls
         {
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "RadarColor.csv");
-            RadarCol.ExportToCsv(fileName);
+            RadarCol.ExportToCSV(fileName);
             MessageBox.Show($"RadarColor saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
     }

@@ -69,7 +69,7 @@ namespace MultiEditor
                     for (int i = 0; i < list.Tiles[x][y].Length; ++i)
                     {
                         Tiles.Add(new MultiTile(
-                            list.Tiles[x][y][i].Id,
+                            list.Tiles[x][y][i].ID,
                             x,
                             y,
                             list.Tiles[x][y][i].Z,

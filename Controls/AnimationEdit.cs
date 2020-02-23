@@ -924,7 +924,7 @@ namespace FiddlerControls
                                         MessageBoxDefaultButton.Button1);
                                     return;
                                 }
-                                Ultima.AnimationEdit.LoadFromVd(_fileType, _currBody, bin);
+                                Ultima.AnimationEdit.LoadFromVD(_fileType, _currBody, bin);
                             }
                         }
 
@@ -966,7 +966,7 @@ namespace FiddlerControls
             {
                 string path = Options.OutputPath;
                 string fileName = Path.Combine(path, string.Format("anim{0}_0x{1:X}.vd", _fileType, _currBody));
-                Ultima.AnimationEdit.ExportToVd(_fileType, _currBody, fileName);
+                Ultima.AnimationEdit.ExportToVD(_fileType, _currBody, fileName);
                 MessageBox.Show(
                         string.Format("Animation saved to {0}", Options.OutputPath),
                         "Export",
@@ -2638,7 +2638,7 @@ namespace FiddlerControls
                             if (index >= 0 && treeView1.Nodes[i].Parent == null && treeView1.Nodes[i].ForeColor != Color.Red)
                             {
                                 string fileName = Path.Combine(dialog.SelectedPath, string.Format("anim{0}_0x{1:X}.vd", _fileType, index));
-                                Ultima.AnimationEdit.ExportToVd(_fileType, index, fileName);
+                                Ultima.AnimationEdit.ExportToVD(_fileType, index, fileName);
                             }
                         }
                         MessageBox.Show(string.Format("All Animations saved to {0}", dialog.SelectedPath),

@@ -91,7 +91,7 @@ namespace FiddlerControls
             switch (e.ColumnIndex)
             {
                 case 0:
-                    SpeechList.Entries.Sort(new SpeechList.IdComparer(_sortOrder == SortOrder.Descending));
+                    SpeechList.Entries.Sort(new SpeechList.IDComparer(_sortOrder == SortOrder.Descending));
                     break;
                 case 1:
                     SpeechList.Entries.Sort(new SpeechList.KeyWordComparer(_sortOrder == SortOrder.Descending));
@@ -217,7 +217,7 @@ namespace FiddlerControls
         {
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "Speech.csv");
-            SpeechList.ExportToCsv(fileName);
+            SpeechList.ExportToCSV(fileName);
             MessageBox.Show($"Speech saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
@@ -233,7 +233,7 @@ namespace FiddlerControls
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 Options.ChangedUltimaClass["Speech"] = true;
-                SpeechList.ImportFromCsv(dialog.FileName);
+                SpeechList.ImportFromCSV(dialog.FileName);
                 _source.DataSource = SpeechList.Entries;
                 dataGridView1.Invalidate();
             }

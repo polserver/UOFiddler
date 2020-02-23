@@ -63,7 +63,7 @@ namespace FiddlerControls
             {
                 using (BinaryWriter bin = new BinaryWriter(fs))
                 {
-                    byte[] md5 = Files.GetMd5(Files.GetFilePath("Art.mul"));
+                    byte[] md5 = Files.GetMD5(Files.GetFilePath("Art.mul"));
                     if (md5 == null)
                     {
                         return;
@@ -229,7 +229,7 @@ namespace FiddlerControls
             }
             else
             {
-                int staticlength = Art.GetMaxItemId() + 1;
+                int staticlength = Art.GetMaxItemID() + 1;
                 for (int i = 0; i < staticlength; ++i)
                 {
                     if (Art.IsValidStatic(i))
@@ -648,7 +648,7 @@ namespace FiddlerControls
 
         private void OnTextChanged_Insert(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemId()))
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemID()))
             {
                 InsertText.ForeColor = Art.IsValidStatic(index) ? Color.Red : Color.Black;
             }
@@ -662,7 +662,7 @@ namespace FiddlerControls
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemId()))
+                if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemID()))
                 {
                     if (Art.IsValidStatic(index))
                     {
@@ -826,7 +826,7 @@ namespace FiddlerControls
             if (_showFreeSlots)
             {
                 ListViewItem item;
-                for (int j = 0; j < Art.GetMaxItemId() + 1; ++j)
+                for (int j = 0; j < Art.GetMaxItemID() + 1; ++j)
                 {
                     if (listView1.Items.Count > j)
                     {

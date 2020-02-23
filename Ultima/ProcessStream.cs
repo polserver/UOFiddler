@@ -3,44 +3,43 @@ using System.IO;
 
 namespace Ultima
 {
-    public unsafe abstract class ProcessStream : Stream
+    public abstract unsafe class ProcessStream : Stream
     {
         private const int ProcessAllAccess = 0x1F0FFF;
 
-        protected bool MOpen;
-        protected ClientProcessHandle MProcess;
+        protected bool m_Open;
+        protected ClientProcessHandle m_Process;
 
-        protected int MPosition;
+        protected int m_Position;
 
-        public abstract ClientProcessHandle ProcessId { get; }
-
-        public ProcessStream()
-        {
-        }
+        public abstract ClientProcessHandle ProcessID { get; }
 
         public virtual bool BeginAccess()
         {
-            if (MOpen)
+            if (m_Open)
+            {
                 return false;
+            }
 
-            MProcess = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessId);
-            MOpen = true;
+            m_Process = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessID);
+            m_Open = true;
 
             return true;
         }
 
         public virtual void EndAccess()
         {
-            if (!MOpen)
+            if (!m_Open)
+            {
                 return;
+            }
 
-            MProcess.Close();
-            MOpen = false;
+            m_Process.Close();
+            m_Open = false;
         }
 
         public override void Flush()
-        {
-        }
+        { }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -49,12 +48,16 @@ namespace Ultima
             int res = 0;
 
             fixed (byte* p = buffer)
-                NativeMethods.ReadProcessMemory(MProcess, MPosition, p + offset, count, ref res);
+            {
+                NativeMethods.ReadProcessMemory(m_Process, m_Position, p + offset, count, ref res);
+            }
 
-            MPosition += count;
+            m_Position += count;
 
             if (end)
+            {
                 EndAccess();
+            }
 
             return res;
         }
@@ -64,22 +67,24 @@ namespace Ultima
             bool end = !BeginAccess();
 
             fixed (byte* p = buffer)
-                NativeMethods.WriteProcessMemory(MProcess, MPosition, p + offset, count, 0);
+            {
+                NativeMethods.WriteProcessMemory(m_Process, m_Position, p + offset, count, 0);
+            }
 
-            MPosition += count;
+            m_Position += count;
 
             if (end)
+            {
                 EndAccess();
+            }
         }
 
-        public override bool CanRead => true;
-        public override bool CanWrite => true;
-        public override bool CanSeek => true;
+        public override bool CanRead { get { return true; } }
+        public override bool CanWrite { get { return true; } }
+        public override bool CanSeek { get { return true; } }
 
-        public override long Length => throw new NotSupportedException();
-        public override long Position { get => MPosition;
-            set => MPosition = (int)value;
-        }
+        public override long Length { get { throw new NotSupportedException(); } }
+        public override long Position { get { return m_Position; } set { m_Position = (int)value; } }
 
         public override void SetLength(long value)
         {
@@ -90,12 +95,17 @@ namespace Ultima
         {
             switch (origin)
             {
-                case SeekOrigin.Begin: MPosition = (int)offset; break;
-                case SeekOrigin.Current: MPosition += (int)offset; break;
-                case SeekOrigin.End: throw new NotSupportedException();
+                case SeekOrigin.Begin: 
+                    m_Position = (int)offset; 
+                    break;
+                case SeekOrigin.Current: 
+                    m_Position += (int)offset; 
+                    break;
+                case SeekOrigin.End: 
+                    throw new NotSupportedException();
             }
 
-            return MPosition;
+            return m_Position;
         }
     }
 }
