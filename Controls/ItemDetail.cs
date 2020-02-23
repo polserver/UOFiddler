@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
+using FiddlerControls.Helpers;
 using Ultima;
 
 namespace FiddlerControls
@@ -26,6 +27,7 @@ namespace FiddlerControls
             this.Icon = FiddlerControls.Options.GetFiddlerIcon();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             index = i;
+            Data.AddBasicContextMenu();
         }
 
         public int index;
@@ -85,6 +87,7 @@ namespace FiddlerControls
             Bitmap bit = Ultima.Art.GetStatic(index);
 
             this.Text = String.Format("Item Detail 0x{0:X} '{1}'", index, item.Name);
+            
             if (bit == null)
                 this.splitContainer1.SplitterDistance = 10;
             else
@@ -106,8 +109,10 @@ namespace FiddlerControls
             this.Data.AppendText(String.Format("Hue: {0}\n", item.Hue));
             this.Data.AppendText(String.Format("StackingOffset/Unk4: {0}\n", item.StackingOffset));
             this.Data.AppendText(String.Format("Flags: {0}\n", item.Flags));
+            
             if ((item.Flags & TileFlag.PartialHue) != 0)
                 partialHue = true;
+            
             if ((item.Flags & TileFlag.Animation) != 0)
             {
                 info = Animdata.GetAnimData(index);

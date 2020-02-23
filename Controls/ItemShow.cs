@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FiddlerControls.Helpers;
 using Ultima;
 
 namespace FiddlerControls
@@ -32,6 +33,7 @@ namespace FiddlerControls
                 PreloadItems.Visible = false;
             ProgressBar.Visible = false;
             DetailPictureBox.Tag = -1;
+            DetailTextBox.AddBasicContextMenu();
         }
 
         private static ItemShow refMarker = null;
@@ -426,12 +428,11 @@ namespace FiddlerControls
         {
             Ultima.ItemData item = Ultima.TileData.ItemTable[id];
             Bitmap bit = Ultima.Art.GetStatic(id);
+            splitContainer2.SplitterDistance = bit?.Size.Height + 10 ?? 10;
+            
             DetailPictureBox.Tag = id;
-            if (bit == null)
-                splitContainer2.SplitterDistance = 10;
-            else
-                splitContainer2.SplitterDistance = bit.Size.Height + 10;
             DetailPictureBox.Invalidate();
+            
             DetailTextBox.Clear();
             DetailTextBox.AppendText(String.Format("Name: {0}\n", item.Name));
             DetailTextBox.AppendText(String.Format("Graphic: 0x{0:X4}\n", id));
@@ -443,6 +444,7 @@ namespace FiddlerControls
             DetailTextBox.AppendText(String.Format("Hue: {0}\n", item.Hue));
             DetailTextBox.AppendText(String.Format("StackingOffset/Unk4: {0}\n", item.StackingOffset));
             DetailTextBox.AppendText(String.Format("Flags: {0}\n", item.Flags));
+            
             if ((item.Flags & TileFlag.Animation) != 0)
             {
                 Animdata.Data info = Animdata.GetAnimData(id);
