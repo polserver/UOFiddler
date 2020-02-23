@@ -79,27 +79,27 @@ namespace FiddlerControls
             this.collapsibleSplitter1 = new FiddlerControls.CollapsibleSplitter();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.DetailPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailPictureBox)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.namelabel, this.graphiclabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 349);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.namelabel,
+            this.graphiclabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 299);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(722, 25);
+            this.statusStrip1.Size = new System.Drawing.Size(619, 25);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -126,13 +126,14 @@ namespace FiddlerControls
             this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView1.ContextMenuStrip = this.contextMenuStrip1;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
             this.listView1.ShowGroups = false;
-            this.listView1.Size = new System.Drawing.Size(536, 313);
+            this.listView1.Size = new System.Drawing.Size(459, 266);
             this.listView1.TabIndex = 3;
             this.listView1.TileSize = new System.Drawing.Size(46, 46);
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -146,14 +147,20 @@ namespace FiddlerControls
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.showFreeSlotsToolStripMenuItem, this.findNextFreeSlotToolStripMenuItem, this.toolStripSeparator3,
-                this.selectInTileDataTabToolStripMenuItem, this.selectInRadarColorTabToolStripMenuItem,
-                this.selectInGumpsTabToolStripMenuItem, this.toolStripSeparator2, this.extractToolStripMenuItem,
-                this.replaceToolStripMenuItem, this.removeToolStripMenuItem, this.insertAtToolStripMenuItem,
-                this.toolStripSeparator1, this.saveToolStripMenuItem
-            });
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showFreeSlotsToolStripMenuItem,
+            this.findNextFreeSlotToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.selectInTileDataTabToolStripMenuItem,
+            this.selectInRadarColorTabToolStripMenuItem,
+            this.selectInGumpsTabToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.extractToolStripMenuItem,
+            this.replaceToolStripMenuItem,
+            this.removeToolStripMenuItem,
+            this.insertAtToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.saveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(201, 242);
             // 
@@ -205,8 +212,10 @@ namespace FiddlerControls
             // 
             // extractToolStripMenuItem
             // 
-            this.extractToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.bmpToolStripMenuItem, this.tiffToolStripMenuItem, this.asJpgToolStripMenuItem1});
+            this.extractToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bmpToolStripMenuItem,
+            this.tiffToolStripMenuItem,
+            this.asJpgToolStripMenuItem1});
             this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
             this.extractToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.extractToolStripMenuItem.Text = "Export Image..";
@@ -248,14 +257,15 @@ namespace FiddlerControls
             // 
             // insertAtToolStripMenuItem
             // 
-            this.insertAtToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.InsertText});
+            this.insertAtToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InsertText});
             this.insertAtToolStripMenuItem.Name = "insertAtToolStripMenuItem";
             this.insertAtToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.insertAtToolStripMenuItem.Text = "Insert At..";
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDown_Insert);
@@ -276,7 +286,7 @@ namespace FiddlerControls
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -287,9 +297,8 @@ namespace FiddlerControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.SizeChanged += new System.EventHandler(this.DetailSplitContainer_SizeChange);
-            this.splitContainer1.Size = new System.Drawing.Size(722, 313);
-            this.splitContainer1.SplitterDistance = 536;
-            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.Size = new System.Drawing.Size(619, 266);
+            this.splitContainer1.SplitterDistance = 459;
             this.splitContainer1.TabIndex = 4;
             // 
             // splitContainer2
@@ -306,9 +315,8 @@ namespace FiddlerControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.DetailTextBox);
-            this.splitContainer2.Size = new System.Drawing.Size(181, 313);
-            this.splitContainer2.SplitterDistance = 180;
-            this.splitContainer2.SplitterWidth = 5;
+            this.splitContainer2.Size = new System.Drawing.Size(156, 266);
+            this.splitContainer2.SplitterDistance = 152;
             this.splitContainer2.TabIndex = 0;
             // 
             // DetailPictureBox
@@ -316,7 +324,7 @@ namespace FiddlerControls
             this.DetailPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DetailPictureBox.Location = new System.Drawing.Point(0, 0);
             this.DetailPictureBox.Name = "DetailPictureBox";
-            this.DetailPictureBox.Size = new System.Drawing.Size(181, 180);
+            this.DetailPictureBox.Size = new System.Drawing.Size(156, 152);
             this.DetailPictureBox.TabIndex = 0;
             this.DetailPictureBox.TabStop = false;
             this.DetailPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.DetailPictureBox_Paint);
@@ -327,7 +335,7 @@ namespace FiddlerControls
             this.DetailTextBox.Location = new System.Drawing.Point(0, 0);
             this.DetailTextBox.Name = "DetailTextBox";
             this.DetailTextBox.ReadOnly = true;
-            this.DetailTextBox.Size = new System.Drawing.Size(181, 128);
+            this.DetailTextBox.Size = new System.Drawing.Size(156, 110);
             this.DetailTextBox.TabIndex = 0;
             this.DetailTextBox.Text = "";
             // 
@@ -335,21 +343,22 @@ namespace FiddlerControls
             // 
             this.PreLoader.WorkerReportsProgress = true;
             this.PreLoader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.PreLoaderDoWork);
-            this.PreLoader.ProgressChanged +=
-                new System.ComponentModel.ProgressChangedEventHandler(this.PreLoaderProgressChanged);
-            this.PreLoader.RunWorkerCompleted +=
-                new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoaderCompleted);
+            this.PreLoader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.PreLoaderProgressChanged);
+            this.PreLoader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoaderCompleted);
             // 
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.toolStripButton1, this.ProgressBar, this.PreloadItems, this.toolStripDropDownButton1});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1,
+            this.ProgressBar,
+            this.PreloadItems,
+            this.toolStripDropDownButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(722, 28);
+            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -358,7 +367,7 @@ namespace FiddlerControls
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(46, 25);
+            this.toolStripButton1.Size = new System.Drawing.Size(46, 22);
             this.toolStripButton1.Text = "Search";
             this.toolStripButton1.Click += new System.EventHandler(this.Search_Click);
             // 
@@ -366,7 +375,7 @@ namespace FiddlerControls
             // 
             this.ProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(117, 25);
+            this.ProgressBar.Size = new System.Drawing.Size(100, 22);
             // 
             // PreloadItems
             // 
@@ -374,24 +383,26 @@ namespace FiddlerControls
             this.PreloadItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.PreloadItems.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PreloadItems.Name = "PreloadItems";
-            this.PreloadItems.Size = new System.Drawing.Size(83, 25);
+            this.PreloadItems.Size = new System.Drawing.Size(83, 22);
             this.PreloadItems.Text = "Preload Items";
             this.PreloadItems.Click += new System.EventHandler(this.OnClickPreload);
             // 
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.exportAllAsToolStripMenuItem});
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportAllAsToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 25);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
             this.toolStripDropDownButton1.Text = "Misc";
             // 
             // exportAllAsToolStripMenuItem
             // 
-            this.exportAllAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.asBmpToolStripMenuItem, this.asTiffToolStripMenuItem, this.asJpgToolStripMenuItem});
+            this.exportAllAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.asBmpToolStripMenuItem,
+            this.asTiffToolStripMenuItem,
+            this.asJpgToolStripMenuItem});
             this.exportAllAsToolStripMenuItem.Name = "exportAllAsToolStripMenuItem";
             this.exportAllAsToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.exportAllAsToolStripMenuItem.Text = "Export all..";
@@ -425,7 +436,7 @@ namespace FiddlerControls
             this.collapsibleSplitter1.ControlToHide = this.toolStrip1;
             this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 28);
+            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
             this.collapsibleSplitter1.Name = "collapsibleSplitter1";
             this.collapsibleSplitter1.TabIndex = 4;
             this.collapsibleSplitter1.TabStop = false;
@@ -434,14 +445,14 @@ namespace FiddlerControls
             // 
             // ItemShow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "ItemShow";
-            this.Size = new System.Drawing.Size(722, 374);
+            this.Size = new System.Drawing.Size(619, 324);
             this.Load += new System.EventHandler(this.OnLoad);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ItemShow_KeyUp);
             this.statusStrip1.ResumeLayout(false);
@@ -449,17 +460,18 @@ namespace FiddlerControls
             this.contextMenuStrip1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.DetailPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailPictureBox)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
