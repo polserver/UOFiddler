@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FiddlerControls.Helpers;
 using Ultima;
 
 namespace FiddlerControls
@@ -29,6 +30,7 @@ namespace FiddlerControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             refMarker = this;
             pictureBox.MouseWheel += new MouseEventHandler(OnMouseWheel);
+            DetailTextBox.AddBasicContextMenu();
         }
 
         private static ItemShowAlternative refMarker = null;
@@ -434,6 +436,12 @@ namespace FiddlerControls
         {
             Ultima.ItemData item = Ultima.TileData.ItemTable[id];
             Bitmap bit = Ultima.Art.GetStatic(id);
+
+            int xMin = 0;
+            int xMax = 0;
+            int yMin = 0;
+            int yMax = 0;
+
             if (bit == null)
             {
                 splitContainer2.SplitterDistance = 10;
@@ -450,6 +458,8 @@ namespace FiddlerControls
                 newgraph.Clear(Color.FromArgb(-1));
                 newgraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
                 DetailPictureBox.Image = newbit;
+
+                Art.Measure(bit, out xMin, out yMin, out xMax, out yMax);
             }
 
             DetailTextBox.Clear();
@@ -463,6 +473,9 @@ namespace FiddlerControls
             DetailTextBox.AppendText(String.Format("Hue: {0}\n", item.Hue));
             DetailTextBox.AppendText(String.Format("StackingOffset/Unk4: {0}\n", item.StackingOffset));
             DetailTextBox.AppendText(String.Format("Flags: {0}\n", item.Flags));
+            DetailTextBox.AppendText(String.Format("Graphic pixel size width, height: {0} {1} \n", bit?.Width ?? 0, bit?.Height ?? 0));
+            DetailTextBox.AppendText(String.Format("Graphic pixel offset xMin, yMin, xMax, yMax: {0} {1} {2} {3}\n", xMin, yMin, xMax, yMax));
+
             if ((item.Flags & TileFlag.Animation) != 0)
             {
                 Animdata.Data info = Animdata.GetAnimData(id);
