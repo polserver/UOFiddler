@@ -10,7 +10,6 @@
  ***************************************************************************/
 
 using System;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -20,14 +19,14 @@ using Ultima;
 
 namespace FiddlerPlugin
 {
-    public class ExamplePlugin : IPlugin
+    public class ExamplePlugin : Plugin
     {
         private const string ItemDescFileName = "itemdesc.cfg";
 
         public ExamplePlugin()
         {
-            PluginInterface.Events.DesignChangeEvent += new PluginInterface.Events.DesignChangeHandler(Events_DesignChangeEvent);
-            PluginInterface.Events.ModifyItemShowContextMenuEvent += new PluginInterface.Events.ModifyItemShowContextMenuHandler(Events_ModifyItemShowContextMenuEvent);
+            PluginInterface.Events.DesignChangeEvent += Events_DesignChangeEvent;
+            PluginInterface.Events.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
         }
 
         /// <summary>
@@ -57,47 +56,47 @@ namespace FiddlerPlugin
 
         public override void Initialize()
         {
-            //make something usefull
+            // make something useful
         }
 
         public override void Dispose()
         {
         }
 
-        public override void ModifyTabPages(TabControl tabcontrol)
+        public override void ModifyTabPages(TabControl tabControl)
         {
             TabPage page = new TabPage
             {
-                Tag = tabcontrol.TabCount + 1, // at end used for undock/dock feature to define the order
+                Tag = tabControl.TabCount + 1, // at end used for undock/dock feature to define the order
                 Text = "PluginTest"
             };
             page.Controls.Add(new ExampleUserControl());
-            tabcontrol.TabPages.Add(page);
+            tabControl.TabPages.Add(page);
         }
 
-        public override void ModifyPluginToolStrip(ToolStripDropDownButton toolstrip)
+        public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)
         {
             ToolStripMenuItem item = new ToolStripMenuItem
             {
                 Text = "PluginTest"
             };
-            item.Click += Item_click;
-            toolstrip.DropDownItems.Add(item);
+            item.Click += ItemClick;
+            toolStrip.DropDownItems.Add(item);
         }
 
-        public void Item_click(object sender, EventArgs e)
+        private static void ItemClick(object sender, EventArgs e)
         {
             new Example().Show();
         }
 
-        private void Events_DesignChangeEvent()
+        private static void Events_DesignChangeEvent()
         {
-            //do something usefull here
+            // do something useful here
         }
 
-        public void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
+        private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
         {
-            strip.Items.Add( new ToolStripSeparator());
+            strip.Items.Add(new ToolStripSeparator());
 
             ToolStripMenuItem exportItemDescItem = new ToolStripMenuItem
             {
@@ -116,39 +115,41 @@ namespace FiddlerPlugin
             strip.Items.Add(exportOffsetItem);
         }
 
-        public void ExportToOffsetClicked(object sender, EventArgs e)
+        private void ExportToOffsetClicked(object sender, EventArgs e)
         {
             string fileName = Path.Combine(Options.OutputPath, "offset.cfg");
 
             string inputMessage = "Do you want to export all items to offset.cfg?\r\n"
-                + "It may take some time (around 10-20 seconds).\r\n\r\n"
-                + "Export will replace existing file located at: "
-                + fileName
-                + "\r\n\r\nContinue?\r\n";
+                                  + "It may take some time (around 10-20 seconds).\r\n\r\n"
+                                  + "Export will replace existing file located at: "
+                                  + fileName
+                                  + "\r\n\r\nContinue?\r\n";
 
             if (MessageBox.Show(inputMessage, "Export all items to offset.cfg?", MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return;
             }
 
-            var listView = Host.GetItemShowListView();
-            var sb = new StringBuilder();
+            ListView listView = Host.GetItemShowListView();
+            StringBuilder sb = new StringBuilder();
             foreach (ListViewItem item in listView.Items)
             {
-                var itemId = (int)item.Tag;
+                int itemId = (int)item.Tag;
 
-                if (itemId > -1 && Art.IsValidStatic(itemId))
+                if (itemId <= -1 || !Art.IsValidStatic(itemId))
                 {
-                    Art.Measure(Art.GetStatic(itemId), out int xMin, out int yMin, out int xMax, out int yMax);
-
-                    sb.AppendFormat("Item 0x{0:X4}", itemId).AppendLine();
-                    sb.AppendLine("{");
-                    sb.AppendFormat("   xMin    {0}", xMin).AppendLine();
-                    sb.AppendFormat("   yMin    {0}", yMin).AppendLine();
-                    sb.AppendFormat("   xMax    {0}", xMax).AppendLine();
-                    sb.AppendFormat("   yMax    {0}", yMax).AppendLine();
-                    sb.AppendLine("}").AppendLine();
+                    continue;
                 }
+
+                Art.Measure(Art.GetStatic(itemId), out int xMin, out int yMin, out int xMax, out int yMax);
+
+                sb.AppendFormat("Item 0x{0:X4}", itemId).AppendLine();
+                sb.AppendLine("{");
+                sb.AppendFormat("   xMin    {0}", xMin).AppendLine();
+                sb.AppendFormat("   yMin    {0}", yMin).AppendLine();
+                sb.AppendFormat("   xMax    {0}", xMax).AppendLine();
+                sb.AppendFormat("   yMax    {0}", yMax).AppendLine();
+                sb.AppendLine("}").AppendLine();
             }
 
             File.WriteAllText(fileName, sb.ToString());
@@ -156,7 +157,7 @@ namespace FiddlerPlugin
             MessageBox.Show("Done!");
         }
 
-        public void ExportToItemDescClicked(object sender, EventArgs e)
+        private void ExportToItemDescClicked(object sender, EventArgs e)
         {
             if (Options.DesignAlternative)
             {
@@ -168,50 +169,52 @@ namespace FiddlerPlugin
             }
         }
 
-        private void ExportAllSelectedItems(ListView itemShowListView)
+        private static void ExportAllSelectedItems(ListView itemShowListView)
         {
-            var selectedItems = itemShowListView.SelectedItems;
-            if (selectedItems.Count > 0)
+            ListView.SelectedListViewItemCollection selectedItems = itemShowListView.SelectedItems;
+            if (selectedItems.Count <= 0)
             {
-                string path = Options.OutputPath;
-                string fileName = Path.Combine(path, ItemDescFileName);
+                return;
+            }
 
-                using (StreamWriter Tex = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, ItemDescFileName);
+
+            using (StreamWriter streamWriter = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
+            {
+                foreach (ListViewItem item in selectedItems)
                 {
-                    var sb = new StringBuilder();
+                    int itemId = (int)item.Tag;
 
-                    foreach (ListViewItem item in selectedItems)
+                    if (Art.IsValidStatic(itemId))
                     {
-                        var itemId = (int)item.Tag;
-
-                        if (Art.IsValidStatic(itemId))
-                        {
-                            Tex.WriteLine(GetItemDescEntry(itemId));
-                        }
+                        streamWriter.WriteLine(GetItemDescEntry(itemId));
                     }
                 }
             }
         }
 
-        private void ExportSingleItem(int itemId)
+        private static void ExportSingleItem(int itemId)
         {
-            if (itemId > -1 && Art.IsValidStatic(itemId))
+            if (itemId <= -1 || !Art.IsValidStatic(itemId))
             {
-                string path = Options.OutputPath;
-                string fileName = Path.Combine(path, ItemDescFileName);
+                return;
+            }
 
-                using (StreamWriter Tex = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
-                {
-                    Tex.WriteLine(GetItemDescEntry(itemId));
-                }
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, ItemDescFileName);
+
+            using (StreamWriter streamWriter = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
+            {
+                streamWriter.WriteLine(GetItemDescEntry(itemId));
             }
         }
 
-        private string GetItemDescEntry(int itemId)
+        private static string GetItemDescEntry(int itemId)
         {
             ItemData itemData = TileData.ItemTable[itemId];
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Item 0x{0:X4}", itemId).AppendLine();
             sb.AppendLine("{");
             sb.AppendFormat("   Name    {0}", itemData.Name).AppendLine();

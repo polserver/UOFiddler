@@ -15,62 +15,63 @@ using PluginInterface;
 
 namespace FiddlerPlugin
 {
-    public class MassImportPlugin : IPlugin
+    public class MassImportPlugin : Plugin
     {
-        public MassImportPlugin()
-        {
-        }
-
-        string myName = "MassImportPlugin";
-        string myDescription = "Import xml based";
-        string myAuthor = "Turley";
-        string myVersion = "1.1.0";
-        IPluginHost myHost = null;
-
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public override string Name { get { return myName; } }
+        public override string Name { get; } = "MassImportPlugin";
+
         /// <summary>
         /// Description of the Plugin's purpose
         /// </summary>
-        public override string Description { get { return myDescription; } }
+        public override string Description { get; } = "Import xml based";
+
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public override string Author { get { return myAuthor; } }
+        public override string Author { get; } = "Turley";
+
         /// <summary>
         /// Version of the plugin
         /// </summary>
-        public override string Version { get { return myVersion; } }
+        public override string Version { get; } = "1.1.0";
+
         /// <summary>
         /// Host of the plugin.
         /// </summary>
-        public override IPluginHost Host { get { return myHost; } set { myHost = value; } }
+        public override IPluginHost Host { get; set; } = null;
 
         public override void Initialize() { }
 
         public override void Dispose() { }
 
-        public override void ModifyTabPages(TabControl tabcontrol) { }
+        public override void ModifyTabPages(TabControl tabControl) { }
 
-        public override void ModifyPluginToolStrip(ToolStripDropDownButton toolstrip)
+        public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)
         {
-            ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Text = "Mass Import";
-            item.Click += new EventHandler(toolstrip_click);
-            toolstrip.DropDownItems.Add(item);
+            ToolStripMenuItem item = new ToolStripMenuItem
+            {
+                Text = "Mass Import"
+            };
+            item.Click += ToolStripClick;
+            toolStrip.DropDownItems.Add(item);
         }
 
-        MassImport.MassImport import;
-        private void toolstrip_click(object sender, EventArgs e)
+        private MassImport.MassImport _import;
+
+        private void ToolStripClick(object sender, EventArgs e)
         {
-            if ((import == null) || (import.IsDisposed))
+            if (_import?.IsDisposed == false)
             {
-                import = new MassImport.MassImport();
-                import.TopMost = true;
-                import.Show();
+                return;
             }
+
+            _import = new MassImport.MassImport
+            {
+                TopMost = true
+            };
+            _import.Show();
         }
     }
 }

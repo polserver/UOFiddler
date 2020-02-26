@@ -13,20 +13,21 @@ using System.Windows.Forms;
 
 namespace PluginInterface
 {
-    public class Events
+    public static class Events
     {
         /// <summary>
         /// Fired when Design is changed
         /// </summary>
         public delegate void DesignChangeHandler();
+
         /// <summary>
         /// Fired when Design is changed
         /// </summary>
         public static event DesignChangeHandler DesignChangeEvent;
+
         public static void FireDesignChangeEvent()
         {
-            if (DesignChangeEvent != null)
-                DesignChangeEvent();
+            DesignChangeEvent?.Invoke();
         }
 
         /// <summary>
@@ -34,17 +35,19 @@ namespace PluginInterface
         /// </summary>
         /// <param name="contextmenu"></param>
         public delegate void ModifyItemShowContextMenuHandler(ContextMenuStrip contextmenu);
+
         /// <summary>
         /// OnLoad called in ItemShow or ItemShowAlternative to modify Contextmenu
         /// </summary>
         public static event ModifyItemShowContextMenuHandler ModifyItemShowContextMenuEvent;
+
         public static void FireModifyItemShowContextMenuEvent(ContextMenuStrip contextmenu)
         {
-            if (ModifyItemShowContextMenuEvent != null)
-                ModifyItemShowContextMenuEvent(contextmenu);
+            ModifyItemShowContextMenuEvent?.Invoke(contextmenu);
         }
     }
-    public abstract class IPlugin
+
+    public abstract class Plugin
     {
         abstract public IPluginHost Host { get; set; }
 
@@ -59,13 +62,14 @@ namespace PluginInterface
         /// <summary>
         /// On Startup called to modify the Plugin ToolStripDropDownButton
         /// </summary>
-        /// <param name="toolstrip"></param>
-        virtual public void ModifyPluginToolStrip(ToolStripDropDownButton toolstrip) { }
+        /// <param name="toolStrip"></param>
+        virtual public void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip) { }
+
         /// <summary>
         /// On Startup called to modify the Tabpages
         /// </summary>
-        /// <param name="tabcontrol"></param>
-        virtual public void ModifyTabPages(TabControl tabcontrol) { }
+        /// <param name="tabControl"></param>
+        virtual public void ModifyTabPages(TabControl tabControl) { }
     }
 
     public interface IPluginHost
@@ -75,26 +79,31 @@ namespace PluginInterface
         /// </summary>
         /// <returns></returns>
         FiddlerControls.ItemShow GetItemShowControl();
+
         /// <summary>
         /// Returns the ItemShowAlternativeControl
         /// </summary>
         /// <returns></returns>
         FiddlerControls.ItemShowAlternative GetItemShowAltControl();
+
         /// <summary>
         /// Gets the current selected graphic in ItemShow
         /// </summary>
         /// <returns>Graphic or -1 if none selected</returns>
         int GetSelectedItemShow();
+
         /// <summary>
         /// Gets the current selected graphic in ItemShowAlternative
         /// </summary>
         /// <returns>Graphic or -1 if none selected</returns>
         int GetSelectedItemShowAlternative();
+
         /// <summary>
         /// Gets the ListView of ItemShow
         /// </summary>
         /// <returns></returns>
         ListView GetItemShowListView();
+
         /// <summary>
         /// Gets the PictureBox of ItemShowAlt
         /// </summary>

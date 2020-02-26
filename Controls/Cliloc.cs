@@ -10,7 +10,6 @@
  ***************************************************************************/
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -25,71 +24,71 @@ namespace FiddlerControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            refmarker = this;
-            source = new BindingSource();
-            FindEntry.TextBox.PreviewKeyDown += new PreviewKeyDownEventHandler(FindEntry_PreviewKeyDown);
+            _refMarker = this;
+            _source = new BindingSource();
+            FindEntry.TextBox.PreviewKeyDown += FindEntry_PreviewKeyDown;
         }
 
-        #region Vars
-        private static Cliloc refmarker;
-        private static StringList cliloc;
-        private static BindingSource source;
-        private int lang;
-        private SortOrder sortorder;
-        private int sortcolumn;
-        private bool Loaded = false;
+        private static Cliloc _refMarker;
+        private static StringList _cliloc;
+        private static BindingSource _source;
+        private int _lang;
+        private SortOrder _sortOrder;
+        private int _sortColumn;
+        private bool _loaded;
 
         /// <summary>
         /// Sets Language and loads cliloc
         /// </summary>
         private int Lang
         {
-            get { return lang; }
+            get => _lang;
             set
             {
-                lang = value;
+                _lang = value;
                 switch (value)
                 {
                     case 0:
-                        cliloc = new StringList("enu");
+                        _cliloc = new StringList("enu");
                         break;
                     case 1:
-                        cliloc = new StringList("deu");
+                        _cliloc = new StringList("deu");
                         break;
                     case 2:
                         TestCustomLang("cliloc.custom1");
-                        cliloc = new StringList("custom1");
+                        _cliloc = new StringList("custom1");
                         break;
                     case 3:
                         TestCustomLang("cliloc.custom2");
-                        cliloc = new StringList("custom2");
+                        _cliloc = new StringList("custom2");
                         break;
                 }
-
             }
         }
-        #endregion
 
         /// <summary>
         /// Reload when loaded (file changed)
         /// </summary>
         private void Reload()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
+            }
+
             OnLoad(this, EventArgs.Empty);
         }
 
         private void OnLoad(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            sortorder = SortOrder.Ascending;
-            sortcolumn = 0;
+            _sortOrder = SortOrder.Ascending;
+            _sortColumn = 0;
             LangComboBox.SelectedIndex = 0;
             Lang = 0;
-            cliloc.Entries.Sort(new StringList.NumberComparer(false));
-            source.DataSource = cliloc.Entries;
-            dataGridView1.DataSource = source;
+            _cliloc.Entries.Sort(new StringList.NumberComparer(false));
+            _source.DataSource = _cliloc.Entries;
+            dataGridView1.DataSource = _source;
             if (dataGridView1.Columns.Count > 0)
             {
                 dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
@@ -100,17 +99,20 @@ namespace FiddlerControls
                 dataGridView1.Columns[2].ReadOnly = true;
             }
             dataGridView1.Invalidate();
-            if (Files.GetFilePath("cliloc.custom1") != null)
-                LangComboBox.Items[2] = String.Format("Custom 1 ({0})", Path.GetExtension(Files.GetFilePath("cliloc.custom1")));
-            else
-                LangComboBox.Items[2] = "Custom 1";
-            if (Files.GetFilePath("cliloc.custom2") != null)
-                LangComboBox.Items[3] = String.Format("Custom 2 ({0})", Path.GetExtension(Files.GetFilePath("cliloc.custom2")));
-            else
-                LangComboBox.Items[3] = "Custom 2";
-            if (!Loaded)
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-            Loaded = true;
+            LangComboBox.Items[2] = Files.GetFilePath("cliloc.custom1") != null
+                ? $"Custom 1 ({Path.GetExtension(Files.GetFilePath("cliloc.custom1"))})"
+                : "Custom 1";
+
+            LangComboBox.Items[3] = Files.GetFilePath("cliloc.custom2") != null
+                ? $"Custom 2 ({Path.GetExtension(Files.GetFilePath("cliloc.custom2"))})"
+                : "Custom 2";
+
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
+            _loaded = true;
 
             Cursor.Current = Cursors.Default;
         }
@@ -122,63 +124,75 @@ namespace FiddlerControls
 
         private void TestCustomLang(string what)
         {
-            if (Files.GetFilePath(what) == null)
+            if (Files.GetFilePath(what) != null)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose Cliloc file to open";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "cliloc files (cliloc.*)|cliloc.*";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose Cliloc file to open";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "cliloc files (cliloc.*)|cliloc.*";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Files.SetMulPath(dialog.FileName, what);
-                        LangComboBox.BeginUpdate();
-                        if (what == "cliloc.custom1")
-                            LangComboBox.Items[2] = String.Format("Custom 1 ({0})", Path.GetExtension(dialog.FileName));
-                        else
-                            LangComboBox.Items[3] = String.Format("Custom 2 ({0})", Path.GetExtension(dialog.FileName));
-                        LangComboBox.EndUpdate();
-                    }
+                    return;
                 }
+
+                Files.SetMulPath(dialog.FileName, what);
+                LangComboBox.BeginUpdate();
+                if (what == "cliloc.custom1")
+                {
+                    LangComboBox.Items[2] = $"Custom 1 ({Path.GetExtension(dialog.FileName)})";
+                }
+                else
+                {
+                    LangComboBox.Items[3] = $"Custom 2 ({Path.GetExtension(dialog.FileName)})";
+                }
+
+                LangComboBox.EndUpdate();
             }
         }
 
-        private void onLangChange(object sender, EventArgs e)
+        private void OnLangChange(object sender, EventArgs e)
         {
-            if (LangComboBox.SelectedIndex != Lang)
+            if (LangComboBox.SelectedIndex == Lang)
             {
-                Lang = LangComboBox.SelectedIndex;
-                sortorder = SortOrder.Ascending;
-                sortcolumn = 0;
-                cliloc.Entries.Sort(new StringList.NumberComparer(false));
-                source.DataSource = cliloc.Entries;
-                if (dataGridView1.Columns.Count > 0)
-                {
-                    dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
-                    dataGridView1.Columns[0].Width = 60;
-                    dataGridView1.Columns[1].HeaderCell.SortGlyphDirection = SortOrder.None;
-                    dataGridView1.Columns[2].HeaderCell.SortGlyphDirection = SortOrder.None;
-                    dataGridView1.Columns[2].Width = 60;
-                    dataGridView1.Columns[2].ReadOnly = true;
-                }
-                dataGridView1.Invalidate();
+                return;
             }
+
+            Lang = LangComboBox.SelectedIndex;
+            _sortOrder = SortOrder.Ascending;
+            _sortColumn = 0;
+            _cliloc.Entries.Sort(new StringList.NumberComparer(false));
+            _source.DataSource = _cliloc.Entries;
+            if (dataGridView1.Columns.Count > 0)
+            {
+                dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                dataGridView1.Columns[0].Width = 60;
+                dataGridView1.Columns[1].HeaderCell.SortGlyphDirection = SortOrder.None;
+                dataGridView1.Columns[2].HeaderCell.SortGlyphDirection = SortOrder.None;
+                dataGridView1.Columns[2].Width = 60;
+                dataGridView1.Columns[2].ReadOnly = true;
+            }
+            dataGridView1.Invalidate();
         }
 
         private void GotoNr(object sender, EventArgs e)
         {
-            int nr;
-            if (Int32.TryParse(GotoEntry.Text.ToString(), NumberStyles.Integer, null, out nr))
+            if (int.TryParse(GotoEntry.Text, NumberStyles.Integer, null, out int nr))
             {
                 for (int i = 0; i < dataGridView1.Rows.Count; ++i)
                 {
-                    if ((int)dataGridView1.Rows[i].Cells[0].Value == nr)
+                    if ((int)dataGridView1.Rows[i].Cells[0].Value != nr)
                     {
-                        dataGridView1.Rows[i].Selected = true;
-                        dataGridView1.FirstDisplayedScrollingRowIndex = i;
-                        return;
+                        continue;
                     }
+
+                    dataGridView1.Rows[i].Selected = true;
+                    dataGridView1.FirstDisplayedScrollingRowIndex = i;
+                    return;
                 }
             }
             MessageBox.Show(
@@ -191,15 +205,17 @@ namespace FiddlerControls
 
         private void FindEntryClick(object sender, EventArgs e)
         {
-            Regex regex = new Regex(@FindEntry.Text.ToString(), RegexOptions.IgnoreCase);
-            for (int i = (dataGridView1.Rows.GetFirstRow(DataGridViewElementStates.Selected) + 1); i < dataGridView1.Rows.Count; ++i)
+            Regex regex = new Regex(FindEntry.Text, RegexOptions.IgnoreCase);
+            for (int i = dataGridView1.Rows.GetFirstRow(DataGridViewElementStates.Selected) + 1; i < dataGridView1.Rows.Count; ++i)
             {
-                if (regex.IsMatch(dataGridView1.Rows[i].Cells[1].Value.ToString()))
+                if (!regex.IsMatch(dataGridView1.Rows[i].Cells[1].Value.ToString()))
                 {
-                    dataGridView1.Rows[i].Selected = true;
-                    dataGridView1.FirstDisplayedScrollingRowIndex = i;
-                    return;
+                    continue;
                 }
+
+                dataGridView1.Rows[i].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = i;
+                return;
             }
             MessageBox.Show(
                 "Entry not found.",
@@ -212,22 +228,29 @@ namespace FiddlerControls
         private void OnClickSave(object sender, EventArgs e)
         {
             dataGridView1.CancelEdit();
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName;
-            if (cliloc.Language == "custom1")
-                FileName = Path.Combine(path, String.Format("Cliloc{0}", Path.GetExtension(Files.GetFilePath("cliloc.custom1"))));
-            else if (cliloc.Language == "custom2")
-                FileName = Path.Combine(path, String.Format("Cliloc{0}", Path.GetExtension(Files.GetFilePath("cliloc.custom2"))));
+
+            string path = Options.OutputPath;
+            string fileName;
+
+            if (_cliloc.Language == "custom1")
+            {
+                fileName = Path.Combine(path, $"Cliloc{Path.GetExtension(Files.GetFilePath("cliloc.custom1"))}");
+            }
             else
-                FileName = Path.Combine(path, String.Format("Cliloc.{0}", cliloc.Language));
-            cliloc.SaveStringList(FileName);
-            dataGridView1.Columns[sortcolumn].HeaderCell.SortGlyphDirection = SortOrder.None;
+            {
+                fileName = _cliloc.Language == "custom2"
+                    ? Path.Combine(path, $"Cliloc{Path.GetExtension(Files.GetFilePath("cliloc.custom2"))}")
+                    : Path.Combine(path, $"Cliloc.{_cliloc.Language}");
+            }
+
+            _cliloc.SaveStringList(fileName);
+            dataGridView1.Columns[_sortColumn].HeaderCell.SortGlyphDirection = SortOrder.None;
             dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
-            sortcolumn = 0;
-            sortorder = SortOrder.Ascending;
+            _sortColumn = 0;
+            _sortOrder = SortOrder.Ascending;
             dataGridView1.Invalidate();
             MessageBox.Show(
-                String.Format("CliLoc saved to {0}", FileName),
+                $"CliLoc saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -235,14 +258,16 @@ namespace FiddlerControls
             Options.ChangedUltimaClass["CliLoc"] = false;
         }
 
-        private void onCell_dbClick(object sender, DataGridViewCellEventArgs e)
+        private void OnCell_dbClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex < 0)
             {
-                int CellNr = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
-                string CellText = (string)dataGridView1.Rows[e.RowIndex].Cells[1].Value;
-                new ClilocDetail(CellNr, CellText).Show();
+                return;
             }
+
+            int cellNr = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
+            string cellText = (string)dataGridView1.Rows[e.RowIndex].Cells[1].Value;
+            new ClilocDetail(cellNr, cellText).Show();
         }
 
         private void OnClick_AddEntry(object sender, EventArgs e)
@@ -252,37 +277,43 @@ namespace FiddlerControls
 
         private void OnClick_DeleteEntry(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count > 0)
+            if (dataGridView1.SelectedCells.Count <= 0)
             {
-                cliloc.Entries.RemoveAt(dataGridView1.SelectedCells[0].OwningRow.Index);
-                dataGridView1.Invalidate();
-                Options.ChangedUltimaClass["CliLoc"] = true;
+                return;
             }
+
+            _cliloc.Entries.RemoveAt(dataGridView1.SelectedCells[0].OwningRow.Index);
+            dataGridView1.Invalidate();
+            Options.ChangedUltimaClass["CliLoc"] = true;
         }
 
         private void OnHeaderClicked(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (sortcolumn == e.ColumnIndex)
+            if (_sortColumn == e.ColumnIndex)
             {
-                if (sortorder == SortOrder.Ascending)
-                    sortorder = SortOrder.Descending;
-                else
-                    sortorder = SortOrder.Ascending;
+                _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
             }
             else
             {
-                sortorder = SortOrder.Ascending;
-                dataGridView1.Columns[sortcolumn].HeaderCell.SortGlyphDirection = SortOrder.None;
+                _sortOrder = SortOrder.Ascending;
+                dataGridView1.Columns[_sortColumn].HeaderCell.SortGlyphDirection = SortOrder.None;
             }
-            dataGridView1.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortorder;
-            sortcolumn = e.ColumnIndex;
 
-            if (e.ColumnIndex == 0)
-                cliloc.Entries.Sort(new StringList.NumberComparer(sortorder == SortOrder.Descending));
-            else if (e.ColumnIndex == 1)
-                cliloc.Entries.Sort(new StringList.TextComparer(sortorder == SortOrder.Descending));
-            else
-                cliloc.Entries.Sort(new StringList.FlagComparer(sortorder == SortOrder.Descending));
+            dataGridView1.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = _sortOrder;
+            _sortColumn = e.ColumnIndex;
+
+            switch (e.ColumnIndex)
+            {
+                case 0:
+                    _cliloc.Entries.Sort(new StringList.NumberComparer(_sortOrder == SortOrder.Descending));
+                    break;
+                case 1:
+                    _cliloc.Entries.Sort(new StringList.TextComparer(_sortOrder == SortOrder.Descending));
+                    break;
+                default:
+                    _cliloc.Entries.Sort(new StringList.FlagComparer(_sortOrder == SortOrder.Descending));
+                    break;
+            }
 
             dataGridView1.Invalidate();
         }
@@ -290,68 +321,72 @@ namespace FiddlerControls
         private void OnCLick_CopyClilocNumber(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0)
+            {
                 Clipboard.SetDataObject(
                     ((int)dataGridView1.SelectedCells[0].OwningRow.Cells[0].Value).ToString(), true);
+            }
         }
 
         private void OnCLick_CopyClilocText(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0)
+            {
                 Clipboard.SetDataObject(
                     (string)dataGridView1.SelectedCells[0].OwningRow.Cells[1].Value, true);
+            }
         }
-
-        #region Public Interface for ClilocAdd
 
         public static void SaveEntry(int number, string text)
         {
-            for (int i = 0; i < cliloc.Entries.Count; ++i)
+            for (int i = 0; i < _cliloc.Entries.Count; ++i)
             {
-                if (((StringEntry)cliloc.Entries[i]).Number == number)
+                if (_cliloc.Entries[i].Number != number)
                 {
-                    ((StringEntry)cliloc.Entries[i]).Text = text;
-                    ((StringEntry)cliloc.Entries[i]).Flag = StringEntry.CliLocFlag.Modified;
-                    refmarker.dataGridView1.Invalidate();
-                    refmarker.dataGridView1.Rows[i].Selected = true;
-                    refmarker.dataGridView1.FirstDisplayedScrollingRowIndex = i;
-
-                    Options.ChangedUltimaClass["CliLoc"] = true;
-                    return;
+                    continue;
                 }
+
+                _cliloc.Entries[i].Text = text;
+                _cliloc.Entries[i].Flag = StringEntry.CliLocFlag.Modified;
+                _refMarker.dataGridView1.Invalidate();
+                _refMarker.dataGridView1.Rows[i].Selected = true;
+                _refMarker.dataGridView1.FirstDisplayedScrollingRowIndex = i;
+
+                Options.ChangedUltimaClass["CliLoc"] = true;
+                return;
             }
         }
 
         public static bool IsNumberFree(int number)
         {
-            foreach (StringEntry entry in cliloc.Entries)
+            foreach (StringEntry entry in _cliloc.Entries)
             {
                 if (entry.Number == number)
+                {
                     return false;
+                }
             }
             return true;
         }
 
-
         public static void AddEntry(int number)
         {
             int index = 0;
-            foreach (StringEntry entry in cliloc.Entries)
+            foreach (StringEntry entry in _cliloc.Entries)
             {
                 if (entry.Number > number)
                 {
-                    cliloc.Entries.Insert(index, new StringEntry(number, "", StringEntry.CliLocFlag.Custom));
-                    refmarker.dataGridView1.Invalidate();
-                    refmarker.dataGridView1.Rows[index].Selected = true;
-                    refmarker.dataGridView1.FirstDisplayedScrollingRowIndex = index;
+                    _cliloc.Entries.Insert(index, new StringEntry(number, "", StringEntry.CliLocFlag.Custom));
+                    _refMarker.dataGridView1.Invalidate();
+                    _refMarker.dataGridView1.Rows[index].Selected = true;
+                    _refMarker.dataGridView1.FirstDisplayedScrollingRowIndex = index;
                     Options.ChangedUltimaClass["CliLoc"] = true;
                     return;
                 }
                 ++index;
             }
         }
-        #endregion
 
-        private void FindEntry_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        private static void FindEntry_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             //if (e.KeyData == Keys.Control) || (e.Ke Keys.Alt | Keys.Tab | Keys.a))
             e.IsInputKey = true;
@@ -359,49 +394,59 @@ namespace FiddlerControls
 
         private void OnClickExportCSV(object sender, EventArgs e)
         {
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, "CliLoc.csv");
-            using (StreamWriter Tex = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite)))
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, "CliLoc.csv");
+            using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)))
             {
-                Tex.WriteLine("Number;Text;Flag");
-                foreach (StringEntry entry in cliloc.Entries)
+                tex.WriteLine("Number;Text;Flag");
+                foreach (StringEntry entry in _cliloc.Entries)
                 {
-                    Tex.WriteLine(String.Format("{0};{1};{2}", entry.Number, entry.Text, entry.Flag));
+                    tex.WriteLine("{0};{1};{2}", entry.Number, entry.Text, entry.Flag);
                 }
             }
-            MessageBox.Show(String.Format("CliLoc saved to {0}", FileName), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"CliLoc saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickImportCSV(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            dialog.Title = "Choose csv file to import";
-            dialog.CheckFileExists = true;
-            dialog.Filter = "csv files (*.csv)|*.csv";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Choose csv file to import",
+                CheckFileExists = true,
+                Filter = "csv files (*.csv)|*.csv"
+            };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 using (StreamReader sr = new StreamReader(dialog.FileName))
                 {
                     string line;
-                    var count = 0;
+                    int count = 0;
                     while ((line = sr.ReadLine()) != null)
                     {
                         if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                        {
                             continue;
+                        }
+
                         if (line.StartsWith("Number;"))
+                        {
                             continue;
+                        }
+
                         try
                         {
                             string[] split = line.Split(';');
                             if (split.Length < 3)
+                            {
                                 continue;
+                            }
 
                             int id = int.Parse(split[0].Trim());
                             string text = split[1].Trim();
 
                             int index = 0;
-                            foreach (StringEntry entry in cliloc.Entries)
+                            foreach (StringEntry entry in _cliloc.Entries)
                             {
                                 if (entry.Number == id)
                                 {
@@ -413,9 +458,10 @@ namespace FiddlerControls
                                     }
                                     break;
                                 }
-                                else if (entry.Number > id)
+
+                                if (entry.Number > id)
                                 {
-                                    cliloc.Entries.Insert(index, new StringEntry(id, text, StringEntry.CliLocFlag.Custom));
+                                    _cliloc.Entries.Insert(index, new StringEntry(id, text, StringEntry.CliLocFlag.Custom));
                                     count++;
                                     break;
                                 }
@@ -424,7 +470,10 @@ namespace FiddlerControls
 
                             dataGridView1.Invalidate();
                         }
-                        catch { }
+                        catch
+                        {
+                            // ignored
+                        }
                     }
 
                     if (count > 0)
@@ -441,29 +490,29 @@ namespace FiddlerControls
             dialog.Dispose();
         }
 
-        private void tileDataToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TileDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int count = 0;
             for (int index = 0; index < TileData.ItemTable.Length; index++)
             {
-                var itemData = TileData.ItemTable[index];
-                var baseClilocId = GetCliLocBaseId(index);
-                var id = index + baseClilocId;
+                ItemData itemData = TileData.ItemTable[index];
+                int baseClilocId = GetCliLocBaseId(index);
+                int id = index + baseClilocId;
 
                 if (string.IsNullOrWhiteSpace(itemData.Name))
                 {
-                    var i = cliloc.Entries.FindIndex(x => x.Number == id);
+                    int i = _cliloc.Entries.FindIndex(x => x.Number == id);
                     if (i >= 0)
                     {
                         //Debug.WriteLine($"Removing {id} at {i} for {itemData.Name}.");
-                        cliloc.Entries.RemoveAt(i);
+                        _cliloc.Entries.RemoveAt(i);
                         count++;
                     }
                 }
                 else
                 {
                     int entryIndex = 0;
-                    foreach (StringEntry entry in cliloc.Entries)
+                    foreach (StringEntry entry in _cliloc.Entries)
                     {
                         if (entry.Number == id)
                         {
@@ -476,10 +525,11 @@ namespace FiddlerControls
                             }
                             break;
                         }
-                        else if (entry.Number > id)
+
+                        if (entry.Number > id)
                         {
                             //Debug.WriteLine($"Adding {id} before {entry.Number} for {itemData.Name}.");
-                            cliloc.Entries.Insert(entryIndex, new StringEntry(id, itemData.Name, StringEntry.CliLocFlag.Modified));
+                            _cliloc.Entries.Insert(entryIndex, new StringEntry(id, itemData.Name, StringEntry.CliLocFlag.Modified));
                             count++;
                             break;
                         }
@@ -507,7 +557,9 @@ namespace FiddlerControls
                 if (tileId >= 0x8000u)
                 {
                     if (tileId < 0x10000)
+                    {
                         return 1084024;
+                    }
                 }
                 else
                 {
@@ -540,22 +592,26 @@ namespace FiddlerControls
 
         private void GotoEntry_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                this.GotoNr(sender, e);
-                e.SuppressKeyPress = true;
-                e.Handled = true;
+                return;
             }
+
+            GotoNr(sender, e);
+            e.SuppressKeyPress = true;
+            e.Handled = true;
         }
 
         private void FindEntry_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                this.FindEntryClick(sender, e);
-                e.SuppressKeyPress = true;
-                e.Handled = true;
+                return;
             }
+
+            FindEntryClick(sender, e);
+            e.SuppressKeyPress = true;
+            e.Handled = true;
         }
     }
 }

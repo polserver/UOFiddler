@@ -25,15 +25,15 @@ namespace FiddlerControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            pictureBox.MouseWheel += new MouseEventHandler(OnMouseWheel);
-            refmarker = this;
+            pictureBox.MouseWheel += OnMouseWheel;
+            _refMarker = this;
         }
 
-        private const int ITEMHEIGHT = 20;
-        private int selected = 0;
-        private bool Loaded = false;
-        private int row;
-        private Hues refmarker;
+        private const int ItemHeight = 20;
+        private int _selected;
+        private bool _loaded;
+        private int _row;
+        private readonly Hues _refMarker;
 
         /// <summary>
         /// Sets Selected Hue
@@ -42,14 +42,18 @@ namespace FiddlerControls
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Selected
         {
-            get { return selected; }
+            get => _selected;
             set
             {
-                selected = value;
-                if (Loaded)
+                _selected = value;
+                if (!_loaded)
                 {
-                    if (Ultima.Hues.List.Length > 0)
-                        pictureBox.Invalidate();
+                    return;
+                }
+
+                if (Ultima.Hues.List.Length > 0)
+                {
+                    pictureBox.Invalidate();
                 }
             }
         }
@@ -59,36 +63,41 @@ namespace FiddlerControls
         /// </summary>
         private void Reload()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
-            selected = 0;
+            }
+
+            _selected = 0;
             OnLoad(this, EventArgs.Empty);
         }
 
         private void OnLoad(object sender, EventArgs e)
         {
             Options.LoadedUltimaClass["Hues"] = true;
-            if ((Parent.GetType() == typeof(HuePopUpItem)) || (Parent.GetType() == typeof(HuePopUp)) || (Parent.GetType() == typeof(HuePopUpDress)))
+            if (Parent.GetType() == typeof(HuePopUpItem) || Parent.GetType() == typeof(HuePopUp) || Parent.GetType() == typeof(HuePopUpDress))
             {
-                pictureBox.MouseDoubleClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseDoubleClick);
+                pictureBox.MouseDoubleClick -= OnMouseDoubleClick;
                 pictureBox.ContextMenu = new ContextMenu();
             }
-
 
             vScrollBar.Maximum = Ultima.Hues.List.Length;
             vScrollBar.Minimum = 0;
             vScrollBar.Value = 0;
             vScrollBar.SmallChange = 1;
             vScrollBar.LargeChange = 10;
-            if (selected > 0)
-                vScrollBar.Value = selected;
-            pictureBox.Invalidate();
-            if (!Loaded)
+            if (_selected > 0)
             {
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-                FiddlerControls.Events.HueChangeEvent += new FiddlerControls.Events.HueChangeHandler(OnHueChangeEvent);
+                vScrollBar.Value = _selected;
             }
-            Loaded = true;
+
+            pictureBox.Invalidate();
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+                FiddlerControls.Events.HueChangeEvent += OnHueChangeEvent;
+            }
+            _loaded = true;
         }
 
         private void OnFilePathChangeEvent()
@@ -104,41 +113,43 @@ namespace FiddlerControls
         private int GetIndex(int y)
         {
             int value = vScrollBar.Value + y;
-            if (Ultima.Hues.List.Length > value)
-                return value;
-            else
-                return -1;
+            return Ultima.Hues.List.Length > value ? value : -1;
         }
 
-        private void onPaint(object sender, PaintEventArgs e)
+        private void OnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
-            for (int y = 0; y <= row; ++y)
+            for (int y = 0; y <= _row; ++y)
             {
                 int index = GetIndex(y);
                 if (index >= 0)
                 {
-                    Rectangle rect = new Rectangle(0, y * ITEMHEIGHT, 200, ITEMHEIGHT);
-                    if (index == selected)
+                    Rectangle rect = new Rectangle(0, y * ItemHeight, 200, ItemHeight);
+                    if (index == _selected)
+                    {
                         e.Graphics.FillRectangle(SystemBrushes.Highlight, rect);
+                    }
                     else
+                    {
                         e.Graphics.FillRectangle(SystemBrushes.Window, rect);
+                    }
 
-                    float size = ((float)(pictureBox.Width - 200)) / 32;
+                    float size = (float)(pictureBox.Width - 200) / 32;
                     Hue hue = Ultima.Hues.List[index];
-                    Rectangle stringrect = new Rectangle(3, y * ITEMHEIGHT, pictureBox.Width, ITEMHEIGHT);
-                    e.Graphics.DrawString(String.Format("{0,-5} {1,-7} {2}", hue.Index + 1, String.Format("(0x{0:X})", hue.Index + 1), hue.Name), Font, Brushes.Black, stringrect);
+                    Rectangle stringRect = new Rectangle(3, y * ItemHeight, pictureBox.Width, ItemHeight);
+                    e.Graphics.DrawString(
+                        $"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
 
                     for (int i = 0; i < hue.Colors.Length; ++i)
                     {
-                        Rectangle rectangle = new Rectangle(200 + ((int)Math.Round((double)(i * size))), y * ITEMHEIGHT, (int)Math.Round((double)(size + 1f)), ITEMHEIGHT);
+                        Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * ItemHeight, (int)Math.Round(size + 1f), ItemHeight);
                         e.Graphics.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
                     }
                 }
             }
         }
 
-        private void onScroll(object sender, ScrollEventArgs e)
+        private void OnScroll(object sender, ScrollEventArgs e)
         {
             pictureBox.Invalidate();
         }
@@ -165,37 +176,44 @@ namespace FiddlerControls
 
         private void OnResize(object sender, EventArgs e)
         {
-            row = pictureBox.Height / ITEMHEIGHT;
-            if (!Loaded)
+            _row = pictureBox.Height / ItemHeight;
+            if (!_loaded)
+            {
                 return;
+            }
+
             pictureBox.Invalidate();
         }
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
             pictureBox.Focus();
-            Point m = PointToClient(Control.MousePosition);
-            int index = GetIndex(m.Y / ITEMHEIGHT);
+            Point m = PointToClient(MousePosition);
+            int index = GetIndex(m.Y / ItemHeight);
             if (index >= 0)
+            {
                 Selected = index;
+            }
         }
 
         private void OnMouseDoubleClick(object sender, MouseEventArgs e)
         {
-            Point m = PointToClient(Control.MousePosition);
-            int index = GetIndex(m.Y / ITEMHEIGHT);
+            Point m = PointToClient(MousePosition);
+            int index = GetIndex(m.Y / ItemHeight);
             if (index >= 0)
+            {
                 Selected = index;
-            new HueEdit(index, refmarker).Show();
+            }
+
+            new HueEdit(index, _refMarker).Show();
         }
 
-        #region ContextMenu
         private void OnClickSave(object sender, EventArgs e)
         {
-            string path = FiddlerControls.Options.OutputPath;
+            string path = Options.OutputPath;
             Ultima.Hues.Save(path);
             MessageBox.Show(
-                String.Format("Hue saved to {0}", path),
+                $"Hue saved to {path}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -205,50 +223,51 @@ namespace FiddlerControls
 
         private void OnTextChangedReplace(object sender, EventArgs e)
         {
-            int index;
-            if (Utils.ConvertStringToInt(ReplaceText.Text, out index, 1, 3000))
-                ReplaceText.ForeColor = Color.Black;
-            else
-                ReplaceText.ForeColor = Color.Red;
+            ReplaceText.ForeColor = Utils.ConvertStringToInt(ReplaceText.Text, out _, 1, 3000) ? Color.Black : Color.Red;
         }
 
         private void OnKeyDownReplace(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                int index;
-                if (Utils.ConvertStringToInt(ReplaceText.Text, out index, 1, 3000))
-                {
-                    contextMenuStrip1.Close();
-                    Ultima.Hues.List[selected] = Ultima.Hues.List[index - 1];
-                    pictureBox.Invalidate();
-                }
+                return;
             }
+
+            if (!Utils.ConvertStringToInt(ReplaceText.Text, out int index, 1, 3000))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            Ultima.Hues.List[_selected] = Ultima.Hues.List[index - 1];
+            pictureBox.Invalidate();
         }
 
         private void OnExport(object sender, EventArgs e)
         {
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Hue {0}.txt", selected + 1));
-            Ultima.Hues.List[selected].Export(FileName);
-            MessageBox.Show(String.Format("Hue saved to {0}", FileName), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Hue {_selected + 1}.txt");
+            Ultima.Hues.List[_selected].Export(fileName);
+            MessageBox.Show($"Hue saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnImport(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            dialog.Title = "Choose txt file to import";
-            dialog.CheckFileExists = true;
-            dialog.Filter = "txt files (*.txt)|*.txt";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Choose txt file to import",
+                CheckFileExists = true,
+                Filter = "txt files (*.txt)|*.txt"
+            };
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Ultima.Hues.List[selected].Import(dialog.FileName);
+                Ultima.Hues.List[_selected].Import(dialog.FileName);
                 Options.ChangedUltimaClass["Hues"] = true;
                 FiddlerControls.Events.FireHueChangeEvent();
             }
         }
-        #endregion
 
         /// <summary>
         /// Print a nice border
@@ -257,11 +276,10 @@ namespace FiddlerControls
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            int borderWidth = 1;
+            const int borderWidth = 1;
 
             Color borderColor = VisualStyleInformation.TextControlBorder;
-            if (borderColor == null)
-                borderColor = Color.LightBlue;
+
             ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle, borderColor,
                       borderWidth, ButtonBorderStyle.Solid, borderColor, borderWidth,
                       ButtonBorderStyle.Solid, borderColor, borderWidth, ButtonBorderStyle.Solid,

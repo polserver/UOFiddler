@@ -18,7 +18,7 @@ namespace Ultima
                 throw new ArgumentException("Out of range.");
             }
 
-            var buffer = new char[length];
+            char[] buffer = new char[length];
             reader.Read(buffer, 0, length);
             return new string(buffer);
         }
@@ -35,7 +35,7 @@ namespace Ultima
                 throw new ArgumentNullException(nameof(data));
             }
 
-            var bytes = Encoding.ASCII.GetBytes(data);
+            byte[] bytes = Encoding.ASCII.GetBytes(data);
             writer.Write(bytes);
         }
     }

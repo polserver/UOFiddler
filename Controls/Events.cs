@@ -31,120 +31,130 @@ namespace FiddlerControls
         /// Fired when map diff file usage is switched
         /// </summary>
         public static event MapDiffChangeHandler MapDiffChangeEvent;
+
         /// <summary>
         /// Fired when map names where changed
         /// </summary>
         public static event MapNameChangeHandler MapNameChangeEvent;
+
         /// <summary>
         /// Fired when map size has changed
         /// </summary>
         public static event MapSizeChangeHandler MapSizeChangeEvent;
+
         /// <summary>
         /// Fired on reload files
         /// </summary>
         public static event FilePathChangeHandler FilePathChangeEvent;
+
         /// <summary>
         /// Fired when Multi Id changed
         /// </summary>
         public static event MultiChangeHandler MultiChangeEvent;
+
         /// <summary>
         /// Fired when Hues changed
         /// </summary>
         public static event HueChangeHandler HueChangeEvent;
+
         /// <summary>
         /// Fired when ArtItems changed
         /// </summary>
         public static event ItemChangeHandler ItemChangeEvent;
+
         /// <summary>
         /// Fired when LandTile changed
         /// </summary>
         public static event LandTileChangeHandler LandTileChangeEvent;
+
         /// <summary>
         /// Fired when Texture changed
         /// </summary>
         public static event TextureChangeHandler TextureChangeEvent;
+
         /// <summary>
         /// Fired when Gump changed
         /// </summary>
         public static event GumpChangeHandler GumpChangeEvent;
+
         /// <summary>
         /// Fired when Tiledata changed
         /// </summary>
         public static event TileDataChangeHandler TileDataChangeEvent;
+
         /// <summary>
         /// Fired when AlwaysOnTop changed
         /// </summary>
         public static event AlwaysOnTopChangeHandler AlwaysOnTopChangeEvent;
+
         /// <summary>
         /// Fired when Progressbar should be changed
         /// </summary>
         public static event ProgressChangeHandler ProgressChangeEvent;
 
-
         public static void FireMapDiffChangeEvent()
         {
-            if (MapDiffChangeEvent != null)
-                MapDiffChangeEvent();
+            MapDiffChangeEvent?.Invoke();
         }
+
         public static void FireMapNameChangeEvent()
         {
-            if (MapNameChangeEvent != null)
-                MapNameChangeEvent();
+            MapNameChangeEvent?.Invoke();
         }
+
         public static void FireMapSizeChangeEvent()
         {
-            if (MapSizeChangeEvent != null)
-                MapSizeChangeEvent();
+            MapSizeChangeEvent?.Invoke();
         }
+
         public static void FireFilePathChangeEvent()
         {
-            if (FilePathChangeEvent != null)
-                FilePathChangeEvent();
+            FilePathChangeEvent?.Invoke();
         }
+
         public static void FireMultiChangeEvent(object sender, int id)
         {
-            if (MultiChangeEvent != null)
-                MultiChangeEvent(sender, id);
+            MultiChangeEvent?.Invoke(sender, id);
         }
+
         public static void FireHueChangeEvent()
         {
-            if (HueChangeEvent != null)
-                HueChangeEvent();
+            HueChangeEvent?.Invoke();
         }
+
         public static void FireItemChangeEvent(object sender, int id)
         {
-            if (ItemChangeEvent != null)
-                ItemChangeEvent(sender, id);
+            ItemChangeEvent?.Invoke(sender, id);
         }
+
         public static void FireLandTileChangeEvent(object sender, int id)
         {
-            if (LandTileChangeEvent != null)
-                LandTileChangeEvent(sender, id);
+            LandTileChangeEvent?.Invoke(sender, id);
         }
+
         public static void FireTextureChangeEvent(object sender, int id)
         {
-            if (TextureChangeEvent != null)
-                TextureChangeEvent(sender, id);
+            TextureChangeEvent?.Invoke(sender, id);
         }
+
         public static void FireGumpChangeEvent(object sender, int id)
         {
-            if (GumpChangeEvent != null)
-                GumpChangeEvent(sender, id);
+            GumpChangeEvent?.Invoke(sender, id);
         }
+
         public static void FireTileDataChangeEvent(object sender, int id)
         {
-            if (TileDataChangeEvent != null)
-                TileDataChangeEvent(sender, id);
+            TileDataChangeEvent?.Invoke(sender, id);
         }
+
         public static void FireAlwaysOnTopChangeEvent(bool value)
         {
-            if (AlwaysOnTopChangeEvent != null)
-                AlwaysOnTopChangeEvent(value);
+            AlwaysOnTopChangeEvent?.Invoke(value);
         }
+
         public static void FireProgressChangeEvent()
         {
-            if (ProgressChangeEvent != null)
-                ProgressChangeEvent();
+            ProgressChangeEvent?.Invoke();
         }
     }
 }

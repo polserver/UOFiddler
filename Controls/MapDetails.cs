@@ -9,7 +9,6 @@
  *
  ***************************************************************************/
 
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Ultima;
@@ -21,26 +20,21 @@ namespace FiddlerControls
         public MapDetails(Ultima.Map currmap, Point point)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
-            this.TopMost = true;
+            Icon = Options.GetFiddlerIcon();
+            TopMost = true;
             Tile currtile = currmap.Tiles.GetLandTile(point.X, point.Y);
-            richTextBox.AppendText(String.Format("X: {0} Y: {1}\n\n", point.X, point.Y));
+            richTextBox.AppendText($"X: {point.X} Y: {point.Y}\n\n");
             richTextBox.AppendText("LandTile:\n");
-            richTextBox.AppendText(String.Format("{0}: 0x{1:X} Altitute: {2}\n\n",
-                                                 Ultima.TileData.LandTable[currtile.ID].Name,
-                                                 currtile.ID,
-                                                 currtile.Z));
+            richTextBox.AppendText(
+                $"{TileData.LandTable[currtile.Id].Name}: 0x{currtile.Id:X} Altitute: {currtile.Z}\n\n");
             HuedTile[] currStatics = currmap.Tiles.GetStaticTiles(point.X, point.Y);
             richTextBox.AppendText("Statics:\n");
 
             foreach (HuedTile currstatic in currStatics)
             {
-                ushort id = (ushort)currstatic.ID;
-                richTextBox.AppendText(String.Format("{0}: 0x{1:X} Hue: {2} Altitute: {3}\n",
-                                                     Ultima.TileData.ItemTable[id].Name,
-                                                     id,
-                                                     currstatic.Hue,
-                                                     currstatic.Z));
+                ushort id = currstatic.Id;
+                richTextBox.AppendText(
+                    $"{TileData.ItemTable[id].Name}: 0x{id:X} Hue: {currstatic.Hue} Altitute: {currstatic.Z}\n");
             }
         }
     }

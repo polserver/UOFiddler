@@ -23,7 +23,7 @@ namespace UoFiddler
         public PathSettings()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = FiddlerControls.Options.GetFiddlerIcon();
             propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
             TextBoxRoot.Text = Files.RootDir;
         }
@@ -37,7 +37,6 @@ namespace UoFiddler
             propertyGrid1.Invalidate();
             propertyGrid1.Update();
             TextBoxRoot.Text = Files.RootDir;
-
         }
 
         private void OnClickManual(object sender, EventArgs e)
@@ -46,23 +45,12 @@ namespace UoFiddler
             {
                 dialog.Description = "Select directory containing the client files";
                 dialog.ShowNewFolderButton = false;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    Files.SetMulPath(dialog.SelectedPath);
-                    propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-                    propertyGrid1.Invalidate();
-                    propertyGrid1.Update();
-                    TextBoxRoot.Text = Files.RootDir;
-                    Files.CheckForNewMapSize();
+                    return;
                 }
-            }
-        }
 
-        private void onKeyDownDir(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                Files.SetMulPath(TextBoxRoot.Text);
+                Files.SetMulPath(dialog.SelectedPath);
                 propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
                 propertyGrid1.Invalidate();
                 propertyGrid1.Update();
@@ -70,10 +58,26 @@ namespace UoFiddler
                 Files.CheckForNewMapSize();
             }
         }
+
+        private void OnKeyDownDir(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            Files.SetMulPath(TextBoxRoot.Text);
+            propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
+            propertyGrid1.Invalidate();
+            propertyGrid1.Update();
+            TextBoxRoot.Text = Files.RootDir;
+            Files.CheckForNewMapSize();
+        }
     }
-    class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
+
+    internal class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
     {
-        IDictionary _dictionary;
+        private readonly IDictionary _dictionary;
 
         public DictionaryPropertyGridAdapter(IDictionary d)
         {
@@ -100,7 +104,7 @@ namespace UoFiddler
             return TypeDescriptor.GetEvents(this, attributes, true);
         }
 
-        EventDescriptorCollection System.ComponentModel.ICustomTypeDescriptor.GetEvents()
+        EventDescriptorCollection ICustomTypeDescriptor.GetEvents()
         {
             return TypeDescriptor.GetEvents(this, true);
         }
@@ -131,7 +135,7 @@ namespace UoFiddler
         }
 
         PropertyDescriptorCollection
-            System.ComponentModel.ICustomTypeDescriptor.GetProperties()
+            ICustomTypeDescriptor.GetProperties()
         {
             return ((ICustomTypeDescriptor)this).GetProperties(new Attribute[0]);
         }
@@ -150,10 +154,10 @@ namespace UoFiddler
         }
     }
 
-    class DictionaryPropertyDescriptor : PropertyDescriptor
+    internal class DictionaryPropertyDescriptor : PropertyDescriptor
     {
-        IDictionary _dictionary;
-        object _key;
+        private readonly IDictionary _dictionary;
+        private readonly object _key;
 
         internal DictionaryPropertyDescriptor(IDictionary d, object key)
             : base(key.ToString(), null)
@@ -162,10 +166,7 @@ namespace UoFiddler
             _key = key;
         }
 
-        public override Type PropertyType
-        {
-            get { return typeof(string); }
-        }
+        public override Type PropertyType => typeof(string);
 
         public override void SetValue(object component, object value)
         {
@@ -177,15 +178,9 @@ namespace UoFiddler
             return _dictionary[_key];
         }
 
-        public override bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public override bool IsReadOnly => false;
 
-        public override Type ComponentType
-        {
-            get { return null; }
-        }
+        public override Type ComponentType => null;
 
         public override bool CanResetValue(object component)
         {
@@ -200,6 +195,5 @@ namespace UoFiddler
         {
             return false;
         }
-
     }
 }

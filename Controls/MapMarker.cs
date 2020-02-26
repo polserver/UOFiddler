@@ -17,34 +17,36 @@ namespace FiddlerControls
 {
     public partial class MapMarker : Form
     {
-        private static Color lastcolor = Color.FromArgb(180, Color.Yellow);
+        private static Color _lastcolor = Color.FromArgb(180, Color.Yellow);
 
-        public MapMarker(int x,int y, int map)
+        public MapMarker(int x, int y, int map)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             numericUpDown1.Value = x;
             numericUpDown2.Value = y;
             comboBox1.Items.AddRange(Options.MapNames);
             comboBox1.SelectedIndex = map;
-            pictureBox1.BackColor = lastcolor;
+            pictureBox1.BackColor = _lastcolor;
         }
 
         private void OnClickColor(object sender, EventArgs e)
         {
             if (colorDialog1.ShowDialog() != DialogResult.Cancel)
-                lastcolor = pictureBox1.BackColor = colorDialog1.Color;
+            {
+                _lastcolor = pictureBox1.BackColor = colorDialog1.Color;
+            }
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            FiddlerControls.Map.AddOverlay(
-                (int)numericUpDown1.Value, 
+            Map.AddOverlay(
+                (int)numericUpDown1.Value,
                 (int)numericUpDown2.Value,
-                comboBox1.SelectedIndex, 
-                pictureBox1.BackColor, 
+                comboBox1.SelectedIndex,
+                pictureBox1.BackColor,
                 textBox1.Text);
-            this.Close();
+            Close();
         }
     }
 }

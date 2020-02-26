@@ -9,44 +9,44 @@ namespace Ultima
 {
     public sealed class Textures
     {
-        private static FileIndex m_FileIndex = new FileIndex("Texidx.mul", "Texmaps.mul", 0x4000, 10);
-        private static Bitmap[] m_Cache = new Bitmap[0x4000];
-        private static bool[] m_Removed = new bool[0x4000];
-        private static Hashtable m_patched = new Hashtable();
+        private static FileIndex _mFileIndex = new FileIndex("Texidx.mul", "Texmaps.mul", 0x4000, 10);
+        private static Bitmap[] _mCache = new Bitmap[0x4000];
+        private static bool[] _mRemoved = new bool[0x4000];
+        private static readonly Hashtable _mPatched = new Hashtable();
 
-        private static byte[] m_StreamBuffer;
+        private static byte[] _mStreamBuffer;
         struct CheckSums
         {
-            public byte[] checksum;
-            public int pos;
-            public int length;
-            public int index;
+            public byte[] Checksum;
+            public int Pos;
+            public int Length;
+            public int Index;
         }
-        private static List<CheckSums> checksums;
+        private static List<CheckSums> _checksums;
 
         /// <summary>
         /// ReReads texmaps
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("Texidx.mul", "Texmaps.mul", 0x4000, 10);
-            m_Cache = new Bitmap[0x4000];
-            m_Removed = new bool[0x4000];
-            m_patched.Clear();
+            _mFileIndex = new FileIndex("Texidx.mul", "Texmaps.mul", 0x4000, 10);
+            _mCache = new Bitmap[0x4000];
+            _mRemoved = new bool[0x4000];
+            _mPatched.Clear();
         }
 
         public static int GetIdxLength()
         {
-            return (int)(m_FileIndex.IdxLength / 12);
+            return (int)(_mFileIndex.IdxLength / 12);
         }
 
         /// <summary>
-        /// Removes Texture <see cref="m_Removed"/>
+        /// Removes Texture <see cref="_mRemoved"/>
         /// </summary>
         /// <param name="index"></param>
         public static void Remove(int index)
         {
-            m_Removed[index] = true;
+            _mRemoved[index] = true;
         }
 
         /// <summary>
@@ -56,10 +56,10 @@ namespace Ultima
         /// <param name="bmp"></param>
         public static void Replace(int index, Bitmap bmp)
         {
-            m_Cache[index] = bmp;
-            m_Removed[index] = false;
-            if (m_patched.Contains(index))
-                m_patched.Remove(index);
+            _mCache[index] = bmp;
+            _mRemoved[index] = false;
+            if (_mPatched.Contains(index))
+                _mPatched.Remove(index);
         }
 
         /// <summary>
@@ -71,11 +71,11 @@ namespace Ultima
         {
             int length, extra;
             bool patched;
-            if (m_Removed[index])
+            if (_mRemoved[index])
                 return false;
-            if (m_Cache[index] != null)
+            if (_mCache[index] != null)
                 return true;
-            bool valid = m_FileIndex.Valid(index, out length, out extra, out patched);
+            bool valid = _mFileIndex.Valid(index, out length, out extra, out patched);
             if ((!valid) || (length == 0))
                 return false;
             return true;
@@ -99,23 +99,23 @@ namespace Ultima
         /// <returns></returns>
         public unsafe static Bitmap GetTexture(int index, out bool patched)
         {
-            if (m_patched.Contains(index))
-                patched = (bool)m_patched[index];
+            if (_mPatched.Contains(index))
+                patched = (bool)_mPatched[index];
             else
                 patched = false;
-            if (m_Removed[index])
+            if (_mRemoved[index])
                 return null;
-            if (m_Cache[index] != null)
-                return m_Cache[index];
+            if (_mCache[index] != null)
+                return _mCache[index];
 
             int length, extra;
-            Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
+            Stream stream = _mFileIndex.Seek(index, out length, out extra, out patched);
             if (stream == null)
                 return null;
             if (length == 0)
                 return null;
             if (patched)
-                m_patched[index] = true;
+                _mPatched[index] = true;
 
             int size = extra == 0 ? 64 : 128;
 
@@ -127,11 +127,11 @@ namespace Ultima
 
             int max = size * size * 2;
 
-            if (m_StreamBuffer == null || m_StreamBuffer.Length < max)
-                m_StreamBuffer = new byte[max];
-            stream.Read(m_StreamBuffer, 0, max);
+            if (_mStreamBuffer == null || _mStreamBuffer.Length < max)
+                _mStreamBuffer = new byte[max];
+            stream.Read(_mStreamBuffer, 0, max);
 
-            fixed (byte* data = m_StreamBuffer)
+            fixed (byte* data = _mStreamBuffer)
             {
                 ushort* bindat = (ushort*)data;
                 for (int y = 0; y < size; ++y, line += delta)
@@ -148,7 +148,7 @@ namespace Ultima
 
             stream.Close();
             if (!Files.CacheData)
-                return m_Cache[index] = bmp;
+                return _mCache[index] = bmp;
             else
                 return bmp;
         }
@@ -157,7 +157,7 @@ namespace Ultima
         {
             string idx = Path.Combine(path, "texidx.mul");
             string mul = Path.Combine(path, "texmaps.mul");
-            checksums = new List<CheckSums>();
+            _checksums = new List<CheckSums>();
             using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
                               fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
@@ -170,15 +170,15 @@ namespace Ultima
                     //StreamWriter Tex = new StreamWriter(new FileStream("d:/texlog.txt", FileMode.Create, FileAccess.ReadWrite));
                     for (int index = 0; index < GetIdxLength(); ++index)
                     {
-                        if (m_Cache[index] == null)
-                            m_Cache[index] = GetTexture(index);
+                        if (_mCache[index] == null)
+                            _mCache[index] = GetTexture(index);
 
-                        Bitmap bmp = m_Cache[index];
-                        if ((bmp == null) || (m_Removed[index]))
+                        Bitmap bmp = _mCache[index];
+                        if ((bmp == null) || (_mRemoved[index]))
                         {
-                            binidx.Write((int)-1); // lookup
-                            binidx.Write((int)0); // length
-                            binidx.Write((int)-1); // extra
+                            binidx.Write(-1); // lookup
+                            binidx.Write(0); // length
+                            binidx.Write(-1); // extra
                         }
                         else
                         {
@@ -186,11 +186,11 @@ namespace Ultima
                             bmp.Save(ms, ImageFormat.Bmp);
                             byte[] checksum = sha.ComputeHash(ms.ToArray());
                             CheckSums sum;
-                            if (compareSaveImages(checksum, out sum))
+                            if (CompareSaveImages(checksum, out sum))
                             {
-                                binidx.Write((int)sum.pos); //lookup
-                                binidx.Write((int)sum.length);
-                                binidx.Write((int)0);
+                                binidx.Write(sum.Pos); //lookup
+                                binidx.Write(sum.Length);
+                                binidx.Write(0);
                                 //Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, (int)sum.pos, (int)sum.length));
                                 //Tex.WriteLine(System.String.Format("0x{0:X4} -> 0x{1:X4}", sum.index, index));
                                 continue;
@@ -202,22 +202,22 @@ namespace Ultima
                             binidx.Write((int)binmul.BaseStream.Position); //lookup
                             int length = (int)binmul.BaseStream.Position;
 
-                            for (int Y = 0; Y < bmp.Height; ++Y, line += delta)
+                            for (int y = 0; y < bmp.Height; ++y, line += delta)
                             {
                                 ushort* cur = line;
-                                for (int X = 0; X < bmp.Width; ++X)
+                                for (int x = 0; x < bmp.Width; ++x)
                                 {
-                                    binmul.Write((ushort)(cur[X] ^ 0x8000));
+                                    binmul.Write((ushort)(cur[x] ^ 0x8000));
                                 }
                             }
                             int start = length;
                             length = (int)binmul.BaseStream.Position - length;
                             binidx.Write(length);
-                            binidx.Write((int)(bmp.Width == 64 ? 0 : 1));
+                            binidx.Write(bmp.Width == 64 ? 0 : 1);
                             bmp.UnlockBits(bd);
-                            CheckSums s = new CheckSums() { pos = start, length = length, checksum = checksum, index = index };
+                            CheckSums s = new CheckSums() { Pos = start, Length = length, Checksum = checksum, Index = index };
                             //Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, start, length));
-                            checksums.Add(s);
+                            _checksums.Add(s);
                         }
                     }
                     memidx.WriteTo(fsidx);
@@ -226,12 +226,12 @@ namespace Ultima
             }
         }
 
-        private static bool compareSaveImages(byte[] newchecksum, out CheckSums sum)
+        private static bool CompareSaveImages(byte[] newchecksum, out CheckSums sum)
         {
             sum = new CheckSums();
-            for (int i = 0; i < checksums.Count; ++i)
+            for (int i = 0; i < _checksums.Count; ++i)
             {
-                byte[] cmp = checksums[i].checksum;
+                byte[] cmp = _checksums[i].Checksum;
                 if (((cmp == null) || (newchecksum == null))
                     || (cmp.Length != newchecksum.Length))
                 {
@@ -248,7 +248,7 @@ namespace Ultima
                 }
                 if (valid)
                 {
-                    sum = checksums[i];
+                    sum = _checksums[i];
                     return true;
                 }
             }

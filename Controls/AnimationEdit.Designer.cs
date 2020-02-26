@@ -254,7 +254,7 @@
             this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Tag = ".bmp";
             this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.onClickExtractImages);
+            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
             // 
             // asTiffToolStripMenuItem
             // 
@@ -262,7 +262,7 @@
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Tag = ".tiff";
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.onClickExtractImages);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
             // 
             // importToolStripMenuItem1
             // 
@@ -316,7 +316,7 @@
             "anim5"});
             this.toolStripComboBox1.Name = "toolStripComboBox1";
             this.toolStripComboBox1.Size = new System.Drawing.Size(121, 25);
-            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.onAnimChanged);
+            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.OnAnimChanged);
             // 
             // progressBar1
             // 
@@ -382,7 +382,7 @@
             this.button4.TabIndex = 25;
             this.button4.Text = "Apply";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.Button4_Click);
             // 
             // label8
             // 
@@ -482,7 +482,7 @@
             this.button3.TabIndex = 17;
             this.button3.Text = "Set";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
             // radioButton6
             // 
@@ -493,7 +493,7 @@
             this.radioButton6.TabIndex = 16;
             this.radioButton6.Text = "BRG";
             this.radioButton6.UseVisualStyleBackColor = true;
-            this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
+            this.radioButton6.CheckedChanged += new System.EventHandler(this.RadioButton6_CheckedChanged);
             // 
             // radioButton5
             // 
@@ -504,7 +504,7 @@
             this.radioButton5.TabIndex = 15;
             this.radioButton5.Text = "BGR";
             this.radioButton5.UseVisualStyleBackColor = true;
-            this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
+            this.radioButton5.CheckedChanged += new System.EventHandler(this.RadioButton5_CheckedChanged);
             // 
             // radioButton4
             // 
@@ -515,7 +515,7 @@
             this.radioButton4.TabIndex = 14;
             this.radioButton4.Text = "GBR";
             this.radioButton4.UseVisualStyleBackColor = true;
-            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.RadioButton4_CheckedChanged);
             // 
             // radioButton3
             // 
@@ -526,7 +526,7 @@
             this.radioButton3.TabIndex = 13;
             this.radioButton3.Text = "GRB";
             this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.RadioButton3_CheckedChanged);
             // 
             // radioButton2
             // 
@@ -537,7 +537,7 @@
             this.radioButton2.TabIndex = 12;
             this.radioButton2.Text = "RBG";
             this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.RadioButton2_CheckedChanged);
             // 
             // radioButton1
             // 
@@ -560,7 +560,7 @@
             this.checkBox2.Size = new System.Drawing.Size(22, 23);
             this.checkBox2.TabIndex = 9;
             this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBox2_CheckedChanged);
             // 
             // label4
             // 
@@ -694,7 +694,7 @@
             this.allDirectionsAddToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
             this.allDirectionsAddToolStripMenuItem.Text = "All directions add";
             this.allDirectionsAddToolStripMenuItem.ToolTipText = "Select 5 Gifs to add ,one by one, in a diferent direction ";
-            this.allDirectionsAddToolStripMenuItem.Click += new System.EventHandler(this.allDirectionsAddToolStripMenuItem_Click);
+            this.allDirectionsAddToolStripMenuItem.Click += new System.EventHandler(this.AllDirectionsAddToolStripMenuItem_Click);
             // 
             // allDirectionsAddWithCanvasToolStripMenuItem
             // 
@@ -704,14 +704,14 @@
             this.allDirectionsAddWithCanvasToolStripMenuItem.Text = "All directions add with Canvas";
             this.allDirectionsAddWithCanvasToolStripMenuItem.ToolTipText = "Select 5 Gifs to add ,one by one, in a diferent direction (with canvas reduction " +
     "algorithm)";
-            this.allDirectionsAddWithCanvasToolStripMenuItem.Click += new System.EventHandler(this.allDirectionsAddWithCanvasToolStripMenuItem_Click);
+            this.allDirectionsAddWithCanvasToolStripMenuItem.Click += new System.EventHandler(this.AllDirectionsAddWithCanvasToolStripMenuItem_Click);
             // 
             // addDirectionsAddWithCanvasUniqueImageToolStripMenuItem
             // 
             this.addDirectionsAddWithCanvasUniqueImageToolStripMenuItem.Name = "addDirectionsAddWithCanvasUniqueImageToolStripMenuItem";
             this.addDirectionsAddWithCanvasUniqueImageToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
             this.addDirectionsAddWithCanvasUniqueImageToolStripMenuItem.Text = "All directions add with Canvas ( CV5 Gif Style )";
-            this.addDirectionsAddWithCanvasUniqueImageToolStripMenuItem.Click += new System.EventHandler(this.addDirectionsAddWithCanvasUniqueImageToolStripMenuItem_Click);
+            this.addDirectionsAddWithCanvasUniqueImageToolStripMenuItem.Click += new System.EventHandler(this.AddDirectionsAddWithCanvasUniqueImageToolStripMenuItem_Click);
             // 
             // allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem
             // 
@@ -720,7 +720,7 @@
             this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
             this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Text = "All directions add with Canvas ( KRframeViewer Color Corrector)";
             this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.ToolTipText = "Add image removing all green colors";
-            this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Click += new System.EventHandler(this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem_Click);
+            this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Click += new System.EventHandler(this.AllDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem_Click);
             // 
             // addToolStripMenuItem1
             // 
@@ -738,7 +738,7 @@
             this.addWithCanvasToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
             this.addWithCanvasToolStripMenuItem.Text = "Add with Canvas";
             this.addWithCanvasToolStripMenuItem.ToolTipText = "Add image with canvas reduction algorithm";
-            this.addWithCanvasToolStripMenuItem.Click += new System.EventHandler(this.addWithCanvasToolStripMenuItem_Click);
+            this.addWithCanvasToolStripMenuItem.Click += new System.EventHandler(this.AddWithCanvasToolStripMenuItem_Click);
             // 
             // replaceToolStripMenuItem
             // 
@@ -790,7 +790,7 @@
             this.bmpToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
             this.bmpToolStripMenuItem.Tag = "bmp";
             this.bmpToolStripMenuItem.Text = "Bmp";
-            this.bmpToolStripMenuItem.Click += new System.EventHandler(this.onClickExtractPalette);
+            this.bmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractPalette);
             // 
             // tiffToolStripMenuItem
             // 
@@ -798,7 +798,7 @@
             this.tiffToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
             this.tiffToolStripMenuItem.Tag = "tiff";
             this.tiffToolStripMenuItem.Text = "Tiff";
-            this.tiffToolStripMenuItem.Click += new System.EventHandler(this.onClickExtractPalette);
+            this.tiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractPalette);
             // 
             // textToolStripMenuItem
             // 
@@ -806,7 +806,7 @@
             this.textToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
             this.textToolStripMenuItem.Tag = "txt";
             this.textToolStripMenuItem.Text = "Text";
-            this.textToolStripMenuItem.Click += new System.EventHandler(this.onClickExtractPalette);
+            this.textToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractPalette);
             // 
             // importToolStripMenuItem
             // 
@@ -823,14 +823,14 @@
             this.fromTxtToolStripMenuItem.Name = "fromTxtToolStripMenuItem";
             this.fromTxtToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.fromTxtToolStripMenuItem.Text = "From Txt";
-            this.fromTxtToolStripMenuItem.Click += new System.EventHandler(this.onClickImportPalette);
+            this.fromTxtToolStripMenuItem.Click += new System.EventHandler(this.OnClickImportPalette);
             // 
             // fromGifToolStripMenuItem
             // 
             this.fromGifToolStripMenuItem.Name = "fromGifToolStripMenuItem";
             this.fromGifToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.fromGifToolStripMenuItem.Text = "From Gif";
-            this.fromGifToolStripMenuItem.Click += new System.EventHandler(this.fromGifToolStripMenuItem_Click);
+            this.fromGifToolStripMenuItem.Click += new System.EventHandler(this.FromGifToolStripMenuItem_Click);
             // 
             // fromImageToolStripMenuItem
             // 
@@ -883,7 +883,7 @@
             this.button2.TabIndex = 15;
             this.button2.Text = "Same Center";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // button1
             // 
@@ -896,7 +896,7 @@
             this.button1.TabStop = false;
             this.button1.Text = "Set";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // checkBox1
             // 
@@ -908,7 +908,7 @@
             this.checkBox1.TabIndex = 13;
             this.checkBox1.Text = "Save Coordinates";
             this.checkBox1.UseVisualStyleBackColor = false;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
             // toolStrip4
             // 
@@ -1007,7 +1007,7 @@
             this.numericUpDown2.Size = new System.Drawing.Size(43, 20);
             this.numericUpDown2.TabIndex = 5;
             this.numericUpDown2.ValueChanged += new System.EventHandler(this.ReferencialPointX);
-            this.numericUpDown2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendData_KeyDown2);
+            this.numericUpDown2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown2);
             // 
             // numericUpDownCx
             // 
@@ -1029,7 +1029,7 @@
             this.numericUpDownCx.Size = new System.Drawing.Size(43, 20);
             this.numericUpDownCx.TabIndex = 3;
             this.numericUpDownCx.ValueChanged += new System.EventHandler(this.OnCenterXValueChanged);
-            this.numericUpDownCx.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendData_KeyDown);
+            this.numericUpDownCx.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown);
             // 
             // numericUpDownCy
             // 
@@ -1050,7 +1050,7 @@
             this.numericUpDownCy.Size = new System.Drawing.Size(43, 20);
             this.numericUpDownCy.TabIndex = 2;
             this.numericUpDownCy.ValueChanged += new System.EventHandler(this.OnCenterYValueChanged);
-            this.numericUpDownCy.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendData_KeyDown);
+            this.numericUpDownCy.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown);
             // 
             // numericUpDown1
             // 
@@ -1071,7 +1071,7 @@
             this.numericUpDown1.Size = new System.Drawing.Size(43, 20);
             this.numericUpDown1.TabIndex = 4;
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.ReferencialPointY);
-            this.numericUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendData_KeyDown2);
+            this.numericUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown2);
             // 
             // trackBar2
             // 
@@ -1082,7 +1082,7 @@
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(94, 20);
             this.trackBar2.TabIndex = 6;
-            this.trackBar2.ValueChanged += new System.EventHandler(this.onFrameCountBarChanged);
+            this.trackBar2.ValueChanged += new System.EventHandler(this.OnFrameCountBarChanged);
             // 
             // trackBar3
             // 
@@ -1094,7 +1094,7 @@
             this.trackBar3.Size = new System.Drawing.Size(75, 20);
             this.trackBar3.TabIndex = 11;
             this.trackBar3.Value = 3;
-            this.trackBar3.ValueChanged += new System.EventHandler(this.trackBar3_ValueChanged);
+            this.trackBar3.ValueChanged += new System.EventHandler(this.TrackBar3_ValueChanged);
             // 
             // toolStrip3
             // 
@@ -1138,7 +1138,7 @@
             this.toolStripButton11.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton11.Text = "toolStripButton11";
             this.toolStripButton11.ToolTipText = "Play animation";
-            this.toolStripButton11.Click += new System.EventHandler(this.toolStripButton11_Click);
+            this.toolStripButton11.Click += new System.EventHandler(this.ToolStripButton11_Click);
             // 
             // toolStripSeparator9
             // 
@@ -1174,7 +1174,7 @@
             this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton6.Text = "toolStripButton6";
             this.toolStripButton6.ToolTipText = "Lock \"Referencial Point\" ";
-            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
+            this.toolStripButton6.Click += new System.EventHandler(this.ToolStripButton6_Click);
             // 
             // toolStripSeparator4
             // 
@@ -1198,7 +1198,7 @@
             this.toolStripButton7.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton7.Text = "toolStripButton7";
             this.toolStripButton7.ToolTipText = "Draw Full Rectangle";
-            this.toolStripButton7.Click += new System.EventHandler(this.toolStripButton7_Click);
+            this.toolStripButton7.Click += new System.EventHandler(this.ToolStripButton7_Click);
             // 
             // toolStripSeparator5
             // 
@@ -1217,7 +1217,7 @@
             this.toolStripButton10.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton10.Text = "toolStripButton10";
             this.toolStripButton10.ToolTipText = "Draw Empty Rectangle";
-            this.toolStripButton10.Click += new System.EventHandler(this.toolStripButton10_Click);
+            this.toolStripButton10.Click += new System.EventHandler(this.ToolStripButton10_Click);
             // 
             // toolStripSeparator6
             // 
@@ -1236,7 +1236,7 @@
             this.toolStripButton12.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton12.Text = "toolStripButton12";
             this.toolStripButton12.ToolTipText = "Undraw Referencial Point";
-            this.toolStripButton12.Click += new System.EventHandler(this.toolStripButton12_Click);
+            this.toolStripButton12.Click += new System.EventHandler(this.ToolStripButton12_Click);
             // 
             // toolStripSeparator10
             // 
@@ -1253,8 +1253,8 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.SizeChanged += new System.EventHandler(this.OnSizeChangedPictureBox);
-            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.onPaintFrame);
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaintFrame);
+            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseClick);
             // 
             // toolStrip2
             // 
@@ -1441,7 +1441,7 @@
             // 
             // timer1
             // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
             // AnimationEdit
             // 
@@ -1454,7 +1454,7 @@
             this.Text = "Animation Edit - By Soulblighter";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AnimationEdit_FormClosing);
-            this.Load += new System.EventHandler(this.onLoad);
+            this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

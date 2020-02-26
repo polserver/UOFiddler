@@ -14,14 +14,14 @@ namespace FiddlerControls
     partial class AnimData
     {
         /// <summary> 
-        /// Erforderliche Designervariable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary> 
-        /// Verwendete Ressourcen bereinigen.
+        /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -31,11 +31,11 @@ namespace FiddlerControls
             base.Dispose(disposing);
         }
 
-        #region Vom Komponenten-Designer generierter Code
+        #region Component Designer generated code
 
         /// <summary> 
-        /// Erforderliche Methode für die Designerunterstützung. 
-        /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -106,7 +106,7 @@ namespace FiddlerControls
             this.treeView1.Size = new System.Drawing.Size(205, 324);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterNodeSelect);
-            this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.onClickNode);
+            this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnClickNode);
             // 
             // contextMenuStrip1
             // 
@@ -128,15 +128,15 @@ namespace FiddlerControls
             // 
             this.AddTextBox.Name = "AddTextBox";
             this.AddTextBox.Size = new System.Drawing.Size(100, 23);
-            this.AddTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownAdd);
-            this.AddTextBox.TextChanged += new System.EventHandler(this.onTextChangeAdd);
+            this.AddTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownAdd);
+            this.AddTextBox.TextChanged += new System.EventHandler(this.OnTextChangeAdd);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.removeToolStripMenuItem.Text = "Remove";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.onClickRemoveAnim);
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemoveAnim);
             // 
             // splitContainer2
             // 
@@ -180,7 +180,7 @@ namespace FiddlerControls
             this.button1.TabIndex = 1;
             this.button1.Text = "Start/Stop";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.onClickStartStop);
+            this.button1.Click += new System.EventHandler(this.OnClickStartStop);
             // 
             // pictureBox1
             // 
@@ -200,7 +200,7 @@ namespace FiddlerControls
             this.button6.TabIndex = 5;
             this.button6.Text = "Save";
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.onClickSave);
+            this.button6.Click += new System.EventHandler(this.OnClickSave);
             // 
             // groupBox4
             // 
@@ -238,7 +238,7 @@ namespace FiddlerControls
             this.button2.TabIndex = 2;
             this.button2.Text = "Add";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.onClickAdd);
+            this.button2.Click += new System.EventHandler(this.OnClickAdd);
             // 
             // button4
             // 
@@ -249,7 +249,7 @@ namespace FiddlerControls
             this.button4.TabIndex = 3;
             this.button4.Text = "▼";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.onClickFrameDown);
+            this.button4.Click += new System.EventHandler(this.OnClickFrameDown);
             // 
             // checkBoxRelative
             // 
@@ -260,7 +260,7 @@ namespace FiddlerControls
             this.checkBoxRelative.TabIndex = 1;
             this.checkBoxRelative.Text = "Relative";
             this.checkBoxRelative.UseVisualStyleBackColor = true;
-            this.checkBoxRelative.CheckedChanged += new System.EventHandler(this.onCheckChange);
+            this.checkBoxRelative.CheckedChanged += new System.EventHandler(this.OnCheckChange);
             // 
             // button3
             // 
@@ -271,7 +271,7 @@ namespace FiddlerControls
             this.button3.TabIndex = 2;
             this.button3.Text = "▲";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.onClickFrameUp);
+            this.button3.Click += new System.EventHandler(this.OnClickFrameUp);
             // 
             // textBoxAddFrame
             // 
@@ -279,7 +279,7 @@ namespace FiddlerControls
             this.textBoxAddFrame.Name = "textBoxAddFrame";
             this.textBoxAddFrame.Size = new System.Drawing.Size(63, 20);
             this.textBoxAddFrame.TabIndex = 0;
-            this.textBoxAddFrame.TextChanged += new System.EventHandler(this.onTextChanged);
+            this.textBoxAddFrame.TextChanged += new System.EventHandler(this.OnTextChanged);
             // 
             // treeViewFrames
             // 
@@ -325,7 +325,7 @@ namespace FiddlerControls
             this.numericUpDownFrameDelay.Name = "numericUpDownFrameDelay";
             this.numericUpDownFrameDelay.Size = new System.Drawing.Size(63, 20);
             this.numericUpDownFrameDelay.TabIndex = 2;
-            this.numericUpDownFrameDelay.ValueChanged += new System.EventHandler(this.onValueChangedFrameDelay);
+            this.numericUpDownFrameDelay.ValueChanged += new System.EventHandler(this.OnValueChangedFrameDelay);
             // 
             // label1
             // 
@@ -347,7 +347,7 @@ namespace FiddlerControls
             this.numericUpDownStartDelay.Name = "numericUpDownStartDelay";
             this.numericUpDownStartDelay.Size = new System.Drawing.Size(63, 20);
             this.numericUpDownStartDelay.TabIndex = 0;
-            this.numericUpDownStartDelay.ValueChanged += new System.EventHandler(this.onValueChangedStartDelay);
+            this.numericUpDownStartDelay.ValueChanged += new System.EventHandler(this.OnValueChangedStartDelay);
             // 
             // AnimData
             // 
@@ -356,7 +356,7 @@ namespace FiddlerControls
             this.Controls.Add(this.splitContainer1);
             this.Name = "AnimData";
             this.Size = new System.Drawing.Size(619, 324);
-            this.Load += new System.EventHandler(this.onLoad);
+            this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);

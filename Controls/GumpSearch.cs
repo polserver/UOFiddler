@@ -19,35 +19,39 @@ namespace FiddlerControls
         public GumpSearch()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
         }
 
         private void SearchId(object sender, EventArgs e)
         {
-            int graphic;
-            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
             {
                 if (!Gump.Search(graphic))
                 {
                     DialogResult result = MessageBox.Show("No used index found", "Result",
                         MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Cancel)
+                    {
                         Close();
+                    }
                 }
             }
         }
 
-        private void onKeyDownSearch(object sender, KeyEventArgs e)
+        private void OnKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
-                    this.SearchId(this, null);
+                {
+                    SearchId(this, null);
+                }
+
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                Close();
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

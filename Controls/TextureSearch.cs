@@ -19,38 +19,42 @@ namespace FiddlerControls
         public TextureSearch()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
         }
 
         private void SearchGraphic(object sender, EventArgs e)
         {
             int graphic;
-            bool candone;
+            bool canDone;
             if (textBoxGraphic.Text.Contains("0x"))
             {
                 string convert = textBoxGraphic.Text.Replace("0x", "");
-                candone = int.TryParse(convert, System.Globalization.NumberStyles.HexNumber, null, out graphic);
+                canDone = int.TryParse(convert, System.Globalization.NumberStyles.HexNumber, null, out graphic);
             }
             else
-                candone = int.TryParse(textBoxGraphic.Text, System.Globalization.NumberStyles.Integer, null, out graphic);
-
-            if (candone)
             {
-                bool res;
-                if (Options.DesignAlternative)
-                    res = TextureAlternative.SearchGraphic(graphic);
-                else
-                    res = Texture.SearchGraphic(graphic);
-                if (!res)
-                {
-                    DialogResult result = MessageBox.Show("No texture found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Cancel)
-                        Close();
-                }
+                canDone = int.TryParse(textBoxGraphic.Text, System.Globalization.NumberStyles.Integer, null, out graphic);
+            }
+
+            if (!canDone)
+            {
+                return;
+            }
+
+            bool res = Options.DesignAlternative ? TextureAlternative.SearchGraphic(graphic) : Texture.SearchGraphic(graphic);
+            if (res)
+            {
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No texture found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
-        private void onKeyDownSearch(object sender, KeyEventArgs e)
+        private void OnKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -59,7 +63,7 @@ namespace FiddlerControls
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                Close();
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

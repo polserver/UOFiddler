@@ -13,203 +13,216 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using FiddlerControls;
 using PluginInterface;
 using Ultima;
+using Events = PluginInterface.Events;
 
 namespace FiddlerPlugin
 {
-    public class SendItemPlugin : IPlugin
+    public class SendItemPlugin : Plugin
     {
         public SendItemPlugin()
         {
-            refMarker = this;
-            PluginInterface.Events.DesignChangeEvent += new Events.DesignChangeHandler(Events_DesignChangeEvent);
-            PluginInterface.Events.ModifyItemShowContextMenuEvent += new Events.ModifyItemShowContextMenuHandler(Events_ModifyItemShowContextMenuEvent);
+            _refMarker = this;
+            Events.DesignChangeEvent += Events_DesignChangeEvent;
+            Events.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
         }
 
-        private static SendItemPlugin refMarker = null;
-        static string m_Cmd = ".create";
-        static string m_CmdArg = "0x{1:X4}";
-        static bool m_OverrideClick = false;
+        private static SendItemPlugin _refMarker;
+        private static bool _overrideClick;
 
-        public static string Cmd { get { return SendItemPlugin.m_Cmd; } set { SendItemPlugin.m_Cmd = value; } }
-        public static string CmdArg { get { return SendItemPlugin.m_CmdArg; } set { SendItemPlugin.m_CmdArg = value; } }
+        public static string Cmd { get; set; } = ".create";
+
+        public static string CmdArg { get; set; } = "0x{1:X4}";
+
         public static bool OverrideClick
         {
-            get { return SendItemPlugin.m_OverrideClick; }
+            get => _overrideClick;
             set
             {
-                if (value != SendItemPlugin.m_OverrideClick)
-                    refMarker.ChangeOverrideClick(value,false);
-                SendItemPlugin.m_OverrideClick = value;
+                if (value != _overrideClick)
+                    _refMarker.ChangeOverrideClick(value, false);
+                _overrideClick = value;
             }
         }
-
-        string myName = "SendItemPlugin";
-        string myDescription = "Send custom Cmd to Client with selected ObjectType in Itemstab";
-        string myAuthor = "Turley";
-        string myVersion = "1.0.1";
-        IPluginHost myHost = null;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public override string Name { get { return myName; } }
+        public override string Name { get; } = "SendItemPlugin";
+
         /// <summary>
         /// Description of the Plugin's purpose
         /// </summary>
-        public override string Description { get { return myDescription; } }
+        public override string Description { get; } = "Send custom Cmd to Client with selected ObjectType in Items tab";
+
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public override string Author { get { return myAuthor; } }
+        public override string Author { get; } = "Turley";
+
         /// <summary>
         /// Version of the plugin
         /// </summary>
-        public override string Version { get { return myVersion; } }
+        public override string Version { get; } = "1.0.1";
+
         /// <summary>
         /// Host of the plugin.
         /// </summary>
-        public override IPluginHost Host { get { return myHost; } set { myHost = value; } }
-
+        public override IPluginHost Host { get; set; } = null;
 
         public override void Initialize()
         {
-            LoadXML();
-            ChangeOverrideClick(OverrideClick,true);
+            LoadXml();
+            ChangeOverrideClick(OverrideClick, true);
         }
 
         private void PlugOnDoubleClick(object sender, MouseEventArgs e)
         {
-            itemshowcontextclicked(this, EventArgs.Empty);
-        }
-        public override void Dispose()
-        {
-            SaveXML();
+            ItemShowContextClicked(this, EventArgs.Empty);
         }
 
-        public override void ModifyTabPages(TabControl tabcontrol) { }
+        public override void Dispose()
+        {
+            SaveXml();
+        }
+
+        public override void ModifyTabPages(TabControl tabControl)
+        {
+        }
 
         private void Events_DesignChangeEvent()
         {
             ChangeOverrideClick(OverrideClick, true);
         }
 
-        public override void ModifyPluginToolStrip(ToolStripDropDownButton toolstrip)
+        public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)
         {
-            ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Text = "Send Item";
-            item.Click += new EventHandler(toolstrip_click);
-            toolstrip.DropDownItems.Add(item);
+            ToolStripMenuItem item = new ToolStripMenuItem
+            {
+                Text = "Send Item"
+            };
+            item.Click += ToolStripClick;
+            toolStrip.DropDownItems.Add(item);
         }
 
-        public void ChangeOverrideClick(bool value,bool init)
+        private void ChangeOverrideClick(bool value, bool init)
         {
-            if (FiddlerControls.Options.DesignAlternative)
+            if (Options.DesignAlternative)
             {
-                FiddlerControls.ItemShowAlternative itemshowalt = Host.GetItemShowAltControl();
-                PictureBox picturebox = Host.GetItemShowAltPictureBox();
+                ItemShowAlternative itemShowAltControl = Host.GetItemShowAltControl();
+                PictureBox itemShowAltPictureBox = Host.GetItemShowAltPictureBox();
                 if (value)
                 {
-                    picturebox.MouseDoubleClick -= new MouseEventHandler(itemshowalt.OnMouseDoubleClick);
-                    picturebox.MouseDoubleClick += new MouseEventHandler(this.PlugOnDoubleClick);
+                    itemShowAltPictureBox.MouseDoubleClick -= itemShowAltControl.OnMouseDoubleClick;
+                    itemShowAltPictureBox.MouseDoubleClick += PlugOnDoubleClick;
                 }
                 else if (!init)
                 {
-                    picturebox.MouseDoubleClick -= new MouseEventHandler(this.PlugOnDoubleClick);
-                    picturebox.MouseDoubleClick += new MouseEventHandler(itemshowalt.OnMouseDoubleClick);
+                    itemShowAltPictureBox.MouseDoubleClick -= PlugOnDoubleClick;
+                    itemShowAltPictureBox.MouseDoubleClick += itemShowAltControl.OnMouseDoubleClick;
                 }
             }
             else
             {
-                FiddlerControls.ItemShow itemshow = Host.GetItemShowControl();
-                ListView listview = Host.GetItemShowListView();
+                ItemShow itemShowControl = Host.GetItemShowControl();
+                ListView itemShowListView = Host.GetItemShowListView();
                 if (value)
                 {
-                    listview.MouseDoubleClick -= new MouseEventHandler(itemshow.listView_DoubleClicked);
-                    listview.MouseDoubleClick += new MouseEventHandler(this.PlugOnDoubleClick);
+                    itemShowListView.MouseDoubleClick -= itemShowControl.ListView_DoubleClicked;
+                    itemShowListView.MouseDoubleClick += PlugOnDoubleClick;
                 }
                 else if (!init)
                 {
-                    listview.MouseDoubleClick -= new MouseEventHandler(this.PlugOnDoubleClick);
-                    listview.MouseDoubleClick += new MouseEventHandler(itemshow.listView_DoubleClicked);
+                    itemShowListView.MouseDoubleClick -= PlugOnDoubleClick;
+                    itemShowListView.MouseDoubleClick += itemShowControl.ListView_DoubleClicked;
                 }
             }
         }
 
-        private void toolstrip_click(object sender, EventArgs e)
+        private static void ToolStripClick(object sender, EventArgs e)
         {
             new Option().Show();
         }
 
         private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
         {
-            ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Text = "Send Item to Client";
-            item.Click += new EventHandler(this.itemshowcontextclicked);
+            ToolStripMenuItem item = new ToolStripMenuItem { Text = "Send Item to Client" };
+            item.Click += ItemShowContextClicked;
             strip.Items.Add(item);
         }
 
-        private void itemshowcontextclicked(object sender, EventArgs e)
+        private void ItemShowContextClicked(object sender, EventArgs e)
         {
-            int currselected;
-            if (FiddlerControls.Options.DesignAlternative)
-                currselected = Host.GetSelectedItemShowAlternative();
-            else
-                currselected = Host.GetSelectedItemShow();
-            if (currselected > -1)
+            int currSelected = Options.DesignAlternative
+                ? Host.GetSelectedItemShowAlternative()
+                : Host.GetSelectedItemShow();
+
+            if (currSelected <= -1)
             {
-                if (Client.Running)
-                {
-                    string format = "{0} " + CmdArg;
-                    Client.SendText(String.Format(format, Cmd, currselected));
-                }
-                else
-                {
-                    MessageBox.Show(
-                        "No Client running/or not recognized",
-                        "SendItem",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button1);
-                }
+                return;
+            }
+
+            if (Client.Running)
+            {
+                string format = "{0} " + CmdArg;
+                Client.SendText(string.Format(format, Cmd, currSelected));
+            }
+            else
+            {
+                MessageBox.Show(
+                    "No Client running/or not recognized",
+                    "SendItem",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 
-        private void LoadXML()
+        private static void LoadXml()
         {
-            string path = FiddlerControls.Options.AppDataPath;
-            string FileName = Path.Combine(path, @"plugins/SendItem.xml");
-            if (!System.IO.File.Exists(FileName))
+            string path = Options.AppDataPath;
+            string fileName = Path.Combine(path, "plugins/SendItem.xml");
+            if (!File.Exists(fileName))
+            {
                 return;
+            }
 
             XmlDocument dom = new XmlDocument();
-            dom.Load(FileName);
+            dom.Load(fileName);
+
             XmlElement xOptions = dom["Options"];
 
-            XmlElement elem = (XmlElement)xOptions.SelectSingleNode("SendItem");
-            if (elem != null)
+            XmlElement elem = (XmlElement)xOptions?.SelectSingleNode("SendItem");
+            if (elem == null)
             {
-                Cmd = elem.GetAttribute("cmd");
-                CmdArg = elem.GetAttribute("args");
-                OverrideClick = bool.Parse(elem.GetAttribute("overrideclick"));
+                return;
             }
+
+            Cmd = elem.GetAttribute("cmd");
+            CmdArg = elem.GetAttribute("args");
+            OverrideClick = bool.Parse(elem.GetAttribute("overrideclick"));
         }
 
-        private void SaveXML()
+        private static void SaveXml()
         {
-            string path = FiddlerControls.Options.AppDataPath;
-            string FileName = Path.Combine(path, @"plugins/senditem.xml");
+            string path = Options.AppDataPath;
+            string fileName = Path.Combine(path, "plugins/senditem.xml");
 
             XmlDocument dom = new XmlDocument();
+
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
             dom.AppendChild(decl);
+
             XmlElement sr = dom.CreateElement("Options");
 
-            XmlComment comment = dom.CreateComment("Definies the cmd for Item create");
+            XmlComment comment = dom.CreateComment("Defines the cmd for Item create");
             sr.AppendChild(comment);
+
             comment = dom.CreateComment("{1} = item objecttype");
             sr.AppendChild(comment);
+
             XmlElement elem = dom.CreateElement("SendItem");
             elem.SetAttribute("cmd", Cmd);
             elem.SetAttribute("args", CmdArg);
@@ -217,7 +230,7 @@ namespace FiddlerPlugin
             sr.AppendChild(elem);
 
             dom.AppendChild(sr);
-            dom.Save(FileName);
+            dom.Save(fileName);
         }
     }
 }

@@ -8,14 +8,14 @@ namespace Ultima
     /// </summary>
     public sealed class Client
     {
-        private const int WM_CHAR = 0x102;
+        private const int WmChar = 0x102;
 
-        private static ClientWindowHandle m_Handle = ClientWindowHandle.Invalid;
+        private static ClientWindowHandle _mHandle = ClientWindowHandle.Invalid;
 
-        private static WindowProcessStream m_ProcStream;
-        private static LocationPointer m_LocationPointer;
+        private static WindowProcessStream _mProcStream;
+        private static LocationPointer _mLocationPointer;
 
-        private static bool m_Is_Iris2 = false;
+        private static bool _mIsIris2 = false;
 
         private Client()
         {
@@ -28,15 +28,15 @@ namespace Ultima
         {
             get
             {
-                if (m_ProcStream == null || m_ProcStream.Window != Handle)
+                if (_mProcStream == null || _mProcStream.Window != Handle)
                 {
                     if (Running)
-                        m_ProcStream = new WindowProcessStream(Handle);
+                        _mProcStream = new WindowProcessStream(Handle);
                     else
-                        m_ProcStream = null;
+                        _mProcStream = null;
                 }
 
-                return m_ProcStream;
+                return _mProcStream;
             }
         }
 
@@ -95,7 +95,7 @@ namespace Ultima
             {
                 case 1: return (sbyte)buffer[0];
                 case 2: return (short)(buffer[0] | (buffer[1] << 8));
-                case 4: return (int)(buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24));
+                case 4: return buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
             }
 
             int val = 0;
@@ -193,7 +193,7 @@ namespace Ultima
         /// <returns>The calibrated memory location -or- 0 if it could not be found.</returns>
         public static void Calibrate(int x, int y, int z)
         {
-            m_LocationPointer = null;
+            _mLocationPointer = null;
 
             ProcessStream pc = ProcessStream;
 
@@ -222,7 +222,7 @@ namespace Ultima
             if (ptr == 0)
                 return;
 
-            m_LocationPointer = new LocationPointer(ptr + 8, ptr + 4, ptr, 0, 4, 4, 4, 0);
+            _mLocationPointer = new LocationPointer(ptr + 8, ptr + 4, ptr, 0, 4, 4, 4, 0);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Ultima
         /// <returns>The calibrated memory location -or- 0 if it could not be found.</returns>
         public static void Calibrate(CalibrationInfo[] info)
         {
-            m_LocationPointer = null;
+            _mLocationPointer = null;
 
             ProcessStream pc = ProcessStream;
 
@@ -278,7 +278,7 @@ namespace Ultima
             }
 
             if (ptrX != 0 || ptrY != 0 || ptrZ != 0 || ptrF != 0)
-                m_LocationPointer = new LocationPointer(ptrX, ptrY, ptrZ, ptrF, sizeX, sizeY, sizeZ, sizeF);
+                _mLocationPointer = new LocationPointer(ptrX, ptrY, ptrZ, ptrF, sizeX, sizeY, sizeZ, sizeF);
         }
 
         private static void GetCoordDetails(ProcessStream pc, int ptr, byte[] dets, out int coordPointer, out int coordSize)
@@ -326,8 +326,8 @@ namespace Ultima
         /// </summary>
         public static LocationPointer LocationPointer
         {
-            get { return m_LocationPointer; }
-            set { m_LocationPointer = value; }
+            get => _mLocationPointer;
+            set => _mLocationPointer = value;
         }
 
         /// <summary>
@@ -338,10 +338,10 @@ namespace Ultima
         {
             get
             {
-                if (NativeMethods.IsWindow(m_Handle) == 0)
-                    m_Handle = FindHandle();
+                if (NativeMethods.IsWindow(_mHandle) == 0)
+                    _mHandle = FindHandle();
 
-                return m_Handle;
+                return _mHandle;
             }
         }
 
@@ -349,29 +349,23 @@ namespace Ultima
         /// Whether or not the Client is currently running.
         /// <seealso cref="ClientHandle" />
         /// </summary>
-        public static bool Running
-        {
-            get
-            {
-                return (!Handle.IsInvalid);
-            }
-        }
+        public static bool Running => (!Handle.IsInvalid);
 
         /// <summary>
         /// Is Client Iris2
         /// </summary>
-        public static bool Is_Iris2
+        public static bool IsIris2
         {
-            get { return m_Is_Iris2; }
-            set { m_Is_Iris2 = value; }
+            get => _mIsIris2;
+            set => _mIsIris2 = value;
         }
 
         private static void SendChar(ClientWindowHandle hWnd, char c)
         {
-            int value = (int)c;
+            int value = c;
             int lParam = 1 | ((NativeMethods.OemKeyScan(value) & 0xFF) << 16) | (0x3 << 30);
 
-            NativeMethods.PostMessage(hWnd, WM_CHAR, value, lParam);
+            NativeMethods.PostMessage(hWnd, WmChar, value, lParam);
         }
 
         /// <summary>
@@ -424,7 +418,7 @@ namespace Ultima
         /// <returns>True if the Client is running, false if not.</returns>
         public static bool SendText(string format, params object[] args)
         {
-            return SendText(String.Format(format, args));
+            return SendText(string.Format(format, args));
         }
 
 
@@ -439,7 +433,7 @@ namespace Ultima
                 return hWnd;
             if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("OgreGLWindow", null)) != 0)
             {
-                m_Is_Iris2 = true;
+                _mIsIris2 = true;
                 return hWnd;
             }
 

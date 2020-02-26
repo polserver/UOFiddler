@@ -214,7 +214,7 @@ namespace FiddlerControls
             this.iGPreviewToolStripMenuItem.Name = "iGPreviewToolStripMenuItem";
             this.iGPreviewToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.iGPreviewToolStripMenuItem.Text = "IG Preview";
-            this.iGPreviewToolStripMenuItem.Click += new System.EventHandler(this.IGPreviewClicked);
+            this.iGPreviewToolStripMenuItem.Click += new System.EventHandler(this.IgPreviewClicked);
             // 
             // backgroundLandTileToolStripMenuItem
             // 

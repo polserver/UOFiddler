@@ -18,17 +18,18 @@ namespace FiddlerControls
 {
     public partial class MapDiffInsert : Form
     {
-        private Ultima.Map workingmap;
+        private readonly Ultima.Map _workingmap;
+
         public MapDiffInsert(Ultima.Map currmap)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
-            workingmap = currmap;
-            numericUpDownX1.Maximum = workingmap.Width;
-            numericUpDownX2.Maximum = workingmap.Width;
-            numericUpDownY1.Maximum = workingmap.Height;
-            numericUpDownY2.Maximum = workingmap.Height;
-            this.Text = String.Format("Map Diff Insert ID:{0}",workingmap.FileIndex);
+            Icon = Options.GetFiddlerIcon();
+            _workingmap = currmap;
+            numericUpDownX1.Maximum = _workingmap.Width;
+            numericUpDownX2.Maximum = _workingmap.Width;
+            numericUpDownY1.Maximum = _workingmap.Height;
+            numericUpDownY2.Maximum = _workingmap.Height;
+            Text = $"Map Diff Insert ID:{_workingmap.FileIndex}";
         }
 
         private void OnClickCopy(object sender, EventArgs e)
@@ -37,27 +38,32 @@ namespace FiddlerControls
             int x2 = (int)numericUpDownX2.Value;
             int y1 = (int)numericUpDownY1.Value;
             int y2 = (int)numericUpDownY2.Value;
-            if ((x1<0) || (x1>workingmap.Width))
+
+            if (x1 < 0 || x1 > _workingmap.Width)
             {
                 MessageBox.Show("Invalid X1 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
-            if ((x2<0) || (x2>workingmap.Width))
+
+            if (x2 < 0 || x2 > _workingmap.Width)
             {
                 MessageBox.Show("Invalid X2 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
-            if ((y1 < 0) || (y1 > workingmap.Height))
+
+            if (y1 < 0 || y1 > _workingmap.Height)
             {
                 MessageBox.Show("Invalid Y1 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
-            if ((y2 < 0) || (y2 > workingmap.Height))
+
+            if (y2 < 0 || y2 > _workingmap.Height)
             {
                 MessageBox.Show("Invalid Y2 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
-            if ((x1 > x2) || (y1 > y2))
+
+            if (x1 > x2 || y1 > y2)
             {
                 MessageBox.Show("X1 and Y1 cannot be bigger than X2 and Y2!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
@@ -68,26 +74,33 @@ namespace FiddlerControls
             y1 >>= 3;
             y2 >>= 3;
 
-            int blocky = workingmap.Height >> 3;
-            int blockx = workingmap.Width >> 3;
+            int blocky = _workingmap.Height >> 3;
+            int blockx = _workingmap.Width >> 3;
 
             progressBar1.Step = 1;
             progressBar1.Value = 0;
-            progressBar1.Maximum=0;
-            if (checkBoxMap.Checked)
-                progressBar1.Maximum += blocky * blockx;
-            if (checkBoxStatics.Checked)
-                progressBar1.Maximum += blocky * blockx;
-            
+            progressBar1.Maximum = 0;
+
             if (checkBoxMap.Checked)
             {
-                string mapPath = Ultima.Files.GetFilePath(String.Format("map{0}.mul", workingmap.FileIndex));
-                FileStream m_map;
-                BinaryReader m_mapReader;
+                progressBar1.Maximum += blocky * blockx;
+            }
+
+            if (checkBoxStatics.Checked)
+            {
+                progressBar1.Maximum += blocky * blockx;
+            }
+
+            if (checkBoxMap.Checked)
+            {
+                string mapPath = Files.GetFilePath($"map{_workingmap.FileIndex}.mul");
+                FileStream mMap;
+                BinaryReader mMapReader;
+
                 if (mapPath != null)
                 {
-                    m_map = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    m_mapReader = new BinaryReader(m_map);
+                    mMap = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    mMapReader = new BinaryReader(mMap);
                 }
                 else
                 {
@@ -95,7 +108,7 @@ namespace FiddlerControls
                     return;
                 }
 
-                string mul = Path.Combine(FiddlerControls.Options.OutputPath, String.Format("map{0}.mul", workingmap.FileIndex));
+                string mul = Path.Combine(Options.OutputPath, $"map{_workingmap.FileIndex}.mul");
                 using (FileStream fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
                     using (BinaryWriter binmul = new BinaryWriter(fsmul))
@@ -104,63 +117,78 @@ namespace FiddlerControls
                         {
                             for (int y = 0; y < blocky; ++y)
                             {
-                                m_mapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
-                                int header = m_mapReader.ReadInt32();
+                                mMapReader.BaseStream.Seek((x * blocky + y) * 196, SeekOrigin.Begin);
+                                int header = mMapReader.ReadInt32();
                                 binmul.Write(header);
                                 ushort tileid;
                                 sbyte z;
                                 bool patched = false;
-                                if ((x1 <= x) && (x <= x2) && (y1 <= y) && (y <= y2))
+                                if (x1 <= x && x <= x2 && y1 <= y && y <= y2)
                                 {
-                                    if (workingmap.Tiles.Patch.IsLandBlockPatched(x, y))
+                                    if (_workingmap.Tiles.Patch.IsLandBlockPatched(x, y))
                                     {
                                         patched = true;
-                                        Tile[] patchtile = workingmap.Tiles.Patch.GetLandBlock(x, y);
+                                        Tile[] patchtile = _workingmap.Tiles.Patch.GetLandBlock(x, y);
                                         for (int i = 0; i < 64; ++i)
                                         {
-                                            tileid = patchtile[i].ID;
+                                            tileid = patchtile[i].Id;
                                             z = (sbyte)patchtile[i].Z;
-                                            tileid = Art.GetLegalItemID(tileid);
+                                            tileid = Art.GetLegalItemId(tileid);
                                             if (z < -128)
+                                            {
                                                 z = -128;
+                                            }
+
                                             if (z > 127)
+                                            {
                                                 z = 127;
+                                            }
+
                                             binmul.Write(tileid);
                                             binmul.Write(z);
                                         }
                                     }
                                 }
+
                                 if (!patched)
                                 {
                                     for (int i = 0; i < 64; ++i)
                                     {
-                                        tileid = m_mapReader.ReadUInt16();
-                                        z = m_mapReader.ReadSByte();
-                                        tileid = Art.GetLegalItemID(tileid);
+                                        tileid = mMapReader.ReadUInt16();
+                                        z = mMapReader.ReadSByte();
+                                        tileid = Art.GetLegalItemId(tileid);
                                         if (z < -128)
+                                        {
                                             z = -128;
+                                        }
+
                                         if (z > 127)
+                                        {
                                             z = 127;
+                                        }
+
                                         binmul.Write(tileid);
                                         binmul.Write(z);
                                     }
                                 }
+
                                 progressBar1.PerformStep();
                             }
                         }
                     }
                 }
-                m_mapReader.Close();
+
+                mMapReader.Close();
             }
             if (checkBoxStatics.Checked)
             {
-                string indexPath = Files.GetFilePath(String.Format("staidx{0}.mul", workingmap.FileIndex));
-                FileStream m_Index;
-                BinaryReader m_IndexReader;
+                string indexPath = Files.GetFilePath($"staidx{_workingmap.FileIndex}.mul");
+                FileStream mIndex;
+                BinaryReader mIndexReader;
                 if (indexPath != null)
                 {
-                    m_Index = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    m_IndexReader = new BinaryReader(m_Index);
+                    mIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    mIndexReader = new BinaryReader(mIndex);
                 }
                 else
                 {
@@ -168,14 +196,14 @@ namespace FiddlerControls
                     return;
                 }
 
-                string staticsPath = Files.GetFilePath(String.Format("statics{0}.mul", workingmap.FileIndex));
+                string staticsPath = Files.GetFilePath($"statics{_workingmap.FileIndex}.mul");
 
-                FileStream m_Statics;
-                BinaryReader m_StaticsReader;
+                FileStream mStatics;
+                BinaryReader mStaticsReader;
                 if (staticsPath != null)
                 {
-                    m_Statics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    m_StaticsReader = new BinaryReader(m_Statics);
+                    mStatics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    mStaticsReader = new BinaryReader(mStatics);
                 }
                 else
                 {
@@ -183,8 +211,8 @@ namespace FiddlerControls
                     return;
                 }
 
-                string idx = Path.Combine(FiddlerControls.Options.OutputPath, String.Format("staidx{0}.mul", workingmap.FileIndex));
-                string mul = Path.Combine(FiddlerControls.Options.OutputPath, String.Format("statics{0}.mul", workingmap.FileIndex));
+                string idx = Path.Combine(Options.OutputPath, $"staidx{_workingmap.FileIndex}.mul");
+                string mul = Path.Combine(Options.OutputPath, $"statics{_workingmap.FileIndex}.mul");
                 using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
                                   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
@@ -196,33 +224,39 @@ namespace FiddlerControls
                             for (int y = 0; y < blocky; ++y)
                             {
                                 int lookup, length, extra;
-                                m_IndexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
-                                lookup = m_IndexReader.ReadInt32();
-                                length = m_IndexReader.ReadInt32();
-                                extra = m_IndexReader.ReadInt32();
+                                mIndexReader.BaseStream.Seek((x * blocky + y) * 12, SeekOrigin.Begin);
+                                lookup = mIndexReader.ReadInt32();
+                                length = mIndexReader.ReadInt32();
+                                extra = mIndexReader.ReadInt32();
                                 bool patched = false;
-                                if ((x1 <= x) && (x <= x2) && (y1 <= y) && (y <= y2))
+                                if (x1 <= x && x <= x2 && y1 <= y && y <= y2)
                                 {
-                                    if (workingmap.Tiles.Patch.IsStaticBlockPatched(x, y))
+                                    if (_workingmap.Tiles.Patch.IsStaticBlockPatched(x, y))
+                                    {
                                         patched = true;
+                                    }
                                 }
+
                                 if (patched)
                                 {
-                                    HuedTile[][][] patchstat = workingmap.Tiles.Patch.GetStaticBlock(x, y);
+                                    HuedTile[][][] patchstat = _workingmap.Tiles.Patch.GetStaticBlock(x, y);
                                     int count = 0;
                                     for (int i = 0; i < 8; ++i)
                                     {
                                         for (int j = 0; j < 8; ++j)
                                         {
                                             if (patchstat[i][j] != null)
+                                            {
                                                 count += patchstat[i][j].Length;
+                                            }
                                         }
                                     }
+
                                     if (count == 0)
                                     {
-                                        binidx.Write((int)-1); // lookup
-                                        binidx.Write((int)-1); // length
-                                        binidx.Write((int)-1); // extra
+                                        binidx.Write(-1); // lookup
+                                        binidx.Write(-1); // length
+                                        binidx.Write(-1); // extra
                                     }
                                     else
                                     {
@@ -237,34 +271,38 @@ namespace FiddlerControls
                                                 {
                                                     foreach (HuedTile htile in patchstat[i][j])
                                                     {
-                                                        StaticTile tile = new StaticTile();
-                                                        tile.m_ID = (ushort)(htile.ID);
-                                                        tile.m_Z = (sbyte)htile.Z;
-                                                        tile.m_X = (byte)i;
-                                                        tile.m_Y = (byte)j;
-                                                        tile.m_Hue = (short)htile.Hue;
-
-                                                        if ((tile.m_ID >= 0) && (tile.m_ID <= Art.GetMaxItemID()))
+                                                        StaticTile tile = new StaticTile
                                                         {
-                                                            if (tile.m_Hue < 0)
-                                                                tile.m_Hue = 0;
-                                                            bool first = true;
-                                                            for (int k = 0; k < m; ++k)
+                                                            m_ID = htile.Id,
+                                                            m_Z = (sbyte)htile.Z,
+                                                            m_X = (byte)i,
+                                                            m_Y = (byte)j,
+                                                            m_Hue = (short)htile.Hue
+                                                        };
+
+                                                        if (tile.m_ID < 0 || tile.m_ID > Art.GetMaxItemId())
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        if (tile.m_Hue < 0)
+                                                        {
+                                                            tile.m_Hue = 0;
+                                                        }
+
+                                                        bool first = true;
+                                                        for (int k = 0; k < m; ++k)
+                                                        {
+                                                            if (tilelist[k].m_ID == tile.m_ID && tilelist[k].m_X == tile.m_X && tilelist[k].m_Y == tile.m_Y && tilelist[k].m_Z == tile.m_Z && tilelist[k].m_Hue == tile.m_Hue)
                                                             {
-                                                                if ((tilelist[k].m_ID == tile.m_ID)
-                                                                    && ((tilelist[k].m_X == tile.m_X) && (tilelist[k].m_Y == tile.m_Y))
-                                                                    && (tilelist[k].m_Z == tile.m_Z)
-                                                                    && (tilelist[k].m_Hue == tile.m_Hue))
-                                                                {
-                                                                    first = false;
-                                                                    break;
-                                                                }
+                                                                first = false;
+                                                                break;
                                                             }
-                                                            if (first)
-                                                            {
-                                                                tilelist[m] = tile;
-                                                                ++m;
-                                                            }
+                                                        }
+                                                        if (first)
+                                                        {
+                                                            tilelist[m] = tile;
+                                                            ++m;
                                                         }
                                                     }
                                                 }
@@ -284,35 +322,37 @@ namespace FiddlerControls
                                         }
                                         else
                                         {
-                                            ushort graphic;
-                                            short shue;
-                                            sbyte sz;
-                                            bool firstitem = true;
+                                            bool firstItem = true;
                                             for (int i = 0; i < 8; ++i)
                                             {
                                                 for (int j = 0; j < 8; ++j)
                                                 {
                                                     foreach (HuedTile tile in patchstat[i][j])
                                                     {
-                                                        graphic = tile.ID;
-                                                        sz = (sbyte)tile.Z;
-                                                        shue = (short)tile.Hue;
+                                                        ushort graphic = tile.Id;
+                                                        sbyte sz = (sbyte)tile.Z;
+                                                        short sHue = (short)tile.Hue;
 
-                                                        if ((graphic >= 0) && (graphic <= Art.GetMaxItemID()))
+                                                        if (graphic < 0 || graphic > Art.GetMaxItemId())
                                                         {
-                                                            if (shue < 0)
-                                                                shue = 0;
-                                                            if (firstitem)
-                                                            {
-                                                                binidx.Write((int)fsmul.Position); //lookup
-                                                                firstitem = false;
-                                                            }
-                                                            binmul.Write(graphic);
-                                                            binmul.Write((byte)i); //x
-                                                            binmul.Write((byte)j); //y
-                                                            binmul.Write(sz);
-                                                            binmul.Write(shue);
+                                                            continue;
                                                         }
+
+                                                        if (sHue < 0)
+                                                        {
+                                                            sHue = 0;
+                                                        }
+
+                                                        if (firstItem)
+                                                        {
+                                                            binidx.Write((int)fsmul.Position); //lookup
+                                                            firstItem = false;
+                                                        }
+                                                        binmul.Write(graphic);
+                                                        binmul.Write((byte)i); //x
+                                                        binmul.Write((byte)j); //y
+                                                        binmul.Write(sz);
+                                                        binmul.Write(sHue);
                                                     }
                                                 }
                                             }
@@ -325,24 +365,23 @@ namespace FiddlerControls
                                         }
                                         else
                                         {
-                                            binidx.Write((int)-1); //lookup
-                                            binidx.Write((int)-1); //length
-                                            binidx.Write((int)-1); //extra
+                                            binidx.Write(-1); //lookup
+                                            binidx.Write(-1); //length
+                                            binidx.Write(-1); //extra
                                         }
                                     }
-                                    
                                 }
                                 else
                                 {
                                     if (lookup < 0 || length <= 0)
                                     {
-                                        binidx.Write((int)-1); // lookup
-                                        binidx.Write((int)-1); // length
-                                        binidx.Write((int)-1); // extra
+                                        binidx.Write(-1); // lookup
+                                        binidx.Write(-1); // length
+                                        binidx.Write(-1); // extra
                                     }
                                     else
                                     {
-                                        m_Statics.Seek(lookup, SeekOrigin.Begin);
+                                        mStatics.Seek(lookup, SeekOrigin.Begin);
                                         int fsmullength = (int)fsmul.Position;
                                         int count = length / 7;
 
@@ -352,31 +391,35 @@ namespace FiddlerControls
                                             int j = 0;
                                             for (int i = 0; i < count; ++i)
                                             {
-                                                StaticTile tile = new StaticTile();
-                                                tile.m_ID = m_StaticsReader.ReadUInt16();
-                                                tile.m_X = m_StaticsReader.ReadByte();
-                                                tile.m_Y = m_StaticsReader.ReadByte();
-                                                tile.m_Z = m_StaticsReader.ReadSByte();
-                                                tile.m_Hue = m_StaticsReader.ReadInt16();
-                                                
-                                                if ((tile.m_ID >= 0) && (tile.m_ID <= Art.GetMaxItemID()))
+                                                StaticTile tile = new StaticTile
+                                                {
+                                                    m_ID = mStaticsReader.ReadUInt16(),
+                                                    m_X = mStaticsReader.ReadByte(),
+                                                    m_Y = mStaticsReader.ReadByte(),
+                                                    m_Z = mStaticsReader.ReadSByte(),
+                                                    m_Hue = mStaticsReader.ReadInt16()
+                                                };
+
+                                                if (tile.m_ID >= 0 && tile.m_ID <= Art.GetMaxItemId())
                                                 {
                                                     if (tile.m_Hue < 0)
+                                                    {
                                                         tile.m_Hue = 0;
+                                                    }
+
                                                     bool first = true;
                                                     for (int k = 0; k < j; ++k)
                                                     {
-                                                        if ((tilelist[k].m_ID == tile.m_ID)
-                                                            && ((tilelist[k].m_X == tile.m_X) && (tilelist[k].m_Y == tile.m_Y))
-                                                            && (tilelist[k].m_Z == tile.m_Z)
-                                                            && (tilelist[k].m_Hue == tile.m_Hue))
+                                                        if (tilelist[k].m_ID == tile.m_ID && tilelist[k].m_X == tile.m_X && tilelist[k].m_Y == tile.m_Y && tilelist[k].m_Z == tile.m_Z && tilelist[k].m_Hue == tile.m_Hue)
                                                         {
                                                             first = false;
                                                             break;
                                                         }
                                                     }
                                                     if (first)
+                                                    {
                                                         tilelist[j++] = tile;
+                                                    }
                                                 }
                                             }
                                             if (j > 0)
@@ -394,27 +437,30 @@ namespace FiddlerControls
                                         }
                                         else
                                         {
-                                            bool firstitem = true;
+                                            bool firstItem = true;
                                             for (int i = 0; i < count; ++i)
                                             {
                                                 ushort graphic;
                                                 short shue;
                                                 byte sx, sy;
                                                 sbyte sz;
-                                                graphic = m_StaticsReader.ReadUInt16();
-                                                sx = m_StaticsReader.ReadByte();
-                                                sy = m_StaticsReader.ReadByte();
-                                                sz = m_StaticsReader.ReadSByte();
-                                                shue = m_StaticsReader.ReadInt16();
+                                                graphic = mStaticsReader.ReadUInt16();
+                                                sx = mStaticsReader.ReadByte();
+                                                sy = mStaticsReader.ReadByte();
+                                                sz = mStaticsReader.ReadSByte();
+                                                shue = mStaticsReader.ReadInt16();
 
-                                                if ((graphic >= 0) && (graphic <= Art.GetMaxItemID()))
+                                                if (graphic >= 0 && graphic <= Art.GetMaxItemId())
                                                 {
                                                     if (shue < 0)
+                                                    {
                                                         shue = 0;
-                                                    if (firstitem)
+                                                    }
+
+                                                    if (firstItem)
                                                     {
                                                         binidx.Write((int)fsmul.Position); //lookup
-                                                        firstitem = false;
+                                                        firstItem = false;
                                                     }
                                                     binmul.Write(graphic);
                                                     binmul.Write(sx);
@@ -432,9 +478,9 @@ namespace FiddlerControls
                                         }
                                         else
                                         {
-                                            binidx.Write((int)-1); //lookup
-                                            binidx.Write((int)-1); //length
-                                            binidx.Write((int)-1); //extra
+                                            binidx.Write(-1); //lookup
+                                            binidx.Write(-1); //length
+                                            binidx.Write(-1); //extra
                                         }
                                     }
                                 }
@@ -443,11 +489,11 @@ namespace FiddlerControls
                         }
                     }
                 }
-                m_IndexReader.Close();
-                m_StaticsReader.Close();
+                mIndexReader.Close();
+                mStaticsReader.Close();
             }
 
-            MessageBox.Show(String.Format("Files saved to {0}", FiddlerControls.Options.OutputPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Files saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
     }
 }

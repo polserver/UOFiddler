@@ -267,8 +267,8 @@ namespace FiddlerControls
             this.checkedListBoxWear.Name = "checkedListBoxWear";
             this.checkedListBoxWear.Size = new System.Drawing.Size(139, 277);
             this.checkedListBoxWear.TabIndex = 0;
-            this.checkedListBoxWear.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox_ItemCheck);
-            this.checkedListBoxWear.SelectedIndexChanged += new System.EventHandler(this.checkedListBox_Change);
+            this.checkedListBoxWear.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBox_ItemCheck);
+            this.checkedListBoxWear.SelectedIndexChanged += new System.EventHandler(this.CheckedListBox_Change);
             // 
             // contextMenuStrip1
             // 
@@ -293,7 +293,7 @@ namespace FiddlerControls
             this.huToolStripMenuItem.Name = "huToolStripMenuItem";
             this.huToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.huToolStripMenuItem.Text = "Hue";
-            this.huToolStripMenuItem.Click += new System.EventHandler(this.onClickHue);
+            this.huToolStripMenuItem.Click += new System.EventHandler(this.OnClickHue);
             // 
             // hueToolStripMenuItem
             // 

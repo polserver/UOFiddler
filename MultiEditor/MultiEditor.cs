@@ -21,74 +21,62 @@ namespace MultiEditor
 {
     public partial class MultiEditor : UserControl
     {
-        #region Fields (14)
+        private MultiEditorComponentList _compList;
 
-        private MultiEditorComponentList compList;
         //Sin/Cos(45°)
         private static readonly double CoordinateTransform = Math.Sqrt(2) / 2;
         private const int DrawTileSizeHeight = 45;
         private const int DrawTileSizeWidth = 45;
-        private List<int> DrawTilesList = new List<int>();
-        private List<MultiTile> OverlayList = new List<MultiTile>();
-        private bool Loaded = false;
-        private int m_DrawFloorZ;
-        private bool moving;
-        private MultiTile m_DrawTile;
-        private MultiTile m_HoverTile;
-        private MultiTile m_SelectedTile;
+        private List<int> _drawTilesList = new List<int>();
+        private readonly List<MultiTile> _overlayList = new List<MultiTile>();
+        private bool _loaded;
+        private bool _moving;
+        private readonly MultiTile _mDrawTile;
+        private MultiTile _mHoverTile;
+        private MultiTile _mSelectedTile;
+
         /// <summary>
         /// Current MouseLoc + Scrollbar values (for hover effect)
         /// </summary>
-        private Point MouseLoc;
-        private Point MovingLoc;
-        private int pictureboxDrawTilescol;
-        private int pictureboxDrawTilesrow;
-        private static MultiEditor refMarkerMulti = null;
-        private bool ForceRefresh;
+        private Point _mouseLoc;
 
-        #endregion Fields
-
-        #region Constructors (1)
+        private Point _movingLoc;
+        private int _pictureBoxDrawTilesCol;
+        private int _pictureBoxDrawTilesRow;
+        private bool _forceRefresh; // TODO: unused?
 
         public MultiEditor()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint,
+                true);
             InitializeComponent();
-            refMarkerMulti = this;
-            MouseLoc = new Point();
-            MovingLoc = new Point();
-            m_DrawTile = new MultiTile();
+            _mouseLoc = new Point();
+            _movingLoc = new Point();
+            _mDrawTile = new MultiTile();
             Selectedpanel.Visible = false;
             FloatingPreviewPanel.Visible = false;
             FloatingPreviewPanel.Tag = -1;
             BTN_Select.Checked = true;
-            pictureBoxDrawTiles.MouseWheel += new MouseEventHandler(pictureBoxDrawTiles_OnMouseWheel);
+            pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
             pictureBoxMulti.ContextMenu = null;
-            ForceRefresh = true;
+            _forceRefresh = true;
         }
-
-        #endregion Constructors
-
-        #region Properties (3)
 
         /// <summary>
         /// Floor Z level
         /// </summary>
-        public int DrawFloorZ { get { return m_DrawFloorZ; } }
+        public int DrawFloorZ { get; private set; }
 
         /// <summary>
         /// Current Hovered Tile (set inside MultiComponentList)
         /// </summary>
         public MultiTile HoverTile
         {
-            get { return m_HoverTile; }
+            get => _mHoverTile;
             set
             {
-                m_HoverTile = value;
-                if (value != null)
-                    toolTip1.SetToolTip(pictureBoxMulti, String.Format("ID: 0x{0:X} Z: {1}", m_HoverTile.ID, m_HoverTile.Z));
-                else
-                    toolTip1.SetToolTip(pictureBoxMulti, String.Empty);
+                _mHoverTile = value;
+                toolTip1.SetToolTip(pictureBoxMulti, value != null ? $"ID: 0x{_mHoverTile.Id:X} Z: {_mHoverTile.Z}" : string.Empty);
             }
         }
 
@@ -97,30 +85,27 @@ namespace MultiEditor
         /// </summary>
         public MultiTile SelectedTile
         {
-            get { return m_SelectedTile; }
-            set
+            get => _mSelectedTile;
+            private set
             {
-                m_SelectedTile = value;
+                _mSelectedTile = value;
                 if (value != null)
                 {
-                    SelectedTileLabel.Text = String.Format("ID: 0x{0:X} Z: {1}", value.ID, value.Z);
+                    SelectedTileLabel.Text = $"ID: 0x{value.Id:X} Z: {value.Z}";
                     numericUpDown_Selected_X.Value = value.X;
                     numericUpDown_Selected_Y.Value = value.Y;
                     numericUpDown_Selected_Z.Value = value.Z;
                     DynamiccheckBox.Checked = value.Invisible;
                 }
                 else
+                {
                     SelectedTileLabel.Text = "ID:";
+                }
             }
         }
 
-        public bool ShowWalkables { get { return showWalkablesToolStripMenuItem.Checked; } }
-        public bool ShowDoubleSurface { get { return showDoubleSurfaceMenuItem.Checked; } }
-
-
-        #endregion Properties
-
-        #region Methods (35)
+        public bool ShowWalkables => showWalkablesToolStripMenuItem.Checked;
+        public bool ShowDoubleSurface => showDoubleSurfaceMenuItem.Checked;
 
         // Private Methods (35) 
 
@@ -129,21 +114,24 @@ namespace MultiEditor
         /// </summary>
         private void BTN_CreateBlank_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Do you want to create a blank Multi?", "Create", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.OK)
+            if (MessageBox.Show("Do you want to create a blank Multi?", "Create", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) != DialogResult.OK)
             {
-                int width = (int)numericUpDown_Size_Width.Value;
-                int height = (int)numericUpDown_Size_Height.Value;
-                compList = new MultiEditorComponentList(width, height, this);
-                UndoList_Clear();
-                MaxHeightTrackBar.Minimum = compList.zMin;
-                MaxHeightTrackBar.Maximum = compList.zMax;
-                MaxHeightTrackBar.Value = compList.zMax;
-                numericUpDown_Selected_X.Maximum = compList.Width - 1;
-                numericUpDown_Selected_Y.Maximum = compList.Height - 1;
-                ScrollbarsSetValue();
-                ForceRefresh = true;
-                pictureBoxMulti.Invalidate();
+                return;
             }
+
+            int width = (int)numericUpDown_Size_Width.Value;
+            int height = (int)numericUpDown_Size_Height.Value;
+            _compList = new MultiEditorComponentList(width, height, this);
+            UndoList_Clear();
+            MaxHeightTrackBar.Minimum = _compList.ZMin;
+            MaxHeightTrackBar.Maximum = _compList.ZMax;
+            MaxHeightTrackBar.Value = _compList.ZMax;
+            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
+            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+            ScrollbarsSetValue();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         /// <summary>
@@ -157,41 +145,47 @@ namespace MultiEditor
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
         private void BTN_Export_TXT_OnClick(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string FileName = Path.Combine(path, String.Format(@"{0}.txt", textBox_Export.Text));
-                MultiComponentList sdklist = compList.ConvertToSDK();
-                sdklist.ExportToTextFile(FileName);
+                return;
             }
+
+            string path = FiddlerControls.Options.OutputPath;
+            string fileName = Path.Combine(path, $"{textBox_Export.Text}.txt");
+            MultiComponentList sdkList = _compList.ConvertToSdk();
+            sdkList.ExportToTextFile(fileName);
         }
 
         private void BTN_Export_UOA_OnClick(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string FileName = Path.Combine(path, String.Format(@"{0}.uoa", textBox_Export.Text));
-                MultiComponentList sdklist = compList.ConvertToSDK();
-                sdklist.ExportToUOAFile(FileName);
+                return;
             }
+
+            string path = FiddlerControls.Options.OutputPath;
+            string fileName = Path.Combine(path, $"{textBox_Export.Text}.uoa");
+            MultiComponentList sdkList = _compList.ConvertToSdk();
+            sdkList.ExportToUoaFile(fileName);
         }
 
         private void BTN_Export_WSC_OnClick(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string FileName = Path.Combine(path, String.Format(@"{0}.wsc", textBox_Export.Text));
-                MultiComponentList sdklist = compList.ConvertToSDK();
-                sdklist.ExportToWscFile(FileName);
+                return;
             }
+
+            string path = FiddlerControls.Options.OutputPath;
+            string fileName = Path.Combine(path, $"{textBox_Export.Text}.wsc");
+            MultiComponentList sdkList = _compList.ConvertToSdk();
+            sdkList.ExportToWscFile(fileName);
         }
 
         /// <summary>
@@ -199,9 +193,9 @@ namespace MultiEditor
         /// </summary>
         private void BTN_Floor_Clicked(object sender, EventArgs e)
         {
-            m_DrawFloorZ = (int)numericUpDown_Floor.Value;
+            DrawFloorZ = (int)numericUpDown_Floor.Value;
             ScrollbarsSetValue();
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -216,7 +210,7 @@ namespace MultiEditor
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = true;
             BTN_Trans.Checked = false;
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -231,7 +225,7 @@ namespace MultiEditor
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -240,20 +234,22 @@ namespace MultiEditor
         /// </summary>
         private void BTN_ResizeMulti_Click(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                int width = (int)numericUpDown_Size_Width.Value;
-                int height = (int)numericUpDown_Size_Height.Value;
-                compList.Resize(width, height);
-                MaxHeightTrackBar.Minimum = compList.zMin;
-                MaxHeightTrackBar.Maximum = compList.zMax;
-                MaxHeightTrackBar.Value = compList.zMax;
-                numericUpDown_Selected_X.Maximum = compList.Width - 1;
-                numericUpDown_Selected_Y.Maximum = compList.Height - 1;
-                ScrollbarsSetValue();
-                ForceRefresh = true;
-                pictureBoxMulti.Invalidate();
+                return;
             }
+
+            int width = (int)numericUpDown_Size_Width.Value;
+            int height = (int)numericUpDown_Size_Height.Value;
+            _compList.Resize(width, height);
+            MaxHeightTrackBar.Minimum = _compList.ZMin;
+            MaxHeightTrackBar.Maximum = _compList.ZMax;
+            MaxHeightTrackBar.Value = _compList.ZMax;
+            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
+            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+            ScrollbarsSetValue();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         /// <summary>
@@ -261,11 +257,10 @@ namespace MultiEditor
         /// </summary>
         private void BTN_Save_Click(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList != null &&
+                FiddlerControls.Utils.ConvertStringToInt(textBox_SaveToID.Text, out int id, 0, 0x1FFF))
             {
-                int id;
-                if (FiddlerControls.Utils.ConvertStringToInt(textBox_SaveToID.Text, out id, 0, 0x1FFF))
-                    compList.AddToSDKComponentList(id); //fires MultiChangeEvent
+                _compList.AddToSdkComponentList(id); //fires MultiChangeEvent
             }
         }
 
@@ -280,7 +275,7 @@ namespace MultiEditor
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -289,13 +284,27 @@ namespace MultiEditor
             CheckBox thisBox = (CheckBox)sender;
             switch (thisBox.Name)
             {
-                case "BTN_Select": thisBox.ImageKey = (thisBox.Checked) ? "SelectButton_Selected.bmp" : "SelectButton.bmp"; break;
-                case "BTN_Draw": thisBox.ImageKey = (thisBox.Checked) ? "DrawButton_Selected.bmp" : "DrawButton.bmp"; break;
-                case "BTN_Remove": thisBox.ImageKey = (thisBox.Checked) ? "RemoveButton_Selected.bmp" : "RemoveButton.bmp"; break;
-                case "BTN_Z": thisBox.ImageKey = (thisBox.Checked) ? "AltitudeButton_Selected.bmp" : "AltitudeButton.bmp"; break;
-                case "BTN_Floor": thisBox.ImageKey = (thisBox.Checked) ? "VirtualFloorButton_Selected.bmp" : "VirtualFloorButton.bmp"; break;
-                case "BTN_Pipette": thisBox.ImageKey = (thisBox.Checked) ? "PipetteButton_Selected.bmp" : "PipetteButton.bmp"; break;
-                case "BTN_Trans": thisBox.ImageKey = (thisBox.Checked) ? "TransButton_Selected.bmp" : "TransButton.bmp"; break;
+                case "BTN_Select":
+                    thisBox.ImageKey = thisBox.Checked ? "SelectButton_Selected.bmp" : "SelectButton.bmp";
+                    break;
+                case "BTN_Draw":
+                    thisBox.ImageKey = thisBox.Checked ? "DrawButton_Selected.bmp" : "DrawButton.bmp";
+                    break;
+                case "BTN_Remove":
+                    thisBox.ImageKey = thisBox.Checked ? "RemoveButton_Selected.bmp" : "RemoveButton.bmp";
+                    break;
+                case "BTN_Z":
+                    thisBox.ImageKey = thisBox.Checked ? "AltitudeButton_Selected.bmp" : "AltitudeButton.bmp";
+                    break;
+                case "BTN_Floor":
+                    thisBox.ImageKey = thisBox.Checked ? "VirtualFloorButton_Selected.bmp" : "VirtualFloorButton.bmp";
+                    break;
+                case "BTN_Pipette":
+                    thisBox.ImageKey = thisBox.Checked ? "PipetteButton_Selected.bmp" : "PipetteButton.bmp";
+                    break;
+                case "BTN_Trans":
+                    thisBox.ImageKey = thisBox.Checked ? "TransButton_Selected.bmp" : "TransButton.bmp";
+                    break;
             }
         }
 
@@ -310,7 +319,7 @@ namespace MultiEditor
             BTN_Z.Checked = true;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -322,12 +331,12 @@ namespace MultiEditor
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = true;
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
         /// <summary>
-        /// Converts pictureBox coords to Multicoords
+        /// Converts pictureBox coords to Multi coords
         /// </summary>
         private void ConvertCoords(Point point, out int x, out int y, out int z)
         {
@@ -335,7 +344,7 @@ namespace MultiEditor
             if (HoverTile != null)
             {
                 //visible?
-                if ((!BTN_Floor.Checked) || (HoverTile.Z >= DrawFloorZ))
+                if (!BTN_Floor.Checked || HoverTile.Z >= DrawFloorZ)
                 {
                     x = HoverTile.X;
                     y = HoverTile.Y;
@@ -343,6 +352,7 @@ namespace MultiEditor
                     return;
                 }
             }
+
             //damn the hard way
             z = 0;
 
@@ -353,9 +363,10 @@ namespace MultiEditor
                 cy -= DrawFloorZ * 4;
                 z = DrawFloorZ;
             }
+
             cy -= 44;
-            cx -= compList.xMin;
-            cy -= compList.yMin;
+            cx -= _compList.XMin;
+            cy -= _compList.YMin;
             cy += MultiEditorComponentList.GapYMod; //Mod for a bit of gap
             cx += MultiEditorComponentList.GapXMod;
 
@@ -379,97 +390,90 @@ namespace MultiEditor
         {
             ScrollbarsSetValue();
             toolTip1.SetToolTip(MaxHeightTrackBar, MaxHeightTrackBar.Value.ToString());
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
         /// <summary>
         /// Virtual Floor zValue changed
         /// </summary>
-        private void numericUpDown_Floor_Changed(object sender, EventArgs e)
+        private void NumericUpDown_Floor_Changed(object sender, EventArgs e)
         {
-            m_DrawFloorZ = (int)numericUpDown_Floor.Value;
-            compList.SetFloorZ(m_DrawFloorZ);
-            if (BTN_Floor.Checked)
+            DrawFloorZ = (int)numericUpDown_Floor.Value;
+            _compList.SetFloorZ(DrawFloorZ);
+            if (!BTN_Floor.Checked)
             {
-                ScrollbarsSetValue();
-                ForceRefresh = true;
-                pictureBoxMulti.Invalidate();
+                return;
             }
+
+            ScrollbarsSetValue();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         /// <summary>
         /// SelectedTile panel X value changed 
         /// </summary>
-        private void numericUpDown_Selected_X_Changed(object sender, EventArgs e)
+        private void NumericUpDown_Selected_X_Changed(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList != null && SelectedTile != null && (int)numericUpDown_Selected_X.Value != SelectedTile.X)
             {
-                if (SelectedTile != null)
-                {
-                    if ((int)numericUpDown_Selected_X.Value != SelectedTile.X)
-                    {
-                        compList.TileMove(SelectedTile, (int)numericUpDown_Selected_X.Value, SelectedTile.Y);
-                        ForceRefresh = true;
-                        pictureBoxMulti.Invalidate();
-                    }
-                }
+                _compList.TileMove(SelectedTile, (int)numericUpDown_Selected_X.Value, SelectedTile.Y);
+                _forceRefresh = true;
+                pictureBoxMulti.Invalidate();
             }
         }
 
         /// <summary>
         /// SelectedTile panel Y value changed 
         /// </summary>
-        private void numericUpDown_Selected_Y_Changed(object sender, EventArgs e)
+        private void NumericUpDown_Selected_Y_Changed(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList != null && SelectedTile != null && (int)numericUpDown_Selected_Y.Value != SelectedTile.Y)
             {
-                if (SelectedTile != null)
-                {
-                    if ((int)numericUpDown_Selected_Y.Value != SelectedTile.Y)
-                    {
-                        compList.TileMove(SelectedTile, SelectedTile.X, (int)numericUpDown_Selected_Y.Value);
-                        ForceRefresh = true;
-                        pictureBoxMulti.Invalidate();
-                    }
-                }
+                _compList.TileMove(SelectedTile, SelectedTile.X, (int)numericUpDown_Selected_Y.Value);
+                _forceRefresh = true;
+                pictureBoxMulti.Invalidate();
             }
         }
 
         /// <summary>
         /// SelectedTile panel Z value changed 
         /// </summary>
-        private void numericUpDown_Selected_Z_Changed(object sender, EventArgs e)
+        private void NumericUpDown_Selected_Z_Changed(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null || SelectedTile == null || (int)numericUpDown_Selected_Z.Value == SelectedTile.Z)
             {
-                if (SelectedTile != null)
-                {
-                    if ((int)numericUpDown_Selected_Z.Value != SelectedTile.Z)
-                    {
-                        compList.TileZSet(SelectedTile, (int)numericUpDown_Selected_Z.Value);
-                        MaxHeightTrackBar.Minimum = compList.zMin;
-                        MaxHeightTrackBar.Maximum = compList.zMax;
-                        if (MaxHeightTrackBar.Value < SelectedTile.Z)
-                            MaxHeightTrackBar.Value = SelectedTile.Z;
-                        ForceRefresh = true;
-                        pictureBoxMulti.Invalidate();
-                    }
-                }
+                return;
+            }
+
+            _compList.TileZSet(SelectedTile, (int)numericUpDown_Selected_Z.Value);
+
+            MaxHeightTrackBar.Minimum = _compList.ZMin;
+            MaxHeightTrackBar.Maximum = _compList.ZMax;
+
+            if (MaxHeightTrackBar.Value < SelectedTile.Z)
+            {
+                MaxHeightTrackBar.Value = SelectedTile.Z;
+            }
+
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
+        }
+
+        /// <summary>
+        /// Event Ultima FilePath changed
+        /// </summary>
+        private void OnFilePathChangeEvent()
+        {
+            if (_loaded)
+            {
+                OnLoad(null, null);
             }
         }
 
         /// <summary>
-        /// Event Ultima FilePathes changed
-        /// </summary>
-        private void OnFilePathChangeEvent()
-        {
-            if (Loaded)
-                OnLoad(null, null);
-        }
-
-        /// <summary>
-        /// Load of Usercontrol
+        /// Load of UserControl
         /// </summary>
         private void OnLoad(object sender, EventArgs e)
         {
@@ -477,91 +481,95 @@ namespace MultiEditor
             FiddlerControls.Options.LoadedUltimaClass["Art"] = true;
             FiddlerControls.Options.LoadedUltimaClass["Multis"] = true;
             FiddlerControls.Options.LoadedUltimaClass["Hues"] = true;
-            XML_InitializeToolBox();
-            string path = FiddlerControls.Options.AppDataPath;
 
-            string FileName = Path.Combine(path, "Multilist.xml");
+            XML_InitializeToolBox();
+
+            string path = FiddlerControls.Options.AppDataPath;
+            string fileName = Path.Combine(path, "Multilist.xml");
+
             XmlDocument dom = null;
             XmlElement xMultis = null;
-            if ((File.Exists(FileName)))
+            if (File.Exists(fileName))
             {
                 dom = new XmlDocument();
-                dom.Load(FileName);
+                dom.Load(fileName);
                 xMultis = dom["Multis"];
             }
+
             treeViewMultiList.BeginUpdate();
             treeViewMultiList.Nodes.Clear();
+
             // Let's create a root for import from Multi file and put these in there
-            TreeNode multinode = new TreeNode("Multi.mul");
+            TreeNode multiNode = new TreeNode("Multi.mul");
             for (int i = 0; i < 0x2000; ++i)
             {
-                if (Ultima.Multis.GetComponents(i) != MultiComponentList.Empty)
+                if (Multis.GetComponents(i) == MultiComponentList.Empty)
                 {
-                    TreeNode node;
-                    if (dom == null)
-                    {
-                        node = new TreeNode(String.Format("{0,5} (0x{0:X})", i));
-                    }
-                    else
-                    {
-                        XmlNodeList xMultiNodeList = xMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
-                        string j = "";
-                        foreach (XmlNode xMultiNode in xMultiNodeList)
-                        {
-                            j = xMultiNode.Attributes["name"].Value;
-                        }
-                        node = new TreeNode(String.Format("{0,5} (0x{0:X}) {1}", i, j));
-                    }
-                    node.Tag = i;
-                    node.Name = i.ToString();
-                    multinode.Nodes.Add(node);
+                    continue;
                 }
+
+                TreeNode node;
+                if (dom == null)
+                {
+                    node = new TreeNode(string.Format("{0,5} (0x{0:X})", i));
+                }
+                else
+                {
+                    XmlNodeList xMultiNodeList = xMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
+                    string j = "";
+                    foreach (XmlNode xMultiNode in xMultiNodeList)
+                    {
+                        j = xMultiNode.Attributes["name"].Value;
+                    }
+
+                    node = new TreeNode(string.Format("{0,5} (0x{0:X}) {1}", i, j));
+                }
+
+                node.Tag = i;
+                node.Name = i.ToString();
+                multiNode.Nodes.Add(node);
             }
-            treeViewMultiList.Nodes.Add(multinode);
-            TreeNode filenode = new TreeNode("From File");
-            TreeNode txtnode = new TreeNode("Txt File");
-            txtnode.Tag = "txt";
-            filenode.Nodes.Add(txtnode);
 
-            TreeNode uoanode = new TreeNode("UOA File");
-            uoanode.Tag = "uoa";
-            filenode.Nodes.Add(uoanode);
+            treeViewMultiList.Nodes.Add(multiNode);
+            TreeNode fileNode = new TreeNode("From File");
 
-            TreeNode uoabnode = new TreeNode("UOA Binary File");
-            uoabnode.Tag = "uoab";
-            filenode.Nodes.Add(uoabnode);
+            TreeNode txtNode = new TreeNode("Txt File") { Tag = "txt" };
+            fileNode.Nodes.Add(txtNode);
 
-            TreeNode wscnode = new TreeNode("WSC File");
-            wscnode.Tag = "wsc";
-            filenode.Nodes.Add(wscnode);
+            TreeNode uoaNode = new TreeNode("UOA File") { Tag = "uoa" };
+            fileNode.Nodes.Add(uoaNode);
 
-            TreeNode cachenode = new TreeNode("MultiCache File"); //LoadFromFile fixed
-            cachenode.Tag = "cache";
-            filenode.Nodes.Add(cachenode);
+            TreeNode uoabNode = new TreeNode("UOA Binary File") { Tag = "uoab" };
+            fileNode.Nodes.Add(uoabNode);
 
-            TreeNode uoadesignnode = new TreeNode("UOA Design File"); //LoadFromFile fixed
-            uoadesignnode.Tag = "uoadesign";
-            filenode.Nodes.Add(uoadesignnode);
+            TreeNode wscNode = new TreeNode("WSC File") { Tag = "wsc" };
+            fileNode.Nodes.Add(wscNode);
 
-            treeViewMultiList.Nodes.Add(filenode);
+            TreeNode cacheNode = new TreeNode("MultiCache File") { Tag = "cache" };
+            fileNode.Nodes.Add(cacheNode);
+
+            TreeNode uoadesignNode = new TreeNode("UOA Design File") { Tag = "uoadesign" };
+            fileNode.Nodes.Add(uoadesignNode);
+
+            treeViewMultiList.Nodes.Add(fileNode);
             treeViewMultiList.EndUpdate();
-            if (!Loaded)
+            if (!_loaded)
             {
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-                FiddlerControls.Events.MultiChangeEvent += new FiddlerControls.Events.MultiChangeHandler(OnMultiChangeEvent);
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+                FiddlerControls.Events.MultiChangeEvent += OnMultiChangeEvent;
             }
 
-            Loaded = true;
+            _loaded = true;
         }
 
         private void OnMultiChangeEvent(object sender, int id)
         {
-            if (!Loaded)
+            if (!_loaded)
                 return;
             if (sender.Equals(this))
                 return;
             bool done = false;
-            bool remove = (Ultima.Multis.GetComponents(id) == MultiComponentList.Empty);
+            bool remove = Multis.GetComponents(id) == MultiComponentList.Empty;
             for (int i = 0; i < treeViewMultiList.Nodes[0].Nodes.Count; ++i)
             {
                 if (id == (int)treeViewMultiList.Nodes[0].Nodes[i].Tag)
@@ -575,20 +583,26 @@ namespace MultiEditor
                 {
                     if (!remove)
                     {
-                        TreeNode node = new TreeNode(String.Format("{0,5} (0x{0:X})", id));
-                        node.Tag = id;
-                        node.Name = id.ToString();
+                        TreeNode node = new TreeNode(string.Format("{0,5} (0x{0:X})", id))
+                        {
+                            Tag = id,
+                            Name = id.ToString()
+                        };
                         treeViewMultiList.Nodes[0].Nodes.Insert(i, node);
                     }
+
                     done = true;
                     break;
                 }
             }
-            if ((!remove) && (!done))
+
+            if (!remove && !done)
             {
-                TreeNode node = new TreeNode(String.Format("{0,5} (0x{0:X})", id));
-                node.Tag = id;
-                node.Name = id.ToString();
+                TreeNode node = new TreeNode(string.Format("{0,5} (0x{0:X})", id))
+                {
+                    Tag = id,
+                    Name = id.ToString()
+                };
                 treeViewMultiList.Nodes[0].Nodes.Add(node);
             }
         }
@@ -598,17 +612,18 @@ namespace MultiEditor
         /// </summary>
         private void PictureBoxMultiOnMouseMove(object sender, MouseEventArgs e)
         {
-            MouseLoc = e.Location;
-            MouseLoc.X += hScrollBar.Value;
-            MouseLoc.Y += vScrollBar.Value;
-            if (moving)
+            _mouseLoc = e.Location;
+            _mouseLoc.X += hScrollBar.Value;
+            _mouseLoc.Y += vScrollBar.Value;
+            if (_moving)
             {
-                int deltax = (int)(-1 * (e.X - MovingLoc.X));
-                int deltay = (int)(-1 * (e.Y - MovingLoc.Y));
-                MovingLoc = e.Location;
-                hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltax));
-                vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltay));
+                int deltaX = -1 * (e.X - _movingLoc.X);
+                int deltaY = -1 * (e.Y - _movingLoc.Y);
+                _movingLoc = e.Location;
+                hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
+                vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
             }
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -616,14 +631,14 @@ namespace MultiEditor
         {
             if (e.Button == MouseButtons.Right)
             {
-                moving = true;
-                MovingLoc = e.Location;
-                this.Cursor = Cursors.Hand;
+                _moving = true;
+                _movingLoc = e.Location;
+                Cursor = Cursors.Hand;
             }
             else
             {
-                moving = false;
-                this.Cursor = Cursors.Default;
+                _moving = false;
+                Cursor = Cursors.Default;
             }
         }
 
@@ -632,114 +647,145 @@ namespace MultiEditor
         /// </summary>
         private void PictureBoxMultiOnMouseUp(object sender, MouseEventArgs e)
         {
-            moving = false;
-            this.Cursor = Cursors.Default;
+            _moving = false;
+            Cursor = Cursors.Default;
+
             if (e.Button == MouseButtons.Right)
+            {
                 return;
-            if (compList == null)
+            }
+
+            if (_compList == null)
+            {
                 return;
+            }
+
             if (e.Button == MouseButtons.Middle)
             {
-                OverlayList.Clear();
-                if (m_HoverTile != null)
+                _overlayList.Clear();
+                if (_mHoverTile != null)
                 {
-                    foreach (MultiTile tile in compList.GetXYArray(m_HoverTile.X, m_HoverTile.Y))
+                    foreach (MultiTile tile in _compList.GetMultiTileLitAtCoordinate(_mHoverTile.X, _mHoverTile.Y))
                     {
-                        if (tile.isVirtualFloor)
+                        if (tile.IsVirtualFloor)
+                        {
                             continue;
-                        if (tile.Z == m_HoverTile.Z)
-                            OverlayList.Add(tile);
+                        }
+
+                        if (tile.Z == _mHoverTile.Z)
+                        {
+                            _overlayList.Add(tile);
+                        }
                     }
                 }
             }
             else if (BTN_Select.Checked)
             {
-                SelectedTile = m_HoverTile;
+                SelectedTile = _mHoverTile;
             }
             else if (BTN_Draw.Checked)
             {
-                if (m_DrawTile.ID >= 0)
+                // TODO: something wrong? looks like always true. Maybe it was meant to be > 0 ?
+                if (_mDrawTile.Id >= 0)
                 {
-                    int x, y, z;
-                    ConvertCoords(MouseLoc, out x, out y, out z);
-                    if ((x >= 0) && (x < compList.Width) && (y >= 0) && (y < compList.Height))
+                    ConvertCoords(_mouseLoc, out int x, out int y, out int z);
+
+                    if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
                     {
-                        compList.TileAdd(x, y, z, m_DrawTile.ID);
-                        MaxHeightTrackBar.Minimum = compList.zMin;
-                        MaxHeightTrackBar.Maximum = compList.zMax;
+                        _compList.TileAdd(x, y, z, _mDrawTile.Id);
+                        MaxHeightTrackBar.Minimum = _compList.ZMin;
+                        MaxHeightTrackBar.Maximum = _compList.ZMax;
                         if (MaxHeightTrackBar.Value < z)
+                        {
                             MaxHeightTrackBar.Value = z;
+                        }
                     }
                 }
             }
             else if (BTN_Remove.Checked)
             {
-                if (m_HoverTile != null)
-                    compList.TileRemove(m_HoverTile);
+                if (_mHoverTile != null)
+                {
+                    _compList.TileRemove(_mHoverTile);
+                }
                 else
                 {
-                    int overx = 0, overy = 0;
-                    foreach (MultiTile tile in OverlayList)
+                    int overX = 0;
+                    const int overY = 0;
+                    foreach (MultiTile tile in _overlayList)
                     {
                         Bitmap bmp = tile.GetBitmap();
                         if (bmp == null)
+                        {
                             continue;
+                        }
 
-                        if (((MouseLoc.X > overx) && (MouseLoc.X < (overx + bmp.Width))) &&
-                            ((MouseLoc.Y > overy) && (MouseLoc.Y < (overy + bmp.Height))))
+                        if (_mouseLoc.X > overX && _mouseLoc.X < overX + bmp.Width && _mouseLoc.Y > overY &&
+                            _mouseLoc.Y < overY + bmp.Height)
                         {
                             //Check for transparent part
-                            Color p = bmp.GetPixel(MouseLoc.X - overx, MouseLoc.Y - overy);
-                            if (!((p.R == 0) && (p.G == 0) && (p.B == 0)))
+                            Color p = bmp.GetPixel(_mouseLoc.X - overX, _mouseLoc.Y - overY);
+                            if (!(p.R == 0 && p.G == 0 && p.B == 0))
                             {
-                                compList.TileRemove(tile);
-                                OverlayList.Remove(tile);
+                                _compList.TileRemove(tile);
+                                _overlayList.Remove(tile);
                                 break;
                             }
                         }
-                        overx += bmp.Width + 10;
+
+                        overX += bmp.Width + 10;
                     }
                 }
-                MaxHeightTrackBar.Minimum = compList.zMin;
-                MaxHeightTrackBar.Maximum = compList.zMax;
+
+                MaxHeightTrackBar.Minimum = _compList.ZMin;
+                MaxHeightTrackBar.Maximum = _compList.ZMax;
             }
             else if (BTN_Z.Checked)
             {
-                if (m_HoverTile != null)
+                if (_mHoverTile != null)
                 {
                     int z = (int)numericUpDown_Z.Value;
-                    compList.TileZMod(m_HoverTile, z);
-                    MaxHeightTrackBar.Minimum = compList.zMin;
-                    MaxHeightTrackBar.Maximum = compList.zMax;
-                    if (MaxHeightTrackBar.Value < m_HoverTile.Z)
-                        MaxHeightTrackBar.Value = m_HoverTile.Z;
+                    _compList.TileZMod(_mHoverTile, z);
+                    MaxHeightTrackBar.Minimum = _compList.ZMin;
+                    MaxHeightTrackBar.Maximum = _compList.ZMax;
+                    if (MaxHeightTrackBar.Value < _mHoverTile.Z)
+                    {
+                        MaxHeightTrackBar.Value = _mHoverTile.Z;
+                    }
                 }
             }
             else if (BTN_Pipette.Checked)
             {
-                if (m_HoverTile != null)
+                if (_mHoverTile != null)
                 {
-                    m_DrawTile.Set(m_HoverTile.ID, 0);
-                    pictureBoxDrawTiles_Select();
-                    DrawTileLabel.Text = String.Format("Draw ID: 0x{0:X}", m_HoverTile.ID);
+                    _mDrawTile.Set(_mHoverTile.Id, 0);
+                    PictureBoxDrawTiles_Select();
+                    DrawTileLabel.Text = $"Draw ID: 0x{_mHoverTile.Id:X}";
                 }
             }
             else if (BTN_Trans.Checked)
             {
-                if (m_HoverTile != null)
-                    m_HoverTile.Transparent = !m_HoverTile.Transparent;
+                if (_mHoverTile != null)
+                {
+                    _mHoverTile.Transparent = !_mHoverTile.Transparent;
+                }
             }
 
-            if ((e.Button != MouseButtons.Middle) && (!BTN_Remove.Checked))
-                OverlayList.Clear();
-            else if (OverlayList.Count == 1)
-                OverlayList.Clear();
+            if (e.Button != MouseButtons.Middle && !BTN_Remove.Checked)
+            {
+                _overlayList.Clear();
+            }
+            else if (_overlayList.Count == 1)
+            {
+                _overlayList.Clear();
+            }
 
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
-        delegate void aDelegate(string t);
+        private delegate void ADelegate(string t);
+
         private void SetToolStripText(string text)
         {
             toolStripLabelCoord.Text = text;
@@ -752,60 +798,77 @@ namespace MultiEditor
         private void PictureBoxMultiOnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
-            if (compList != null)
+            if (_compList == null)
             {
-                compList.GetImage(e.Graphics, hScrollBar.Value, vScrollBar.Value, MaxHeightTrackBar.Value, MouseLoc, BTN_Floor.Checked, ForceRefresh);
-                ForceRefresh = false;
+                return;
+            }
 
-                if (ShowWalkables)
-                    showWalkablesToolStripMenuItem.Text = String.Format("Show Walkable tiles ({0})", compList.WalkableCount);
-                if (ShowDoubleSurface)
-                    showDoubleSurfaceMenuItem.Text = String.Format("Show double surface ({0})", compList.DoubleSurfaceCount);
+            _compList.GetImage(e.Graphics, hScrollBar.Value, vScrollBar.Value, MaxHeightTrackBar.Value, _mouseLoc,
+                BTN_Floor.Checked);
+            _forceRefresh = false;
 
-                int x, y, z;
-                ConvertCoords(MouseLoc, out x, out y, out z);
-                if ((x >= 0) && (x < compList.Width) && (y >= 0) && (y < compList.Height))
+            if (ShowWalkables)
+            {
+                showWalkablesToolStripMenuItem.Text = $"Show Walkable tiles ({_compList.WalkableCount})";
+            }
+
+            if (ShowDoubleSurface)
+            {
+                showDoubleSurfaceMenuItem.Text = $"Show double surface ({_compList.DoubleSurfaceCount})";
+            }
+
+            ConvertCoords(_mouseLoc, out int x, out int y, out int z);
+            if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
+            {
+                Invoke(new ADelegate(SetToolStripText), $"{x},{y},{z}");
+            }
+
+            if (BTN_Draw.Checked)
+            {
+                // TODO: always true again? > 0 ?
+                if (_mDrawTile.Id < 0)
                 {
-                     base.Invoke(new aDelegate(SetToolStripText),String.Format("{0},{1},{2}", x, y, z) );
+                    return;
                 }
 
-                if (BTN_Draw.Checked)
+                if (x < 0 || x >= _compList.Width || y < 0 || y >= _compList.Height)
                 {
-                    if (m_DrawTile.ID >= 0)
-                    {
-                        if ((x >= 0) && (x < compList.Width) && (y >= 0) && (y < compList.Height))
-                        {
-                            this.Invoke(new aDelegate(SetToolStripText), String.Format("{0},{1},{2}", x, y, z) );
-                            Bitmap bmp = m_DrawTile.GetBitmap();
-                            if (bmp == null)
-                                return;
-                            int px = (x - y) * 22;
-                            int py = (x + y) * 22;
-
-                            px -= (bmp.Width / 2);
-                            py -= z * 4;
-                            py -= bmp.Height;
-                            px -= compList.xMin;
-                            py -= compList.yMin;
-                            py += MultiEditorComponentList.GapYMod; //Mod for a bit of gap
-                            px += MultiEditorComponentList.GapXMod;
-                            px -= hScrollBar.Value;
-                            py -= vScrollBar.Value;
-                            e.Graphics.DrawImage(bmp, new Rectangle(px, py, bmp.Width, bmp.Height), 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, MultiTile.DrawColor);
-                        }
-                    }
+                    return;
                 }
-                else if (OverlayList.Count > 0)
+
+                Invoke(new ADelegate(SetToolStripText), $"{x},{y},{z}");
+                Bitmap bmp = _mDrawTile.GetBitmap();
+                if (bmp == null)
                 {
-                    int overx = 0, overy = 0;
-                    foreach (MultiTile tile in OverlayList)
-                    {
-                        Bitmap bmp = tile.GetBitmap();
-                        if (bmp == null)
-                            continue;
-                        e.Graphics.DrawImage(bmp, new Rectangle(overx, overy, bmp.Width, bmp.Height));
-                        overx += bmp.Width + 10;
-                    }
+                    return;
+                }
+
+                int px = (x - y) * 22;
+                int py = (x + y) * 22;
+
+                px -= bmp.Width / 2;
+                py -= z * 4;
+                py -= bmp.Height;
+                px -= _compList.XMin;
+                py -= _compList.YMin;
+                py += MultiEditorComponentList.GapYMod; //Mod for a bit of gap
+                px += MultiEditorComponentList.GapXMod;
+                px -= hScrollBar.Value;
+                py -= vScrollBar.Value;
+                e.Graphics.DrawImage(bmp, new Rectangle(px, py, bmp.Width, bmp.Height), 0, 0, bmp.Width,
+                    bmp.Height, GraphicsUnit.Pixel, MultiTile.DrawColor);
+            }
+            else if (_overlayList.Count > 0)
+            {
+                int overX = 0;
+                const int overY = 0;
+                foreach (MultiTile tile in _overlayList)
+                {
+                    Bitmap bmp = tile.GetBitmap();
+                    if (bmp == null)
+                        continue;
+                    e.Graphics.DrawImage(bmp, new Rectangle(overX, overY, bmp.Width, bmp.Height));
+                    overX += bmp.Width + 10;
                 }
             }
         }
@@ -816,7 +879,7 @@ namespace MultiEditor
         private void PictureBoxMultiOnResize(object sender, EventArgs e)
         {
             ScrollbarsSetValue();
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -825,22 +888,29 @@ namespace MultiEditor
         /// </summary>
         private void ScrollbarsSetValue()
         {
-            if (compList == null)
+            if (_compList == null)
                 return;
-            int yMin = compList.yMinOrg;
-            int yMax = compList.yMaxOrg;
+            int yMin = _compList.YMinOrg;
+            int yMax = _compList.YMaxOrg;
 
             if (BTN_Floor.Checked)
             {
-                int floorzmod = -DrawFloorZ * 4 - 44;
-                if (yMin > floorzmod)
-                    yMin = floorzmod;
-                floorzmod = (compList.Width + compList.Height) * 22 - DrawFloorZ * 4;
-                if (yMax < floorzmod)
-                    yMax = floorzmod;
+                int floorZMod = -DrawFloorZ * 4 - 44;
+                if (yMin > floorZMod)
+                {
+                    yMin = floorZMod;
+                }
+
+                floorZMod = (_compList.Width + _compList.Height) * 22 - DrawFloorZ * 4;
+
+                if (yMax < floorZMod)
+                {
+                    yMax = floorZMod;
+                }
             }
+
             int height = yMax - yMin + MultiEditorComponentList.GapYMod * 3;
-            int width = compList.xMax - compList.xMin + MultiEditorComponentList.GapXMod * 2;
+            int width = _compList.XMax - _compList.XMin + MultiEditorComponentList.GapXMod * 2;
 
             if (height <= pictureBoxMulti.Height + hScrollBar.Height)
             {
@@ -852,6 +922,7 @@ namespace MultiEditor
                 vScrollBar.Enabled = true;
                 vScrollBar.Maximum = height - pictureBoxMulti.Height + 10;
             }
+
             if (width <= pictureBoxMulti.Width + vScrollBar.Width)
             {
                 hScrollBar.Enabled = false;
@@ -869,238 +940,297 @@ namespace MultiEditor
         /// </summary>
         private void ScrollBarsValueChanged(object sender, EventArgs e)
         {
-            ForceRefresh = true;
+            _forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
-        private void treeViewMultiList_LoadFromFile(Multis.ImportType importtype)
+        private void TreeViewMultiList_LoadFromFile(Multis.ImportType importType)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            string type = "";
-            switch (importtype)
+            OpenFileDialog dialog = new OpenFileDialog { Multiselect = false };
+            string type;
+            switch (importType)
             {
-                case Multis.ImportType.TXT: type = "txt"; break;
-                case Multis.ImportType.UOA: type = "uoa"; break;
-                case Multis.ImportType.UOAB: type = "uoab"; break;
-                case Multis.ImportType.WSC: type = "wsc"; break;
-                case Multis.ImportType.MULTICACHE: type = "Multicache.dat"; break;
-                case Multis.ImportType.UOADESIGN: type = "Designs"; break;
-                default: return;
+                case Multis.ImportType.TXT:
+                    type = "txt";
+                    break;
+                case Multis.ImportType.UOA:
+                    type = "uoa";
+                    break;
+                case Multis.ImportType.UOAB:
+                    type = "uoab";
+                    break;
+                case Multis.ImportType.WSC:
+                    type = "wsc";
+                    break;
+                case Multis.ImportType.MULTICACHE:
+                    type = "Multicache.dat";
+                    break;
+                case Multis.ImportType.UOADESIGN:
+                    type = "Designs";
+                    break;
+                default:
+                    return;
             }
-            dialog.Title = String.Format("Choose {0} file to import", type);
+
+            dialog.Title = $"Choose {type} file to import";
             dialog.CheckFileExists = true;
-            if (importtype == Multis.ImportType.MULTICACHE)
-                dialog.Filter = String.Format("{0} file ({0})|{0}", type);
-            else if (importtype == Multis.ImportType.UOADESIGN)
-                dialog.Filter = String.Format("{0} file ({0}.*)|{0}.*", type);
-            else if (importtype == Multis.ImportType.UOAB)
-                dialog.Filter = String.Format("{0} file (*.{0})|*.{0}", "uoa");
-            else
-                dialog.Filter = String.Format("{0} file (*.{0})|*.{0}", type);
+
+            switch (importType)
+            {
+                case Multis.ImportType.MULTICACHE:
+                    dialog.Filter = string.Format("{0} file ({0})|{0}", type);
+                    break;
+                case Multis.ImportType.UOADESIGN:
+                    dialog.Filter = string.Format("{0} file ({0}.*)|{0}.*", type);
+                    break;
+                case Multis.ImportType.UOAB:
+                    dialog.Filter = string.Format("{0} file (*.{0})|*.{0}", "uoa");
+                    break;
+                default:
+                    dialog.Filter = string.Format("{0} file (*.{0})|*.{0}", type);
+                    break;
+            }
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                if (importtype == Multis.ImportType.MULTICACHE)
+                switch (importType)
                 {
-                    List<MultiComponentList> list = Ultima.Multis.LoadFromCache(dialog.FileName);
-                    TreeNode node = treeViewMultiList.Nodes[1].Nodes[4];
-                    node.Nodes.Clear();
-                    for (int i = 0; i < list.Count; ++i)
-                    {
-                        TreeNode child = new TreeNode("Entry " + i);
-                        child.Tag = list[i];
-                        node.Nodes.Add(child);
-                    }
-                }
-                else if (importtype == Multis.ImportType.UOADESIGN)
-                {
-                    List<Object[]> list = Ultima.Multis.LoadFromDesigner(dialog.FileName);
-                    TreeNode node = treeViewMultiList.Nodes[1].Nodes[5];
-                    node.Nodes.Clear();
-                    for (int i = 0; i < list.Count; ++i)
-                    {
-                        Object[] data = list[i];
-                        TreeNode child = new TreeNode(data[0] + "(" + i + ")");
-                        child.Tag = data[1];
-                        node.Nodes.Add(child);
-                    }
-                }
-                else
-                {
-                    MultiComponentList multi = Ultima.Multis.LoadFromFile(dialog.FileName, importtype);
-                    compList = new MultiEditorComponentList(multi, this);
-                    UndoList_Clear();
-                    MaxHeightTrackBar.Minimum = compList.zMin;
-                    MaxHeightTrackBar.Maximum = compList.zMax;
-                    MaxHeightTrackBar.Value = compList.zMax;
-                    textBox_SaveToID.Text = "0";
-                    numericUpDown_Size_Width.Value = compList.Width;
-                    numericUpDown_Size_Height.Value = compList.Height;
-                    numericUpDown_Selected_X.Maximum = compList.Width - 1;
-                    numericUpDown_Selected_Y.Maximum = compList.Height - 1;
-                    vScrollBar.Value = 0;
-                    hScrollBar.Value = 0;
-                    ScrollbarsSetValue();
-                    ForceRefresh = true;
-                    pictureBoxMulti.Invalidate();
+                    case Multis.ImportType.MULTICACHE:
+                        {
+                            List<MultiComponentList> list = Multis.LoadFromCache(dialog.FileName);
+                            TreeNode node = treeViewMultiList.Nodes[1].Nodes[4];
+                            node.Nodes.Clear();
+                            for (int i = 0; i < list.Count; ++i)
+                            {
+                                TreeNode child = new TreeNode("Entry " + i) { Tag = list[i] };
+                                node.Nodes.Add(child);
+                            }
+
+                            break;
+                        }
+                    case Multis.ImportType.UOADESIGN:
+                        {
+                            List<object[]> list = Multis.LoadFromDesigner(dialog.FileName);
+                            TreeNode node = treeViewMultiList.Nodes[1].Nodes[5];
+                            node.Nodes.Clear();
+                            for (int i = 0; i < list.Count; ++i)
+                            {
+                                object[] data = list[i];
+                                TreeNode child = new TreeNode(data[0] + "(" + i + ")")
+                                {
+                                    Tag = data[1]
+                                };
+                                node.Nodes.Add(child);
+                            }
+
+                            break;
+                        }
+                    default:
+                        {
+                            MultiComponentList multi = Multis.LoadFromFile(dialog.FileName, importType);
+                            _compList = new MultiEditorComponentList(multi, this);
+                            UndoList_Clear();
+                            MaxHeightTrackBar.Minimum = _compList.ZMin;
+                            MaxHeightTrackBar.Maximum = _compList.ZMax;
+                            MaxHeightTrackBar.Value = _compList.ZMax;
+                            textBox_SaveToID.Text = "0";
+                            numericUpDown_Size_Width.Value = _compList.Width;
+                            numericUpDown_Size_Height.Value = _compList.Height;
+                            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
+                            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+                            vScrollBar.Value = 0;
+                            hScrollBar.Value = 0;
+                            ScrollbarsSetValue();
+                            _forceRefresh = true;
+                            pictureBoxMulti.Invalidate();
+                            break;
+                        }
                 }
             }
+
             dialog.Dispose();
         }
 
         /// <summary>
-        /// Doubleclick Node of Import treeview
+        /// DoubleClick Node of Import tree view
         /// </summary>
-        private void treeViewMultiList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void TreeViewMultiList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node.Tag == null)
+            {
                 return;
+            }
 
             switch (e.Node.Tag.ToString())
             {
-                case "txt": treeViewMultiList_LoadFromFile(Multis.ImportType.TXT); return;
-                case "uoa": treeViewMultiList_LoadFromFile(Multis.ImportType.UOA); return;
-                case "uoab": treeViewMultiList_LoadFromFile(Multis.ImportType.UOAB); return;
-                case "wsc": treeViewMultiList_LoadFromFile(Multis.ImportType.WSC); return;
-                case "cache": treeViewMultiList_LoadFromFile(Multis.ImportType.MULTICACHE); return;
-                case "uoadesign": treeViewMultiList_LoadFromFile(Multis.ImportType.UOADESIGN); return;
-                default: break;
+                case "txt":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.TXT);
+                    return;
+                case "uoa":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.UOA);
+                    return;
+                case "uoab":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.UOAB);
+                    return;
+                case "wsc":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.WSC);
+                    return;
+                case "cache":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.MULTICACHE);
+                    return;
+                case "uoadesign":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.UOADESIGN);
+                    return;
             }
 
-            if (MessageBox.Show("Do you want to open selected Multi?", "Open", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.OK)
+            if (MessageBox.Show("Do you want to open selected Multi?", "Open", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) != DialogResult.OK)
             {
-                if ((e.Node.Parent != null) && (e.Node.Parent.Tag != null) && (e.Node.Parent.Tag.ToString() == "cache"))
-                {
-                    MultiComponentList list = (MultiComponentList)e.Node.Tag;
-                    if (list != null)
-                    {
-                        compList = new MultiEditorComponentList(list, this);
-                        textBox_SaveToID.Text = "0";
-                    }
-                }
-                else if ((e.Node.Parent != null) && (e.Node.Parent.Tag != null) && (e.Node.Parent.Tag.ToString() == "uoadesign"))
-                {
-                    MultiComponentList list = (MultiComponentList)e.Node.Tag;
-                    if (list != null)
-                    {
-                        compList = new MultiEditorComponentList(list, this);
-                        textBox_SaveToID.Text = "0";
-                    }
-                }
-                else
-                {
-                    compList = new MultiEditorComponentList(Ultima.Multis.GetComponents((int)e.Node.Tag), this);
-                    textBox_SaveToID.Text = e.Node.Tag.ToString();
-                }
-                UndoList_Clear();
-                MaxHeightTrackBar.Minimum = compList.zMin;
-                MaxHeightTrackBar.Maximum = compList.zMax;
-                MaxHeightTrackBar.Value = compList.zMax;
-                numericUpDown_Size_Width.Value = compList.Width;
-                numericUpDown_Size_Height.Value = compList.Height;
-                numericUpDown_Selected_X.Maximum = compList.Width - 1;
-                numericUpDown_Selected_Y.Maximum = compList.Height - 1;
-                vScrollBar.Value = 0;
-                hScrollBar.Value = 0;
-                ScrollbarsSetValue();
-                ForceRefresh = true;
-                pictureBoxMulti.Invalidate();
+                return;
             }
+
+            if (e.Node.Parent?.Tag != null && e.Node.Parent.Tag.ToString() == "cache")
+            {
+                MultiComponentList list = (MultiComponentList)e.Node.Tag;
+                if (list != null)
+                {
+                    _compList = new MultiEditorComponentList(list, this);
+                    textBox_SaveToID.Text = "0";
+                }
+            }
+            else if (e.Node.Parent?.Tag?.ToString() == "uoadesign")
+            {
+                MultiComponentList list = (MultiComponentList)e.Node.Tag;
+                if (list != null)
+                {
+                    _compList = new MultiEditorComponentList(list, this);
+                    textBox_SaveToID.Text = "0";
+                }
+            }
+            else
+            {
+                _compList = new MultiEditorComponentList(Multis.GetComponents((int)e.Node.Tag), this);
+                textBox_SaveToID.Text = e.Node.Tag.ToString();
+            }
+
+            UndoList_Clear();
+            MaxHeightTrackBar.Minimum = _compList.ZMin;
+            MaxHeightTrackBar.Maximum = _compList.ZMax;
+            MaxHeightTrackBar.Value = _compList.ZMax;
+            numericUpDown_Size_Width.Value = _compList.Width;
+            numericUpDown_Size_Height.Value = _compList.Height;
+            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
+            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+            vScrollBar.Value = 0;
+            hScrollBar.Value = 0;
+            ScrollbarsSetValue();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
-        private void treeViewMultiList_NodeMouseHover(object sender, TreeNodeMouseHoverEventArgs e)
+        private void TreeViewMultiList_NodeMouseHover(object sender, TreeNodeMouseHoverEventArgs e)
         {
-            if (e.Node.Tag is int)
+            switch (e.Node.Tag)
             {
-                MultiComponentList list = Ultima.Multis.GetComponents((int)e.Node.Tag);
-                toolTip1.SetToolTip(treeViewMultiList, String.Format("{0}x{1} {2}", list.Width, list.Height, list.SortedTiles.Length));
+                case int nodeTag:
+                    {
+                        MultiComponentList list = Multis.GetComponents(nodeTag);
+                        toolTip1.SetToolTip(treeViewMultiList, $"{list.Width}x{list.Height} {list.SortedTiles.Length}");
+                        break;
+                    }
+                case MultiComponentList multiComponentList:
+                    {
+                        MultiComponentList list = multiComponentList;
+                        toolTip1.SetToolTip(treeViewMultiList, $"{list.Width}x{list.Height} {list.SortedTiles.Length}");
+                        break;
+                    }
             }
-            else if (e.Node.Tag is MultiComponentList)
-            {
-                MultiComponentList list = e.Node.Tag as MultiComponentList;
-                toolTip1.SetToolTip(treeViewMultiList, String.Format("{0}x{1} {2}", list.Width, list.Height, list.SortedTiles.Length));
-            }
-
         }
 
         private void TreeViewTilesXML_OnAfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag != null)
+            if (e.Node.Tag == null)
             {
-                DrawTilesList = (List<int>)e.Node.Tag;
-                vScrollBarDrawTiles.Maximum = DrawTilesList.Count / pictureboxDrawTilescol + 1;
-                vScrollBarDrawTiles.Minimum = 1;
-                vScrollBarDrawTiles.SmallChange = 1;
-                vScrollBarDrawTiles.LargeChange = 1;
-                vScrollBarDrawTiles.Value = 1;
-                pictureBoxDrawTiles.Invalidate();
+                return;
             }
+
+            _drawTilesList = (List<int>)e.Node.Tag;
+            vScrollBarDrawTiles.Maximum = _drawTilesList.Count / _pictureBoxDrawTilesCol + 1;
+            vScrollBarDrawTiles.Minimum = 1;
+            vScrollBarDrawTiles.SmallChange = 1;
+            vScrollBarDrawTiles.LargeChange = 1;
+            vScrollBarDrawTiles.Value = 1;
+            pictureBoxDrawTiles.Invalidate();
         }
 
         private void Undo_onClick(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                ToolStripMenuItem item = (ToolStripMenuItem)sender;
-                int undo = (int)item.Tag;
-                compList.Undo(undo);
-                MaxHeightTrackBar.Minimum = compList.zMin;
-                MaxHeightTrackBar.Maximum = compList.zMax;
-                MaxHeightTrackBar.Value = compList.zMax;
-                numericUpDown_Size_Width.Value = compList.Width;
-                numericUpDown_Size_Height.Value = compList.Height;
-                numericUpDown_Selected_X.Maximum = compList.Width - 1;
-                numericUpDown_Selected_Y.Maximum = compList.Height - 1;
-                ScrollbarsSetValue();
-                ForceRefresh = true;
-                pictureBoxMulti.Invalidate();
+                return;
             }
+
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            int undo = (int)item.Tag;
+            _compList.Undo(undo);
+            MaxHeightTrackBar.Minimum = _compList.ZMin;
+            MaxHeightTrackBar.Maximum = _compList.ZMax;
+            MaxHeightTrackBar.Value = _compList.ZMax;
+            numericUpDown_Size_Width.Value = _compList.Width;
+            numericUpDown_Size_Height.Value = _compList.Height;
+            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
+            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+            ScrollbarsSetValue();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         private void UndoList_BeforeOpening(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                foreach (ToolStripItem item in UndoItems.DropDownItems)
-                {
-                    int index = (int)item.Tag;
-                    if (compList.UndoList[index].Tiles != null)
-                        item.Text = compList.UndoList[index].Action;
-                    else
-                        item.Text = "---";
-                }
+                return;
+            }
+
+            foreach (ToolStripItem item in UndoItems.DropDownItems)
+            {
+                int index = (int)item.Tag;
+                item.Text = _compList.UndoList[index].Tiles != null
+                    ? _compList.UndoList[index].Action
+                    : "---";
             }
         }
 
         private void UndoList_Clear()
         {
-            if (compList != null)
-                compList.UndoClear();
+            _compList?.UndoClear();
+
             foreach (ToolStripItem item in UndoItems.DropDownItems)
             {
                 item.Text = "---";
             }
         }
 
-        private void XML_AddChildren(TreeNode node, XmlElement mainNode)
+        private static void XML_AddChildren(TreeNode node, XmlElement mainNode)
         {
             foreach (XmlElement e in mainNode)
             {
-                TreeNode tempNode = new TreeNode();
+                TreeNode tempNode = new TreeNode { Text = e.GetAttribute("name") };
 
-                tempNode.Text = e.GetAttribute("name");
                 if (e.Name == "subgroup")
                 {
                     tempNode.ImageIndex = 0;
+
                     if (e.HasChildNodes)
                     {
                         List<int> list = new List<int>();
                         foreach (XmlElement elem in e.ChildNodes)
                         {
-                            int i = Int32.Parse(elem.GetAttribute("index"));
-                            if (Ultima.Art.IsValidStatic(i))
+                            int i = int.Parse(elem.GetAttribute("index"));
+                            if (Art.IsValidStatic(i))
                                 list.Add(i);
                         }
+
                         tempNode.Tag = list;
                     }
                 }
@@ -1112,64 +1242,78 @@ namespace MultiEditor
         private void XML_InitializeToolBox()
         {
             string path = FiddlerControls.Options.AppDataPath;
-            string FileName = Path.Combine(path, @"plugins/multieditor.xml");
-            if (!File.Exists(FileName))
+            string fileName = Path.Combine(path, "plugins/multieditor.xml");
+            if (!File.Exists(fileName))
+            {
                 return;
+            }
 
             XmlDocument dom = new XmlDocument();
-            dom.Load(FileName);
+            dom.Load(fileName);
+
             XmlElement xTiles = dom["TileGroups"];
+            if (xTiles == null)
+            {
+                return;
+            }
 
             foreach (XmlElement xRootGroup in xTiles)
             {
-                TreeNode mainNode = new TreeNode();
-                mainNode.Text = xRootGroup.GetAttribute("name");
-                mainNode.Tag = null;
-
-                mainNode.ImageIndex = 0;
+                TreeNode mainNode = new TreeNode
+                {
+                    Text = xRootGroup.GetAttribute("name"),
+                    Tag = null,
+                    ImageIndex = 0
+                };
 
                 XML_AddChildren(mainNode, xRootGroup);
-
                 treeViewTilesXML.Nodes.Add(mainNode);
             }
         }
 
-        #endregion Methods
-
         public void SelectDrawTile(ushort id)
         {
-            m_DrawTile.Set(id, 0);
-            pictureBoxDrawTiles_Select();
-            DrawTileLabel.Text = String.Format("Draw ID: 0x{0:X}", id);
+            _mDrawTile.Set(id, 0);
+            PictureBoxDrawTiles_Select();
+            DrawTileLabel.Text = $"Draw ID: 0x{id:X}";
         }
 
-        #region DrawTilesPictureBox Stuff
         private int GetIndex(int x, int y)
         {
-            if (x >= pictureboxDrawTilescol)
+            if (x >= _pictureBoxDrawTilesCol)
+            {
                 return -1;
-            int value = Math.Max(0, ((pictureboxDrawTilescol * (vScrollBarDrawTiles.Value - 1)) + (x + (y * pictureboxDrawTilescol))));
-            if (DrawTilesList.Count > value)
-                return DrawTilesList[value];
-            else
-                return -1;
+            }
+
+            int value = Math.Max(0,
+                _pictureBoxDrawTilesCol * (vScrollBarDrawTiles.Value - 1) + x + y * _pictureBoxDrawTilesCol);
+
+            if (_drawTilesList.Count > value)
+            {
+                return _drawTilesList[value];
+            }
+
+            return -1;
         }
 
-        private void pictureBoxDrawTiles_OnMouseClick(object sender, MouseEventArgs e)
+        private void PictureBoxDrawTiles_OnMouseClick(object sender, MouseEventArgs e)
         {
             pictureBoxDrawTiles.Focus();
             int x = e.X / (DrawTileSizeWidth - 1);
             int y = e.Y / (DrawTileSizeHeight - 1);
+
             int index = GetIndex(x, y);
-            if (index >= 0)
+            if (index < 0)
             {
-                m_DrawTile.Set((ushort)index, 0);
-                DrawTileLabel.Text = String.Format("Draw ID: 0x{0:X}", index);
-                pictureBoxDrawTiles.Invalidate();
+                return;
             }
+
+            _mDrawTile.Set((ushort)index, 0);
+            DrawTileLabel.Text = $"Draw ID: 0x{index:X}";
+            pictureBoxDrawTiles.Invalidate();
         }
 
-        private void pictureBoxDrawTilesMouseMove(object sender, MouseEventArgs e)
+        private void PictureBoxDrawTilesMouseMove(object sender, MouseEventArgs e)
         {
             int x = e.X / (DrawTileSizeWidth - 1);
             int y = e.Y / (DrawTileSizeHeight - 1);
@@ -1178,90 +1322,101 @@ namespace MultiEditor
             {
                 if (index != (int)FloatingPreviewPanel.Tag)
                 {
-                    FloatingPreviewPanel.BackgroundImage = Ultima.Art.GetStatic(index);
-                    FloatingPreviewPanel.Size = new Size(Ultima.Art.GetStatic(index).Width + 10, Ultima.Art.GetStatic(index).Height + 10);
+                    FloatingPreviewPanel.BackgroundImage = Art.GetStatic(index);
+                    FloatingPreviewPanel.Size =
+                        new Size(Art.GetStatic(index).Width + 10, Art.GetStatic(index).Height + 10);
                 }
+
                 FloatingPreviewPanel.Left = PointToClient(MousePosition).X;
                 FloatingPreviewPanel.Top = PointToClient(MousePosition).Y - FloatingPreviewPanel.Size.Height;
                 FloatingPreviewPanel.Visible = true;
                 FloatingPreviewPanel.Tag = index;
-                toolTip1.SetToolTip(pictureBoxDrawTiles, String.Format("0x{0:X} ({0})", index));
+                toolTip1.SetToolTip(pictureBoxDrawTiles, string.Format("0x{0:X} ({0})", index));
                 pictureBoxDrawTiles.Invalidate();
             }
             else
             {
                 FloatingPreviewPanel.Visible = false;
-                toolTip1.SetToolTip(pictureBoxDrawTiles, String.Empty);
+                toolTip1.SetToolTip(pictureBoxDrawTiles, string.Empty);
             }
         }
 
-        private void pictureBoxDrawTilesMouseLeave(object sender, EventArgs e)
+        private void PictureBoxDrawTilesMouseLeave(object sender, EventArgs e)
         {
             FloatingPreviewPanel.Visible = false;
         }
 
-        private void pictureBoxDrawTiles_OnPaint(object sender, PaintEventArgs e)
+        private void PictureBoxDrawTiles_OnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
 
-            for (int y = 0; y < pictureboxDrawTilesrow; ++y)
+            for (int y = 0; y < _pictureBoxDrawTilesRow; ++y)
             {
-                for (int x = 0; x < pictureboxDrawTilescol; ++x)
+                for (int x = 0; x < _pictureBoxDrawTilesCol; ++x)
                 {
                     int index = GetIndex(x, y);
-                    if (index >= 0)
+                    if (index < 0)
                     {
-                        Bitmap b = Art.GetStatic(index);
-
-                        if (b != null)
-                        {
-                            Point loc = new Point((x * DrawTileSizeWidth) + 1, (y * DrawTileSizeHeight) + 1);
-                            Size size = new Size(DrawTileSizeWidth - 1, DrawTileSizeHeight - 1);
-                            Rectangle rect = new Rectangle(loc, size);
-
-                            e.Graphics.Clip = new Region(rect);
-
-                            if (index == m_DrawTile.ID)
-                                e.Graphics.FillRectangle(Brushes.LightBlue, rect);
-
-                            int width = b.Width;
-                            int height = b.Height;
-                            if (width > size.Width)
-                            {
-                                width = size.Width;
-                                height = size.Height * b.Height / b.Width;
-                            }
-                            if (height > size.Height)
-                            {
-                                height = size.Height;
-                                width = size.Width * b.Width / b.Height;
-                            }
-                            e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
-                        }
+                        continue;
                     }
+
+                    Bitmap b = Art.GetStatic(index);
+
+                    if (b == null)
+                    {
+                        continue;
+                    }
+
+                    Point loc = new Point(x * DrawTileSizeWidth + 1, y * DrawTileSizeHeight + 1);
+                    Size size = new Size(DrawTileSizeWidth - 1, DrawTileSizeHeight - 1);
+                    Rectangle rect = new Rectangle(loc, size);
+
+                    e.Graphics.Clip = new Region(rect);
+
+                    if (index == _mDrawTile.Id)
+                        e.Graphics.FillRectangle(Brushes.LightBlue, rect);
+
+                    int width = b.Width;
+                    int height = b.Height;
+                    if (width > size.Width)
+                    {
+                        width = size.Width;
+                        height = size.Height * b.Height / b.Width;
+                    }
+
+                    if (height > size.Height)
+                    {
+                        height = size.Height;
+                        width = size.Width * b.Width / b.Height;
+                    }
+
+                    e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
                 }
             }
         }
 
-        private void pictureBoxDrawTiles_OnResize(object sender, EventArgs e)
+        private void PictureBoxDrawTiles_OnResize(object sender, EventArgs e)
         {
-            if ((pictureBoxDrawTiles.Height == 0) || (pictureBoxDrawTiles.Width == 0))
+            if (pictureBoxDrawTiles.Height == 0 || pictureBoxDrawTiles.Width == 0)
+            {
                 return;
-            pictureboxDrawTilescol = pictureBoxDrawTiles.Width / DrawTileSizeWidth;
-            pictureboxDrawTilesrow = pictureBoxDrawTiles.Height / DrawTileSizeHeight + 1;
-            vScrollBarDrawTiles.Maximum = DrawTilesList.Count / pictureboxDrawTilescol + 1;
+            }
+
+            _pictureBoxDrawTilesCol = pictureBoxDrawTiles.Width / DrawTileSizeWidth;
+            _pictureBoxDrawTilesRow = pictureBoxDrawTiles.Height / DrawTileSizeHeight + 1;
+            vScrollBarDrawTiles.Maximum = _drawTilesList.Count / _pictureBoxDrawTilesCol + 1;
             vScrollBarDrawTiles.Minimum = 1;
             vScrollBarDrawTiles.SmallChange = 1;
-            vScrollBarDrawTiles.LargeChange = pictureboxDrawTilesrow;
+            vScrollBarDrawTiles.LargeChange = _pictureBoxDrawTilesRow;
             pictureBoxDrawTiles.Invalidate();
         }
 
-        private void vScrollBarDrawTiles_Scroll(object sender, ScrollEventArgs e)
+        private void VScrollBarDrawTiles_Scroll(object sender, ScrollEventArgs e)
         {
             pictureBoxDrawTiles.Invalidate();
         }
 
-        private void pictureBoxDrawTiles_OnMouseWheel(object sender, MouseEventArgs e)
+        private void PictureBoxDrawTiles_OnMouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta < 0)
             {
@@ -1281,87 +1436,90 @@ namespace MultiEditor
             }
         }
 
-        private void pictureBoxDrawTiles_Select()
+        private void PictureBoxDrawTiles_Select()
         {
             foreach (TreeNode node in treeViewTilesXML.Nodes)
             {
-                foreach (TreeNode childnode in node.Nodes)
+                foreach (TreeNode childNode in node.Nodes)
                 {
-                    if (childnode.Tag != null)
+                    if (childNode.Tag == null)
                     {
-                        foreach (int index in (List<int>)childnode.Tag)
+                        continue;
+                    }
+
+                    foreach (int index in (List<int>)childNode.Tag)
+                    {
+                        if (index != _mDrawTile.Id)
                         {
-                            if (index == m_DrawTile.ID)
-                            {
-                                treeViewTilesXML.SelectedNode = childnode;
-                                pictureBoxDrawTiles.Invalidate();
-                                return;
-                            }
+                            continue;
                         }
+
+                        treeViewTilesXML.SelectedNode = childNode;
+                        pictureBoxDrawTiles.Invalidate();
+                        return;
                     }
                 }
             }
         }
-        #endregion
 
         private void BTN_DynamicCheckBox_Changed(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null || SelectedTile == null)
             {
-                if (SelectedTile != null)
-                {
-                    if (SelectedTile.Invisible != DynamiccheckBox.Checked)
-                        SelectedTile.Invisible = DynamiccheckBox.Checked;
-                }
+                return;
+            }
+
+            if (SelectedTile.Invisible != DynamiccheckBox.Checked)
+            {
+                SelectedTile.Invisible = DynamiccheckBox.Checked;
             }
         }
 
         private void BTN_ShowWalkables_Click(object sender, EventArgs e)
         {
             showWalkablesToolStripMenuItem.Text = "Show Walkable tiles";
-            if (ShowWalkables)
+            if (!ShowWalkables || _compList == null)
             {
-                if (compList != null)
-                {
-                    compList.CalcWalkable();
-                    ForceRefresh = true;
-                    pictureBoxMulti.Invalidate();
-                }
+                return;
             }
+
+            _compList.CalcWalkable();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         private void BTN_ShowAllTrans(object sender, EventArgs e)
         {
-            if (compList != null)
+            if (_compList == null)
             {
-                for (int i = 0; i < compList.Tiles.Count; ++i)
-                {
-                    compList.Tiles[i].Transparent = false;
-                }
-                ForceRefresh = true;
-                pictureBoxMulti.Invalidate();
+                return;
             }
+
+            foreach (MultiTile tile in _compList.Tiles)
+            {
+                tile.Transparent = false;
+            }
+
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         private void BTN_ShowDoubleSurface(object sender, EventArgs e)
         {
             showDoubleSurfaceMenuItem.Text = "Show double surface";
-            if (ShowDoubleSurface)
+            if (!ShowDoubleSurface || _compList == null)
             {
-                if (compList != null)
-                {
-                    compList.CalcDoubleSurface();
-                    ForceRefresh = true;
-                    pictureBoxMulti.Invalidate();
-                }
+                return;
             }
+
+            _compList.CalcDoubleSurface();
+            _forceRefresh = true;
+            pictureBoxMulti.Invalidate();
         }
 
         private void OnDummyContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
         }
-
-
     }
 }

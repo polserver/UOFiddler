@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
+using Ultima;
 
 namespace ComparePlugin
 {
@@ -26,21 +27,21 @@ namespace ComparePlugin
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
-        bool Loaded = false;
-        bool moving = false;
-        Point movingpoint = new Point();
-        private Point currPoint;
-        private Ultima.Map currmap;
-        private Ultima.Map origmap;
-        private int currmapint;
-        private Bitmap map;
-        public static double Zoom = 1;
-        private bool[][][][] diffs;
+        private bool _loaded;
+        private bool _moving;
+        private Point _movingPoint;
+        private Point _currPoint;
+        private Map _currMap;
+        private Map _origMap;
+        private int _currMapInt;
+        private Bitmap _map;
+        private static double _zoom = 1;
+        private bool[][][][] _diffs;
 
         private void OnLoad(object sender, EventArgs e)
         {
-            currmap = Ultima.Map.Custom;
-            origmap = Ultima.Map.Felucca;
+            _currMap = Map.Custom;
+            _origMap = Map.Felucca;
             feluccaToolStripMenuItem.Checked = true;
             trammelToolStripMenuItem.Checked = false;
             ilshenarToolStripMenuItem.Checked = false;
@@ -52,19 +53,19 @@ namespace ComparePlugin
             showMap2ToolStripMenuItem.Checked = false;
             SetScrollBarValues();
             ChangeMapNames();
-            ZoomLabel.Text = String.Format("Zoom: {0}", Zoom);
+            ZoomLabel.Text = $"Zoom: {_zoom}";
 
             FiddlerControls.Options.LoadedUltimaClass["Map"] = true;
             FiddlerControls.Options.LoadedUltimaClass["RadarColor"] = true;
 
-            if (!Loaded)
+            if (!_loaded)
             {
-                FiddlerControls.Events.MapDiffChangeEvent += new FiddlerControls.Events.MapDiffChangeHandler(OnMapDiffChangeEvent);
-                FiddlerControls.Events.MapNameChangeEvent += new FiddlerControls.Events.MapNameChangeHandler(OnMapNameChangeEvent);
-                FiddlerControls.Events.MapSizeChangeEvent += new FiddlerControls.Events.MapSizeChangeHandler(OnMapSizeChangeEvent);
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
+                FiddlerControls.Events.MapDiffChangeEvent += OnMapDiffChangeEvent;
+                FiddlerControls.Events.MapNameChangeEvent += OnMapNameChangeEvent;
+                FiddlerControls.Events.MapSizeChangeEvent += OnMapSizeChangeEvent;
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
             }
-            Loaded = true;
+            _loaded = true;
         }
 
         private void OnMapDiffChangeEvent()
@@ -81,23 +82,32 @@ namespace ComparePlugin
         private void OnMapSizeChangeEvent()
         {
             SetScrollBarValues();
-            if (currmap != null)
+            if (_currMap != null)
+            {
                 ChangeMap();
+            }
+
             pictureBox.Invalidate();
         }
 
         private void OnFilePathChangeEvent()
         {
             SetScrollBarValues();
-            if (currmap != null)
+            if (_currMap != null)
+            {
                 ChangeMap();
+            }
+
             pictureBox.Invalidate();
         }
 
         private void ChangeMapNames()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
+            }
+
             feluccaToolStripMenuItem.Text = FiddlerControls.Options.MapNames[0];
             trammelToolStripMenuItem.Text = FiddlerControls.Options.MapNames[1];
             ilshenarToolStripMenuItem.Text = FiddlerControls.Options.MapNames[2];
@@ -105,66 +115,72 @@ namespace ComparePlugin
             tokunoToolStripMenuItem.Text = FiddlerControls.Options.MapNames[4];
             terMurToolStripMenuItem.Text = FiddlerControls.Options.MapNames[5];
         }
-        public static int Round(int x)
+
+        private static int Round(int x)
         {
-            return (int)((x >> 3) << 3);
+            return (x >> 3) << 3;
         }
 
-        private void onMouseDown(object sender, MouseEventArgs e)
+        private void OnMouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                moving = true;
-                movingpoint.X = e.X;
-                movingpoint.Y = e.Y;
-                this.Cursor = Cursors.Hand;
+                _moving = true;
+                _movingPoint.X = e.X;
+                _movingPoint.Y = e.Y;
+                Cursor = Cursors.Hand;
             }
             else
             {
-                moving = false;
-                this.Cursor = Cursors.Default;
+                _moving = false;
+                Cursor = Cursors.Default;
             }
         }
 
-        private void onMouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            int xDelta = Math.Min(origmap.Width, (int)(e.X / Zoom) + Round(hScrollBar.Value));
-            int yDelta = Math.Min(origmap.Height, (int)(e.Y / Zoom) + Round(vScrollBar.Value));
-            CoordsLabel.Text = String.Format("Coords: {0},{1}", xDelta, yDelta);
+            int xDelta = Math.Min(_origMap.Width, (int)(e.X / _zoom) + Round(hScrollBar.Value));
+            int yDelta = Math.Min(_origMap.Height, (int)(e.Y / _zoom) + Round(vScrollBar.Value));
+            CoordsLabel.Text = $"Coords: {xDelta},{yDelta}";
             string diff = "";
-            if (moving)
+            if (_moving)
             {
                 toolTip1.RemoveAll();
-                int deltax = (int)(-1 * (e.X - movingpoint.X) / Zoom);
-                int deltay = (int)(-1 * (e.Y - movingpoint.Y) / Zoom);
-                movingpoint.X = e.X;
-                movingpoint.Y = e.Y;
-                hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltax));
-                vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltay));
+                int deltaX = (int)(-1 * (e.X - _movingPoint.X) / _zoom);
+                int deltaY = (int)(-1 * (e.Y - _movingPoint.Y) / _zoom);
+                _movingPoint.X = e.X;
+                _movingPoint.Y = e.Y;
+                hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
+                vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
                 pictureBox.Invalidate();
             }
-            else if ((Zoom >= 2) && (currmap != null))
+            else if (_zoom >= 2 && _currMap != null)
             {
                 if (BlockDiff(xDelta >> 3, yDelta >> 3))
                 {
+                    Tile customTile = _currMap.Tiles.GetLandTile(xDelta, yDelta);
+                    Tile origTile = _origMap.Tiles.GetLandTile(xDelta, yDelta);
+                    if (customTile.Id != origTile.Id || customTile.Z != origTile.Z)
+                    {
+                        diff = $"Tile:\n\r0x{origTile.Id:X} {origTile.Z} -> 0x{customTile.Id:X} {customTile.Z}\n\r";
+                    }
 
-                    Ultima.Tile customTile = currmap.Tiles.GetLandTile(xDelta, yDelta);
-                    Ultima.Tile origTile = origmap.Tiles.GetLandTile(xDelta, yDelta);
-                    if ((customTile.ID != origTile.ID) || (customTile.Z != origTile.Z))
-                        diff = String.Format("Tile:\n\r0x{0:X} {1} -> 0x{2:X} {3}\n\r", origTile.ID, origTile.Z, customTile.ID, customTile.Z);
-                    Ultima.HuedTile[] customStatics = currmap.Tiles.GetStaticTiles(xDelta, yDelta);
-                    Ultima.HuedTile[] origStatics = origmap.Tiles.GetStaticTiles(xDelta, yDelta);
+                    HuedTile[] customStatics = _currMap.Tiles.GetStaticTiles(xDelta, yDelta);
+                    HuedTile[] origStatics = _origMap.Tiles.GetStaticTiles(xDelta, yDelta);
                     if (customStatics.Length != origStatics.Length)
                     {
                         diff += "Statics:\n\rorig:\n\r";
-                        foreach (Ultima.HuedTile tile in origStatics)
+
+                        foreach (HuedTile tile in origStatics)
                         {
-                            diff += String.Format("0x{0:X} {1} {2}\n\r", tile.ID, tile.Z, tile.Hue);
+                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
                         }
+
                         diff += "new:\n\r";
-                        foreach (Ultima.HuedTile tile in customStatics)
+
+                        foreach (HuedTile tile in customStatics)
                         {
-                            diff += String.Format("0x{0:X} {1} {2}\n\r", tile.ID, tile.Z, tile.Hue);
+                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
                         }
                     }
                     else
@@ -172,18 +188,17 @@ namespace ComparePlugin
                         bool changed = false;
                         for (int i = 0; i < customStatics.Length; i++)
                         {
-                            if ((customStatics[i].ID != origStatics[i].ID)
-                                || (customStatics[i].Z != origStatics[i].Z)
-                                || (customStatics[i].Hue != origStatics[i].Hue))
+                            if (customStatics[i].Id != origStatics[i].Id
+                                || customStatics[i].Z != origStatics[i].Z
+                                || customStatics[i].Hue != origStatics[i].Hue)
                             {
                                 if (!changed)
                                 {
                                     diff += "Statics diff:\n\r";
                                     changed = true;
                                 }
-                                diff += String.Format("0x{0:X} {1} {2} -> 0x{3:X} {4} {5}\n\r",
-                                    origStatics[i].ID, origStatics[i].Z, origStatics[i].Hue,
-                                    customStatics[i].ID, customStatics[i].Z, customStatics[i].Hue);
+                                diff +=
+                                    $"0x{origStatics[i].Id:X} {origStatics[i].Z} {origStatics[i].Hue} -> 0x{customStatics[i].Id:X} {customStatics[i].Z} {customStatics[i].Hue}\n\r";
                             }
                         }
                     }
@@ -192,37 +207,40 @@ namespace ComparePlugin
                 pictureBox.Invalidate();
             }
 
-            if ((Zoom >= 2) && (markDiffToolStripMenuItem.Checked) && (String.IsNullOrEmpty(diff)))
+            if (_zoom >= 2 && markDiffToolStripMenuItem.Checked && string.IsNullOrEmpty(diff))
             {
-                Ultima.Map drawmap;
-                if (showMap1ToolStripMenuItem.Checked)
-                    drawmap = origmap;
-                else
-                    drawmap = currmap;
-                if (drawmap.Tiles.Patch.LandBlocksCount > 0)
+                Map drawMap = showMap1ToolStripMenuItem.Checked
+                    ? _origMap
+                    : _currMap;
+
+                if (drawMap.Tiles.Patch.LandBlocksCount > 0)
                 {
-                    if (drawmap.Tiles.Patch.IsLandBlockPatched(xDelta >> 3, yDelta >> 3))
+                    if (drawMap.Tiles.Patch.IsLandBlockPatched(xDelta >> 3, yDelta >> 3))
                     {
-                        Ultima.Tile patchTile = drawmap.Tiles.Patch.GetLandTile(xDelta, yDelta);
-                        Ultima.Tile origTile = drawmap.Tiles.GetLandTile(xDelta, yDelta, false);
-                        diff = String.Format("Tile:\n\r0x{0:X} {1} -> 0x{2:X} {3}\n\r", origTile.ID, origTile.Z, patchTile.ID, patchTile.Z);
+                        Tile patchTile = drawMap.Tiles.Patch.GetLandTile(xDelta, yDelta);
+                        Tile origTile = drawMap.Tiles.GetLandTile(xDelta, yDelta, false);
+                        diff = $"Tile:\n\r0x{origTile.Id:X} {origTile.Z} -> 0x{patchTile.Id:X} {patchTile.Z}\n\r";
                     }
                 }
-                if (drawmap.Tiles.Patch.StaticBlocksCount > 0)
+                if (drawMap.Tiles.Patch.StaticBlocksCount > 0)
                 {
-                    if (drawmap.Tiles.Patch.IsStaticBlockPatched(xDelta >> 3, yDelta >> 3))
+                    if (drawMap.Tiles.Patch.IsStaticBlockPatched(xDelta >> 3, yDelta >> 3))
                     {
-                        Ultima.HuedTile[] patchStatics = drawmap.Tiles.Patch.GetStaticTiles(xDelta, yDelta);
-                        Ultima.HuedTile[] origStatics = drawmap.Tiles.GetStaticTiles(xDelta, yDelta, false);
+                        HuedTile[] patchStatics = drawMap.Tiles.Patch.GetStaticTiles(xDelta, yDelta);
+                        HuedTile[] origStatics = drawMap.Tiles.GetStaticTiles(xDelta, yDelta, false);
+
                         diff += "Statics:\n\rorig:\n\r";
-                        foreach (Ultima.HuedTile tile in origStatics)
+
+                        foreach (HuedTile tile in origStatics)
                         {
-                            diff += String.Format("0x{0:X} {1} {2}\n\r", tile.ID, tile.Z, tile.Hue);
+                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
                         }
+
                         diff += "patch:\n\r";
-                        foreach (Ultima.HuedTile tile in patchStatics)
+
+                        foreach (HuedTile tile in patchStatics)
                         {
-                            diff += String.Format("0x{0:X} {1} {2}\n\r", tile.ID, tile.Z, tile.Hue);
+                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
                         }
                     }
                 }
@@ -231,53 +249,67 @@ namespace ComparePlugin
             }
         }
 
-        private void onMouseUp(object sender, MouseEventArgs e)
+        private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            moving = false;
-            this.Cursor = Cursors.Default;
+            _moving = false;
+            Cursor = Cursors.Default;
         }
-        static Pen redpen = Pens.Red;
-        private void onPaint(object sender, PaintEventArgs e)
+
+        private static readonly Pen RedPen = Pens.Red;
+
+        private void OnPaint(object sender, PaintEventArgs e)
         {
-
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
-            if (showMap1ToolStripMenuItem.Checked)
-                map = origmap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                    (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
-                    true);
-            else
-                map = currmap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                    (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
-                    true);
+            }
 
-            if (currmap != null)
+            if (showMap1ToolStripMenuItem.Checked)
+            {
+                _map = _origMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
+                   (int)(e.ClipRectangle.Width / _zoom + 8) >> 3, (int)(e.ClipRectangle.Height / _zoom + 8) >> 3,
+                   true);
+            }
+            else
+            {
+                _map = _currMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
+                   (int)(e.ClipRectangle.Width / _zoom + 8) >> 3, (int)(e.ClipRectangle.Height / _zoom + 8) >> 3,
+                   true);
+            }
+
+            if (_currMap != null)
             {
                 if (showDifferencesToolStripMenuItem.Checked)
                 {
-                    using (Graphics mapg = Graphics.FromImage(map))
+                    using (Graphics mapg = Graphics.FromImage(_map))
                     {
-                        int maxx = ((int)((e.ClipRectangle.Width / Zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
-                        int maxy = ((int)((e.ClipRectangle.Height / Zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
-                        if (maxx > (origmap.Width >> 3))
-                            maxx = (origmap.Width >> 3);
-                        if (maxy > (origmap.Height >> 3))
-                            maxy = (origmap.Height >> 3);
-                        int gx = 0, gy = 0;
-                        for (int x = (hScrollBar.Value >> 3); x < maxx; x++, gx += 8)
+                        int maxx = ((int)(e.ClipRectangle.Width / _zoom + 8) >> 3) + (hScrollBar.Value >> 3);
+                        int maxy = ((int)(e.ClipRectangle.Height / _zoom + 8) >> 3) + (vScrollBar.Value >> 3);
+                        if (maxx > _origMap.Width >> 3)
                         {
-                            gy = 0;
-                            for (int y = (vScrollBar.Value >> 3); y < maxy; y++, gy += 8)
+                            maxx = _origMap.Width >> 3;
+                        }
+
+                        if (maxy > _origMap.Height >> 3)
+                        {
+                            maxy = _origMap.Height >> 3;
+                        }
+
+                        int gx = 0;
+                        for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
+                        {
+                            int gy = 0;
+                            for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
                             {
                                 for (int xb = 0; xb < 8; xb++)
                                 {
                                     for (int yb = 0; yb < 8; yb++)
                                     {
-                                        if (diffs[x][y][xb][yb])
+                                        if (_diffs[x][y][xb][yb])
                                         {
-                                            mapg.DrawRectangle(redpen, (gx + xb), (gy + yb), 1, 1);
-                                            mapg.DrawRectangle(redpen, (gx + xb), 0, 1, 2);
-                                            mapg.DrawRectangle(redpen, 0, (gy + yb), 2, 1);
+                                            mapg.DrawRectangle(RedPen, gx + xb, gy + yb, 1, 1);
+                                            mapg.DrawRectangle(RedPen, gx + xb, 0, 1, 2);
+                                            mapg.DrawRectangle(RedPen, 0, gy + yb, 2, 1);
                                         }
                                     }
                                 }
@@ -290,36 +322,40 @@ namespace ComparePlugin
 
             if (markDiffToolStripMenuItem.Checked)
             {
-                Ultima.Map drawmap;
-                if (showMap1ToolStripMenuItem.Checked)
-                    drawmap = origmap;
-                else
-                    drawmap = currmap;
-                int count = drawmap.Tiles.Patch.LandBlocksCount + drawmap.Tiles.Patch.StaticBlocksCount;
+                Map drawMap = showMap1ToolStripMenuItem.Checked
+                    ? _origMap
+                    : _currMap;
+
+                int count = drawMap.Tiles.Patch.LandBlocksCount + drawMap.Tiles.Patch.StaticBlocksCount;
                 if (count > 0)
                 {
-                    using (Graphics mapg = Graphics.FromImage(map))
+                    using (Graphics mapg = Graphics.FromImage(_map))
                     {
-                        int maxx = ((int)((e.ClipRectangle.Width / Zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
-                        int maxy = ((int)((e.ClipRectangle.Height / Zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
-                        if (maxx > drawmap.Width >> 3)
-                            maxx = drawmap.Width >> 3;
-                        if (maxy > drawmap.Height >> 3)
-                            maxy = drawmap.Height >> 3;
-
-                        int gx = 0, gy = 0;
-                        for (int x = (hScrollBar.Value >> 3); x < maxx; x++, gx += 8)
+                        int maxx = ((int)(e.ClipRectangle.Width / _zoom + 8) >> 3) + (hScrollBar.Value >> 3);
+                        int maxy = ((int)(e.ClipRectangle.Height / _zoom + 8) >> 3) + (vScrollBar.Value >> 3);
+                        if (maxx > drawMap.Width >> 3)
                         {
-                            gy = 0;
-                            for (int y = (vScrollBar.Value >> 3); y < maxy; y++, gy += 8)
+                            maxx = drawMap.Width >> 3;
+                        }
+
+                        if (maxy > drawMap.Height >> 3)
+                        {
+                            maxy = drawMap.Height >> 3;
+                        }
+
+                        int gx = 0;
+                        for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
+                        {
+                            int gy = 0;
+                            for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
                             {
-                                if (drawmap.Tiles.Patch.IsLandBlockPatched(x, y))
+                                if (drawMap.Tiles.Patch.IsLandBlockPatched(x, y))
                                 {
                                     mapg.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
                                     mapg.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
                                     mapg.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
                                 }
-                                if (drawmap.Tiles.Patch.IsStaticBlockPatched(x, y))
+                                if (drawMap.Tiles.Patch.IsStaticBlockPatched(x, y))
                                 {
                                     mapg.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
                                     mapg.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
@@ -330,13 +366,13 @@ namespace ComparePlugin
                     }
                 }
             }
-            ZoomMap(ref map);
-            e.Graphics.DrawImageUnscaledAndClipped(map, e.ClipRectangle);
+            ZoomMap(ref _map);
+            e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
         }
 
         private void ZoomMap(ref Bitmap bmp0)
         {
-            Bitmap bmp1 = new Bitmap((int)(map.Width * Zoom), (int)(map.Height * Zoom));
+            Bitmap bmp1 = new Bitmap((int)(_map.Width * _zoom), (int)(_map.Height * _zoom));
             Graphics graph = Graphics.FromImage(bmp1);
             graph.InterpolationMode = InterpolationMode.NearestNeighbor;
             graph.PixelOffsetMode = PixelOffsetMode.Half;
@@ -347,7 +383,7 @@ namespace ComparePlugin
 
         private void OnResize(object sender, EventArgs e)
         {
-            if (Loaded)
+            if (_loaded)
             {
                 ChangeScrollBar();
                 pictureBox.Invalidate();
@@ -356,19 +392,31 @@ namespace ComparePlugin
 
         private void ChangeScrollBar()
         {
-            hScrollBar.Maximum = (int)(origmap.Width);
-            hScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Width / Zoom) - 8);
-            if (Zoom >= 1)
-                hScrollBar.Maximum += (int)(40 * Zoom);
-            else if (Zoom < 1)
-                hScrollBar.Maximum += (int)(40 / Zoom);
+            hScrollBar.Maximum = _origMap.Width;
+            hScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Width / _zoom) - 8);
+
+            if (_zoom >= 1)
+            {
+                hScrollBar.Maximum += (int)(40 * _zoom);
+            }
+            else if (_zoom < 1)
+            {
+                hScrollBar.Maximum += (int)(40 / _zoom);
+            }
+
             hScrollBar.Maximum = Math.Max(0, Round(hScrollBar.Maximum));
-            vScrollBar.Maximum = (int)(origmap.Height);
-            vScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Height / Zoom) - 8);
-            if (Zoom >= 1)
-                vScrollBar.Maximum += (int)(40 * Zoom);
-            else if (Zoom < 1)
-                vScrollBar.Maximum += (int)(40 / Zoom);
+            vScrollBar.Maximum = _origMap.Height;
+            vScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Height / _zoom) - 8);
+
+            if (_zoom >= 1)
+            {
+                vScrollBar.Maximum += (int)(40 * _zoom);
+            }
+            else if (_zoom < 1)
+            {
+                vScrollBar.Maximum += (int)(40 / _zoom);
+            }
+
             vScrollBar.Maximum = Math.Max(0, Round(vScrollBar.Maximum));
         }
 
@@ -385,25 +433,24 @@ namespace ComparePlugin
             hScrollBar.Value = 0;
         }
 
-        private void onZoomPlus(object sender, EventArgs e)
+        private void OnZoomPlus(object sender, EventArgs e)
         {
-            Zoom *= 2;
+            _zoom *= 2;
             DoZoom();
         }
 
         private void OnZoomMinus(object sender, EventArgs e)
         {
-            Zoom /= 2;
+            _zoom /= 2;
             DoZoom();
         }
 
         private void DoZoom()
         {
             ChangeScrollBar();
-            ZoomLabel.Text = String.Format("Zoom: {0}", Zoom);
-            int x, y;
-            x = Math.Max(0, currPoint.X - (int)(pictureBox.ClientSize.Width / Zoom) / 2);
-            y = Math.Max(0, currPoint.Y - (int)(pictureBox.ClientSize.Height / Zoom) / 2);
+            ZoomLabel.Text = $"Zoom: {_zoom}";
+            int x = Math.Max(0, _currPoint.X - (int)(pictureBox.ClientSize.Width / _zoom) / 2);
+            int y = Math.Max(0, _currPoint.Y - (int)(pictureBox.ClientSize.Height / _zoom) / 2);
             x = Math.Min(x, hScrollBar.Maximum);
             y = Math.Min(y, vScrollBar.Maximum);
             hScrollBar.Value = Round(x);
@@ -413,11 +460,11 @@ namespace ComparePlugin
 
         private void OnOpeningContext(object sender, CancelEventArgs e)
         {
-            currPoint = pictureBox.PointToClient(Control.MousePosition);
-            currPoint.X = (int)(currPoint.X / Zoom);
-            currPoint.Y = (int)(currPoint.Y / Zoom);
-            currPoint.X += hScrollBar.Value;
-            currPoint.Y += vScrollBar.Value;
+            _currPoint = pictureBox.PointToClient(MousePosition);
+            _currPoint.X = (int)(_currPoint.X / _zoom);
+            _currPoint.Y = (int)(_currPoint.Y / _zoom);
+            _currPoint.X += hScrollBar.Value;
+            _currPoint.Y += vScrollBar.Value;
         }
 
         private void OnClickBrowseLoc(object sender, EventArgs e)
@@ -427,7 +474,9 @@ namespace ComparePlugin
                 dialog.Description = "Select directory containing the map files";
                 dialog.ShowNewFolderButton = false;
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
                     toolStripTextBox1.Text = dialog.SelectedPath;
+                }
             }
         }
 
@@ -441,7 +490,9 @@ namespace ComparePlugin
             SetScrollBarValues();
             string path = toolStripTextBox1.Text;
             if (Directory.Exists(path))
-                currmap = Ultima.Map.Custom = new Ultima.Map(path, origmap.FileIndex, currmapint, origmap.Width, origmap.Height);
+            {
+                _currMap = Map.Custom = new Map(path, _origMap.FileIndex, _currMapInt, _origMap.Width, _origMap.Height);
+            }
 
             CalculateDiffs();
             pictureBox.Invalidate();
@@ -459,74 +510,86 @@ namespace ComparePlugin
 
         private void OnClickChangeFelucca(object sender, EventArgs e)
         {
-            if (!feluccaToolStripMenuItem.Checked)
+            if (feluccaToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                feluccaToolStripMenuItem.Checked = true;
-                origmap = Ultima.Map.Felucca;
-                currmapint = 0;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            feluccaToolStripMenuItem.Checked = true;
+            _origMap = Map.Felucca;
+            _currMapInt = 0;
+            ChangeMap();
         }
 
         private void OnClickChangeTrammel(object sender, EventArgs e)
         {
-            if (!trammelToolStripMenuItem.Checked)
+            if (trammelToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                trammelToolStripMenuItem.Checked = true;
-                origmap = Ultima.Map.Trammel;
-                currmapint = 1;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            trammelToolStripMenuItem.Checked = true;
+            _origMap = Map.Trammel;
+            _currMapInt = 1;
+            ChangeMap();
         }
 
         private void OnClickChangeIlshenar(object sender, EventArgs e)
         {
-            if (!ilshenarToolStripMenuItem.Checked)
+            if (ilshenarToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                ilshenarToolStripMenuItem.Checked = true;
-                origmap = Ultima.Map.Ilshenar;
-                currmapint = 2;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            ilshenarToolStripMenuItem.Checked = true;
+            _origMap = Map.Ilshenar;
+            _currMapInt = 2;
+            ChangeMap();
         }
 
         private void OnClickChangeMalas(object sender, EventArgs e)
         {
-            if (!malasToolStripMenuItem.Checked)
+            if (malasToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                malasToolStripMenuItem.Checked = true;
-                origmap = Ultima.Map.Malas;
-                currmapint = 3;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            malasToolStripMenuItem.Checked = true;
+            _origMap = Map.Malas;
+            _currMapInt = 3;
+            ChangeMap();
         }
 
         private void OnClickChangeTokuno(object sender, EventArgs e)
         {
-            if (!tokunoToolStripMenuItem.Checked)
+            if (tokunoToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                tokunoToolStripMenuItem.Checked = true;
-                origmap = Ultima.Map.Tokuno;
-                currmapint = 4;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            tokunoToolStripMenuItem.Checked = true;
+            _origMap = Map.Tokuno;
+            _currMapInt = 4;
+            ChangeMap();
         }
 
         private void OnClickChangeTerMur(object sender, EventArgs e)
         {
-            if (!terMurToolStripMenuItem.Checked)
+            if (terMurToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                terMurToolStripMenuItem.Checked = true;
-                origmap = Ultima.Map.TerMur;
-                currmapint = 5;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            terMurToolStripMenuItem.Checked = true;
+            _origMap = Map.TerMur;
+            _currMapInt = 5;
+            ChangeMap();
         }
 
         private void OnClickShowDiff(object sender, EventArgs e)
@@ -536,25 +599,26 @@ namespace ComparePlugin
 
         private void OnClickShowMap2(object sender, EventArgs e)
         {
-            if (!showMap2ToolStripMenuItem.Checked)
+            if (showMap2ToolStripMenuItem.Checked || _currMap == null)
             {
-                if (currmap != null)
-                {
-                    showMap1ToolStripMenuItem.Checked = false;
-                    showMap2ToolStripMenuItem.Checked = true;
-                    pictureBox.Invalidate();
-                }
+                return;
             }
+
+            showMap1ToolStripMenuItem.Checked = false;
+            showMap2ToolStripMenuItem.Checked = true;
+            pictureBox.Invalidate();
         }
 
         private void OnClickShowMap1(object sender, EventArgs e)
         {
-            if (!showMap1ToolStripMenuItem.Checked)
+            if (showMap1ToolStripMenuItem.Checked)
             {
-                showMap2ToolStripMenuItem.Checked = false;
-                showMap1ToolStripMenuItem.Checked = true;
-                pictureBox.Invalidate();
+                return;
             }
+
+            showMap2ToolStripMenuItem.Checked = false;
+            showMap1ToolStripMenuItem.Checked = true;
+            pictureBox.Invalidate();
         }
 
         private void OnClickMarkDiff(object sender, EventArgs e)
@@ -564,65 +628,75 @@ namespace ComparePlugin
 
         private bool BlockDiff(int x, int y)
         {
-            if (diffs == null)
+            if (_diffs == null)
+            {
                 return false;
-            if (x < 0 || y < 0 || x >= diffs.GetLength(0) || y >= diffs[x].GetLength(0))
+            }
+
+            if (x < 0 || y < 0 || x >= _diffs.GetLength(0) || y >= _diffs[x].GetLength(0))
+            {
                 return false;
+            }
+
             for (int xb = 0; xb < 8; xb++)
             {
                 for (int yb = 0; yb < 8; yb++)
                 {
-                    if (diffs[x][y][xb][yb])
+                    if (_diffs[x][y][xb][yb])
+                    {
                         return true;
+                    }
                 }
             }
             return false;
-
         }
 
         private void CalculateDiffs()
         {
-            int width = currmap.Width >> 3;
-            int height = currmap.Height >> 3;
-            diffs = new bool[width][][][];
-            if (currmap == null || origmap == null)
+            int width = _currMap.Width >> 3;
+            int height = _currMap.Height >> 3;
+            _diffs = new bool[width][][][];
+            if (_currMap == null || _origMap == null)
+            {
                 return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
             for (int x = 0; x < width; ++x)
             {
-                diffs[x] = new bool[height][][];
+                _diffs[x] = new bool[height][][];
                 for (int y = 0; y < height; ++y)
                 {
-                    diffs[x][y] = new bool[8][];
-                    Ultima.Tile[] customTiles = currmap.Tiles.GetLandBlock(x, y);
-                    Ultima.Tile[] origTiles = origmap.Tiles.GetLandBlock(x, y);
-                    Ultima.HuedTile[][][] customStatics = currmap.Tiles.GetStaticBlock(x, y);
-                    Ultima.HuedTile[][][] origStatics = origmap.Tiles.GetStaticBlock(x, y);
+                    _diffs[x][y] = new bool[8][];
+                    Tile[] customTiles = _currMap.Tiles.GetLandBlock(x, y);
+                    Tile[] origTiles = _origMap.Tiles.GetLandBlock(x, y);
+                    HuedTile[][][] customStatics = _currMap.Tiles.GetStaticBlock(x, y);
+                    HuedTile[][][] origStatics = _origMap.Tiles.GetStaticBlock(x, y);
                     for (int xb = 0; xb < 8; xb++)
                     {
-                        diffs[x][y][xb] = new bool[8];
+                        _diffs[x][y][xb] = new bool[8];
                         for (int yb = 0; yb < 8; yb++)
                         {
-                            if ((customTiles[((yb & 0x7) << 3) + (xb & 0x7)].ID != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].ID)
-                             || (customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z))
+                            if (customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Id != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Id
+                             || customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z)
                             {
-                                diffs[x][y][xb][yb] = true;
+                                _diffs[x][y][xb][yb] = true;
                             }
                             else
                             {
                                 if (customStatics[xb][yb].Length != origStatics[xb][yb].Length)
                                 {
-                                    diffs[x][y][xb][yb] = true;
+                                    _diffs[x][y][xb][yb] = true;
                                 }
                                 else
                                 {
                                     for (int i = 0; i < customStatics[xb][yb].Length; i++)
                                     {
-                                        if ((customStatics[xb][yb][i].ID != origStatics[xb][yb][i].ID)
-                                            || (customStatics[xb][yb][i].Z != origStatics[xb][yb][i].Z)
-                                            || (customStatics[xb][yb][i].Hue != origStatics[xb][yb][i].Hue))
+                                        if (customStatics[xb][yb][i].Id != origStatics[xb][yb][i].Id
+                                            || customStatics[xb][yb][i].Z != origStatics[xb][yb][i].Z
+                                            || customStatics[xb][yb][i].Hue != origStatics[xb][yb][i].Hue)
                                         {
-                                            diffs[x][y][xb][yb] = true;
+                                            _diffs[x][y][xb][yb] = true;
                                             break;
                                         }
                                     }

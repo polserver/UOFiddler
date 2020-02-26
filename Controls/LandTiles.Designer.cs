@@ -105,21 +105,21 @@ namespace FiddlerControls
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
             this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(158, 30);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.onClickExportBmp);
+            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(158, 30);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.onClickExportTiff);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportTiff);
             // 
             // asJpgToolStripMenuItem1
             // 
             this.asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
             this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(158, 30);
             this.asJpgToolStripMenuItem1.Text = "As Jpg";
-            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.onClickExportJpg);
+            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportJpg);
             // 
             // toolStripSeparator3
             // 
@@ -150,14 +150,14 @@ namespace FiddlerControls
             this.findNextFreeSlotToolStripMenuItem.Name = "findNextFreeSlotToolStripMenuItem";
             this.findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(274, 30);
             this.findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
-            this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.onClickFindFree);
+            this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.OnClickFindFree);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(274, 30);
             this.removeToolStripMenuItem.Text = "Remove";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.onClickRemove);
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // replaceToolStripMenuItem
             // 
@@ -179,7 +179,7 @@ namespace FiddlerControls
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 31);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown_Insert);
-            this.InsertText.TextChanged += new System.EventHandler(this.onTextChanged_Insert);
+            this.InsertText.TextChanged += new System.EventHandler(this.OnTextChanged_Insert);
             // 
             // toolStripLandTile
             // 
@@ -317,8 +317,8 @@ namespace FiddlerControls
             this.listView1.TileSize = new System.Drawing.Size(46, 46);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Tile;
-            this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.drawitem);
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
+            this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.DrawItem);
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.ListView_SelectedIndexChanged);
             this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LandTiles_KeyUp);
             // 
             // showFreeSlotsToolStripMenuItem
@@ -327,7 +327,7 @@ namespace FiddlerControls
             this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
             this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(274, 30);
             this.showFreeSlotsToolStripMenuItem.Text = "Show Free Slots";
-            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.onClickShowFreeSlots);
+            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.OnClickShowFreeSlots);
             // 
             // LandTiles
             // 

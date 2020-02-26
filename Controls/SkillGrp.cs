@@ -25,17 +25,20 @@ namespace FiddlerControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
-        private bool Loaded = false;
-        private TreeNode sourceNode;
+        private bool _loaded;
+        private TreeNode _sourceNode;
 
         /// <summary>
         /// ReLoads if loaded
         /// </summary>
         private void Reload()
         {
-            if (Loaded)
+            if (_loaded)
+            {
                 OnLoad(this, EventArgs.Empty);
+            }
         }
+
         private void OnLoad(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -47,17 +50,24 @@ namespace FiddlerControls
 
             foreach (SkillGroup group in SkillGroups.List)
             {
-                TreeNode groupnode = new TreeNode();
-                groupnode.Text = group.Name;
-                if (String.Equals("Misc", group.Name))
+                TreeNode groupnode = new TreeNode
+                {
+                    Text = group.Name
+                };
+                if (string.Equals("Misc", group.Name))
+                {
                     groupnode.ForeColor = Color.Blue;
+                }
+
                 for (int i = 0; i < SkillGroups.SkillList.Count; ++i)
                 {
-                    if ((SkillGroups.SkillList[i]) == cache.Count)
+                    if (SkillGroups.SkillList[i] == cache.Count)
                     {
-                        TreeNode skillnode = new TreeNode();
-                        skillnode.Text = Ultima.Skills.GetSkill(i).Name;
-                        skillnode.Tag = i;
+                        TreeNode skillnode = new TreeNode
+                        {
+                            Text = Ultima.Skills.GetSkill(i).Name,
+                            Tag = i
+                        };
                         groupnode.Nodes.Add(skillnode);
                     }
                 }
@@ -67,9 +77,12 @@ namespace FiddlerControls
             treeView1.Nodes.AddRange(cache.ToArray());
             treeView1.EndUpdate();
 
-            if (!Loaded)
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-            Loaded = true;
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
+            _loaded = true;
             Cursor.Current = Cursors.Default;
         }
 
@@ -81,14 +94,16 @@ namespace FiddlerControls
         private void OnClickSave(object sender, EventArgs e)
         {
             SkillGroups.List.Clear();
-            int skillcount=int.MinValue;
+            int skillcount = int.MinValue;
             foreach (TreeNode root in treeView1.Nodes)
             {
                 foreach (TreeNode child in root.Nodes)
                 {
                     int id = (int)child.Tag;
                     if (id > skillcount)
+                    {
                         skillcount = id;
+                    }
                 }
             }
             ++skillcount;
@@ -105,9 +120,9 @@ namespace FiddlerControls
                     SkillGroups.SkillList[(int)skill.Tag] = root.Index;
                 }
             }
-            SkillGroups.Save(FiddlerControls.Options.OutputPath);
+            SkillGroups.Save(Options.OutputPath);
             MessageBox.Show(
-                String.Format("SkillGrp saved to {0}", FiddlerControls.Options.OutputPath),
+                $"SkillGrp saved to {Options.OutputPath}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -115,23 +130,25 @@ namespace FiddlerControls
             Options.ChangedUltimaClass["SkillGrp"] = false;
         }
 
-
         private void OnItemDrag(object sender, ItemDragEventArgs e)
         {
-            sourceNode = (TreeNode)e.Item;
-            if (sourceNode == null)
+            _sourceNode = (TreeNode)e.Item;
+            if (_sourceNode == null)
+            {
                 return;
-            if (String.Equals("Misc", sourceNode.Text))
+            }
+
+            if (string.Equals("Misc", _sourceNode.Text))
+            {
                 return;
+            }
+
             DoDragDrop(e.Item.ToString(), DragDropEffects.Move | DragDropEffects.Copy);
         }
 
         private void OnDragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.Text))
-                e.Effect = DragDropEffects.Move;
-            else
-                e.Effect = DragDropEffects.None;
+            e.Effect = e.Data.GetDataPresent(DataFormats.Text) ? DragDropEffects.Move : DragDropEffects.None;
         }
 
         private void OnDragDrop(object sender, DragEventArgs e)
@@ -142,19 +159,28 @@ namespace FiddlerControls
 
             if (targetNode != null)
             {
-                nodeCopy = new TreeNode(sourceNode.Text, sourceNode.ImageIndex, sourceNode.SelectedImageIndex);
-                nodeCopy.Tag = sourceNode.Tag;
+                nodeCopy = new TreeNode(_sourceNode.Text, _sourceNode.ImageIndex, _sourceNode.SelectedImageIndex)
+                {
+                    Tag = _sourceNode.Tag
+                };
 
                 bool targetIsSkill = targetNode.Tag != null;
-                bool sourceIsSkill = sourceNode.Tag != null;
+                bool sourceIsSkill = _sourceNode.Tag != null;
                 if (targetIsSkill && !sourceIsSkill)
+                {
                     return;
+                }
+
                 if (targetIsSkill && sourceIsSkill)
                 {
-                    if (sourceNode.Index > targetNode.Index)
+                    if (_sourceNode.Index > targetNode.Index)
+                    {
                         targetNode.Parent.Nodes.Insert(targetNode.Index, nodeCopy);
+                    }
                     else
+                    {
                         targetNode.Parent.Nodes.Insert(targetNode.Index + 1, nodeCopy);
+                    }
                 }
                 else if (!targetIsSkill && sourceIsSkill)
                 {
@@ -162,26 +188,33 @@ namespace FiddlerControls
                 }
                 else if (!targetIsSkill && !sourceIsSkill)
                 {
-                    if (String.Equals("Misc", targetNode.Text))
+                    if (string.Equals("Misc", targetNode.Text))
                     {
                         treeView1.Invalidate();
                         return;
                     }
-                    if (sourceNode.Index > targetNode.Index)
-                        treeView1.Nodes.Insert(targetNode.Index, nodeCopy);
-                    else
-                        treeView1.Nodes.Insert(targetNode.Index + 1, nodeCopy);
-
-                    while (sourceNode.GetNodeCount(false) > 0)
+                    if (_sourceNode.Index > targetNode.Index)
                     {
-                        TreeNode node = sourceNode.FirstNode;
+                        treeView1.Nodes.Insert(targetNode.Index, nodeCopy);
+                    }
+                    else
+                    {
+                        treeView1.Nodes.Insert(targetNode.Index + 1, nodeCopy);
+                    }
+
+                    while (_sourceNode.GetNodeCount(false) > 0)
+                    {
+                        TreeNode node = _sourceNode.FirstNode;
                         node.Remove();
                         nodeCopy.Nodes.Add(node);
                     }
                 }
                 else
+                {
                     return;
-                sourceNode.Remove();
+                }
+
+                _sourceNode.Remove();
                 nodeCopy.EnsureVisible();
                 treeView1.SelectedNode = nodeCopy;
                 treeView1.Invalidate();
@@ -195,7 +228,7 @@ namespace FiddlerControls
             {
                 if (treeView1.SelectedNode.Parent == null)
                 {
-                    if (!String.Equals("Misc", treeView1.SelectedNode.Text))
+                    if (!string.Equals("Misc", treeView1.SelectedNode.Text))
                     {
                         treeView1.LabelEdit = true;
                         treeView1.SelectedNode.BeginEdit();
@@ -208,14 +241,16 @@ namespace FiddlerControls
         {
             if (e.Label != null)
             {
-                if (String.Equals("Misc", e.Label))
+                if (string.Equals("Misc", e.Label))
                 {
                     e.CancelEdit = true;
                     MessageBox.Show("Invalid name. Name is reserved.", "SkillGroup Edit");
                     e.Node.BeginEdit();
                 }
                 else if (e.Label.Length > 0)
+                {
                     e.Node.EndEdit(false);
+                }
                 else
                 {
                     e.CancelEdit = true;
@@ -247,12 +282,14 @@ namespace FiddlerControls
             }
         }
 
-        private void onOpeningContext(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OnOpeningContext(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (treeView1.SelectedNode != null)
             {
                 if (treeView1.SelectedNode.Tag == null)
+                {
                     SkillIDTextBox.Text = "";
+                }
                 else
                 {
                     int id = (int)treeView1.SelectedNode.Tag;
@@ -267,17 +304,19 @@ namespace FiddlerControls
             }
         }
 
-        private void onKeyDownSkillID(object sender, KeyEventArgs e)
+        private void OnKeyDownSkillID(object sender, KeyEventArgs e)
         {
             if (treeView1.SelectedNode == null)
+            {
                 return;
+            }
+
             if (e.KeyCode == Keys.Enter)
             {
                 string line = SkillIDTextBox.Text.Trim();
                 if (line.Length > 0)
                 {
-                    int id;
-                    if (int.TryParse(line, out id))
+                    if (int.TryParse(line, out int id))
                     {
                         treeView1.SelectedNode.Tag = id;
                     }

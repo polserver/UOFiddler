@@ -11,19 +11,21 @@
 
 using System;
 using System.Windows.Forms;
+using Ultima;
 
 namespace FiddlerControls
 {
     public partial class MapClearStatics : Form
     {
-        FiddlerControls.Map MapParent;
-        Ultima.Map Map;
-        public MapClearStatics(FiddlerControls.Map parent, Ultima.Map map)
+        private readonly Map _mapParent;
+        private readonly Ultima.Map _map;
+
+        public MapClearStatics(Map parent, Ultima.Map map)
         {
-            MapParent = parent;
-            Map = map;
+            _mapParent = parent;
+            _map = map;
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             numericUpDownX1.Maximum = map.Width;
             numericUpDownX2.Maximum = map.Width;
             numericUpDownY1.Maximum = map.Height;
@@ -58,13 +60,13 @@ namespace FiddlerControls
             {
                 for (int y = blocky1; y <= blocky2; ++y)
                 {
-                    Ultima.HuedTile[][][] tiles = Map.Tiles.GetStaticBlock(x, y, false);
-                    Map.Tiles.RemoveStaticBlock(x, y);
+                    HuedTile[][][] tiles = _map.Tiles.GetStaticBlock(x, y, false);
+                    _map.Tiles.RemoveStaticBlock(x, y);
                 }
             }
-            Map.ResetCache();
+            _map.ResetCache();
             MessageBox.Show("Done", "Clear Static", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            MapParent.RefreshMap();
+            _mapParent.RefreshMap();
         }
     }
 }

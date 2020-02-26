@@ -30,7 +30,7 @@ namespace FiddlerPlugin
             }
             else
             {
-                MessageBox.Show("UO client is not runnig so I will say hello here. Hi!");
+                MessageBox.Show("UO client is not running so I will say hello here. Hi!");
             }
         }
     }

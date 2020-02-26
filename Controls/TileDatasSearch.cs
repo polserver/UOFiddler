@@ -16,64 +16,81 @@ namespace FiddlerControls
 {
     public partial class TileDatasSearch : Form
     {
-        private bool land;
+        private readonly bool _land;
+
         public TileDatasSearch(bool landtile)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
-            land = landtile;
+            Icon = Options.GetFiddlerIcon();
+            _land = landtile;
         }
 
         private void SearchGraphic(object sender, EventArgs e)
         {
-            int graphic;
-            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
             {
-                bool res = TileDatas.SearchGraphic(graphic, land);
-                if (!res)
-                {
-                    DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
-                    if (result == DialogResult.Cancel)
-                        Close();
-                }
+                return;
+            }
+
+            bool res = TileDatas.SearchGraphic(graphic, _land);
+            if (res)
+            {
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
         private void SearchName(object sender, EventArgs e)
         {
-            lastSearchedName = textBoxItemName.Text;
-            bool res = TileDatas.SearchName(textBoxItemName.Text, false, land);
-            if (!res)
+            _lastSearchedName = textBoxItemName.Text;
+            bool res = TileDatas.SearchName(textBoxItemName.Text, false, _land);
+            if (res)
             {
-                DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                    Close();
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = TileDatas.SearchName(textBoxItemName.Text, true, land);
-            if (!res)
+            bool res = TileDatas.SearchName(textBoxItemName.Text, true, _land);
+            if (res)
             {
-                DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                    Close();
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
-        private string lastSearchedName = null;
-        private void onKeyDownSearch(object sender, KeyEventArgs e)
+        private string _lastSearchedName;
+
+        private void OnKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
+                {
                     SearchGraphic(sender, e);
+                }
                 else
                 {
-                    if (textBoxItemName.Text != lastSearchedName)
+                    if (textBoxItemName.Text != _lastSearchedName)
                     {
-                        this.SearchName(sender, e);
+                        SearchName(sender, e);
                     }
                     else
                     {
@@ -84,7 +101,7 @@ namespace FiddlerControls
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                Close();
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

@@ -13,35 +13,22 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Host.Types;
 using PluginInterface;
-
 
 namespace Host
 {
-    public class GlobalPlugins
+    public static class GlobalPlugins
     {
-        public GlobalPlugins()
-        {
-        }
-        public static Host.PluginServices Plugins = new PluginServices();
+        public static readonly PluginServices Plugins = new PluginServices();
     }
 
     public class PluginServices : IPluginHost
     {
-        public PluginServices()
-        {
-        }
-
-        private Types.AvailablePlugins colAvailablePlugins = new Types.AvailablePlugins();
-
         /// <summary>
         /// A Collection of all Plugins Found
         /// </summary>
-        public Types.AvailablePlugins AvailablePlugins
-        {
-            get { return colAvailablePlugins; }
-            set { colAvailablePlugins = value; }
-        }
+        public AvailablePlugins AvailablePlugins { get; set; } = new AvailablePlugins();
 
         /// <summary>
         /// Searches the Application's Startup Directory for Plugins
@@ -50,26 +37,37 @@ namespace Host
         {
             FindPlugins(AppDomain.CurrentDomain.BaseDirectory);
         }
+
         /// <summary>
         /// Searches the passed Path for Plugins
         /// </summary>
-        /// <param name="Path">Directory to search for Plugins in</param>
-        public void FindPlugins(string Path)
+        /// <param name="path">Directory to search for Plugins in</param>
+        public void FindPlugins(string path)
         {
-            colAvailablePlugins.Clear();
-            if (!Directory.Exists(Path))
+            AvailablePlugins.Clear();
+            if (!Directory.Exists(path))
+            {
                 return;
-            foreach (string fileOn in Directory.GetFiles(Path))
+            }
+
+            foreach (string fileOn in Directory.GetFiles(path))
             {
                 FileInfo file = new FileInfo(fileOn);
-                if (file.Extension.Equals(".dll"))
+                if (!file.Extension.Equals(".dll"))
                 {
-                    try
+                    continue;
+                }
+
+                try
+                {
+                    if (!file.Name.Equals("Controls.dll") && !file.Name.Equals("Ultima.dll"))
                     {
-                        if (!file.Name.Equals("Controls.dll") && (!file.Name.Equals("Ultima.dll")))
-                            this.AddPlugin(fileOn);
+                        AddPlugin(fileOn);
                     }
-                    catch { }
+                }
+                catch
+                {
+                    // ignored
                 }
             }
         }
@@ -79,47 +77,53 @@ namespace Host
         /// </summary>
         public void ClosePlugins()
         {
-            foreach (Types.AvailablePlugin pluginOn in colAvailablePlugins)
+            foreach (AvailablePlugin pluginOn in AvailablePlugins)
             {
-                if (pluginOn.Instance != null)
+                if (pluginOn.Instance == null)
                 {
-                    pluginOn.Instance.Dispose();
-                    pluginOn.Instance = null;
+                    continue;
                 }
+
+                pluginOn.Instance.Dispose();
+                pluginOn.Instance = null;
             }
-            colAvailablePlugins.Clear();
+            AvailablePlugins.Clear();
         }
 
-        private void AddPlugin(string FileName)
+        private void AddPlugin(string fileName)
         {
-            Assembly pluginAssembly = Assembly.LoadFrom(FileName);
+            Assembly pluginAssembly = Assembly.LoadFrom(fileName);
             foreach (Type pluginType in pluginAssembly.GetTypes())
             {
-                if (pluginType.IsPublic)
+                if (!pluginType.IsPublic || pluginType.IsAbstract)
                 {
-                    if (!pluginType.IsAbstract)
-                    {
-                        if (pluginType.IsSubclassOf(typeof(IPlugin)))
-                        {
-                            Types.AvailablePlugin newPlugin = new Types.AvailablePlugin();
-                            newPlugin.AssemblyPath = FileName;
-                            newPlugin.Type = pluginAssembly.GetType(pluginType.ToString());
-                            if (FiddlerControls.Options.PluginsToLoad.Contains(pluginType.ToString()))
-                            {
-                                newPlugin.CreateInstance();
-                                newPlugin.Instance.Host = this;
-                                newPlugin.Instance.Initialize();
-                            }
-                            this.colAvailablePlugins.Add(newPlugin);
-                            newPlugin = null;
-                        }
-                    }
+                    continue;
                 }
+
+                if (!pluginType.IsSubclassOf(typeof(Plugin)))
+                {
+                    continue;
+                }
+
+                AvailablePlugin newPlugin = new AvailablePlugin
+                {
+                    AssemblyPath = fileName,
+                    Type = pluginAssembly.GetType(pluginType.ToString())
+                };
+
+                if (FiddlerControls.Options.PluginsToLoad.Contains(pluginType.ToString()))
+                {
+                    newPlugin.CreateInstance();
+                    newPlugin.Instance.Host = this;
+                    newPlugin.Instance.Initialize();
+                }
+
+                AvailablePlugins.Add(newPlugin);
+                //newPlugin = null; // TODO: to be removed?
             }
-            pluginAssembly = null;
+            //pluginAssembly = null; // TODO: to be removed?
         }
 
-        #region HostInterface
         public FiddlerControls.ItemShow GetItemShowControl()
         {
             return FiddlerControls.ItemShow.RefMarker;
@@ -128,9 +132,11 @@ namespace Host
         public int GetSelectedItemShow()
         {
             if (FiddlerControls.ItemShow.ItemListView.SelectedItems.Count > 0)
+            {
                 return (int)FiddlerControls.ItemShow.ItemListView.SelectedItems[0].Tag;
-            else
-                return -1;
+            }
+
+            return -1;
         }
 
         public ListView GetItemShowListView()
@@ -152,8 +158,8 @@ namespace Host
         {
             return FiddlerControls.ItemShowAlternative.RefMarker.Selected;
         }
-        #endregion
     }
+
     namespace Types
     {
         /// <summary>
@@ -165,18 +171,18 @@ namespace Host
             /// Add a Plugin to the collection of Available plugins
             /// </summary>
             /// <param name="pluginToAdd">The Plugin to Add</param>
-            public void Add(Types.AvailablePlugin pluginToAdd)
+            public void Add(AvailablePlugin pluginToAdd)
             {
-                this.List.Add(pluginToAdd);
+                List.Add(pluginToAdd);
             }
 
             /// <summary>
             /// Remove a Plugin to the collection of Available plugins
             /// </summary>
             /// <param name="pluginToRemove">The Plugin to Remove</param>
-            public void Remove(Types.AvailablePlugin pluginToRemove)
+            public void Remove(AvailablePlugin pluginToRemove)
             {
-                this.List.Remove(pluginToRemove);
+                List.Remove(pluginToRemove);
             }
 
             /// <summary>
@@ -184,12 +190,13 @@ namespace Host
             /// </summary>
             /// <param name="pluginNameOrPath">The name or File path of the plugin to find</param>
             /// <returns>Available Plugin, or null if the plugin is not found</returns>
-            public Types.AvailablePlugin Find(string pluginNameOrPath)
+            public AvailablePlugin Find(string pluginNameOrPath)
             {
-                Types.AvailablePlugin toReturn = null;
-                foreach (Types.AvailablePlugin pluginOn in this.List)
+                AvailablePlugin toReturn = null;
+                foreach (AvailablePlugin pluginOn in List)
                 {
-                    if ((pluginOn.Instance.Name.Equals(pluginNameOrPath)) || pluginOn.AssemblyPath.Equals(pluginNameOrPath))
+                    if (pluginOn.Instance.Name.Equals(pluginNameOrPath) ||
+                        pluginOn.AssemblyPath.Equals(pluginNameOrPath))
                     {
                         toReturn = pluginOn;
                         break;
@@ -204,37 +211,18 @@ namespace Host
         /// </summary>
         public class AvailablePlugin
         {
-            private IPlugin m_Instance = null;
-            private string m_AssemblyPath = "";
-            private Type m_type = null;
-            private bool m_loaded = false;
+            public bool Loaded { get; private set; }
 
-            public bool Loaded
-            {
-                get { return m_loaded; }
-            }
+            public Type Type { get; set; }
 
-            public Type Type
-            {
-                get { return m_type; }
-                set { m_type = value; }
-            }
+            public Plugin Instance { get; set; }
 
-            public IPlugin Instance
-            {
-                get { return m_Instance; }
-                set { m_Instance = value; }
-            }
-            public string AssemblyPath
-            {
-                get { return m_AssemblyPath; }
-                set { m_AssemblyPath = value; }
-            }
+            public string AssemblyPath { get; set; } = "";
 
             public void CreateInstance()
             {
-                m_Instance = (IPlugin)Activator.CreateInstance(m_type);
-                m_loaded = true;
+                Instance = (Plugin)Activator.CreateInstance(Type);
+                Loaded = true;
             }
         }
     }

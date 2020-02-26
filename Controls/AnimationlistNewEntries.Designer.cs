@@ -11,7 +11,7 @@
 
 namespace FiddlerControls
 {
-    partial class AnimationlistNewEntries
+    partial class AnimationListNewEntries
     {
         /// <summary>
         /// Required designer variable.
@@ -86,7 +86,7 @@ namespace FiddlerControls
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.Size = new System.Drawing.Size(157, 263);
             this.treeView1.TabIndex = 0;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.onAfterSelectTreeView);
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnAfterSelectTreeView);
             // 
             // facingbar
             // 
@@ -98,7 +98,7 @@ namespace FiddlerControls
             this.facingbar.Name = "facingbar";
             this.facingbar.Size = new System.Drawing.Size(104, 20);
             this.facingbar.TabIndex = 2;
-            this.facingbar.Scroll += new System.EventHandler(this.onScrollFacing);
+            this.facingbar.Scroll += new System.EventHandler(this.OnScrollFacing);
             // 
             // pictureBox1
             // 
@@ -125,7 +125,7 @@ namespace FiddlerControls
             this.animateToolStripMenuItem.Name = "animateToolStripMenuItem";
             this.animateToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.animateToolStripMenuItem.Text = "Animate";
-            this.animateToolStripMenuItem.Click += new System.EventHandler(this.onClickAnimate);
+            this.animateToolStripMenuItem.Click += new System.EventHandler(this.OnClickAnimate);
             // 
             // toolStrip1
             // 
@@ -148,7 +148,7 @@ namespace FiddlerControls
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(30, 22);
             this.toolStripButton1.Text = "Add";
-            this.toolStripButton1.Click += new System.EventHandler(this.onClickAdd);
+            this.toolStripButton1.Click += new System.EventHandler(this.OnClickAdd);
             // 
             // ComboBoxActionType
             // 
@@ -169,7 +169,7 @@ namespace FiddlerControls
             this.ClientSize = new System.Drawing.Size(473, 263);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.Name = "AnimationlistNewEntries";
+            this.Name = "AnimationListNewEntries";
             this.Text = "Animationlist New Entries";
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);

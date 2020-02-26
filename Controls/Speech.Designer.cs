@@ -14,14 +14,14 @@ namespace FiddlerControls
     partial class Speech
     {
         /// <summary> 
-        /// Erforderliche Designervariable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary> 
-        /// Verwendete Ressourcen bereinigen.
+        /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -31,11 +31,11 @@ namespace FiddlerControls
             base.Dispose(disposing);
         }
 
-        #region Vom Komponenten-Designer generierter Code
+        #region Component Designer generated code
 
         /// <summary> 
-        /// Erforderliche Methode für die Designerunterstützung. 
-        /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -75,7 +75,7 @@ namespace FiddlerControls
             this.KeyWordEntry,
             this.KeyWordButton,
             this.KeyWordNextButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 28);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 33);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(619, 25);
@@ -103,7 +103,7 @@ namespace FiddlerControls
             this.IDNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.IDNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.IDNextButton.Name = "IDNextButton";
-            this.IDNextButton.Size = new System.Drawing.Size(61, 22);
+            this.IDNextButton.Size = new System.Drawing.Size(62, 22);
             this.IDNextButton.Text = "Find Next";
             this.IDNextButton.Click += new System.EventHandler(this.OnClickNextID);
             // 
@@ -132,7 +132,7 @@ namespace FiddlerControls
             this.KeyWordNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.KeyWordNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.KeyWordNextButton.Name = "KeyWordNextButton";
-            this.KeyWordNextButton.Size = new System.Drawing.Size(61, 22);
+            this.KeyWordNextButton.Size = new System.Drawing.Size(62, 22);
             this.KeyWordNextButton.Text = "Find Next";
             this.KeyWordNextButton.Click += new System.EventHandler(this.OnClickNextKeyWord);
             // 
@@ -142,14 +142,14 @@ namespace FiddlerControls
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 53);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 58);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(619, 271);
+            this.dataGridView1.Size = new System.Drawing.Size(619, 266);
             this.dataGridView1.TabIndex = 4;
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellValueChanged);
-            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.onHeaderClick);
+            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClick);
             // 
             // contextMenuStrip1
             // 
@@ -222,7 +222,7 @@ namespace FiddlerControls
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(82, 22);
+            this.toolStripButton2.Size = new System.Drawing.Size(83, 22);
             this.toolStripButton2.Text = "Export to CSV";
             this.toolStripButton2.Click += new System.EventHandler(this.OnClickExport);
             // 

@@ -19,19 +19,14 @@ namespace FiddlerControls
         public LandTileSearch()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
         }
 
         private void SearchGraphic(object sender, EventArgs e)
         {
-            int graphic;
-            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out graphic, 0, 0x3FFF))
+            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, 0x3FFF))
             {
-                bool res;
-                if (Options.DesignAlternative)
-                    res = LandTilesAlternative.SearchGraphic(graphic);
-                else
-                    res = LandTiles.SearchGraphic(graphic);
+                bool res = Options.DesignAlternative ? LandTilesAlternative.SearchGraphic(graphic) : LandTiles.SearchGraphic(graphic);
                 if (!res)
                 {
                     DialogResult result = MessageBox.Show(
@@ -41,62 +36,71 @@ namespace FiddlerControls
                         MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Cancel)
+                    {
                         Close();
+                    }
                 }
             }
         }
 
         private void SearchName(object sender, EventArgs e)
         {
-            lastSearchedName = textBoxItemName.Text;
-            bool res;
-            if (Options.DesignAlternative)
-                res = LandTilesAlternative.SearchName(textBoxItemName.Text, false);
-            else
-                res = LandTiles.SearchName(textBoxItemName.Text, false);
-            if (!res)
+            _lastSearchedName = textBoxItemName.Text;
+            bool res = Options.DesignAlternative
+                ? LandTilesAlternative.SearchName(textBoxItemName.Text, false)
+                : LandTiles.SearchName(textBoxItemName.Text, false);
+            if (res)
             {
-                DialogResult result = MessageBox.Show(
-                    "No landtile found",
-                    "Result",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                    Close();
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "No landtile found",
+                "Result",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res;
-            if (Options.DesignAlternative)
-                res = LandTilesAlternative.SearchName(textBoxItemName.Text, true);
-            else
-                res = LandTiles.SearchName(textBoxItemName.Text, true);
-            if (!res)
+            bool res = Options.DesignAlternative
+                ? LandTilesAlternative.SearchName(textBoxItemName.Text, true)
+                : LandTiles.SearchName(textBoxItemName.Text, true);
+            if (res)
             {
-                DialogResult result = MessageBox.Show(
-                    "No landtile found",
-                    "Result",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                    Close();
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "No landtile found",
+                "Result",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
-        private string lastSearchedName = null;
-        private void onKeyDownSearch(object sender, KeyEventArgs e)
+        private string _lastSearchedName;
+
+        private void OnKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
+                {
                     SearchGraphic(sender, e);
+                }
                 else
                 {
-                    if (textBoxItemName.Text != lastSearchedName)
+                    if (textBoxItemName.Text != _lastSearchedName)
                     {
                         SearchName(sender, e);
                     }
@@ -109,7 +113,7 @@ namespace FiddlerControls
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                Close();
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

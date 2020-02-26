@@ -15,41 +15,47 @@ namespace UoFiddler
 {
     public partial class UnDocked : Form
     {
-        private TabPage m_oldtab;
+        private readonly TabPage _oldTab;
 
-        public UnDocked(TabPage oldtab)
+        public UnDocked(TabPage oldTab)
         {
-            Control contr = oldtab.Controls[0];
-            this.Controls.Clear();
-            this.Controls.Add(contr);
+            Control contr = oldTab.Controls[0];
+            Controls.Clear();
+            Controls.Add(contr);
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
-            this.Text = oldtab.Text;
-            m_oldtab = oldtab;
-            if (UoFiddler.ActiveForm.TopMost)
-                this.TopMost = true;
-            FiddlerControls.Events.AlwaysOnTopChangeEvent += new FiddlerControls.Events.AlwaysOnTopChangeHandler(OnAlwaysOnTopChangeEvent);
+            Icon = FiddlerControls.Options.GetFiddlerIcon();
+            // TODO: virtual member call in constructor?
+            Text = oldTab.Text;
+            _oldTab = oldTab;
+
+            if (ActiveForm?.TopMost == true)
+            {
+                TopMost = true;
+            }
+
+            FiddlerControls.Events.AlwaysOnTopChangeEvent += OnAlwaysOnTopChangeEvent;
         }
 
         private void OnAlwaysOnTopChangeEvent(bool value)
         {
-            this.TopMost = value;
+            TopMost = value;
         }
 
-        public void ChangeControl(Control contr)
-        {
-            this.Controls.Clear();
-            this.Controls.Add(contr);
-            this.PerformLayout();
+        // TODO: unused?
+        // public void ChangeControl(Control contr)
+        // {
+        //     Controls.Clear();
+        //     Controls.Add(contr);
+        //     PerformLayout();
+        // }
 
-        }
         private void OnClose(object sender, FormClosingEventArgs e)
         {
-            Control contr = this.Controls[0];
-            m_oldtab.Controls.Clear();
-            m_oldtab.Controls.Add(contr);
+            Control contr = Controls[0];
+            _oldTab.Controls.Clear();
+            _oldTab.Controls.Add(contr);
 
-            UoFiddler.ReDock(m_oldtab);
+            UoFiddler.ReDock(_oldTab);
         }
     }
 }

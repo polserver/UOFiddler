@@ -63,7 +63,7 @@ namespace FiddlerControls
             this.saveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(153, 142);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.onOpeningContext);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.OnOpeningContext);
             // 
             // addToolStripMenuItem
             // 
@@ -125,7 +125,7 @@ namespace FiddlerControls
             // 
             this.SkillIDTextBox.Name = "SkillIDTextBox";
             this.SkillIDTextBox.Size = new System.Drawing.Size(100, 23);
-            this.SkillIDTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownSkillID);
+            this.SkillIDTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSkillID);
             // 
             // SkillGrp
             // 

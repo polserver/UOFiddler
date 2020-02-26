@@ -59,7 +59,7 @@ namespace FiddlerControls
             this.vScrollBar.Name = "vScrollBar";
             this.vScrollBar.Size = new System.Drawing.Size(17, 322);
             this.vScrollBar.TabIndex = 0;
-            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.onScroll);
+            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
             // 
             // pictureBox
             // 
@@ -72,7 +72,7 @@ namespace FiddlerControls
             this.pictureBox.TabStop = false;
             this.pictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseDoubleClick);
             this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.onPaint);
+            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
             // 
             // contextMenuStrip1

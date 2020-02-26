@@ -6,27 +6,27 @@ namespace Ultima
 {
     public sealed class Skills
     {
-        private static FileIndex m_FileIndex = new FileIndex("skills.idx", "skills.mul", 16);
+        private static FileIndex _mFileIndex = new FileIndex("skills.idx", "skills.mul", 16);
 
-        private static List<SkillInfo> m_SkillEntries;
+        private static List<SkillInfo> _mSkillEntries;
         public static List<SkillInfo> SkillEntries
         {
             get
             {
-                if (m_SkillEntries == null)
+                if (_mSkillEntries == null)
                 {
-                    m_SkillEntries = new List<SkillInfo>();
-                    for (int i = 0; i < m_FileIndex.Index.Length; ++i)
+                    _mSkillEntries = new List<SkillInfo>();
+                    for (int i = 0; i < _mFileIndex.Index.Length; ++i)
                     {
                         SkillInfo info = GetSkill(i);
                         if (info == null)
                             break;
-                        m_SkillEntries.Add(info);
+                        _mSkillEntries.Add(info);
                     }
                 }
-                return m_SkillEntries;
+                return _mSkillEntries;
             }
-            set { m_SkillEntries = value; }
+            set => _mSkillEntries = value;
         }
 
         public Skills()
@@ -39,14 +39,14 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("skills.idx", "skills.mul", 16);
-            m_SkillEntries = new List<SkillInfo>();
-            for (int i = 0; i < m_FileIndex.Index.Length; ++i)
+            _mFileIndex = new FileIndex("skills.idx", "skills.mul", 16);
+            _mSkillEntries = new List<SkillInfo>();
+            for (int i = 0; i < _mFileIndex.Index.Length; ++i)
             {
                 SkillInfo info = GetSkill(i);
                 if (info == null)
                     break;
-                m_SkillEntries.Add(info);
+                _mSkillEntries.Add(info);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Ultima
             int length, extra;
             bool patched;
 
-            Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
+            Stream stream = _mFileIndex.Seek(index, out length, out extra, out patched);
             if (stream == null)
                 return null;
             if (length == 0)
@@ -74,14 +74,14 @@ namespace Ultima
             }
         }
 
-        private static byte[] m_StringBuffer = new byte[1024];
+        private static readonly byte[] _mStringBuffer = new byte[1024];
         private static string ReadNameString(BinaryReader bin, int length)
         {
-            bin.Read(m_StringBuffer, 0, length);
+            bin.Read(_mStringBuffer, 0, length);
             int count;
-            for (count = 0; count < length && m_StringBuffer[count] != 0; ++count) ;
+            for (count = 0; count < length && _mStringBuffer[count] != 0; ++count) ;
 
-            return Encoding.Default.GetString(m_StringBuffer, 0, count);
+            return Encoding.Default.GetString(_mStringBuffer, 0, count);
         }
 
         public static void Save(string path)
@@ -94,14 +94,14 @@ namespace Ultima
                 using (BinaryWriter binidx = new BinaryWriter(fsidx),
                                     binmul = new BinaryWriter(fsmul))
                 {
-                    for (int i = 0; i < m_FileIndex.Index.Length; ++i)
+                    for (int i = 0; i < _mFileIndex.Index.Length; ++i)
                     {
-                        SkillInfo skill = (i < m_SkillEntries.Count) ? (SkillInfo)m_SkillEntries[i] : null;
+                        SkillInfo skill = (i < _mSkillEntries.Count) ? _mSkillEntries[i] : null;
                         if (skill == null)
                         {
-                            binidx.Write((int)-1); // lookup
-                            binidx.Write((int)0); // length
-                            binidx.Write((int)0); // extra
+                            binidx.Write(-1); // lookup
+                            binidx.Write(0); // length
+                            binidx.Write(0); // extra
                         }
                         else
                         {
@@ -125,28 +125,28 @@ namespace Ultima
 
     public sealed class SkillInfo
     {
-        private string m_Name;
+        private string _mName;
 
         public int Index { get; set; }
         public bool IsAction { get; set; }
         public string Name
         {
-            get { return m_Name; }
+            get => _mName;
             set
             {
                 if (value == null)
-                    m_Name = "";
+                    _mName = "";
                 else
-                    m_Name = value;
+                    _mName = value;
             }
         }
-        public int Extra { get; private set; }
+        public int Extra { get; }
 
 
         public SkillInfo(int nr, string name, bool action, int extra)
         {
             Index = nr;
-            m_Name = name;
+            _mName = name;
             IsAction = action;
             Extra = extra;
         }

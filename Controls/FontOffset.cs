@@ -17,23 +17,24 @@ namespace FiddlerControls
 {
     public partial class FontOffset : Form
     {
-        private int m_font;
-        private int m_char;
+        private readonly int _font;
+        private readonly int _char;
+
         public FontOffset(int font, int ch)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
-            CharLabel.Text = String.Format("Character: '{0}' 0x{1:X}", (char)ch, ch);
+            Icon = Options.GetFiddlerIcon();
+            CharLabel.Text = $"Character: '{(char)ch}' 0x{ch:X}";
             offsetx.Value = UnicodeFonts.Fonts[font].Chars[ch].XOffset;
             offsety.Value = UnicodeFonts.Fonts[font].Chars[ch].YOffset;
-            m_font = font;
-            m_char = ch;
+            _font = font;
+            _char = ch;
         }
 
         private void OnClickOK(object sender, EventArgs e)
         {
-            UnicodeFonts.Fonts[m_font].Chars[m_char].XOffset = (sbyte)offsetx.Value;
-            UnicodeFonts.Fonts[m_font].Chars[m_char].YOffset = (sbyte)offsety.Value;
+            UnicodeFonts.Fonts[_font].Chars[_char].XOffset = (sbyte)offsetx.Value;
+            UnicodeFonts.Fonts[_font].Chars[_char].YOffset = (sbyte)offsety.Value;
             Fonts.RefreshOnCharChange();
             Close();
         }

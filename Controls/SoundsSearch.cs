@@ -19,62 +19,68 @@ namespace FiddlerControls
         public SoundsSearch()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
         }
 
         private void Search_Id(object sender, EventArgs e)
         {
-            int graphic;
-            if (Utils.ConvertStringToInt(this.textBoxId.Text, out graphic, 0, 0xFFF))
+            if (Utils.ConvertStringToInt(textBoxId.Text, out int graphic, 0, 0xFFF))
             {
-                bool res;
-                    res = Sounds.SearchID(graphic);
+                bool res = Sounds.SearchId(graphic);
                 if (!res)
                 {
                     DialogResult result = MessageBox.Show("No sound found", "Result",
                         MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Cancel)
+                    {
                         Close();
+                    }
                 }
             }
         }
 
         private void Search_SoundName(object sender, EventArgs e)
         {
-            lastSearchedName = textBoxSoundName.Text;
-            var res = Sounds.SearchName(this.textBoxSoundName.Text, false);
+            _lastSearchedName = textBoxSoundName.Text;
+            bool res = Sounds.SearchName(textBoxSoundName.Text, false);
             if (!res)
             {
                 DialogResult result = MessageBox.Show("No sound found", "Result",
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
+                {
                     Close();
+                }
             }
         }
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res;
-                res = Sounds.SearchName(this.textBoxSoundName.Text, true);
+            bool res = Sounds.SearchName(textBoxSoundName.Text, true);
             if (!res)
             {
                 DialogResult result = MessageBox.Show("No sound found", "Result",
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.Cancel)
+                {
                     Close();
+                }
             }
         }
 
-        private string lastSearchedName = null;
-        private void onKeyDownSearch(object sender, KeyEventArgs e)
+        private string _lastSearchedName;
+
+        private void OnKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if ((TextBox)sender == this.textBoxId)
-                    this.Search_Id(sender, e);
+                if ((TextBox)sender == textBoxId)
+                {
+                    Search_Id(sender, e);
+                }
                 else
                 {
-                    if (textBoxSoundName.Text != lastSearchedName)
+                    if (textBoxSoundName.Text != _lastSearchedName)
                     {
                         Search_SoundName(sender, e);
                     }
@@ -87,7 +93,7 @@ namespace FiddlerControls
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                Close();
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

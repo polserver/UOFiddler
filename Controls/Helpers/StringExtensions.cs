@@ -2,7 +2,7 @@
 
 namespace FiddlerControls.Helpers
 {
-    static class StringExtensions
+    internal static class StringExtensions
     {
         public static bool ContainsCaseInsensitive(this string haystack, string needle)
         {

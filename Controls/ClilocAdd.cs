@@ -19,14 +19,13 @@ namespace FiddlerControls
         public ClilocAdd()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             TopMost = true;
         }
 
         private void OnClickAdd(object sender, EventArgs e)
         {
-            int number;
-            if (int.TryParse(NumberBox.Text, System.Globalization.NumberStyles.Integer, null, out number))
+            if (int.TryParse(NumberBox.Text, System.Globalization.NumberStyles.Integer, null, out int number))
             {
                 if (Cliloc.IsNumberFree(number))
                 {
@@ -34,20 +33,24 @@ namespace FiddlerControls
                     Close();
                 }
                 else
+                {
                     MessageBox.Show(
-                        "Number not free.",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button1);
+                       "Number not free.",
+                       "Error",
+                       MessageBoxButtons.OK,
+                       MessageBoxIcon.Error,
+                       MessageBoxDefaultButton.Button1);
+                }
             }
             else
+            {
                 MessageBox.Show(
-                    "Error reading Number",
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1);
+                   "Error reading Number",
+                   "Error",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Error,
+                   MessageBoxDefaultButton.Button1);
+            }
         }
 
         private void OnClickCancel(object sender, EventArgs e)

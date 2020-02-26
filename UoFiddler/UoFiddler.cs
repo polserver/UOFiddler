@@ -24,37 +24,39 @@ namespace UoFiddler
     public partial class UoFiddler : Form
     {
         public static string Version => Assembly.GetExecutingAssembly().GetCustomAttributes(true).OfType<AssemblyFileVersionAttribute>().First().Version;
-        private FiddlerControls.ItemShowAlternative controlItemShowAlt;
-        private FiddlerControls.TextureAlternative controlTextureAlt;
-        private FiddlerControls.LandTilesAlternative controlLandTilesAlt;
-        private static UoFiddler refmarker;
+        private FiddlerControls.ItemShowAlternative _controlItemShowAlt;
+        private FiddlerControls.TextureAlternative _controlTextureAlt;
+        private FiddlerControls.LandTilesAlternative _controlLandTilesAlt;
+        private static UoFiddler _refMarker;
 
         public UoFiddler()
         {
-            refmarker = this;
+            _refMarker = this;
             InitializeComponent();
+
             if (Options.StoreFormState)
             {
                 if (Options.MaximisedForm)
                 {
-                    this.StartPosition = FormStartPosition.Manual;
-                    this.WindowState = FormWindowState.Maximized;
+                    StartPosition = FormStartPosition.Manual;
+                    WindowState = FormWindowState.Maximized;
                 }
                 else
                 {
-                    if (isOkFormStateLocation(Options.FormPosition, Options.FormSize))
+                    if (IsOkFormStateLocation(Options.FormPosition, Options.FormSize))
                     {
-                        this.StartPosition = FormStartPosition.Manual;
-                        this.WindowState = FormWindowState.Normal;
-                        this.Location = Options.FormPosition;
-                        this.Size = Options.FormSize;
+                        StartPosition = FormStartPosition.Manual;
+                        WindowState = FormWindowState.Normal;
+                        Location = Options.FormPosition;
+                        Size = Options.FormSize;
                     }
                 }
             }
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+
+            Icon = FiddlerControls.Options.GetFiddlerIcon();
             {
-                var commaCountA = 0;
-                var majorVersion = new string(
+                int commaCountA = 0;
+                string majorVersion = new string(
                     Version.TakeWhile(
                         x =>
                             {
@@ -66,13 +68,13 @@ namespace UoFiddler
                                 return commaCountA < 2;
                             }).ToArray());
 
-                Versionlabel.Text = "Version " + majorVersion;
+                Versionlabel.Text = $"Version {majorVersion}";
             }
 
-            Versionlabel.Left = (Start.Size.Width - Versionlabel.Width) - 5;
+            Versionlabel.Left = Start.Size.Width - Versionlabel.Width - 5;
             ChangeDesign();
             LoadExternToolStripMenu();
-            GlobalPlugins.Plugins.FindPlugins(Application.StartupPath + @"\plugins");
+            GlobalPlugins.Plugins.FindPlugins($@"{Application.StartupPath}\plugins");
 
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.UserPaint, true);
@@ -80,38 +82,46 @@ namespace UoFiddler
 
             foreach (Host.Types.AvailablePlugin plug in GlobalPlugins.Plugins.AvailablePlugins)
             {
-                if (plug.Loaded)
+                if (!plug.Loaded)
                 {
-                    plug.Instance.ModifyPluginToolStrip(this.toolStripDropDownButtonPlugins);
-                    plug.Instance.ModifyTabPages(this.TabPanel);
+                    continue;
                 }
+
+                plug.Instance.ModifyPluginToolStrip(toolStripDropDownButtonPlugins);
+                plug.Instance.ModifyTabPages(TabPanel);
             }
 
             foreach (TabPage tab in TabPanel.TabPages)
             {
-                if (((int)tab.Tag >= 0) && ((int)tab.Tag < FiddlerControls.Options.ChangedViewState.Count))
+                if ((int)tab.Tag >= 0 && (int)tab.Tag < FiddlerControls.Options.ChangedViewState.Count &&
+                    !FiddlerControls.Options.ChangedViewState[(int)tab.Tag])
                 {
-                    if (!FiddlerControls.Options.ChangedViewState[(int)tab.Tag])
-                        ToggleView(tab);
+                    ToggleView(tab);
                 }
             }
         }
 
-        private PathSettings m_Path = new PathSettings();
-        private void click_path(object sender, EventArgs e)
+        private PathSettings _pathSettings = new PathSettings();
+
+        private void Click_path(object sender, EventArgs e)
         {
-            if (m_Path.IsDisposed)
-                m_Path = new PathSettings();
+            if (_pathSettings.IsDisposed)
+            {
+                _pathSettings = new PathSettings();
+            }
             else
-                m_Path.Focus();
-            m_Path.TopMost = true;
-            m_Path.Show();
+            {
+                _pathSettings.Focus();
+            }
+
+            _pathSettings.TopMost = true;
+            _pathSettings.Show();
         }
 
-        private void onClickAlwaysTop(object sender, EventArgs e)
+        private void OnClickAlwaysTop(object sender, EventArgs e)
         {
-            this.TopMost = AlwaysOnTopMenuitem.Checked;
-            FiddlerControls.Events.FireAlwaysOnTopChangeEvent(this.TopMost);
+            TopMost = AlwaysOnTopMenuitem.Checked;
+            FiddlerControls.Events.FireAlwaysOnTopChangeEvent(TopMost);
         }
 
         private void Restart(object sender, EventArgs e)
@@ -119,43 +129,92 @@ namespace UoFiddler
             Cursor.Current = Cursors.WaitCursor;
 
             Ultima.Verdata.Initialize();
+
             if (FiddlerControls.Options.LoadedUltimaClass["TileData"])
+            {
                 Ultima.TileData.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Hues"])
+            {
                 Ultima.Hues.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["ASCIIFont"])
-                Ultima.ASCIIText.Initialize();
+            {
+                Ultima.AsciiText.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["UnicodeFont"])
+            {
                 Ultima.UnicodeFonts.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Animdata"])
+            {
                 Ultima.Animdata.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Light"])
+            {
                 Ultima.Light.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Skills"])
+            {
                 Ultima.Skills.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Sound"])
+            {
                 Ultima.Sounds.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Texture"])
+            {
                 Ultima.Textures.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Gumps"])
+            {
                 Ultima.Gumps.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Animations"])
+            {
                 Ultima.Animations.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Art"])
+            {
                 Ultima.Art.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["RadarColor"])
+            {
                 Ultima.RadarCol.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Map"])
             {
                 Ultima.Files.CheckForNewMapSize();
                 Ultima.Map.Reload();
             }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Multis"])
+            {
                 Ultima.Multis.Reload();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["Speech"])
+            {
                 Ultima.SpeechList.Initialize();
+            }
+
             if (FiddlerControls.Options.LoadedUltimaClass["AnimationEdit"])
+            {
                 Ultima.AnimationEdit.Reload();
+            }
 
             FiddlerControls.Events.FireFilePathChangeEvent();
 
@@ -172,83 +231,106 @@ namespace UoFiddler
         /// </summary>
         public static void LoadExternToolStripMenu()
         {
-            refmarker.ExternToolsDropDown.DropDownItems.Clear();
-            ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Text = "Manage..";
-            item.Click += new System.EventHandler(refmarker.onClickToolManage);
-            refmarker.ExternToolsDropDown.DropDownItems.Add(item);
-            refmarker.ExternToolsDropDown.DropDownItems.Add(new ToolStripSeparator());
+            _refMarker.ExternToolsDropDown.DropDownItems.Clear();
+            ToolStripMenuItem item = new ToolStripMenuItem
+            {
+                Text = "Manage.."
+            };
+            item.Click += _refMarker.OnClickToolManage;
+
+            _refMarker.ExternToolsDropDown.DropDownItems.Add(item);
+            _refMarker.ExternToolsDropDown.DropDownItems.Add(new ToolStripSeparator());
+
             for (int i = 0; i < Options.ExternTools.Count; i++)
             {
                 ExternTool tool = Options.ExternTools[i];
-                item = new ToolStripMenuItem();
-                item.Text = tool.Name;
-                item.Tag = i;
-                item.DropDownItemClicked += new ToolStripItemClickedEventHandler(refmarker.ExternTool_ItemClicked);
-                ToolStripMenuItem sub = new ToolStripMenuItem();
-                sub.Text = "Start";
-                sub.Tag = -1;
+                item = new ToolStripMenuItem
+                {
+                    Text = tool.Name,
+                    Tag = i
+                };
+                item.DropDownItemClicked += ExternTool_ItemClicked;
+
+                ToolStripMenuItem sub = new ToolStripMenuItem
+                {
+                    Text = "Start",
+                    Tag = -1
+                };
                 item.DropDownItems.Add(sub);
                 item.DropDownItems.Add(new ToolStripSeparator());
                 for (int j = 0; j < tool.Args.Count; j++)
                 {
-                    ToolStripMenuItem arg = new ToolStripMenuItem();
-                    arg.Text = tool.ArgsName[j];
-                    arg.Tag = j;
+                    ToolStripMenuItem arg = new ToolStripMenuItem
+                    {
+                        Text = tool.ArgsName[j],
+                        Tag = j
+                    };
                     item.DropDownItems.Add(arg);
                 }
-                refmarker.ExternToolsDropDown.DropDownItems.Add(item);
+                _refMarker.ExternToolsDropDown.DropDownItems.Add(item);
             }
         }
 
-        private void ExternTool_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private static void ExternTool_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            int arginfo = (int)e.ClickedItem.Tag;
-            int toolinfo = (int)e.ClickedItem.OwnerItem.Tag;
+            int argInfo = (int)e.ClickedItem.Tag;
+            int toolInfo = (int)e.ClickedItem.OwnerItem.Tag;
 
-            if (toolinfo >= 0)
+            if (toolInfo < 0 || argInfo < -1)
             {
-                if (arginfo >= -1)
-                {
-                    Process P = new Process();
-                    ExternTool tool = Options.ExternTools[toolinfo];
-                    P.StartInfo.FileName = tool.FileName;
-                    if (arginfo >= 0)
-                        P.StartInfo.Arguments = tool.Args[arginfo];
-                    try
-                    {
-                        P.Start();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Error starting tool",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error,
-                            MessageBoxDefaultButton.Button1);
-                    }
-                }
+                return;
+            }
+
+            Process process = new Process();
+            ExternTool tool = Options.ExternTools[toolInfo];
+            process.StartInfo.FileName = tool.FileName;
+            if (argInfo >= 0)
+            {
+                process.StartInfo.Arguments = tool.Args[argInfo];
+            }
+
+            try
+            {
+                process.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error starting tool",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 
-        private ManageTools manageform;
-        private void onClickToolManage(object sender, EventArgs e)
+        private ManageTools _manageForm;
+
+        private void OnClickToolManage(object sender, EventArgs e)
         {
-            if ((manageform == null) || (manageform.IsDisposed))
+            if (_manageForm?.IsDisposed == false)
             {
-                manageform = new ManageTools();
-                manageform.TopMost = true;
-                manageform.Show();
+                return;
             }
+
+            _manageForm = new ManageTools
+            {
+                TopMost = true
+            };
+            _manageForm.Show();
         }
 
-        private OptionsForm optionsform;
+        private OptionsForm _optionsForm;
+
         private void OnClickOptions(object sender, EventArgs e)
         {
-            if ((optionsform == null) || (optionsform.IsDisposed))
+            if (_optionsForm?.IsDisposed == false)
             {
-                optionsform = new OptionsForm();
-                optionsform.TopMost = true;
-                optionsform.Show();
+                return;
             }
+
+            _optionsForm = new OptionsForm
+            {
+                TopMost = true
+            };
+            _optionsForm.Show();
         }
 
         /// <summary>
@@ -258,94 +340,123 @@ namespace UoFiddler
         {
             if (FiddlerControls.Options.DesignAlternative)
             {
-                refmarker.controlItemShowAlt = new FiddlerControls.ItemShowAlternative();
-                refmarker.controlItemShowAlt.Dock = System.Windows.Forms.DockStyle.Fill;
-                refmarker.controlItemShowAlt.Location = new System.Drawing.Point(3, 3);
-                refmarker.controlItemShowAlt.Name = "controlItemShow";
-                refmarker.controlItemShowAlt.Size = new System.Drawing.Size(613, 318);
-                refmarker.controlItemShowAlt.TabIndex = 0;
-                Control parent = refmarker.controlItemShow.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(refmarker.controlItemShowAlt);
-                parent.PerformLayout();
-                refmarker.controlItemShow.Dispose();
+                _refMarker._controlItemShowAlt = new FiddlerControls.ItemShowAlternative
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    Name = "controlItemShow",
+                    Size = new Size(613, 318),
+                    TabIndex = 0
+                };
 
-                refmarker.controlTextureAlt = new FiddlerControls.TextureAlternative();
-                refmarker.controlTextureAlt.Dock = System.Windows.Forms.DockStyle.Fill;
-                refmarker.controlTextureAlt.Location = new System.Drawing.Point(3, 3);
-                refmarker.controlTextureAlt.Name = "controlTexture";
-                refmarker.controlTextureAlt.Size = new System.Drawing.Size(613, 318);
-                refmarker.controlTextureAlt.TabIndex = 0;
-                parent = refmarker.controlTexture.Parent;
+                Control parent = _refMarker.controlItemShow.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(refmarker.controlTextureAlt);
+                parent.Controls.Add(_refMarker._controlItemShowAlt);
                 parent.PerformLayout();
-                refmarker.controlTexture.Dispose();
 
-                refmarker.controlLandTilesAlt = new FiddlerControls.LandTilesAlternative();
-                refmarker.controlLandTilesAlt.Dock = System.Windows.Forms.DockStyle.Fill;
-                refmarker.controlLandTilesAlt.Location = new System.Drawing.Point(3, 3);
-                refmarker.controlLandTilesAlt.Name = "controlLandTiles";
-                refmarker.controlLandTilesAlt.Size = new System.Drawing.Size(613, 318);
-                refmarker.controlLandTilesAlt.TabIndex = 0;
-                parent = refmarker.controlLandTiles.Parent;
+                _refMarker.controlItemShow.Dispose();
+                _refMarker._controlTextureAlt = new FiddlerControls.TextureAlternative
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    Name = "controlTexture",
+                    Size = new Size(613, 318),
+                    TabIndex = 0
+                };
+
+                parent = _refMarker.controlTexture.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(refmarker.controlLandTilesAlt);
+                parent.Controls.Add(_refMarker._controlTextureAlt);
                 parent.PerformLayout();
-                refmarker.controlLandTiles.Dispose();
+
+                _refMarker.controlTexture.Dispose();
+
+                _refMarker._controlLandTilesAlt = new FiddlerControls.LandTilesAlternative
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    Name = "controlLandTiles",
+                    Size = new Size(613, 318),
+                    TabIndex = 0
+                };
+
+                parent = _refMarker.controlLandTiles.Parent;
+                parent.Controls.Clear();
+                parent.Controls.Add(_refMarker._controlLandTilesAlt);
+                parent.PerformLayout();
+
+                _refMarker.controlLandTiles.Dispose();
             }
             else
             {
-                if (refmarker.controlItemShowAlt == null)
+                if (_refMarker._controlItemShowAlt == null)
+                {
                     return;
+                }
 
-                refmarker.controlItemShow = new FiddlerControls.ItemShow();
-                refmarker.controlItemShow.Dock = System.Windows.Forms.DockStyle.Fill;
-                refmarker.controlItemShow.Location = new System.Drawing.Point(3, 3);
-                refmarker.controlItemShow.Name = "controlItemShow";
-                refmarker.controlItemShow.Size = new System.Drawing.Size(613, 318);
-                refmarker.controlItemShow.TabIndex = 0;
-                Control parent = refmarker.controlItemShowAlt.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(refmarker.controlItemShow);
-                parent.PerformLayout();
-                refmarker.controlItemShowAlt.Dispose();
+                _refMarker.controlItemShow = new FiddlerControls.ItemShow
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    Name = "controlItemShow",
+                    Size = new Size(613, 318),
+                    TabIndex = 0
+                };
 
-                refmarker.controlTexture = new FiddlerControls.Texture();
-                refmarker.controlTexture.Dock = System.Windows.Forms.DockStyle.Fill;
-                refmarker.controlTexture.Location = new System.Drawing.Point(3, 3);
-                refmarker.controlTexture.Name = "controlTexture";
-                refmarker.controlTexture.Size = new System.Drawing.Size(613, 318);
-                refmarker.controlTexture.TabIndex = 0;
-                parent = refmarker.controlTextureAlt.Parent;
+                Control parent = _refMarker._controlItemShowAlt.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(refmarker.controlTexture);
+                parent.Controls.Add(_refMarker.controlItemShow);
                 parent.PerformLayout();
-                refmarker.controlTextureAlt.Dispose();
 
-                refmarker.controlLandTiles = new FiddlerControls.LandTiles();
-                refmarker.controlLandTiles.Dock = System.Windows.Forms.DockStyle.Fill;
-                refmarker.controlLandTiles.Location = new System.Drawing.Point(3, 3);
-                refmarker.controlLandTiles.Name = "controlLandTiles";
-                refmarker.controlLandTiles.Size = new System.Drawing.Size(613, 318);
-                refmarker.controlLandTiles.TabIndex = 0;
-                parent = refmarker.controlLandTilesAlt.Parent;
+                _refMarker._controlItemShowAlt.Dispose();
+
+                _refMarker.controlTexture = new FiddlerControls.Texture
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    Name = "controlTexture",
+                    Size = new Size(613, 318),
+                    TabIndex = 0
+                };
+
+                parent = _refMarker._controlTextureAlt.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(refmarker.controlLandTiles);
+                parent.Controls.Add(_refMarker.controlTexture);
                 parent.PerformLayout();
-                refmarker.controlLandTilesAlt.Dispose();
+
+                _refMarker._controlTextureAlt.Dispose();
+
+                _refMarker.controlLandTiles = new FiddlerControls.LandTiles
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    Name = "controlLandTiles",
+                    Size = new Size(613, 318),
+                    TabIndex = 0
+                };
+
+                parent = _refMarker._controlLandTilesAlt.Parent;
+                parent.Controls.Clear();
+                parent.Controls.Add(_refMarker.controlLandTiles);
+                parent.PerformLayout();
+
+                _refMarker._controlLandTilesAlt.Dispose();
             }
         }
 
         /// <summary>
-        /// Reloads Itemtab
+        /// Reloads Item tab
         /// </summary>
         public static void ReloadItemTab()
         {
             if (FiddlerControls.Options.DesignAlternative)
-                refmarker.controlItemShowAlt.ChangeTileSize();
+            {
+                _refMarker._controlItemShowAlt.ChangeTileSize();
+            }
             else
-                refmarker.controlItemShow.ChangeTileSize();
+            {
+                _refMarker.controlItemShow.ChangeTileSize();
+            }
         }
 
         /// <summary>
@@ -354,160 +465,200 @@ namespace UoFiddler
         public static void ChangeMapSize()
         {
             if (FiddlerControls.Options.LoadedUltimaClass["Map"])
+            {
                 Ultima.Map.Reload();
+            }
+
             FiddlerControls.Events.FireMapSizeChangeEvent();
         }
 
-        private void OnClickUndock(object sender, EventArgs e)
+        private void OnClickUnDock(object sender, EventArgs e)
         {
             int tag = (int)TabPanel.SelectedTab.Tag;
-            if (tag > 0)
+            if (tag <= 0)
             {
-                new UnDocked(TabPanel.SelectedTab).Show();
-                TabPanel.TabPages.Remove(TabPanel.SelectedTab);
+                return;
             }
+
+            new UnDocked(TabPanel.SelectedTab).Show();
+            TabPanel.TabPages.Remove(TabPanel.SelectedTab);
         }
 
         /// <summary>
         /// ReDocks closed Form
         /// </summary>
-        /// <param name="contr"></param>
-        /// <param name="index"></param>
-        /// <param name="name"></param>
-        public static void ReDock(TabPage oldtab)
+        /// <param name="oldTab"></param>
+        public static void ReDock(TabPage oldTab)
         {
             bool done = false;
-            foreach (TabPage page in refmarker.TabPanel.TabPages)
+            foreach (TabPage page in _refMarker.TabPanel.TabPages)
             {
-                if ((int)page.Tag > (int)oldtab.Tag)
+                if ((int)page.Tag <= (int)oldTab.Tag)
                 {
-                    refmarker.TabPanel.TabPages.Insert(refmarker.TabPanel.TabPages.IndexOf(page), oldtab);
-                    done = true;
-                    break;
+                    continue;
                 }
+
+                _refMarker.TabPanel.TabPages.Insert(_refMarker.TabPanel.TabPages.IndexOf(page), oldTab);
+                done = true;
+                break;
             }
+
             if (!done)
-                refmarker.TabPanel.TabPages.Add(oldtab);
-            refmarker.TabPanel.SelectedTab = oldtab;
+            {
+                _refMarker.TabPanel.TabPages.Add(oldTab);
+            }
+
+            _refMarker.TabPanel.SelectedTab = oldTab;
         }
 
-        private ManagePlugins pluginsform;
-        private void onClickManagePlugins(object sender, EventArgs e)
+        private ManagePlugins _pluginsForm;
+
+        private void OnClickManagePlugins(object sender, EventArgs e)
         {
-            if ((pluginsform == null) || (pluginsform.IsDisposed))
+            if (_pluginsForm?.IsDisposed == false)
             {
-                pluginsform = new ManagePlugins();
-                pluginsform.TopMost = true;
-                pluginsform.Show();
+                return;
             }
+
+            _pluginsForm = new ManagePlugins
+            {
+                TopMost = true
+            };
+            _pluginsForm.Show();
         }
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
             string files = "";
+
             foreach (KeyValuePair<string, bool> key in FiddlerControls.Options.ChangedUltimaClass)
             {
                 if (key.Value)
-                    files += key.Key + " ";
+                {
+                    files += $"{key.Key} ";
+                }
             }
+
             if (files.Length > 0)
             {
-                DialogResult result =
-                        MessageBox.Show(String.Format("Are you sure you want to quit?\r\n{0}", files),
-                        "UnSaved Changes",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
+                DialogResult result = MessageBox.Show($"Are you sure you want to quit?\r\n{files}",
+                    "UnSaved Changes",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)
                 {
                     e.Cancel = true;
                     return;
                 }
             }
-            Options.MaximisedForm = this.WindowState == FormWindowState.Maximized;
-            Options.FormPosition = this.Location;
-            Options.FormSize = this.Size;
+
+            Options.MaximisedForm = WindowState == FormWindowState.Maximized;
+            Options.FormPosition = Location;
+            Options.FormSize = Size;
 
             GlobalPlugins.Plugins.ClosePlugins();
         }
 
         private void OnClickHelp(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(@"http://uofiddler.polserver.com/help.html");
+            Process.Start("http://uofiddler.polserver.com/help.html");
         }
 
-        private static bool isOkFormStateLocation(Point loc, Size size)
+        private static bool IsOkFormStateLocation(Point loc, Size size)
         {
             if (loc.X < 0 || loc.Y < 0)
+            {
                 return false;
-            else if (loc.X + size.Width > Screen.PrimaryScreen.WorkingArea.Width)
+            }
+
+            if (loc.X + size.Width > Screen.PrimaryScreen.WorkingArea.Width)
+            {
                 return false;
-            else if (loc.Y + size.Height > Screen.PrimaryScreen.WorkingArea.Height)
-                return false;
-            return true;
+            }
+
+            return loc.Y + size.Height <= Screen.PrimaryScreen.WorkingArea.Height;
         }
 
-        #region View Menu Code
         private void ToggleView(object sender, EventArgs e)
         {
-            ToolStripMenuItem themenuitem = (ToolStripMenuItem)sender;
-            TabPage thepage = TabFromTag((int)themenuitem.Tag);
-            int tag = (int)thepage.Tag;
-            if (themenuitem.Checked)
+            ToolStripMenuItem theMenuItem = (ToolStripMenuItem)sender;
+            TabPage thePage = TabFromTag((int)theMenuItem.Tag);
+
+            int tag = (int)thePage.Tag;
+
+            if (theMenuItem.Checked)
             {
-                if (!TabPanel.TabPages.Contains(thepage))
+                if (!TabPanel.TabPages.Contains(thePage))
+                {
                     return;
-                themenuitem.Checked = false;
-                TabPanel.TabPages.Remove(thepage);
+                }
+
+                theMenuItem.Checked = false;
+                TabPanel.TabPages.Remove(thePage);
                 FiddlerControls.Options.ChangedViewState[tag] = false;
             }
             else
             {
-                themenuitem.Checked = true;
+                theMenuItem.Checked = true;
                 bool done = false;
-                foreach (TabPage page in refmarker.TabPanel.TabPages)
+                foreach (TabPage page in _refMarker.TabPanel.TabPages)
                 {
-                    if ((int)page.Tag > tag)
+                    if ((int)page.Tag <= tag)
                     {
-                        refmarker.TabPanel.TabPages.Insert(refmarker.TabPanel.TabPages.IndexOf(page), thepage);
-                        done = true;
-                        break;
+                        continue;
                     }
+
+                    _refMarker.TabPanel.TabPages.Insert(_refMarker.TabPanel.TabPages.IndexOf(page), thePage);
+                    done = true;
+                    break;
                 }
                 if (!done)
-                    refmarker.TabPanel.TabPages.Add(thepage);
+                {
+                    _refMarker.TabPanel.TabPages.Add(thePage);
+                }
+
                 FiddlerControls.Options.ChangedViewState[tag] = true;
             }
         }
 
-        private void ToggleView(TabPage thepage)
+        private void ToggleView(TabPage thePage)
         {
-            int tag = (int)thepage.Tag;
-            ToolStripMenuItem themenuitem = MenuFromTag(tag);
+            int tag = (int)thePage.Tag;
+            ToolStripMenuItem theMenuItem = MenuFromTag(tag);
 
-            if (themenuitem.Checked)
+            if (theMenuItem.Checked)
             {
-                if (!TabPanel.TabPages.Contains(thepage))
+                if (!TabPanel.TabPages.Contains(thePage))
+                {
                     return;
-                themenuitem.Checked = false;
-                TabPanel.TabPages.Remove(thepage);
+                }
+
+                theMenuItem.Checked = false;
+                TabPanel.TabPages.Remove(thePage);
                 FiddlerControls.Options.ChangedViewState[tag] = false;
             }
             else
             {
-                themenuitem.Checked = true;
+                theMenuItem.Checked = true;
                 bool done = false;
-                foreach (TabPage page in refmarker.TabPanel.TabPages)
+                foreach (TabPage page in _refMarker.TabPanel.TabPages)
                 {
-                    if ((int)page.Tag > tag)
+                    if ((int)page.Tag <= tag)
                     {
-                        refmarker.TabPanel.TabPages.Insert(refmarker.TabPanel.TabPages.IndexOf(page), thepage);
-                        done = true;
-                        break;
+                        continue;
                     }
+
+                    _refMarker.TabPanel.TabPages.Insert(_refMarker.TabPanel.TabPages.IndexOf(page), thePage);
+                    done = true;
+                    break;
                 }
+
                 if (!done)
-                    refmarker.TabPanel.TabPages.Add(thepage);
+                {
+                    _refMarker.TabPanel.TabPages.Add(thePage);
+                }
+
                 FiddlerControls.Options.ChangedViewState[tag] = true;
             }
         }
@@ -569,6 +720,5 @@ namespace UoFiddler
                 default: return ToggleViewStart;
             }
         }
-        #endregion
     }
 }

@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using FiddlerControls.Helpers;
@@ -25,75 +24,80 @@ namespace FiddlerControls
 {
     public partial class Sounds : UserControl
     {
-        private static Sounds refMarker;
-
         public Sounds()
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            refMarker = this;
-            this.sp_timer = new Timer();
-            sp_timer.Tick += this.OnSpTimerTick;
+            RefMarker = this;
+            _spTimer = new Timer();
+            _spTimer.Tick += OnSpTimerTick;
 
             treeView.LabelEdit = true;
             treeView.BeforeLabelEdit += TreeView_BeforeLabelEdit;
             treeView.AfterLabelEdit += TreeViewOnAfterLabelEdit;
         }
 
-        public static Sounds RefMarker => refMarker;
+        public static Sounds RefMarker { get; private set; }
 
-        private System.Media.SoundPlayer sp;
-        private Timer sp_timer;
-        private int sp_timer_max;
-        private DateTime sp_timer_start;
+        private System.Media.SoundPlayer _sp;
+        private readonly Timer _spTimer;
+        private int _spTimerMax;
+        private DateTime _spTimerStart;
 
-        private bool Loaded = false;
+        private bool _loaded;
 
         /// <summary>
         /// ReLoads if loaded
         /// </summary>
         private void Reload()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
+            }
+
             nameSortToolStripMenuItem.Checked = false;
             OnLoad(this, EventArgs.Empty);
         }
+
         private void OnLoad(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Sound"] = true;
 
             int? oldItem = null;
-            if (this.treeView.SelectedNode != null)
+            if (treeView.SelectedNode != null)
             {
-                oldItem = ((int)treeView.SelectedNode.Tag) - 1;
+                oldItem = (int)treeView.SelectedNode.Tag - 1;
             }
 
-            string name = "";
-            bool translated = false;
             treeView.BeginUpdate();
             treeView.Nodes.Clear();
-            List<TreeNode> cache = new List<TreeNode>();
+
+            var cache = new List<TreeNode>();
             for (int i = 1; i <= 0xFFF; ++i)
             {
-                if (Ultima.Sounds.IsValidSound(i - 1, out name, out translated))
+                if (Ultima.Sounds.IsValidSound(i - 1, out string name, out bool translated))
                 {
-                    TreeNode node = new TreeNode(String.Format("0x{0:X3} {1}", i - 1, name));
-                    node.Tag = i;
+                    TreeNode node = new TreeNode($"0x{i - 1:X3} {name}")
+                    {
+                        Tag = i
+                    };
                     if (translated)
                     {
                         node.ForeColor = Color.Blue;
-                        node.NodeFont = new Font(this.Font, FontStyle.Underline);
+                        node.NodeFont = new Font(Font, FontStyle.Underline);
                     }
 
                     cache.Add(node);
                 }
                 else if (showFreeSlotsToolStripMenuItem.Checked)
                 {
-                    TreeNode node = new TreeNode(String.Format("0x{0:X3} ", i - 1));
-                    node.Tag = i;
-                    node.ForeColor = Color.Red;
+                    TreeNode node = new TreeNode($"0x{i - 1:X3} ")
+                    {
+                        Tag = i,
+                        ForeColor = Color.Red
+                    };
                     cache.Add(node);
                 }
             }
@@ -101,33 +105,41 @@ namespace FiddlerControls
 
             treeView.EndUpdate();
             if (treeView.Nodes.Count > 0)
+            {
                 treeView.SelectedNode = treeView.Nodes[0];
-            sp = new System.Media.SoundPlayer();
-            if (!Loaded)
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-            Loaded = true;
+            }
+
+            _sp = new System.Media.SoundPlayer();
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
+            _loaded = true;
 
             Cursor.Current = Cursors.Default;
 
             if (oldItem != null)
             {
-                SearchID(oldItem.Value);
+                SearchId(oldItem.Value);
             }
         }
 
         private void OnSpTimerTick(object sender, EventArgs eventArgs)
         {
-            this.BeginInvoke((Action)(() =>
+            BeginInvoke((Action)(() =>
                 {
-                    var diff = DateTime.Now - sp_timer_start;
-                    playing.Value = Math.Min(100, (int)((diff.TotalMilliseconds * 100d) / this.sp_timer_max));
+                    TimeSpan diff = DateTime.Now - _spTimerStart;
+                    playing.Value = Math.Min(100, (int)(diff.TotalMilliseconds * 100d / _spTimerMax));
 
-                    if (diff.TotalMilliseconds >= sp_timer_max)
+                    if (diff.TotalMilliseconds < _spTimerMax)
                     {
-                        playing.Visible = false;
-                        stopButton.Visible = false;
-                        sp_timer.Stop();
+                        return;
                     }
+
+                    playing.Visible = false;
+                    stopButton.Visible = false;
+                    _spTimer.Stop();
                 }));
         }
 
@@ -143,61 +155,61 @@ namespace FiddlerControls
 
         private void OnClickPlay(object sender, EventArgs e)
         {
-            this.PlaySound((int)treeView.SelectedNode.Tag - 1);
+            PlaySound((int)treeView.SelectedNode.Tag - 1);
         }
 
         private void OnDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            this.PlaySound((int)e.Node.Tag - 1);
+            PlaySound((int)e.Node.Tag - 1);
         }
 
         private void OnClickStop(object sender, EventArgs e)
         {
-            this.StopSound();
+            StopSound();
         }
 
         private void StopSound()
         {
-            this.sp.Stop();
-            this.sp_timer.Stop();
-            this.playing.Visible = false;
-            this.stopButton.Visible = false;
+            _sp.Stop();
+            _spTimer.Stop();
+            playing.Visible = false;
+            stopButton.Visible = false;
         }
 
         private void PlaySound(int id)
         {
-            this.sp.Stop();
-            sp_timer.Stop();
+            _sp.Stop();
+            _spTimer.Stop();
             playing.Visible = false;
             stopButton.Visible = false;
 
-            if (this.treeView.SelectedNode == null)
+            if (treeView.SelectedNode == null)
             {
                 return;
             }
 
-            Ultima.UOSound s = Ultima.Sounds.GetSound(id);
+            UoSound s = Ultima.Sounds.GetSound(id);
             if (s == null)
             {
                 return;
             }
 
-            using (MemoryStream m = new MemoryStream(s.buffer))
+            using (MemoryStream m = new MemoryStream(s.Buffer))
             {
-                this.sp.Stream = m;
-                this.sp.Play();
+                _sp.Stream = m;
+                _sp.Play();
 
                 playing.Value = 0;
                 playing.Visible = true;
                 stopButton.Visible = true;
-                this.sp_timer_start = DateTime.Now;
-                this.sp_timer_max = (int)(Ultima.Sounds.GetSoundLength(id) * 1000);
-                sp_timer.Interval = 50;
-                sp_timer.Start();
+                _spTimerStart = DateTime.Now;
+                _spTimerMax = (int)(Ultima.Sounds.GetSoundLength(id) * 1000);
+                _spTimer.Interval = 50;
+                _spTimer.Start();
             }
         }
 
-        private void afterSelect(object sender, EventArgs e)
+        private void AfterSelect(object sender, EventArgs e)
         {
             if (treeView.SelectedNode == null)
             {
@@ -208,14 +220,9 @@ namespace FiddlerControls
                 replaceToolStripMenuItem.Text = "Insert/Replace";
             }
 
-            var length = Ultima.Sounds.GetSoundLength((int)treeView.SelectedNode.Tag - 1);
-            seconds.Text = length > 0
-                ? String.Format("{0:f}s", length)
-                : "Empty Slot";
-
-            string name;
-            bool translated;
-            var isValidSound = Ultima.Sounds.IsValidSound((int)this.treeView.SelectedNode.Tag - 1, out name, out translated);
+            double length = Ultima.Sounds.GetSoundLength((int)treeView.SelectedNode.Tag - 1);
+            seconds.Text = length > 0 ? $"{length:f}s" : "Empty Slot";
+            bool isValidSound = Ultima.Sounds.IsValidSound((int)treeView.SelectedNode.Tag - 1, out _, out _);
 
             playSoundToolStripMenuItem.Enabled = isValidSound;
             extractSoundToolStripMenuItem.Enabled = isValidSound;
@@ -226,38 +233,30 @@ namespace FiddlerControls
 
         private void OnChangeSort(object sender, EventArgs e)
         {
-            if (this.showFreeSlotsToolStripMenuItem.Checked)
+            if (showFreeSlotsToolStripMenuItem.Checked)
             {
-                this.showFreeSlotsToolStripMenuItem.Checked = false;
-                this.nextFreeSlotToolStripMenuItem.Enabled = false;
-                this.Reload();
-                this.nameSortToolStripMenuItem.Checked = true;
+                showFreeSlotsToolStripMenuItem.Checked = false;
+                nextFreeSlotToolStripMenuItem.Enabled = false;
+                Reload();
+                nameSortToolStripMenuItem.Checked = true;
             }
 
             int? oldItem = null;
-            if (this.treeView.SelectedNode != null)
+            if (treeView.SelectedNode != null)
             {
-                oldItem = ((int)treeView.SelectedNode.Tag) - 1;
+                oldItem = (int)treeView.SelectedNode.Tag - 1;
             }
 
-            string delimiter = " ";
-            char[] delim = delimiter.ToCharArray();
-            string name;
-            int splitIndex = 0;
+            const string delimiter = " ";
             treeView.BeginUpdate();
             for (int i = 0; i < treeView.Nodes.Count; ++i)
             {
-                name = treeView.Nodes[i].Text;
-                if (this.nameSortToolStripMenuItem.Checked)
-                {
-                    splitIndex = name.IndexOf(delimiter);
-                }
-                else
-                {
-                    splitIndex = name.LastIndexOf(delimiter);
-                }
+                string name = treeView.Nodes[i].Text;
+                int splitIndex = nameSortToolStripMenuItem.Checked
+                    ? name.IndexOf(delimiter, StringComparison.Ordinal)
+                    : name.LastIndexOf(delimiter, StringComparison.Ordinal);
 
-                treeView.Nodes[i].Text = String.Format("{0} {1}", name.Substring(splitIndex + 1), name.Substring(0, splitIndex));
+                treeView.Nodes[i].Text = $"{name.Substring(splitIndex + 1)} {name.Substring(0, splitIndex)}";
             }
 
             treeView.Sort();
@@ -265,7 +264,7 @@ namespace FiddlerControls
 
             if (oldItem != null)
             {
-                SearchID(oldItem.Value);
+                SearchId(oldItem.Value);
             }
         }
 
@@ -275,20 +274,27 @@ namespace FiddlerControls
             if (next)
             {
                 if (treeView.SelectedNode.Index >= 0)
+                {
                     index = treeView.SelectedNode.Index + 1;
+                }
+
                 if (index >= treeView.Nodes.Count)
+                {
                     index = 0;
+                }
             }
 
             for (int i = index; i < treeView.Nodes.Count; ++i)
             {
                 TreeNode node = treeView.Nodes[i];
-                if (node.Text.ContainsCaseInsensitive(name))
+                if (!node.Text.ContainsCaseInsensitive(name))
                 {
-                    treeView.SelectedNode = node;
-                    node.EnsureVisible();
-                    return true;
+                    continue;
                 }
+
+                treeView.SelectedNode = node;
+                node.EnsureVisible();
+                return true;
             }
             return false;
         }
@@ -296,35 +302,36 @@ namespace FiddlerControls
         private void OnClickExtract(object sender, EventArgs e)
         {
             if (treeView.SelectedNode == null)
-                return;
-            int id = (int)treeView.SelectedNode.Tag - 1;
-            string name = "";
-            bool translated = false;
-            Ultima.Sounds.IsValidSound(id, out name, out translated);
-            string fileName = Path.Combine(FiddlerControls.Options.OutputPath, String.Format("{0}", name));
-            if (!fileName.EndsWith(".wav"))
             {
-                fileName = fileName + ".wav";
+                return;
             }
 
-            using (MemoryStream stream = new MemoryStream(Ultima.Sounds.GetSound(id).buffer))
+            int id = (int)treeView.SelectedNode.Tag - 1;
+            Ultima.Sounds.IsValidSound(id, out string name, out _);
+            string fileName = Path.Combine(Options.OutputPath, $"{name}");
+            if (!fileName.EndsWith(".wav"))
+            {
+                fileName += ".wav";
+            }
+
+            using (MemoryStream stream = new MemoryStream(Ultima.Sounds.GetSound(id).Buffer))
             {
                 using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
                     stream.WriteTo(fs);
                 }
             }
-            MessageBox.Show(String.Format("Sound saved to {0}", fileName), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Sound saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            string path = FiddlerControls.Options.OutputPath;
+            string path = Options.OutputPath;
             Ultima.Sounds.Save(path);
             Cursor.Current = Cursors.Default;
             MessageBox.Show(
-                    String.Format("Saved to {0}", path),
+                $"Saved to {path}",
                     "Save",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information,
@@ -335,63 +342,74 @@ namespace FiddlerControls
         private void OnClickRemove(object sender, EventArgs e)
         {
             if (treeView.SelectedNode == null)
+            {
                 return;
+            }
+
             int id = (int)treeView.SelectedNode.Tag - 1;
             DialogResult result =
-                        MessageBox.Show(String.Format("Are you sure to remove {0}?", treeView.SelectedNode.Text), "Remove",
+                        MessageBox.Show($"Are you sure to remove {treeView.SelectedNode.Text}?", "Remove",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes)
             {
-                Ultima.Sounds.Remove(id);
-                if (!showFreeSlotsToolStripMenuItem.Checked)
-                {
-                    treeView.SelectedNode.Remove();
-                }
-                else
-                {
-                    treeView.SelectedNode.Text = string.Format("0x{0:X3}", (int)treeView.SelectedNode.Tag - 1);
-                    treeView.SelectedNode.ForeColor = Color.Red;
-                }
-
-                afterSelect(this, e);
-                Options.ChangedUltimaClass["Sound"] = true;
+                return;
             }
+
+            Ultima.Sounds.Remove(id);
+            if (!showFreeSlotsToolStripMenuItem.Checked)
+            {
+                treeView.SelectedNode.Remove();
+            }
+            else
+            {
+                treeView.SelectedNode.Text = $"0x{(int)treeView.SelectedNode.Tag - 1:X3}";
+                treeView.SelectedNode.ForeColor = Color.Red;
+            }
+
+            AfterSelect(this, e);
+            Options.ChangedUltimaClass["Sound"] = true;
         }
 
         private void OnClickExtractSoundList(object sender, EventArgs e)
         {
-            string FileName = Path.Combine(FiddlerControls.Options.OutputPath, "SoundList.csv");
-            Ultima.Sounds.SaveSoundListToCSV(FileName);
-            MessageBox.Show(String.Format("SoundList saved to {0}", FileName),
+            string fileName = Path.Combine(Options.OutputPath, "SoundList.csv");
+            Ultima.Sounds.SaveSoundListToCsv(fileName);
+            MessageBox.Show($"SoundList saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
-        private SoundsSearch showform = null;
+        private SoundsSearch _showForm;
 
         private void SearchClick(object sender, EventArgs e)
         {
-            if ((showform == null) || (showform.IsDisposed))
+            if (_showForm?.IsDisposed == false)
             {
-                showform = new SoundsSearch();
-                showform.TopMost = true;
-                showform.Show();
+                return;
             }
+
+            _showForm = new SoundsSearch
+            {
+                TopMost = true
+            };
+            _showForm.Show();
         }
 
-        public static bool SearchID(int id)
+        public static bool SearchId(int id)
         {
-            for (int i = 0; i < refMarker.treeView.Nodes.Count; ++i)
+            for (int i = 0; i < RefMarker.treeView.Nodes.Count; ++i)
             {
-                TreeNode node = refMarker.treeView.Nodes[i];
-                if ((int)node.Tag == id + 1)
+                TreeNode node = RefMarker.treeView.Nodes[i];
+                if ((int)node.Tag != id + 1)
                 {
-                    refMarker.treeView.SelectedNode = node;
-                    node.EnsureVisible();
-                    return true;
+                    continue;
                 }
+
+                RefMarker.treeView.SelectedNode = node;
+                node.EnsureVisible();
+                return true;
             }
 
             return false;
@@ -401,12 +419,12 @@ namespace FiddlerControls
         {
             Reload();
 
-            this.nextFreeSlotToolStripMenuItem.Enabled = this.showFreeSlotsToolStripMenuItem.Checked;
+            nextFreeSlotToolStripMenuItem.Enabled = showFreeSlotsToolStripMenuItem.Checked;
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            string file = null;
+            string file;
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
@@ -414,12 +432,16 @@ namespace FiddlerControls
                 dialog.CheckFileExists = true;
                 dialog.Filter = "wav file (*.wav)|*.wav";
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
                     file = dialog.FileName;
+                }
                 else
+                {
                     return;
+                }
             }
 
-            int id = (int)this.treeView.SelectedNode.Tag;
+            int id = (int)treeView.SelectedNode.Tag;
             string name = Path.GetFileName(file);
             if (name.Length > 32)
             {
@@ -431,12 +453,10 @@ namespace FiddlerControls
                 MessageBox.Show("Invalid Filename", "Add/Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
 
-            string orgName;
-            bool translated;
-            if (Ultima.Sounds.IsValidSound(id - 1, out orgName, out translated))
+            if (Ultima.Sounds.IsValidSound(id - 1, out _, out _))
             {
                 DialogResult result = MessageBox.Show(
-                    String.Format("Are you sure to replace {0}?", treeView.SelectedNode.Text),
+                    $"Are you sure to replace {treeView.SelectedNode.Text}?",
                     "Replace",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question,
@@ -457,81 +477,87 @@ namespace FiddlerControls
                 return;
             }
 
-            TreeNode node = new TreeNode(String.Format("0x{0:X3} {1}", id - 1, name));
-            if (this.nameSortToolStripMenuItem.Checked)
+            TreeNode node = new TreeNode($"0x{id - 1:X3} {name}");
+            if (nameSortToolStripMenuItem.Checked)
             {
-                node.Text = String.Format("{1} 0x{0:X3}", id - 1, name);
+                node.Text = string.Format("{1} 0x{0:X3}", id - 1, name);
             }
 
             node.Tag = id;
             bool done = false;
-            for (int i = 0; i < this.treeView.Nodes.Count; ++i)
+            for (int i = 0; i < treeView.Nodes.Count; ++i)
             {
-                if ((int)this.treeView.Nodes[i].Tag == id)
+                if ((int)treeView.Nodes[i].Tag != id)
                 {
-                    done = true;
-                    this.treeView.Nodes.RemoveAt(i);
-                    this.treeView.Nodes.Insert(i, node);
-                    break;
+                    continue;
                 }
+
+                done = true;
+                treeView.Nodes.RemoveAt(i);
+                treeView.Nodes.Insert(i, node);
+                break;
             }
             if (!done)
             {
-                this.treeView.Nodes.Add(node);
-                this.treeView.Sort();
+                treeView.Nodes.Add(node);
+                treeView.Sort();
             }
 
             node.EnsureVisible();
-            this.treeView.SelectedNode = node;
-            this.treeView.Invalidate();
+            treeView.SelectedNode = node;
+            treeView.Invalidate();
             Options.ChangedUltimaClass["Sound"] = true;
         }
 
-        private void nextFreeSlotToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NextFreeSlotToolStripMenuItem_Click(object sender, EventArgs e)
         {
             for (int i = treeView.Nodes.IndexOf(treeView.SelectedNode) + 1; i < treeView.Nodes.Count; ++i)
             {
-                TreeNode node = refMarker.treeView.Nodes[i];
-                string name;
-                bool translated;
-                if (!Ultima.Sounds.IsValidSound((int)node.Tag - 1, out name, out translated))
+                TreeNode node = RefMarker.treeView.Nodes[i];
+                if (Ultima.Sounds.IsValidSound((int)node.Tag - 1, out _, out _))
                 {
-                    treeView.SelectedNode = node;
-                    node.EnsureVisible();
-                    return;
+                    continue;
                 }
+
+                treeView.SelectedNode = node;
+                node.EnsureVisible();
+                return;
             }
         }
 
-        private void treeView_KeyDown(object sender, KeyEventArgs e)
+        private void TreeView_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                this.StopSound();
+                StopSound();
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.F2)
             {
-                if (this.treeView.SelectedNode != null)
+                if (treeView.SelectedNode == null)
                 {
-                    this.treeView.SelectedNode.BeginEdit();
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
+                    return;
                 }
+
+                treeView.SelectedNode.BeginEdit();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Enter)
             {
-                if (!this.treeView.Nodes.OfType<TreeNode>().Any(n => n.IsEditing))
+                if (treeView.Nodes.OfType<TreeNode>().Any(n => n.IsEditing))
                 {
-                    this.OnClickPlay(this, e);
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
+                    return;
                 }
+
+                OnClickPlay(this, e);
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
-          else  if (e.KeyCode == Keys.F && e.Control)
+            else if (e.KeyCode == Keys.F && e.Control)
             {
-                this.SearchClick(sender, e);
+                SearchClick(sender, e);
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }
@@ -539,17 +565,17 @@ namespace FiddlerControls
 
         private void TreeViewOnAfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            var id = ((int)e.Node.Tag) - 1;
-            var sound = Ultima.Sounds.GetSound(id);
+            int id = (int)e.Node.Tag - 1;
+            UoSound sound = Ultima.Sounds.GetSound(id);
             if (sound != null && e.Label != null)
             {
-                var newName = e.Label;
+                string newName = e.Label;
                 if (newName.Length > 32)
                 {
                     newName = newName.Substring(0, 32);
                 }
 
-                var oldName = sound.Name;
+                string oldName = sound.Name;
                 sound.Name = newName;
                 if (oldName != newName)
                 {
@@ -557,13 +583,11 @@ namespace FiddlerControls
                 }
             }
 
-            string name;
-            bool translated;
-            Ultima.Sounds.IsValidSound(id, out name, out translated);
-            e.Node.Text = String.Format("0x{0:X3} {1}", id, name);
-            if (this.nameSortToolStripMenuItem.Checked)
+            Ultima.Sounds.IsValidSound(id, out string name, out _);
+            e.Node.Text = $"0x{id:X3} {name}";
+            if (nameSortToolStripMenuItem.Checked)
             {
-                e.Node.Text = String.Format("{1} 0x{0:X3}", id, name);
+                e.Node.Text = string.Format("{1} 0x{0:X3}", id, name);
             }
 
             e.CancelEdit = true;
@@ -571,12 +595,10 @@ namespace FiddlerControls
 
         private void TreeView_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            var id = ((int)e.Node.Tag) - 1;
-            string name;
-            bool translated;
-            if (Ultima.Sounds.IsValidSound(id, out name, out translated) && !translated)
+            int id = (int)e.Node.Tag - 1;
+            if (Ultima.Sounds.IsValidSound(id, out string name, out bool translated) && !translated)
             {
-                this.treeView.SetEditText(name);
+                treeView.SetEditText(name);
             }
             else
             {

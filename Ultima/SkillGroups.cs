@@ -19,7 +19,7 @@ namespace Ultima
     {
         public static List<SkillGroup> List { get; private set; }
         public static List<int> SkillList { get; private set; }
-        private static bool unicode = false;
+        private static bool _unicode = false;
         static SkillGroups()
         {
             Initialize();
@@ -43,7 +43,7 @@ namespace Ultima
                         int count = bin.ReadInt32();
                         if (count == -1)
                         {
-                            unicode = true;
+                            _unicode = true;
                             count = bin.ReadInt32();
                             start *= 2;
                             strlen *= 2;
@@ -53,9 +53,9 @@ namespace Ultima
                         for (int i = 0; i < count - 1; ++i)
                         {
                             int strbuild;
-                            fs.Seek((long)(start + (i * strlen)), SeekOrigin.Begin);
+                            fs.Seek(start + (i * strlen), SeekOrigin.Begin);
                             StringBuilder builder2 = new StringBuilder(17);
-                            if (unicode)
+                            if (_unicode)
                             {
                                 while ((strbuild = bin.ReadInt16()) != 0)
                                     builder2.Append((char)strbuild);
@@ -67,7 +67,7 @@ namespace Ultima
                             }
                             List.Add(new SkillGroup(builder2.ToString()));
                         }
-                        fs.Seek((long)(start + ((count - 1) * strlen)), SeekOrigin.Begin);
+                        fs.Seek(start + ((count - 1) * strlen), SeekOrigin.Begin);
                         try
                         {
                             while (bin.BaseStream.Length != bin.BaseStream.Position)
@@ -88,22 +88,22 @@ namespace Ultima
             {
                 using (BinaryWriter bin = new BinaryWriter(fs))
                 {
-                    if (unicode)
-                        bin.Write((int)-1);
-                    bin.Write((int)List.Count);
+                    if (_unicode)
+                        bin.Write(-1);
+                    bin.Write(List.Count);
 
                     foreach (SkillGroup group in List)
                     {
                         if (group.Name == "Misc")
                             continue;
                         byte[] name;
-                        if (unicode)
+                        if (_unicode)
                             name = new byte[34];
                         else
                             name = new byte[17];
                         if (group.Name != null)
                         {
-                            if (unicode)
+                            if (_unicode)
                             {
                                 byte[] bb = Encoding.Unicode.GetBytes(group.Name);
                                 if (bb.Length > 34)

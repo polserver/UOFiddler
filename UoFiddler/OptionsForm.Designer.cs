@@ -224,7 +224,7 @@ namespace UoFiddler
             this.label2.Size = new System.Drawing.Size(64, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "map0 Name";
-            this.toolTip1.SetToolTip(this.label2, "Definies the map name");
+            this.toolTip1.SetToolTip(this.label2, "Defines the map name");
             // 
             // label3
             // 
@@ -234,7 +234,7 @@ namespace UoFiddler
             this.label3.Size = new System.Drawing.Size(64, 13);
             this.label3.TabIndex = 3;
             this.label3.Text = "map1 Name";
-            this.toolTip1.SetToolTip(this.label3, "Definies the map name");
+            this.toolTip1.SetToolTip(this.label3, "Defines the map name");
             // 
             // label4
             // 
@@ -244,7 +244,7 @@ namespace UoFiddler
             this.label4.Size = new System.Drawing.Size(64, 13);
             this.label4.TabIndex = 5;
             this.label4.Text = "map2 Name";
-            this.toolTip1.SetToolTip(this.label4, "Definies the map name");
+            this.toolTip1.SetToolTip(this.label4, "Defines the map name");
             // 
             // label5
             // 
@@ -254,7 +254,7 @@ namespace UoFiddler
             this.label5.Size = new System.Drawing.Size(64, 13);
             this.label5.TabIndex = 7;
             this.label5.Text = "map3 Name";
-            this.toolTip1.SetToolTip(this.label5, "Definies the map name");
+            this.toolTip1.SetToolTip(this.label5, "Defines the map name");
             // 
             // label6
             // 
@@ -264,7 +264,7 @@ namespace UoFiddler
             this.label6.Size = new System.Drawing.Size(64, 13);
             this.label6.TabIndex = 9;
             this.label6.Text = "map4 Name";
-            this.toolTip1.SetToolTip(this.label6, "Definies the map name");
+            this.toolTip1.SetToolTip(this.label6, "Defines the map name");
             // 
             // label7
             // 
@@ -274,7 +274,7 @@ namespace UoFiddler
             this.label7.Size = new System.Drawing.Size(28, 13);
             this.label7.TabIndex = 11;
             this.label7.Text = "Cmd";
-            this.toolTip1.SetToolTip(this.label7, "Definies the cmd to send Client to loc");
+            this.toolTip1.SetToolTip(this.label7, "Defines the cmd to send Client to loc");
             // 
             // label8
             // 
@@ -294,7 +294,7 @@ namespace UoFiddler
             this.label9.Size = new System.Drawing.Size(64, 13);
             this.label9.TabIndex = 15;
             this.label9.Text = "map5 Name";
-            this.toolTip1.SetToolTip(this.label9, "Definies the map name");
+            this.toolTip1.SetToolTip(this.label9, "Defines the map name");
             // 
             // groupBox3
             // 
@@ -413,7 +413,7 @@ namespace UoFiddler
             this.button2.TabIndex = 2;
             this.button2.Text = "...";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.onClickBrowseOutputPath);
+            this.button2.Click += new System.EventHandler(this.OnClickBrowseOutputPath);
             // 
             // OptionsForm
             // 

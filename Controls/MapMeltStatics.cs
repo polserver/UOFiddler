@@ -12,19 +12,21 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using Ultima;
 
 namespace FiddlerControls
 {
     public partial class MapMeltStatics : Form
     {
-        FiddlerControls.Map MapParent;
-        Ultima.Map Map;
-        public MapMeltStatics(FiddlerControls.Map parent, Ultima.Map map)
+        private readonly Map _mapParent;
+        private readonly Ultima.Map _map;
+
+        public MapMeltStatics(Map parent, Ultima.Map map)
         {
-            MapParent = parent;
-            Map = map;
+            _mapParent = parent;
+            _map = map;
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             numericUpDownX1.Maximum = map.Width;
             numericUpDownX2.Maximum = map.Width;
             numericUpDownY1.Maximum = map.Height;
@@ -33,16 +35,22 @@ namespace FiddlerControls
 
         private void OnClickMelt(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.CheckPathExists = true;
-            dialog.Title = "Choose the file to save to";
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                CheckPathExists = true,
+                Title = "Choose the file to save to"
+            };
             if (dialog.ShowDialog() != DialogResult.OK)
+            {
                 return;
+            }
+
             int blockx1 = (int)numericUpDownX1.Value;
             int blockx2 = (int)numericUpDownX2.Value;
             int blocky1 = (int)numericUpDownY1.Value;
             int blocky2 = (int)numericUpDownY2.Value;
             int temp;
+
             if (blockx1 > blockx2)
             {
                 temp = blockx1;
@@ -55,48 +63,50 @@ namespace FiddlerControls
                 blocky1 = blocky2;
                 blocky2 = temp;
             }
+
             blockx1 >>= 3;
             blockx2 >>= 3;
             blocky1 >>= 3;
             blocky2 >>= 3;
 
-            int count=1;
-            using (StreamWriter Tex = new StreamWriter(new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write), System.Text.Encoding.GetEncoding(1252)))
+            int count = 1;
+            using (StreamWriter tex = new StreamWriter(new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write), System.Text.Encoding.GetEncoding(1252)))
             {
                 for (int x = blockx1; x <= blockx2; ++x)
                 {
                     for (int y = blocky1; y <= blocky2; ++y)
                     {
-                        Ultima.HuedTile[][][] tiles = Map.Tiles.GetStaticBlock(x, y, false);
+                        HuedTile[][][] tiles = _map.Tiles.GetStaticBlock(x, y, false);
                         for (int ix = 0; ix < 8; ++ix)
                         {
                             for (int iy = 0; iy < 8; ++iy)
                             {
-                                foreach (Ultima.HuedTile tile in tiles[ix][iy])
+                                foreach (HuedTile tile in tiles[ix][iy])
                                 {
-                                    Tex.WriteLine(String.Format("SECTION WORLDITEM {0}",count));
-                                    Tex.WriteLine("{");
-                                    Tex.WriteLine("  NAME #");
-                                    Tex.WriteLine(String.Format("  ID {0}", tile.ID));
-                                    Tex.WriteLine(String.Format("  X {0}", (x << 3) + ix));
-                                    Tex.WriteLine(String.Format("  Y {0}", (y << 3) + iy));
-                                    Tex.WriteLine(String.Format("  Z {0}", tile.Z));
-                                    Tex.WriteLine(String.Format("  COLOR {0}", tile.Hue));
-                                    Tex.WriteLine("  CONT -1");
-                                    Tex.WriteLine("  TYPE 255");
-                                    Tex.WriteLine("}");
+                                    tex.WriteLine("SECTION WORLDITEM {0}", count);
+                                    tex.WriteLine("{");
+                                    tex.WriteLine("  NAME #");
+                                    tex.WriteLine("  ID {0}", tile.Id);
+                                    tex.WriteLine("  X {0}", (x << 3) + ix);
+                                    tex.WriteLine("  Y {0}", (y << 3) + iy);
+                                    tex.WriteLine("  Z {0}", tile.Z);
+                                    tex.WriteLine("  COLOR {0}", tile.Hue);
+                                    tex.WriteLine("  CONT -1");
+                                    tex.WriteLine("  TYPE 255");
+                                    tex.WriteLine("}");
                                     ++count;
                                 }
                             }
                         }
-                        Map.Tiles.RemoveStaticBlock(x,y);
+                        _map.Tiles.RemoveStaticBlock(x, y);
                     }
                 }
             }
+
             dialog.Dispose();
-            Map.ResetCache();
+            _map.ResetCache();
             MessageBox.Show("Done", "Melt Static", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            MapParent.RefreshMap();
+            _mapParent.RefreshMap();
         }
     }
 }

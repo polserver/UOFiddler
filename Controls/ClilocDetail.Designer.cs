@@ -51,27 +51,26 @@ namespace FiddlerControls
             this.TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextBox.Location = new System.Drawing.Point(0, 25);
             this.TextBox.Name = "TextBox";
-            this.TextBox.Size = new System.Drawing.Size(292, 241);
+            this.TextBox.Size = new System.Drawing.Size(341, 282);
             this.TextBox.TabIndex = 0;
             this.TextBox.Text = "";
             // 
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.NumberLabel,
-            this.SaveButton});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.NumberLabel, this.SaveButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(292, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(341, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // NumberLabel
             // 
             this.NumberLabel.Name = "NumberLabel";
-            this.NumberLabel.Size = new System.Drawing.Size(25, 22);
+            this.NumberLabel.Size = new System.Drawing.Size(26, 22);
             this.NumberLabel.Text = "Nr: ";
             // 
             // SaveButton
@@ -86,9 +85,9 @@ namespace FiddlerControls
             // 
             // ClilocDetail
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 266);
+            this.ClientSize = new System.Drawing.Size(341, 307);
             this.Controls.Add(this.TextBox);
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -98,7 +97,6 @@ namespace FiddlerControls
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

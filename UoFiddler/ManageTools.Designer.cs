@@ -121,7 +121,7 @@ namespace UoFiddler
             this.button2.TabIndex = 5;
             this.button2.Text = "Add";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.onAddTool);
+            this.button2.Click += new System.EventHandler(this.OnAddTool);
             // 
             // button3
             // 
@@ -132,7 +132,7 @@ namespace UoFiddler
             this.button3.TabIndex = 6;
             this.button3.Text = "Remove";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.onClickRemoveTool);
+            this.button3.Click += new System.EventHandler(this.OnClickRemoveTool);
             // 
             // button4
             // 
@@ -143,7 +143,7 @@ namespace UoFiddler
             this.button4.TabIndex = 8;
             this.button4.Text = "Remove";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.onClickRemoveArg);
+            this.button4.Click += new System.EventHandler(this.OnClickRemoveArg);
             // 
             // splitContainer1
             // 
@@ -249,7 +249,7 @@ namespace UoFiddler
             this.button5.TabIndex = 6;
             this.button5.Text = "Save";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.onClickSaveTool);
+            this.button5.Click += new System.EventHandler(this.OnClickSaveTool);
             // 
             // textBoxToolFile
             // 
@@ -269,7 +269,7 @@ namespace UoFiddler
             this.button1.TabIndex = 3;
             this.button1.Text = "...";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.onClickChangeToolFile);
+            this.button1.Click += new System.EventHandler(this.OnClickChangeToolFile);
             // 
             // textBoxToolName
             // 
@@ -304,7 +304,7 @@ namespace UoFiddler
             this.button7.TabIndex = 7;
             this.button7.Text = "Save";
             this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.onClickSaveArg);
+            this.button7.Click += new System.EventHandler(this.OnClickSaveArg);
             // 
             // textBoxArgName
             // 
@@ -333,7 +333,7 @@ namespace UoFiddler
             this.button6.TabIndex = 9;
             this.button6.Text = "Add";
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.onAddArg);
+            this.button6.Click += new System.EventHandler(this.OnAddArg);
             // 
             // ManageTools
             // 
@@ -346,7 +346,7 @@ namespace UoFiddler
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "Manage Tools";
             this.Load += new System.EventHandler(this.OnLoad);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.onClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

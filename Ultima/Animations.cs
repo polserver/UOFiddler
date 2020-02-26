@@ -268,12 +268,12 @@ namespace Ultima
         /// <summary>
         /// Converts backward
         /// </summary>
-        /// <param name="FileType"></param>
+        /// <param name="fileType"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static int GetTrueBody(int FileType, int index)
+        public static int GetTrueBody(int fileType, int index)
         {
-            switch (FileType)
+            switch (fileType)
             {
                 default:
                 case 1:
@@ -326,34 +326,34 @@ namespace Ultima
 
     public class Animations
     {
-        private static FileIndex m_FileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
+        private static FileIndex _mFileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
         //public static FileIndex FileIndex{ get{ return m_FileIndex; } }
 
-        private static FileIndex m_FileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
+        private static FileIndex _mFileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
         //public static FileIndex FileIndex2{ get{ return m_FileIndex2; } }
 
-        private static FileIndex m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
+        private static FileIndex _mFileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
         //public static FileIndex FileIndex3{ get{ return m_FileIndex3; } }
 
-        private static FileIndex m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
+        private static FileIndex _mFileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
         //public static FileIndex FileIndex4{ get{ return m_FileIndex4; } }
 
-        private static FileIndex m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
+        private static FileIndex _mFileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
         //public static FileIndex FileIndex5 { get { return m_FileIndex5; } }
 
-        private static byte[] m_StreamBuffer;
-        private static MemoryStream m_MemoryStream;
+        private static byte[] _mStreamBuffer;
+        private static MemoryStream _mMemoryStream;
 
         /// <summary>
         /// Rereads AnimX files and bodyconv, body.def
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
-            m_FileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
-            m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
-            m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
-            m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
+            _mFileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
+            _mFileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
+            _mFileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
+            _mFileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
+            _mFileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
 
             BodyConverter.Initialize();
             BodyTable.Initialize();
@@ -367,9 +367,9 @@ namespace Ultima
         /// <param name="direction"></param>
         /// <param name="hue"></param>
         /// <param name="preserveHue">No Hue override <see cref="bodydev"/></param>
-        /// <param name="FirstFrame"></param>
+        /// <param name="firstFrame"></param>
         /// <returns></returns>
-        public static Frame[] GetAnimation(int body, int action, int direction, ref int hue, bool preserveHue, bool FirstFrame)
+        public static Frame[] GetAnimation(int body, int action, int direction, ref int hue, bool preserveHue, bool firstFrame)
         {
             if (preserveHue)
                 Translate(ref body);
@@ -388,14 +388,14 @@ namespace Ultima
 
             if (stream == null)
                 return null;
-            if (m_StreamBuffer == null || m_StreamBuffer.Length < length)
-                m_StreamBuffer = new byte[length];
-            stream.Read(m_StreamBuffer, 0, length);
-            m_MemoryStream = new MemoryStream(m_StreamBuffer, false);
+            if (_mStreamBuffer == null || _mStreamBuffer.Length < length)
+                _mStreamBuffer = new byte[length];
+            stream.Read(_mStreamBuffer, 0, length);
+            _mMemoryStream = new MemoryStream(_mStreamBuffer, false);
 
             bool flip = direction > 4;
             Frame[] frames;
-            using (BinaryReader bin = new BinaryReader(m_MemoryStream))
+            using (BinaryReader bin = new BinaryReader(_mMemoryStream))
             {
                 ushort[] palette = new ushort[0x100];
 
@@ -421,7 +421,7 @@ namespace Ultima
                 else
                     hueObject = null;
 
-                if (FirstFrame)
+                if (firstFrame)
                     frameCount = 1;
                 frames = new Frame[frameCount];
 
@@ -441,7 +441,7 @@ namespace Ultima
                 }
                 bin.Close();
             }
-            m_MemoryStream.Close();
+            _mMemoryStream.Close();
             return frames;
         }
 
@@ -489,7 +489,7 @@ namespace Ultima
             }
         }
 
-        private static int[] m_Table;
+        private static int[] _mTable;
 
         /// <summary>
         /// Translates body (body.def)
@@ -497,15 +497,15 @@ namespace Ultima
         /// <param name="body"></param>
         public static void Translate(ref int body)
         {
-            if (m_Table == null)
+            if (_mTable == null)
                 LoadTable();
-            if (body <= 0 || body >= m_Table.Length)
+            if (body <= 0 || body >= _mTable.Length)
             {
                 body = 0;
                 return;
             }
 
-            body = m_Table[body] & 0x7FFF;
+            body = _mTable[body] & 0x7FFF;
         }
 
         /// <summary>
@@ -515,15 +515,15 @@ namespace Ultima
         /// <param name="hue"></param>
         public static void Translate(ref int body, ref int hue)
         {
-            if (m_Table == null)
+            if (_mTable == null)
                 LoadTable();
-            if (body <= 0 || body >= m_Table.Length)
+            if (body <= 0 || body >= _mTable.Length)
             {
                 body = 0;
                 return;
             }
 
-            int table = m_Table[body];
+            int table = _mTable[body];
 
             if ((table & (1 << 31)) != 0)
             {
@@ -538,23 +538,23 @@ namespace Ultima
 
         private static void LoadTable()
         {
-            int count = 400 + ((m_FileIndex.Index.Length - 35000) / 175);
+            int count = 400 + ((_mFileIndex.Index.Length - 35000) / 175);
 
-            m_Table = new int[count];
+            _mTable = new int[count];
 
             for (int i = 0; i < count; ++i)
             {
-                object o = BodyTable.m_Entries[i];
+                object o = BodyTable.MEntries[i];
 
                 if (o == null || BodyConverter.Contains(i))
                 {
-                    m_Table[i] = i;
+                    _mTable[i] = i;
                 }
                 else
                 {
                     BodyTableEntry bte = (BodyTableEntry)o;
 
-                    m_Table[i] = bte.OldID | (1 << 31) | ((bte.NewHue & 0xFFFF) << 15);
+                    _mTable[i] = bte.OldId | (1 << 31) | ((bte.NewHue & 0xFFFF) << 15);
                 }
             }
         }
@@ -602,8 +602,7 @@ namespace Ultima
             bool def = true;
             if ((stream == null) || (length == 0))
                 def = false;
-            if (stream != null)
-                stream.Close();
+            stream?.Close();
             return def;
         }
 
@@ -619,19 +618,19 @@ namespace Ultima
             {
                 default:
                 case 1:
-                    count = 400 + (int)(m_FileIndex.IdxLength - 35000 * 12) / (12 * 175);
+                    count = 400 + (int)(_mFileIndex.IdxLength - 35000 * 12) / (12 * 175);
                     break;
                 case 2:
-                    count = 200 + (int)(m_FileIndex2.IdxLength - 22000 * 12) / (12 * 65);
+                    count = 200 + (int)(_mFileIndex2.IdxLength - 22000 * 12) / (12 * 65);
                     break;
                 case 3:
-                    count = 400 + (int)(m_FileIndex3.IdxLength - 35000 * 12) / (12 * 175);
+                    count = 400 + (int)(_mFileIndex3.IdxLength - 35000 * 12) / (12 * 175);
                     break;
                 case 4:
-                    count = 400 + (int)(m_FileIndex4.IdxLength - 35000 * 12) / (12 * 175);
+                    count = 400 + (int)(_mFileIndex4.IdxLength - 35000 * 12) / (12 * 175);
                     break;
                 case 5:
-                    count = 400 + (int)(m_FileIndex5.IdxLength - 35000 * 12) / (12 * 175);
+                    count = 400 + (int)(_mFileIndex5.IdxLength - 35000 * 12) / (12 * 175);
                     break;
             }
             return count;
@@ -706,7 +705,7 @@ namespace Ultima
             {
                 default:
                 case 1:
-                    fileIndex = m_FileIndex;
+                    fileIndex = _mFileIndex;
                     if (body < 200)
                         index = body * 110;
                     else if (body < 400)
@@ -716,7 +715,7 @@ namespace Ultima
 
                     break;
                 case 2:
-                    fileIndex = m_FileIndex2;
+                    fileIndex = _mFileIndex2;
                     if (body < 200)
                         index = body * 110;
                     else
@@ -724,7 +723,7 @@ namespace Ultima
 
                     break;
                 case 3:
-                    fileIndex = m_FileIndex3;
+                    fileIndex = _mFileIndex3;
                     if (body < 300)
                         index = body * 65;
                     else if (body < 400)
@@ -734,7 +733,7 @@ namespace Ultima
 
                     break;
                 case 4:
-                    fileIndex = m_FileIndex4;
+                    fileIndex = _mFileIndex4;
                     if (body < 200)
                         index = body * 110;
                     else if (body < 400)
@@ -744,7 +743,7 @@ namespace Ultima
 
                     break;
                 case 5:
-                    fileIndex = m_FileIndex5;
+                    fileIndex = _mFileIndex5;
                     if ((body < 200) && (body != 34)) // looks strange, though it works.
                         index = body * 110;
                     else if (body < 400)
@@ -776,7 +775,7 @@ namespace Ultima
             if (fileType == 1)
                 return "anim.mul";
             else
-                return String.Format("anim{0}.mul", fileType);
+                return $"anim{fileType}.mul";
         }
     }
 
@@ -857,20 +856,20 @@ namespace Ultima
 
     public sealed class BodyTableEntry
     {
-        public int OldID { get; set; }
-        public int NewID { get; set; }
+        public int OldId { get; set; }
+        public int NewId { get; set; }
         public int NewHue { get; set; }
-        public BodyTableEntry(int oldID, int newID, int newHue)
+        public BodyTableEntry(int oldId, int newId, int newHue)
         {
-            OldID = oldID;
-            NewID = newID;
+            OldId = oldId;
+            NewId = newId;
             NewHue = newHue;
         }
     }
 
     public sealed class BodyTable
     {
-        public static Hashtable m_Entries;
+        public static Hashtable MEntries;
 
         static BodyTable()
         {
@@ -879,7 +878,7 @@ namespace Ultima
 
         public static void Initialize()
         {
-            m_Entries = new Hashtable();
+            MEntries = new Hashtable();
 
             string filePath = Files.GetFilePath("body.def");
 
@@ -913,7 +912,7 @@ namespace Ultima
                         int iParam2 = Convert.ToInt32(param2.Trim());
                         int iParam3 = Convert.ToInt32(param3.Trim());
 
-                        m_Entries[iParam1] = new BodyTableEntry(iParam2, iParam1, iParam3);
+                        MEntries[iParam1] = new BodyTableEntry(iParam2, iParam1, iParam3);
                     }
                     catch
                     {

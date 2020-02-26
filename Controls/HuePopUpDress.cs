@@ -16,38 +16,45 @@ namespace FiddlerControls
 {
     public partial class HuePopUpDress : Form
     {
-        private FiddlerControls.Dress refItem;
-        private int layer;
-        public HuePopUpDress(FiddlerControls.Dress ref_, int hue, int l)
+        private readonly Dress _refDressItem;
+        private readonly int _layer;
+
+        public HuePopUpDress(Dress refDress, int hue, int l)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             if ((hue & 0x8000) != 0)
             {
                 hue ^= 0x8000;
                 HueOnlyGray.Checked = true;
             }
             if (hue >= 0)
+            {
                 control.Selected = hue - 1;
-            refItem = ref_;
-            layer = l;
+            }
+
+            _refDressItem = refDress;
+            _layer = l;
         }
 
         private void Click_OK(object sender, EventArgs e)
         {
-            int Selected = control.Selected + 1;
+            int selected = control.Selected + 1;
             if (HueOnlyGray.Checked)
-                Selected ^= 0x8000;
-            refItem.SetHue(layer, Selected);
-            refItem.RefreshDrawing();
-            this.Close();
+            {
+                selected ^= 0x8000;
+            }
+
+            _refDressItem.SetHue(_layer, selected);
+            _refDressItem.RefreshDrawing();
+            Close();
         }
 
         private void OnClick_Clear(object sender, EventArgs e)
         {
-            refItem.SetHue(layer, -1);
-            refItem.RefreshDrawing();
-            this.Close();
+            _refDressItem.SetHue(_layer, -1);
+            _refDressItem.RefreshDrawing();
+            Close();
         }
     }
 }

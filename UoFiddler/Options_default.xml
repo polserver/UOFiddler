@@ -16,10 +16,10 @@
   <UseHashFile active="True" />
   <!--Should an Update Check be done on startup?-->
   <UpdateCheck active="False" />
-  <!--Definies the cmd to send Client to loc-->
+  <!--Defines the cmd to send Client to loc-->
   <!--{1} = x, {2} = y, {3} = z, {4} = mapid, {5} = mapname-->
   <SendCharToLoc cmd=".goforce" args="{1} {2} {3} {4}" />
-  <!--Definies the map names-->
+  <!--Defines the map names-->
   <MapNames map0="Felucca" map1="Trammel" map2="Ilshenar" map3="Malas" map4="Tokuno" map5="Ter Mur" />
   <!--Extern Tools settings-->
   <!--Loaded Plugins-->

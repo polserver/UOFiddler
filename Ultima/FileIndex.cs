@@ -7,10 +7,10 @@ namespace Ultima
 {
     public sealed class FileIndex
     {
-        public Entry3D[] Index { get; private set; }
+        public Entry3D[] Index { get; }
         public Stream Stream { get; private set; }
-        public long IdxLength { get; private set; }
-        private string MulPath;
+        public long IdxLength { get; }
+        private readonly string _mulPath;
 
         public Stream Seek(int index, out int length, out int extra, out bool patched)
         {
@@ -49,10 +49,10 @@ namespace Ultima
 
             if ((Stream == null) || (!Stream.CanRead) || (!Stream.CanSeek))
             {
-                if (MulPath == null)
+                if (_mulPath == null)
                     Stream = null;
                 else
-                    Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
             if (Stream == null)
@@ -108,7 +108,7 @@ namespace Ultima
                 return false;
             }
 
-            if ((MulPath == null) || !File.Exists(MulPath))
+            if ((_mulPath == null) || !File.Exists(_mulPath))
             {
                 length = extra = 0;
                 patched = false;
@@ -117,7 +117,7 @@ namespace Ultima
 
             if ((Stream == null) || (!Stream.CanRead) || (!Stream.CanSeek))
             {
-                Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
             if (Stream.Length < e.lookup)
@@ -141,47 +141,47 @@ namespace Ultima
             Index = new Entry3D[length];
 
             string idxPath = null;
-            MulPath = null;
+            _mulPath = null;
             string uopPath = null;
             if (Files.MulPath == null)
                 Files.LoadMulPath();
             if (Files.MulPath.Count > 0)
             {
                 idxPath = Files.MulPath[idxFile.ToLower()];
-                MulPath = Files.MulPath[mulFile.ToLower()];
-            if (!String.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile.ToLower()))
+                _mulPath = Files.MulPath[mulFile.ToLower()];
+            if (!string.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile.ToLower()))
 					uopPath = Files.MulPath[uopFile.ToLower()];
-                if (String.IsNullOrEmpty(idxPath))
+                if (string.IsNullOrEmpty(idxPath))
                     idxPath = null;
                 else
                 {
-                    if (String.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
+                    if (string.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
                         idxPath = Path.Combine(Files.RootDir, idxPath);
                     if (!File.Exists(idxPath))
                         idxPath = null;
                 }
-                if (String.IsNullOrEmpty(MulPath))
-                    MulPath = null;
+                if (string.IsNullOrEmpty(_mulPath))
+                    _mulPath = null;
                 else
                 {
-                    if (String.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
-                        MulPath = Path.Combine(Files.RootDir, MulPath);
-                    if (!File.Exists(MulPath))
-                        MulPath = null;
+                    if (string.IsNullOrEmpty(Path.GetDirectoryName(_mulPath)))
+                        _mulPath = Path.Combine(Files.RootDir, _mulPath);
+                    if (!File.Exists(_mulPath))
+                        _mulPath = null;
                 }
-	            if (String.IsNullOrEmpty(uopPath))
+	            if (string.IsNullOrEmpty(uopPath))
 				{
 					uopPath = null;
             }
             else
 				{
-					if (String.IsNullOrEmpty(Path.GetDirectoryName(uopPath)))
+					if (string.IsNullOrEmpty(Path.GetDirectoryName(uopPath)))
 						uopPath = Path.Combine(Files.RootDir, uopPath);
 
             if (!File.Exists(uopPath))
 						uopPath = null;
 					else
-						MulPath = uopPath;
+						_mulPath = uopPath;
 				}
 			}
 
@@ -192,13 +192,13 @@ namespace Ultima
 			 * It's possible that UOP can include some entries with unknown hash: not really unknown for me, but
 			 * not useful for reading legacy entries. That's why i removed unknown hash exception throwing from this code
 			 */
-			if (MulPath != null && MulPath.EndsWith(".uop"))
+			if (_mulPath != null && _mulPath.EndsWith(".uop"))
 			{
-				using (FileStream index = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (FileStream index = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
-					Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+					Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-					FileInfo fi = new FileInfo(MulPath);
+					FileInfo fi = new FileInfo(_mulPath);
 					string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
 
 					using (BinaryReader br = new BinaryReader(Stream))
@@ -220,7 +220,7 @@ namespace Ultima
 
 						for (int i = 0; i < length; i++)
 						{
-							string entryName = string.Format("build/{0}/{1:D8}{2}", uopPattern, i, uopEntryExtension);
+							string entryName = $"build/{uopPattern}/{i:D8}{uopEntryExtension}";
 							ulong hash = HashFileName(entryName);
 
 							if (!hashes.ContainsKey(hash))
@@ -281,11 +281,11 @@ namespace Ultima
 					}
 				}
 			}
-			else if ((idxPath != null) && (MulPath != null))
+			else if ((idxPath != null) && (_mulPath != null))
             {
                 using (FileStream index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     int count = (int)(index.Length / 12);
                     IdxLength = index.Length;
                     GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
@@ -314,11 +314,11 @@ namespace Ultima
                 {
                     Entry5D patch = patches[i];
 
-                    if (patch.file == file && patch.index >= 0 && patch.index < length)
+                    if (patch.File == file && patch.Index >= 0 && patch.Index < length)
                     {
-                        Index[patch.index].lookup = patch.lookup;
-                        Index[patch.index].length = patch.length | (1 << 31);
-                        Index[patch.index].extra = patch.extra;
+                        Index[patch.Index].lookup = patch.Lookup;
+                        Index[patch.Index].length = patch.Length | (1 << 31);
+                        Index[patch.Index].extra = patch.Extra;
                     }
                 }
             }
@@ -327,38 +327,38 @@ namespace Ultima
         public FileIndex(string idxFile, string mulFile, int file)
         {
             string idxPath = null;
-            MulPath = null;
+            _mulPath = null;
             if (Files.MulPath == null)
                 Files.LoadMulPath();
             if (Files.MulPath.Count > 0)
             {
                 idxPath = Files.MulPath[idxFile.ToLower()];
-                MulPath = Files.MulPath[mulFile.ToLower()];
-                if (String.IsNullOrEmpty(idxPath))
+                _mulPath = Files.MulPath[mulFile.ToLower()];
+                if (string.IsNullOrEmpty(idxPath))
                     idxPath = null;
                 else
                 {
-                    if (String.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
+                    if (string.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
                         idxPath = Path.Combine(Files.RootDir, idxPath);
                     if (!File.Exists(idxPath))
                         idxPath = null;
                 }
-                if (String.IsNullOrEmpty(MulPath))
-                    MulPath = null;
+                if (string.IsNullOrEmpty(_mulPath))
+                    _mulPath = null;
                 else
                 {
-                    if (String.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
-                        MulPath = Path.Combine(Files.RootDir, MulPath);
-                    if (!File.Exists(MulPath))
-                        MulPath = null;
+                    if (string.IsNullOrEmpty(Path.GetDirectoryName(_mulPath)))
+                        _mulPath = Path.Combine(Files.RootDir, _mulPath);
+                    if (!File.Exists(_mulPath))
+                        _mulPath = null;
                 }
             }
 
-            if ((idxPath != null) && (MulPath != null))
+            if ((idxPath != null) && (_mulPath != null))
             {
                 using (FileStream index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     int count = (int)(index.Length / 12);
                     IdxLength = index.Length;
                     Index = new Entry3D[count];
@@ -383,11 +383,11 @@ namespace Ultima
                 {
                     Entry5D patch = patches[i];
 
-                    if (patch.file == file && patch.index >= 0 && patch.index < Index.Length)
+                    if (patch.File == file && patch.Index >= 0 && patch.Index < Index.Length)
                     {
-                        Index[patch.index].lookup = patch.lookup;
-                        Index[patch.index].length = patch.length | (1 << 31);
-                        Index[patch.index].extra = patch.extra;
+                        Index[patch.Index].lookup = patch.Lookup;
+                        Index[patch.Index].length = patch.Length | (1 << 31);
+                        Index[patch.Index].extra = patch.Extra;
                     }
                 }
             }
@@ -441,7 +441,7 @@ namespace Ultima
 						esi += (uint)s[i + 9] << 8;
 						goto case 9;
 					case 9:
-						esi += (uint)s[i + 8];
+						esi += s[i + 8];
 						goto case 8;
 					case 8:
 						edi += (uint)s[i + 7] << 24;
@@ -453,7 +453,7 @@ namespace Ultima
 						edi += (uint)s[i + 5] << 8;
 						goto case 5;
 					case 5:
-						edi += (uint)s[i + 4];
+						edi += s[i + 4];
 						goto case 4;
 					case 4:
 						ebx += (uint)s[i + 3] << 24;
@@ -465,7 +465,7 @@ namespace Ultima
 						ebx += (uint)s[i + 1] << 8;
 						goto case 1;
 					case 1:
-						ebx += (uint)s[i];
+						ebx += s[i];
 						break;
 				}
 
@@ -484,7 +484,7 @@ namespace Ultima
 		}
     }
 
-    [StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Entry3D
     {
         public int lookup;

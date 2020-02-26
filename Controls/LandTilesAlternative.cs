@@ -26,28 +26,28 @@ namespace FiddlerControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            pictureBox.MouseWheel += new MouseEventHandler(OnMouseWheel);
-            refMarker = this;
+            pictureBox.MouseWheel += OnMouseWheel;
+            _refMarker = this;
         }
 
-        private List<int> TileList = new List<int>();
-        private int col;
-        private int row;
-        private int selected = -1;
-        private bool Loaded = false;
-        public bool isLoaded { get { return Loaded; } }
+        private List<int> _tileList = new List<int>();
+        private int _col;
+        private int _row;
+        private int _selected = -1;
 
-        private static LandTilesAlternative refMarker = null;
+        public bool IsLoaded { get; private set; }
+
+        private static LandTilesAlternative _refMarker;
 
         public int Selected
         {
-            get { return selected; }
+            get => _selected;
             set
             {
-                selected = value;
-                namelabel.Text = String.Format("Name: {0}", TileData.LandTable[value].Name);
-                graphiclabel.Text = String.Format("ID: 0x{0:X4} ({0})", value);
-                FlagsLabel.Text = String.Format("Flags: {0}", TileData.LandTable[value].Flags);
+                _selected = value;
+                namelabel.Text = $"Name: {TileData.LandTable[value].Name}";
+                graphiclabel.Text = string.Format("ID: 0x{0:X4} ({0})", value);
+                FlagsLabel.Text = $"Flags: {TileData.LandTable[value].Flags}";
                 pictureBox.Invalidate();
             }
         }
@@ -59,16 +59,21 @@ namespace FiddlerControls
         /// <returns></returns>
         public static bool SearchGraphic(int graphic)
         {
-            if (!refMarker.isLoaded)
-                refMarker.OnLoad(refMarker, EventArgs.Empty);
-            for (int i = 0; i < refMarker.TileList.Count; ++i)
+            if (!_refMarker.IsLoaded)
             {
-                if (refMarker.TileList[i] == graphic)
+                _refMarker.OnLoad(_refMarker, EventArgs.Empty);
+            }
+
+            for (int i = 0; i < _refMarker._tileList.Count; ++i)
+            {
+                if (_refMarker._tileList[i] != graphic)
                 {
-                    refMarker.vScrollBar.Value = i / refMarker.col + 1;
-                    refMarker.Selected = graphic;
-                    return true;
+                    continue;
                 }
+
+                _refMarker.vScrollBar.Value = i / _refMarker._col + 1;
+                _refMarker.Selected = graphic;
+                return true;
             }
             return false;
         }
@@ -84,21 +89,28 @@ namespace FiddlerControls
             int index = 0;
             if (next)
             {
-                if (refMarker.selected >= 0)
-                    index = refMarker.TileList.IndexOf(refMarker.selected) + 1;
-                if (index >= refMarker.TileList.Count)
+                if (_refMarker._selected >= 0)
+                {
+                    index = _refMarker._tileList.IndexOf(_refMarker._selected) + 1;
+                }
+
+                if (index >= _refMarker._tileList.Count)
+                {
                     index = 0;
+                }
             }
 
-            Regex regex = new Regex(@name, RegexOptions.IgnoreCase);
-            for (int i = index; i < refMarker.TileList.Count; ++i)
+            Regex regex = new Regex(name, RegexOptions.IgnoreCase);
+            for (int i = index; i < _refMarker._tileList.Count; ++i)
             {
-                if (regex.IsMatch(TileData.LandTable[refMarker.TileList[i]].Name))
+                if (!regex.IsMatch(TileData.LandTable[_refMarker._tileList[i]].Name))
                 {
-                    refMarker.vScrollBar.Value = i / refMarker.col + 1;
-                    refMarker.Selected = refMarker.TileList[i];
-                    return true;
+                    continue;
                 }
+
+                _refMarker.vScrollBar.Value = i / _refMarker._col + 1;
+                _refMarker.Selected = _refMarker._tileList[i];
+                return true;
             }
             return false;
         }
@@ -108,23 +120,23 @@ namespace FiddlerControls
         /// </summary>
         private void Reload()
         {
-            if (!Loaded)
+            if (!IsLoaded)
+            {
                 return;
-            TileList = new List<int>();
-            selected = -1;
-            OnLoad(this, new MyEventArgs(MyEventArgs.TYPES.FORCERELOAD));
+            }
+
+            _tileList = new List<int>();
+            _selected = -1;
+            OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
         }
 
         private int GetIndex(int x, int y)
         {
-            int value = Math.Max(0, ((col * (vScrollBar.Value - 1)) + (x + (y * col))));
-            if (TileList.Count > value)
-                return TileList[value];
-            else
-                return -1;
+            int value = Math.Max(0, _col * (vScrollBar.Value - 1) + x + y * _col);
+            return _tileList.Count > value ? _tileList[value] : -1;
         }
 
-        public void OnLoad(object sender, EventArgs e)
+        private void OnLoad(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["TileData"] = true;
@@ -133,76 +145,109 @@ namespace FiddlerControls
             for (int i = 0; i < 0x4000; ++i)
             {
                 if (Art.IsValidLand(i))
-                    TileList.Add(i);
+                {
+                    _tileList.Add(i);
+                }
             }
-            vScrollBar.Maximum = TileList.Count / col + 1;
+            vScrollBar.Maximum = _tileList.Count / _col + 1;
             pictureBox.Invalidate();
-            if (!Loaded)
+            if (!IsLoaded)
             {
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-                FiddlerControls.Events.LandTileChangeEvent += new FiddlerControls.Events.LandTileChangeHandler(OnLandTileChangeEvent);
-                FiddlerControls.Events.TileDataChangeEvent += new FiddlerControls.Events.TileDataChangeHandler(OnTileDataChangeEvent);
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+                FiddlerControls.Events.LandTileChangeEvent += OnLandTileChangeEvent;
+                FiddlerControls.Events.TileDataChangeEvent += OnTileDataChangeEvent;
             }
-            Loaded = true;
+            IsLoaded = true;
             Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()
         {
-            if (FiddlerControls.Options.DesignAlternative)
+            if (Options.DesignAlternative)
+            {
                 Reload();
+            }
         }
 
-        void OnTileDataChangeEvent(object sender, int id)
+        private void OnTileDataChangeEvent(object sender, int id)
         {
-            if (!FiddlerControls.Options.DesignAlternative)
-                return;
-            if (!Loaded)
-                return;
-            if (sender.Equals(this))
-                return;
-            if (id > 0x3FFF)
-                return;
-            if (selected == id)
+            if (!Options.DesignAlternative)
             {
-                namelabel.Text = String.Format("Name: {0}", TileData.LandTable[id].Name);
-                FlagsLabel.Text = String.Format("Flags: {0}", TileData.LandTable[id].Flags);
+                return;
             }
+
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            if (sender.Equals(this))
+            {
+                return;
+            }
+
+            if (id > 0x3FFF)
+            {
+                return;
+            }
+
+            if (_selected != id)
+            {
+                return;
+            }
+
+            namelabel.Text = $"Name: {TileData.LandTable[id].Name}";
+            FlagsLabel.Text = $"Flags: {TileData.LandTable[id].Flags}";
         }
 
         private void OnLandTileChangeEvent(object sender, int index)
         {
-            if (!FiddlerControls.Options.DesignAlternative)
+            if (!Options.DesignAlternative)
+            {
                 return;
-            if (!Loaded)
+            }
+
+            if (!IsLoaded)
+            {
                 return;
+            }
+
             if (sender.Equals(this))
+            {
                 return;
-            if (Ultima.Art.IsValidLand(index))
+            }
+
+            if (Art.IsValidLand(index))
             {
                 bool done = false;
-                for (int i = 0; i < TileList.Count; ++i)
+                for (int i = 0; i < _tileList.Count; ++i)
                 {
-                    if (index < TileList[i])
+                    if (index < _tileList[i])
                     {
-                        TileList.Insert(i, index);
+                        _tileList.Insert(i, index);
                         done = true;
                         break;
                     }
-                    if (index == TileList[i])
+
+                    if (index != _tileList[i])
                     {
-                        done = true;
-                        break;
+                        continue;
                     }
+
+                    done = true;
+                    break;
                 }
                 if (!done)
-                    TileList.Add(index);
-                vScrollBar.Maximum = TileList.Count / col + 1;
+                {
+                    _tileList.Add(index);
+                }
+
+                vScrollBar.Maximum = _tileList.Count / _col + 1;
             }
             else
             {
-                TileList.Remove(index);
-                vScrollBar.Maximum = TileList.Count / col + 1;
+                _tileList.Remove(index);
+                vScrollBar.Maximum = _tileList.Count / _col + 1;
             }
         }
 
@@ -215,19 +260,23 @@ namespace FiddlerControls
         {
             if (e.Delta < 0)
             {
-                if (vScrollBar.Value < vScrollBar.Maximum)
+                if (vScrollBar.Value >= vScrollBar.Maximum)
                 {
-                    vScrollBar.Value++;
-                    pictureBox.Invalidate();
+                    return;
                 }
+
+                vScrollBar.Value++;
+                pictureBox.Invalidate();
             }
             else
             {
-                if (vScrollBar.Value > 1)
+                if (vScrollBar.Value <= 1)
                 {
-                    vScrollBar.Value--;
-                    pictureBox.Invalidate();
+                    return;
                 }
+
+                vScrollBar.Value--;
+                pictureBox.Invalidate();
             }
         }
 
@@ -235,69 +284,78 @@ namespace FiddlerControls
         {
             e.Graphics.Clear(Color.White);
 
-            for (int x = 0; x <= col; ++x)
+            for (int x = 0; x <= _col; ++x)
             {
                 e.Graphics.DrawLine(Pens.Gray, new Point(x * 49, 0),
-                    new Point(x * 49, row * 49));
+                    new Point(x * 49, _row * 49));
             }
 
-            for (int y = 0; y <= row; ++y)
+            for (int y = 0; y <= _row; ++y)
             {
                 e.Graphics.DrawLine(Pens.Gray, new Point(0, y * 49),
-                    new Point(col * 49, y * 49));
+                    new Point(_col * 49, y * 49));
             }
 
-            for (int y = 0; y < row; ++y)
+            for (int y = 0; y < _row; ++y)
             {
-                for (int x = 0; x < col; ++x)
+                for (int x = 0; x < _col; ++x)
                 {
                     int index = GetIndex(x, y);
-                    if (index >= 0)
+                    if (index < 0)
                     {
-                        bool patched;
-                        Bitmap b = Art.GetLand(index, out patched);
-
-                        if (b != null)
-                        {
-                            Point loc = new Point((x * 49) + 1, (y * 49) + 1);
-                            Size size = new Size(49 - 1, 49 - 1);
-                            Rectangle rect = new Rectangle(loc, size);
-
-                            e.Graphics.Clip = new Region(rect);
-                            if (index == selected)
-                                e.Graphics.FillRectangle(Brushes.LightBlue, rect);
-                            else if (patched)
-                                e.Graphics.FillRectangle(Brushes.LightCoral, rect);
-
-                            int width = b.Width;
-                            int height = b.Height;
-                            if (width > size.Width)
-                            {
-                                width = size.Width;
-                                height = size.Height * b.Height / b.Width;
-                            }
-                            if (height > size.Height)
-                            {
-                                height = size.Height;
-                                width = size.Width * b.Width / b.Height;
-                            }
-                            e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
-                        }
+                        continue;
                     }
+
+                    Bitmap b = Art.GetLand(index, out bool patched);
+                    if (b == null)
+                    {
+                        continue;
+                    }
+
+                    Point loc = new Point(x * 49 + 1, y * 49 + 1);
+                    Size size = new Size(49 - 1, 49 - 1);
+                    Rectangle rect = new Rectangle(loc, size);
+
+                    e.Graphics.Clip = new Region(rect);
+                    if (index == _selected)
+                    {
+                        e.Graphics.FillRectangle(Brushes.LightBlue, rect);
+                    }
+                    else if (patched)
+                    {
+                        e.Graphics.FillRectangle(Brushes.LightCoral, rect);
+                    }
+
+                    int width = b.Width;
+                    int height = b.Height;
+                    if (width > size.Width)
+                    {
+                        width = size.Width;
+                        height = size.Height * b.Height / b.Width;
+                    }
+                    if (height > size.Height)
+                    {
+                        height = size.Height;
+                        width = size.Width * b.Width / b.Height;
+                    }
+                    e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
                 }
             }
         }
 
         private void OnResize(object sender, EventArgs e)
         {
-            if ((pictureBox.Width == 0) || (pictureBox.Height == 0))
+            if (pictureBox.Width == 0 || pictureBox.Height == 0)
+            {
                 return;
-            col = pictureBox.Width / 49;
-            row = pictureBox.Height / 49 + 1;
-            vScrollBar.Maximum = TileList.Count / col + 1;
+            }
+
+            _col = pictureBox.Width / 49;
+            _row = pictureBox.Height / 49 + 1;
+            vScrollBar.Maximum = _tileList.Count / _col + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
-            vScrollBar.LargeChange = row;
+            vScrollBar.LargeChange = _row;
             pictureBox.Invalidate();
         }
 
@@ -307,213 +365,253 @@ namespace FiddlerControls
             int x = e.X / (49 - 1);
             int y = e.Y / (49 - 1);
             int index = GetIndex(x, y);
-            if (index >= 0)
+            if (index < 0)
             {
-                if (selected != index)
-                    Selected = index;
+                return;
+            }
+
+            if (_selected != index)
+            {
+                Selected = index;
             }
         }
 
-        private LandTileSearch showform = null;
+        private LandTileSearch _showForm;
+
         private void OnClickSearch(object sender, EventArgs e)
         {
-            if ((showform == null) || (showform.IsDisposed))
+            if (_showForm?.IsDisposed == false)
             {
-                showform = new LandTileSearch();
-                showform.TopMost = true;
-                showform.Show();
+                return;
             }
+
+            _showForm = new LandTileSearch
+            {
+                TopMost = true
+            };
+            _showForm.Show();
         }
 
-        private void onClickFindFree(object sender, EventArgs e)
+        private void OnClickFindFree(object sender, EventArgs e)
         {
-            int id = selected;
+            int id = _selected;
             ++id;
-            for (int i = TileList.IndexOf(selected) + 1; i < TileList.Count; ++i, ++id)
+            for (int i = _tileList.IndexOf(_selected) + 1; i < _tileList.Count; ++i, ++id)
             {
-                if (id < TileList[i])
+                if (id >= _tileList[i])
                 {
-                    vScrollBar.Value = i / refMarker.col + 1;
-                    Selected = TileList[i];
-                    break;
+                    continue;
                 }
+
+                vScrollBar.Value = i / _refMarker._col + 1;
+                Selected = _tileList[i];
+                break;
             }
         }
 
-        private void onClickRemove(object sender, EventArgs e)
+        private void OnClickRemove(object sender, EventArgs e)
         {
             DialogResult result =
-                        MessageBox.Show(String.Format("Are you sure to remove {0}", selected), "Save",
+                        MessageBox.Show($"Are you sure to remove {_selected}", "Save",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes)
             {
-                Art.RemoveLand(selected);
-                FiddlerControls.Events.FireLandTileChangeEvent(this, selected);
-                TileList.Remove(selected);
-                --selected;
+                return;
+            }
+
+            Art.RemoveLand(_selected);
+            FiddlerControls.Events.FireLandTileChangeEvent(this, _selected);
+            _tileList.Remove(_selected);
+            --_selected;
+            pictureBox.Invalidate();
+            Options.ChangedUltimaClass["Art"] = true;
+        }
+
+        private void OnClickReplace(object sender, EventArgs e)
+        {
+            if (_selected < 0)
+            {
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose image file to replace";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                Art.ReplaceLand(_selected, bmp);
+                FiddlerControls.Events.FireLandTileChangeEvent(this, _selected);
                 pictureBox.Invalidate();
                 Options.ChangedUltimaClass["Art"] = true;
             }
         }
 
-        private void onClickReplace(object sender, EventArgs e)
+        private void OnTextChangedInsert(object sender, EventArgs e)
         {
-            if (selected >= 0)
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
-                {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose image file to replace";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (dialog.FileName.Contains(".bmp"))
-                            bmp = Utils.ConvertBmp(bmp);
-                        Art.ReplaceLand(selected, bmp);
-                        FiddlerControls.Events.FireLandTileChangeEvent(this, selected);
-                        pictureBox.Invalidate();
-                        Options.ChangedUltimaClass["Art"] = true;
-                    }
-                }
-            }
-        }
-
-        private void onTextChangedInsert(object sender, EventArgs e)
-        {
-            int index;
-            if (Utils.ConvertStringToInt(InsertText.Text, out index, 0, 0x3FFF))
-            {
-                if (Art.IsValidLand(index))
-                    InsertText.ForeColor = Color.Red;
-                else
-                    InsertText.ForeColor = Color.Black;
+                InsertText.ForeColor = Art.IsValidLand(index) ? Color.Red : Color.Black;
             }
             else
-                InsertText.ForeColor = Color.Red;
-        }
-
-        private void onKeyDownInsert(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
             {
-                int index;
-                if (Utils.ConvertStringToInt(InsertText.Text, out index, 0, 0x3FFF))
-                {
-                    if (Art.IsValidLand(index))
-                        return;
-                    contextMenuStrip1.Close();
-                    using (OpenFileDialog dialog = new OpenFileDialog())
-                    {
-                        dialog.Multiselect = false;
-                        dialog.Title = String.Format("Choose image file to insert at 0x{0:X}", index);
-                        dialog.CheckFileExists = true;
-                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                        {
-                            Bitmap bmp = new Bitmap(dialog.FileName);
-                            if (dialog.FileName.Contains(".bmp"))
-                                bmp = Utils.ConvertBmp(bmp);
-                            Art.ReplaceLand(index, bmp);
-                            FiddlerControls.Events.FireLandTileChangeEvent(this, index);
-                            bool done = false;
-                            for (int i = 0; i < TileList.Count; ++i)
-                            {
-                                if (index < TileList[i])
-                                {
-                                    TileList.Insert(i, index);
-                                    vScrollBar.Value = i / refMarker.col + 1;
-                                    done = true;
-                                    break;
-                                }
-                            }
-                            if (!done)
-                            {
-                                TileList.Add(index);
-                                vScrollBar.Value = TileList.Count / refMarker.col + 1;
-                            }
-                            Selected = index;
-                            Options.ChangedUltimaClass["Art"] = true;
-                        }
-                    }
-                }
+                InsertText.ForeColor = Color.Red;
             }
         }
 
-        private void onClickSave(object sender, EventArgs e)
+        private void OnKeyDownInsert(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
+            {
+                return;
+            }
+
+            if (Art.IsValidLand(index))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                Art.ReplaceLand(index, bmp);
+                FiddlerControls.Events.FireLandTileChangeEvent(this, index);
+                bool done = false;
+                for (int i = 0; i < _tileList.Count; ++i)
+                {
+                    if (index >= _tileList[i])
+                    {
+                        continue;
+                    }
+
+                    _tileList.Insert(i, index);
+                    vScrollBar.Value = i / _refMarker._col + 1;
+                    done = true;
+                    break;
+                }
+                if (!done)
+                {
+                    _tileList.Add(index);
+                    vScrollBar.Value = _tileList.Count / _refMarker._col + 1;
+                }
+                Selected = index;
+                Options.ChangedUltimaClass["Art"] = true;
+            }
+        }
+
+        private void OnClickSave(object sender, EventArgs e)
         {
             DialogResult result =
                         MessageBox.Show("Are you sure? Will take a while", "Save",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes)
             {
-                Cursor.Current = Cursors.WaitCursor;
-                Art.Save(FiddlerControls.Options.OutputPath);
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show(
-                    String.Format("Saved to {0}", FiddlerControls.Options.OutputPath),
-                    "Save",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-                Options.ChangedUltimaClass["Art"] = false;
+                return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+            Art.Save(Options.OutputPath);
+            Cursor.Current = Cursors.Default;
+            MessageBox.Show(
+                $"Saved to {Options.OutputPath}",
+                "Save",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            Options.ChangedUltimaClass["Art"] = false;
         }
 
-        private void onClickExportBmp(object sender, EventArgs e)
+        private void OnClickExportBmp(object sender, EventArgs e)
         {
-            if (selected >= 0)
+            if (_selected < 0)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string FileName = Path.Combine(path, String.Format("Landtile {0}.bmp", selected));
-                Bitmap bit = new Bitmap(Ultima.Art.GetLand(selected));
-                if (bit != null)
-                    bit.Save(FileName, ImageFormat.Bmp);
-                bit.Dispose();
-                MessageBox.Show(String.Format("Landtile saved to {0}", FileName), "Saved",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Landtile {_selected}.bmp");
+            Bitmap bit = new Bitmap(Art.GetLand(_selected));
+            bit.Save(fileName, ImageFormat.Bmp);
+            bit.Dispose();
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
-        private void onClickExportTiff(object sender, EventArgs e)
+        private void OnClickExportTiff(object sender, EventArgs e)
         {
-            if (selected >= 0)
+            if (_selected < 0)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string FileName = Path.Combine(path, String.Format("Landtile {0}.tiff", selected));
-                Bitmap bit = new Bitmap(Ultima.Art.GetLand(selected));
-                if (bit != null)
-                    bit.Save(FileName, ImageFormat.Tiff);
-                bit.Dispose();
-                MessageBox.Show(String.Format("Landtile saved to {0}", FileName), "Saved",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Landtile {_selected}.tiff");
+            Bitmap bit = new Bitmap(Art.GetLand(_selected));
+            bit.Save(fileName, ImageFormat.Tiff);
+            bit.Dispose();
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
-        private void onClickExportJpg(object sender, EventArgs e)
+        private void OnClickExportJpg(object sender, EventArgs e)
         {
-            if (selected >= 0)
+            if (_selected < 0)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string FileName = Path.Combine(path, String.Format("Landtile {0}.jpg", selected));
-                Bitmap bit = new Bitmap(Ultima.Art.GetLand(selected));
-                if (bit != null)
-                    bit.Save(FileName, ImageFormat.Jpeg);
-                bit.Dispose();
-                MessageBox.Show(String.Format("Landtile saved to {0}", FileName), "Saved",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Landtile {_selected}.jpg");
+            Bitmap bit = new Bitmap(Art.GetLand(_selected));
+            bit.Save(fileName, ImageFormat.Jpeg);
+            bit.Dispose();
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (selected >= 0)
-                FiddlerControls.TileDatas.Select(selected, true);
+            if (_selected >= 0)
+            {
+                TileDatas.Select(_selected, true);
+            }
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            if (selected >= 0)
-                FiddlerControls.RadarColor.Select(selected, true);
+            if (_selected >= 0)
+            {
+                RadarColor.Select(_selected, true);
+            }
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
@@ -522,22 +620,25 @@ namespace FiddlerControls
             {
                 dialog.Description = "Select directory";
                 dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    for (int i = 0; i < TileList.Count; ++i)
-                    {
-                        int index = TileList[i];
-                        if (Art.IsValidStatic(index))
-                        {
-                            string FileName = Path.Combine(dialog.SelectedPath, String.Format("Landtile {0}.bmp", index));
-                            Bitmap bit = new Bitmap(Ultima.Art.GetLand(index));
-                            if (bit != null)
-                                bit.Save(FileName, ImageFormat.Bmp);
-                            bit.Dispose();
-                        }
-                    }
-                    MessageBox.Show(String.Format("All LandTiles saved to {0}", dialog.SelectedPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
+
+                for (int i = 0; i < _tileList.Count; ++i)
+                {
+                    int index = _tileList[i];
+                    if (!Art.IsValidStatic(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.bmp");
+                    Bitmap bit = new Bitmap(Art.GetLand(index));
+                    bit.Save(fileName, ImageFormat.Bmp);
+                    bit.Dispose();
+                }
+                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -547,22 +648,25 @@ namespace FiddlerControls
             {
                 dialog.Description = "Select directory";
                 dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    for (int i = 0; i < TileList.Count; ++i)
-                    {
-                        int index = TileList[i];
-                        if (Art.IsValidStatic(index))
-                        {
-                            string FileName = Path.Combine(dialog.SelectedPath, String.Format("Landtile {0}.tiff", index));
-                            Bitmap bit = new Bitmap(Ultima.Art.GetLand(index));
-                            if (bit != null)
-                                bit.Save(FileName, ImageFormat.Tiff);
-                            bit.Dispose();
-                        }
-                    }
-                    MessageBox.Show(String.Format("All LandTiles saved to {0}", dialog.SelectedPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
+
+                for (int i = 0; i < _tileList.Count; ++i)
+                {
+                    int index = _tileList[i];
+                    if (!Art.IsValidStatic(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.tiff");
+                    Bitmap bit = new Bitmap(Art.GetLand(index));
+                    bit.Save(fileName, ImageFormat.Tiff);
+                    bit.Dispose();
+                }
+                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -572,24 +676,26 @@ namespace FiddlerControls
             {
                 dialog.Description = "Select directory";
                 dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    for (int i = 0; i < TileList.Count; ++i)
-                    {
-                        int index = TileList[i];
-                        if (Art.IsValidStatic(index))
-                        {
-                            string FileName = Path.Combine(dialog.SelectedPath, String.Format("Landtile {0}.jpg", index));
-                            Bitmap bit = new Bitmap(Ultima.Art.GetLand(index));
-                            if (bit != null)
-                                bit.Save(FileName, ImageFormat.Jpeg);
-                            bit.Dispose();
-                        }
-                    }
-                    MessageBox.Show(String.Format("All LandTiles saved to {0}", dialog.SelectedPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
+
+                for (int i = 0; i < _tileList.Count; ++i)
+                {
+                    int index = _tileList[i];
+                    if (!Art.IsValidStatic(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.jpg");
+                    Bitmap bit = new Bitmap(Art.GetLand(index));
+                    bit.Save(fileName, ImageFormat.Jpeg);
+                    bit.Dispose();
+                }
+                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
-
     }
 }

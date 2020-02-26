@@ -54,7 +54,7 @@ namespace FiddlerControls
             this.textBoxId.Name = "textBoxId";
             this.textBoxId.Size = new System.Drawing.Size(256, 20);
             this.textBoxId.TabIndex = 0;
-            this.textBoxId.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownSearch);
+            this.textBoxId.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
             // button1
             // 
@@ -75,7 +75,7 @@ namespace FiddlerControls
             this.textBoxSoundName.Name = "textBoxSoundName";
             this.textBoxSoundName.Size = new System.Drawing.Size(256, 20);
             this.textBoxSoundName.TabIndex = 2;
-            this.textBoxSoundName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownSearch);
+            this.textBoxSoundName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
             // button2
             // 

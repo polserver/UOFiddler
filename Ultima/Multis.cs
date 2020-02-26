@@ -9,8 +9,8 @@ namespace Ultima
 {
     public sealed class Multis
     {
-        private static MultiComponentList[] m_Components = new MultiComponentList[0x3000];
-        private static FileIndex m_FileIndex = new FileIndex("Multi.idx", "Multi.mul", 0x3000, 14);
+        private static MultiComponentList[] _mComponents = new MultiComponentList[0x3000];
+        private static FileIndex _mFileIndex = new FileIndex("Multi.idx", "Multi.mul", 0x3000, 14);
 
         public enum ImportType
         {
@@ -22,14 +22,14 @@ namespace Ultima
             UOADESIGN
         }
 
-		public static bool PostHSFormat { get; set; }
+		public static bool PostHsFormat { get; set; }
         /// <summary>
         /// ReReads multi.mul
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("Multi.idx", "Multi.mul", 0x3000, 14);
-            m_Components = new MultiComponentList[0x3000];
+            _mFileIndex = new FileIndex("Multi.idx", "Multi.mul", 0x3000, 14);
+            _mComponents = new MultiComponentList[0x3000];
         }
 
         /// <summary>
@@ -43,12 +43,12 @@ namespace Ultima
 
             index &= 0x2FFF;
 
-            if (index >= 0 && index < m_Components.Length)
+            if (index >= 0 && index < _mComponents.Length)
             {
-                mcl = m_Components[index];
+                mcl = _mComponents[index];
 
                 if (mcl == null)
-                    m_Components[index] = mcl = Load(index);
+                    _mComponents[index] = mcl = Load(index);
             }
             else
                 mcl = MultiComponentList.Empty;
@@ -62,12 +62,12 @@ namespace Ultima
             {
                 int length, extra;
                 bool patched;
-                Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
+                Stream stream = _mFileIndex.Seek(index, out length, out extra, out patched);
 
                 if (stream == null)
                     return MultiComponentList.Empty;
 
-				if (PostHSFormat || Art.IsUOAHS())
+				if (PostHsFormat || Art.IsUoahs())
                     return new MultiComponentList(new BinaryReader(stream), length / 16);
                 else
                     return new MultiComponentList(new BinaryReader(stream), length / 12);
@@ -80,31 +80,31 @@ namespace Ultima
 
         public static void Remove(int index)
         {
-            m_Components[index] = MultiComponentList.Empty;
+            _mComponents[index] = MultiComponentList.Empty;
         }
 
         public static void Add(int index, MultiComponentList comp)
         {
-            m_Components[index] = comp;
+            _mComponents[index] = comp;
         }
 
-        public static MultiComponentList ImportFromFile(int index, string FileName, Multis.ImportType type)
+        public static MultiComponentList ImportFromFile(int index, string fileName, ImportType type)
         {
             try
             {
-                return m_Components[index] = new MultiComponentList(FileName, type);
+                return _mComponents[index] = new MultiComponentList(fileName, type);
             }
             catch
             {
-                return m_Components[index] = MultiComponentList.Empty;
+                return _mComponents[index] = MultiComponentList.Empty;
             }
         }
 
-        public static MultiComponentList LoadFromFile(string FileName, Multis.ImportType type)
+        public static MultiComponentList LoadFromFile(string fileName, ImportType type)
         {
             try
             {
-                return new MultiComponentList(FileName, type);
+                return new MultiComponentList(fileName, type);
             }
             catch
             {
@@ -112,10 +112,10 @@ namespace Ultima
             }
         }
 
-        public static List<MultiComponentList> LoadFromCache(string FileName)
+        public static List<MultiComponentList> LoadFromCache(string fileName)
         {
             List<MultiComponentList> multilist = new List<MultiComponentList>();
-            using (StreamReader ip = new StreamReader(FileName))
+            using (StreamReader ip = new StreamReader(fileName))
             {
                 string line;
                 while ((line = ip.ReadLine()) != null)
@@ -131,7 +131,7 @@ namespace Ultima
             return multilist;
         }
 
-        public static string ReadUOAString(BinaryReader bin)
+        public static string ReadUoaString(BinaryReader bin)
         {
             byte flag = bin.ReadByte();
 
@@ -140,12 +140,12 @@ namespace Ultima
             else
                 return bin.ReadString();
         }
-        public static List<Object[]> LoadFromDesigner(string FileName)
+        public static List<object[]> LoadFromDesigner(string fileName)
         {
-            List<Object[]> multilist = new List<Object[]>();
-            string root = Path.GetFileNameWithoutExtension(FileName);
-            string idx = String.Format("{0}.idx", root);
-            string bin = String.Format("{0}.bin", root);
+            List<object[]> multilist = new List<object[]>();
+            string root = Path.GetFileNameWithoutExtension(fileName);
+            string idx = $"{root}.idx";
+            string bin = $"{root}.bin";
             if ((!File.Exists(idx)) || (!File.Exists(bin)))
                 return multilist;
             using (FileStream idxfs = new FileStream(idx, FileMode.Open, FileAccess.Read, FileShare.Read),
@@ -159,14 +159,14 @@ namespace Ultima
 
                     for (int i = 0; i < count; ++i)
                     {
-                        Object[] data = new Object[2];
+                        object[] data = new object[2];
                         switch (version)
                         {
                             case 0:
-                                data[0] = ReadUOAString(idxbin);
+                                data[0] = ReadUoaString(idxbin);
                                 List<MultiComponentList.MultiTileEntry> arr = new List<MultiComponentList.MultiTileEntry>();
-                                data[0] += "-" + ReadUOAString(idxbin);
-                                data[0] += "-" + ReadUOAString(idxbin);
+                                data[0] += "-" + ReadUoaString(idxbin);
+                                data[0] += "-" + ReadUoaString(idxbin);
                                 int width = idxbin.ReadInt32();
                                 int height = idxbin.ReadInt32();
                                 int uwidth = idxbin.ReadInt32();
@@ -200,12 +200,12 @@ namespace Ultima
                                             break;
                                     }
                                     MultiComponentList.MultiTileEntry tempitem = new MultiComponentList.MultiTileEntry();
-                                    tempitem.m_ItemID = (ushort)index;
-                                    tempitem.m_Flags = 1;
-                                    tempitem.m_OffsetX = (short)x;
-                                    tempitem.m_OffsetY = (short)y;
-                                    tempitem.m_OffsetZ = (short)z;
-                                    tempitem.m_Unk1 = 0;
+                                    tempitem.MItemId = (ushort)index;
+                                    tempitem.MFlags = 1;
+                                    tempitem.MOffsetX = (short)x;
+                                    tempitem.MOffsetY = (short)y;
+                                    tempitem.MOffsetZ = (short)z;
+                                    tempitem.MUnk1 = 0;
                                     arr.Add(tempitem);
 
                                 }
@@ -225,13 +225,13 @@ namespace Ultima
             List<MultiComponentList.MultiTileEntry> newtiles = new List<MultiComponentList.MultiTileEntry>();
             newtiles.AddRange(tiles);
 
-            if (newtiles[0].m_OffsetX == 0 && newtiles[0].m_OffsetY == 0 && newtiles[0].m_OffsetZ == 0) // found a centeritem
+            if (newtiles[0].MOffsetX == 0 && newtiles[0].MOffsetY == 0 && newtiles[0].MOffsetZ == 0) // found a centeritem
             {
-                if (newtiles[0].m_ItemID != 0x1) // its a "good" one
+                if (newtiles[0].MItemId != 0x1) // its a "good" one
                 {
                     for (int j = newtiles.Count - 1; j >= 0; --j) // remove all invis items
                     {
-                        if (newtiles[j].m_ItemID == 0x1)
+                        if (newtiles[j].MItemId == 0x1)
                             newtiles.RemoveAt(j);
                     }
                     return newtiles;
@@ -240,14 +240,14 @@ namespace Ultima
                 {
                     for (int i = 1; i < newtiles.Count; ++i) // do we have a better one?
                     {
-                        if (newtiles[i].m_OffsetX == 0 && newtiles[i].m_OffsetY == 0 
-                            && newtiles[i].m_ItemID != 0x1 && newtiles[i].m_OffsetZ == 0 )
+                        if (newtiles[i].MOffsetX == 0 && newtiles[i].MOffsetY == 0 
+                            && newtiles[i].MItemId != 0x1 && newtiles[i].MOffsetZ == 0 )
                         {
                             MultiComponentList.MultiTileEntry centeritem = newtiles[i];
                             newtiles.RemoveAt(i); // jep so save it
                             for (int j = newtiles.Count-1; j >= 0; --j) // and remove all invis
                             {
-                                if (newtiles[j].m_ItemID == 0x1)
+                                if (newtiles[j].MItemId == 0x1)
                                     newtiles.RemoveAt(j);
                             }
                             newtiles.Insert(0, centeritem);
@@ -256,7 +256,7 @@ namespace Ultima
                     }
                     for (int j = newtiles.Count-1; j >= 1; --j) // nothing found so remove all invis exept the first
                     {
-                        if (newtiles[j].m_ItemID == 0x1)
+                        if (newtiles[j].MItemId == 0x1)
                             newtiles.RemoveAt(j);
                     }
                     return newtiles;
@@ -264,14 +264,14 @@ namespace Ultima
             }
             for (int i = 0; i < newtiles.Count; ++i) // is there a good one
             {
-                if (newtiles[i].m_OffsetX == 0 && newtiles[i].m_OffsetY == 0 
-                    && newtiles[i].m_ItemID != 0x1 && newtiles[i].m_OffsetZ == 0)
+                if (newtiles[i].MOffsetX == 0 && newtiles[i].MOffsetY == 0 
+                    && newtiles[i].MItemId != 0x1 && newtiles[i].MOffsetZ == 0)
                 {
                     MultiComponentList.MultiTileEntry centeritem = newtiles[i];
                     newtiles.RemoveAt(i); // store it
                     for (int j = newtiles.Count-1; j >= 0; --j) // remove all invis
                     {
-                        if (newtiles[j].m_ItemID == 0x1)
+                        if (newtiles[j].MItemId == 0x1)
                             newtiles.RemoveAt(j);
                     }
                     newtiles.Insert(0, centeritem);
@@ -280,23 +280,23 @@ namespace Ultima
             }
             for (int j = newtiles.Count-1; j >= 0; --j) // nothing found so remove all invis
             {
-                if (newtiles[j].m_ItemID == 0x1)
+                if (newtiles[j].MItemId == 0x1)
                     newtiles.RemoveAt(j);
             }
             MultiComponentList.MultiTileEntry invisitem = new MultiComponentList.MultiTileEntry();
-            invisitem.m_ItemID = 0x1; // and create a new invis
-            invisitem.m_OffsetX = 0;
-            invisitem.m_OffsetY = 0;
-            invisitem.m_OffsetZ = 0;
-            invisitem.m_Flags = 0;
-            invisitem.m_Unk1 = 0;
+            invisitem.MItemId = 0x1; // and create a new invis
+            invisitem.MOffsetX = 0;
+            invisitem.MOffsetY = 0;
+            invisitem.MOffsetZ = 0;
+            invisitem.MFlags = 0;
+            invisitem.MUnk1 = 0;
             newtiles.Insert(0, invisitem);
             return newtiles;
         }
 
         public static void Save(string path)
         {
-			bool isUOAHS = PostHSFormat || Art.IsUOAHS();
+			bool isUoahs = PostHsFormat || Art.IsUoahs();
             string idx = Path.Combine(path, "multi.idx");
             string mul = Path.Combine(path, "multi.mul");
             using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
@@ -311,28 +311,28 @@ namespace Ultima
 
                         if (comp == MultiComponentList.Empty)
                         {
-                            binidx.Write((int)-1); // lookup
-                            binidx.Write((int)-1); // length
-                            binidx.Write((int)-1); // extra
+                            binidx.Write(-1); // lookup
+                            binidx.Write(-1); // length
+                            binidx.Write(-1); // extra
                         }
                         else
                         {
                             List<MultiComponentList.MultiTileEntry> tiles = RebuildTiles(comp.SortedTiles);
                             binidx.Write((int)fsmul.Position); //lookup
-                            if (isUOAHS)
-                                binidx.Write((int)(tiles.Count * 16)); //length
+                            if (isUoahs)
+                                binidx.Write(tiles.Count * 16); //length
                             else
-                                binidx.Write((int)(tiles.Count * 12)); //length
-                            binidx.Write((int)-1); //extra
+                                binidx.Write(tiles.Count * 12); //length
+                            binidx.Write(-1); //extra
                             for (int i = 0; i < tiles.Count; ++i)
                             {
-                                binmul.Write((ushort)tiles[i].m_ItemID);
-                                binmul.Write((short)tiles[i].m_OffsetX);
-                                binmul.Write((short)tiles[i].m_OffsetY);
-                                binmul.Write((short)tiles[i].m_OffsetZ);
-                                binmul.Write((int)tiles[i].m_Flags);
-                                if (isUOAHS)
-                                    binmul.Write((int)tiles[i].m_Unk1);
+                                binmul.Write(tiles[i].MItemId);
+                                binmul.Write(tiles[i].MOffsetX);
+                                binmul.Write(tiles[i].MOffsetY);
+                                binmul.Write(tiles[i].MOffsetZ);
+                                binmul.Write(tiles[i].MFlags);
+                                if (isUoahs)
+                                    binmul.Write(tiles[i].MUnk1);
 
                             }
                         }
@@ -344,30 +344,32 @@ namespace Ultima
 
     public sealed class MultiComponentList
     {
-        private Point m_Min, m_Max, m_Center;
-        private int m_Width, m_Height, m_maxHeight, m_Surface;
-        private MTile[][][] m_Tiles;
-        private MultiTileEntry[] m_SortedTiles;
+        private Point _mMin, _mMax, _mCenter;
+        private int _mWidth, _mHeight;
+        private readonly int _mMaxHeight;
+        private int _mSurface;
+        private MTile[][][] _mTiles;
+        private readonly MultiTileEntry[] _mSortedTiles;
 
         public static readonly MultiComponentList Empty = new MultiComponentList();
 
-        public Point Min { get { return m_Min; } }
-        public Point Max { get { return m_Max; } }
-        public Point Center { get { return m_Center; } }
-        public int Width { get { return m_Width; } }
-        public int Height { get { return m_Height; } }
-        public MTile[][][] Tiles { get { return m_Tiles; } }
-        public int maxHeight { get { return m_maxHeight; } }
-        public MultiTileEntry[] SortedTiles { get { return m_SortedTiles; } }
-        public int Surface { get { return m_Surface; } }
+        public Point Min => _mMin;
+        public Point Max => _mMax;
+        public Point Center => _mCenter;
+        public int Width => _mWidth;
+        public int Height => _mHeight;
+        public MTile[][][] Tiles => _mTiles;
+        public int MaxHeight => _mMaxHeight;
+        public MultiTileEntry[] SortedTiles => _mSortedTiles;
+        public int Surface => _mSurface;
 
 
         public struct MultiTileEntry
         {
-            public ushort m_ItemID;
-            public short m_OffsetX, m_OffsetY, m_OffsetZ;
-            public int m_Flags;
-            public int m_Unk1;
+            public ushort MItemId;
+            public short MOffsetX, MOffsetY, MOffsetZ;
+            public int MFlags;
+            public int MUnk1;
         }
 
         /// <summary>
@@ -386,21 +388,21 @@ namespace Ultima
         /// <returns></returns>
         public Bitmap GetImage(int maxheight)
         {
-            if (m_Width == 0 || m_Height == 0)
+            if (_mWidth == 0 || _mHeight == 0)
                 return null;
 
             int xMin = 1000, yMin = 1000;
             int xMax = -1000, yMax = -1000;
 
-            for (int x = 0; x < m_Width; ++x)
+            for (int x = 0; x < _mWidth; ++x)
             {
-                for (int y = 0; y < m_Height; ++y)
+                for (int y = 0; y < _mHeight; ++y)
                 {
-                    MTile[] tiles = m_Tiles[x][y];
+                    MTile[] tiles = _mTiles[x][y];
 
                     for (int i = 0; i < tiles.Length; ++i)
                     {
-                        Bitmap bmp = Art.GetStatic(tiles[i].ID);
+                        Bitmap bmp = Art.GetStatic(tiles[i].Id);
 
                         if (bmp == null)
                             continue;
@@ -433,16 +435,16 @@ namespace Ultima
             Bitmap canvas = new Bitmap(xMax - xMin, yMax - yMin);
             Graphics gfx = Graphics.FromImage(canvas);
             gfx.Clear(Color.Transparent);
-            for (int x = 0; x < m_Width; ++x)
+            for (int x = 0; x < _mWidth; ++x)
             {
-                for (int y = 0; y < m_Height; ++y)
+                for (int y = 0; y < _mHeight; ++y)
                 {
-                    MTile[] tiles = m_Tiles[x][y];
+                    MTile[] tiles = _mTiles[x][y];
 
                     for (int i = 0; i < tiles.Length; ++i)
                     {
 
-                        Bitmap bmp = Art.GetStatic(tiles[i].ID);
+                        Bitmap bmp = Art.GetStatic(tiles[i].Id);
 
                         if (bmp == null)
                             continue;
@@ -474,51 +476,51 @@ namespace Ultima
 
         public MultiComponentList(BinaryReader reader, int count)
         {
-			bool useNewMultiFormat = Multis.PostHSFormat || Art.IsUOAHS();
-            m_Min = m_Max = Point.Empty;
-            m_SortedTiles = new MultiTileEntry[count];
+			bool useNewMultiFormat = Multis.PostHsFormat || Art.IsUoahs();
+            _mMin = _mMax = Point.Empty;
+            _mSortedTiles = new MultiTileEntry[count];
             for (int i = 0; i < count; ++i)
             {
-                m_SortedTiles[i].m_ItemID = Art.GetLegalItemID(reader.ReadUInt16());
-                m_SortedTiles[i].m_OffsetX = reader.ReadInt16();
-                m_SortedTiles[i].m_OffsetY = reader.ReadInt16();
-                m_SortedTiles[i].m_OffsetZ = reader.ReadInt16();
-                m_SortedTiles[i].m_Flags = reader.ReadInt32();
+                _mSortedTiles[i].MItemId = Art.GetLegalItemId(reader.ReadUInt16());
+                _mSortedTiles[i].MOffsetX = reader.ReadInt16();
+                _mSortedTiles[i].MOffsetY = reader.ReadInt16();
+                _mSortedTiles[i].MOffsetZ = reader.ReadInt16();
+                _mSortedTiles[i].MFlags = reader.ReadInt32();
                 if (useNewMultiFormat)
-                    m_SortedTiles[i].m_Unk1 = reader.ReadInt32();
+                    _mSortedTiles[i].MUnk1 = reader.ReadInt32();
                 else
-                    m_SortedTiles[i].m_Unk1 = 0;
+                    _mSortedTiles[i].MUnk1 = 0;
 
-                MultiTileEntry e = m_SortedTiles[i];
+                MultiTileEntry e = _mSortedTiles[i];
 
-                if (e.m_OffsetX < m_Min.X)
-                    m_Min.X = e.m_OffsetX;
+                if (e.MOffsetX < _mMin.X)
+                    _mMin.X = e.MOffsetX;
 
-                if (e.m_OffsetY < m_Min.Y)
-                    m_Min.Y = e.m_OffsetY;
+                if (e.MOffsetY < _mMin.Y)
+                    _mMin.Y = e.MOffsetY;
 
-                if (e.m_OffsetX > m_Max.X)
-                    m_Max.X = e.m_OffsetX;
+                if (e.MOffsetX > _mMax.X)
+                    _mMax.X = e.MOffsetX;
 
-                if (e.m_OffsetY > m_Max.Y)
-                    m_Max.Y = e.m_OffsetY;
+                if (e.MOffsetY > _mMax.Y)
+                    _mMax.Y = e.MOffsetY;
 
-                if (e.m_OffsetZ > m_maxHeight)
-                    m_maxHeight = e.m_OffsetZ;
+                if (e.MOffsetZ > _mMaxHeight)
+                    _mMaxHeight = e.MOffsetZ;
             }
             ConvertList();
             reader.Close();
         }
 
-        public MultiComponentList(string FileName, Multis.ImportType Type)
+        public MultiComponentList(string fileName, Multis.ImportType type)
         {
-            m_Min = m_Max = Point.Empty;
+            _mMin = _mMax = Point.Empty;
             int itemcount;
-            switch (Type)
+            switch (type)
             {
                 case Multis.ImportType.TXT:
                     itemcount = 0;
-                    using (StreamReader ip = new StreamReader(FileName))
+                    using (StreamReader ip = new StreamReader(fileName))
                     {
                         string line;
                         while ((line = ip.ReadLine()) != null)
@@ -526,11 +528,11 @@ namespace Ultima
                             itemcount++;
                         }
                     }
-                    m_SortedTiles = new MultiTileEntry[itemcount];
+                    _mSortedTiles = new MultiTileEntry[itemcount];
                     itemcount = 0;
-                    m_Min.X = 10000;
-                    m_Min.Y = 10000;
-                    using (StreamReader ip = new StreamReader(FileName))
+                    _mMin.X = 10000;
+                    _mMin.Y = 10000;
+                    using (StreamReader ip = new StreamReader(fileName))
                     {
                         string line;
                         while ((line = ip.ReadLine()) != null)
@@ -540,57 +542,57 @@ namespace Ultima
                             string tmp = split[0];
                             tmp = tmp.Replace("0x", "");
 
-                            m_SortedTiles[itemcount].m_ItemID = ushort.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
-                            m_SortedTiles[itemcount].m_OffsetX = Convert.ToInt16(split[1]);
-                            m_SortedTiles[itemcount].m_OffsetY = Convert.ToInt16(split[2]);
-                            m_SortedTiles[itemcount].m_OffsetZ = Convert.ToInt16(split[3]);
-                            m_SortedTiles[itemcount].m_Flags = Convert.ToInt32(split[4]);
-                            m_SortedTiles[itemcount].m_Unk1 = 0;
+                            _mSortedTiles[itemcount].MItemId = ushort.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
+                            _mSortedTiles[itemcount].MOffsetX = Convert.ToInt16(split[1]);
+                            _mSortedTiles[itemcount].MOffsetY = Convert.ToInt16(split[2]);
+                            _mSortedTiles[itemcount].MOffsetZ = Convert.ToInt16(split[3]);
+                            _mSortedTiles[itemcount].MFlags = Convert.ToInt32(split[4]);
+                            _mSortedTiles[itemcount].MUnk1 = 0;
 
-                            MultiTileEntry e = m_SortedTiles[itemcount];
+                            MultiTileEntry e = _mSortedTiles[itemcount];
 
-                            if (e.m_OffsetX < m_Min.X)
-                                m_Min.X = e.m_OffsetX;
+                            if (e.MOffsetX < _mMin.X)
+                                _mMin.X = e.MOffsetX;
 
-                            if (e.m_OffsetY < m_Min.Y)
-                                m_Min.Y = e.m_OffsetY;
+                            if (e.MOffsetY < _mMin.Y)
+                                _mMin.Y = e.MOffsetY;
 
-                            if (e.m_OffsetX > m_Max.X)
-                                m_Max.X = e.m_OffsetX;
+                            if (e.MOffsetX > _mMax.X)
+                                _mMax.X = e.MOffsetX;
 
-                            if (e.m_OffsetY > m_Max.Y)
-                                m_Max.Y = e.m_OffsetY;
+                            if (e.MOffsetY > _mMax.Y)
+                                _mMax.Y = e.MOffsetY;
 
-                            if (e.m_OffsetZ > m_maxHeight)
-                                m_maxHeight = e.m_OffsetZ;
+                            if (e.MOffsetZ > _mMaxHeight)
+                                _mMaxHeight = e.MOffsetZ;
 
                             itemcount++;
                         }
-                        int centerx = m_Max.X - (int)(Math.Round((m_Max.X - m_Min.X) / 2.0));
-                        int centery = m_Max.Y - (int)(Math.Round((m_Max.Y - m_Min.Y) / 2.0));
+                        int centerx = _mMax.X - (int)(Math.Round((_mMax.X - _mMin.X) / 2.0));
+                        int centery = _mMax.Y - (int)(Math.Round((_mMax.Y - _mMin.Y) / 2.0));
 
-                        m_Min = m_Max = Point.Empty;
+                        _mMin = _mMax = Point.Empty;
                         int i = 0;
-                        for (; i < m_SortedTiles.Length; i++)
+                        for (; i < _mSortedTiles.Length; i++)
                         {
-                            m_SortedTiles[i].m_OffsetX -= (short)centerx;
-                            m_SortedTiles[i].m_OffsetY -= (short)centery;
-                            if (m_SortedTiles[i].m_OffsetX < m_Min.X)
-                                m_Min.X = m_SortedTiles[i].m_OffsetX;
-                            if (m_SortedTiles[i].m_OffsetX > m_Max.X)
-                                m_Max.X = m_SortedTiles[i].m_OffsetX;
+                            _mSortedTiles[i].MOffsetX -= (short)centerx;
+                            _mSortedTiles[i].MOffsetY -= (short)centery;
+                            if (_mSortedTiles[i].MOffsetX < _mMin.X)
+                                _mMin.X = _mSortedTiles[i].MOffsetX;
+                            if (_mSortedTiles[i].MOffsetX > _mMax.X)
+                                _mMax.X = _mSortedTiles[i].MOffsetX;
 
-                            if (m_SortedTiles[i].m_OffsetY < m_Min.Y)
-                                m_Min.Y = m_SortedTiles[i].m_OffsetY;
-                            if (m_SortedTiles[i].m_OffsetY > m_Max.Y)
-                                m_Max.Y = m_SortedTiles[i].m_OffsetY;
+                            if (_mSortedTiles[i].MOffsetY < _mMin.Y)
+                                _mMin.Y = _mSortedTiles[i].MOffsetY;
+                            if (_mSortedTiles[i].MOffsetY > _mMax.Y)
+                                _mMax.Y = _mSortedTiles[i].MOffsetY;
                         }
                     }
                     break;
                 case Multis.ImportType.UOA:
                     itemcount = 0;
 
-                    using (StreamReader ip = new StreamReader(FileName))
+                    using (StreamReader ip = new StreamReader(fileName))
                     {
                         string line;
                         while ((line = ip.ReadLine()) != null)
@@ -604,11 +606,11 @@ namespace Ultima
                             }
                         }
                     }
-                    m_SortedTiles = new MultiTileEntry[itemcount];
+                    _mSortedTiles = new MultiTileEntry[itemcount];
                     itemcount = 0;
-                    m_Min.X = 10000;
-                    m_Min.Y = 10000;
-                    using (StreamReader ip = new StreamReader(FileName))
+                    _mMin.X = 10000;
+                    _mMin.Y = 10000;
+                    using (StreamReader ip = new StreamReader(fileName))
                     {
                         string line;
                         int i = -1;
@@ -619,64 +621,64 @@ namespace Ultima
                                 continue;
                             string[] split = line.Split(' ');
 
-                            m_SortedTiles[itemcount].m_ItemID = Convert.ToUInt16(split[0]);
-                            m_SortedTiles[itemcount].m_OffsetX = Convert.ToInt16(split[1]);
-                            m_SortedTiles[itemcount].m_OffsetY = Convert.ToInt16(split[2]);
-                            m_SortedTiles[itemcount].m_OffsetZ = Convert.ToInt16(split[3]);
-                            m_SortedTiles[itemcount].m_Flags = Convert.ToInt32(split[4]);
-                            m_SortedTiles[itemcount].m_Unk1 = 0;
+                            _mSortedTiles[itemcount].MItemId = Convert.ToUInt16(split[0]);
+                            _mSortedTiles[itemcount].MOffsetX = Convert.ToInt16(split[1]);
+                            _mSortedTiles[itemcount].MOffsetY = Convert.ToInt16(split[2]);
+                            _mSortedTiles[itemcount].MOffsetZ = Convert.ToInt16(split[3]);
+                            _mSortedTiles[itemcount].MFlags = Convert.ToInt32(split[4]);
+                            _mSortedTiles[itemcount].MUnk1 = 0;
 
-                            MultiTileEntry e = m_SortedTiles[itemcount];
+                            MultiTileEntry e = _mSortedTiles[itemcount];
 
-                            if (e.m_OffsetX < m_Min.X)
-                                m_Min.X = e.m_OffsetX;
+                            if (e.MOffsetX < _mMin.X)
+                                _mMin.X = e.MOffsetX;
 
-                            if (e.m_OffsetY < m_Min.Y)
-                                m_Min.Y = e.m_OffsetY;
+                            if (e.MOffsetY < _mMin.Y)
+                                _mMin.Y = e.MOffsetY;
 
-                            if (e.m_OffsetX > m_Max.X)
-                                m_Max.X = e.m_OffsetX;
+                            if (e.MOffsetX > _mMax.X)
+                                _mMax.X = e.MOffsetX;
 
-                            if (e.m_OffsetY > m_Max.Y)
-                                m_Max.Y = e.m_OffsetY;
+                            if (e.MOffsetY > _mMax.Y)
+                                _mMax.Y = e.MOffsetY;
 
-                            if (e.m_OffsetZ > m_maxHeight)
-                                m_maxHeight = e.m_OffsetZ;
+                            if (e.MOffsetZ > _mMaxHeight)
+                                _mMaxHeight = e.MOffsetZ;
 
                             ++itemcount;
                         }
-                        int centerx = m_Max.X - (int)(Math.Round((m_Max.X - m_Min.X) / 2.0));
-                        int centery = m_Max.Y - (int)(Math.Round((m_Max.Y - m_Min.Y) / 2.0));
+                        int centerx = _mMax.X - (int)(Math.Round((_mMax.X - _mMin.X) / 2.0));
+                        int centery = _mMax.Y - (int)(Math.Round((_mMax.Y - _mMin.Y) / 2.0));
 
-                        m_Min = m_Max = Point.Empty;
+                        _mMin = _mMax = Point.Empty;
                         i = 0;
-                        for (; i < m_SortedTiles.Length; ++i)
+                        for (; i < _mSortedTiles.Length; ++i)
                         {
-                            m_SortedTiles[i].m_OffsetX -= (short)centerx;
-                            m_SortedTiles[i].m_OffsetY -= (short)centery;
-                            if (m_SortedTiles[i].m_OffsetX < m_Min.X)
-                                m_Min.X = m_SortedTiles[i].m_OffsetX;
-                            if (m_SortedTiles[i].m_OffsetX > m_Max.X)
-                                m_Max.X = m_SortedTiles[i].m_OffsetX;
+                            _mSortedTiles[i].MOffsetX -= (short)centerx;
+                            _mSortedTiles[i].MOffsetY -= (short)centery;
+                            if (_mSortedTiles[i].MOffsetX < _mMin.X)
+                                _mMin.X = _mSortedTiles[i].MOffsetX;
+                            if (_mSortedTiles[i].MOffsetX > _mMax.X)
+                                _mMax.X = _mSortedTiles[i].MOffsetX;
 
-                            if (m_SortedTiles[i].m_OffsetY < m_Min.Y)
-                                m_Min.Y = m_SortedTiles[i].m_OffsetY;
-                            if (m_SortedTiles[i].m_OffsetY > m_Max.Y)
-                                m_Max.Y = m_SortedTiles[i].m_OffsetY;
+                            if (_mSortedTiles[i].MOffsetY < _mMin.Y)
+                                _mMin.Y = _mSortedTiles[i].MOffsetY;
+                            if (_mSortedTiles[i].MOffsetY > _mMax.Y)
+                                _mMax.Y = _mSortedTiles[i].MOffsetY;
                         }
                     }
 
                     break;
                 case Multis.ImportType.UOAB:
-                    using (FileStream fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     using (BinaryReader reader = new BinaryReader(fs))
                     {
                         if (reader.ReadInt16() != 1) //Version check
                             return;
                         string tmp;
-                        tmp = Multis.ReadUOAString(reader); //Name
-                        tmp = Multis.ReadUOAString(reader); //Category
-                        tmp = Multis.ReadUOAString(reader); //Subsection
+                        tmp = Multis.ReadUoaString(reader); //Name
+                        tmp = Multis.ReadUoaString(reader); //Category
+                        tmp = Multis.ReadUoaString(reader); //Subsection
                         int width = reader.ReadInt32();
                         int height = reader.ReadInt32();
                         int uwidth = reader.ReadInt32();
@@ -684,63 +686,63 @@ namespace Ultima
 
                         int count = reader.ReadInt32();
                         itemcount = count;
-                        m_SortedTiles = new MultiTileEntry[itemcount];
+                        _mSortedTiles = new MultiTileEntry[itemcount];
                         itemcount = 0;
-                        m_Min.X = 10000;
-                        m_Min.Y = 10000;
+                        _mMin.X = 10000;
+                        _mMin.Y = 10000;
                         for (; itemcount < count; ++itemcount)
                         {
-                            m_SortedTiles[itemcount].m_ItemID = (ushort)reader.ReadInt16();
-                            m_SortedTiles[itemcount].m_OffsetX = reader.ReadInt16();
-                            m_SortedTiles[itemcount].m_OffsetY = reader.ReadInt16();
-                            m_SortedTiles[itemcount].m_OffsetZ = reader.ReadInt16();
+                            _mSortedTiles[itemcount].MItemId = (ushort)reader.ReadInt16();
+                            _mSortedTiles[itemcount].MOffsetX = reader.ReadInt16();
+                            _mSortedTiles[itemcount].MOffsetY = reader.ReadInt16();
+                            _mSortedTiles[itemcount].MOffsetZ = reader.ReadInt16();
                             reader.ReadInt16(); // level
-                            m_SortedTiles[itemcount].m_Flags = 1;
+                            _mSortedTiles[itemcount].MFlags = 1;
                             reader.ReadInt16(); // hue
-                            m_SortedTiles[itemcount].m_Unk1 = 0;
+                            _mSortedTiles[itemcount].MUnk1 = 0;
 
-                            MultiTileEntry e = m_SortedTiles[itemcount];
+                            MultiTileEntry e = _mSortedTiles[itemcount];
 
-                            if (e.m_OffsetX < m_Min.X)
-                                m_Min.X = e.m_OffsetX;
+                            if (e.MOffsetX < _mMin.X)
+                                _mMin.X = e.MOffsetX;
 
-                            if (e.m_OffsetY < m_Min.Y)
-                                m_Min.Y = e.m_OffsetY;
+                            if (e.MOffsetY < _mMin.Y)
+                                _mMin.Y = e.MOffsetY;
 
-                            if (e.m_OffsetX > m_Max.X)
-                                m_Max.X = e.m_OffsetX;
+                            if (e.MOffsetX > _mMax.X)
+                                _mMax.X = e.MOffsetX;
 
-                            if (e.m_OffsetY > m_Max.Y)
-                                m_Max.Y = e.m_OffsetY;
+                            if (e.MOffsetY > _mMax.Y)
+                                _mMax.Y = e.MOffsetY;
 
-                            if (e.m_OffsetZ > m_maxHeight)
-                                m_maxHeight = e.m_OffsetZ;
+                            if (e.MOffsetZ > _mMaxHeight)
+                                _mMaxHeight = e.MOffsetZ;
                         }
-                        int centerx = m_Max.X - (int)(Math.Round((m_Max.X - m_Min.X) / 2.0));
-                        int centery = m_Max.Y - (int)(Math.Round((m_Max.Y - m_Min.Y) / 2.0));
+                        int centerx = _mMax.X - (int)(Math.Round((_mMax.X - _mMin.X) / 2.0));
+                        int centery = _mMax.Y - (int)(Math.Round((_mMax.Y - _mMin.Y) / 2.0));
 
-                        m_Min = m_Max = Point.Empty;
+                        _mMin = _mMax = Point.Empty;
                         itemcount = 0;
-                        for (; itemcount < m_SortedTiles.Length; ++itemcount)
+                        for (; itemcount < _mSortedTiles.Length; ++itemcount)
                         {
-                            m_SortedTiles[itemcount].m_OffsetX -= (short)centerx;
-                            m_SortedTiles[itemcount].m_OffsetY -= (short)centery;
-                            if (m_SortedTiles[itemcount].m_OffsetX < m_Min.X)
-                                m_Min.X = m_SortedTiles[itemcount].m_OffsetX;
-                            if (m_SortedTiles[itemcount].m_OffsetX > m_Max.X)
-                                m_Max.X = m_SortedTiles[itemcount].m_OffsetX;
+                            _mSortedTiles[itemcount].MOffsetX -= (short)centerx;
+                            _mSortedTiles[itemcount].MOffsetY -= (short)centery;
+                            if (_mSortedTiles[itemcount].MOffsetX < _mMin.X)
+                                _mMin.X = _mSortedTiles[itemcount].MOffsetX;
+                            if (_mSortedTiles[itemcount].MOffsetX > _mMax.X)
+                                _mMax.X = _mSortedTiles[itemcount].MOffsetX;
 
-                            if (m_SortedTiles[itemcount].m_OffsetY < m_Min.Y)
-                                m_Min.Y = m_SortedTiles[itemcount].m_OffsetY;
-                            if (m_SortedTiles[itemcount].m_OffsetY > m_Max.Y)
-                                m_Max.Y = m_SortedTiles[itemcount].m_OffsetY;
+                            if (_mSortedTiles[itemcount].MOffsetY < _mMin.Y)
+                                _mMin.Y = _mSortedTiles[itemcount].MOffsetY;
+                            if (_mSortedTiles[itemcount].MOffsetY > _mMax.Y)
+                                _mMax.Y = _mSortedTiles[itemcount].MOffsetY;
                         }
                     }
                     break;
 
                 case Multis.ImportType.WSC:
                     itemcount = 0;
-                    using (StreamReader ip = new StreamReader(FileName))
+                    using (StreamReader ip = new StreamReader(fileName))
                     {
                         string line;
                         while ((line = ip.ReadLine()) != null)
@@ -750,86 +752,86 @@ namespace Ultima
                                 ++itemcount;
                         }
                     }
-                    m_SortedTiles = new MultiTileEntry[itemcount];
+                    _mSortedTiles = new MultiTileEntry[itemcount];
                     itemcount = 0;
-                    m_Min.X = 10000;
-                    m_Min.Y = 10000;
-                    using (StreamReader ip = new StreamReader(FileName))
+                    _mMin.X = 10000;
+                    _mMin.Y = 10000;
+                    using (StreamReader ip = new StreamReader(fileName))
                     {
                         string line;
                         MultiTileEntry tempitem = new MultiTileEntry();
-                        tempitem.m_ItemID = 0xFFFF;
-                        tempitem.m_Flags = 1;
-                        tempitem.m_Unk1 = 0;
+                        tempitem.MItemId = 0xFFFF;
+                        tempitem.MFlags = 1;
+                        tempitem.MUnk1 = 0;
                         while ((line = ip.ReadLine()) != null)
                         {
                             line = line.Trim();
                             if (line.StartsWith("SECTION WORLDITEM"))
                             {
-                                if (tempitem.m_ItemID != 0xFFFF)
+                                if (tempitem.MItemId != 0xFFFF)
                                 {
-                                    m_SortedTiles[itemcount] = tempitem;
+                                    _mSortedTiles[itemcount] = tempitem;
                                     ++itemcount;
                                 }
-                                tempitem.m_ItemID = 0xFFFF;
+                                tempitem.MItemId = 0xFFFF;
                             }
                             else if (line.StartsWith("ID"))
                             {
                                 line = line.Remove(0, 2);
                                 line = line.Trim();
-                                tempitem.m_ItemID = Convert.ToUInt16(line);
+                                tempitem.MItemId = Convert.ToUInt16(line);
                             }
                             else if (line.StartsWith("X"))
                             {
                                 line = line.Remove(0, 1);
                                 line = line.Trim();
-                                tempitem.m_OffsetX = Convert.ToInt16(line);
-                                if (tempitem.m_OffsetX < m_Min.X)
-                                    m_Min.X = tempitem.m_OffsetX;
-                                if (tempitem.m_OffsetX > m_Max.X)
-                                    m_Max.X = tempitem.m_OffsetX;
+                                tempitem.MOffsetX = Convert.ToInt16(line);
+                                if (tempitem.MOffsetX < _mMin.X)
+                                    _mMin.X = tempitem.MOffsetX;
+                                if (tempitem.MOffsetX > _mMax.X)
+                                    _mMax.X = tempitem.MOffsetX;
                             }
                             else if (line.StartsWith("Y"))
                             {
                                 line = line.Remove(0, 1);
                                 line = line.Trim();
-                                tempitem.m_OffsetY = Convert.ToInt16(line);
-                                if (tempitem.m_OffsetY < m_Min.Y)
-                                    m_Min.Y = tempitem.m_OffsetY;
-                                if (tempitem.m_OffsetY > m_Max.Y)
-                                    m_Max.Y = tempitem.m_OffsetY;
+                                tempitem.MOffsetY = Convert.ToInt16(line);
+                                if (tempitem.MOffsetY < _mMin.Y)
+                                    _mMin.Y = tempitem.MOffsetY;
+                                if (tempitem.MOffsetY > _mMax.Y)
+                                    _mMax.Y = tempitem.MOffsetY;
                             }
                             else if (line.StartsWith("Z"))
                             {
                                 line = line.Remove(0, 1);
                                 line = line.Trim();
-                                tempitem.m_OffsetZ = Convert.ToInt16(line);
-                                if (tempitem.m_OffsetZ > m_maxHeight)
-                                    m_maxHeight = tempitem.m_OffsetZ;
+                                tempitem.MOffsetZ = Convert.ToInt16(line);
+                                if (tempitem.MOffsetZ > _mMaxHeight)
+                                    _mMaxHeight = tempitem.MOffsetZ;
 
                             }
                         }
-                        if (tempitem.m_ItemID != 0xFFFF)
-                            m_SortedTiles[itemcount] = tempitem;
+                        if (tempitem.MItemId != 0xFFFF)
+                            _mSortedTiles[itemcount] = tempitem;
 
-                        int centerx = m_Max.X - (int)(Math.Round((m_Max.X - m_Min.X) / 2.0));
-                        int centery = m_Max.Y - (int)(Math.Round((m_Max.Y - m_Min.Y) / 2.0));
+                        int centerx = _mMax.X - (int)(Math.Round((_mMax.X - _mMin.X) / 2.0));
+                        int centery = _mMax.Y - (int)(Math.Round((_mMax.Y - _mMin.Y) / 2.0));
 
-                        m_Min = m_Max = Point.Empty;
+                        _mMin = _mMax = Point.Empty;
                         int i = 0;
-                        for (; i < m_SortedTiles.Length; i++)
+                        for (; i < _mSortedTiles.Length; i++)
                         {
-                            m_SortedTiles[i].m_OffsetX -= (short)centerx;
-                            m_SortedTiles[i].m_OffsetY -= (short)centery;
-                            if (m_SortedTiles[i].m_OffsetX < m_Min.X)
-                                m_Min.X = m_SortedTiles[i].m_OffsetX;
-                            if (m_SortedTiles[i].m_OffsetX > m_Max.X)
-                                m_Max.X = m_SortedTiles[i].m_OffsetX;
+                            _mSortedTiles[i].MOffsetX -= (short)centerx;
+                            _mSortedTiles[i].MOffsetY -= (short)centery;
+                            if (_mSortedTiles[i].MOffsetX < _mMin.X)
+                                _mMin.X = _mSortedTiles[i].MOffsetX;
+                            if (_mSortedTiles[i].MOffsetX > _mMax.X)
+                                _mMax.X = _mSortedTiles[i].MOffsetX;
 
-                            if (m_SortedTiles[i].m_OffsetY < m_Min.Y)
-                                m_Min.Y = m_SortedTiles[i].m_OffsetY;
-                            if (m_SortedTiles[i].m_OffsetY > m_Max.Y)
-                                m_Max.Y = m_SortedTiles[i].m_OffsetY;
+                            if (_mSortedTiles[i].MOffsetY < _mMin.Y)
+                                _mMin.Y = _mSortedTiles[i].MOffsetY;
+                            if (_mSortedTiles[i].MOffsetY > _mMax.Y)
+                                _mMax.Y = _mSortedTiles[i].MOffsetY;
                         }
                     }
                     break;
@@ -839,50 +841,50 @@ namespace Ultima
 
         public MultiComponentList(List<MultiTileEntry> arr)
         {
-            m_Min = m_Max = Point.Empty;
+            _mMin = _mMax = Point.Empty;
             int itemcount = arr.Count;
-            m_SortedTiles = new MultiTileEntry[itemcount];
-            m_Min.X = 10000;
-            m_Min.Y = 10000;
+            _mSortedTiles = new MultiTileEntry[itemcount];
+            _mMin.X = 10000;
+            _mMin.Y = 10000;
             int i = 0;
             foreach (MultiTileEntry entry in arr)
             {
-                if (entry.m_OffsetX < m_Min.X)
-                    m_Min.X = entry.m_OffsetX;
+                if (entry.MOffsetX < _mMin.X)
+                    _mMin.X = entry.MOffsetX;
 
-                if (entry.m_OffsetY < m_Min.Y)
-                    m_Min.Y = entry.m_OffsetY;
+                if (entry.MOffsetY < _mMin.Y)
+                    _mMin.Y = entry.MOffsetY;
 
-                if (entry.m_OffsetX > m_Max.X)
-                    m_Max.X = entry.m_OffsetX;
+                if (entry.MOffsetX > _mMax.X)
+                    _mMax.X = entry.MOffsetX;
 
-                if (entry.m_OffsetY > m_Max.Y)
-                    m_Max.Y = entry.m_OffsetY;
+                if (entry.MOffsetY > _mMax.Y)
+                    _mMax.Y = entry.MOffsetY;
 
-                if (entry.m_OffsetZ > m_maxHeight)
-                    m_maxHeight = entry.m_OffsetZ;
-                m_SortedTiles[i] = entry;
+                if (entry.MOffsetZ > _mMaxHeight)
+                    _mMaxHeight = entry.MOffsetZ;
+                _mSortedTiles[i] = entry;
 
                 ++i;
             }
             arr.Clear();
-            int centerx = m_Max.X - (int)(Math.Round((m_Max.X - m_Min.X) / 2.0));
-            int centery = m_Max.Y - (int)(Math.Round((m_Max.Y - m_Min.Y) / 2.0));
+            int centerx = _mMax.X - (int)(Math.Round((_mMax.X - _mMin.X) / 2.0));
+            int centery = _mMax.Y - (int)(Math.Round((_mMax.Y - _mMin.Y) / 2.0));
 
-            m_Min = m_Max = Point.Empty;
-            for (i = 0; i < m_SortedTiles.Length; ++i)
+            _mMin = _mMax = Point.Empty;
+            for (i = 0; i < _mSortedTiles.Length; ++i)
             {
-                m_SortedTiles[i].m_OffsetX -= (short)centerx;
-                m_SortedTiles[i].m_OffsetY -= (short)centery;
-                if (m_SortedTiles[i].m_OffsetX < m_Min.X)
-                    m_Min.X = m_SortedTiles[i].m_OffsetX;
-                if (m_SortedTiles[i].m_OffsetX > m_Max.X)
-                    m_Max.X = m_SortedTiles[i].m_OffsetX;
+                _mSortedTiles[i].MOffsetX -= (short)centerx;
+                _mSortedTiles[i].MOffsetY -= (short)centery;
+                if (_mSortedTiles[i].MOffsetX < _mMin.X)
+                    _mMin.X = _mSortedTiles[i].MOffsetX;
+                if (_mSortedTiles[i].MOffsetX > _mMax.X)
+                    _mMax.X = _mSortedTiles[i].MOffsetX;
 
-                if (m_SortedTiles[i].m_OffsetY < m_Min.Y)
-                    m_Min.Y = m_SortedTiles[i].m_OffsetY;
-                if (m_SortedTiles[i].m_OffsetY > m_Max.Y)
-                    m_Max.Y = m_SortedTiles[i].m_OffsetY;
+                if (_mSortedTiles[i].MOffsetY < _mMin.Y)
+                    _mMin.Y = _mSortedTiles[i].MOffsetY;
+                if (_mSortedTiles[i].MOffsetY > _mMax.Y)
+                    _mMax.Y = _mSortedTiles[i].MOffsetY;
             }
             ConvertList();
         }
@@ -891,114 +893,114 @@ namespace Ultima
         {
             string line;
             int itemcount = 0;
-            m_Min = m_Max = Point.Empty;
-            m_SortedTiles = new MultiTileEntry[count];
-            m_Min.X = 10000;
-            m_Min.Y = 10000;
+            _mMin = _mMax = Point.Empty;
+            _mSortedTiles = new MultiTileEntry[count];
+            _mMin.X = 10000;
+            _mMin.Y = 10000;
 
             while ((line = stream.ReadLine()) != null)
             {
                 string[] split = Regex.Split(line, @"\s+");
-                m_SortedTiles[itemcount].m_ItemID = Convert.ToUInt16(split[0]);
-                m_SortedTiles[itemcount].m_Flags = Convert.ToInt32(split[1]);
-                m_SortedTiles[itemcount].m_OffsetX = Convert.ToInt16(split[2]);
-                m_SortedTiles[itemcount].m_OffsetY = Convert.ToInt16(split[3]);
-                m_SortedTiles[itemcount].m_OffsetZ = Convert.ToInt16(split[4]);
-                m_SortedTiles[itemcount].m_Unk1 = 0;
+                _mSortedTiles[itemcount].MItemId = Convert.ToUInt16(split[0]);
+                _mSortedTiles[itemcount].MFlags = Convert.ToInt32(split[1]);
+                _mSortedTiles[itemcount].MOffsetX = Convert.ToInt16(split[2]);
+                _mSortedTiles[itemcount].MOffsetY = Convert.ToInt16(split[3]);
+                _mSortedTiles[itemcount].MOffsetZ = Convert.ToInt16(split[4]);
+                _mSortedTiles[itemcount].MUnk1 = 0;
 
-                MultiTileEntry e = m_SortedTiles[itemcount];
+                MultiTileEntry e = _mSortedTiles[itemcount];
 
-                if (e.m_OffsetX < m_Min.X)
-                    m_Min.X = e.m_OffsetX;
-                if (e.m_OffsetY < m_Min.Y)
-                    m_Min.Y = e.m_OffsetY;
-                if (e.m_OffsetX > m_Max.X)
-                    m_Max.X = e.m_OffsetX;
-                if (e.m_OffsetY > m_Max.Y)
-                    m_Max.Y = e.m_OffsetY;
-                if (e.m_OffsetZ > m_maxHeight)
-                    m_maxHeight = e.m_OffsetZ;
+                if (e.MOffsetX < _mMin.X)
+                    _mMin.X = e.MOffsetX;
+                if (e.MOffsetY < _mMin.Y)
+                    _mMin.Y = e.MOffsetY;
+                if (e.MOffsetX > _mMax.X)
+                    _mMax.X = e.MOffsetX;
+                if (e.MOffsetY > _mMax.Y)
+                    _mMax.Y = e.MOffsetY;
+                if (e.MOffsetZ > _mMaxHeight)
+                    _mMaxHeight = e.MOffsetZ;
 
                 ++itemcount;
                 if (itemcount == count)
                     break;
 
             }
-            int centerx = m_Max.X - (int)(Math.Round((m_Max.X - m_Min.X) / 2.0));
-            int centery = m_Max.Y - (int)(Math.Round((m_Max.Y - m_Min.Y) / 2.0));
+            int centerx = _mMax.X - (int)(Math.Round((_mMax.X - _mMin.X) / 2.0));
+            int centery = _mMax.Y - (int)(Math.Round((_mMax.Y - _mMin.Y) / 2.0));
 
-            m_Min = m_Max = Point.Empty;
+            _mMin = _mMax = Point.Empty;
             int i = 0;
-            for (; i < m_SortedTiles.Length; i++)
+            for (; i < _mSortedTiles.Length; i++)
             {
-                m_SortedTiles[i].m_OffsetX -= (short)centerx;
-                m_SortedTiles[i].m_OffsetY -= (short)centery;
-                if (m_SortedTiles[i].m_OffsetX < m_Min.X)
-                    m_Min.X = m_SortedTiles[i].m_OffsetX;
-                if (m_SortedTiles[i].m_OffsetX > m_Max.X)
-                    m_Max.X = m_SortedTiles[i].m_OffsetX;
+                _mSortedTiles[i].MOffsetX -= (short)centerx;
+                _mSortedTiles[i].MOffsetY -= (short)centery;
+                if (_mSortedTiles[i].MOffsetX < _mMin.X)
+                    _mMin.X = _mSortedTiles[i].MOffsetX;
+                if (_mSortedTiles[i].MOffsetX > _mMax.X)
+                    _mMax.X = _mSortedTiles[i].MOffsetX;
 
-                if (m_SortedTiles[i].m_OffsetY < m_Min.Y)
-                    m_Min.Y = m_SortedTiles[i].m_OffsetY;
-                if (m_SortedTiles[i].m_OffsetY > m_Max.Y)
-                    m_Max.Y = m_SortedTiles[i].m_OffsetY;
+                if (_mSortedTiles[i].MOffsetY < _mMin.Y)
+                    _mMin.Y = _mSortedTiles[i].MOffsetY;
+                if (_mSortedTiles[i].MOffsetY > _mMax.Y)
+                    _mMax.Y = _mSortedTiles[i].MOffsetY;
             }
             ConvertList();
         }
 
         private void ConvertList()
         {
-            m_Center = new Point(-m_Min.X, -m_Min.Y);
-            m_Width = (m_Max.X - m_Min.X) + 1;
-            m_Height = (m_Max.Y - m_Min.Y) + 1;
+            _mCenter = new Point(-_mMin.X, -_mMin.Y);
+            _mWidth = (_mMax.X - _mMin.X) + 1;
+            _mHeight = (_mMax.Y - _mMin.Y) + 1;
 
-            MTileList[][] tiles = new MTileList[m_Width][];
-            m_Tiles = new MTile[m_Width][][];
+            MTileList[][] tiles = new MTileList[_mWidth][];
+            _mTiles = new MTile[_mWidth][][];
 
-            for (int x = 0; x < m_Width; ++x)
+            for (int x = 0; x < _mWidth; ++x)
             {
-                tiles[x] = new MTileList[m_Height];
-                m_Tiles[x] = new MTile[m_Height][];
+                tiles[x] = new MTileList[_mHeight];
+                _mTiles[x] = new MTile[_mHeight][];
 
-                for (int y = 0; y < m_Height; ++y)
+                for (int y = 0; y < _mHeight; ++y)
                     tiles[x][y] = new MTileList();
             }
 
-            for (int i = 0; i < m_SortedTiles.Length; ++i)
+            for (int i = 0; i < _mSortedTiles.Length; ++i)
             {
-                int xOffset = m_SortedTiles[i].m_OffsetX + m_Center.X;
-                int yOffset = m_SortedTiles[i].m_OffsetY + m_Center.Y;
+                int xOffset = _mSortedTiles[i].MOffsetX + _mCenter.X;
+                int yOffset = _mSortedTiles[i].MOffsetY + _mCenter.Y;
 
-                tiles[xOffset][yOffset].Add((ushort)(m_SortedTiles[i].m_ItemID), (sbyte)m_SortedTiles[i].m_OffsetZ, (sbyte)m_SortedTiles[i].m_Flags, m_SortedTiles[i].m_Unk1);
+                tiles[xOffset][yOffset].Add(_mSortedTiles[i].MItemId, (sbyte)_mSortedTiles[i].MOffsetZ, (sbyte)_mSortedTiles[i].MFlags, _mSortedTiles[i].MUnk1);
             }
 
-            m_Surface = 0;
+            _mSurface = 0;
 
-            for (int x = 0; x < m_Width; ++x)
+            for (int x = 0; x < _mWidth; ++x)
             {
-                for (int y = 0; y < m_Height; ++y)
+                for (int y = 0; y < _mHeight; ++y)
                 {
-                    m_Tiles[x][y] = tiles[x][y].ToArray();
-                    for (int i = 0; i < m_Tiles[x][y].Length; ++i)
-                        m_Tiles[x][y][i].Solver = i;
-                    if (m_Tiles[x][y].Length > 1)
-                        Array.Sort(m_Tiles[x][y]);
-                    if (m_Tiles[x][y].Length > 0)
-                        ++m_Surface;
+                    _mTiles[x][y] = tiles[x][y].ToArray();
+                    for (int i = 0; i < _mTiles[x][y].Length; ++i)
+                        _mTiles[x][y][i].Solver = i;
+                    if (_mTiles[x][y].Length > 1)
+                        Array.Sort(_mTiles[x][y]);
+                    if (_mTiles[x][y].Length > 0)
+                        ++_mSurface;
                 }
             }
         }
 
         public MultiComponentList(MTileList[][] newtiles, int count, int width, int height)
         {
-            m_Min = m_Max = Point.Empty;
-            m_SortedTiles = new MultiTileEntry[count];
-            m_Center = new Point((int)(Math.Round((width / 2.0))) - 1, (int)(Math.Round((height / 2.0))) - 1);
-            if (m_Center.X < 0)
-                m_Center.X = width / 2;
-            if (m_Center.Y < 0)
-                m_Center.Y = height / 2;
-            m_maxHeight = -128;
+            _mMin = _mMax = Point.Empty;
+            _mSortedTiles = new MultiTileEntry[count];
+            _mCenter = new Point((int)(Math.Round((width / 2.0))) - 1, (int)(Math.Round((height / 2.0))) - 1);
+            if (_mCenter.X < 0)
+                _mCenter.X = width / 2;
+            if (_mCenter.Y < 0)
+                _mCenter.Y = height / 2;
+            _mMaxHeight = -128;
 
             int counter = 0;
             for (int x = 0; x < width; ++x)
@@ -1008,23 +1010,23 @@ namespace Ultima
                     MTile[] tiles = newtiles[x][y].ToArray();
                     for (int i = 0; i < tiles.Length; ++i)
                     {
-                        m_SortedTiles[counter].m_ItemID = (ushort)(tiles[i].ID);
-                        m_SortedTiles[counter].m_OffsetX = (short)(x - m_Center.X);
-                        m_SortedTiles[counter].m_OffsetY = (short)(y - m_Center.Y);
-                        m_SortedTiles[counter].m_OffsetZ = (short)(tiles[i].Z);
-                        m_SortedTiles[counter].m_Flags = (int)tiles[i].Flag;
-                        m_SortedTiles[counter].m_Unk1 = 0;
+                        _mSortedTiles[counter].MItemId = tiles[i].Id;
+                        _mSortedTiles[counter].MOffsetX = (short)(x - _mCenter.X);
+                        _mSortedTiles[counter].MOffsetY = (short)(y - _mCenter.Y);
+                        _mSortedTiles[counter].MOffsetZ = (short)(tiles[i].Z);
+                        _mSortedTiles[counter].MFlags = tiles[i].Flag;
+                        _mSortedTiles[counter].MUnk1 = 0;
 
-                        if (m_SortedTiles[counter].m_OffsetX < m_Min.X)
-                            m_Min.X = m_SortedTiles[counter].m_OffsetX;
-                        if (m_SortedTiles[counter].m_OffsetX > m_Max.X)
-                            m_Max.X = m_SortedTiles[counter].m_OffsetX;
-                        if (m_SortedTiles[counter].m_OffsetY < m_Min.Y)
-                            m_Min.Y = m_SortedTiles[counter].m_OffsetY;
-                        if (m_SortedTiles[counter].m_OffsetY > m_Max.Y)
-                            m_Max.Y = m_SortedTiles[counter].m_OffsetY;
-                        if (m_SortedTiles[counter].m_OffsetZ > m_maxHeight)
-                            m_maxHeight = m_SortedTiles[counter].m_OffsetZ;
+                        if (_mSortedTiles[counter].MOffsetX < _mMin.X)
+                            _mMin.X = _mSortedTiles[counter].MOffsetX;
+                        if (_mSortedTiles[counter].MOffsetX > _mMax.X)
+                            _mMax.X = _mSortedTiles[counter].MOffsetX;
+                        if (_mSortedTiles[counter].MOffsetY < _mMin.Y)
+                            _mMin.Y = _mSortedTiles[counter].MOffsetY;
+                        if (_mSortedTiles[counter].MOffsetY > _mMax.Y)
+                            _mMax.Y = _mSortedTiles[counter].MOffsetY;
+                        if (_mSortedTiles[counter].MOffsetZ > _mMaxHeight)
+                            _mMaxHeight = _mSortedTiles[counter].MOffsetZ;
                         ++counter;
                     }
                 }
@@ -1034,60 +1036,52 @@ namespace Ultima
 
         private MultiComponentList()
         {
-            m_Tiles = new MTile[0][][];
+            _mTiles = new MTile[0][][];
         }
 
-        public void ExportToTextFile(string FileName)
+        public void ExportToTextFile(string fileName)
         {
-            using (StreamWriter Tex = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
+            using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
             {
-                for (int i = 0; i < m_SortedTiles.Length; ++i)
+                for (int i = 0; i < _mSortedTiles.Length; ++i)
                 {
-                    Tex.WriteLine(String.Format("0x{0:X} {1} {2} {3} {4}",
-                                m_SortedTiles[i].m_ItemID,
-                                m_SortedTiles[i].m_OffsetX,
-                                m_SortedTiles[i].m_OffsetY,
-                                m_SortedTiles[i].m_OffsetZ,
-                                m_SortedTiles[i].m_Flags));
+                    tex.WriteLine(
+                        $"0x{_mSortedTiles[i].MItemId:X} {_mSortedTiles[i].MOffsetX} {_mSortedTiles[i].MOffsetY} {_mSortedTiles[i].MOffsetZ} {_mSortedTiles[i].MFlags}");
                 }
             }
         }
 
-        public void ExportToWscFile(string FileName)
+        public void ExportToWscFile(string fileName)
         {
-            using (StreamWriter Tex = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
+            using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
             {
-                for (int i = 0; i < m_SortedTiles.Length; ++i)
+                for (int i = 0; i < _mSortedTiles.Length; ++i)
                 {
-                    Tex.WriteLine(String.Format("SECTION WORLDITEM {0}", i));
-                    Tex.WriteLine("{");
-                    Tex.WriteLine(String.Format("\tID\t{0}", m_SortedTiles[i].m_ItemID));
-                    Tex.WriteLine(String.Format("\tX\t{0}", m_SortedTiles[i].m_OffsetX));
-                    Tex.WriteLine(String.Format("\tY\t{0}", m_SortedTiles[i].m_OffsetY));
-                    Tex.WriteLine(String.Format("\tZ\t{0}", m_SortedTiles[i].m_OffsetZ));
-                    Tex.WriteLine("\tColor\t0");
-                    Tex.WriteLine("}");
+                    tex.WriteLine($"SECTION WORLDITEM {i}");
+                    tex.WriteLine("{");
+                    tex.WriteLine($"\tID\t{_mSortedTiles[i].MItemId}");
+                    tex.WriteLine($"\tX\t{_mSortedTiles[i].MOffsetX}");
+                    tex.WriteLine($"\tY\t{_mSortedTiles[i].MOffsetY}");
+                    tex.WriteLine($"\tZ\t{_mSortedTiles[i].MOffsetZ}");
+                    tex.WriteLine("\tColor\t0");
+                    tex.WriteLine("}");
 
                 }
             }
         }
 
-        public void ExportToUOAFile(string FileName)
+        public void ExportToUoaFile(string fileName)
         {
-            using (StreamWriter Tex = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
+            using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
             {
-                Tex.WriteLine("6 version");
-                Tex.WriteLine("1 template id");
-                Tex.WriteLine("-1 item version");
-                Tex.WriteLine(String.Format("{0} num components", m_SortedTiles.Length));
-                for (int i = 0; i < m_SortedTiles.Length; ++i)
+                tex.WriteLine("6 version");
+                tex.WriteLine("1 template id");
+                tex.WriteLine("-1 item version");
+                tex.WriteLine($"{_mSortedTiles.Length} num components");
+                for (int i = 0; i < _mSortedTiles.Length; ++i)
                 {
-                    Tex.WriteLine(String.Format("{0} {1} {2} {3} {4}",
-                                m_SortedTiles[i].m_ItemID,
-                                m_SortedTiles[i].m_OffsetX,
-                                m_SortedTiles[i].m_OffsetY,
-                                m_SortedTiles[i].m_OffsetZ,
-                                m_SortedTiles[i].m_Flags));
+                    tex.WriteLine(
+                        $"{_mSortedTiles[i].MItemId} {_mSortedTiles[i].MOffsetX} {_mSortedTiles[i].MOffsetY} {_mSortedTiles[i].MOffsetZ} {_mSortedTiles[i].MFlags}");
                 }
             }
         }

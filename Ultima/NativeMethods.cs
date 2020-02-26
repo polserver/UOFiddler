@@ -9,13 +9,13 @@ namespace Ultima
         public static extern int IsWindow(ClientWindowHandle window);
 
         [DllImport("User32")]
-        public static extern int GetWindowThreadProcessId(ClientWindowHandle window, ref ClientProcessHandle processID);
+        public static extern int GetWindowThreadProcessId(ClientWindowHandle window, ref ClientProcessHandle processId);
 
         [DllImport("Kernel32")]
         public unsafe static extern int _lread(SafeFileHandle hFile, void* lpBuffer, int wBytes);
 
         [DllImport("Kernel32")]
-        public static extern ClientProcessHandle OpenProcess(int desiredAccess, int inheritClientHandle, ClientProcessHandle processID);
+        public static extern ClientProcessHandle OpenProcess(int desiredAccess, int inheritClientHandle, ClientProcessHandle processId);
 
         [DllImport("Kernel32")]
         public static extern int CloseHandle(ClientProcessHandle handle);
@@ -52,16 +52,16 @@ namespace Ultima
             return (short)((y >> 8) | (y << 8));
         }
 
-        private static byte[] m_StringBuffer;
+        private static byte[] _mStringBuffer;
         public unsafe static string ReadNameString(byte* buffer, int len)
         {
-            if ((m_StringBuffer == null) || (m_StringBuffer.Length < len))
-                m_StringBuffer = new byte[20];
+            if ((_mStringBuffer == null) || (_mStringBuffer.Length < len))
+                _mStringBuffer = new byte[20];
             int count;
             for (count = 0; count < len && *buffer != 0; ++count)
-                m_StringBuffer[count] = *buffer++;
+                _mStringBuffer[count] = *buffer++;
 
-            return System.Text.Encoding.Default.GetString(m_StringBuffer, 0, count);
+            return System.Text.Encoding.Default.GetString(_mStringBuffer, 0, count);
         }
         public unsafe static string ReadNameString(byte[] buffer, int len)
         {

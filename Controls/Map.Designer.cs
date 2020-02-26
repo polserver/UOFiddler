@@ -37,8 +37,8 @@ namespace FiddlerControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -112,7 +112,7 @@ namespace FiddlerControls
             this.collapsibleSplitter2 = new FiddlerControls.CollapsibleSplitter();
             this.collapsibleSplitter1 = new FiddlerControls.CollapsibleSplitter();
             this.statusStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -121,13 +121,12 @@ namespace FiddlerControls
             // 
             // statusStrip
             // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CoordsLabel,
-            this.ClientLocLabel,
-            this.ZoomLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 302);
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.CoordsLabel, this.ClientLocLabel, this.ZoomLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 341);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(619, 22);
+            this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip.Size = new System.Drawing.Size(722, 33);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -135,7 +134,7 @@ namespace FiddlerControls
             // 
             this.CoordsLabel.AutoSize = false;
             this.CoordsLabel.Name = "CoordsLabel";
-            this.CoordsLabel.Size = new System.Drawing.Size(120, 17);
+            this.CoordsLabel.Size = new System.Drawing.Size(120, 28);
             this.CoordsLabel.Text = "Coords: 0,0";
             this.CoordsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -143,7 +142,7 @@ namespace FiddlerControls
             // 
             this.ClientLocLabel.AutoSize = false;
             this.ClientLocLabel.Name = "ClientLocLabel";
-            this.ClientLocLabel.Size = new System.Drawing.Size(200, 17);
+            this.ClientLocLabel.Size = new System.Drawing.Size(200, 28);
             this.ClientLocLabel.Text = "ClientLoc: 0,0";
             this.ClientLocLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -151,7 +150,7 @@ namespace FiddlerControls
             // 
             this.ZoomLabel.AutoSize = false;
             this.ZoomLabel.Name = "ZoomLabel";
-            this.ZoomLabel.Size = new System.Drawing.Size(100, 17);
+            this.ZoomLabel.Size = new System.Drawing.Size(100, 28);
             this.ZoomLabel.Text = "Zoom: ";
             this.ZoomLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -159,196 +158,187 @@ namespace FiddlerControls
             // 
             this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(0, 33);
+            this.pictureBox.Location = new System.Drawing.Point(0, 31);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(394, 252);
+            this.pictureBox.Size = new System.Drawing.Size(469, 293);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
-            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
-            this.pictureBox.Resize += new System.EventHandler(this.OnResizeMap);
-            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
+            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnMouseUp);
+            this.pictureBox.Resize += new System.EventHandler(this.OnResizeMap);
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zoomToolStripMenuItem,
-            this.zoomToolStripMenuItem1,
-            this.getMapInfoToolStripMenuItem,
-            this.insertMarkerToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.gotoToolStripMenuItem,
-            this.sendClientToPosToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.feluccaToolStripMenuItem,
-            this.trammelToolStripMenuItem,
-            this.ilshenarToolStripMenuItem,
-            this.malasToolStripMenuItem,
-            this.tokunoToolStripMenuItem,
-            this.terMurToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.extractMapToolStripMenuItem});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                this.zoomToolStripMenuItem, this.zoomToolStripMenuItem1, this.getMapInfoToolStripMenuItem,
+                this.insertMarkerToolStripMenuItem, this.toolStripSeparator4, this.gotoToolStripMenuItem,
+                this.sendClientToPosToolStripMenuItem, this.toolStripSeparator2, this.feluccaToolStripMenuItem,
+                this.trammelToolStripMenuItem, this.ilshenarToolStripMenuItem, this.malasToolStripMenuItem,
+                this.tokunoToolStripMenuItem, this.terMurToolStripMenuItem, this.toolStripSeparator1,
+                this.extractMapToolStripMenuItem
+            });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 330);
-            this.contextMenuStrip1.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.onContextClosed);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(172, 308);
+            this.contextMenuStrip1.Closed +=
+                new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.OnContextClosed);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.OnOpenContext);
             // 
             // zoomToolStripMenuItem
             // 
             this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.zoomToolStripMenuItem.Text = "+Zoom";
             this.zoomToolStripMenuItem.Click += new System.EventHandler(this.OnZoomPlus);
             // 
             // zoomToolStripMenuItem1
             // 
             this.zoomToolStripMenuItem1.Name = "zoomToolStripMenuItem1";
-            this.zoomToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.zoomToolStripMenuItem1.Size = new System.Drawing.Size(171, 22);
             this.zoomToolStripMenuItem1.Text = "-Zoom";
             this.zoomToolStripMenuItem1.Click += new System.EventHandler(this.OnZoomMinus);
             // 
             // getMapInfoToolStripMenuItem
             // 
             this.getMapInfoToolStripMenuItem.Name = "getMapInfoToolStripMenuItem";
-            this.getMapInfoToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.getMapInfoToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.getMapInfoToolStripMenuItem.Text = "GetMapInfo";
             this.getMapInfoToolStripMenuItem.Click += new System.EventHandler(this.GetMapInfo);
             // 
             // insertMarkerToolStripMenuItem
             // 
             this.insertMarkerToolStripMenuItem.Name = "insertMarkerToolStripMenuItem";
-            this.insertMarkerToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.insertMarkerToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.insertMarkerToolStripMenuItem.Text = "Insert Marker";
             this.insertMarkerToolStripMenuItem.Click += new System.EventHandler(this.OnClickInsertMarker);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(171, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(168, 6);
             // 
             // gotoToolStripMenuItem
             // 
-            this.gotoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.TextBoxGoto});
+            this.gotoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.TextBoxGoto});
             this.gotoToolStripMenuItem.Name = "gotoToolStripMenuItem";
-            this.gotoToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.gotoToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.gotoToolStripMenuItem.Text = "Goto...";
             this.gotoToolStripMenuItem.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
             // TextBoxGoto
             // 
             this.TextBoxGoto.Name = "TextBoxGoto";
-            this.TextBoxGoto.Size = new System.Drawing.Size(100, 21);
-            this.TextBoxGoto.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownGoto);
+            this.TextBoxGoto.Size = new System.Drawing.Size(100, 23);
+            this.TextBoxGoto.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownGoto);
             // 
             // sendClientToPosToolStripMenuItem
             // 
             this.sendClientToPosToolStripMenuItem.Name = "sendClientToPosToolStripMenuItem";
-            this.sendClientToPosToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.sendClientToPosToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.sendClientToPosToolStripMenuItem.Text = "Send Client To Pos";
-            this.sendClientToPosToolStripMenuItem.Click += new System.EventHandler(this.onClickSendClientToPos);
+            this.sendClientToPosToolStripMenuItem.Click += new System.EventHandler(this.OnClickSendClientToPos);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(171, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(168, 6);
             // 
             // feluccaToolStripMenuItem
             // 
             this.feluccaToolStripMenuItem.Name = "feluccaToolStripMenuItem";
-            this.feluccaToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.feluccaToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.feluccaToolStripMenuItem.Text = "Felucca";
             this.feluccaToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapFelucca);
             // 
             // trammelToolStripMenuItem
             // 
             this.trammelToolStripMenuItem.Name = "trammelToolStripMenuItem";
-            this.trammelToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.trammelToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.trammelToolStripMenuItem.Text = "Trammel";
             this.trammelToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapTrammel);
             // 
             // ilshenarToolStripMenuItem
             // 
             this.ilshenarToolStripMenuItem.Name = "ilshenarToolStripMenuItem";
-            this.ilshenarToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.ilshenarToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.ilshenarToolStripMenuItem.Text = "Ilshenar";
             this.ilshenarToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapIlshenar);
             // 
             // malasToolStripMenuItem
             // 
             this.malasToolStripMenuItem.Name = "malasToolStripMenuItem";
-            this.malasToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.malasToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.malasToolStripMenuItem.Text = "Malas";
             this.malasToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapMalas);
             // 
             // tokunoToolStripMenuItem
             // 
             this.tokunoToolStripMenuItem.Name = "tokunoToolStripMenuItem";
-            this.tokunoToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.tokunoToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.tokunoToolStripMenuItem.Text = "Tokuno";
             this.tokunoToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapTokuno);
             // 
             // terMurToolStripMenuItem
             // 
             this.terMurToolStripMenuItem.Name = "terMurToolStripMenuItem";
-            this.terMurToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.terMurToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.terMurToolStripMenuItem.Text = "TerMur";
             this.terMurToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapTerMur);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(171, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(168, 6);
             // 
             // extractMapToolStripMenuItem
             // 
-            this.extractMapToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.asBmpToolStripMenuItem,
-            this.asTiffToolStripMenuItem,
-            this.asJpgToolStripMenuItem});
+            this.extractMapToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.asBmpToolStripMenuItem, this.asTiffToolStripMenuItem, this.asJpgToolStripMenuItem});
             this.extractMapToolStripMenuItem.Name = "extractMapToolStripMenuItem";
-            this.extractMapToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.extractMapToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.extractMapToolStripMenuItem.Text = "Extract Map..";
             this.extractMapToolStripMenuItem.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapJpg);
             // 
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 285);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 324);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(394, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(469, 17);
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(394, 33);
+            this.vScrollBar.Location = new System.Drawing.Point(469, 31);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 269);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 310);
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
@@ -362,18 +352,19 @@ namespace FiddlerControls
             // 
             this.PreloadWorker.WorkerReportsProgress = true;
             this.PreloadWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.PreLoadDoWork);
-            this.PreloadWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoadCompleted);
-            this.PreloadWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.PreLoadProgressChanged);
+            this.PreloadWorker.ProgressChanged +=
+                new System.ComponentModel.ProgressChangedEventHandler(this.PreLoadProgressChanged);
+            this.PreloadWorker.RunWorkerCompleted +=
+                new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoadCompleted);
             // 
             // contextMenuStrip2
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.gotoToolStripMenuItem1,
-            this.removeToolStripMenuItem,
-            this.switchVisibleToolStripMenuItem});
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.gotoToolStripMenuItem1, this.removeToolStripMenuItem, this.switchVisibleToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(157, 70);
-            this.contextMenuStrip2.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.onContextClosed);
+            this.contextMenuStrip2.Closed +=
+                new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.OnContextClosed);
             // 
             // gotoToolStripMenuItem1
             // 
@@ -400,9 +391,9 @@ namespace FiddlerControls
             // 
             this.panel1.Controls.Add(this.OverlayObjectTree);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(419, 33);
+            this.panel1.Location = new System.Drawing.Point(489, 31);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 269);
+            this.panel1.Size = new System.Drawing.Size(233, 310);
             this.panel1.TabIndex = 5;
             // 
             // OverlayObjectTree
@@ -411,37 +402,37 @@ namespace FiddlerControls
             this.OverlayObjectTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OverlayObjectTree.Location = new System.Drawing.Point(0, 0);
             this.OverlayObjectTree.Name = "OverlayObjectTree";
-            this.OverlayObjectTree.Size = new System.Drawing.Size(200, 269);
+            this.OverlayObjectTree.Size = new System.Drawing.Size(233, 310);
             this.OverlayObjectTree.TabIndex = 5;
-            this.OverlayObjectTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClickMarker);
+            this.OverlayObjectTree.NodeMouseDoubleClick +=
+                new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClickMarker);
             // 
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripDropDownButton1,
-            this.toolStripDropDownButton2,
-            this.ProgressBar,
-            this.PreloadMap,
-            this.toolStripDropDownButton3});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                this.toolStripDropDownButton1, this.toolStripDropDownButton2, this.ProgressBar, this.PreloadMap,
+                this.toolStripDropDownButton3
+            });
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(722, 28);
             this.toolStrip1.TabIndex = 7;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showStaticsToolStripMenuItem1,
-            this.showCenterCrossToolStripMenuItem1,
-            this.showMarkersToolStripMenuItem,
-            this.showClientCrossToolStripMenuItem});
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                this.showStaticsToolStripMenuItem1, this.showCenterCrossToolStripMenuItem1,
+                this.showMarkersToolStripMenuItem, this.showClientCrossToolStripMenuItem
+            });
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(42, 22);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 25);
             this.toolStripDropDownButton1.Text = "View";
             this.toolStripDropDownButton1.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
@@ -451,7 +442,7 @@ namespace FiddlerControls
             this.showStaticsToolStripMenuItem1.CheckOnClick = true;
             this.showStaticsToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showStaticsToolStripMenuItem1.Name = "showStaticsToolStripMenuItem1";
-            this.showStaticsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.showStaticsToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.showStaticsToolStripMenuItem1.Text = "Show Statics";
             this.showStaticsToolStripMenuItem1.Click += new System.EventHandler(this.OnChangeView);
             // 
@@ -461,7 +452,7 @@ namespace FiddlerControls
             this.showCenterCrossToolStripMenuItem1.CheckOnClick = true;
             this.showCenterCrossToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showCenterCrossToolStripMenuItem1.Name = "showCenterCrossToolStripMenuItem1";
-            this.showCenterCrossToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.showCenterCrossToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.showCenterCrossToolStripMenuItem1.Text = "Show Center Cross";
             this.showCenterCrossToolStripMenuItem1.Click += new System.EventHandler(this.OnChangeView);
             // 
@@ -471,7 +462,7 @@ namespace FiddlerControls
             this.showMarkersToolStripMenuItem.CheckOnClick = true;
             this.showMarkersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showMarkersToolStripMenuItem.Name = "showMarkersToolStripMenuItem";
-            this.showMarkersToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.showMarkersToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.showMarkersToolStripMenuItem.Text = "Show Markers";
             this.showMarkersToolStripMenuItem.Click += new System.EventHandler(this.OnChangeView);
             // 
@@ -481,20 +472,20 @@ namespace FiddlerControls
             this.showClientCrossToolStripMenuItem.CheckOnClick = true;
             this.showClientCrossToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showClientCrossToolStripMenuItem.Name = "showClientCrossToolStripMenuItem";
-            this.showClientCrossToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.showClientCrossToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.showClientCrossToolStripMenuItem.Text = "Show Client Cross";
             // 
             // toolStripDropDownButton2
             // 
             this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showClientLocToolStripMenuItem1,
-            this.toolStripSeparator5,
-            this.gotoClientLocToolStripMenuItem1,
-            this.sendClientToCenterToolStripMenuItem});
+            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                this.showClientLocToolStripMenuItem1, this.toolStripSeparator5, this.gotoClientLocToolStripMenuItem1,
+                this.sendClientToCenterToolStripMenuItem
+            });
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(89, 22);
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(94, 25);
             this.toolStripDropDownButton2.Text = "Client Interact";
             this.toolStripDropDownButton2.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
@@ -502,34 +493,34 @@ namespace FiddlerControls
             // 
             this.showClientLocToolStripMenuItem1.CheckOnClick = true;
             this.showClientLocToolStripMenuItem1.Name = "showClientLocToolStripMenuItem1";
-            this.showClientLocToolStripMenuItem1.Size = new System.Drawing.Size(188, 22);
+            this.showClientLocToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.showClientLocToolStripMenuItem1.Text = "Show Client Loc";
-            this.showClientLocToolStripMenuItem1.Click += new System.EventHandler(this.onClick_ShowClientLoc);
+            this.showClientLocToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_ShowClientLoc);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(185, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(183, 6);
             // 
             // gotoClientLocToolStripMenuItem1
             // 
             this.gotoClientLocToolStripMenuItem1.Name = "gotoClientLocToolStripMenuItem1";
-            this.gotoClientLocToolStripMenuItem1.Size = new System.Drawing.Size(188, 22);
+            this.gotoClientLocToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.gotoClientLocToolStripMenuItem1.Text = "Goto Client Loc";
-            this.gotoClientLocToolStripMenuItem1.Click += new System.EventHandler(this.onClick_GotoClientLoc);
+            this.gotoClientLocToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_GotoClientLoc);
             // 
             // sendClientToCenterToolStripMenuItem
             // 
             this.sendClientToCenterToolStripMenuItem.Name = "sendClientToCenterToolStripMenuItem";
-            this.sendClientToCenterToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.sendClientToCenterToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.sendClientToCenterToolStripMenuItem.Text = "Send Client to Center";
-            this.sendClientToCenterToolStripMenuItem.Click += new System.EventHandler(this.onClickSendClient);
+            this.sendClientToCenterToolStripMenuItem.Click += new System.EventHandler(this.OnClickSendClient);
             // 
             // ProgressBar
             // 
             this.ProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(100, 22);
+            this.ProgressBar.Size = new System.Drawing.Size(117, 25);
             // 
             // PreloadMap
             // 
@@ -537,127 +528,124 @@ namespace FiddlerControls
             this.PreloadMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.PreloadMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PreloadMap.Name = "PreloadMap";
-            this.PreloadMap.Size = new System.Drawing.Size(70, 22);
+            this.PreloadMap.Size = new System.Drawing.Size(78, 25);
             this.PreloadMap.Text = "Preload Map";
             this.PreloadMap.Click += new System.EventHandler(this.OnClickPreloadMap);
             // 
             // toolStripDropDownButton3
             // 
             this.toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.defragStaticsToolStripMenuItem,
-            this.defragAndRemoveDuplicatesStToolStripMenuItem,
-            this.importStaticsToolStripMenuItem,
-            this.meltStaticsToolStripMenuItem,
-            this.clearStaticsinMemoryToolStripMenuItem,
-            this.reportStaticsUnderMapToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.toolStripSeparator3,
-            this.rewriteMapToolStripMenuItem,
-            this.toolStripSeparator6,
-            this.copyToolStripMenuItem,
-            this.insertDiffDataToolStripMenuItem,
-            this.toolStripSeparator7,
-            this.replaceTilesToolStripMenuItem});
+            this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                this.defragStaticsToolStripMenuItem, this.defragAndRemoveDuplicatesStToolStripMenuItem,
+                this.importStaticsToolStripMenuItem, this.meltStaticsToolStripMenuItem,
+                this.clearStaticsinMemoryToolStripMenuItem, this.reportStaticsUnderMapToolStripMenuItem,
+                this.toolStripMenuItem1, this.toolStripSeparator3, this.rewriteMapToolStripMenuItem,
+                this.toolStripSeparator6, this.copyToolStripMenuItem, this.insertDiffDataToolStripMenuItem,
+                this.toolStripSeparator7, this.replaceTilesToolStripMenuItem
+            });
             this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
-            this.toolStripDropDownButton3.Size = new System.Drawing.Size(40, 22);
+            this.toolStripDropDownButton3.Size = new System.Drawing.Size(45, 25);
             this.toolStripDropDownButton3.Text = "Misc";
             this.toolStripDropDownButton3.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
             // defragStaticsToolStripMenuItem
             // 
             this.defragStaticsToolStripMenuItem.Name = "defragStaticsToolStripMenuItem";
-            this.defragStaticsToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.defragStaticsToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.defragStaticsToolStripMenuItem.Text = "Defrag Statics";
             this.defragStaticsToolStripMenuItem.Click += new System.EventHandler(this.OnClickDefragStatics);
             // 
             // defragAndRemoveDuplicatesStToolStripMenuItem
             // 
             this.defragAndRemoveDuplicatesStToolStripMenuItem.Name = "defragAndRemoveDuplicatesStToolStripMenuItem";
-            this.defragAndRemoveDuplicatesStToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.defragAndRemoveDuplicatesStToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.defragAndRemoveDuplicatesStToolStripMenuItem.Text = "Defrag and Remove Duplicates Statics";
-            this.defragAndRemoveDuplicatesStToolStripMenuItem.Click += new System.EventHandler(this.OnClickDefragRemoveStatics);
+            this.defragAndRemoveDuplicatesStToolStripMenuItem.Click +=
+                new System.EventHandler(this.OnClickDefragRemoveStatics);
             // 
             // importStaticsToolStripMenuItem
             // 
             this.importStaticsToolStripMenuItem.Name = "importStaticsToolStripMenuItem";
-            this.importStaticsToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.importStaticsToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.importStaticsToolStripMenuItem.Text = "Freeze Statics.. (in Memory)";
             this.importStaticsToolStripMenuItem.Click += new System.EventHandler(this.OnClickStaticImport);
             // 
             // meltStaticsToolStripMenuItem
             // 
             this.meltStaticsToolStripMenuItem.Name = "meltStaticsToolStripMenuItem";
-            this.meltStaticsToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.meltStaticsToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.meltStaticsToolStripMenuItem.Text = "Melt Statics.. (in Memory)";
-            this.meltStaticsToolStripMenuItem.ToolTipText = "Clears a block of statics from memory. Also generates an Export File of the items" +
-                " removed.";
+            this.meltStaticsToolStripMenuItem.ToolTipText =
+                "Clears a block of statics from memory. Also generates an Export File of the items" + " removed.";
             this.meltStaticsToolStripMenuItem.Click += new System.EventHandler(this.OnClickMeltStatics);
             // 
             // clearStaticsinMemoryToolStripMenuItem
             // 
             this.clearStaticsinMemoryToolStripMenuItem.Name = "clearStaticsinMemoryToolStripMenuItem";
-            this.clearStaticsinMemoryToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.clearStaticsinMemoryToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.clearStaticsinMemoryToolStripMenuItem.Text = "Clear Statics..(in Memory)";
-            this.clearStaticsinMemoryToolStripMenuItem.ToolTipText = "Clears a block of statics from memory. Unlike the Melt Statics, this does not cre" +
+            this.clearStaticsinMemoryToolStripMenuItem.ToolTipText =
+                "Clears a block of statics from memory. Unlike the Melt Statics, this does not cre" +
                 "ate an export file of the static items removed.";
             this.clearStaticsinMemoryToolStripMenuItem.Click += new System.EventHandler(this.OnClickClearStatics);
             // 
             // reportStaticsUnderMapToolStripMenuItem
             // 
             this.reportStaticsUnderMapToolStripMenuItem.Name = "reportStaticsUnderMapToolStripMenuItem";
-            this.reportStaticsUnderMapToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.reportStaticsUnderMapToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.reportStaticsUnderMapToolStripMenuItem.Text = "Report Statics below Map (possible invisible)";
-            this.reportStaticsUnderMapToolStripMenuItem.Click += new System.EventHandler(this.OnClickReportInvisStatics);
+            this.reportStaticsUnderMapToolStripMenuItem.Click +=
+                new System.EventHandler(this.OnClickReportInvisStatics);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(296, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(308, 22);
             this.toolStripMenuItem1.Text = "Report Invalid Map IDs";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.OnClickReportInvalidMapIDs);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(293, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(305, 6);
             // 
             // rewriteMapToolStripMenuItem
             // 
             this.rewriteMapToolStripMenuItem.Name = "rewriteMapToolStripMenuItem";
-            this.rewriteMapToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.rewriteMapToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.rewriteMapToolStripMenuItem.Text = "Rewrite Map";
             this.rewriteMapToolStripMenuItem.Click += new System.EventHandler(this.OnClickRewriteMap);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(293, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(305, 6);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.copyToolStripMenuItem.Text = "Map and Statics Copy...";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.OnClickCopy);
             // 
             // insertDiffDataToolStripMenuItem
             // 
             this.insertDiffDataToolStripMenuItem.Name = "insertDiffDataToolStripMenuItem";
-            this.insertDiffDataToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.insertDiffDataToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.insertDiffDataToolStripMenuItem.Text = "Diff to Map Copy...";
             this.insertDiffDataToolStripMenuItem.Click += new System.EventHandler(this.OnClickInsertDiffData);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(293, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(305, 6);
             // 
             // replaceTilesToolStripMenuItem
             // 
             this.replaceTilesToolStripMenuItem.Name = "replaceTilesToolStripMenuItem";
-            this.replaceTilesToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.replaceTilesToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
             this.replaceTilesToolStripMenuItem.Text = "Replace Tiles..";
             this.replaceTilesToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplaceTiles);
             // 
@@ -669,7 +657,7 @@ namespace FiddlerControls
             this.collapsibleSplitter2.ControlToHide = this.panel1;
             this.collapsibleSplitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.collapsibleSplitter2.ExpandParentForm = false;
-            this.collapsibleSplitter2.Location = new System.Drawing.Point(411, 33);
+            this.collapsibleSplitter2.Location = new System.Drawing.Point(486, 31);
             this.collapsibleSplitter2.Name = "collapsibleSplitter2";
             this.collapsibleSplitter2.TabIndex = 8;
             this.collapsibleSplitter2.TabStop = false;
@@ -685,7 +673,7 @@ namespace FiddlerControls
             this.collapsibleSplitter1.ControlToHide = this.toolStrip1;
             this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
+            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 28);
             this.collapsibleSplitter1.Name = "collapsibleSplitter1";
             this.collapsibleSplitter1.TabIndex = 6;
             this.collapsibleSplitter1.TabStop = false;
@@ -695,7 +683,7 @@ namespace FiddlerControls
             // 
             // Map
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.hScrollBar);
@@ -707,12 +695,12 @@ namespace FiddlerControls
             this.Controls.Add(this.statusStrip);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "Map";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(722, 374);
             this.Load += new System.EventHandler(this.OnLoad);
             this.SizeChanged += new System.EventHandler(this.OnResize);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -720,7 +708,6 @@ namespace FiddlerControls
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

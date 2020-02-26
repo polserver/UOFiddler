@@ -12,13 +12,13 @@ namespace FiddlerControls.Helpers
             }
 
             ContextMenuStrip menuStrip = new ContextMenuStrip { ShowImageMargin = false };
-            
+
             ToolStripMenuItem menuItemCopy = new ToolStripMenuItem("Copy");
             menuItemCopy.Click += (sender, e) => richTextBox.Copy();
             menuStrip.Items.Add(menuItemCopy);
-            
+
             menuStrip.Items.Add(new ToolStripSeparator());
-            
+
             ToolStripMenuItem menuItemSelectAll = new ToolStripMenuItem("Select All");
             menuItemSelectAll.Click += (sender, e) => richTextBox.SelectAll();
             menuStrip.Items.Add(menuItemSelectAll);

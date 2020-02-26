@@ -12,18 +12,18 @@ namespace Ultima
             Custom = 0x1,
             Modified = 0x2
         }
-        private string m_Text;
+        private string _mText;
 
-        public int Number { get; private set; }
+        public int Number { get; }
         public string Text
         {
-            get { return m_Text; }
+            get => _mText;
             set
             {
                 if (value == null)
-                    m_Text = "";
+                    _mText = "";
                 else
-                    m_Text = value;
+                    _mText = value;
             }
         }
         public CliLocFlag Flag { get; set; }
@@ -31,39 +31,39 @@ namespace Ultima
         public StringEntry(int number, string text, byte flag)
         {
             Number = number;
-            m_Text = text;
+            _mText = text;
             Flag = (CliLocFlag)flag;
         }
 
         public StringEntry(int number, string text, CliLocFlag flag)
         {
             Number = number;
-            m_Text = text;
+            _mText = text;
             Flag = flag;
         }
 
 		// Razor
-		private static Regex m_RegEx = new Regex(@"~(\d+)[_\w]+~", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-		private string m_FmtTxt;
-		private static object[] m_Args = new object[] { "", "", "", "", "", "", "", "", "", "", "" };
+		private static readonly Regex _mRegEx = new Regex(@"~(\d+)[_\w]+~", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+		private string _mFmtTxt;
+		private static readonly object[] _mArgs = new object[] { "", "", "", "", "", "", "", "", "", "", "" };
 
 		public string Format(params object[] args)
 		{
-			if (m_FmtTxt == null)
-				m_FmtTxt = m_RegEx.Replace(m_Text, @"{$1}");
+			if (_mFmtTxt == null)
+				_mFmtTxt = _mRegEx.Replace(_mText, @"{$1}");
 			for (int i = 0; i < args.Length && i < 10; i++)
-				m_Args[i + 1] = args[i];
-			return String.Format(m_FmtTxt, m_Args);
+				_mArgs[i + 1] = args[i];
+			return string.Format(_mFmtTxt, _mArgs);
 		}
 
 		public string SplitFormat(string argstr)
 		{
-			if (m_FmtTxt == null)
-				m_FmtTxt = m_RegEx.Replace(m_Text, @"{$1}");
+			if (_mFmtTxt == null)
+				_mFmtTxt = _mRegEx.Replace(_mText, @"{$1}");
 			string[] args = argstr.Split('\t');// adds an extra on to the args array
 			for (int i = 0; i < args.Length && i < 10; i++)
-				m_Args[i + 1] = args[i];
-			return String.Format(m_FmtTxt, m_Args);
+				_mArgs[i + 1] = args[i];
+			return string.Format(_mFmtTxt, _mArgs);
 			/*
 			{
 				StringBuilder sb = new StringBuilder();

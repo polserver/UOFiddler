@@ -16,34 +16,41 @@ namespace FiddlerControls
 {
     public partial class HuePopUp : Form
     {
-        private FiddlerControls.Animationlist refMob;
-        public HuePopUp(FiddlerControls.Animationlist ref_, int hue)
+        private readonly AnimationList _animationListMob;
+
+        public HuePopUp(AnimationList animationList, int hue)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             if ((hue & 0x8000) != 0)
             {
                 hue ^= 0x8000;
                 HueOnlyGray.Checked = true;
             }
             if (hue != 0)
+            {
                 control.Selected = hue;
-            refMob = ref_;
+            }
+
+            _animationListMob = animationList;
         }
 
         private void Click_OK(object sender, EventArgs e)
         {
-            int Selected = control.Selected;
+            int selected = control.Selected;
             if (HueOnlyGray.Checked)
-                Selected ^= 0x8000;
-            refMob.ChangeHue(Selected);
-            this.Close();
+            {
+                selected ^= 0x8000;
+            }
+
+            _animationListMob.ChangeHue(selected);
+            Close();
         }
 
         private void OnClick_Clear(object sender, EventArgs e)
         {
-            refMob.ChangeHue(-1);
-            this.Close();
+            _animationListMob.ChangeHue(-1);
+            Close();
         }
     }
 }

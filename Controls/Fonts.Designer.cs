@@ -63,7 +63,7 @@ namespace FiddlerControls
             this.treeView.Name = "treeView";
             this.treeView.Size = new System.Drawing.Size(121, 324);
             this.treeView.TabIndex = 0;
-            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.onSelect);
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
             // 
             // listView1
             // 
@@ -81,8 +81,8 @@ namespace FiddlerControls
             this.listView1.TileSize = new System.Drawing.Size(46, 46);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Tile;
-            this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.drawitem);
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.onSelectChar);
+            this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.Drawitem);
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.OnSelectChar);
             // 
             // contextMenuStrip1
             // 

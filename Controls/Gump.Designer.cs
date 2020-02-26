@@ -113,9 +113,9 @@ namespace FiddlerControls
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(205, 299);
             this.listBox.TabIndex = 0;
-            this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
-            this.listBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.listBox_MeasureItem);
-            this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
+            this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
+            this.listBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.ListBox_MeasureItem);
+            this.listBox.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
             this.listBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Gump_KeyUp);
             // 
             // contextMenuStrip1
@@ -148,21 +148,21 @@ namespace FiddlerControls
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
             this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickBmp);
+            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickTiff);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickTiff);
             // 
             // asJpgToolStripMenuItem1
             // 
             this.asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
             this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(120, 22);
             this.asJpgToolStripMenuItem1.Text = "As Jpg";
-            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.extract_Image_ClickJpg);
+            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.Extract_Image_ClickJpg);
             // 
             // toolStripSeparator2
             // 
@@ -174,28 +174,28 @@ namespace FiddlerControls
             this.findNextFreeSlotToolStripMenuItem.Name = "findNextFreeSlotToolStripMenuItem";
             this.findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
-            this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.onClickFindFree);
+            this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.OnClickFindFree);
             // 
             // jumpToMaleFemale
             // 
             this.jumpToMaleFemale.Name = "jumpToMaleFemale";
             this.jumpToMaleFemale.Size = new System.Drawing.Size(175, 22);
             this.jumpToMaleFemale.Text = "Jump to Male/Female";
-            this.jumpToMaleFemale.Click += new System.EventHandler(this.jumpToMaleFemale_Click);
+            this.jumpToMaleFemale.Click += new System.EventHandler(this.JumpToMaleFemale_Click);
             // 
             // replaceGumpToolStripMenuItem
             // 
             this.replaceGumpToolStripMenuItem.Name = "replaceGumpToolStripMenuItem";
             this.replaceGumpToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.replaceGumpToolStripMenuItem.Text = "Replace";
-            this.replaceGumpToolStripMenuItem.Click += new System.EventHandler(this.onClickReplace);
+            this.replaceGumpToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.removeToolStripMenuItem.Text = "Remove";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.onClickRemove);
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // insertToolStripMenuItem
             // 
@@ -209,8 +209,8 @@ namespace FiddlerControls
             // 
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 21);
-            this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeydown_InsertText);
-            this.InsertText.TextChanged += new System.EventHandler(this.onTextChanged_InsertAt);
+            this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeydown_InsertText);
+            this.InsertText.TextChanged += new System.EventHandler(this.OnTextChanged_InsertAt);
             // 
             // toolStripSeparator1
             // 
@@ -244,7 +244,7 @@ namespace FiddlerControls
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(44, 22);
             this.toolStripButton1.Text = "Search";
-            this.toolStripButton1.Click += new System.EventHandler(this.search_Click);
+            this.toolStripButton1.Click += new System.EventHandler(this.Search_Click);
             // 
             // toolStripDropDownButton1
             // 

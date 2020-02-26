@@ -26,7 +26,7 @@ namespace Ultima
             int width = 0;
             for (int i = 0; i < text.Length; ++i)
             {
-                int c = (int)text[i] % 0x10000;
+                int c = text[i] % 0x10000;
                 width += Chars[c].Width;
                 width += Chars[c].XOffset;
             }
@@ -45,7 +45,7 @@ namespace Ultima
             int height = 0;
             for (int i = 0; i < text.Length; ++i)
             {
-                int c = (int)text[i] % 0x10000;
+                int c = text[i] % 0x10000;
                 height = Math.Max(height, Chars[c].Height + Chars[c].YOffset);
             }
             return height;
@@ -138,7 +138,7 @@ namespace Ultima
 
     public static class UnicodeFonts
     {
-        private static string[] m_files = new string[]
+        private static readonly string[] _mFiles = new string[]
         {
             "unifont.mul",
             "unifont1.mul",
@@ -166,9 +166,9 @@ namespace Ultima
         /// </summary>
         public static void Initialize()
         {
-            for (int i = 0; i < m_files.Length; i++)
+            for (int i = 0; i < _mFiles.Length; i++)
             {
-                string filePath = Files.GetFilePath(m_files[i]);
+                string filePath = Files.GetFilePath(_mFiles[i]);
                 if (filePath == null)
                     continue;
                 Fonts[i] = new UnicodeFont();
@@ -179,21 +179,21 @@ namespace Ultima
                         for (int c = 0; c < 0x10000; ++c)
                         {
                             Fonts[i].Chars[c] = new UnicodeChar();
-                            fs.Seek((long)((c) * 4), SeekOrigin.Begin);
+                            fs.Seek((c) * 4, SeekOrigin.Begin);
                             int num2 = bin.ReadInt32();
                             if ((num2 >= fs.Length) || (num2 <= 0))
                                 continue;
-                            fs.Seek((long)num2, SeekOrigin.Begin);
+                            fs.Seek(num2, SeekOrigin.Begin);
                             sbyte xOffset = bin.ReadSByte();
                             sbyte yOffset = bin.ReadSByte();
-                            int Width = bin.ReadByte();
-                            int Height = bin.ReadByte();
+                            int width = bin.ReadByte();
+                            int height = bin.ReadByte();
                             Fonts[i].Chars[c].XOffset = xOffset;
                             Fonts[i].Chars[c].YOffset = yOffset;
-                            Fonts[i].Chars[c].Width = Width;
-                            Fonts[i].Chars[c].Height = Height;
-                            if (!((Width == 0) || (Height == 0)))
-                                Fonts[i].Chars[c].Bytes = bin.ReadBytes(Height * (((Width - 1) / 8) + 1));
+                            Fonts[i].Chars[c].Width = width;
+                            Fonts[i].Chars[c].Height = height;
+                            if (!((width == 0) || (height == 0)))
+                                Fonts[i].Chars[c].Bytes = bin.ReadBytes(height * (((width - 1) / 8) + 1));
                         }
                     }
                 }
@@ -216,7 +216,7 @@ namespace Ultima
             {
                 for (int i = 0; i < text.Length; ++i)
                 {
-                    int c = (int)text[i] % 0x10000;
+                    int c = text[i] % 0x10000;
                     Bitmap bmp = Fonts[fontId].Chars[c].GetImage();
                     dx += Fonts[fontId].Chars[c].XOffset;
                     graph.DrawImage(bmp, dx, dy + Fonts[fontId].Chars[c].YOffset);
@@ -234,8 +234,8 @@ namespace Ultima
         /// <returns></returns>
         public static string Save(string path, int filetype)
         {
-            string FileName = Path.Combine(path, m_files[filetype]);
-            using (FileStream fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            string fileName = Path.Combine(path, _mFiles[filetype]);
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (BinaryWriter bin = new BinaryWriter(fs))
                 {
@@ -246,7 +246,7 @@ namespace Ultima
                     {
                         if (Fonts[filetype].Chars[c].Bytes == null)
                             continue;
-                        fs.Seek((long)((c) * 4), SeekOrigin.Begin);
+                        fs.Seek((c) * 4, SeekOrigin.Begin);
                         bin.Write((int)fs.Length);
                         fs.Seek(fs.Length, SeekOrigin.Begin);
                         bin.Write(Fonts[filetype].Chars[c].XOffset);
@@ -257,7 +257,7 @@ namespace Ultima
                     }
                 }
             }
-            return FileName;
+            return fileName;
         }
     }
 }

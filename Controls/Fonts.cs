@@ -24,38 +24,40 @@ namespace FiddlerControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            refmarker = this;
+            _refMarker = this;
             setOffsetsToolStripMenuItem.Visible = false;
         }
 
-        private bool Loaded = false;
-        private static Fonts refmarker;
+        private bool _loaded;
+        private static Fonts _refMarker;
 
         /// <summary>
         /// Reload when loaded (file changed)
         /// </summary>
         private void Reload()
         {
-            if (Loaded)
+            if (_loaded)
+            {
                 OnLoad(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
-        /// Refreshs view if Offset of Unicode char is changed
+        /// Refreshes view if Offset of Unicode char is changed
         /// </summary>
         public static void RefreshOnCharChange()
         {
-            if ((int)refmarker.treeView.SelectedNode.Parent.Tag == 1) // Unicode
+            if ((int)_refMarker.treeView.SelectedNode.Parent.Tag == 1) // Unicode
             {
-                refmarker.listView1.Invalidate();
-                if (refmarker.listView1.SelectedItems.Count > 0)
+                _refMarker.listView1.Invalidate();
+                if (_refMarker.listView1.SelectedItems.Count > 0)
                 {
-                    int i = int.Parse(refmarker.listView1.SelectedItems[0].Text.ToString());
-                    refmarker.toolStripStatusLabel1.Text =
-                        String.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}",
+                    int i = int.Parse(_refMarker.listView1.SelectedItems[0].Text);
+                    _refMarker.toolStripStatusLabel1.Text =
+                        string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}",
                         (char)i, i,
-                        UnicodeFonts.Fonts[(int)refmarker.treeView.SelectedNode.Tag].Chars[i].XOffset,
-                        UnicodeFonts.Fonts[(int)refmarker.treeView.SelectedNode.Tag].Chars[i].YOffset);
+                        UnicodeFonts.Fonts[(int)_refMarker.treeView.SelectedNode.Tag].Chars[i].XOffset,
+                        UnicodeFonts.Fonts[(int)_refMarker.treeView.SelectedNode.Tag].Chars[i].YOffset);
                 }
             }
         }
@@ -68,32 +70,46 @@ namespace FiddlerControls
 
             treeView.BeginUpdate();
             treeView.Nodes.Clear();
-            TreeNode node = new TreeNode("ASCII");
-            node.Tag = 0;
-            treeView.Nodes.Add(node);
-            for (int i = 0; i < ASCIIText.Fonts.Length; ++i)
+            TreeNode node = new TreeNode("ASCII")
             {
-                node = new TreeNode(i.ToString());
-                node.Tag = i;
+                Tag = 0
+            };
+            treeView.Nodes.Add(node);
+            for (int i = 0; i < AsciiText.Fonts.Length; ++i)
+            {
+                node = new TreeNode(i.ToString())
+                {
+                    Tag = i
+                };
                 treeView.Nodes[0].Nodes.Add(node);
             }
-            node = new TreeNode("Unicode");
-            node.Tag = 1;
+            node = new TreeNode("Unicode")
+            {
+                Tag = 1
+            };
             treeView.Nodes.Add(node);
             for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
             {
                 if (UnicodeFonts.Fonts[i] == null)
+                {
                     continue;
-                node = new TreeNode(i.ToString());
-                node.Tag = i;
+                }
+
+                node = new TreeNode(i.ToString())
+                {
+                    Tag = i
+                };
                 treeView.Nodes[1].Nodes.Add(node);
             }
             treeView.ExpandAll();
             treeView.EndUpdate();
             treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
-            if (!Loaded)
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-            Loaded = true;
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
+            _loaded = true;
             Cursor.Current = Cursors.Default;
         }
 
@@ -102,10 +118,12 @@ namespace FiddlerControls
             Reload();
         }
 
-        private void onSelect(object sender, TreeViewEventArgs e)
+        private void OnSelect(object sender, TreeViewEventArgs e)
         {
             if (treeView.SelectedNode.Parent == null)
+            {
                 treeView.SelectedNode = treeView.SelectedNode.Nodes[0];
+            }
 
             int font = (int)treeView.SelectedNode.Tag;
             listView1.Clear();
@@ -116,23 +134,25 @@ namespace FiddlerControls
                 ListViewItem[] cache = new ListViewItem[0x10000];
                 for (int i = 0; i < 0x10000; ++i)
                 {
-                    ListViewItem item = new ListViewItem(i.ToString(), 0);
-                    item.Tag = i;
-                    cache[i] = item;
+                    cache[i] = new ListViewItem(i.ToString(), 0)
+                    {
+                        Tag = i
+                    };
                 }
                 listView1.Items.AddRange(cache);
             }
             else
             {
                 setOffsetsToolStripMenuItem.Visible = false;
-                if (ASCIIText.Fonts[font] != null)
+                if (AsciiText.Fonts[font] != null)
                 {
-                    ListViewItem[] cache = new ListViewItem[ASCIIText.Fonts[font].Characters.Length];
-                    for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
+                    ListViewItem[] cache = new ListViewItem[AsciiText.Fonts[font].Characters.Length];
+                    for (int i = 0; i < AsciiText.Fonts[font].Characters.Length; ++i)
                     {
-                        ListViewItem item = new ListViewItem((i + 32).ToString(), 0);
-                        item.Tag = ASCIIText.Fonts[font].Characters[i];
-                        cache[i] = item;
+                        cache[i] = new ListViewItem((i + 32).ToString(), 0)
+                        {
+                            Tag = AsciiText.Fonts[font].Characters[i]
+                        };
                     }
                     listView1.Items.AddRange(cache);
                 }
@@ -141,129 +161,137 @@ namespace FiddlerControls
             listView1.EndUpdate();
         }
 
-        private void drawitem(object sender, DrawListViewItemEventArgs e)
+        private void Drawitem(object sender, DrawListViewItemEventArgs e)
         {
-            int i = int.Parse(e.Item.Text.ToString());
+            int i = int.Parse(e.Item.Text);
             Bitmap bmp;
             char c = (char)i;
-            if ((int)treeView.SelectedNode.Parent.Tag == 1) // Unicode
-                bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].GetImage();
-            else
-                bmp = (Bitmap)e.Item.Tag;
+            bmp = (int)treeView.SelectedNode.Parent.Tag == 1
+                ? UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].GetImage()
+                : (Bitmap)e.Item.Tag;
 
             if (listView1.SelectedItems.Contains(e.Item))
+            {
                 e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            e.Graphics.DrawString(c.ToString(), Fonts.DefaultFont, Brushes.Gray, e.Bounds.X + e.Bounds.Width / 2, e.Bounds.Y + e.Bounds.Height / 2);
+            }
+
+            e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + e.Bounds.Width / 2, e.Bounds.Y + e.Bounds.Height / 2);
             if (bmp != null)
             {
                 int width = bmp.Width;
                 int height = bmp.Height;
 
                 if (width > e.Bounds.Width)
+                {
                     width = e.Bounds.Width - 2;
+                }
 
                 if (height > e.Bounds.Height)
+                {
                     height = e.Bounds.Height - 2;
+                }
 
                 e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, width, height));
-
             }
             e.Graphics.DrawRectangle(new Pen(Color.Gray), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
         }
 
-        private void onSelectChar(object sender, EventArgs e)
+        private void OnSelectChar(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count == 0)
+            {
                 toolStripStatusLabel1.Text = " : ()";
+            }
             else
             {
-                int i = int.Parse(listView1.SelectedItems[0].Text.ToString());
-                if ((int)treeView.SelectedNode.Parent.Tag == 1) // Unicode
-                    toolStripStatusLabel1.Text = String.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset);
-                else
-                    toolStripStatusLabel1.Text = String.Format("'{0}' : {1} (0x{1:X})", (char)i, i);
+                int i = int.Parse(listView1.SelectedItems[0].Text);
+                toolStripStatusLabel1.Text = (int)treeView.SelectedNode.Parent.Tag == 1
+                    ? string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset)
+                    : string.Format("'{0}' : {1} (0x{1:X})", (char)i, i);
             }
         }
 
         private void OnClickExport(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                string path = FiddlerControls.Options.OutputPath;
-                string filetype;
-                if ((int)treeView.SelectedNode.Parent.Tag == 1)
-                    filetype = "Unicode";
-                else
-                    filetype = "ASCII";
-
-                string filename = Path.Combine(path, String.Format("{0} {1} 0x{2:X}.tiff",
-                    filetype,
-                    (int)treeView.SelectedNode.Tag,
-                    int.Parse(listView1.SelectedItems[0].Text.ToString())));
-
-                if ((int)treeView.SelectedNode.Parent.Tag == 1)
-                {
-                    Bitmap bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[(int)listView1.SelectedItems[0].Tag].GetImage(true);
-                    if (bmp == null)
-                        bmp = new Bitmap(10, 10);
-                    bmp.Save(filename, ImageFormat.Tiff);
-                }
-                else
-                    ((Bitmap)listView1.SelectedItems[0].Tag).Save(filename, ImageFormat.Tiff);
-                MessageBox.Show(
-                    String.Format("Character saved to {0}", filename),
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            string path = Options.OutputPath;
+            string fileType = (int)treeView.SelectedNode.Parent.Tag == 1 ? "Unicode" : "ASCII";
+            string fileName = Path.Combine(path,
+                $"{fileType} {(int)treeView.SelectedNode.Tag} 0x{int.Parse(listView1.SelectedItems[0].Text):X}.tiff");
+
+            if ((int)treeView.SelectedNode.Parent.Tag == 1)
+            {
+                Bitmap bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[(int)listView1.SelectedItems[0].Tag].GetImage(true)
+                             ?? new Bitmap(10, 10);
+
+                bmp.Save(fileName, ImageFormat.Tiff);
+            }
+            else
+            {
+                ((Bitmap)listView1.SelectedItems[0].Tag).Save(fileName, ImageFormat.Tiff);
+            }
+
+            MessageBox.Show(
+                $"Character saved to {fileName}",
+                "Saved",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickImport(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose an image file to import";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose an imagefile to import";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap import = new Bitmap(dialog.FileName);
-                        if ((import.Height > 255) || (import.Width > 255))
-                        {
-                            MessageBox.Show("Image Height or Width exceeds 255", "Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                            return;
-                        }
-                        int font = (int)treeView.SelectedNode.Tag;
-                        int character = int.Parse(listView1.SelectedItems[0].Text.ToString()) - 32;
-                        if ((int)treeView.SelectedNode.Parent.Tag == 1)
-                        {
-                            UnicodeFonts.Fonts[font].Chars[(int)listView1.SelectedItems[0].Tag].SetBuffer(import);
-                            Options.ChangedUltimaClass["UnicodeFont"] = true;
-                        }
-                        else
-                        {
-                            ASCIIText.Fonts[font].ReplaceCharacter(character, import);
-                            listView1.SelectedItems[0].Tag = import;
-                            Options.ChangedUltimaClass["ASCIIFont"] = true;
-                        }
-                        listView1.Invalidate();
-                    }
+                    return;
                 }
+
+                Bitmap import = new Bitmap(dialog.FileName);
+                if (import.Height > 255 || import.Width > 255)
+                {
+                    MessageBox.Show("Image Height or Width exceeds 255", "Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    return;
+                }
+                int font = (int)treeView.SelectedNode.Tag;
+                int character = int.Parse(listView1.SelectedItems[0].Text) - 32;
+                if ((int)treeView.SelectedNode.Parent.Tag == 1)
+                {
+                    UnicodeFonts.Fonts[font].Chars[(int)listView1.SelectedItems[0].Tag].SetBuffer(import);
+                    Options.ChangedUltimaClass["UnicodeFont"] = true;
+                }
+                else
+                {
+                    AsciiText.Fonts[font].ReplaceCharacter(character, import);
+                    listView1.SelectedItems[0].Tag = import;
+                    Options.ChangedUltimaClass["ASCIIFont"] = true;
+                }
+                listView1.Invalidate();
             }
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            string path = FiddlerControls.Options.OutputPath;
+            string path = Options.OutputPath;
             if ((int)treeView.SelectedNode.Parent.Tag == 1)
             {
-                string FileName = UnicodeFonts.Save(path, (int)treeView.SelectedNode.Tag);
+                string fileName = UnicodeFonts.Save(path, (int)treeView.SelectedNode.Tag);
                 MessageBox.Show(
-                    String.Format("Unicode saved to {0}", FileName),
+                    $"Unicode saved to {fileName}",
                     "Save",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information,
@@ -272,10 +300,10 @@ namespace FiddlerControls
             }
             else
             {
-                string FileName = Path.Combine(path, "fonts.mul");
-                ASCIIText.Save(FileName);
+                string fileName = Path.Combine(path, "fonts.mul");
+                AsciiText.Save(fileName);
                 MessageBox.Show(
-                    String.Format("Fonts saved to {0}", FileName),
+                    $"Fonts saved to {fileName}",
                     "Save",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information,
@@ -284,20 +312,27 @@ namespace FiddlerControls
             }
         }
 
-        private FontOffset form;
+        private FontOffset _form;
+
         private void OnClickSetOffsets(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                int font = (int)treeView.SelectedNode.Tag;
-                int cha = (int)listView1.SelectedItems[0].Tag;
-                if ((form == null) || (form.IsDisposed))
-                {
-                    form = new FontOffset(font, cha);
-                    form.TopMost = true;
-                    form.Show();
-                }
+                return;
             }
+
+            int font = (int)treeView.SelectedNode.Tag;
+            int cha = (int)listView1.SelectedItems[0].Tag;
+            if (_form?.IsDisposed == false)
+            {
+                return;
+            }
+
+            _form = new FontOffset(font, cha)
+            {
+                TopMost = true
+            };
+            _form.Show();
         }
 
         private void OnClickWriteText(object sender, EventArgs e)

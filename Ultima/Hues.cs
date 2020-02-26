@@ -9,7 +9,7 @@ namespace Ultima
 {
     public sealed class Hues
     {
-        private static int[] m_Header;
+        private static int[] _mHeader;
 
         public static Hue[] List { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Ultima
 
                     if (blockCount > 375)
                         blockCount = 375;
-                    m_Header = new int[blockCount];
+                    _mHeader = new int[blockCount];
                     unsafe
                     {
                         int structsize = Marshal.SizeOf(typeof(HueDataMul));
@@ -51,7 +51,7 @@ namespace Ultima
                             {
                                 IntPtr ptrheader = new IntPtr((long)gc.AddrOfPinnedObject() + currpos);
                                 currpos += 4;
-                                m_Header[i] = (int)Marshal.PtrToStructure(ptrheader, typeof(int));
+                                _mHeader[i] = (int)Marshal.PtrToStructure(ptrheader, typeof(int));
 
                                 for (int j = 0; j < 8; ++j, ++index)
                                 {
@@ -79,9 +79,9 @@ namespace Ultima
                 using (BinaryWriter binmul = new BinaryWriter(fsmul))
                 {
                     int index = 0;
-                    for (int i = 0; i < m_Header.Length; ++i)
+                    for (int i = 0; i < _mHeader.Length; ++i)
                     {
-                        binmul.Write(m_Header[i]);
+                        binmul.Write(_mHeader[i]);
                         for (int j = 0; j < 8; ++j, ++index)
                         {
                             for (int c = 0; c < 32; ++c)
@@ -173,7 +173,7 @@ namespace Ultima
             return ((hue & 0x1f) * (255 / 31));
         }
 
-        public unsafe static void ApplyTo(Bitmap bmp, short[] Colors, bool onlyHueGrayPixels)
+        public unsafe static void ApplyTo(Bitmap bmp, short[] colors, bool onlyHueGrayPixels)
         {
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format16bppArgb1555);
 
@@ -204,7 +204,7 @@ namespace Ultima
                             g = (c >> 5) & 0x1F;
                             b = c & 0x1F;
                             if (r == g && r == b)
-                                *pBuffer = (ushort)Colors[(c >> 10) & 0x1F];
+                                *pBuffer = (ushort)colors[(c >> 10) & 0x1F];
                         }
                         ++pBuffer;
                     }
@@ -220,7 +220,7 @@ namespace Ultima
                     while (pBuffer < pLineEnd)
                     {
                         if (*pBuffer != 0)
-                            *pBuffer = (ushort)Colors[(*pBuffer >> 10) & 0x1F];
+                            *pBuffer = (ushort)colors[(*pBuffer >> 10) & 0x1F];
                         ++pBuffer;
                     }
 
@@ -235,7 +235,7 @@ namespace Ultima
 
     public sealed class Hue
     {
-        public int Index { get; private set; }
+        public int Index { get; }
         public short[] Colors { get; set; }
         public string Name { get; set; }
         public short TableStart { get; set; }
@@ -255,17 +255,17 @@ namespace Ultima
             return Hues.HueToColor(Colors[index]);
         }
 
-        private static byte[] m_StringBuffer = new byte[20];
-        private static byte[] m_Buffer = new byte[88];
+        private static readonly byte[] _mStringBuffer = new byte[20];
+        private static byte[] _mBuffer = new byte[88];
         public Hue(int index, BinaryReader bin)
         {
             Index = index;
             Colors = new short[32];
 
-            m_Buffer = bin.ReadBytes(88);
+            _mBuffer = bin.ReadBytes(88);
             unsafe
             {
-                fixed (byte* buffer = m_Buffer)
+                fixed (byte* buffer = _mBuffer)
                 {
                     ushort* buf = (ushort*)buffer;
                     for (int i = 0; i < 32; ++i)
@@ -275,8 +275,8 @@ namespace Ultima
                     byte* sbuf = (byte*)buf;
                     int count;
                     for (count = 0; count < 20 && *sbuf != 0; ++count)
-                        m_StringBuffer[count] = *sbuf++;
-                    Name = Encoding.Default.GetString(m_StringBuffer, 0, count);
+                        _mStringBuffer[count] = *sbuf++;
+                    Name = Encoding.Default.GetString(_mStringBuffer, 0, count);
                     Name = Name.Replace("\n", " ");
                 }
             }
@@ -361,25 +361,25 @@ namespace Ultima
             bmp.UnlockBits(bd);
         }
 
-        public void Export(string FileName)
+        public void Export(string fileName)
         {
-            using (StreamWriter Tex = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), System.Text.Encoding.GetEncoding(1252)))
+            using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
-                Tex.WriteLine(Name);
-                Tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString());
-                Tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString());
+                tex.WriteLine(Name);
+                tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString());
+                tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString());
                 for (int i = 0; i < Colors.Length; ++i)
                 {
-                    Tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString());
+                    tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString());
                 }
             }
         }
 
-        public void Import(string FileName)
+        public void Import(string fileName)
         {
-            if (!File.Exists(FileName))
+            if (!File.Exists(fileName))
                 return;
-            using (StreamReader sr = new StreamReader(FileName))
+            using (StreamReader sr = new StreamReader(fileName))
             {
                 string line;
                 int i = -3;
@@ -407,7 +407,7 @@ namespace Ultima
             }
         }
     }
-    [StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct HueDataMul
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]

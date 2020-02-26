@@ -79,6 +79,7 @@ namespace FiddlerControls
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.MultiComponentBox = new System.Windows.Forms.RichTextBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -86,10 +87,12 @@ namespace FiddlerControls
             this.toolStrip1.SuspendLayout();
             this.tabControl3.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.HeightChangeMulti)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
@@ -124,13 +127,13 @@ namespace FiddlerControls
             this.TreeViewMulti.ContextMenuStrip = this.contextMenuStrip2;
             this.TreeViewMulti.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TreeViewMulti.HideSelection = false;
-            this.TreeViewMulti.Location = new System.Drawing.Point(0, 28);
+            this.TreeViewMulti.Location = new System.Drawing.Point(0, 33);
             this.TreeViewMulti.Margin = new System.Windows.Forms.Padding(0);
             this.TreeViewMulti.Name = "TreeViewMulti";
             this.TreeViewMulti.ShowNodeToolTips = true;
-            this.TreeViewMulti.Size = new System.Drawing.Size(176, 306);
+            this.TreeViewMulti.Size = new System.Drawing.Size(176, 301);
             this.TreeViewMulti.TabIndex = 0;
-            this.TreeViewMulti.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.afterSelect_Multi);
+            this.TreeViewMulti.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect_Multi);
             // 
             // contextMenuStrip2
             // 
@@ -170,21 +173,21 @@ namespace FiddlerControls
             // toTextfileToolStripMenuItem
             // 
             this.toTextfileToolStripMenuItem.Name = "toTextfileToolStripMenuItem";
-            this.toTextfileToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.toTextfileToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.toTextfileToolStripMenuItem.Text = "To Textfile";
             this.toTextfileToolStripMenuItem.Click += new System.EventHandler(this.OnExportTextFile);
             // 
             // toUOAToolStripMenuItem
             // 
             this.toUOAToolStripMenuItem.Name = "toUOAToolStripMenuItem";
-            this.toUOAToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.toUOAToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.toUOAToolStripMenuItem.Text = "To UOA";
             this.toUOAToolStripMenuItem.Click += new System.EventHandler(this.OnExportUOAFile);
             // 
             // toWscToolStripMenuItem
             // 
             this.toWscToolStripMenuItem.Name = "toWscToolStripMenuItem";
-            this.toWscToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.toWscToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.toWscToolStripMenuItem.Text = "To Wsc";
             this.toWscToolStripMenuItem.Click += new System.EventHandler(this.OnExportWscFile);
             // 
@@ -242,7 +245,7 @@ namespace FiddlerControls
             this.asTiffToolStripMenuItem1,
             this.asJpgToolStripMenuItem});
             this.exportAllImagesToolStripMenuItem.Name = "exportAllImagesToolStripMenuItem";
-            this.exportAllImagesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.exportAllImagesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.exportAllImagesToolStripMenuItem.Text = "Export All Image";
             // 
             // aToolStripMenuItem
@@ -273,39 +276,39 @@ namespace FiddlerControls
             this.toUOAFileToolStripMenuItem,
             this.toWSCFileToolStripMenuItem});
             this.exportAllPartsToolStripMenuItem.Name = "exportAllPartsToolStripMenuItem";
-            this.exportAllPartsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.exportAllPartsToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.exportAllPartsToolStripMenuItem.Text = "Export All Parts";
             // 
             // toTextFileToolStripMenuItem1
             // 
             this.toTextFileToolStripMenuItem1.Name = "toTextFileToolStripMenuItem1";
-            this.toTextFileToolStripMenuItem1.Size = new System.Drawing.Size(137, 22);
+            this.toTextFileToolStripMenuItem1.Size = new System.Drawing.Size(135, 22);
             this.toTextFileToolStripMenuItem1.Text = "To Text File";
             this.toTextFileToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllText);
             // 
             // toUOAFileToolStripMenuItem
             // 
             this.toUOAFileToolStripMenuItem.Name = "toUOAFileToolStripMenuItem";
-            this.toUOAFileToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.toUOAFileToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.toUOAFileToolStripMenuItem.Text = "To UOA File";
             this.toUOAFileToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllUOA);
             // 
             // toWSCFileToolStripMenuItem
             // 
             this.toWSCFileToolStripMenuItem.Name = "toWSCFileToolStripMenuItem";
-            this.toWSCFileToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.toWSCFileToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.toWSCFileToolStripMenuItem.Text = "To WSC File";
             this.toWSCFileToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllWSC);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(158, 6);
             // 
             // saveToolStripMenuItem1
             // 
             this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
-            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(160, 22);
+            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(161, 22);
             this.saveToolStripMenuItem1.Text = "Save";
             this.saveToolStripMenuItem1.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -362,7 +365,7 @@ namespace FiddlerControls
             this.HeightChangeMulti.Name = "HeightChangeMulti";
             this.HeightChangeMulti.Size = new System.Drawing.Size(334, 33);
             this.HeightChangeMulti.TabIndex = 0;
-            this.HeightChangeMulti.ValueChanged += new System.EventHandler(this.onValue_HeightChangeMulti);
+            this.HeightChangeMulti.ValueChanged += new System.EventHandler(this.OnValue_HeightChangeMulti);
             // 
             // splitContainer4
             // 
@@ -396,14 +399,14 @@ namespace FiddlerControls
             this.MultiPictureBox.Size = new System.Drawing.Size(334, 241);
             this.MultiPictureBox.TabIndex = 0;
             this.MultiPictureBox.TabStop = false;
-            this.MultiPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.onPaint_MultiPic);
+            this.MultiPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint_MultiPic);
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extractImageToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(152, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 26);
             // 
             // extractImageToolStripMenuItem
             // 
@@ -412,7 +415,7 @@ namespace FiddlerControls
             this.asTiffToolStripMenuItem,
             this.asJpgToolStripMenuItem1});
             this.extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
-            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.extractImageToolStripMenuItem.Text = "extract Image..";
             // 
             // asBmpToolStripMenuItem
@@ -420,21 +423,21 @@ namespace FiddlerControls
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
             this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickBmp);
+            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickTiff);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickTiff);
             // 
             // asJpgToolStripMenuItem1
             // 
             this.asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
             this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem1.Text = "As Jpg";
-            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.extract_Image_ClickJpg);
+            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.Extract_Image_ClickJpg);
             // 
             // statusMulti
             // 
@@ -449,7 +452,7 @@ namespace FiddlerControls
             // StatusMultiText
             // 
             this.StatusMultiText.Name = "StatusMultiText";
-            this.StatusMultiText.Size = new System.Drawing.Size(88, 17);
+            this.StatusMultiText.Size = new System.Drawing.Size(87, 17);
             this.StatusMultiText.Text = "statusMultiText";
             // 
             // tabPage6
@@ -484,6 +487,7 @@ namespace FiddlerControls
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
@@ -493,11 +497,13 @@ namespace FiddlerControls
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel1.PerformLayout();
             this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.HeightChangeMulti)).EndInit();
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             this.splitContainer4.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MultiPictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);

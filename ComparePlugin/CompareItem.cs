@@ -18,26 +18,26 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
 
-
 namespace ComparePlugin
 {
     public partial class CompareItem : UserControl
     {
+        private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
+        private readonly ImageConverter _ic = new ImageConverter();
+        private readonly SHA256Managed _shaM = new SHA256Managed();
+
         public CompareItem()
         {
             InitializeComponent();
         }
-        Dictionary<int, bool> m_Compare = new Dictionary<int, bool>();
-        SHA256Managed shaM = new SHA256Managed();
-        System.Drawing.ImageConverter ic = new System.Drawing.ImageConverter();
 
         private void OnLoad(object sender, EventArgs e)
         {
             listBoxOrg.Items.Clear();
             listBoxOrg.BeginUpdate();
             List<object> cache = new List<object>();
-            int staticlength = Art.GetMaxItemID() + 1;
-            for (int i = 0; i < staticlength; i++)
+            int staticsLength = Art.GetMaxItemId() + 1;
+            for (int i = 0; i < staticsLength; i++)
             {
                 cache.Add(i);
             }
@@ -47,51 +47,59 @@ namespace ComparePlugin
 
         private void OnIndexChangedOrg(object sender, EventArgs e)
         {
-            if ((listBoxOrg.SelectedIndex == -1) || (listBoxOrg.Items.Count < 1))
+            if (listBoxOrg.SelectedIndex == -1 || listBoxOrg.Items.Count < 1)
+            {
                 return;
+            }
 
             int i = int.Parse(listBoxOrg.Items[listBoxOrg.SelectedIndex].ToString());
             if (listBoxSec.Items.Count > 0)
             {
                 int pos = listBoxSec.Items.IndexOf(i);
                 if (pos >= 0)
+                {
                     listBoxSec.SelectedIndex = pos;
+                }
             }
-            if (Art.IsValidStatic(i))
-            {
-                Bitmap bmp = Art.GetStatic(i);
-                if (bmp != null)
-                    pictureBoxOrg.BackgroundImage = bmp;
-                else
-                    pictureBoxOrg.BackgroundImage = null;
-            }
-            else
-                pictureBoxOrg.BackgroundImage = null;
+
+            pictureBoxOrg.BackgroundImage = Art.IsValidStatic(i)
+                ? Art.GetStatic(i)
+                : null;
+
             listBoxOrg.Invalidate();
         }
 
-        private void DrawitemOrg(object sender, DrawItemEventArgs e)
+        private void DrawItemOrg(object sender, DrawItemEventArgs e)
         {
             if (e.Index == -1)
+            {
                 return;
+            }
 
             Brush fontBrush = Brushes.Gray;
 
             int i = int.Parse(listBoxOrg.Items[e.Index].ToString());
             if (listBoxOrg.SelectedIndex == e.Index)
+            {
                 e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
+
             if (!Art.IsValidStatic(i))
+            {
                 fontBrush = Brushes.Red;
+            }
             else if (listBoxSec.Items.Count > 0)
             {
                 if (!Compare(i))
+                {
                     fontBrush = Brushes.Blue;
+                }
             }
 
-            e.Graphics.DrawString(String.Format("0x{0:X}", i), Font, fontBrush,
-                new PointF((float)5,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString(String.Format("0x{0:X}", i), Font).Height / 2))));
+            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
+                new PointF(5,
+                e.Bounds.Y + (e.Bounds.Height / 2 -
+                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
         }
 
         private void MeasureOrg(object sender, MeasureItemEventArgs e)
@@ -102,11 +110,14 @@ namespace ComparePlugin
         private void OnClickLoadSecond(object sender, EventArgs e)
         {
             if (textBoxSecondDir.Text == null)
+            {
                 return;
+            }
+
             string path = textBoxSecondDir.Text;
             string file = Path.Combine(path, "art.mul");
             string file2 = Path.Combine(path, "artidx.mul");
-            if ((File.Exists(file)) && (File.Exists(file2)))
+            if (File.Exists(file) && File.Exists(file2))
             {
                 SecondArt.SetFileIndex(file2, file);
                 LoadSecond();
@@ -115,12 +126,12 @@ namespace ComparePlugin
 
         private void LoadSecond()
         {
-            m_Compare.Clear();
+            _mCompare.Clear();
             listBoxSec.BeginUpdate();
             listBoxSec.Items.Clear();
             List<object> cache = new List<object>();
-            int staticlength = SecondArt.GetMaxItemID() + 1;
-            for (int i = 0; i < staticlength; i++)
+            int staticLength = SecondArt.GetMaxItemId() + 1;
+            for (int i = 0; i < staticLength; i++)
             {
                 cache.Add(i);
             }
@@ -131,22 +142,31 @@ namespace ComparePlugin
         private void DrawItemSec(object sender, DrawItemEventArgs e)
         {
             if (e.Index == -1)
+            {
                 return;
+            }
 
             Brush fontBrush = Brushes.Gray;
 
             int i = int.Parse(listBoxSec.Items[e.Index].ToString());
             if (listBoxSec.SelectedIndex == e.Index)
+            {
                 e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            if (!SecondArt.IsValidStatic(i))
-                fontBrush = Brushes.Red;
-            else if (!Compare(i))
-                fontBrush = Brushes.Blue;
+            }
 
-            e.Graphics.DrawString(String.Format("0x{0:X}", i), Font, fontBrush,
-                new PointF((float)5,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString(String.Format("0x{0:X}", i), Font).Height / 2))));
+            if (!SecondArt.IsValidStatic(i))
+            {
+                fontBrush = Brushes.Red;
+            }
+            else if (!Compare(i))
+            {
+                fontBrush = Brushes.Blue;
+            }
+
+            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
+                new PointF(5,
+                e.Bounds.Y + (e.Bounds.Height / 2 -
+                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
         }
 
         private void MeasureSec(object sender, MeasureItemEventArgs e)
@@ -156,52 +176,54 @@ namespace ComparePlugin
 
         private void OnIndexChangedSec(object sender, EventArgs e)
         {
-            if ((listBoxSec.SelectedIndex == -1) || (listBoxSec.Items.Count < 1))
+            if (listBoxSec.SelectedIndex == -1 || listBoxSec.Items.Count < 1)
+            {
                 return;
+            }
 
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             int pos = listBoxOrg.Items.IndexOf(i);
             if (pos >= 0)
-                listBoxOrg.SelectedIndex = pos;
-            if (SecondArt.IsValidStatic(i))
             {
-                Bitmap bmp = SecondArt.GetStatic(i);
-                if (bmp != null)
-                    pictureBoxSec.BackgroundImage = bmp;
-                else
-                    pictureBoxSec.BackgroundImage = null;
+                listBoxOrg.SelectedIndex = pos;
             }
-            else
-                pictureBoxSec.BackgroundImage = null;
+
+            pictureBoxSec.BackgroundImage = SecondArt.IsValidStatic(i)
+                ? SecondArt.GetStatic(i)
+                : null;
+
             listBoxSec.Invalidate();
         }
 
         private bool Compare(int index)
         {
-            if (m_Compare.ContainsKey(index))
-                return m_Compare[index];
+            if (_mCompare.ContainsKey(index))
+            {
+                return _mCompare[index];
+            }
+
             Bitmap bitorg = Art.GetStatic(index);
             Bitmap bitsec = SecondArt.GetStatic(index);
-            if ((bitorg == null) && (bitsec == null))
+            if (bitorg == null && bitsec == null)
             {
-                m_Compare[index] = true;
+                _mCompare[index] = true;
                 return true;
             }
-            if (((bitorg == null) || (bitsec == null))
-                || (bitorg.Size != bitsec.Size))
+            if (bitorg == null || bitsec == null
+                               || bitorg.Size != bitsec.Size)
             {
-                m_Compare[index] = false;
+                _mCompare[index] = false;
                 return false;
             }
 
             byte[] btImage1 = new byte[1];
-            btImage1 = (byte[])ic.ConvertTo(bitorg, btImage1.GetType());
+            btImage1 = (byte[])_ic.ConvertTo(bitorg, btImage1.GetType());
             byte[] btImage2 = new byte[1];
-            btImage2 = (byte[])ic.ConvertTo(bitsec, btImage2.GetType());
+            btImage2 = (byte[])_ic.ConvertTo(bitsec, btImage2.GetType());
 
-            byte[] checksum1 = shaM.ComputeHash(btImage1);
-            byte[] checksum2 = shaM.ComputeHash(btImage2);
-            bool res=true;
+            byte[] checksum1 = _shaM.ComputeHash(btImage1);
+            byte[] checksum2 = _shaM.ComputeHash(btImage2);
+            bool res = true;
             for (int j = 0; j < checksum1.Length; ++j)
             {
                 if (checksum1[j] != checksum2[j])
@@ -210,13 +232,13 @@ namespace ComparePlugin
                     break;
                 }
             }
-            m_Compare[index] = res;
+            _mCompare[index] = res;
             return res;
         }
 
         private void OnChangeShowDiff(object sender, EventArgs e)
         {
-            if (m_Compare.Count < 1)
+            if (_mCompare.Count < 1)
             {
                 if (checkBox1.Checked)
                 {
@@ -231,18 +253,20 @@ namespace ComparePlugin
             listBoxOrg.Items.Clear();
             listBoxSec.Items.Clear();
             List<object> cache = new List<object>();
-            int staticlength = Math.Max(Art.GetMaxItemID(), SecondArt.GetMaxItemID());
+            int staticLength = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
             if (checkBox1.Checked)
             {
-                for (int i = 0; i < staticlength; i++)
+                for (int i = 0; i < staticLength; i++)
                 {
                     if (!Compare(i))
+                    {
                         cache.Add(i);
+                    }
                 }
             }
             else
             {
-                for (int i = 0; i < staticlength; i++)
+                for (int i = 0; i < staticLength; i++)
                 {
                     cache.Add(i);
                 }
@@ -256,15 +280,21 @@ namespace ComparePlugin
         private void ExportAsBmp(object sender, EventArgs e)
         {
             if (listBoxSec.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             if (!SecondArt.IsValidStatic(i))
+            {
                 return;
+            }
+
             string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item(Sec) 0x{0:X}.bmp", i));
-            SecondArt.GetStatic(i).Save(FileName, ImageFormat.Bmp);
+            string fileName = Path.Combine(path, $"Item(Sec) 0x{i:X}.bmp");
+            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Bmp);
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -274,15 +304,21 @@ namespace ComparePlugin
         private void ExportAsTiff(object sender, EventArgs e)
         {
             if (listBoxSec.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             if (!SecondArt.IsValidStatic(i))
+            {
                 return;
+            }
+
             string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item(Sec) 0x{0:X}.tiff", i));
-            SecondArt.GetStatic(i).Save(FileName, ImageFormat.Tiff);
+            string fileName = Path.Combine(path, $"Item(Sec) 0x{i:X}.tiff");
+            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Tiff);
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -292,22 +328,31 @@ namespace ComparePlugin
         private void OnClickCopy(object sender, EventArgs e)
         {
             if (listBoxSec.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             if (!SecondArt.IsValidStatic(i))
+            {
                 return;
-            int staticlength = Art.GetMaxItemID() + 1;
-            if (i >= staticlength)
+            }
+
+            int staticLength = Art.GetMaxItemId() + 1;
+            if (i >= staticLength)
+            {
                 return;
+            }
+
             Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
-            Ultima.Art.ReplaceStatic(i, copy);
+            Art.ReplaceStatic(i, copy);
             FiddlerControls.Options.ChangedUltimaClass["Art"] = true;
             FiddlerControls.Events.FireItemChangeEvent(this, i);
-            m_Compare[i] = true;
+            _mCompare[i] = true;
             listBoxOrg.BeginUpdate();
             bool done = false;
 
-            for (int id = 0; id < staticlength; id++)
+            for (int id = 0; id < staticLength; id++)
             {
                 if (id > i)
                 {
@@ -315,14 +360,19 @@ namespace ComparePlugin
                     done = true;
                     break;
                 }
+
                 if (id == i)
                 {
                     done = true;
                     break;
                 }
             }
+
             if (!done)
+            {
                 listBoxOrg.Items.Add(i);
+            }
+
             listBoxOrg.EndUpdate();
             listBoxOrg.Invalidate();
             listBoxSec.Invalidate();
@@ -335,8 +385,11 @@ namespace ComparePlugin
             {
                 dialog.Description = "Select directory containing the art files";
                 dialog.ShowNewFolderButton = false;
+
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
                     textBoxSecondDir.Text = dialog.SelectedPath;
+                }
             }
         }
     }

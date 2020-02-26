@@ -28,8 +28,11 @@ namespace FiddlerControls
             {
                 components.Dispose();
             }
-            if (showform != null)
-                showform.Close();
+            
+            if (_showForm != null)
+            {
+                _showForm.Close();
+            }
 
             base.Dispose(disposing);
         }
@@ -88,7 +91,7 @@ namespace FiddlerControls
             this.Graphic.Size = new System.Drawing.Size(292, 61);
             this.Graphic.TabIndex = 0;
             this.Graphic.TabStop = false;
-            this.Graphic.Paint += new System.Windows.Forms.PaintEventHandler(this.onPaint);
+            this.Graphic.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             this.Graphic.SizeChanged += new System.EventHandler(this.OnSizeChange);
             // 
             // contextMenuStrip1
@@ -114,14 +117,14 @@ namespace FiddlerControls
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
             this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickBmp);
+            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickTiff);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickTiff);
             // 
             // setHueToolStripMenuItem
             // 
@@ -156,8 +159,8 @@ namespace FiddlerControls
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ItemDetail";
             this.Text = "ItemDetail";
-            this.Load += new System.EventHandler(this.onLoad);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.onClose);
+            this.Load += new System.EventHandler(this.OnLoad);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);

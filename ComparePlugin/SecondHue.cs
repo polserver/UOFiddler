@@ -3,7 +3,7 @@ using Ultima;
 
 namespace ComparePlugin
 {
-    public sealed class SecondHue
+    internal static class SecondHue
     {
         public static Hue[] List { get; private set; }
 
@@ -25,30 +25,39 @@ namespace ComparePlugin
                     int blockCount = (int)fs.Length / 708;
 
                     if (blockCount > 375)
+                    {
                         blockCount = 375;
+                    }
 
                     for (int i = 0; i < blockCount; ++i)
                     {
                         bin.ReadInt32();
 
                         for (int j = 0; j < 8; ++j, ++index)
+                        {
                             List[index] = new Hue(index, bin);
+                        }
                     }
                 }
             }
 
             for (; index < List.Length; ++index)
+            {
                 List[index] = new Hue(index);
+            }
         }
 
-        public static Hue GetHue(int index)
-        {
-            index &= 0x3FFF;
-
-            if (index >= 0 && index < 3000)
-                return List[index];
-
-            return List[0];
-        }
+        // TODO: unused method?
+        // public static Hue GetHue(int index)
+        // {
+        //     index &= 0x3FFF;
+        //
+        //     if (index >= 0 && index < 3000)
+        //     {
+        //         return List[index];
+        //     }
+        //
+        //     return List[0];
+        // }
     }
 }

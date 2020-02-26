@@ -28,7 +28,7 @@ namespace Ultima
         public static Stream Stream { get; private set; }
         public static Entry5D[] Patches { get; private set; }
 
-        private static string path;
+        private static string _path;
 
         static Verdata()
         {
@@ -37,16 +37,16 @@ namespace Ultima
 
         public static void Initialize()
         {
-            path = Files.GetFilePath("verdata.mul");
+            _path = Files.GetFilePath("verdata.mul");
 
-            if (path == null)
+            if (_path == null)
             {
                 Patches = new Entry5D[0];
                 Stream = Stream.Null;
             }
             else
             {
-                using (Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     using (BinaryReader bin = new BinaryReader(Stream))
                     {
@@ -54,11 +54,11 @@ namespace Ultima
 
                         for (int i = 0; i < Patches.Length; ++i)
                         {
-                            Patches[i].file = bin.ReadInt32();
-                            Patches[i].index = bin.ReadInt32();
-                            Patches[i].lookup = bin.ReadInt32();
-                            Patches[i].length = bin.ReadInt32();
-                            Patches[i].extra = bin.ReadInt32();
+                            Patches[i].File = bin.ReadInt32();
+                            Patches[i].Index = bin.ReadInt32();
+                            Patches[i].Lookup = bin.ReadInt32();
+                            Patches[i].Length = bin.ReadInt32();
+                            Patches[i].Extra = bin.ReadInt32();
                         }
                     }
                 }
@@ -70,8 +70,8 @@ namespace Ultima
         {
             if (Stream == null || !Stream.CanRead || !Stream.CanSeek)
             {
-                if (path != null)
-                    Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                if (_path != null)
+                    Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
             Stream.Seek(lookup, SeekOrigin.Begin);
         }
@@ -79,10 +79,10 @@ namespace Ultima
 
     public struct Entry5D
     {
-        public int file;
-        public int index;
-        public int lookup;
-        public int length;
-        public int extra;
+        public int File;
+        public int Index;
+        public int Lookup;
+        public int Length;
+        public int Extra;
     }
 }

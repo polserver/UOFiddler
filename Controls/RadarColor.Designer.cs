@@ -14,14 +14,14 @@ namespace FiddlerControls
     partial class RadarColor
     {
         /// <summary> 
-        /// Erforderliche Designervariable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary> 
-        /// Verwendete Ressourcen bereinigen.
+        /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -31,11 +31,11 @@ namespace FiddlerControls
             base.Dispose(disposing);
         }
 
-        #region Vom Komponenten-Designer generierter Code
+        #region Component Designer generated code
 
         /// <summary> 
-        /// Erforderliche Methode für die Designerunterstützung. 
-        /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -326,7 +326,7 @@ namespace FiddlerControls
             this.numericUpDownR.Name = "numericUpDownR";
             this.numericUpDownR.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownR.TabIndex = 7;
-            this.numericUpDownR.ValueChanged += new System.EventHandler(this.onChangeR);
+            this.numericUpDownR.ValueChanged += new System.EventHandler(this.OnChangeR);
             // 
             // button2
             // 
@@ -336,7 +336,7 @@ namespace FiddlerControls
             this.button2.TabIndex = 5;
             this.button2.Text = "Save File";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.onClickSaveFile);
+            this.button2.Click += new System.EventHandler(this.OnClickSaveFile);
             // 
             // button1
             // 
@@ -346,7 +346,7 @@ namespace FiddlerControls
             this.button1.TabIndex = 4;
             this.button1.Text = "Save Color";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.onClickSaveColor);
+            this.button1.Click += new System.EventHandler(this.OnClickSaveColor);
             // 
             // buttonMean
             // 

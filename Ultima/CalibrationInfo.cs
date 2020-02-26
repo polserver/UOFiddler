@@ -6,12 +6,12 @@ namespace Ultima
 {
     public sealed class CalibrationInfo
     {
-        public byte[] Mask { get; private set; }
-        public byte[] Vals { get; private set; }
-        public byte[] DetX { get; private set; }
-        public byte[] DetY { get; private set; }
-        public byte[] DetZ { get; private set; }
-        public byte[] DetF { get; private set; }
+        public byte[] Mask { get; }
+        public byte[] Vals { get; }
+        public byte[] DetX { get; }
+        public byte[] DetY { get; }
+        public byte[] DetZ { get; }
+        public byte[] DetF { get; }
 
         public CalibrationInfo(byte[] mask, byte[] vals, byte[] detx, byte[] dety, byte[] detz, byte[] detf)
         {
@@ -62,7 +62,7 @@ namespace Ultima
             return buffer;
         }
 
-        private static CalibrationInfo[] m_DefaultList = new CalibrationInfo[]
+        private static CalibrationInfo[] _mDefaultList = new CalibrationInfo[]
 			{
 			  new CalibrationInfo( //Post 7.0.4.0 (Andreew)
                new byte[]{ 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF },
@@ -107,8 +107,8 @@ namespace Ultima
 
         public static CalibrationInfo[] DefaultList
         {
-            get { return m_DefaultList; }
-            set { m_DefaultList = value; }
+            get => _mDefaultList;
+            set => _mDefaultList = value;
         }
 
         public static CalibrationInfo[] GetList()

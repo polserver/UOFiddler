@@ -24,214 +24,247 @@ namespace FiddlerControls
         public ItemDetail(int i)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            index = i;
+            _index = i;
             Data.AddBasicContextMenu();
         }
 
-        public int index;
-        private int defHue = -1;
-        private bool partialHue = false;
-        private bool animate = false;
-        private Timer m_Timer;
-        int frame;
-        Animdata.Data info;
+        private readonly int _index;
+        private int _defHue = -1;
+        private bool _partialHue;
+        private bool _animate;
+        private Timer _mTimer;
+        private int _frame;
+        private Animdata.Data _info;
 
         /// <summary>
         /// Sets Hue
         /// </summary>
         public int DefHue
         {
-            get { return defHue; }
+            get => _defHue;
             set
             {
-                defHue = value;
-                if (!animate)
+                _defHue = value;
+                if (_animate)
                 {
-                    Bitmap huebit = new Bitmap(Ultima.Art.GetStatic(index));
-                    if (defHue >= 0)
-                    {
-                        Hue hue = Ultima.Hues.List[defHue];
-                        hue.ApplyTo(huebit, partialHue);
-                    }
-                    Graphic.Tag = huebit;
-                    Graphic.Invalidate();
+                    return;
                 }
+
+                Bitmap hueBit = new Bitmap(Art.GetStatic(_index));
+                if (_defHue >= 0)
+                {
+                    Hue hue = Ultima.Hues.List[_defHue];
+                    hue.ApplyTo(hueBit, _partialHue);
+                }
+                Graphic.Tag = hueBit;
+                Graphic.Invalidate();
             }
         }
 
-        private void onPaint(object sender, PaintEventArgs e)
+        private void OnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(SystemColors.Control);
-            if (Graphic.Tag!=null)
+            if (Graphic.Tag == null)
             {
-                Bitmap bit=(Bitmap)Graphic.Tag;
-                e.Graphics.DrawImage(bit,(e.ClipRectangle.Width-bit.Width)/2,5);
+                return;
             }
+
+            Bitmap bit = (Bitmap)Graphic.Tag;
+            e.Graphics.DrawImage(bit, (e.ClipRectangle.Width - bit.Width) / 2, 5);
         }
 
-        private void SetPicture(Bitmap bit)
-        {
-            Bitmap newbit = new Bitmap(this.Graphic.Size.Width, this.Graphic.Size.Height);
-            Graphics newgraph = Graphics.FromImage(newbit);
-            newgraph.DrawImage(bit, (this.Graphic.Size.Width - bit.Width) / 2, 5);
-            this.Graphic.Image = newbit;
-            newgraph.Dispose();
-        }
+        // TODO: unused method?
+        //private void SetPicture(Bitmap bit)
+        //{
+        //    var newbit = new Bitmap(Graphic.Size.Width, Graphic.Size.Height);
+        //    var newgraph = Graphics.FromImage(newbit);
+        //    newgraph.DrawImage(bit, (Graphic.Size.Width - bit.Width) / 2, 5);
+        //    Graphic.Image = newbit;
+        //    newgraph.Dispose();
+        //}
 
-        private void onLoad(object sender, EventArgs e)
+        private void OnLoad(object sender, EventArgs e)
         {
-            this.animateToolStripMenuItem.Visible = false;
-            Ultima.ItemData item = Ultima.TileData.ItemTable[index];
-            Bitmap bit = Ultima.Art.GetStatic(index);
+            animateToolStripMenuItem.Visible = false;
+            ItemData item = TileData.ItemTable[_index];
+            Bitmap bit = Art.GetStatic(_index);
 
-            this.Text = String.Format("Item Detail 0x{0:X} '{1}'", index, item.Name);
-            
+            Text = $"Item Detail 0x{_index:X} '{item.Name}'";
+
             if (bit == null)
-                this.splitContainer1.SplitterDistance = 10;
+            {
+                splitContainer1.SplitterDistance = 10;
+            }
             else
             {
-                this.Size = new System.Drawing.Size(300, bit.Size.Height + this.Data.Size.Height + 10);
-                this.splitContainer1.SplitterDistance = bit.Size.Height + 10;
-                this.Graphic.Size = new System.Drawing.Size(300, bit.Size.Height + 10);
+                Size = new Size(300, bit.Size.Height + Data.Size.Height + 10);
+                splitContainer1.SplitterDistance = bit.Size.Height + 10;
+                Graphic.Size = new Size(300, bit.Size.Height + 10);
                 Graphic.Tag = bit;
                 Graphic.Invalidate();
             }
 
-            this.Data.AppendText(String.Format("Name: {0}\n", item.Name));
-            this.Data.AppendText(String.Format("Graphic: 0x{0:X4} ({0})\n", index));
-            this.Data.AppendText(String.Format("Height/Capacity: {0}\n", item.Height));
-            this.Data.AppendText(String.Format("Weight: {0}\n", item.Weight));
-            this.Data.AppendText(String.Format("Animation: {0}\n", item.Animation));
-            this.Data.AppendText(String.Format("Quality/Layer/Light: {0}\n", item.Quality));
-            this.Data.AppendText(String.Format("Quantity: {0}\n", item.Quantity));
-            this.Data.AppendText(String.Format("Hue: {0}\n", item.Hue));
-            this.Data.AppendText(String.Format("StackingOffset/Unk4: {0}\n", item.StackingOffset));
-            this.Data.AppendText(String.Format("Flags: {0}\n", item.Flags));
-            
+            Data.AppendText($"Name: {item.Name}\n");
+            Data.AppendText(string.Format("Graphic: 0x{0:X4} ({0})\n", _index));
+            Data.AppendText($"Height/Capacity: {item.Height}\n");
+            Data.AppendText($"Weight: {item.Weight}\n");
+            Data.AppendText($"Animation: {item.Animation}\n");
+            Data.AppendText($"Quality/Layer/Light: {item.Quality}\n");
+            Data.AppendText($"Quantity: {item.Quantity}\n");
+            Data.AppendText($"Hue: {item.Hue}\n");
+            Data.AppendText($"StackingOffset/Unk4: {item.StackingOffset}\n");
+            Data.AppendText($"Flags: {item.Flags}\n");
+
             if ((item.Flags & TileFlag.PartialHue) != 0)
-                partialHue = true;
-            
-            if ((item.Flags & TileFlag.Animation) != 0)
             {
-                info = Animdata.GetAnimData(index);
-                if (info != null)
-                {
-                    this.animateToolStripMenuItem.Visible = true;
-                    this.Data.AppendText(String.Format("Animation FrameCount: {0} Interval: {1}\n", info.FrameCount, info.FrameInterval));
-                }
+                _partialHue = true;
             }
+
+            if ((item.Flags & TileFlag.Animation) == 0)
+            {
+                return;
+            }
+
+            _info = Animdata.GetAnimData(_index);
+            if (_info == null)
+            {
+                return;
+            }
+
+            animateToolStripMenuItem.Visible = true;
+            Data.AppendText($"Animation FrameCount: {_info.FrameCount} Interval: {_info.FrameInterval}\n");
         }
 
         private void AnimTick(object sender, EventArgs e)
         {
-            ++frame;
-            if (frame >= info.FrameCount)
-                frame = 0;
-
-            Bitmap animbit = new Bitmap(Ultima.Art.GetStatic(index + info.FrameData[frame]));
-            if (defHue >= 0)
+            ++_frame;
+            if (_frame >= _info.FrameCount)
             {
-                Hue hue = Ultima.Hues.List[defHue];
-                hue.ApplyTo(animbit, partialHue);
+                _frame = 0;
             }
-            Graphic.Tag = animbit;
+
+            Bitmap animBit = new Bitmap(Art.GetStatic(_index + _info.FrameData[_frame]));
+            if (_defHue >= 0)
+            {
+                Hue hue = Ultima.Hues.List[_defHue];
+                hue.ApplyTo(animBit, _partialHue);
+            }
+            Graphic.Tag = animBit;
             Graphic.Invalidate();
         }
 
-        private HuePopUpItem showform = null;
+        private HuePopUpItem _showForm;
+
         private void OnClick_Hue(object sender, EventArgs e)
         {
-            if ((showform == null) || (showform.IsDisposed))
-                showform = new HuePopUpItem(this, DefHue);
+            if (_showForm?.IsDisposed != false)
+            {
+                _showForm = new HuePopUpItem(this, DefHue);
+            }
             else
-                showform.SetHue(DefHue);
-            showform.TopMost = true;
-            showform.Show();
+            {
+                _showForm.SetHue(DefHue);
+            }
+
+            _showForm.TopMost = true;
+            _showForm.Show();
         }
 
         private void OnClickAnimate(object sender, EventArgs e)
         {
-            animate = !animate;
-            if (animate)
+            _animate = !_animate;
+            if (_animate)
             {
-                m_Timer = new Timer();
-                frame = -1;
-                m_Timer.Interval = 100 * info.FrameInterval;
-                m_Timer.Tick += new EventHandler(AnimTick);
-                m_Timer.Start();
+                _mTimer = new Timer();
+                _frame = -1;
+                _mTimer.Interval = 100 * _info.FrameInterval;
+                _mTimer.Tick += AnimTick;
+                _mTimer.Start();
             }
             else
             {
-                if (m_Timer.Enabled)
-                    m_Timer.Stop();
+                if (_mTimer.Enabled)
+                {
+                    _mTimer.Stop();
+                }
 
-                m_Timer.Dispose();
-                m_Timer = null;
-                Graphic.Tag = Ultima.Art.GetStatic(index);
+                _mTimer.Dispose();
+                _mTimer = null;
+                Graphic.Tag = Art.GetStatic(_index);
                 Graphic.Invalidate();
             }
         }
 
-        private void onClose(object sender, FormClosingEventArgs e)
+        private void OnClose(object sender, FormClosingEventArgs e)
         {
-            if (m_Timer != null)
+            if (_mTimer != null)
             {
-                if (m_Timer.Enabled)
-                    m_Timer.Stop();
+                if (_mTimer.Enabled)
+                {
+                    _mTimer.Stop();
+                }
 
-                m_Timer.Dispose();
-                m_Timer = null;
+                _mTimer.Dispose();
+                _mTimer = null;
             }
-            if ((showform != null) && (!showform.IsDisposed))
-                showform.Close();
+            if (_showForm?.IsDisposed == false)
+            {
+                _showForm.Close();
+            }
         }
 
-        private void extract_Image_ClickBmp(object sender, EventArgs e)
+        private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            if (!Art.IsValidStatic(index))
+            if (!Art.IsValidStatic(_index))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item 0x{0:X}.bmp", index));
-            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(index).Width, Ultima.Art.GetStatic(index).Height);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Item 0x{_index:X}.bmp");
+            Bitmap bit = new Bitmap(Art.GetStatic(_index).Width, Art.GetStatic(_index).Height);
             Graphics newgraph = Graphics.FromImage(bit);
             newgraph.Clear(Color.Transparent);
-            Bitmap huebit = new Bitmap(Ultima.Art.GetStatic(index));
-            if (defHue > 0)
+            Bitmap huebit = new Bitmap(Art.GetStatic(_index));
+            if (_defHue > 0)
             {
-                Hue hue = Ultima.Hues.List[defHue];
-                hue.ApplyTo(huebit, partialHue);
+                Hue hue = Ultima.Hues.List[_defHue];
+                hue.ApplyTo(huebit, _partialHue);
             }
             newgraph.DrawImage(huebit, 0, 0);
-            bit.Save(FileName, ImageFormat.Bmp);
+            bit.Save(fileName, ImageFormat.Bmp);
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
-        private void extract_Image_ClickTiff(object sender, EventArgs e)
+        private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            if (!Art.IsValidStatic(index))
+            if (!Art.IsValidStatic(_index))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item 0x{0:X}.tiff", index));
-            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(index).Width, Ultima.Art.GetStatic(index).Height);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Item 0x{_index:X}.tiff");
+            Bitmap bit = new Bitmap(Art.GetStatic(_index).Width, Art.GetStatic(_index).Height);
             Graphics newgraph = Graphics.FromImage(bit);
             newgraph.Clear(Color.Transparent);
-            Bitmap huebit = new Bitmap(Ultima.Art.GetStatic(index));
-            if (defHue > 0)
+            Bitmap huebit = new Bitmap(Art.GetStatic(_index));
+            if (_defHue > 0)
             {
-                Hue hue = Ultima.Hues.List[defHue];
-                hue.ApplyTo(huebit, partialHue);
+                Hue hue = Ultima.Hues.List[_defHue];
+                hue.ApplyTo(huebit, _partialHue);
             }
             newgraph.DrawImage(huebit, 0, 0);
-            bit.Save(FileName, ImageFormat.Tiff);
+            bit.Save(fileName, ImageFormat.Tiff);
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -242,7 +275,5 @@ namespace FiddlerControls
         {
             Graphic.Invalidate();
         }
-
-        
     }
 }

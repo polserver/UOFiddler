@@ -6,10 +6,11 @@ namespace ComparePlugin
 {
     public sealed class SecondFileIndex
     {
-        public Entry3D[] Index { get; private set; }
-        public Stream Stream { get; private set; }
-        public long IdxLength { get; private set; }
-        private string MulPath;
+        private readonly string _mulPath;
+        private Entry3D[] Index { get; }
+        private Stream Stream { get; set; }
+
+        public long IdxLength { get; }
 
         public Stream Seek(int index, out int length, out int extra)
         {
@@ -21,21 +22,20 @@ namespace ComparePlugin
 
             Entry3D e = Index[index];
 
-            if (e.lookup < 0)
+            if (e.Lookup < 0)
             {
                 length = extra = 0;
                 return null;
             }
 
-            length = e.length & 0x7FFFFFFF;
-            extra = e.extra;
+            length = e.Length & 0x7FFFFFFF;
+            extra = e.Extra;
 
-            if ((Stream == null) || (!Stream.CanRead) || (!Stream.CanSeek))
+            if (Stream?.CanRead != true || !Stream.CanSeek)
             {
-                if (MulPath == null)
-                    Stream = null;
-                else
-                    Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                Stream = _mulPath == null
+                    ? null
+                    : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
             if (Stream == null)
@@ -44,7 +44,7 @@ namespace ComparePlugin
                 return null;
             }
 
-            Stream.Seek(e.lookup, SeekOrigin.Begin);
+            Stream.Seek(e.Lookup, SeekOrigin.Begin);
             return Stream;
         }
 
@@ -58,54 +58,60 @@ namespace ComparePlugin
 
             Entry3D e = Index[index];
 
-            if (e.lookup < 0)
+            if (e.Lookup < 0)
             {
                 length = extra = 0;
                 return false;
             }
-            if (e.length < 0)
-            {
-                length = extra = 0;
-                return false;
-            }
-
-            length = e.length & 0x7FFFFFFF;
-            extra = e.extra;
-
-            if ((MulPath == null) || !File.Exists(MulPath))
+            if (e.Length < 0)
             {
                 length = extra = 0;
                 return false;
             }
 
-            if ((Stream == null) || (!Stream.CanRead) || (!Stream.CanSeek))
-            {
-                Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            }
+            length = e.Length & 0x7FFFFFFF;
+            extra = e.Extra;
 
-            if (Stream.Length < e.lookup)
+            if (_mulPath == null || !File.Exists(_mulPath))
             {
                 length = extra = 0;
                 return false;
             }
-            return true;
+
+            if (Stream?.CanRead != true || !Stream.CanSeek)
+            {
+                Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (Stream.Length >= e.Lookup)
+            {
+                return true;
+            }
+
+            length = extra = 0;
+            return false;
         }
 
         public SecondFileIndex(string idxFile, string mulFile, int length)
         {
             Index = new Entry3D[length];
 
-            MulPath = mulFile;
+            _mulPath = mulFile;
             if (!File.Exists(idxFile))
+            {
                 idxFile = null;
-            if (!File.Exists(MulPath))
-                MulPath = null;
+            }
 
-            if (idxFile != null && MulPath != null)
+            if (!File.Exists(_mulPath))
+            {
+                _mulPath = null;
+            }
+
+            if (idxFile != null && _mulPath != null)
             {
                 using (FileStream index = new FileStream(idxFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                     int count = (int)(index.Length / 12);
                     IdxLength = index.Length;
@@ -118,24 +124,23 @@ namespace ComparePlugin
 
                     for (int i = count; i < length; ++i)
                     {
-                        Index[i].lookup = -1;
-                        Index[i].length = -1;
-                        Index[i].extra = -1;
+                        Index[i].Lookup = -1;
+                        Index[i].Length = -1;
+                        Index[i].Extra = -1;
                     }
                 }
             }
             else
             {
                 Stream = null;
-                return;
             }
         }
     }
 
     public struct Entry3D
     {
-        public int lookup;
-        public int length;
-        public int extra;
+        public int Lookup;
+        public int Length;
+        public int Extra;
     }
 }

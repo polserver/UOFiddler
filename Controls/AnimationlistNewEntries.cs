@@ -18,102 +18,112 @@ using Ultima;
 
 namespace FiddlerControls
 {
-    public partial class AnimationlistNewEntries : Form
+    public partial class AnimationListNewEntries : Form
     {
-        private Animationlist Form;
-        public AnimationlistNewEntries(Animationlist form)
+        private readonly AnimationList _form;
+        private int _currentSelect;
+        private int _facing = 1;
+        private bool _animate;
+        private Timer _timer;
+        private int _frameIndex;
+        private Frame[] _animation;
+
+        public AnimationListNewEntries(AnimationList form)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
-            Form = form;
+            Icon = Options.GetFiddlerIcon();
+            _form = form;
         }
 
-        private int m_CurrentSelect;
-        private int m_CurrentSelectAction;
-        private int facing = 1;
-        private bool animate = false;
-        private Timer m_Timer = null;
-        private int m_FrameIndex;
-        private Frame[] m_Animation;
-
-        public bool Animate
+        private bool Animate
         {
-            get { return animate; }
+            get => _animate;
             set
             {
-                if (animate != value)
+                if (_animate == value)
                 {
-                    animate = value;
-                    StopAnimation();
-                    if (animate)
-                        SetAnimation();
+                    return;
+                }
+
+                _animate = value;
+                StopAnimation();
+                if (_animate)
+                {
+                    SetAnimation();
                 }
             }
         }
 
-        public int CurrentSelectAction
-        {
-            get { return m_CurrentSelectAction; }
-            set { m_CurrentSelectAction = value; }
-        }
+        private int CurrentSelectAction { get; set; }
 
-        public int CurrentSelect
+        private int CurrentSelect
         {
-            get { return m_CurrentSelect; }
+            get => _currentSelect;
             set
             {
                 StopAnimation();
-                m_CurrentSelect = value;
-                if (animate)
+                _currentSelect = value;
+                if (_animate)
+                {
                     SetAnimation();
+                }
+
                 pictureBox1.Invalidate();
             }
         }
 
         private void StopAnimation()
         {
-            if (m_Timer != null)
+            if (_timer != null)
             {
-                if (m_Timer.Enabled)
-                    m_Timer.Stop();
+                if (_timer.Enabled)
+                {
+                    _timer.Stop();
+                }
 
-                m_Timer.Dispose();
-                m_Timer = null;
+                _timer.Dispose();
+                _timer = null;
             }
 
-            m_Animation = null;
-            m_FrameIndex = 0;
+            _animation = null;
+            _frameIndex = 0;
         }
 
         private void SetAnimation()
         {
-            int body = m_CurrentSelect;
+            int body = _currentSelect;
             Animations.Translate(ref body);
             int hue = 0;
-            m_Animation = Animations.GetAnimation(m_CurrentSelect, m_CurrentSelectAction, facing, ref hue, false, false);
-            if (m_Animation != null)
+            _animation = Animations.GetAnimation(_currentSelect, CurrentSelectAction, _facing, ref hue, false, false);
+            if (_animation == null)
             {
-                m_FrameIndex = 0;
-                m_Timer = new Timer();
-                m_Timer.Interval = 1000 / m_Animation.Length;
-                m_Timer.Tick += new EventHandler(AnimTick);
-                m_Timer.Start();
+                return;
             }
+
+            _frameIndex = 0;
+            _timer = new Timer
+            {
+                Interval = 1000 / _animation.Length
+            };
+            _timer.Tick += AnimTick;
+            _timer.Start();
         }
 
         private void AnimTick(object sender, EventArgs e)
         {
-            ++m_FrameIndex;
+            ++_frameIndex;
 
-            if (m_FrameIndex == m_Animation.Length)
-                m_FrameIndex = 0;
+            if (_frameIndex == _animation.Length)
+            {
+                _frameIndex = 0;
+            }
 
             pictureBox1.Invalidate();
         }
 
         private void OnLoad(object sender, EventArgs e)
         {
-            facingbar.Value = (facing + 3) & 7;
+            facingbar.Value = (_facing + 3) & 7;
             treeView1.BeginUpdate();
             treeView1.Nodes.Clear();
             treeView1.TreeViewNodeSorter = new AnimNewListGraphicSorter();
@@ -121,106 +131,149 @@ namespace FiddlerControls
             MobTypes();
 
             TreeNode node;
-            foreach (DictionaryEntry key in BodyTable.m_Entries) //body.def
+            foreach (DictionaryEntry key in BodyTable.MEntries) //body.def
             {
                 BodyTableEntry entry = (BodyTableEntry)key.Value;
-                if (!AlreadyFound(entry.NewID))
+                if (AlreadyFound(entry.NewId))
                 {
-                    if (!Form.IsAlreadyDefinied(entry.NewID))
-                    {
-                        node = new TreeNode(entry.NewID.ToString());
-                        node.Tag = entry.NewID;
-                        node.ToolTipText = String.Format("Found in body.def {0}", Animations.GetFileName(entry.NewID));
-                        node.Tag = new int[] { entry.NewID, 0 };
-                        treeView1.Nodes.Add(node);
-                        SetActionType(node, entry.NewID, 0);
-                    }
+                    continue;
                 }
+
+                if (_form.IsAlreadyDefined(entry.NewId))
+                {
+                    continue;
+                }
+
+                node = new TreeNode(entry.NewId.ToString())
+                {
+                    Tag = entry.NewId,
+                    ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewId)}"
+                };
+                node.Tag = new[] { entry.NewId, 0 };
+                treeView1.Nodes.Add(node);
+                SetActionType(node, entry.NewId, 0);
             }
+
             if (BodyConverter.Table1 != null)
             {
-                foreach (int entry in BodyConverter.Table1)  //bodyconv.def
+                foreach (int entry in BodyConverter.Table1)  // bodyconv.def
                 {
-                    if (entry != -1)
+                    if (entry == -1)
                     {
-                        if (!AlreadyFound(entry))
-                        {
-                            if (!Form.IsAlreadyDefinied(entry))
-                            {
-                                node = new TreeNode(entry.ToString());
-                                node.ToolTipText = String.Format("Found in bodyconv.def {0}", Animations.GetFileName(entry));
-                                node.Tag = entry;
-                                node.Tag = new int[] { entry, 0 };
-                                treeView1.Nodes.Add(node);
-                                SetActionType(node, entry, 0);
-                            }
-                        }
+                        continue;
                     }
+
+                    if (AlreadyFound(entry))
+                    {
+                        continue;
+                    }
+
+                    if (_form.IsAlreadyDefined(entry))
+                    {
+                        continue;
+                    }
+
+                    node = new TreeNode(entry.ToString())
+                    {
+                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
+                        Tag = entry
+                    };
+                    node.Tag = new[] { entry, 0 };
+                    treeView1.Nodes.Add(node);
+                    SetActionType(node, entry, 0);
                 }
             }
+
             if (BodyConverter.Table2 != null)
             {
                 foreach (int entry in BodyConverter.Table2)
                 {
-                    if (entry != -1)
+                    if (entry == -1)
                     {
-                        if (!AlreadyFound(entry))
-                        {
-                            if (!Form.IsAlreadyDefinied(entry))
-                            {
-                                node = new TreeNode(entry.ToString());
-                                node.ToolTipText = String.Format("Found in bodyconv.def {0}", Animations.GetFileName(entry));
-                                node.Tag = entry;
-                                node.Tag = new int[] { entry, 0 };
-                                treeView1.Nodes.Add(node);
-                                SetActionType(node, entry, 0);
-                            }
-                        }
+                        continue;
                     }
+
+                    if (AlreadyFound(entry))
+                    {
+                        continue;
+                    }
+
+                    if (_form.IsAlreadyDefined(entry))
+                    {
+                        continue;
+                    }
+
+                    node = new TreeNode(entry.ToString())
+                    {
+                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
+                        Tag = entry
+                    };
+                    node.Tag = new[] { entry, 0 };
+                    treeView1.Nodes.Add(node);
+                    SetActionType(node, entry, 0);
                 }
             }
+
             if (BodyConverter.Table3 != null)
             {
                 foreach (int entry in BodyConverter.Table3)
                 {
-                    if (entry != -1)
+                    if (entry == -1)
                     {
-                        if (!AlreadyFound(entry))
-                        {
-                            if (!Form.IsAlreadyDefinied(entry))
-                            {
-                                node = new TreeNode(entry.ToString());
-                                node.ToolTipText = String.Format("Found in bodyconv.def {0}", Animations.GetFileName(entry));
-                                node.Tag = entry;
-                                node.Tag = new int[] { entry, 0 };
-                                treeView1.Nodes.Add(node);
-                                SetActionType(node, entry, 0);
-                            }
-                        }
+                        continue;
                     }
+
+                    if (AlreadyFound(entry))
+                    {
+                        continue;
+                    }
+
+                    if (_form.IsAlreadyDefined(entry))
+                    {
+                        continue;
+                    }
+
+                    node = new TreeNode(entry.ToString())
+                    {
+                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
+                        Tag = entry
+                    };
+                    node.Tag = new[] { entry, 0 };
+                    treeView1.Nodes.Add(node);
+                    SetActionType(node, entry, 0);
                 }
             }
+
             if (BodyConverter.Table4 != null)
             {
                 foreach (int entry in BodyConverter.Table4)
                 {
-                    if (entry != -1)
+                    if (entry == -1)
                     {
-                        if (!AlreadyFound(entry))
-                        {
-                            if (!Form.IsAlreadyDefinied(entry))
-                            {
-                                node = new TreeNode(entry.ToString());
-                                node.ToolTipText = String.Format("Found in bodyconv.def {0}", Animations.GetFileName(entry));
-                                node.Tag = entry;
-                                node.Tag = new int[] { entry, 0 };
-                                treeView1.Nodes.Add(node);
-                                SetActionType(node, entry, 0);
-                            }
-                        }
+                        continue;
                     }
+
+                    if (AlreadyFound(entry))
+                    {
+                        continue;
+                    }
+
+                    if (_form.IsAlreadyDefined(entry))
+                    {
+                        continue;
+                    }
+
+                    node = new TreeNode(entry.ToString())
+                    {
+                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
+                        Tag = entry
+                    };
+                    node.Tag = new[] { entry, 0 };
+                    treeView1.Nodes.Add(node);
+                    SetActionType(node, entry, 0);
                 }
             }
+
             treeView1.EndUpdate();
         }
 
@@ -229,8 +282,11 @@ namespace FiddlerControls
             foreach (TreeNode node in treeView1.Nodes)
             {
                 if (((int[])node.Tag)[0] == graphic)
+                {
                     return true;
+                }
             }
+
             return false;
         }
 
@@ -239,46 +295,51 @@ namespace FiddlerControls
             string filePath = Files.GetFilePath("mobtypes.txt");
 
             if (filePath == null)
+            {
                 return;
-            TreeNode node;
+            }
+
             using (StreamReader def = new StreamReader(filePath))
             {
                 string line;
-                int graphic;
 
                 while ((line = def.ReadLine()) != null)
                 {
                     if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    {
                         continue;
+                    }
+
                     try
                     {
                         string[] split = line.Split('\t');
-                        if (int.TryParse(split[0], out graphic))
+                        if (int.TryParse(split[0], out int graphic))
                         {
-                            if (!AlreadyFound(graphic))
+                            if (!AlreadyFound(graphic) && !_form.IsAlreadyDefined(graphic))
                             {
-                                if (!Form.IsAlreadyDefinied(graphic))
+                                TreeNode node = new TreeNode(graphic.ToString())
                                 {
-                                    node = new TreeNode(graphic.ToString());
-
-                                    node.ToolTipText = String.Format("Found in mobtype.txt {0}", Animations.GetFileName(graphic));
-                                    int type = 0;
-                                    switch (split[1])
-                                    {
-                                        case "MONSTER": type = 0; break;
-                                        case "SEA_MONSTER": type = 1; break;
-                                        case "ANIMAL": type = 2; break;
-                                        case "HUMAN": type = 3; break;
-                                        case "EQUIPMENT": type = 3; break;
-                                    }
-                                    node.Tag = new int[] { graphic, type };
-                                    treeView1.Nodes.Add(node);
-                                    SetActionType(node, graphic, type);
+                                    ToolTipText = $"Found in mobtype.txt {Animations.GetFileName(graphic)}"
+                                };
+                                int type = 0;
+                                switch (split[1])
+                                {
+                                    case "MONSTER": type = 0; break;
+                                    case "SEA_MONSTER": type = 1; break;
+                                    case "ANIMAL": type = 2; break;
+                                    case "HUMAN": type = 3; break;
+                                    case "EQUIPMENT": type = 3; break;
                                 }
+                                node.Tag = new[] { graphic, type };
+                                treeView1.Nodes.Add(node);
+                                SetActionType(node, graphic, type);
                             }
                         }
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
         }
@@ -286,31 +347,37 @@ namespace FiddlerControls
         private void SetActionType(TreeNode parent, int graphic, int type)
         {
             parent.Nodes.Clear();
-            TreeNode node;
-            if (type == 4) //Equipment==human
-                type = 3;
-            for (int i = 0; i < Form.GetAnimNames[type].GetLength(0); ++i)
+            if (type == 4) // Equipment == human
             {
-                if (Animations.IsActionDefined(graphic, i, 0))
+                type = 3;
+            }
+
+            for (int i = 0; i < _form.GetAnimNames[type].GetLength(0); ++i)
+            {
+                if (!Animations.IsActionDefined(graphic, i, 0))
                 {
-                    node = new TreeNode(String.Format("{0} {1}", i, Form.GetAnimNames[type][i]));
-                    node.Tag = i;
-                    parent.Nodes.Add(node);
+                    continue;
                 }
+
+                TreeNode node = new TreeNode($"{i} {_form.GetAnimNames[type][i]}")
+                {
+                    Tag = i
+                };
+                parent.Nodes.Add(node);
             }
         }
 
-        private void onAfterSelectTreeView(object sender, TreeViewEventArgs e)
+        private void OnAfterSelectTreeView(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Parent == null)
             {
-                m_CurrentSelectAction = 0;
+                CurrentSelectAction = 0;
                 CurrentSelect = ((int[])e.Node.Tag)[0];
                 ComboBoxActionType.SelectedIndex = ((int[])e.Node.Tag)[1];
             }
             else
             {
-                m_CurrentSelectAction = (int)e.Node.Tag;
+                CurrentSelectAction = (int)e.Node.Tag;
                 CurrentSelect = ((int[])e.Node.Parent.Tag)[0];
                 ComboBoxActionType.SelectedIndex = ((int[])e.Node.Parent.Tag)[1];
             }
@@ -318,74 +385,86 @@ namespace FiddlerControls
 
         private void OnPaint_PictureBox(object sender, PaintEventArgs e)
         {
-            if (CurrentSelect != 0)
+            if (CurrentSelect == 0)
             {
-                if (animate)
+                return;
+            }
+
+            if (_animate)
+            {
+                if (_animation?[_frameIndex].Bitmap == null)
                 {
-                    if (m_Animation != null)
-                    {
-                        if (m_Animation[m_FrameIndex].Bitmap != null)
-                        {
-                            Point loc = new Point();
-                            loc.X = (pictureBox1.Width - m_Animation[m_FrameIndex].Bitmap.Width) / 2;
-                            loc.Y = (pictureBox1.Height - m_Animation[m_FrameIndex].Bitmap.Height) / 2;
-                            e.Graphics.DrawImage(m_Animation[m_FrameIndex].Bitmap, loc);
-                        }
-                    }
+                    return;
                 }
-                else
+
+                Point loc = new Point
                 {
-                    int body = m_CurrentSelect;
-                    Animations.Translate(ref body);
-                    int hue = 0;
-                    Frame[] frames = Animations.GetAnimation(m_CurrentSelect, m_CurrentSelectAction, facing, ref hue, false, false);
-                    if (frames != null)
-                    {
-                        if (frames[0].Bitmap != null)
-                        {
-                            Point loc = new Point();
-                            loc.X = (pictureBox1.Width - frames[0].Bitmap.Width) / 2;
-                            loc.Y = (pictureBox1.Height - frames[0].Bitmap.Height) / 2;
-                            e.Graphics.DrawImage(frames[0].Bitmap, loc);
-                        }
-                    }
+                    X = (pictureBox1.Width - _animation[_frameIndex].Bitmap.Width) / 2,
+                    Y = (pictureBox1.Height - _animation[_frameIndex].Bitmap.Height) / 2
+                };
+                e.Graphics.DrawImage(_animation[_frameIndex].Bitmap, loc);
+            }
+            else
+            {
+                int body = _currentSelect;
+                Animations.Translate(ref body);
+                int hue = 0;
+                Frame[] frames = Animations.GetAnimation(_currentSelect, CurrentSelectAction, _facing, ref hue, false, false);
+                if (frames?[0].Bitmap == null)
+                {
+                    return;
                 }
+
+                Point loc = new Point
+                {
+                    X = (pictureBox1.Width - frames[0].Bitmap.Width) / 2,
+                    Y = (pictureBox1.Height - frames[0].Bitmap.Height) / 2
+                };
+                e.Graphics.DrawImage(frames[0].Bitmap, loc);
             }
         }
 
-        private void onClickAnimate(object sender, EventArgs e)
+        private void OnClickAnimate(object sender, EventArgs e)
         {
             Animate = !Animate;
         }
 
         private void OnChangeType(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode != null)
+            if (treeView1.SelectedNode == null)
             {
-                TreeNode node = treeView1.SelectedNode;
-                if (node.Parent != null)
-                    node = node.Parent;
-                ((int[])node.Tag)[1] = ComboBoxActionType.SelectedIndex;
-                SetActionType(node, ((int[])node.Tag)[0], ComboBoxActionType.SelectedIndex);
+                return;
             }
+
+            TreeNode node = treeView1.SelectedNode;
+            if (node.Parent != null)
+            {
+                node = node.Parent;
+            } ((int[])node.Tag)[1] = ComboBoxActionType.SelectedIndex;
+            SetActionType(node, ((int[])node.Tag)[0], ComboBoxActionType.SelectedIndex);
         }
 
-        private void onScrollFacing(object sender, EventArgs e)
+        private void OnScrollFacing(object sender, EventArgs e)
         {
-            facing = (facingbar.Value - 3) & 7;
+            _facing = (facingbar.Value - 3) & 7;
             CurrentSelect = CurrentSelect;
         }
 
-        private void onClickAdd(object sender, EventArgs e)
+        private void OnClickAdd(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode != null)
+            if (treeView1.SelectedNode == null)
             {
-                TreeNode node = treeView1.SelectedNode;
-                if (node.Parent != null)
-                    node = node.Parent;
-                Form.AddGraphic(((int[])node.Tag)[0], ((int[])node.Tag)[1], node.Text);
-                treeView1.SelectedNode.Remove();
+                return;
             }
+
+            TreeNode node = treeView1.SelectedNode;
+            if (node.Parent != null)
+            {
+                node = node.Parent;
+            }
+
+            _form.AddGraphic(((int[])node.Tag)[0], ((int[])node.Tag)[1], node.Text);
+            treeView1.SelectedNode.Remove();
         }
     }
 
@@ -396,17 +475,29 @@ namespace FiddlerControls
             TreeNode tx = x as TreeNode;
             TreeNode ty = y as TreeNode;
             if (tx.Parent != null)
+            {
                 return 0;
+            }
+
             if (ty.Parent != null)
+            {
                 return 0;
+            }
+
             int[] ix = (int[])tx.Tag;
             int[] iy = (int[])ty.Tag;
             if (ix[0] == iy[0])
+            {
                 return 0;
+            }
             else if (ix[0] < iy[0])
+            {
                 return -1;
+            }
             else
+            {
                 return 1;
+            }
         }
     }
 }

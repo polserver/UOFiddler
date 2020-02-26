@@ -24,79 +24,85 @@ namespace UoFiddler
 {
     public static class Options
     {
-        private static bool m_UpdateCheckOnStart = true;
-        private static List<ExternTool> m_ExternTools;
+        public static List<ExternTool> ExternTools { get; private set; }
 
-        public static List<ExternTool> ExternTools
-        {
-            get { return m_ExternTools; }
-            set { m_ExternTools = value; }
-        }
         /// <summary>
-        /// Definies if an Update Check should be made on startup
+        /// Defines if an Update Check should be made on startup
         /// </summary>
-        public static bool UpdateCheckOnStart
-        {
-            get { return m_UpdateCheckOnStart; }
-            set { m_UpdateCheckOnStart = value; }
-        }
+        public static bool UpdateCheckOnStart { get; set; } = true;
 
         public static bool StoreFormState { get; set; }
         public static bool MaximisedForm { get; set; }
         public static Point FormPosition { get; set; }
         public static Size FormSize { get; set; }
-        public static string OutputPath { get; set; }
 
-        private static void MoveFile(FileInfo[] files, string path)
+        // TODO: unused?
+        //public static string OutputPath { get; set; }
+
+        private static void MoveFile(IEnumerable<FileInfo> files, string path)
         {
             foreach (FileInfo file in files)
             {
-                string newpath = Path.Combine(path, file.Name);
-                if (!File.Exists(newpath))
+                string destFileName = Path.Combine(path, file.Name);
+                if (File.Exists(destFileName))
                 {
-                    try
-                    {
-                        file.MoveTo(newpath);
-                    }
-                    catch
-                    {
-                        file.CopyTo(newpath);
-                    }
+                    continue;
+                }
+
+                try
+                {
+                    file.MoveTo(destFileName);
+                }
+                catch
+                {
+                    file.CopyTo(destFileName);
                 }
             }
         }
 
         public static void Startup()
         {
-            // Move xml files to appdata
-            
+            // Move xml files to AppData
             if (!Directory.Exists(FiddlerControls.Options.AppDataPath))
+            {
                 Directory.CreateDirectory(FiddlerControls.Options.AppDataPath);
-            string pluginpath = Path.Combine(FiddlerControls.Options.AppDataPath, "plugins");
-            if (!Directory.Exists(pluginpath))
-                Directory.CreateDirectory(pluginpath);
+            }
+
+            string plugInPath = Path.Combine(FiddlerControls.Options.AppDataPath, "plugins");
+            if (!Directory.Exists(plugInPath))
+            {
+                Directory.CreateDirectory(plugInPath);
+            }
+
             DirectoryInfo di = new DirectoryInfo(Application.StartupPath);
-            MoveFile(di.GetFiles(@"Options_default.xml", SearchOption.TopDirectoryOnly), FiddlerControls.Options.AppDataPath);
-            MoveFile(di.GetFiles(@"Animationlist.xml", SearchOption.TopDirectoryOnly), FiddlerControls.Options.AppDataPath);
-            MoveFile(di.GetFiles(@"Multilist.xml", SearchOption.TopDirectoryOnly), FiddlerControls.Options.AppDataPath);
-            di = new DirectoryInfo(Path.Combine(Application.StartupPath,"plugins"));
-            MoveFile(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), pluginpath);
+            MoveFile(di.GetFiles("Options_default.xml", SearchOption.TopDirectoryOnly), FiddlerControls.Options.AppDataPath);
+            MoveFile(di.GetFiles("Animationlist.xml", SearchOption.TopDirectoryOnly), FiddlerControls.Options.AppDataPath);
+            MoveFile(di.GetFiles("Multilist.xml", SearchOption.TopDirectoryOnly), FiddlerControls.Options.AppDataPath);
+
+            di = new DirectoryInfo(Path.Combine(Application.StartupPath, "plugins"));
+            MoveFile(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
 
             Load();
-            if (m_UpdateCheckOnStart)
+
+            if (UpdateCheckOnStart)
             {
-                using (BackgroundWorker updater = new BackgroundWorker())
-                {
-                    updater.DoWork += new DoWorkEventHandler(Updater_DoWork);
-                    updater.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Updater_RunWorkerCompleted);
-                    updater.RunWorkerAsync();
-                }
+                RunUpdater();
+            }
+        }
+
+        private static void RunUpdater()
+        {
+            using (BackgroundWorker updater = new BackgroundWorker())
+            {
+                updater.DoWork += Updater_DoWork;
+                updater.RunWorkerCompleted += Updater_RunWorkerCompleted;
+                updater.RunWorkerAsync();
             }
         }
 
         public static void Save()
         {
-            string FileName = Path.Combine(FiddlerControls.Options.AppDataPath, FiddlerControls.Options.ProfileName);
+            string fileName = Path.Combine(FiddlerControls.Options.AppDataPath, FiddlerControls.Options.ProfileName);
 
             XmlDocument dom = new XmlDocument();
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -106,7 +112,7 @@ namespace UoFiddler
             XmlComment comment = dom.CreateComment("Output Path");
             sr.AppendChild(comment);
             XmlElement elem = dom.CreateElement("OutputPath");
-            elem.SetAttribute("path", FiddlerControls.Options.OutputPath.ToString());
+            elem.SetAttribute("path", FiddlerControls.Options.OutputPath);
             sr.AppendChild(elem);
             comment = dom.CreateComment("ItemSize controls the size of images in items tab");
             sr.AppendChild(comment);
@@ -150,7 +156,7 @@ namespace UoFiddler
             elem.SetAttribute("active", UpdateCheckOnStart.ToString());
             sr.AppendChild(elem);
 
-            comment = dom.CreateComment("Definies the cmd to send Client to loc");
+            comment = dom.CreateComment("Defines the cmd to send Client to loc");
             sr.AppendChild(comment);
             comment = dom.CreateComment("{1} = x, {2} = y, {3} = z, {4} = mapid, {5} = mapname");
             sr.AppendChild(comment);
@@ -159,7 +165,7 @@ namespace UoFiddler
             elem.SetAttribute("args", FiddlerControls.Options.MapArgs);
             sr.AppendChild(elem);
 
-            comment = dom.CreateComment("Definies the map names");
+            comment = dom.CreateComment("Defines the map names");
             sr.AppendChild(comment);
             elem = dom.CreateElement("MapNames");
             elem.SetAttribute("map0", FiddlerControls.Options.MapNames[0]);
@@ -172,21 +178,23 @@ namespace UoFiddler
 
             comment = dom.CreateComment("Extern Tools settings");
             sr.AppendChild(comment);
+
             if (ExternTools != null)
             {
                 foreach (ExternTool tool in ExternTools)
                 {
-                    XmlElement xtool = dom.CreateElement("ExternTool");
-                    xtool.SetAttribute("name", tool.Name);
-                    xtool.SetAttribute("path", tool.FileName);
+                    XmlElement externalToolElement = dom.CreateElement("ExternTool");
+                    externalToolElement.SetAttribute("name", tool.Name);
+                    externalToolElement.SetAttribute("path", tool.FileName);
+
                     for (int i = 0; i < tool.Args.Count; i++)
                     {
-                        XmlElement xarg = dom.CreateElement("Args");
-                        xarg.SetAttribute("name", tool.ArgsName[i]);
-                        xarg.SetAttribute("arg", tool.Args[i]);
-                        xtool.AppendChild(xarg);
+                        XmlElement argsElement = dom.CreateElement("Args");
+                        argsElement.SetAttribute("name", tool.ArgsName[i]);
+                        argsElement.SetAttribute("arg", tool.Args[i]);
+                        externalToolElement.AppendChild(argsElement);
                     }
-                    sr.AppendChild(xtool);
+                    sr.AppendChild(externalToolElement);
                 }
             }
 
@@ -194,15 +202,15 @@ namespace UoFiddler
             sr.AppendChild(comment);
             if (FiddlerControls.Options.PluginsToLoad != null)
             {
-                foreach (string plug in FiddlerControls.Options.PluginsToLoad)
+                foreach (string plugIn in FiddlerControls.Options.PluginsToLoad)
                 {
-                    XmlElement xplug = dom.CreateElement("Plugin");
-                    xplug.SetAttribute("name", plug);
-                    sr.AppendChild(xplug);
+                    XmlElement xmlPlugin = dom.CreateElement("Plugin");
+                    xmlPlugin.SetAttribute("name", plugIn);
+                    sr.AppendChild(xmlPlugin);
                 }
             }
 
-            comment = dom.CreateComment("Pathsettings");
+            comment = dom.CreateComment("Path settings");
             sr.AppendChild(comment);
             elem = dom.CreateElement("RootPath");
             elem.SetAttribute("path", Files.RootDir);
@@ -212,8 +220,8 @@ namespace UoFiddler
             foreach (string key in sorter)
             {
                 XmlElement path = dom.CreateElement("Paths");
-                path.SetAttribute("key", key.ToString());
-                path.SetAttribute("value", Files.MulPath[key].ToString());
+                path.SetAttribute("key", key);
+                path.SetAttribute("value", Files.MulPath[key]);
                 sr.AppendChild(path);
             }
             dom.AppendChild(sr);
@@ -222,12 +230,14 @@ namespace UoFiddler
             sr.AppendChild(comment);
             foreach (KeyValuePair<int, bool> kvp in FiddlerControls.Options.ChangedViewState)
             {
-                if (!kvp.Value)
+                if (kvp.Value)
                 {
-                    XmlElement viewstate = dom.CreateElement("TabView");
-                    viewstate.SetAttribute("tab", kvp.Key.ToString());
-                    sr.AppendChild(viewstate);
+                    continue;
                 }
+
+                XmlElement viewState = dom.CreateElement("TabView");
+                viewState.SetAttribute("tab", kvp.Key.ToString());
+                sr.AppendChild(viewState);
             }
 
             comment = dom.CreateComment("ViewState of the MainForm");
@@ -247,76 +257,100 @@ namespace UoFiddler
             elem.SetAttribute("value", FiddlerControls.Options.TileDataDirectlySaveOnChange.ToString());
             sr.AppendChild(elem);
 
-            dom.Save(FileName);
+            dom.Save(fileName);
         }
-
 
         private static void Load()
         {
-            string FileName = Path.Combine(FiddlerControls.Options.AppDataPath, "Options_default.xml");
-            if (!File.Exists(FileName))
+            string fileName = Path.Combine(FiddlerControls.Options.AppDataPath, "Options_default.xml");
+            if (!File.Exists(fileName))
+            {
                 return;
-            LoadProfile profileform = new LoadProfile();
-            profileform.TopMost = true;
-            profileform.ShowDialog();
+            }
+
+            LoadProfile profile = new LoadProfile
+            {
+                TopMost = true
+            };
+            profile.ShowDialog();
+
             //loadProfile(FileName);
         }
 
         public static void LoadProfile(string filename)
         {
-            string FileName = Path.Combine(FiddlerControls.Options.AppDataPath, filename);
-            if (!File.Exists(FileName))
+            string fileName = Path.Combine(FiddlerControls.Options.AppDataPath, filename);
+            if (!File.Exists(fileName))
+            {
                 return;
+            }
+
             XmlDocument dom = new XmlDocument();
-            dom.Load(FileName);
+            dom.Load(fileName);
             XmlElement xOptions = dom["Options"];
-            XmlElement elem = (XmlElement)xOptions.SelectSingleNode("OutputPath");
+            XmlElement elem = (XmlElement)xOptions?.SelectSingleNode("OutputPath");
             if (elem != null)
             {
                 FiddlerControls.Options.OutputPath = elem.GetAttribute("path");
                 if (!Directory.Exists(FiddlerControls.Options.OutputPath))
+                {
                     FiddlerControls.Options.OutputPath = FiddlerControls.Options.AppDataPath;
+                }
             }
             else
+            {
                 FiddlerControls.Options.OutputPath = FiddlerControls.Options.AppDataPath;
+            }
+
             elem = (XmlElement)xOptions.SelectSingleNode("ItemSize");
             if (elem != null)
             {
                 FiddlerControls.Options.ArtItemSizeWidth = int.Parse(elem.GetAttribute("width"));
                 FiddlerControls.Options.ArtItemSizeHeight = int.Parse(elem.GetAttribute("height"));
             }
+
             elem = (XmlElement)xOptions.SelectSingleNode("ItemClip");
             if (elem != null)
+            {
                 FiddlerControls.Options.ArtItemClip = bool.Parse(elem.GetAttribute("active"));
+            }
 
             elem = (XmlElement)xOptions.SelectSingleNode("CacheData");
             if (elem != null)
+            {
                 Files.CacheData = bool.Parse(elem.GetAttribute("active"));
+            }
 
             elem = (XmlElement)xOptions.SelectSingleNode("NewMapSize");
-            if (elem != null)
+            if (elem != null && bool.Parse(elem.GetAttribute("active")))
             {
-                if (bool.Parse(elem.GetAttribute("active")))
-                {
-                    Map.Felucca.Width = 7168;
-                    Map.Trammel.Width = 7168;
-                }
+                Map.Felucca.Width = 7168;
+                Map.Trammel.Width = 7168;
             }
+
             elem = (XmlElement)xOptions.SelectSingleNode("UseMapDiff");
             if (elem != null)
+            {
                 Map.StartUpSetDiff(bool.Parse(elem.GetAttribute("active")));
+            }
 
             elem = (XmlElement)xOptions.SelectSingleNode("AlternativeDesign");
             if (elem != null)
+            {
                 FiddlerControls.Options.DesignAlternative = bool.Parse(elem.GetAttribute("active"));
+            }
 
             elem = (XmlElement)xOptions.SelectSingleNode("UseHashFile");
             if (elem != null)
+            {
                 Files.UseHashFile = bool.Parse(elem.GetAttribute("active"));
+            }
 
             elem = (XmlElement)xOptions.SelectSingleNode("UpdateCheck");
             if (elem != null)
+            {
                 UpdateCheckOnStart = bool.Parse(elem.GetAttribute("active"));
+            }
 
             elem = (XmlElement)xOptions.SelectSingleNode("SendCharToLoc");
             if (elem != null)
@@ -344,10 +378,10 @@ namespace UoFiddler
                 ExternTool tool = new ExternTool(name, file);
                 foreach (XmlElement xArg in xTool.SelectNodes("Args"))
                 {
-                    string argname = xArg.GetAttribute("name");
+                    string argName = xArg.GetAttribute("name");
                     string arg = xArg.GetAttribute("arg");
                     tool.Args.Add(arg);
-                    tool.ArgsName.Add(argname);
+                    tool.ArgsName.Add(argName);
                 }
                 ExternTools.Add(tool);
             }
@@ -361,21 +395,20 @@ namespace UoFiddler
 
             elem = (XmlElement)xOptions.SelectSingleNode("RootPath");
             if (elem != null)
+            {
                 Files.RootDir = elem.GetAttribute("path");
+            }
+
             foreach (XmlElement xPath in xOptions.SelectNodes("Paths"))
             {
-                string key;
-                string value;
-                key = xPath.GetAttribute("key");
-                value = xPath.GetAttribute("value");
-                Files.MulPath[key] = value;
+                string key = xPath.GetAttribute("key");
+                Files.MulPath[key] = xPath.GetAttribute("value");
             }
 
             foreach (XmlElement xTab in xOptions.SelectNodes("TabView"))
             {
-                int viewtab;
-                viewtab = Convert.ToInt32(xTab.GetAttribute("tab"));
-                FiddlerControls.Options.ChangedViewState[viewtab] = false;
+                int viewTab = Convert.ToInt32(xTab.GetAttribute("tab"));
+                FiddlerControls.Options.ChangedViewState[viewTab] = false;
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("ViewState");
@@ -401,35 +434,38 @@ namespace UoFiddler
         {
             StringBuilder sb = new StringBuilder();
             byte[] buf = new byte[8192];
+
             error = "";
             string[] match;
 
             try
             {
-                HttpWebRequest request = (HttpWebRequest)
-                    WebRequest.Create(@"http://uofiddler.polserver.com/latestversion");
-
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://uofiddler.polserver.com/latestversion");
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream resStream = response.GetResponseStream();
 
-                string tempString = null;
                 int count = 0;
-
                 do
                 {
-                    count = resStream.Read(buf, 0, buf.Length);
-                    if (count != 0)
+                    if (resStream != null)
                     {
-                        tempString = Encoding.ASCII.GetString(buf, 0, count);
-                        sb.Append(tempString);
+                        count = resStream.Read(buf, 0, buf.Length);
                     }
+
+                    if (count == 0)
+                    {
+                        continue;
+                    }
+
+                    string tempString = Encoding.ASCII.GetString(buf, 0, count);
+                    sb.Append(tempString);
                 }
                 while (count > 0);
 
-                match = sb.ToString().Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                match = sb.ToString().Split(new[] { "\r\n" }, StringSplitOptions.None);
 
                 response.Close();
-                resStream.Dispose();
+                resStream?.Dispose();
             }
             catch (Exception e)
             {
@@ -442,54 +478,61 @@ namespace UoFiddler
 
         private static void Updater_DoWork(object sender, DoWorkEventArgs e)
         {
-            string error;
-            e.Result = CheckForUpdate(out error);
-            if (e.Result == null)
-                throw new Exception(error);
+            e.Result = CheckForUpdate(out string error);
 
+            if (e.Result == null)
+            {
+                throw new Exception(error);
+            }
         }
 
         private static void Updater_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
             {
-                MessageBox.Show("Error:\n" + e.Error, "Check for Update");
+                MessageBox.Show($"Error:\n{e.Error}", "Check for Update");
                 return;
             }
+
             string[] match = (string[])e.Result;
             if (match != null)
             {
-                if (VersionCheck(match[0]))
+                if (!VersionCheck(match[0]))
                 {
-                    DialogResult result =
-                        MessageBox.Show(String.Format("A new version was found: {1}\nYour version: {0}", UoFiddler.Version, match[0]) 
-                        + "\n\nDownload now?", "Check for Update", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                        DownloadFile(match[1]);
+                    return;
+                }
+
+                DialogResult result = MessageBox.Show(
+                    $"{string.Format("A new version was found: {1}\nYour version: {0}", UoFiddler.Version, match[0])}\n\nDownload now?",
+                    "Check for Update",
+                    MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    DownloadFile(match[1]);
                 }
             }
             else
-                MessageBox.Show("Failed to get Versioninfo", "Check for Update");
+            {
+                MessageBox.Show("Failed to get version info", "Check for Update");
+            }
         }
 
-        public static bool VersionCheck(string newversion)
+        public static bool VersionCheck(string newVersionParam)
         {
-            Version currentVersion;
-            Version.TryParse(UoFiddler.Version, out currentVersion);
-            Version newVersion;
-            Version.TryParse(newversion, out newVersion);
+            Version.TryParse(UoFiddler.Version, out Version currentVersion);
+            Version.TryParse(newVersionParam, out Version newVersion);
 
             return newVersion > currentVersion;
         }
 
-        #region Downloader
         private static void DownloadFile(string file)
         {
-            string FileName = Path.Combine(FiddlerControls.Options.OutputPath, file);
+            string fileName = Path.Combine(FiddlerControls.Options.OutputPath, file);
             using (WebClient web = new WebClient())
             {
-                web.DownloadFileCompleted += new AsyncCompletedEventHandler(OnDownloadFileCompleted);
-                web.DownloadFileAsync(new Uri(String.Format(@"http://downloads.polserver.com/browser.php?download=./Projects/uofiddler/{0}", file)), FileName);
+                web.DownloadFileCompleted += OnDownloadFileCompleted;
+                web.DownloadFileAsync(new Uri(
+                    $"http://downloads.polserver.com/browser.php?download=./Projects/uofiddler/{file}"), fileName);
             }
         }
 
@@ -497,37 +540,11 @@ namespace UoFiddler
         {
             if (e.Error != null)
             {
-                MessageBox.Show("An error occurred while downloading UOFiddler\n" + e.Error.Message,
+                MessageBox.Show($"An error occurred while downloading UOFiddler\n{e.Error.Message}",
                     "Updater");
                 return;
             }
             MessageBox.Show("Finished Download", "Updater");
-        }
-        #endregion
-    }
-
-    public class ExternTool
-    {
-        public string Name { get; set; }
-        public string FileName { get; set; }
-        public List<string> Args { get; set; }
-        public List<string> ArgsName { get; set; }
-
-        public ExternTool(string name, string filename)
-        {
-            Name = name;
-            FileName = filename;
-            Args = new List<string>();
-            ArgsName = new List<string>();
-        }
-
-        public string FormatName()
-        {
-            return String.Format("{0}: {1}", Name, FileName);
-        }
-        public string FormatArg(int i)
-        {
-            return String.Format("{0}: {1}", ArgsName[i], Args[i]);
         }
     }
 }

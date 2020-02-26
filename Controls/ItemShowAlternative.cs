@@ -28,34 +28,30 @@ namespace FiddlerControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            refMarker = this;
-            pictureBox.MouseWheel += new MouseEventHandler(OnMouseWheel);
+            RefMarker = this;
+            pictureBox.MouseWheel += OnMouseWheel;
             DetailTextBox.AddBasicContextMenu();
         }
 
-        private static ItemShowAlternative refMarker = null;
-        private List<int> ItemList = new List<int>();
-        private int col;
-        private int row;
-        private int selected = -1;
-        private bool Loaded = false;
-        private bool ShowFreeSlots = false;
+        private List<int> _itemList = new List<int>();
+        private int _col;
+        private int _row;
+        private int _selected = -1;
+        private bool _showFreeSlots;
 
-        public static ItemShowAlternative RefMarker { get { return refMarker; } }
-        public static PictureBox ItemPictureBox { get { return refMarker.pictureBox; } }
-        public bool isLoaded { get { return Loaded; } }
+        public static ItemShowAlternative RefMarker { get; private set; }
+        public static PictureBox ItemPictureBox => RefMarker.pictureBox;
+        public bool IsLoaded { get; private set; }
 
         public int Selected
         {
-            get { return selected; }
+            get => _selected;
             set
             {
-                selected = value;
-                if (!Art.IsValidStatic(value))
-                    namelabel.Text = "Name: FREE";
-                else
-                    namelabel.Text = String.Format("Name: {0}", TileData.ItemTable[value].Name);
-                graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", value);
+                _selected = value;
+                namelabel.Text = !Art.IsValidStatic(value) ? "Name: FREE" : $"Name: {TileData.ItemTable[value].Name}";
+
+                graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", value);
 
                 UpdateDetail(value);
                 pictureBox.Invalidate();
@@ -67,33 +63,40 @@ namespace FiddlerControls
         /// </summary>
         public void ChangeTileSize()
         {
-            col = pictureBox.Width / Options.ArtItemSizeWidth;
-            row = pictureBox.Height / Options.ArtItemSizeHeight;
-            vScrollBar.Maximum = ItemList.Count / col + 1;
+            _col = pictureBox.Width / Options.ArtItemSizeWidth;
+            _row = pictureBox.Height / Options.ArtItemSizeHeight;
+            vScrollBar.Maximum = _itemList.Count / _col + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
-            vScrollBar.LargeChange = row;
+            vScrollBar.LargeChange = _row;
             pictureBox.Invalidate();
-            if (selected != -1)
-                UpdateDetail(selected);
+            if (_selected != -1)
+            {
+                UpdateDetail(_selected);
+            }
         }
 
         private void MakeHashFile()
         {
-            string path = FiddlerControls.Options.AppDataPath;
-            string FileName = Path.Combine(path, "UOFiddlerArt.hash");
-            using (FileStream fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            string path = Options.AppDataPath;
+            string fileName = Path.Combine(path, "UOFiddlerArt.hash");
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (BinaryWriter bin = new BinaryWriter(fs))
                 {
-                    byte[] md5 = Files.GetMD5(Files.GetFilePath("Art.mul"));
+                    byte[] md5 = Files.GetMd5(Files.GetFilePath("Art.mul"));
                     if (md5 == null)
+                    {
                         return;
+                    }
+
                     int length = md5.Length;
                     bin.Write(length);
                     bin.Write(md5);
-                    foreach (int item in ItemList)
+                    foreach (int item in _itemList)
+                    {
                         bin.Write(item);
+                    }
                 }
             }
         }
@@ -105,14 +108,17 @@ namespace FiddlerControls
         /// <returns></returns>
         public static bool SearchGraphic(int graphic)
         {
-            if (!refMarker.isLoaded)
-                refMarker.OnLoad(refMarker, EventArgs.Empty);
-            for (int i = 0; i < refMarker.ItemList.Count; ++i)
+            if (!RefMarker.IsLoaded)
             {
-                if (refMarker.ItemList[i] == graphic)
+                RefMarker.OnLoad(RefMarker, EventArgs.Empty);
+            }
+
+            for (int i = 0; i < RefMarker._itemList.Count; ++i)
+            {
+                if (RefMarker._itemList[i] == graphic)
                 {
-                    refMarker.vScrollBar.Value = i / refMarker.col + 1;
-                    refMarker.Selected = graphic;
+                    RefMarker.vScrollBar.Value = i / RefMarker._col + 1;
+                    RefMarker.Selected = graphic;
                     return true;
                 }
             }
@@ -130,19 +136,24 @@ namespace FiddlerControls
             int index = 0;
             if (next)
             {
-                if (refMarker.selected >= 0)
-                    index = refMarker.ItemList.IndexOf(refMarker.selected) + 1;
-                if (index >= refMarker.ItemList.Count)
+                if (RefMarker._selected >= 0)
+                {
+                    index = RefMarker._itemList.IndexOf(RefMarker._selected) + 1;
+                }
+
+                if (index >= RefMarker._itemList.Count)
+                {
                     index = 0;
+                }
             }
 
-            Regex regex = new Regex(@name, RegexOptions.IgnoreCase);
-            for (int i = index; i < refMarker.ItemList.Count; ++i)
+            Regex regex = new Regex(name, RegexOptions.IgnoreCase);
+            for (int i = index; i < RefMarker._itemList.Count; ++i)
             {
-                if (regex.IsMatch(TileData.ItemTable[refMarker.ItemList[i]].Name))
+                if (regex.IsMatch(TileData.ItemTable[RefMarker._itemList[i]].Name))
                 {
-                    refMarker.vScrollBar.Value = i / refMarker.col + 1;
-                    refMarker.Selected = refMarker.ItemList[i];
+                    RefMarker.vScrollBar.Value = i / RefMarker._col + 1;
+                    RefMarker.Selected = RefMarker._itemList[i];
                     return true;
                 }
             }
@@ -154,35 +165,40 @@ namespace FiddlerControls
         /// </summary>
         private void Reload()
         {
-            if (Loaded)
-                OnLoad(this, new MyEventArgs(MyEventArgs.TYPES.FORCERELOAD));
+            if (IsLoaded)
+            {
+                OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
+            }
         }
 
         public void OnLoad(object sender, EventArgs e)
         {
-            MyEventArgs _args = e as MyEventArgs;
-            if (Loaded && (_args == null || _args.Type != MyEventArgs.TYPES.FORCERELOAD))
+            MyEventArgs args = e as MyEventArgs;
+            if (IsLoaded && (args == null || args.Type != MyEventArgs.Types.ForceReload))
+            {
                 return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["TileData"] = true;
             Options.LoadedUltimaClass["Art"] = true;
             Options.LoadedUltimaClass["Animdata"] = true;
             Options.LoadedUltimaClass["Hues"] = true;
-            if (!Loaded) // only once
+            if (!IsLoaded) // only once
             {
-                PluginInterface.Events.FireModifyItemShowContextMenuEvent(this.contextMenuStrip1);
+                PluginInterface.Events.FireModifyItemShowContextMenuEvent(contextMenuStrip1);
             }
 
-            ShowFreeSlots = false;
+            _showFreeSlots = false;
             showFreeSlotsToolStripMenuItem.Checked = false;
-            ItemList = new List<int>();
-            if ((Files.UseHashFile) && (Files.CompareHashFile("Art", FiddlerControls.Options.AppDataPath)) && (!Ultima.Art.Modified))
+            _itemList = new List<int>();
+            if (Files.UseHashFile && Files.CompareHashFile("Art", Options.AppDataPath) && !Art.Modified)
             {
-                string path = FiddlerControls.Options.AppDataPath;
-                string FileName = Path.Combine(path, "UOFiddlerArt.hash");
-                if (File.Exists(FileName))
+                string path = Options.AppDataPath;
+                string fileName = Path.Combine(path, "UOFiddlerArt.hash");
+                if (File.Exists(fileName))
                 {
-                    using (FileStream bin = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (FileStream bin = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         unsafe
                         {
@@ -197,7 +213,7 @@ namespace FiddlerControls
                                 while (i < buffer.Length)
                                 {
                                     int j = *dat++;
-                                    ItemList.Add(j);
+                                    _itemList.Add(j);
                                     i += 4;
                                 }
                             }
@@ -207,115 +223,147 @@ namespace FiddlerControls
             }
             else
             {
-                int staticlength = Ultima.Art.GetMaxItemID() + 1;
+                int staticlength = Art.GetMaxItemId() + 1;
                 for (int i = 0; i < staticlength; ++i)
                 {
                     if (Art.IsValidStatic(i))
-                        ItemList.Add(i);
+                    {
+                        _itemList.Add(i);
+                    }
                 }
                 if (Files.UseHashFile)
+                {
                     MakeHashFile();
+                }
             }
-            vScrollBar.Maximum = ItemList.Count / col + 1;
+            vScrollBar.Maximum = _itemList.Count / _col + 1;
             pictureBox.Invalidate();
-            if (!Loaded)
+            if (!IsLoaded)
             {
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-                FiddlerControls.Events.ItemChangeEvent += new FiddlerControls.Events.ItemChangeHandler(OnItemChangeEvent);
-                FiddlerControls.Events.TileDataChangeEvent += new FiddlerControls.Events.TileDataChangeHandler(OnTileDataChangeEvent);
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+                FiddlerControls.Events.ItemChangeEvent += OnItemChangeEvent;
+                FiddlerControls.Events.TileDataChangeEvent += OnTileDataChangeEvent;
             }
-            Loaded = true;
+            IsLoaded = true;
             Cursor.Current = Cursors.Default;
         }
+
         private void OnFilePathChangeEvent()
         {
-            if (FiddlerControls.Options.DesignAlternative)
+            if (Options.DesignAlternative)
+            {
                 Reload();
+            }
         }
 
-        void OnTileDataChangeEvent(object sender, int id)
+        private void OnTileDataChangeEvent(object sender, int id)
         {
-            if (!FiddlerControls.Options.DesignAlternative)
-                return;
-            if (!Loaded)
-                return;
-            if (sender.Equals(this))
-                return;
-            if (id < 0x4000)
-                return;
-            id -= 0x4000;
-            if (selected == id)
+            if (!Options.DesignAlternative)
             {
-                graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", id);
+                return;
+            }
+
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            if (sender.Equals(this))
+            {
+                return;
+            }
+
+            if (id < 0x4000)
+            {
+                return;
+            }
+
+            id -= 0x4000;
+            if (_selected == id)
+            {
+                graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", id);
                 UpdateDetail(id);
             }
         }
 
         private void OnItemChangeEvent(object sender, int index)
         {
-            if (!FiddlerControls.Options.DesignAlternative)
+            if (!Options.DesignAlternative)
+            {
                 return;
-            if (!Loaded)
+            }
+
+            if (!IsLoaded)
+            {
                 return;
+            }
+
             if (sender.Equals(this))
+            {
                 return;
-            if (Ultima.Art.IsValidStatic(index))
+            }
+
+            if (Art.IsValidStatic(index))
             {
                 bool done = false;
-                for (int i = 0; i < ItemList.Count; ++i)
+                for (int i = 0; i < _itemList.Count; ++i)
                 {
-                    if (index < ItemList[i])
+                    if (index < _itemList[i])
                     {
-                        ItemList.Insert(i, index);
+                        _itemList.Insert(i, index);
                         done = true;
                         break;
                     }
-                    if (index == ItemList[i])
+                    if (index == _itemList[i])
                     {
                         done = true;
                         break;
                     }
                 }
                 if (!done)
-                    ItemList.Add(index);
-                vScrollBar.Maximum = ItemList.Count / col + 1;
+                {
+                    _itemList.Add(index);
+                }
+
+                vScrollBar.Maximum = _itemList.Count / _col + 1;
             }
             else
             {
-                if (!ShowFreeSlots)
+                if (!_showFreeSlots)
                 {
-                    ItemList.Remove(index);
-                    vScrollBar.Maximum = ItemList.Count / col + 1;
+                    _itemList.Remove(index);
+                    vScrollBar.Maximum = _itemList.Count / _col + 1;
                 }
             }
         }
 
         private int GetIndex(int x, int y)
         {
-            int value = Math.Max(0, ((col * (vScrollBar.Value - 1)) + (x + (y * col))));
-            if (ItemList.Count > value)
-                return ItemList[value];
-            else
-                return -1;
+            int value = Math.Max(0, _col * (vScrollBar.Value - 1) + x + y * _col);
+            return _itemList.Count > value ? _itemList[value] : -1;
         }
 
         private void OnMouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta < 0)
             {
-                if (vScrollBar.Value < vScrollBar.Maximum)
+                if (vScrollBar.Value >= vScrollBar.Maximum)
                 {
-                    vScrollBar.Value++;
-                    pictureBox.Invalidate();
+                    return;
                 }
+
+                vScrollBar.Value++;
+                pictureBox.Invalidate();
             }
             else
             {
-                if (vScrollBar.Value > 1)
+                if (vScrollBar.Value <= 1)
                 {
-                    vScrollBar.Value--;
-                    pictureBox.Invalidate();
+                    return;
                 }
+
+                vScrollBar.Value--;
+                pictureBox.Invalidate();
             }
         }
 
@@ -324,84 +372,94 @@ namespace FiddlerControls
             pictureBox.Invalidate();
         }
 
-        static Brush BrushLightBlue = Brushes.LightBlue;
-        static Brush BrushLightCoral = Brushes.LightCoral;
-        static Brush BrushRed = Brushes.Red;
-        static Pen PenGray = Pens.Gray;
+        private static readonly Brush BrushLightBlue = Brushes.LightBlue;
+        private static readonly Brush BrushLightCoral = Brushes.LightCoral;
+        private static readonly Brush BrushRed = Brushes.Red;
+        private static readonly Pen PenGray = Pens.Gray;
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
 
-            for (int x = 0; x <= col; ++x)
+            for (int x = 0; x <= _col; ++x)
             {
                 e.Graphics.DrawLine(PenGray, new Point(x * Options.ArtItemSizeWidth, 0),
-                    new Point(x * Options.ArtItemSizeWidth, row * Options.ArtItemSizeHeight));
+                    new Point(x * Options.ArtItemSizeWidth, _row * Options.ArtItemSizeHeight));
             }
 
-            for (int y = 0; y <= row; ++y)
+            for (int y = 0; y <= _row; ++y)
             {
                 e.Graphics.DrawLine(PenGray, new Point(0, y * Options.ArtItemSizeHeight),
-                    new Point(col * Options.ArtItemSizeWidth, y * Options.ArtItemSizeHeight));
+                    new Point(_col * Options.ArtItemSizeWidth, y * Options.ArtItemSizeHeight));
             }
 
-            for (int y = 0; y < row; ++y)
+            for (int y = 0; y < _row; ++y)
             {
-                for (int x = 0; x < col; ++x)
+                for (int x = 0; x < _col; ++x)
                 {
                     int index = GetIndex(x, y);
-                    if (index >= 0)
+                    if (index < 0)
                     {
-                        bool patched;
-                        Bitmap b = Art.GetStatic(index, out patched);
+                        continue;
+                    }
 
-                        if (b != null)
+                    Bitmap b = Art.GetStatic(index, out bool patched);
+
+                    if (b != null)
+                    {
+                        Point loc = new Point(x * Options.ArtItemSizeWidth + 1, y * Options.ArtItemSizeHeight + 1);
+                        Size size = new Size(Options.ArtItemSizeWidth - 1, Options.ArtItemSizeHeight - 1);
+                        Rectangle rect = new Rectangle(loc, size);
+
+                        e.Graphics.Clip = new Region(rect);
+
+                        if (index == _selected)
                         {
-                            Point loc = new Point((x * Options.ArtItemSizeWidth) + 1, (y * Options.ArtItemSizeHeight) + 1);
-                            Size size = new Size(Options.ArtItemSizeWidth - 1, Options.ArtItemSizeHeight - 1);
-                            Rectangle rect = new Rectangle(loc, size);
+                            e.Graphics.FillRectangle(BrushLightBlue, rect);
+                        }
+                        else if (patched)
+                        {
+                            e.Graphics.FillRectangle(BrushLightCoral, rect);
+                        }
 
-                            e.Graphics.Clip = new Region(rect);
-
-                            if (index == selected)
-                                e.Graphics.FillRectangle(BrushLightBlue, rect);
-                            else if (patched)
-                                e.Graphics.FillRectangle(BrushLightCoral, rect);
-
-                            if (Options.ArtItemClip)
-                                e.Graphics.DrawImage(b, loc);
-                            else
-                            {
-                                int width = b.Width;
-                                int height = b.Height;
-                                if (width > size.Width)
-                                {
-                                    width = size.Width;
-                                    height = size.Height * b.Height / b.Width;
-                                }
-                                if (height > size.Height)
-                                {
-                                    height = size.Height;
-                                    width = size.Width * b.Width / b.Height;
-                                }
-                                e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
-                            }
+                        if (Options.ArtItemClip)
+                        {
+                            e.Graphics.DrawImage(b, loc);
                         }
                         else
                         {
-                            Point loc = new Point((x * Options.ArtItemSizeWidth) + 1, (y * Options.ArtItemSizeHeight) + 1);
-                            Size size = new Size(Options.ArtItemSizeWidth - 1, Options.ArtItemSizeHeight - 1);
-                            Rectangle rect = new Rectangle(loc, size);
-
-                            e.Graphics.Clip = new Region(rect);
-                            if (index == selected)
-                                e.Graphics.FillRectangle(BrushLightBlue, rect);
-                            rect.X += 5;
-                            rect.Y += 5;
-                            rect.Width -= 10;
-                            rect.Height -= 10;
-                            e.Graphics.FillRectangle(BrushRed, rect);
+                            int width = b.Width;
+                            int height = b.Height;
+                            if (width > size.Width)
+                            {
+                                width = size.Width;
+                                height = size.Height * b.Height / b.Width;
+                            }
+                            if (height > size.Height)
+                            {
+                                height = size.Height;
+                                width = size.Width * b.Width / b.Height;
+                            }
+                            e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
                         }
+                    }
+                    else
+                    {
+                        Point loc = new Point(x * Options.ArtItemSizeWidth + 1, y * Options.ArtItemSizeHeight + 1);
+                        Size size = new Size(Options.ArtItemSizeWidth - 1, Options.ArtItemSizeHeight - 1);
+                        Rectangle rect = new Rectangle(loc, size);
+
+                        e.Graphics.Clip = new Region(rect);
+                        if (index == _selected)
+                        {
+                            e.Graphics.FillRectangle(BrushLightBlue, rect);
+                        }
+
+                        rect.X += 5;
+                        rect.Y += 5;
+                        rect.Width -= 10;
+                        rect.Height -= 10;
+                        e.Graphics.FillRectangle(BrushRed, rect);
                     }
                 }
             }
@@ -409,17 +467,22 @@ namespace FiddlerControls
 
         private void OnResize(object sender, EventArgs e)
         {
-            if ((pictureBox.Height == 0) || (pictureBox.Width == 0))
+            if (pictureBox.Height == 0 || pictureBox.Width == 0)
+            {
                 return;
-            col = pictureBox.Width / Options.ArtItemSizeWidth;
-            row = pictureBox.Height / Options.ArtItemSizeHeight + 1;
-            vScrollBar.Maximum = ItemList.Count / col + 1;
+            }
+
+            _col = pictureBox.Width / Options.ArtItemSizeWidth;
+            _row = pictureBox.Height / Options.ArtItemSizeHeight + 1;
+            vScrollBar.Maximum = _itemList.Count / _col + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
-            vScrollBar.LargeChange = row;
+            vScrollBar.LargeChange = _row;
             pictureBox.Invalidate();
-            if (selected != -1)
-                UpdateDetail(selected);
+            if (_selected != -1)
+            {
+                UpdateDetail(_selected);
+            }
         }
 
         private void OnMouseClick(object sender, MouseEventArgs e)
@@ -429,13 +492,15 @@ namespace FiddlerControls
             int y = e.Y / (Options.ArtItemSizeHeight - 1);
             int index = GetIndex(x, y);
             if (index >= 0)
+            {
                 Selected = index;
+            }
         }
 
         private void UpdateDetail(int id)
         {
-            Ultima.ItemData item = Ultima.TileData.ItemTable[id];
-            Bitmap bit = Ultima.Art.GetStatic(id);
+            ItemData item = TileData.ItemTable[id];
+            Bitmap bit = Art.GetStatic(id);
 
             int xMin = 0;
             int xMax = 0;
@@ -445,275 +510,323 @@ namespace FiddlerControls
             if (bit == null)
             {
                 splitContainer2.SplitterDistance = 10;
-                Bitmap newbit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
-                Graphics newgraph = Graphics.FromImage(newbit);
-                newgraph.Clear(Color.FromArgb(-1));
-                DetailPictureBox.Image = newbit;
+                Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
+                Graphics newGraph = Graphics.FromImage(newBit);
+                newGraph.Clear(Color.FromArgb(-1));
+                DetailPictureBox.Image = newBit;
             }
             else
             {
                 splitContainer2.SplitterDistance = bit.Size.Height + 10;
-                Bitmap newbit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
-                Graphics newgraph = Graphics.FromImage(newbit);
-                newgraph.Clear(Color.FromArgb(-1));
-                newgraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
-                DetailPictureBox.Image = newbit;
+                Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
+                Graphics newGraph = Graphics.FromImage(newBit);
+                newGraph.Clear(Color.FromArgb(-1));
+                newGraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
+                DetailPictureBox.Image = newBit;
 
                 Art.Measure(bit, out xMin, out yMin, out xMax, out yMax);
             }
 
             DetailTextBox.Clear();
-            DetailTextBox.AppendText(String.Format("Name: {0}\n", item.Name));
-            DetailTextBox.AppendText(String.Format("Graphic: 0x{0:X4}\n", id));
-            DetailTextBox.AppendText(String.Format("Height/Capacity: {0}\n", item.Height));
-            DetailTextBox.AppendText(String.Format("Weight: {0}\n", item.Weight));
-            DetailTextBox.AppendText(String.Format("Animation: {0}\n", item.Animation));
-            DetailTextBox.AppendText(String.Format("Quality/Layer/Light: {0}\n", item.Quality));
-            DetailTextBox.AppendText(String.Format("Quantity: {0}\n", item.Quantity));
-            DetailTextBox.AppendText(String.Format("Hue: {0}\n", item.Hue));
-            DetailTextBox.AppendText(String.Format("StackingOffset/Unk4: {0}\n", item.StackingOffset));
-            DetailTextBox.AppendText(String.Format("Flags: {0}\n", item.Flags));
-            DetailTextBox.AppendText(String.Format("Graphic pixel size width, height: {0} {1} \n", bit?.Width ?? 0, bit?.Height ?? 0));
-            DetailTextBox.AppendText(String.Format("Graphic pixel offset xMin, yMin, xMax, yMax: {0} {1} {2} {3}\n", xMin, yMin, xMax, yMax));
+            DetailTextBox.AppendText($"Name: {item.Name}\n");
+            DetailTextBox.AppendText($"Graphic: 0x{id:X4}\n");
+            DetailTextBox.AppendText($"Height/Capacity: {item.Height}\n");
+            DetailTextBox.AppendText($"Weight: {item.Weight}\n");
+            DetailTextBox.AppendText($"Animation: {item.Animation}\n");
+            DetailTextBox.AppendText($"Quality/Layer/Light: {item.Quality}\n");
+            DetailTextBox.AppendText($"Quantity: {item.Quantity}\n");
+            DetailTextBox.AppendText($"Hue: {item.Hue}\n");
+            DetailTextBox.AppendText($"StackingOffset/Unk4: {item.StackingOffset}\n");
+            DetailTextBox.AppendText($"Flags: {item.Flags}\n");
+            DetailTextBox.AppendText($"Graphic pixel size width, height: {bit?.Width ?? 0} {bit?.Height ?? 0} \n");
+            DetailTextBox.AppendText($"Graphic pixel offset xMin, yMin, xMax, yMax: {xMin} {yMin} {xMax} {yMax}\n");
 
-            if ((item.Flags & TileFlag.Animation) != 0)
+            if ((item.Flags & TileFlag.Animation) == 0)
             {
-                Animdata.Data info = Animdata.GetAnimData(id);
-                if (info != null)
-                    DetailTextBox.AppendText(String.Format("Animation FrameCount: {0} Interval: {1}\n", info.FrameCount, info.FrameInterval));
+                return;
+            }
+
+            Animdata.Data info = Animdata.GetAnimData(id);
+            if (info != null)
+            {
+                DetailTextBox.AppendText(
+                    $"Animation FrameCount: {info.FrameCount} Interval: {info.FrameInterval}\n");
             }
         }
 
         public void OnMouseDoubleClick(object sender, MouseEventArgs e)
         {
-            Point m = PointToClient(Control.MousePosition);
+            Point m = PointToClient(MousePosition);
             int x = m.X / (Options.ArtItemSizeWidth - 1);
             int y = m.Y / (Options.ArtItemSizeHeight - 1);
             int index = GetIndex(x, y);
-            if (index >= 0)
+            if (index < 0)
             {
-                ItemDetail f = new ItemDetail(index);
-                f.TopMost = true;
-                f.Show();
+                return;
             }
+
+            ItemDetail f = new ItemDetail(index)
+            {
+                TopMost = true
+            };
+            f.Show();
         }
 
-        private ItemSearch showform = null;
+        private ItemSearch _showForm;
+
         private void OnSearchClick(object sender, EventArgs e)
         {
-            if ((showform == null) || (showform.IsDisposed))
+            if (_showForm?.IsDisposed == false)
             {
-                showform = new ItemSearch();
-                showform.TopMost = true;
-                showform.Show();
+                return;
             }
+
+            _showForm = new ItemSearch
+            {
+                TopMost = true
+            };
+            _showForm.Show();
         }
 
-        private void onClickFindFree(object sender, EventArgs e)
+        private void OnClickFindFree(object sender, EventArgs e)
         {
-            if (ShowFreeSlots)
+            if (_showFreeSlots)
             {
-                int i;
-                if (selected > -1)
-                    i = ItemList.IndexOf(selected) + 1;
-                else
-                    i = 0;
-                for (; i < ItemList.Count; ++i)
+                int i = _selected > -1 ? _itemList.IndexOf(_selected) + 1 : 0;
+                for (; i < _itemList.Count; ++i)
                 {
-                    if (!Art.IsValidStatic(ItemList[i]))
+                    if (Art.IsValidStatic(_itemList[i]))
                     {
-                        vScrollBar.Value = i / refMarker.col + 1;
-                        Selected = ItemList[i];
-                        break;
+                        continue;
                     }
+
+                    vScrollBar.Value = i / RefMarker._col + 1;
+                    Selected = _itemList[i];
+                    break;
                 }
             }
             else
             {
                 int id, i;
-                if (selected > -1)
+                if (_selected > -1)
                 {
-                    id = selected + 1;
-                    i = ItemList.IndexOf(selected) + 1;
+                    id = _selected + 1;
+                    i = _itemList.IndexOf(_selected) + 1;
                 }
                 else
                 {
                     id = 0;
                     i = 0;
                 }
-                for (; i < ItemList.Count; ++i, ++id)
+                for (; i < _itemList.Count; ++i, ++id)
                 {
-                    if (id < ItemList[i])
+                    if (id >= _itemList[i])
                     {
-                        vScrollBar.Value = i / refMarker.col + 1;
-                        Selected = ItemList[i];
-                        break;
+                        continue;
                     }
+
+                    vScrollBar.Value = i / RefMarker._col + 1;
+                    Selected = _itemList[i];
+                    break;
                 }
             }
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (selected >= 0)
+            if (_selected < 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
-                {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose image file to replace";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (dialog.FileName.Contains(".bmp"))
-                            bmp = Utils.ConvertBmp(bmp);
-                        Art.ReplaceStatic(selected, bmp);
-                        FiddlerControls.Events.FireItemChangeEvent(this, selected);
-                        pictureBox.Invalidate();
-                        Options.ChangedUltimaClass["Art"] = true;
-                    }
-                }
-            }
-        }
-
-        private void OnClickRemove(object sender, EventArgs e)
-        {
-            if (!Art.IsValidStatic(selected))
                 return;
-            DialogResult result =
-                        MessageBox.Show(String.Format("Are you sure to remove 0x{0:X}", selected),
-                        "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                Art.RemoveStatic(selected);
-                FiddlerControls.Events.FireItemChangeEvent(this, selected);
-                if (!ShowFreeSlots)
-                    ItemList.Remove(selected);
-                --selected;
+                dialog.Multiselect = false;
+                dialog.Title = "Choose image file to replace";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                Art.ReplaceStatic(_selected, bmp);
+                FiddlerControls.Events.FireItemChangeEvent(this, _selected);
                 pictureBox.Invalidate();
                 Options.ChangedUltimaClass["Art"] = true;
             }
         }
 
-        private void onTextChangedInsert(object sender, EventArgs e)
+        private void OnClickRemove(object sender, EventArgs e)
         {
-            int index;
-            if (Utils.ConvertStringToInt(InsertText.Text, out index, 0, Ultima.Art.GetMaxItemID()))
+            if (!Art.IsValidStatic(_selected))
             {
-                if (Art.IsValidStatic(index))
-                    InsertText.ForeColor = Color.Red;
-                else
-                    InsertText.ForeColor = Color.Black;
+                return;
             }
-            else
-                InsertText.ForeColor = Color.Red;
+
+            DialogResult result =
+                        MessageBox.Show($"Are you sure to remove 0x{_selected:X}",
+                        "Save",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            Art.RemoveStatic(_selected);
+            FiddlerControls.Events.FireItemChangeEvent(this, _selected);
+            if (!_showFreeSlots)
+            {
+                _itemList.Remove(_selected);
+            }
+
+            --_selected;
+            pictureBox.Invalidate();
+            Options.ChangedUltimaClass["Art"] = true;
         }
 
-        private void onKeyDownInsertText(object sender, KeyEventArgs e)
+        private void OnTextChangedInsert(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemId()))
             {
-                int index;
-                if (Utils.ConvertStringToInt(InsertText.Text, out index, 0, Ultima.Art.GetMaxItemID()))
+                InsertText.ForeColor = Art.IsValidStatic(index) ? Color.Red : Color.Black;
+            }
+            else
+            {
+                InsertText.ForeColor = Color.Red;
+            }
+        }
+
+        private void OnKeyDownInsertText(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemId()))
+            {
+                return;
+            }
+
+            if (Art.IsValidStatic(index))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    if (Art.IsValidStatic(index))
-                        return;
-                    contextMenuStrip1.Close();
-                    using (OpenFileDialog dialog = new OpenFileDialog())
+                    return;
+                }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                Art.ReplaceStatic(index, bmp);
+                FiddlerControls.Events.FireItemChangeEvent(this, index);
+                Options.ChangedUltimaClass["Art"] = true;
+                if (_showFreeSlots)
+                {
+                    _selected = index;
+                    vScrollBar.Value = index / RefMarker._col + 1;
+                    namelabel.Text = $"Name: {TileData.ItemTable[_selected].Name}";
+                    graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", _selected);
+                    UpdateDetail(_selected);
+                    pictureBox.Invalidate();
+                }
+                else
+                {
+                    bool done = false;
+                    for (int i = 0; i < _itemList.Count; ++i)
                     {
-                        dialog.Multiselect = false;
-                        dialog.Title = String.Format("Choose image file to insert at 0x{0:X}", index);
-                        dialog.CheckFileExists = true;
-                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                        if (dialog.ShowDialog() == DialogResult.OK)
+                        if (index >= _itemList[i])
                         {
-                            Bitmap bmp = new Bitmap(dialog.FileName);
-                            if (dialog.FileName.Contains(".bmp"))
-                                bmp = Utils.ConvertBmp(bmp);
-                            Art.ReplaceStatic(index, bmp);
-                            FiddlerControls.Events.FireItemChangeEvent(this, index);
-                            Options.ChangedUltimaClass["Art"] = true;
-                            if (ShowFreeSlots)
-                            {
-                                selected = index;
-                                vScrollBar.Value = index / refMarker.col + 1;
-                                namelabel.Text = String.Format("Name: {0}", TileData.ItemTable[selected].Name);
-                                graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", selected);
-                                UpdateDetail(selected);
-                                pictureBox.Invalidate();
-                            }
-                            else
-                            {
-                                bool done = false;
-                                for (int i = 0; i < ItemList.Count; ++i)
-                                {
-                                    if (index < ItemList[i])
-                                    {
-                                        ItemList.Insert(i, index);
-                                        vScrollBar.Value = i / refMarker.col + 1;
-                                        done = true;
-                                        break;
-                                    }
-                                }
-                                if (!done)
-                                {
-                                    ItemList.Add(index);
-                                    vScrollBar.Value = ItemList.Count / refMarker.col + 1;
-                                }
-                                selected = index;
-                                namelabel.Text = String.Format("Name: {0}", TileData.ItemTable[selected].Name);
-                                graphiclabel.Text = String.Format("Graphic: 0x{0:X4} ({0})", selected);
-                                UpdateDetail(selected);
-                                pictureBox.Invalidate();
-                            }
+                            continue;
                         }
+
+                        _itemList.Insert(i, index);
+                        vScrollBar.Value = i / RefMarker._col + 1;
+                        done = true;
+                        break;
                     }
+
+                    if (!done)
+                    {
+                        _itemList.Add(index);
+                        vScrollBar.Value = _itemList.Count / RefMarker._col + 1;
+                    }
+                    _selected = index;
+                    namelabel.Text = $"Name: {TileData.ItemTable[_selected].Name}";
+                    graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", _selected);
+                    UpdateDetail(_selected);
+                    pictureBox.Invalidate();
                 }
             }
         }
 
-        private void onClickSave(object sender, EventArgs e)
+        private void OnClickSave(object sender, EventArgs e)
         {
             DialogResult result =
                         MessageBox.Show("Are you sure? Will take a while", "Save",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+
+            if (result != DialogResult.Yes)
             {
-                Cursor.Current = Cursors.WaitCursor;
-                ProgressBar bar = new ProgressBar(Art.GetIdxLength(), "Save");
-                Art.Save(FiddlerControls.Options.OutputPath);
-                bar.Dispose();
-                Cursor.Current = Cursors.Default;
-                Options.ChangedUltimaClass["Art"] = false;
-                MessageBox.Show(
-                    String.Format("Saved to {0}", FiddlerControls.Options.OutputPath),
-                    "Save",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+            ProgressBar bar = new ProgressBar(Art.GetIdxLength(), "Save");
+            Art.Save(Options.OutputPath);
+            bar.Dispose();
+            Cursor.Current = Cursors.Default;
+            Options.ChangedUltimaClass["Art"] = false;
+            MessageBox.Show(
+                $"Saved to {Options.OutputPath}",
+                "Save",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
-        private void onClickShowFreeSlots(object sender, EventArgs e)
+        private void OnClickShowFreeSlots(object sender, EventArgs e)
         {
-            ShowFreeSlots = !ShowFreeSlots;
-            if (ShowFreeSlots)
+            _showFreeSlots = !_showFreeSlots;
+            if (_showFreeSlots)
             {
-                for (int j = 0; j < Ultima.Art.GetMaxItemID() + 1; ++j)
+                for (int j = 0; j < Art.GetMaxItemId() + 1; ++j)
                 {
-                    if (ItemList.Count > j)
+                    if (_itemList.Count > j)
                     {
-                        if (ItemList[j] != j)
-                            ItemList.Insert(j, j);
+                        if (_itemList[j] != j)
+                        {
+                            _itemList.Insert(j, j);
+                        }
                     }
                     else
-                        ItemList.Insert(j, j);
+                    {
+                        _itemList.Insert(j, j);
+                    }
                 }
-                vScrollBar.Maximum = ItemList.Count / col + 1;
+                vScrollBar.Maximum = _itemList.Count / _col + 1;
                 pictureBox.Invalidate();
             }
             else
@@ -722,60 +835,75 @@ namespace FiddlerControls
             }
         }
 
-        private void extract_Image_ClickBmp(object sender, EventArgs e)
+        private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            if (selected == -1)
+            if (_selected == -1)
+            {
                 return;
-            if (!Art.IsValidStatic(selected))
+            }
+
+            if (!Art.IsValidStatic(_selected))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item 0x{0:X}.bmp", selected));
-            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(selected));
-            if (bit != null)
-                bit.Save(FileName, ImageFormat.Bmp);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Item 0x{_selected:X}.bmp");
+            Bitmap bit = new Bitmap(Art.GetStatic(_selected));
+            bit.Save(fileName, ImageFormat.Bmp);
             bit.Dispose();
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
-        private void extract_Image_ClickTiff(object sender, EventArgs e)
+        private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            if (selected == -1)
+            if (_selected == -1)
+            {
                 return;
-            if (!Art.IsValidStatic(selected))
+            }
+
+            if (!Art.IsValidStatic(_selected))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item 0x{0:X}.tiff", selected));
-            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(selected));
-            if (bit != null)
-                bit.Save(FileName, ImageFormat.Tiff);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Item 0x{_selected:X}.tiff");
+            Bitmap bit = new Bitmap(Art.GetStatic(_selected));
+            bit.Save(fileName, ImageFormat.Tiff);
             bit.Dispose();
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
-        private void extract_Image_ClickJpg(object sender, EventArgs e)
+        private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            if (selected == -1)
+            if (_selected == -1)
+            {
                 return;
-            if (!Art.IsValidStatic(selected))
+            }
+
+            if (!Art.IsValidStatic(_selected))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Item 0x{0:X}.jpg", selected));
-            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(selected));
-            if (bit != null)
-                bit.Save(FileName, ImageFormat.Jpeg);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Item 0x{_selected:X}.jpg");
+            Bitmap bit = new Bitmap(Art.GetStatic(_selected));
+            bit.Save(fileName, ImageFormat.Jpeg);
             bit.Dispose();
             MessageBox.Show(
-                String.Format("Item saved to {0}", FileName),
+                $"Item saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -784,14 +912,18 @@ namespace FiddlerControls
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (selected >= 0)
-                FiddlerControls.TileDatas.Select(selected, false);
+            if (_selected >= 0)
+            {
+                TileDatas.Select(_selected, false);
+            }
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            if (selected >= 0)
-                FiddlerControls.RadarColor.Select(selected, false);
+            if (_selected >= 0)
+            {
+                RadarColor.Select(_selected, false);
+            }
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
@@ -800,28 +932,31 @@ namespace FiddlerControls
             {
                 dialog.Description = "Select directory";
                 dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    Cursor.Current = Cursors.WaitCursor;
-                    ProgressBar bar = new ProgressBar(ItemList.Count, "Export to bmp", false);
-                    for (int i = 0; i < ItemList.Count; ++i)
-                    {
-                        FiddlerControls.Events.FireProgressChangeEvent();
-                        Application.DoEvents();
-                        int index = ItemList[i];
-                        if (Art.IsValidStatic(index))
-                        {
-                            string FileName = Path.Combine(dialog.SelectedPath, String.Format("Item 0x{0:X}.bmp", index));
-                            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(index));
-                            if (bit != null)
-                                bit.Save(FileName, ImageFormat.Bmp);
-                            bit.Dispose();
-                        }
-                    }
-                    bar.Dispose();
-                    Cursor.Current = Cursors.Default;
-                    MessageBox.Show(String.Format("All Item saved to {0}", dialog.SelectedPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
+
+                Cursor.Current = Cursors.WaitCursor;
+                ProgressBar bar = new ProgressBar(_itemList.Count, "Export to bmp", false);
+                for (int i = 0; i < _itemList.Count; ++i)
+                {
+                    FiddlerControls.Events.FireProgressChangeEvent();
+                    Application.DoEvents();
+                    int index = _itemList[i];
+                    if (!Art.IsValidStatic(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.bmp");
+                    Bitmap bit = new Bitmap(Art.GetStatic(index));
+                    bit.Save(fileName, ImageFormat.Bmp);
+                    bit.Dispose();
+                }
+                bar.Dispose();
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"All Item saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -831,28 +966,31 @@ namespace FiddlerControls
             {
                 dialog.Description = "Select directory";
                 dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    Cursor.Current = Cursors.WaitCursor;
-                    ProgressBar bar = new ProgressBar(ItemList.Count, "Export to tiff", false);
-                    for (int i = 0; i < ItemList.Count; ++i)
-                    {
-                        FiddlerControls.Events.FireProgressChangeEvent();
-                        Application.DoEvents();
-                        int index = ItemList[i];
-                        if (Art.IsValidStatic(index))
-                        {
-                            string FileName = Path.Combine(dialog.SelectedPath, String.Format("Item 0x{0:X}.tiff", index));
-                            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(index));
-                            if (bit != null)
-                                bit.Save(FileName, ImageFormat.Tiff);
-                            bit.Dispose();
-                        }
-                    }
-                    bar.Dispose();
-                    Cursor.Current = Cursors.Default;
-                    MessageBox.Show(String.Format("All Item saved to {0}", dialog.SelectedPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
+
+                Cursor.Current = Cursors.WaitCursor;
+                ProgressBar bar = new ProgressBar(_itemList.Count, "Export to tiff", false);
+                for (int i = 0; i < _itemList.Count; ++i)
+                {
+                    FiddlerControls.Events.FireProgressChangeEvent();
+                    Application.DoEvents();
+                    int index = _itemList[i];
+                    if (!Art.IsValidStatic(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.tiff");
+                    Bitmap bit = new Bitmap(Art.GetStatic(index));
+                    bit.Save(fileName, ImageFormat.Tiff);
+                    bit.Dispose();
+                }
+                bar.Dispose();
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"All Item saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -862,38 +1000,43 @@ namespace FiddlerControls
             {
                 dialog.Description = "Select directory";
                 dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    Cursor.Current = Cursors.WaitCursor;
-                    ProgressBar bar = new ProgressBar(ItemList.Count, "Export to jpeg", false);
-                    for (int i = 0; i < ItemList.Count; ++i)
-                    {
-                        FiddlerControls.Events.FireProgressChangeEvent();
-                        Application.DoEvents();
-                        int index = ItemList[i];
-                        if (Art.IsValidStatic(index))
-                        {
-                            string FileName = Path.Combine(dialog.SelectedPath, String.Format("Item 0x{0:X}.Jpg", index));
-                            Bitmap bit = new Bitmap(Ultima.Art.GetStatic(index));
-                            if (bit != null)
-                                bit.Save(FileName, ImageFormat.Jpeg);
-                            bit.Dispose();
-                        }
-                    }
-                    bar.Dispose();
-                    Cursor.Current = Cursors.Default;
-                    MessageBox.Show(String.Format("All Item saved to {0}", dialog.SelectedPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
+
+                Cursor.Current = Cursors.WaitCursor;
+                ProgressBar bar = new ProgressBar(_itemList.Count, "Export to jpeg", false);
+                for (int i = 0; i < _itemList.Count; ++i)
+                {
+                    FiddlerControls.Events.FireProgressChangeEvent();
+                    Application.DoEvents();
+                    int index = _itemList[i];
+                    if (!Art.IsValidStatic(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.Jpg");
+                    Bitmap bit = new Bitmap(Art.GetStatic(index));
+                    bit.Save(fileName, ImageFormat.Jpeg);
+                    bit.Dispose();
+                }
+                bar.Dispose();
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"All Item saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
-        #region Preloader
         private void OnClickPreload(object sender, EventArgs e)
         {
             if (PreLoader.IsBusy)
+            {
                 return;
+            }
+
             ProgressBar.Minimum = 1;
-            ProgressBar.Maximum = ItemList.Count;
+            ProgressBar.Maximum = _itemList.Count;
             ProgressBar.Step = 1;
             ProgressBar.Value = 1;
             ProgressBar.Visible = true;
@@ -902,7 +1045,7 @@ namespace FiddlerControls
 
         private void PreLoaderDoWork(object sender, DoWorkEventArgs e)
         {
-            foreach (int item in ItemList)
+            foreach (int item in _itemList)
             {
                 Art.GetStatic(item);
                 PreLoader.ReportProgress(1);
@@ -918,8 +1061,5 @@ namespace FiddlerControls
         {
             ProgressBar.Visible = false;
         }
-        #endregion
-
-
     }
 }

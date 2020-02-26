@@ -78,9 +78,9 @@ namespace FiddlerControls
             this.treeView.Name = "treeView";
             this.treeView.Size = new System.Drawing.Size(613, 273);
             this.treeView.TabIndex = 0;
-            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.afterSelect);
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect);
             this.treeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClick);
-            this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView_KeyDown);
+            this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TreeView_KeyDown);
             // 
             // contextMenuStrip1
             // 
@@ -97,26 +97,26 @@ namespace FiddlerControls
             this.toolStripMenuItem1,
             this.itemSave});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(163, 198);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(169, 198);
             // 
             // nameSortToolStripMenuItem
             // 
             this.nameSortToolStripMenuItem.CheckOnClick = true;
             this.nameSortToolStripMenuItem.Name = "nameSortToolStripMenuItem";
-            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.nameSortToolStripMenuItem.Text = "Name Sort";
             this.nameSortToolStripMenuItem.Click += new System.EventHandler(this.OnChangeSort);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(165, 6);
             // 
             // showFreeSlotsToolStripMenuItem
             // 
             this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
             this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
-            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.showFreeSlotsToolStripMenuItem.Text = "Show free slots";
             this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsClick);
             // 
@@ -124,21 +124,21 @@ namespace FiddlerControls
             // 
             this.nextFreeSlotToolStripMenuItem.Enabled = false;
             this.nextFreeSlotToolStripMenuItem.Name = "nextFreeSlotToolStripMenuItem";
-            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.nextFreeSlotToolStripMenuItem.Text = "Find next free slot";
-            this.nextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.nextFreeSlotToolStripMenuItem_Click);
+            this.nextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.NextFreeSlotToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(165, 6);
             // 
             // playSoundToolStripMenuItem
             // 
             this.playSoundToolStripMenuItem.Enabled = false;
             this.playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playSoundToolStripMenuItem.Name = "playSoundToolStripMenuItem";
-            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.playSoundToolStripMenuItem.Text = "Play";
             this.playSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickPlay);
             // 
@@ -146,7 +146,7 @@ namespace FiddlerControls
             // 
             this.replaceToolStripMenuItem.Enabled = false;
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.replaceToolStripMenuItem.Text = "Insert/Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
@@ -154,7 +154,7 @@ namespace FiddlerControls
             // 
             this.extractSoundToolStripMenuItem.Enabled = false;
             this.extractSoundToolStripMenuItem.Name = "extractSoundToolStripMenuItem";
-            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.extractSoundToolStripMenuItem.Text = "Extract";
             this.extractSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtract);
             // 
@@ -162,19 +162,19 @@ namespace FiddlerControls
             // 
             this.removeSoundToolStripMenuItem.Enabled = false;
             this.removeSoundToolStripMenuItem.Name = "removeSoundToolStripMenuItem";
-            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.removeSoundToolStripMenuItem.Text = "Remove";
             this.removeSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(159, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
             // 
             // itemSave
             // 
             this.itemSave.Name = "itemSave";
-            this.itemSave.Size = new System.Drawing.Size(162, 22);
+            this.itemSave.Size = new System.Drawing.Size(168, 22);
             this.itemSave.Text = "Save";
             this.itemSave.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -196,7 +196,7 @@ namespace FiddlerControls
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(44, 22);
+            this.toolStripButton2.Size = new System.Drawing.Size(46, 22);
             this.toolStripButton2.Text = "Search";
             this.toolStripButton2.Click += new System.EventHandler(this.SearchClick);
             // 
@@ -207,13 +207,13 @@ namespace FiddlerControls
             this.itemExtractSoundlist});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(40, 22);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
             this.toolStripDropDownButton1.Text = "Misc";
             // 
             // itemExtractSoundlist
             // 
             this.itemExtractSoundlist.Name = "itemExtractSoundlist";
-            this.itemExtractSoundlist.Size = new System.Drawing.Size(155, 22);
+            this.itemExtractSoundlist.Size = new System.Drawing.Size(162, 22);
             this.itemExtractSoundlist.Text = "Extract Soundlist";
             this.itemExtractSoundlist.Click += new System.EventHandler(this.OnClickExtractSoundList);
             // 
@@ -273,7 +273,7 @@ namespace FiddlerControls
             this.stopButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stopButton.Name = "stopButton";
             this.stopButton.ShowDropDownArrow = false;
-            this.stopButton.Size = new System.Drawing.Size(33, 18);
+            this.stopButton.Size = new System.Drawing.Size(35, 18);
             this.stopButton.Text = "Stop";
             this.stopButton.Visible = false;
             this.stopButton.Click += new System.EventHandler(this.OnClickStop);

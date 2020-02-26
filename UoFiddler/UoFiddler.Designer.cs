@@ -48,7 +48,7 @@ namespace UoFiddler
             this.Multis = new System.Windows.Forms.TabPage();
             this.controlMulti = new FiddlerControls.Multis();
             this.Animation = new System.Windows.Forms.TabPage();
-            this.controlAnimations = new FiddlerControls.Animationlist();
+            this.controlAnimations = new FiddlerControls.AnimationList();
             this.Items = new System.Windows.Forms.TabPage();
             this.controlItemShow = new FiddlerControls.ItemShow();
             this.LandTiles = new System.Windows.Forms.TabPage();
@@ -193,7 +193,7 @@ namespace UoFiddler
             this.unDockToolStripMenuItem.Name = "unDockToolStripMenuItem";
             this.unDockToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.unDockToolStripMenuItem.Text = "UnDock";
-            this.unDockToolStripMenuItem.Click += new System.EventHandler(this.OnClickUndock);
+            this.unDockToolStripMenuItem.Click += new System.EventHandler(this.OnClickUnDock);
             // 
             // Start
             // 
@@ -671,7 +671,7 @@ namespace UoFiddler
             this.AlwaysOnTopMenuitem.Name = "AlwaysOnTopMenuitem";
             this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(154, 22);
             this.AlwaysOnTopMenuitem.Text = "Always On Top";
-            this.AlwaysOnTopMenuitem.Click += new System.EventHandler(this.onClickAlwaysTop);
+            this.AlwaysOnTopMenuitem.Click += new System.EventHandler(this.OnClickAlwaysTop);
             // 
             // optionsToolStripMenuItem
             // 
@@ -685,7 +685,7 @@ namespace UoFiddler
             this.pathSettingsMenuItem.Name = "pathSettingsMenuItem";
             this.pathSettingsMenuItem.Size = new System.Drawing.Size(154, 22);
             this.pathSettingsMenuItem.Text = "Path Settings..";
-            this.pathSettingsMenuItem.Click += new System.EventHandler(this.click_path);
+            this.pathSettingsMenuItem.Click += new System.EventHandler(this.Click_path);
             // 
             // toolStripSeparator2
             // 
@@ -965,7 +965,7 @@ namespace UoFiddler
             this.manageToolStripMenuItem.Name = "manageToolStripMenuItem";
             this.manageToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.manageToolStripMenuItem.Text = "Manage..";
-            this.manageToolStripMenuItem.Click += new System.EventHandler(this.onClickToolManage);
+            this.manageToolStripMenuItem.Click += new System.EventHandler(this.OnClickToolManage);
             // 
             // toolStripDropDownButtonPlugins
             // 
@@ -983,7 +983,7 @@ namespace UoFiddler
             this.manageToolStripMenuItem1.Name = "manageToolStripMenuItem1";
             this.manageToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.manageToolStripMenuItem1.Text = "Manage..";
-            this.manageToolStripMenuItem1.Click += new System.EventHandler(this.onClickManagePlugins);
+            this.manageToolStripMenuItem1.Click += new System.EventHandler(this.OnClickManagePlugins);
             // 
             // toolStripSeparator1
             // 
@@ -1048,7 +1048,7 @@ namespace UoFiddler
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.TabPage Items;
         private FiddlerControls.ItemShow controlItemShow;
-        private FiddlerControls.Animationlist controlAnimations;
+        private FiddlerControls.AnimationList controlAnimations;
         private System.Windows.Forms.TabPage LandTiles;
         private FiddlerControls.LandTiles controlLandTiles;
         private System.Windows.Forms.TabPage Gumps;

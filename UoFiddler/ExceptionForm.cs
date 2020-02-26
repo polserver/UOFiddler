@@ -19,18 +19,18 @@ namespace UoFiddler
         public ExceptionForm(Exception err)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = FiddlerControls.Options.GetFiddlerIcon();
 
-            if (err.InnerException != null)
-                richTextBox.Text = String.Format("{0}\n{1}", err.InnerException.Message, err.InnerException.GetType());
-            else
-                richTextBox.Text = "";
-            richTextBox.Text = String.Format("{0}\n\n{1}\n\n{2}", richTextBox.Text, err.Message, err.StackTrace);
+            richTextBox.Text = err.InnerException != null
+                ? $"{err.InnerException.Message}\n{err.InnerException.GetType()}"
+                : string.Empty;
+
+            richTextBox.Text = $"{richTextBox.Text}\n\n{err.Message}\n\n{err.StackTrace}";
         }
 
-        private void onclick(object sender, EventArgs e)
+        private void OnClick(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

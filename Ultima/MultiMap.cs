@@ -7,7 +7,7 @@ namespace Ultima
 {
     public sealed class MultiMap
     {
-        private static byte[] m_StreamBuffer;
+        private static byte[] _mStreamBuffer;
         static MultiMap()
         {
         }
@@ -40,13 +40,13 @@ namespace Ultima
 
                         ushort* cur = line;
                         int len = (int)(bin.BaseStream.Length - bin.BaseStream.Position);
-                        if (m_StreamBuffer == null || m_StreamBuffer.Length < len)
-                            m_StreamBuffer = new byte[len];
-                        bin.Read(m_StreamBuffer, 0, len);
+                        if (_mStreamBuffer == null || _mStreamBuffer.Length < len)
+                            _mStreamBuffer = new byte[len];
+                        bin.Read(_mStreamBuffer, 0, len);
                         int j = 0;
                         while (j != len)
                         {
-                            pixel = m_StreamBuffer[j++];
+                            pixel = _mStreamBuffer[j++];
                             count = (pixel & 0x7f);
 
                             if ((pixel & 0x80) != 0)
@@ -139,7 +139,7 @@ namespace Ultima
         public static unsafe Bitmap GetFacetImage(int id)
         {
             Bitmap bmp;
-            string path=Files.GetFilePath(String.Format("facet0{0}.mul", id));
+            string path=Files.GetFilePath($"facet0{id}.mul");
             if (path != null)
             {
                 using (BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))

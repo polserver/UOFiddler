@@ -19,72 +19,85 @@ namespace FiddlerControls
         public ItemSearch()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
         }
 
         private void Search_Graphic(object sender, EventArgs e)
         {
-            int graphic;
-            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
             {
-                bool res;
-                if (Options.DesignAlternative)
-                    res = ItemShowAlternative.SearchGraphic(graphic);
-                else
-                    res = ItemShow.SearchGraphic(graphic);
-                if (!res)
-                {
-                    DialogResult result = MessageBox.Show("No item found", "Result",
-                        MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Cancel)
-                        Close();
-                }
+                return;
+            }
+
+            bool res = Options.DesignAlternative
+                ? ItemShowAlternative.SearchGraphic(graphic)
+                : ItemShow.SearchGraphic(graphic);
+
+            if (res)
+            {
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No item found", "Result",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
         private void Search_ItemName(object sender, EventArgs e)
         {
-            lastSearchedName = textBoxItemName.Text;
-            bool res;
-            if (Options.DesignAlternative)
-                res = ItemShowAlternative.SearchName(textBoxItemName.Text, false);
-            else
-                res = ItemShow.SearchName(textBoxItemName.Text, false);
-            if (!res)
+            _lastSearchedName = textBoxItemName.Text;
+            bool res = Options.DesignAlternative
+                ? ItemShowAlternative.SearchName(textBoxItemName.Text, false)
+                : ItemShow.SearchName(textBoxItemName.Text, false);
+
+            if (res)
             {
-                DialogResult result = MessageBox.Show("No item found", "Result",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                    Close();
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No item found", "Result",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res;
-            if (Options.DesignAlternative)
-                res = ItemShowAlternative.SearchName(textBoxItemName.Text, true);
-            else
-                res = ItemShow.SearchName(textBoxItemName.Text, true);
-            if (!res)
+            bool res = Options.DesignAlternative
+                ? ItemShowAlternative.SearchName(textBoxItemName.Text, true)
+                : ItemShow.SearchName(textBoxItemName.Text, true);
+
+            if (res)
             {
-                DialogResult result = MessageBox.Show("No item found", "Result",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                    Close();
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No item found", "Result",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
-        private string lastSearchedName = null;
-        private void onKeyDownSearch(object sender, KeyEventArgs e)
+        private string _lastSearchedName;
+
+        private void OnKeyDownSearch(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if ((TextBox)sender == textBoxGraphic)
+                {
                     Search_Graphic(sender, e);
+                }
                 else
                 {
-                    if (textBoxItemName.Text != lastSearchedName)
+                    if (textBoxItemName.Text != _lastSearchedName)
                     {
                         Search_ItemName(sender, e);
                     }
@@ -97,7 +110,7 @@ namespace FiddlerControls
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                Close();
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

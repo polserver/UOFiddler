@@ -18,7 +18,7 @@ namespace Ultima
 
         protected override bool ReleaseHandle()
         {
-            if (!this.IsClosed)
+            if (!IsClosed)
                 return ReleaseHandle();
             return true;
         }

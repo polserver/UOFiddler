@@ -26,9 +26,10 @@ namespace ComparePlugin
         {
             InitializeComponent();
         }
-        Dictionary<int, bool> m_Compare = new Dictionary<int, bool>();
-        SHA256Managed shaM = new SHA256Managed();
-        System.Drawing.ImageConverter ic = new System.Drawing.ImageConverter();
+
+        private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
+        private readonly SHA256Managed _shaM = new SHA256Managed();
+        private readonly ImageConverter _ic = new ImageConverter();
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -45,47 +46,55 @@ namespace ComparePlugin
 
         private void OnIndexChangedOrg(object sender, EventArgs e)
         {
-            if ((listBoxOrg.SelectedIndex == -1) || (listBoxOrg.Items.Count < 1))
+            if (listBoxOrg.SelectedIndex == -1 || listBoxOrg.Items.Count < 1)
+            {
                 return;
+            }
 
             int i = int.Parse(listBoxOrg.Items[listBoxOrg.SelectedIndex].ToString());
             if (listBoxSec.Items.Count > 0)
-                listBoxSec.SelectedIndex = listBoxSec.Items.IndexOf(i);
-            if (Textures.TestTexture(i))
             {
-                Bitmap bmp = Textures.GetTexture(i);
-                if (bmp != null)
-                    pictureBoxOrg.BackgroundImage = bmp;
-                else
-                    pictureBoxOrg.BackgroundImage = null;
+                listBoxSec.SelectedIndex = listBoxSec.Items.IndexOf(i);
             }
-            else
-                pictureBoxOrg.BackgroundImage = null;
+
+            pictureBoxOrg.BackgroundImage = Textures.TestTexture(i)
+                ? Textures.GetTexture(i)
+                : null;
+
             listBoxOrg.Invalidate();
         }
 
         private void DrawitemOrg(object sender, DrawItemEventArgs e)
         {
             if (e.Index == -1)
+            {
                 return;
+            }
 
             Brush fontBrush = Brushes.Gray;
 
             int i = int.Parse(listBoxOrg.Items[e.Index].ToString());
             if (listBoxOrg.SelectedIndex == e.Index)
+            {
                 e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
+
             if (!Textures.TestTexture(i))
+            {
                 fontBrush = Brushes.Red;
+            }
             else if (listBoxSec.Items.Count > 0)
             {
                 if (!Compare(i))
+                {
                     fontBrush = Brushes.Blue;
+                }
             }
 
-            e.Graphics.DrawString(String.Format("0x{0:X}", i), Font, fontBrush,
-                new PointF((float)5,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString(String.Format("0x{0:X}", i), Font).Height / 2))));
+            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
+                new PointF(5,
+                e.Bounds.Y + (e.Bounds.Height / 2 -
+                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
         }
 
         private void MeasureOrg(object sender, MeasureItemEventArgs e)
@@ -96,11 +105,14 @@ namespace ComparePlugin
         private void OnClickLoadSecond(object sender, EventArgs e)
         {
             if (textBoxSecondDir.Text == null)
+            {
                 return;
+            }
+
             string path = textBoxSecondDir.Text;
             string file = Path.Combine(path, "texmaps.mul");
             string file2 = Path.Combine(path, "texidx.mul");
-            if ((File.Exists(file)) && (File.Exists(file2)))
+            if (File.Exists(file) && File.Exists(file2))
             {
                 SecondTexture.SetFileIndex(file2, file);
                 LoadSecond();
@@ -109,7 +121,7 @@ namespace ComparePlugin
 
         private void LoadSecond()
         {
-            m_Compare.Clear();
+            _mCompare.Clear();
             listBoxSec.BeginUpdate();
             listBoxSec.Items.Clear();
             List<object> cache = new List<object>();
@@ -124,22 +136,31 @@ namespace ComparePlugin
         private void DrawItemSec(object sender, DrawItemEventArgs e)
         {
             if (e.Index == -1)
+            {
                 return;
+            }
 
             Brush fontBrush = Brushes.Gray;
 
             int i = int.Parse(listBoxOrg.Items[e.Index].ToString());
             if (listBoxSec.SelectedIndex == e.Index)
+            {
                 e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            if (!SecondTexture.IsValidTexture(i))
-                fontBrush = Brushes.Red;
-            else if (!Compare(i))
-                fontBrush = Brushes.Blue;
+            }
 
-            e.Graphics.DrawString(String.Format("0x{0:X}", i), Font, fontBrush,
-                new PointF((float)5,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString(String.Format("0x{0:X}", i), Font).Height / 2))));
+            if (!SecondTexture.IsValidTexture(i))
+            {
+                fontBrush = Brushes.Red;
+            }
+            else if (!Compare(i))
+            {
+                fontBrush = Brushes.Blue;
+            }
+
+            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
+                new PointF(5,
+                e.Bounds.Y + (e.Bounds.Height / 2 -
+                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
         }
 
         private void MeasureSec(object sender, MeasureItemEventArgs e)
@@ -149,63 +170,55 @@ namespace ComparePlugin
 
         private void OnIndexChangedSec(object sender, EventArgs e)
         {
-            if ((listBoxSec.SelectedIndex == -1) || (listBoxSec.Items.Count < 1))
+            if (listBoxSec.SelectedIndex == -1 || listBoxSec.Items.Count < 1)
+            {
                 return;
+            }
 
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             listBoxOrg.SelectedIndex = listBoxOrg.Items.IndexOf(i);
-            if (SecondTexture.IsValidTexture(i))
-            {
-                Bitmap bmp = SecondTexture.GetTexture(i);
-                if (bmp != null)
-                    pictureBoxSec.BackgroundImage = bmp;
-                else
-                    pictureBoxSec.BackgroundImage = null;
-            }
-            else
-                pictureBoxSec.BackgroundImage = null;
+            pictureBoxSec.BackgroundImage = SecondTexture.IsValidTexture(i) ? SecondTexture.GetTexture(i) : null;
+
             listBoxSec.Invalidate();
         }
 
         private bool Compare(int index)
         {
-            if (m_Compare.ContainsKey(index))
-                return m_Compare[index];
+            if (_mCompare.ContainsKey(index))
+            {
+                return _mCompare[index];
+            }
+
             Bitmap bitorg = Textures.GetTexture(index);
             Bitmap bitsec = SecondTexture.GetTexture(index);
-            if ((bitorg == null) && (bitsec == null))
+            if (bitorg == null && bitsec == null)
             {
-                m_Compare[index] = true;
+                _mCompare[index] = true;
                 return true;
             }
-            if (((bitorg == null) || (bitsec == null))
-                || (bitorg.Size != bitsec.Size))
+            if (bitorg == null || bitsec == null
+                               || bitorg.Size != bitsec.Size)
             {
-                m_Compare[index] = false;
+                _mCompare[index] = false;
                 return false;
             }
 
             byte[] btImage1 = new byte[1];
-            btImage1 = (byte[])ic.ConvertTo(bitorg, btImage1.GetType());
+            btImage1 = (byte[])_ic.ConvertTo(bitorg, btImage1.GetType());
             byte[] btImage2 = new byte[1];
-            btImage2 = (byte[])ic.ConvertTo(bitsec, btImage2.GetType());
+            btImage2 = (byte[])_ic.ConvertTo(bitsec, btImage2.GetType());
 
-            string hash1string = BitConverter.ToString(shaM.ComputeHash(btImage1));
-            string hash2string = BitConverter.ToString(shaM.ComputeHash(btImage2));
+            string hash1String = BitConverter.ToString(_shaM.ComputeHash(btImage1));
+            string hash2String = BitConverter.ToString(_shaM.ComputeHash(btImage2));
 
-            bool res;
-            if (hash1string != hash2string)
-                res = false;
-            else
-                res = true;
-
-            m_Compare[index] = res;
+            bool res = hash1String == hash2String;
+            _mCompare[index] = res;
             return res;
         }
 
         private void OnChangeShowDiff(object sender, EventArgs e)
         {
-            if (m_Compare.Count < 1)
+            if (_mCompare.Count < 1)
             {
                 if (checkBox1.Checked)
                 {
@@ -226,7 +239,9 @@ namespace ComparePlugin
                 for (int i = 0; i < 0x4000; i++)
                 {
                     if (!Compare(i))
+                    {
                         cache.Add(i);
+                    }
                 }
             }
             else
@@ -246,15 +261,21 @@ namespace ComparePlugin
         private void ExportAsBmp(object sender, EventArgs e)
         {
             if (listBoxSec.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             if (!SecondTexture.IsValidTexture(i))
+            {
                 return;
+            }
+
             string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Texture(Sec) 0x{0:X}.bmp", i));
-            SecondTexture.GetTexture(i).Save(FileName, ImageFormat.Bmp);
+            string fileName = Path.Combine(path, $"Texture(Sec) 0x{i:X}.bmp");
+            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Bmp);
             MessageBox.Show(
-                String.Format("Texture saved to {0}", FileName),
+                $"Texture saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -264,15 +285,21 @@ namespace ComparePlugin
         private void ExportAsTiff(object sender, EventArgs e)
         {
             if (listBoxSec.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             if (!SecondTexture.IsValidTexture(i))
+            {
                 return;
+            }
+
             string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Texture(Sec) 0x{0:X}.tiff", i));
-            SecondTexture.GetTexture(i).Save(FileName, ImageFormat.Tiff);
+            string fileName = Path.Combine(path, $"Texture(Sec) 0x{i:X}.tiff");
+            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Tiff);
             MessageBox.Show(
-                String.Format("Texture saved to {0}", FileName),
+                $"Texture saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -286,22 +313,30 @@ namespace ComparePlugin
                 dialog.Description = "Select directory containing the texture files";
                 dialog.ShowNewFolderButton = false;
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
                     textBoxSecondDir.Text = dialog.SelectedPath;
+                }
             }
         }
 
         private void OnClickCopy(object sender, EventArgs e)
         {
             if (listBoxSec.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
             if (!SecondTexture.IsValidTexture(i))
+            {
                 return;
+            }
+
             Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
-            Ultima.Textures.Replace(i, copy);
+            Textures.Replace(i, copy);
             FiddlerControls.Options.ChangedUltimaClass["Texture"] = true;
             FiddlerControls.Events.FireTextureChangeEvent(this, i);
-            m_Compare[i] = true;
+            _mCompare[i] = true;
             listBoxOrg.BeginUpdate();
             bool done = false;
             for (int id = 0; id < 0x4000; id++)
@@ -319,7 +354,10 @@ namespace ComparePlugin
                 }
             }
             if (!done)
+            {
                 listBoxOrg.Items.Add(i);
+            }
+
             listBoxOrg.EndUpdate();
             listBoxOrg.Invalidate();
             listBoxSec.Invalidate();
@@ -331,16 +369,21 @@ namespace ComparePlugin
             for (int i = 0; i < 0x4000; i++)
             {
                 if (!SecondTexture.IsValidTexture(i))
-                    continue;
-                else if (!Compare(i))
                 {
-                    Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
-                    Ultima.Textures.Replace(i, copy);
-                    FiddlerControls.Events.FireTextureChangeEvent(this, i);
+                    continue;
                 }
+
+                if (Compare(i))
+                {
+                    continue;
+                }
+
+                Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
+                Textures.Replace(i, copy);
+                FiddlerControls.Events.FireTextureChangeEvent(this, i);
             }
 
-            m_Compare.Clear();
+            _mCompare.Clear();
             listBoxOrg.BeginUpdate();
             listBoxOrg.Items.Clear();
             List<object> cache = new List<object>();
@@ -362,16 +405,21 @@ namespace ComparePlugin
             for (int i = 0; i < 0x4000; i++)
             {
                 if (!SecondTexture.IsValidTexture(i))
-                    continue;
-                else if (!Textures.TestTexture(i))
                 {
-                    Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
-                    Ultima.Textures.Replace(i, copy);
-                    FiddlerControls.Events.FireTextureChangeEvent(this, i);
+                    continue;
                 }
+
+                if (Textures.TestTexture(i))
+                {
+                    continue;
+                }
+
+                Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
+                Textures.Replace(i, copy);
+                FiddlerControls.Events.FireTextureChangeEvent(this, i);
             }
 
-            m_Compare.Clear();
+            _mCompare.Clear();
             listBoxOrg.BeginUpdate();
             listBoxOrg.Items.Clear();
             List<object> cache = new List<object>();

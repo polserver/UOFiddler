@@ -28,42 +28,47 @@ namespace FiddlerControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             if (!Files.CacheData)
+            {
                 PreloadMap.Visible = false;
+            }
+
             ProgressBar.Visible = false;
-            refmarker = this;
+            _refMarker = this;
             panel1.Visible = false;
         }
 
-        public static Map refmarker;
-        private Bitmap map;
-        private Ultima.Map currmap;
-        private int currmapint = 0;
-        private bool SyncWithClient = false;
-        private int ClientX = 0;
-        private int ClientY = 0;
-        private int ClientZ = 0;
-        private int ClientMap = 0;
-        private Point currPoint;
+        private static Map _refMarker;
+        private Bitmap _map;
+        private Ultima.Map _currMap;
+        private int _currMapInt;
+        private bool _syncWithClient;
+        private int _clientX;
+        private int _clientY;
+        private int _clientZ;
+        private int _clientMap;
+        private Point _currPoint;
         public static double Zoom = 1;
-        private bool moving = false;
-        private Point movingpoint;
+        private bool _moving;
+        private Point _movingPoint;
 
+        public static int HScrollBar => _refMarker.hScrollBar.Value;
+        public static int VScrollBar => _refMarker.vScrollBar.Value;
+        public static Ultima.Map CurrMap => _refMarker._currMap;
 
-        public static int HScrollBar { get { return refmarker.hScrollBar.Value; } }
-        public static int VScrollBar { get { return refmarker.vScrollBar.Value; } }
-        public static Ultima.Map CurrMap { get { return refmarker.currmap; } }
-
-        private static bool Loaded = false;
+        private static bool _loaded;
 
         /// <summary>
         /// ReLoads if loaded
         /// </summary>
         private void Reload()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
+            }
+
             Zoom = 1;
-            moving = false;
+            _moving = false;
             OnLoad(this, EventArgs.Empty);
         }
 
@@ -74,7 +79,7 @@ namespace FiddlerControls
             Options.LoadedUltimaClass["Map"] = true;
             Options.LoadedUltimaClass["RadarColor"] = true;
 
-            currmap = Ultima.Map.Felucca;
+            _currMap = Ultima.Map.Felucca;
             feluccaToolStripMenuItem.Checked = true;
             trammelToolStripMenuItem.Checked = false;
             ilshenarToolStripMenuItem.Checked = false;
@@ -82,34 +87,37 @@ namespace FiddlerControls
             tokunoToolStripMenuItem.Checked = false;
             PreloadMap.Visible = true;
             ChangeMapNames();
-            ZoomLabel.Text = String.Format("Zoom: {0}", Zoom);
+            ZoomLabel.Text = $"Zoom: {Zoom}";
             SetScrollBarValues();
             Refresh();
             pictureBox.Invalidate();
             Cursor.Current = Cursors.Default;
 
-            if (!Loaded)
+            if (!_loaded)
             {
-                FiddlerControls.Events.MapDiffChangeEvent += new FiddlerControls.Events.MapDiffChangeHandler(OnMapDiffChangeEvent);
-                FiddlerControls.Events.MapNameChangeEvent += new FiddlerControls.Events.MapNameChangeHandler(OnMapNameChangeEvent);
-                FiddlerControls.Events.MapSizeChangeEvent += new FiddlerControls.Events.MapSizeChangeHandler(OnMapSizeChangeEvent);
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
+                FiddlerControls.Events.MapDiffChangeEvent += OnMapDiffChangeEvent;
+                FiddlerControls.Events.MapNameChangeEvent += OnMapNameChangeEvent;
+                FiddlerControls.Events.MapSizeChangeEvent += OnMapSizeChangeEvent;
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
             }
-            Loaded = true;
+            _loaded = true;
         }
 
         private void OnMapDiffChangeEvent()
         {
             pictureBox.Invalidate();
         }
+
         private void OnMapNameChangeEvent()
         {
             ChangeMapNames();
         }
+
         private void OnMapSizeChangeEvent()
         {
             Reload();
         }
+
         private void OnFilePathChangeEvent()
         {
             Reload();
@@ -125,24 +133,30 @@ namespace FiddlerControls
         /// </summary>
         private void ChangeMapNames()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
+            }
+
             feluccaToolStripMenuItem.Text = Options.MapNames[0];
             trammelToolStripMenuItem.Text = Options.MapNames[1];
             ilshenarToolStripMenuItem.Text = Options.MapNames[2];
             malasToolStripMenuItem.Text = Options.MapNames[3];
             tokunoToolStripMenuItem.Text = Options.MapNames[4];
             terMurToolStripMenuItem.Text = Options.MapNames[5];
-            if (OverlayObjectTree.Nodes.Count > 0)
+
+            if (OverlayObjectTree.Nodes.Count <= 0)
             {
-                OverlayObjectTree.Nodes[0].Text = Options.MapNames[0];
-                OverlayObjectTree.Nodes[1].Text = Options.MapNames[1];
-                OverlayObjectTree.Nodes[2].Text = Options.MapNames[2];
-                OverlayObjectTree.Nodes[3].Text = Options.MapNames[3];
-                OverlayObjectTree.Nodes[4].Text = Options.MapNames[4];
-                OverlayObjectTree.Nodes[5].Text = Options.MapNames[5];
-                OverlayObjectTree.Invalidate();
+                return;
             }
+
+            OverlayObjectTree.Nodes[0].Text = Options.MapNames[0];
+            OverlayObjectTree.Nodes[1].Text = Options.MapNames[1];
+            OverlayObjectTree.Nodes[2].Text = Options.MapNames[2];
+            OverlayObjectTree.Nodes[3].Text = Options.MapNames[3];
+            OverlayObjectTree.Nodes[4].Text = Options.MapNames[4];
+            OverlayObjectTree.Nodes[5].Text = Options.MapNames[5];
+            OverlayObjectTree.Invalidate();
         }
 
         private void HandleScroll(object sender, ScrollEventArgs e)
@@ -152,12 +166,12 @@ namespace FiddlerControls
 
         public static int Round(int x)
         {
-            return (int)((x >> 3) << 3);
+            return (x >> 3) << 3;
         }
 
         private void ZoomMap(ref Bitmap bmp0)
         {
-            Bitmap bmp1 = new Bitmap((int)(map.Width * Zoom), (int)(map.Height * Zoom));
+            Bitmap bmp1 = new Bitmap((int)(_map.Width * Zoom), (int)(_map.Height * Zoom));
             Graphics graph = Graphics.FromImage(bmp1);
             graph.InterpolationMode = InterpolationMode.NearestNeighbor;
             graph.PixelOffsetMode = PixelOffsetMode.Half;
@@ -181,34 +195,46 @@ namespace FiddlerControls
 
         private void ChangeScrollBar()
         {
-            hScrollBar.Maximum = (int)(currmap.Width);
+            hScrollBar.Maximum = _currMap.Width;
             hScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Width / Zoom) - 8);
             if (Zoom >= 1)
+            {
                 hScrollBar.Maximum += (int)(40 * Zoom);
+            }
             else if (Zoom < 1)
+            {
                 hScrollBar.Maximum += (int)(40 / Zoom);
+            }
+
             hScrollBar.Maximum = Math.Max(0, Round(hScrollBar.Maximum));
-            vScrollBar.Maximum = (int)(currmap.Height);
+            vScrollBar.Maximum = _currMap.Height;
             vScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Height / Zoom) - 8);
             if (Zoom >= 1)
+            {
                 vScrollBar.Maximum += (int)(40 * Zoom);
+            }
             else if (Zoom < 1)
+            {
                 vScrollBar.Maximum += (int)(40 / Zoom);
+            }
+
             vScrollBar.Maximum = Math.Max(0, Round(vScrollBar.Maximum));
         }
 
         private void OnResize(object sender, EventArgs e)
         {
-            if (Loaded)
+            if (!_loaded)
             {
-                ChangeScrollBar();
-                pictureBox.Invalidate();
+                return;
             }
+
+            ChangeScrollBar();
+            pictureBox.Invalidate();
         }
 
         private void ChangeMap()
         {
-            PreloadMap.Visible = !currmap.IsCached(showStaticsToolStripMenuItem1.Checked);
+            PreloadMap.Visible = !_currMap.IsCached(showStaticsToolStripMenuItem1.Checked);
             SetScrollBarValues();
             pictureBox.Invalidate();
         }
@@ -225,218 +251,246 @@ namespace FiddlerControls
 
         private void ChangeMapFelucca(object sender, EventArgs e)
         {
-            if (!feluccaToolStripMenuItem.Checked)
+            if (feluccaToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                feluccaToolStripMenuItem.Checked = true;
-                currmap = Ultima.Map.Felucca;
-                currmapint = 0;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            feluccaToolStripMenuItem.Checked = true;
+            _currMap = Ultima.Map.Felucca;
+            _currMapInt = 0;
+            ChangeMap();
         }
 
         private void ChangeMapTrammel(object sender, EventArgs e)
         {
-            if (!trammelToolStripMenuItem.Checked)
+            if (trammelToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                trammelToolStripMenuItem.Checked = true;
-                currmap = Ultima.Map.Trammel;
-                currmapint = 1;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            trammelToolStripMenuItem.Checked = true;
+            _currMap = Ultima.Map.Trammel;
+            _currMapInt = 1;
+            ChangeMap();
         }
 
         private void ChangeMapIlshenar(object sender, EventArgs e)
         {
-            if (!ilshenarToolStripMenuItem.Checked)
+            if (ilshenarToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                ilshenarToolStripMenuItem.Checked = true;
-                currmap = Ultima.Map.Ilshenar;
-                currmapint = 2;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            ilshenarToolStripMenuItem.Checked = true;
+            _currMap = Ultima.Map.Ilshenar;
+            _currMapInt = 2;
+            ChangeMap();
         }
 
         private void ChangeMapMalas(object sender, EventArgs e)
         {
-            if (!malasToolStripMenuItem.Checked)
+            if (malasToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                malasToolStripMenuItem.Checked = true;
-                currmap = Ultima.Map.Malas;
-                currmapint = 3;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            malasToolStripMenuItem.Checked = true;
+            _currMap = Ultima.Map.Malas;
+            _currMapInt = 3;
+            ChangeMap();
         }
 
         private void ChangeMapTokuno(object sender, EventArgs e)
         {
-            if (!tokunoToolStripMenuItem.Checked)
+            if (tokunoToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                tokunoToolStripMenuItem.Checked = true;
-                currmap = Ultima.Map.Tokuno;
-                currmapint = 4;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            tokunoToolStripMenuItem.Checked = true;
+            _currMap = Ultima.Map.Tokuno;
+            _currMapInt = 4;
+            ChangeMap();
         }
 
         private void ChangeMapTerMur(object sender, EventArgs e)
         {
-            if (!terMurToolStripMenuItem.Checked)
+            if (terMurToolStripMenuItem.Checked)
             {
-                ResetCheckedMap();
-                terMurToolStripMenuItem.Checked = true;
-                currmap = Ultima.Map.TerMur;
-                currmapint = 5;
-                ChangeMap();
+                return;
             }
+
+            ResetCheckedMap();
+            terMurToolStripMenuItem.Checked = true;
+            _currMap = Ultima.Map.TerMur;
+            _currMapInt = 5;
+            ChangeMap();
         }
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                moving = true;
-                movingpoint.X = e.X;
-                movingpoint.Y = e.Y;
-                this.Cursor = Cursors.Hand;
+                _moving = true;
+                _movingPoint.X = e.X;
+                _movingPoint.Y = e.Y;
+                Cursor = Cursors.Hand;
             }
             else
             {
-                moving = false;
-                this.Cursor = Cursors.Default;
+                _moving = false;
+                Cursor = Cursors.Default;
             }
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            moving = false;
-            this.Cursor = Cursors.Default;
+            _moving = false;
+            Cursor = Cursors.Default;
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            int xDelta = Math.Min(currmap.Width, (int)(e.X / Zoom) + Round(hScrollBar.Value));
-            int yDelta = Math.Min(currmap.Height, (int)(e.Y / Zoom) + Round(vScrollBar.Value));
-            CoordsLabel.Text = String.Format("Coords: {0},{1}", xDelta, yDelta);
-            if (moving)
+            int xDelta = Math.Min(_currMap.Width, (int)(e.X / Zoom) + Round(hScrollBar.Value));
+            int yDelta = Math.Min(_currMap.Height, (int)(e.Y / Zoom) + Round(vScrollBar.Value));
+
+            CoordsLabel.Text = $"Coords: {xDelta},{yDelta}";
+
+            if (!_moving)
             {
-                int deltax = (int)(-1 * (e.X - movingpoint.X) / Zoom);
-                int deltay = (int)(-1 * (e.Y - movingpoint.Y) / Zoom);
-                movingpoint.X = e.X;
-                movingpoint.Y = e.Y;
-                hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltax));
-                vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltay));
-                pictureBox.Invalidate();
+                return;
             }
+
+            int deltaX = (int)(-1 * (e.X - _movingPoint.X) / Zoom);
+            int deltaY = (int)(-1 * (e.Y - _movingPoint.Y) / Zoom);
+
+            _movingPoint.X = e.X;
+            _movingPoint.Y = e.Y;
+
+            hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
+            vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
+
+            pictureBox.Invalidate();
         }
 
-        private void onClick_ShowClientLoc(object sender, EventArgs e)
+        private void OnClick_ShowClientLoc(object sender, EventArgs e)
         {
-            SyncWithClient = !SyncWithClient;
+            _syncWithClient = !_syncWithClient;
         }
 
-        private void onClick_GotoClientLoc(object sender, EventArgs e)
+        private void OnClick_GotoClientLoc(object sender, EventArgs e)
         {
             int x = 0;
             int y = 0;
             int z = 0;
             int mapClient = 0;
-            if (!Ultima.Client.Running)
+            if (!Client.Running)
+            {
                 return;
-            Ultima.Client.Calibrate();
-            if (!Ultima.Client.FindLocation(ref x, ref y, ref z, ref mapClient))
+            }
+
+            Client.Calibrate();
+            if (!Client.FindLocation(ref x, ref y, ref z, ref mapClient))
+            {
                 return;
-            if (currmapint != mapClient)
+            }
+
+            if (_currMapInt != mapClient)
             {
                 ResetCheckedMap();
                 switch (mapClient)
                 {
                     case 0:
                         feluccaToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Felucca;
+                        _currMap = Ultima.Map.Felucca;
                         break;
                     case 1:
                         trammelToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Trammel;
+                        _currMap = Ultima.Map.Trammel;
                         break;
                     case 2:
                         ilshenarToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Ilshenar;
+                        _currMap = Ultima.Map.Ilshenar;
                         break;
                     case 3:
                         malasToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Malas;
+                        _currMap = Ultima.Map.Malas;
                         break;
                     case 4:
                         tokunoToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Tokuno;
+                        _currMap = Ultima.Map.Tokuno;
                         break;
                     case 5:
                         terMurToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.TerMur;
+                        _currMap = Ultima.Map.TerMur;
                         break;
                 }
-                currmapint = mapClient;
+                _currMapInt = mapClient;
             }
-            ClientX = x;
-            ClientY = y;
-            ClientZ = z;
-            ClientMap = mapClient;
+            _clientX = x;
+            _clientY = y;
+            _clientZ = z;
+            _clientMap = mapClient;
             SetScrollBarValues();
             hScrollBar.Value = (int)Math.Max(0, x - pictureBox.Right / Zoom / 2);
             vScrollBar.Value = (int)Math.Max(0, y - pictureBox.Bottom / Zoom / 2);
             pictureBox.Invalidate();
-            ClientLocLabel.Text = String.Format("ClientLoc: {0},{1},{2},{3}", x, y, z, Options.MapNames[mapClient]);
+            ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{Options.MapNames[mapClient]}";
         }
 
         private void SyncClientTimer(object sender, EventArgs e)
         {
-            if (SyncWithClient)
+            if (_syncWithClient)
             {
                 int x = 0;
                 int y = 0;
                 int z = 0;
                 int mapClient = 0;
                 string mapname = "";
-                if (Ultima.Client.Running)
+                if (Client.Running)
                 {
-                    Ultima.Client.Calibrate();
-                    if (Ultima.Client.FindLocation(ref x, ref y, ref z, ref mapClient))
+                    Client.Calibrate();
+                    if (Client.FindLocation(ref x, ref y, ref z, ref mapClient))
                     {
-                        if ((ClientX == x) && (ClientY == y) && (ClientZ == z) && (ClientMap == mapClient))
+                        if (_clientX == x && _clientY == y && _clientZ == z && _clientMap == mapClient)
+                        {
                             return;
-                        ClientX = x;
-                        ClientY = y;
-                        ClientZ = z;
-                        ClientMap = mapClient;
+                        }
+
+                        _clientX = x;
+                        _clientY = y;
+                        _clientZ = z;
+                        _clientMap = mapClient;
                         mapname = Options.MapNames[mapClient];
                     }
                 }
 
-                ClientLocLabel.Text = String.Format("ClientLoc: {0},{1},{2},{3}", x, y, z, mapname);
+                ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{mapname}";
                 pictureBox.Invalidate();
             }
         }
 
         private void GetMapInfo(object sender, EventArgs e)
         {
-            new MapDetails(currmap, currPoint).Show();
+            new MapDetails(_currMap, _currPoint).Show();
         }
 
-        private void OnOpenContext(object sender, CancelEventArgs e)  // Speichern für GetMapInfo
+        private void OnOpenContext(object sender, CancelEventArgs e)  // Save for GetMapInfo
         {
-            currPoint = pictureBox.PointToClient(Control.MousePosition);
-            currPoint.X = (int)(currPoint.X / Zoom);
-            currPoint.Y = (int)(currPoint.Y / Zoom);
-            currPoint.X += Round(hScrollBar.Value);
-            currPoint.Y += Round(vScrollBar.Value);
+            _currPoint = pictureBox.PointToClient(MousePosition);
+            _currPoint.X = (int)(_currPoint.X / Zoom);
+            _currPoint.Y = (int)(_currPoint.Y / Zoom);
+            _currPoint.X += Round(hScrollBar.Value);
+            _currPoint.Y += Round(vScrollBar.Value);
         }
 
-        private void onContextClosed(object sender, ToolStripDropDownClosedEventArgs e)
+        private void OnContextClosed(object sender, ToolStripDropDownClosedEventArgs e)
         {
             pictureBox.Invalidate();
         }
@@ -461,10 +515,9 @@ namespace FiddlerControls
         private void DoZoom()
         {
             ChangeScrollBar();
-            ZoomLabel.Text = String.Format("Zoom: {0}", Zoom);
-            int x, y;
-            x = Math.Max(0, currPoint.X - (int)(pictureBox.ClientSize.Width / Zoom) / 2);
-            y = Math.Max(0, currPoint.Y - (int)(pictureBox.ClientSize.Height / Zoom) / 2);
+            ZoomLabel.Text = $"Zoom: {Zoom}";
+            int x = Math.Max(0, _currPoint.X - (int)(pictureBox.ClientSize.Width / Zoom) / 2);
+            int y = Math.Max(0, _currPoint.Y - (int)(pictureBox.ClientSize.Height / Zoom) / 2);
             x = Math.Min(x, hScrollBar.Maximum);
             y = Math.Min(y, vScrollBar.Maximum);
             hScrollBar.Value = Round(x);
@@ -474,18 +527,18 @@ namespace FiddlerControls
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            map = currmap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
+            _map = _currMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
+                (int)(e.ClipRectangle.Width / Zoom + 8) >> 3, (int)(e.ClipRectangle.Height / Zoom + 8) >> 3,
                 showStaticsToolStripMenuItem1.Checked);
-            ZoomMap(ref map);
-            e.Graphics.DrawImageUnscaledAndClipped(map, e.ClipRectangle);
+            ZoomMap(ref _map);
+            e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
 
             if (showCenterCrossToolStripMenuItem1.Checked)
             {
                 Brush brush = new SolidBrush(Color.FromArgb(180, Color.White));
                 Pen pen = new Pen(brush);
-                int x = Round((int)(pictureBox.Width / 2));
-                int y = Round((int)(pictureBox.Height / 2));
+                int x = Round(pictureBox.Width / 2);
+                int y = Round(pictureBox.Height / 2);
                 e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
                 e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
                 pen.Dispose();
@@ -496,16 +549,16 @@ namespace FiddlerControls
             {
                 if (Client.Running)
                 {
-                    if ((ClientX > hScrollBar.Value) &&
-                        (ClientX < hScrollBar.Value + e.ClipRectangle.Width / Zoom) &&
-                        (ClientY > vScrollBar.Value) &&
-                        (ClientY < vScrollBar.Value + e.ClipRectangle.Height / Zoom) &&
-                        (ClientMap == currmapint))
+                    if (_clientX > hScrollBar.Value &&
+                        _clientX < hScrollBar.Value + e.ClipRectangle.Width / Zoom &&
+                        _clientY > vScrollBar.Value &&
+                        _clientY < vScrollBar.Value + e.ClipRectangle.Height / Zoom &&
+                        _clientMap == _currMapInt)
                     {
                         Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow));
                         Pen pen = new Pen(brush);
-                        int x = (int)((ClientX - Round(hScrollBar.Value)) * Zoom);
-                        int y = (int)((ClientY - Round(vScrollBar.Value)) * Zoom);
+                        int x = (int)((_clientX - Round(hScrollBar.Value)) * Zoom);
+                        int y = (int)((_clientY - Round(vScrollBar.Value)) * Zoom);
                         e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
                         e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
                         e.Graphics.DrawEllipse(pen, x - 2, y - 2, 2 * 2, 2 * 2);
@@ -515,197 +568,232 @@ namespace FiddlerControls
                 }
             }
 
-            if (OverlayObjectTree.Nodes.Count > 0)
+            if (OverlayObjectTree.Nodes.Count <= 0 || !showMarkersToolStripMenuItem.Checked)
             {
-                if (showMarkersToolStripMenuItem.Checked)
+                return;
+            }
+
+            foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
+            {
+                OverlayObject o = (OverlayObject)obj.Tag;
+                if (o.IsVisible(e.ClipRectangle, _currMapInt))
                 {
-                    foreach (TreeNode obj in OverlayObjectTree.Nodes[currmapint].Nodes)
-                    {
-                        OverlayObject o = (OverlayObject)obj.Tag;
-                        if (o.isVisible(e.ClipRectangle, currmapint))
-                            o.Draw(e.Graphics);
-                    }
+                    o.Draw(e.Graphics);
                 }
             }
         }
 
-        private void onKeyDownGoto(object sender, KeyEventArgs e)
+        private void OnKeyDownGoto(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                string line = TextBoxGoto.Text.Trim();
-                if (line.Length > 0)
+                return;
+            }
+
+            string line = TextBoxGoto.Text.Trim();
+            if (line.Length > 0)
+            {
+                string[] args = line.Split(' ');
+                if (args.Length != 2)
                 {
-                    string[] args = line.Split(' ');
-                    if (args.Length != 2)
-                        args = line.Split(',');
-                    if (args.Length == 2)
+                    args = line.Split(',');
+                }
+
+                if (args.Length == 2)
+                {
+                    if (int.TryParse(args[0], out int x) && int.TryParse(args[1], out int y))
                     {
-                        int x, y;
-                        if (int.TryParse(args[0], out x) && (int.TryParse(args[1], out y)))
+                        if (x >= 0 && y >= 0)
                         {
-                            if ((x >= 0) && (y >= 0))
+                            if (x <= _currMap.Width && x <= _currMap.Height)
                             {
-                                if ((x <= currmap.Width) && (x <= currmap.Height))
-                                {
-                                    contextMenuStrip1.Close();
-                                    hScrollBar.Value = (int)Math.Max(0, x - pictureBox.Right / Zoom / 2);
-                                    vScrollBar.Value = (int)Math.Max(0, y - pictureBox.Bottom / Zoom / 2);
-                                }
+                                contextMenuStrip1.Close();
+                                hScrollBar.Value = (int)Math.Max(0, x - pictureBox.Right / Zoom / 2);
+                                vScrollBar.Value = (int)Math.Max(0, y - pictureBox.Bottom / Zoom / 2);
                             }
                         }
                     }
                 }
-                pictureBox.Invalidate();
             }
+            pictureBox.Invalidate();
         }
 
-        private void onClickSendClient(object sender, EventArgs e)
+        private void OnClickSendClient(object sender, EventArgs e)
+        {
+            if (!Client.Running)
+            {
+                return;
+            }
+
+            int x = Round((int)(pictureBox.Width / Zoom / 2));
+            int y = Round((int)(pictureBox.Height / Zoom / 2));
+            x += Round(hScrollBar.Value);
+            y += Round(vScrollBar.Value);
+            SendCharTo(x, y);
+        }
+
+        private void OnClickSendClientToPos(object sender, EventArgs e)
         {
             if (Client.Running)
             {
-                int x = Round((int)(pictureBox.Width / Zoom / 2));
-                int y = Round((int)(pictureBox.Height / Zoom / 2));
-                x += Round(hScrollBar.Value);
-                y += Round(vScrollBar.Value);
-                SendCharTo(x, y);
+                SendCharTo(_currPoint.X, _currPoint.Y);
             }
-        }
-
-        private void onClickSendClientToPos(object sender, EventArgs e)
-        {
-            if (Client.Running)
-                SendCharTo(currPoint.X, currPoint.Y);
         }
 
         private void SendCharTo(int x, int y)
         {
             string format = "{0} " + Options.MapArgs;
-            int z = currmap.Tiles.GetLandTile(x, y).Z;
-            Client.SendText(String.Format(format, Options.MapCmd, x, y, z, currmapint, Options.MapNames[currmapint]));
+            int z = _currMap.Tiles.GetLandTile(x, y).Z;
+            Client.SendText(string.Format(format, Options.MapCmd, x, y, z, _currMapInt, Options.MapNames[_currMapInt]));
         }
 
         private void ExtractMapBmp(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            string path = FiddlerControls.Options.OutputPath;
-            string name = String.Format("{0}.bmp", Options.MapNames[currmapint]);
-            string FileName = Path.Combine(path, name);
-            Bitmap extract = currmap.GetImage(0, 0, (currmap.Width >> 3), (currmap.Height >> 3), showStaticsToolStripMenuItem1.Checked);
+            string path = Options.OutputPath;
+            string name = $"{Options.MapNames[_currMapInt]}.bmp";
+            string fileName = Path.Combine(path, name);
+            Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
             if (showMarkersToolStripMenuItem.Checked)
             {
                 Graphics g = Graphics.FromImage(extract);
-                foreach (TreeNode obj in OverlayObjectTree.Nodes[currmapint].Nodes)
+                foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
                 {
                     OverlayObject o = (OverlayObject)obj.Tag;
                     if (o.Visible)
+                    {
                         o.Draw(g);
+                    }
                 }
                 g.Save();
             }
-            extract.Save(FileName, ImageFormat.Bmp);
+            extract.Save(fileName, ImageFormat.Bmp);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Map saved to {0}", FileName), "Saved",
+            MessageBox.Show($"Map saved to {fileName}", "Saved",
                 MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void ExtractMapTiff(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            string path = FiddlerControls.Options.OutputPath;
-            string name = String.Format("{0}.tiff", Options.MapNames[currmapint]);
-            string FileName = Path.Combine(path, name);
-            Bitmap extract = currmap.GetImage(0, 0, (currmap.Width >> 3), (currmap.Height >> 3), showStaticsToolStripMenuItem1.Checked);
+            string path = Options.OutputPath;
+            string name = $"{Options.MapNames[_currMapInt]}.tiff";
+            string fileName = Path.Combine(path, name);
+            Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
             if (showMarkersToolStripMenuItem.Checked)
             {
                 Graphics g = Graphics.FromImage(extract);
-                foreach (TreeNode obj in OverlayObjectTree.Nodes[currmapint].Nodes)
+                foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
                 {
                     OverlayObject o = (OverlayObject)obj.Tag;
                     if (o.Visible)
+                    {
                         o.Draw(g);
+                    }
                 }
                 g.Save();
             }
-            extract.Save(FileName, ImageFormat.Tiff);
+            extract.Save(fileName, ImageFormat.Tiff);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Map saved to {0}", FileName), "Saved",
+            MessageBox.Show($"Map saved to {fileName}", "Saved",
                 MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void ExtractMapJpg(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            string path = FiddlerControls.Options.OutputPath;
-            string name = String.Format("{0}.jpg", Options.MapNames[currmapint]);
-            string FileName = Path.Combine(path, name);
-            Bitmap extract = currmap.GetImage(0, 0, (currmap.Width >> 3), (currmap.Height >> 3), showStaticsToolStripMenuItem1.Checked);
+            string path = Options.OutputPath;
+            string name = $"{Options.MapNames[_currMapInt]}.jpg";
+            string fileName = Path.Combine(path, name);
+            Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
             if (showMarkersToolStripMenuItem.Checked)
             {
                 Graphics g = Graphics.FromImage(extract);
-                foreach (TreeNode obj in OverlayObjectTree.Nodes[currmapint].Nodes)
+                foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
                 {
                     OverlayObject o = (OverlayObject)obj.Tag;
                     if (o.Visible)
+                    {
                         o.Draw(g);
+                    }
                 }
                 g.Save();
             }
-            extract.Save(FileName, ImageFormat.Jpeg);
+            extract.Save(fileName, ImageFormat.Jpeg);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Map saved to {0}", FileName), "Saved",
+            MessageBox.Show($"Map saved to {fileName}", "Saved",
                 MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
-        private MapMarker mapmarker;
+        private MapMarker _mapMarker;
+
         private void OnClickInsertMarker(object sender, EventArgs e)
         {
-            if ((mapmarker == null) || (mapmarker.IsDisposed))
+            if (_mapMarker?.IsDisposed == false)
             {
-                mapmarker = new MapMarker(currPoint.X, currPoint.Y, currmapint);
-                mapmarker.TopMost = true;
-                mapmarker.Show();
+                return;
             }
+
+            _mapMarker = new MapMarker(_currPoint.X, _currPoint.Y, _currMapInt)
+            {
+                TopMost = true
+            };
+
+            _mapMarker.Show();
         }
 
         public static void AddOverlay(int x, int y, int map, Color c, string text)
         {
             OverlayCursor o = new OverlayCursor(new Point(x, y), map, text, c);
-            TreeNode node = new TreeNode(text);
-            node.Tag = o;
-            refmarker.OverlayObjectTree.Nodes[map].Nodes.Add(node);
-            refmarker.pictureBox.Invalidate();
+            TreeNode node = new TreeNode(text)
+            {
+                Tag = o
+            };
+            _refMarker.OverlayObjectTree.Nodes[map].Nodes.Add(node);
+            _refMarker.pictureBox.Invalidate();
         }
 
         private void LoadMapOverlays()
         {
-            string path = FiddlerControls.Options.AppDataPath;
-            string FileName = Path.Combine(Path.GetDirectoryName(path), "MapOverlays.xml");
+            string path = Options.AppDataPath;
+            // TODO: possible null for path variable and Path.GetDirectoryName(path) later on.
+            string fileName = Path.Combine(Path.GetDirectoryName(path), "MapOverlays.xml");
             OverlayObjectTree.BeginUpdate();
             OverlayObjectTree.Nodes.Clear();
-            TreeNode node;
-            node = new TreeNode(Options.MapNames[0]);
-            node.Tag = 0;
+            TreeNode node = new TreeNode(Options.MapNames[0])
+            {
+                Tag = 0
+            };
             OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[1]);
-            node.Tag = 1;
+            node = new TreeNode(Options.MapNames[1])
+            {
+                Tag = 1
+            };
             OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[2]);
-            node.Tag = 2;
+            node = new TreeNode(Options.MapNames[2])
+            {
+                Tag = 2
+            };
             OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[3]);
-            node.Tag = 3;
+            node = new TreeNode(Options.MapNames[3])
+            {
+                Tag = 3
+            };
             OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[4]);
-            node.Tag = 4;
+            node = new TreeNode(Options.MapNames[4])
+            {
+                Tag = 4
+            };
             OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[5]);
-            node.Tag = 5;
+            node = new TreeNode(Options.MapNames[5])
+            {
+                Tag = 5
+            };
             OverlayObjectTree.Nodes.Add(node);
-            if (File.Exists(FileName))
+            if (File.Exists(fileName))
             {
                 XmlDocument dom = new XmlDocument();
-                dom.Load(FileName);
+                dom.Load(fileName);
                 XmlElement xOptions = dom["Overlays"];
                 foreach (XmlElement xMarker in xOptions.SelectNodes("Marker"))
                 {
@@ -715,8 +803,10 @@ namespace FiddlerControls
                     int c = int.Parse(xMarker.GetAttribute("color"));
                     string text = xMarker.GetAttribute("text");
                     OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
-                    node = new TreeNode(text);
-                    node.Tag = o;
+                    node = new TreeNode(text)
+                    {
+                        Tag = o
+                    };
                     OverlayObjectTree.Nodes[m].Nodes.Add(node);
                 }
             }
@@ -725,11 +815,14 @@ namespace FiddlerControls
 
         public static void SaveMapOverlays()
         {
-            if (!Loaded)
+            if (!_loaded)
+            {
                 return;
-            string filepath = FiddlerControls.Options.AppDataPath;
+            }
 
-            string FileName = Path.Combine(filepath, "MapOverlays.xml");
+            string filepath = Options.AppDataPath;
+
+            string fileName = Path.Combine(filepath, "MapOverlays.xml");
 
             XmlDocument dom = new XmlDocument();
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -738,7 +831,7 @@ namespace FiddlerControls
             bool entries = false;
             for (int i = 0; i < 5; ++i)
             {
-                foreach (TreeNode obj in refmarker.OverlayObjectTree.Nodes[i].Nodes)
+                foreach (TreeNode obj in _refMarker.OverlayObjectTree.Nodes[i].Nodes)
                 {
                     OverlayObject o = (OverlayObject)obj.Tag;
                     XmlElement elem = dom.CreateElement("Marker");
@@ -749,33 +842,37 @@ namespace FiddlerControls
             }
             dom.AppendChild(sr);
             if (entries)
-                dom.Save(FileName);
+            {
+                dom.Save(fileName);
+            }
         }
-        #region PreLoader
+
         private void OnClickPreloadMap(object sender, EventArgs e)
         {
             if (PreloadWorker.IsBusy)
+            {
                 return;
+            }
+
             ProgressBar.Minimum = 0;
-            ProgressBar.Maximum = (currmap.Width >> 3) * (currmap.Height >> 3);
+            ProgressBar.Maximum = (_currMap.Width >> 3) * (_currMap.Height >> 3);
             ProgressBar.Step = 1;
             ProgressBar.Value = 0;
             ProgressBar.Visible = true;
-            PreloadWorker.RunWorkerAsync(new Object[] { currmap, showStaticsToolStripMenuItem1.Checked });
+            PreloadWorker.RunWorkerAsync(new object[] { _currMap, showStaticsToolStripMenuItem1.Checked });
         }
 
         private void PreLoadDoWork(object sender, DoWorkEventArgs e)
         {
-
-            Ultima.Map workmap = (Ultima.Map)((Object[])e.Argument)[0];
-            bool statics = (bool)((Object[])e.Argument)[1];
-            int width = currmap.Width >> 3;
-            int height = currmap.Height >> 3;
+            //Ultima.Map workmap = (Ultima.Map)((object[])e.Argument)[0]; // TODO: unused variable?
+            bool statics = (bool)((object[])e.Argument)[1];
+            int width = _currMap.Width >> 3;
+            int height = _currMap.Height >> 3;
             for (int x = 0; x < width; ++x)
             {
                 for (int y = 0; y < height; ++y)
                 {
-                    currmap.PreloadRenderedBlock(x, y, statics);
+                    _currMap.PreloadRenderedBlock(x, y, statics);
                     PreloadWorker.ReportProgress(1);
                 }
             }
@@ -791,13 +888,13 @@ namespace FiddlerControls
             ProgressBar.Visible = false;
             PreloadMap.Visible = false;
         }
-        #endregion
 
-        private void OnClickEditMarkers(object sender, EventArgs e)
-        {
-            panel1.Visible = !panel1.Visible;
-            pictureBox.Invalidate();
-        }
+        // TODO: unused?
+        // private void OnClickEditMarkers(object sender, EventArgs e)
+        // {
+        //     panel1.Visible = !panel1.Visible;
+        //     pictureBox.Invalidate();
+        // }
 
         private void OnDoubleClickMarker(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -806,42 +903,43 @@ namespace FiddlerControls
 
         private void OnClickGotoMarker(object sender, EventArgs e)
         {
-            if (OverlayObjectTree.SelectedNode == null)
+            if (OverlayObjectTree.SelectedNode?.Parent == null)
+            {
                 return;
-            if (OverlayObjectTree.SelectedNode.Parent == null)
-                return;
+            }
+
             OverlayObject o = (OverlayObject)OverlayObjectTree.SelectedNode.Tag;
-            if (currmapint != o.DefMap)
+            if (_currMapInt != o.DefMap)
             {
                 ResetCheckedMap();
                 switch (o.DefMap)
                 {
                     case 0:
                         feluccaToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Felucca;
+                        _currMap = Ultima.Map.Felucca;
                         break;
                     case 1:
                         trammelToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Trammel;
+                        _currMap = Ultima.Map.Trammel;
                         break;
                     case 2:
                         ilshenarToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Ilshenar;
+                        _currMap = Ultima.Map.Ilshenar;
                         break;
                     case 3:
                         malasToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Malas;
+                        _currMap = Ultima.Map.Malas;
                         break;
                     case 4:
                         tokunoToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.Tokuno;
+                        _currMap = Ultima.Map.Tokuno;
                         break;
                     case 5:
                         terMurToolStripMenuItem.Checked = true;
-                        currmap = Ultima.Map.TerMur;
+                        _currMap = Ultima.Map.TerMur;
                         break;
                 }
-                currmapint = o.DefMap;
+                _currMapInt = o.DefMap;
             }
             SetScrollBarValues();
             hScrollBar.Value = (int)Math.Max(0, o.Loc.X - pictureBox.Right / Zoom / 2);
@@ -851,301 +949,345 @@ namespace FiddlerControls
 
         private void OnClickRemoveMarker(object sender, EventArgs e)
         {
-            if (OverlayObjectTree.SelectedNode == null)
+            if (OverlayObjectTree.SelectedNode?.Parent == null)
+            {
                 return;
-            if (OverlayObjectTree.SelectedNode.Parent == null)
-                return;
+            }
+
             OverlayObjectTree.SelectedNode.Remove();
             pictureBox.Invalidate();
         }
 
         private void OnClickSwitchVisible(object sender, EventArgs e)
         {
-            if (OverlayObjectTree.SelectedNode == null)
+            if (OverlayObjectTree.SelectedNode?.Parent == null)
+            {
                 return;
-            if (OverlayObjectTree.SelectedNode.Parent == null)
-                return;
+            }
+
             OverlayObject o = (OverlayObject)OverlayObjectTree.SelectedNode.Tag;
             o.Visible = !o.Visible;
-            if (!o.Visible)
-                OverlayObjectTree.SelectedNode.ForeColor = Color.Red;
-            else
-                OverlayObjectTree.SelectedNode.ForeColor = Color.Black;
+            OverlayObjectTree.SelectedNode.ForeColor = !o.Visible ? Color.Red : Color.Black;
+
             OverlayObjectTree.Invalidate();
             pictureBox.Invalidate();
         }
 
         private void OnChangeView(object sender, EventArgs e)
         {
-            PreloadMap.Visible = !currmap.IsCached(showStaticsToolStripMenuItem1.Checked);
+            PreloadMap.Visible = !_currMap.IsCached(showStaticsToolStripMenuItem1.Checked);
             pictureBox.Invalidate();
         }
 
         private void OnClickDefragStatics(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            Ultima.Map.DefragStatics(FiddlerControls.Options.OutputPath,
-                currmap, currmap.Width, currmap.Height, false);
+            Ultima.Map.DefragStatics(Options.OutputPath,
+                _currMap, _currMap.Width, _currMap.Height, false);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Statics saved to {0}", FiddlerControls.Options.OutputPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Statics saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickDefragRemoveStatics(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            Ultima.Map.DefragStatics(FiddlerControls.Options.OutputPath,
-                currmap, currmap.Width, currmap.Height, true);
+            Ultima.Map.DefragStatics(Options.OutputPath,
+                _currMap, _currMap.Width, _currMap.Height, true);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Statics saved to {0}", FiddlerControls.Options.OutputPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Statics saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnResizeMap(object sender, EventArgs e)
         {
-            if (Loaded)
+            if (!_loaded)
             {
-                ChangeScrollBar();
-                pictureBox.Invalidate();
+                return;
             }
+
+            ChangeScrollBar();
+            pictureBox.Invalidate();
         }
 
         private void OnClickRewriteMap(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            Ultima.Map.RewriteMap(FiddlerControls.Options.OutputPath,
-                currmapint, currmap.Width, currmap.Height);
+            Ultima.Map.RewriteMap(Options.OutputPath,
+                _currMapInt, _currMap.Width, _currMap.Height);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Map saved to {0}", FiddlerControls.Options.OutputPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Map saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickReportInvisStatics(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            currmap.ReportInvisStatics(FiddlerControls.Options.OutputPath);
+            _currMap.ReportInvisStatics(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Report saved to {0}", FiddlerControls.Options.OutputPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickReportInvalidMapIDs(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            currmap.ReportInvalidMapIDs(FiddlerControls.Options.OutputPath);
+            _currMap.ReportInvalidMapIDs(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(String.Format("Report saved to {0}", FiddlerControls.Options.OutputPath), "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
-        private MapReplace showform = null;
+        private MapReplace _showForm;
+
         private void OnClickCopy(object sender, EventArgs e)
         {
-            if ((showform == null) || (showform.IsDisposed))
+            if (_showForm?.IsDisposed == false)
             {
-                showform = new MapReplace(currmap);
-                showform.TopMost = true;
-                showform.Show();
+                return;
             }
+
+            _showForm = new MapReplace(_currMap)
+            {
+                TopMost = true
+            };
+            _showForm.Show();
         }
 
-        private MapDiffInsert showformMapDiff = null;
+        private MapDiffInsert _showFormMapDiff;
+
         private void OnClickInsertDiffData(object sender, EventArgs e)
         {
-            if ((showformMapDiff == null) || (showformMapDiff.IsDisposed))
+            if (_showFormMapDiff?.IsDisposed == false)
             {
-                showformMapDiff = new MapDiffInsert(currmap);
-                showformMapDiff.TopMost = true;
-                showformMapDiff.Show();
+                return;
             }
+
+            _showFormMapDiff = new MapDiffInsert(_currMap)
+            {
+                TopMost = true
+            };
+            _showFormMapDiff.Show();
         }
 
         private void OnClickStaticImport(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = "Select WSC Staticfile to import";
-            dialog.Multiselect = false;
-            dialog.CheckFileExists = true;
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Title = "Select WSC Static file to import",
+                Multiselect = false,
+                CheckFileExists = true
+            };
+
             if (dialog.ShowDialog() != DialogResult.OK)
             {
                 dialog.Dispose();
                 return;
             }
+
             string path = dialog.FileName;
             dialog.Dispose();
             StaticImport(path);
         }
-        private void StaticImport(string Filename)
+
+        private void StaticImport(string filename)
         {
-            StreamReader ip = new StreamReader(Filename);
+            StreamReader ip = new StreamReader(filename);
 
             string line;
-            StaticTile newtile = new StaticTile();
-            newtile.m_ID = 0xFFFF;
-            newtile.m_Hue = 0;
-            int x, y, blockx, blocky;
-            blockx = blocky = 0;
+            StaticTile newTile = new StaticTile
+            {
+                m_ID = 0xFFFF,
+                m_Hue = 0
+            };
+            int blockY;
+            int blockX = blockY = 0;
             while ((line = ip.ReadLine()) != null)
             {
                 if ((line = line.Trim()).Length == 0 || line.StartsWith("#") || line.StartsWith("//"))
+                {
                     continue;
+                }
 
                 try
                 {
                     if (line.StartsWith("SECTION WORLDITEM"))
                     {
-                        if (newtile.m_ID != 0xFFFF)
+                        if (newTile.m_ID != 0xFFFF)
                         {
-                            currmap.Tiles.AddPendingStatic(blockx, blocky, newtile);
-                            blockx = blocky = 0;
+                            _currMap.Tiles.AddPendingStatic(blockX, blockY, newTile);
+                            blockX = blockY = 0;
                         }
-                        newtile = new StaticTile();
-                        newtile.m_ID = 0xFFFF;
-                        newtile.m_Hue = 0;
+                        newTile = new StaticTile
+                        {
+                            m_ID = 0xFFFF,
+                            m_Hue = 0
+                        };
                     }
                     else if (line.StartsWith("ID"))
                     {
                         line = line.Remove(0, 2);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        newtile.m_ID = Art.GetLegalItemID(Convert.ToUInt16(line));
+                        newTile.m_ID = Art.GetLegalItemId(Convert.ToUInt16(line));
                     }
                     else if (line.StartsWith("X"))
                     {
                         line = line.Remove(0, 1);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        x = Convert.ToInt32(line);
-                        blockx = x >> 3;
+                        int x = Convert.ToInt32(line);
+                        blockX = x >> 3;
                         x &= 0x7;
-                        newtile.m_X = (byte)x;
+                        newTile.m_X = (byte)x;
                     }
                     else if (line.StartsWith("Y"))
                     {
                         line = line.Remove(0, 1);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        y = Convert.ToInt32(line);
-                        blocky = y >> 3;
+                        int y = Convert.ToInt32(line);
+                        blockY = y >> 3;
                         y &= 0x7;
-                        newtile.m_Y = (byte)y;
+                        newTile.m_Y = (byte)y;
                     }
                     else if (line.StartsWith("Z"))
                     {
                         line = line.Remove(0, 1);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        newtile.m_Z = Convert.ToSByte(line);
+                        newTile.m_Z = Convert.ToSByte(line);
                     }
                     else if (line.StartsWith("COLOR"))
                     {
                         line = line.Remove(0, 5);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        newtile.m_Hue = Convert.ToInt16(line);
+                        newTile.m_Hue = Convert.ToInt16(line);
                     }
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
-            if (newtile.m_ID != 0xFFFF)
-                currmap.Tiles.AddPendingStatic(blockx, blocky, newtile);
+            if (newTile.m_ID != 0xFFFF)
+            {
+                _currMap.Tiles.AddPendingStatic(blockX, blockY, newTile);
+            }
 
             ip.Close();
 
             MessageBox.Show("Done", "Freeze Static", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            currmap.ResetCache();
+            _currMap.ResetCache();
             pictureBox.Invalidate();
         }
 
-        MapMeltStatics showmeltstatics = null;
+        private MapMeltStatics _showMeltStatics;
+
         private void OnClickMeltStatics(object sender, EventArgs e)
         {
-            if ((showmeltstatics == null) || (showmeltstatics.IsDisposed))
+            if (_showMeltStatics?.IsDisposed == false)
             {
-                showmeltstatics = new MapMeltStatics(this, currmap);
-                showmeltstatics.TopMost = true;
-                showmeltstatics.Show();
+                return;
             }
+
+            _showMeltStatics = new MapMeltStatics(this, _currMap)
+            {
+                TopMost = true
+            };
+            _showMeltStatics.Show();
         }
 
-        MapClearStatics showclearstatics = null;
+        private MapClearStatics _showClearStatics;
+
         private void OnClickClearStatics(object sender, EventArgs e)
         {
-            if ((showclearstatics == null) || (showclearstatics.IsDisposed))
+            if (_showClearStatics?.IsDisposed == false)
             {
-                showclearstatics = new MapClearStatics(this, currmap);
-                showclearstatics.TopMost = true;
-                showclearstatics.Show();
+                return;
             }
+
+            _showClearStatics = new MapClearStatics(this, _currMap)
+            {
+                TopMost = true
+            };
+            _showClearStatics.Show();
         }
 
-        MapReplaceTiles showmapreplacetiles = null;
+        private MapReplaceTiles _showMapReplaceTiles;
+
         private void OnClickReplaceTiles(object sender, EventArgs e)
         {
-            if ((showmapreplacetiles == null) || (showmapreplacetiles.IsDisposed))
+            if (_showMapReplaceTiles?.IsDisposed == false)
             {
-                showmapreplacetiles = new MapReplaceTiles(currmap);
-                showmapreplacetiles.TopMost = true;
-                showmapreplacetiles.Show();
+                return;
             }
-        }
 
+            _showMapReplaceTiles = new MapReplaceTiles(_currMap)
+            {
+                TopMost = true
+            };
+            _showMapReplaceTiles.Show();
+        }
     }
 
     public class OverlayObject
     {
-        public virtual bool isVisible(Rectangle bounds, int m) { return false; }
+        public virtual bool IsVisible(Rectangle bounds, int m) { return false; }
         public virtual void Draw(Graphics g) { }
         public virtual void Save(XmlElement elem) { }
         public override string ToString() { return ""; }
 
         public bool Visible { get; set; }
-        public Point Loc { get; set; }
-        public int DefMap { get; set; }
+        public Point Loc { get; protected set; }
+        public int DefMap { get; protected set; }
     }
 
     public class OverlayCursor : OverlayObject
     {
-        private string text;
-        private Color col;
-        private Brush brush;
-        private Pen pen;
-        private static Brush background;
+        private readonly string _text;
+        private readonly Color _col;
+        private readonly Brush _brush;
+        private readonly Pen _pen;
+        private static Brush _background;
+
         public OverlayCursor(Point location, int m, string t, Color c)
         {
             Loc = location;
             DefMap = m;
-            text = t;
-            col = c;
+            _text = t;
+            _col = c;
             Visible = true;
-            brush = new SolidBrush(col);
-            pen = new Pen(brush);
-            background = new SolidBrush(Color.FromArgb(100, Color.White));
+            _brush = new SolidBrush(_col);
+            _pen = new Pen(_brush);
+            _background = new SolidBrush(Color.FromArgb(100, Color.White));
         }
-        public override bool isVisible(Rectangle bounds, int m)
+
+        public override bool IsVisible(Rectangle bounds, int m)
         {
             if (!Visible)
+            {
                 return false;
+            }
+
             if (DefMap != m)
+            {
                 return false;
-            if ((Loc.X > Map.HScrollBar) &&
-                (Loc.X < Map.HScrollBar + bounds.Width / Map.Zoom) &&
-                (Loc.Y > Map.VScrollBar) &&
-                (Loc.Y < Map.VScrollBar + bounds.Height / Map.Zoom))
-                return true;
-            return false;
+            }
+
+            return Loc.X > Map.HScrollBar &&
+                Loc.X < Map.HScrollBar + bounds.Width / Map.Zoom &&
+                Loc.Y > Map.VScrollBar &&
+                Loc.Y < Map.VScrollBar + bounds.Height / Map.Zoom;
         }
 
         public override void Draw(Graphics g)
         {
             int x = (int)((Loc.X - Map.Round(Map.HScrollBar)) * Map.Zoom);
             int y = (int)((Loc.Y - Map.Round(Map.VScrollBar)) * Map.Zoom);
-            g.DrawLine(pen, x - 4, y, x + 4, y);
-            g.DrawLine(pen, x, y - 4, x, y + 4);
-            g.DrawEllipse(pen, x - 2, y - 2, 2 * 2, 2 * 2);
-            SizeF tSize = g.MeasureString(text, Fonts.DefaultFont);
-            int x_;
-            if ((Loc.X + tSize.Width) > Map.CurrMap.Width)
-                x_ = x - (int)tSize.Width - 6;
-            else
-                x_ = x + 6;
-            g.FillRectangle(background, x_, y - tSize.Height, tSize.Width, tSize.Height);
-            g.DrawString(text, Fonts.DefaultFont, Brushes.Black, x_, y - tSize.Height);
+            g.DrawLine(_pen, x - 4, y, x + 4, y);
+            g.DrawLine(_pen, x, y - 4, x, y + 4);
+            g.DrawEllipse(_pen, x - 2, y - 2, 2 * 2, 2 * 2);
+            SizeF tSize = g.MeasureString(_text, Control.DefaultFont);
+            int xStr = Loc.X + tSize.Width > Map.CurrMap.Width ? x - (int)tSize.Width - 6 : x + 6;
+            g.FillRectangle(_background, xStr, y - tSize.Height, tSize.Width, tSize.Height);
+            g.DrawString(_text, Control.DefaultFont, Brushes.Black, xStr, y - tSize.Height);
         }
 
         public override void Save(XmlElement elem)
@@ -1153,13 +1295,13 @@ namespace FiddlerControls
             elem.SetAttribute("x", Loc.X.ToString());
             elem.SetAttribute("y", Loc.Y.ToString());
             elem.SetAttribute("map", DefMap.ToString());
-            elem.SetAttribute("color", col.ToArgb().ToString());
-            elem.SetAttribute("text", text);
+            elem.SetAttribute("color", _col.ToArgb().ToString());
+            elem.SetAttribute("text", _text);
         }
 
         public override string ToString()
         {
-            return text;
+            return _text;
         }
     }
 }

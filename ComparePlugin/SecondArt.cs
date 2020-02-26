@@ -5,161 +5,195 @@ using Ultima;
 
 namespace ComparePlugin
 {
-    class SecondArt
+    internal static class SecondArt
     {
-        private static SecondFileIndex m_FileIndex;
-        private static Bitmap[] m_Cache;
+        private static SecondFileIndex _mFileIndex;
+        private static Bitmap[] _mCache;
 
-        private static byte[] m_StreamBuffer;
-        private static byte[] Validbuffer;
+        private static byte[] _mStreamBuffer;
+        private static byte[] _validbuffer;
 
         public static void SetFileIndex(string idxPath, string mulPath)
         {
-            m_FileIndex = new SecondFileIndex(idxPath, mulPath, 0x14000);
-            m_Cache = new Bitmap[0x14000];
+            _mFileIndex = new SecondFileIndex(idxPath, mulPath, 0x14000);
+            _mCache = new Bitmap[0x14000];
         }
 
-        public static int GetMaxItemID()
+        public static int GetMaxItemId()
         {
             if (GetIdxLength() == 0xC000)
+            {
                 return 0x7FFF;
+            }
 
             if (GetIdxLength() == 0x13FDC)
+            {
                 return 0xFFDB;
+            }
 
             return 0x3FFF;
         }
 
-        public static ushort GetLegalItemID(int itemID)
+        private static ushort GetLegalItemId(int itemId)
         {
-            if (itemID < 0)
+            if (itemId < 0)
+            {
                 return 0;
+            }
 
-            int max = GetMaxItemID();
-            if (itemID > max)
+            int max = GetMaxItemId();
+            if (itemId > max)
+            {
                 return 0;
+            }
 
-            return (ushort)itemID;
+            return (ushort)itemId;
         }
 
-        public static int GetIdxLength()
+        private static int GetIdxLength()
         {
-            return (int)(m_FileIndex.IdxLength / 12);
+            return (int)(_mFileIndex.IdxLength / 12);
         }
 
         public static unsafe bool IsValidStatic(int index)
         {
-            index = SecondArt.GetLegalItemID(index);
+            index = GetLegalItemId(index);
             index += 0x4000;
-            
-            if (m_Cache[index] != null)
-                return true;
 
-            int length, extra;
-            Stream stream = m_FileIndex.Seek(index, out length, out extra);
+            if (_mCache[index] != null)
+            {
+                return true;
+            }
+
+            Stream stream = _mFileIndex.Seek(index, out _, out _);
 
             if (stream == null)
+            {
                 return false;
+            }
 
-            if (Validbuffer == null)
-                Validbuffer = new byte[4];
+            if (_validbuffer == null)
+            {
+                _validbuffer = new byte[4];
+            }
+
             stream.Seek(4, SeekOrigin.Current);
-            stream.Read(Validbuffer, 0, 4);
-            fixed (byte* b = Validbuffer)
+            stream.Read(_validbuffer, 0, 4);
+            fixed (byte* b = _validbuffer)
             {
                 short* dat = (short*)b;
-                if (*dat++ <= 0 || *dat <= 0)
-                    return false;
-                return true;
+                return *dat++ > 0 && *dat > 0;
             }
         }
 
         public static Bitmap GetStatic(int index)
         {
-            index = SecondArt.GetLegalItemID(index);
+            index = GetLegalItemId(index);
             index += 0x4000;
-            
-            if (m_Cache[index] != null)
-                return m_Cache[index];
 
-            int length, extra;
-            Stream stream = m_FileIndex.Seek(index, out length, out extra);
+            if (_mCache[index] != null)
+            {
+                return _mCache[index];
+            }
+
+            Stream stream = _mFileIndex.Seek(index, out int length, out _);
             if (stream == null)
+            {
                 return null;
+            }
 
             if (Files.CacheData)
-                return m_Cache[index] = LoadStatic(stream, length);
+            {
+                return _mCache[index] = LoadStatic(stream, length);
+            }
             else
+            {
                 return LoadStatic(stream, length);
+            }
         }
 
-        public static byte[] GetRawStatic(int index)
-        {
-            index = SecondArt.GetLegalItemID(index);
-            index += 0x4000;
-
-            int length, extra;
-            Stream stream = m_FileIndex.Seek(index, out length, out extra);
-            if (stream == null)
-                return null;
-            byte[] buffer = new byte[length];
-            stream.Read(buffer, 0, length);
-            return buffer;
-        }
+        // TODO: unused method?
+        // public static byte[] GetRawStatic(int index)
+        // {
+        //     index = GetLegalItemId(index);
+        //     index += 0x4000;
+        //
+        //     var stream = _mFileIndex.Seek(index, out var length, out _);
+        //     if (stream == null)
+        //     {
+        //         return null;
+        //     }
+        //
+        //     var buffer = new byte[length];
+        //     stream.Read(buffer, 0, length);
+        //     return buffer;
+        // }
 
         private static unsafe Bitmap LoadStatic(Stream stream, int length)
         {
             Bitmap bmp;
-            if (m_StreamBuffer == null || m_StreamBuffer.Length < length)
-                m_StreamBuffer = new byte[length];
-            stream.Read(m_StreamBuffer, 0, length);
+            if (_mStreamBuffer == null || _mStreamBuffer.Length < length)
+            {
+                _mStreamBuffer = new byte[length];
+            }
+
+            stream.Read(_mStreamBuffer, 0, length);
             stream.Close();
 
-            fixed (byte* data = m_StreamBuffer)
+            fixed (byte* data = _mStreamBuffer)
             {
-                ushort* bindata = (ushort*)data;
+                ushort* binData = (ushort*)data;
                 int count = 2;
-                //bin.ReadInt32();
-                int width = bindata[count++];
-                int height = bindata[count++];
+                // bin.ReadInt32(); // TODO: ???
+                int width = binData[count++];
+                int height = binData[count++];
 
                 if (width <= 0 || height <= 0)
+                {
                     return null;
+                }
 
                 int[] lookups = new int[height];
 
-                int start = (height + 4);
+                int start = height + 4;
 
                 for (int i = 0; i < height; ++i)
-                    lookups[i] = (int)(start + (bindata[count++]));
+                {
+                    lookups[i] = start + binData[count++];
+                }
 
                 bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
                 BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
 
-
                 ushort* line = (ushort*)bd.Scan0;
                 int delta = bd.Stride >> 1;
-
 
                 for (int y = 0; y < height; ++y, line += delta)
                 {
                     count = lookups[y];
 
                     ushort* cur = line;
-                    ushort* end;
                     int xOffset, xRun;
 
-                    while (((xOffset = bindata[count++]) + (xRun = bindata[count++])) != 0)
+                    while ((xOffset = binData[count++]) + (xRun = binData[count++]) != 0)
                     {
                         if (xOffset > delta)
+                        {
                             break;
+                        }
+
                         cur += xOffset;
                         if (xOffset + xRun > delta)
+                        {
                             break;
-                        end = cur + xRun;
+                        }
+
+                        ushort* end = cur + xRun;
 
                         while (cur < end)
-                            *cur++ = (ushort)(bindata[count++] ^ 0x8000);
+                        {
+                            *cur++ = (ushort)(binData[count++] ^ 0x8000);
+                        }
                     }
                 }
                 bmp.UnlockBits(bd);
@@ -170,55 +204,59 @@ namespace ComparePlugin
         public static bool IsValidLand(int index)
         {
             index &= 0x3FFF;
-            if (m_Cache[index] != null)
-                return true;
-
-            int length, extra;
-            return m_FileIndex.Valid(index, out length, out extra);
+            return _mCache[index] != null || _mFileIndex.Valid(index, out _, out _);
         }
 
         public static Bitmap GetLand(int index)
         {
             index &= 0x3FFF;
 
-            if (m_Cache[index] != null)
-                return m_Cache[index];
+            if (_mCache[index] != null)
+            {
+                return _mCache[index];
+            }
 
-            int length, extra;
-            Stream stream = m_FileIndex.Seek(index, out length, out extra);
+            Stream stream = _mFileIndex.Seek(index, out int length, out _);
             if (stream == null)
+            {
                 return null;
+            }
 
-            if (Files.CacheData)
-                return m_Cache[index] = LoadLand(stream, length);
-            else
-                return LoadLand(stream, length);
+            return Files.CacheData
+                ? _mCache[index] = LoadLand(stream, length)
+                : LoadLand(stream, length);
         }
 
-        public static byte[] GetRawLand(int index)
-        {
-            index &= 0x3FFF;
-
-            int length, extra;
-            Stream stream = m_FileIndex.Seek(index, out length, out extra);
-            if (stream == null)
-                return null;
-            byte[] buffer = new byte[length];
-            stream.Read(buffer, 0, length);
-            return buffer;
-        }
+        // TODO: unused method?
+        // public static byte[] GetRawLand(int index)
+        // {
+        //     index &= 0x3FFF;
+        //
+        //     var stream = _mFileIndex.Seek(index, out var length, out _);
+        //     if (stream == null)
+        //     {
+        //         return null;
+        //     }
+        //
+        //     var buffer = new byte[length];
+        //     stream.Read(buffer, 0, length);
+        //     return buffer;
+        // }
 
         private static unsafe Bitmap LoadLand(Stream stream, int length)
         {
             Bitmap bmp = new Bitmap(44, 44, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 44, 44), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            if (m_StreamBuffer == null || m_StreamBuffer.Length < length)
-                m_StreamBuffer = new byte[length];
-            stream.Read(m_StreamBuffer, 0, length);
-            stream.Close();
-            fixed (byte* bindata = m_StreamBuffer)
+            if (_mStreamBuffer == null || _mStreamBuffer.Length < length)
             {
-                ushort* bdata = (ushort*)bindata;
+                _mStreamBuffer = new byte[length];
+            }
+
+            stream.Read(_mStreamBuffer, 0, length);
+            stream.Close();
+            fixed (byte* binData = _mStreamBuffer)
+            {
+                ushort* bdata = (ushort*)binData;
                 int xOffset = 21;
                 int xRun = 2;
 
@@ -231,7 +269,9 @@ namespace ComparePlugin
                     ushort* end = cur + xRun;
 
                     while (cur < end)
+                    {
                         *cur++ = (ushort)(*bdata++ | 0x8000);
+                    }
                 }
 
                 xOffset = 0;
@@ -243,7 +283,9 @@ namespace ComparePlugin
                     ushort* end = cur + xRun;
 
                     while (cur < end)
+                    {
                         *cur++ = (ushort)(*bdata++ | 0x8000);
+                    }
                 }
             }
             bmp.UnlockBits(bd);

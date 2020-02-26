@@ -125,6 +125,7 @@ multiple items to an itemdesc.cfg file.
 AsYlum added graphic size &amp; offset information to Item details box.
 AsYlum added export all item's graphic offsets to offset.cfg. This is useful
 for properly positioning art tiles displayed in a gump using the TilePic gump command.
+
 Version 4.7 (aka. Alathair Fiddler 4.6.1.4 Merge)
 Fixed Art saving hash algorithm for duplicate finding was applied to odd data.
 Improved search usability: multiple enter results in search next

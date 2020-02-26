@@ -19,7 +19,6 @@ using System.Windows.Forms;
 using FiddlerControls;
 using Ultima;
 
-
 namespace ComparePlugin
 {
     public partial class CompareGump : UserControl
@@ -29,10 +28,11 @@ namespace ComparePlugin
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
-        Dictionary<int, bool> m_Compare = new Dictionary<int, bool>();
-        SHA256Managed shaM = new SHA256Managed();
 
-        private bool Loaded = false;
+        private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
+        private readonly SHA256Managed _shaM = new SHA256Managed();
+
+        private bool _loaded;
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -50,10 +50,16 @@ namespace ComparePlugin
             listBox1.EndUpdate();
             listBox2.Items.Clear();
             if (listBox1.Items.Count > 0)
+            {
                 listBox1.SelectedIndex = 0;
-            if (!Loaded)
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-            Loaded = true;
+            }
+
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
+            _loaded = true;
             Cursor.Current = Cursors.Default;
         }
 
@@ -64,41 +70,43 @@ namespace ComparePlugin
 
         private void Reload()
         {
-            if (Loaded)
+            if (_loaded)
+            {
                 OnLoad(EventArgs.Empty);
+            }
         }
 
-        private void listbox1_DrawItem(object sender, DrawItemEventArgs e)
+        private void Listbox1_DrawItem(object sender, DrawItemEventArgs e)
         {
             ListBox listBox = (ListBox)sender;
             if (e.Index < 0)
+            {
                 return;
+            }
+
             Brush fontBrush = Brushes.Gray;
 
             int i = (int)listBox.Items[e.Index];
 
             if (listBox.SelectedIndex == e.Index)
+            {
                 e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            bool valid;
-            if ((int)listBox.Tag == 1)
-                valid = Gumps.IsValidIndex(i);
-            else
-                valid = SecondGump.IsValidIndex(i);
+            }
+
+            bool valid = (int)listBox.Tag == 1 ? Gumps.IsValidIndex(i) : SecondGump.IsValidIndex(i);
 
             if (valid)
             {
-                Bitmap bmp;
-                if ((int)listBox.Tag == 1)
-                    bmp = Gumps.GetGump(i);
-                else
-                    bmp = SecondGump.GetGump(i);
+                Bitmap bmp = (int)listBox.Tag == 1 ? Gumps.GetGump(i) : SecondGump.GetGump(i);
 
                 if (bmp != null)
                 {
                     if (listBox2.Items.Count > 0)
                     {
                         if (!Compare(i))
+                        {
                             fontBrush = Brushes.Blue;
+                        }
                     }
                     int width = bmp.Width > 80 ? 80 : bmp.Width;
                     int height = bmp.Height > 54 ? 54 : bmp.Height;
@@ -106,27 +114,33 @@ namespace ComparePlugin
                     e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 3, width, height));
                 }
                 else
+                {
                     fontBrush = Brushes.Red;
+                }
             }
             else
+            {
                 fontBrush = Brushes.Red;
+            }
 
-            e.Graphics.DrawString(String.Format("0x{0:X}", i), Font, fontBrush,
-                new PointF((float)85,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString(String.Format("0x{0:X}", i), Font).Height / 2))));
+            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
+                new PointF(85,
+                e.Bounds.Y + (e.Bounds.Height / 2 -
+                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
         }
 
-        private void listbox_measureItem(object sender, MeasureItemEventArgs e)
+        private void Listbox_measureItem(object sender, MeasureItemEventArgs e)
         {
             e.ItemHeight = 60;
         }
 
-        private void listbox_SelectedChange(object sender, EventArgs e)
+        private void Listbox_SelectedChange(object sender, EventArgs e)
         {
             ListBox listBox = (ListBox)sender;
             if (listBox.SelectedIndex == -1)
+            {
                 return;
+            }
 
             int i = (int)listBox.Items[listBox.SelectedIndex];
             bool valid;
@@ -134,7 +148,9 @@ namespace ComparePlugin
             {
                 valid = Gumps.IsValidIndex(i);
                 if (listBox2.Items.Count > 0)
+                {
                     listBox2.SelectedIndex = listBox2.Items.IndexOf(i);
+                }
             }
             else
             {
@@ -143,33 +159,41 @@ namespace ComparePlugin
             }
             if (valid)
             {
-                Bitmap bmp;
-                if ((int)listBox.Tag == 1)
-                    bmp = Gumps.GetGump(i);
-                else
-                    bmp = SecondGump.GetGump(i);
+                Bitmap bmp = (int)listBox.Tag == 1 ? Gumps.GetGump(i) : SecondGump.GetGump(i);
 
                 if (bmp != null)
                 {
                     if ((int)listBox.Tag == 1)
+                    {
                         pictureBox1.BackgroundImage = bmp;
+                    }
                     else
+                    {
                         pictureBox2.BackgroundImage = bmp;
+                    }
                 }
                 else
                 {
                     if ((int)listBox.Tag == 1)
+                    {
                         pictureBox1.BackgroundImage = null;
+                    }
                     else
+                    {
                         pictureBox2.BackgroundImage = null;
+                    }
                 }
             }
             else
             {
                 if ((int)listBox.Tag == 1)
+                {
                     pictureBox1.BackgroundImage = null;
+                }
                 else
+                {
                     pictureBox2.BackgroundImage = null;
+                }
             }
             listBox.Invalidate();
         }
@@ -181,18 +205,23 @@ namespace ComparePlugin
                 dialog.Description = "Select directory containing the gump files";
                 dialog.ShowNewFolderButton = false;
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
                     textBoxSecondDir.Text = dialog.SelectedPath;
+                }
             }
         }
 
         private void Load_Click(object sender, EventArgs e)
         {
             if (textBoxSecondDir.Text == null)
+            {
                 return;
+            }
+
             string path = textBoxSecondDir.Text;
             string file = Path.Combine(path, "gumpart.mul");
             string file2 = Path.Combine(path, "gumpidx.mul");
-            if ((File.Exists(file)) && (File.Exists(file2)))
+            if (File.Exists(file) && File.Exists(file2))
             {
                 SecondGump.SetFileIndex(file2, file);
                 LoadSecond();
@@ -201,7 +230,7 @@ namespace ComparePlugin
 
         private void LoadSecond()
         {
-            m_Compare.Clear();
+            _mCompare.Clear();
             listBox2.BeginUpdate();
             listBox2.Items.Clear();
             List<object> cache = new List<object>();
@@ -216,35 +245,44 @@ namespace ComparePlugin
 
         private bool Compare(int index)
         {
-            if (m_Compare.ContainsKey(index))
-                return m_Compare[index];
-            int width1, height1;
-            int width2, height2;
-            byte[] org = Gumps.GetRawGump(index, out width1, out height1);
-            byte[] sec = SecondGump.GetRawGump(index, out width2, out height2);
+            if (_mCompare.ContainsKey(index))
+            {
+                return _mCompare[index];
+            }
+
+            byte[] org = Gumps.GetRawGump(index, out int width1, out int height1);
+            byte[] sec = SecondGump.GetRawGump(index, out int width2, out int height2);
             bool res = false;
 
-            if ((org == null) && (sec == null))
+            if (org == null && sec == null)
+            {
                 res = true;
-            else if (((org == null) || (sec == null))
-                || (org.Length != sec.Length))
+            }
+            else if (org == null || sec == null
+                                || org.Length != sec.Length)
+            {
                 res = false;
-            else if ((width1 != width2) || (height1 != height2))
+            }
+            else if (width1 != width2 || height1 != height2)
+            {
                 res = false;
+            }
             else
             {
-                string hash1string = BitConverter.ToString(shaM.ComputeHash(org));
-                string hash2string = BitConverter.ToString(shaM.ComputeHash(sec));
-                if (hash1string == hash2string)
+                string hash1String = BitConverter.ToString(_shaM.ComputeHash(org));
+                string hash2String = BitConverter.ToString(_shaM.ComputeHash(sec));
+                if (hash1String == hash2String)
+                {
                     res = true;
+                }
             }
-            m_Compare[index] = res;
+            _mCompare[index] = res;
             return res;
         }
 
         private void ShowDiff_OnClick(object sender, EventArgs e)
         {
-            if (m_Compare.Count < 1)
+            if (_mCompare.Count < 1)
             {
                 if (checkBox1.Checked)
                 {
@@ -264,7 +302,9 @@ namespace ComparePlugin
                 for (int i = 0; i < 0x10000; i++)
                 {
                     if (!Compare(i))
+                    {
                         cache.Add(i);
+                    }
                 }
             }
             else
@@ -284,15 +324,21 @@ namespace ComparePlugin
         private void Export_Bmp(object sender, EventArgs e)
         {
             if (listBox2.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBox2.Items[listBox2.SelectedIndex].ToString());
             if (!SecondGump.IsValidIndex(i))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Gump(Sec) 0x{0:X}.bmp", i));
-            SecondGump.GetGump(i).Save(FileName, ImageFormat.Bmp);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.bmp");
+            SecondGump.GetGump(i).Save(fileName, ImageFormat.Bmp);
             MessageBox.Show(
-                String.Format("Gump saved to {0}", FileName),
+                $"Gump saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -302,15 +348,21 @@ namespace ComparePlugin
         private void Export_Tiff(object sender, EventArgs e)
         {
             if (listBox2.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = int.Parse(listBox2.Items[listBox2.SelectedIndex].ToString());
             if (!SecondGump.IsValidIndex(i))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            string FileName = Path.Combine(path, String.Format("Gump(Sec) 0x{0:X}.tiff", i));
-            SecondGump.GetGump(i).Save(FileName, ImageFormat.Tiff);
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.tiff");
+            SecondGump.GetGump(i).Save(fileName, ImageFormat.Tiff);
             MessageBox.Show(
-                String.Format("Gump saved to {0}", FileName),
+                $"Gump saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -320,15 +372,21 @@ namespace ComparePlugin
         private void OnClickCopy(object sender, EventArgs e)
         {
             if (listBox2.SelectedIndex == -1)
+            {
                 return;
+            }
+
             int i = (int)listBox2.Items[listBox2.SelectedIndex];
             if (!SecondGump.IsValidIndex(i))
+            {
                 return;
+            }
+
             Bitmap copy = new Bitmap(SecondGump.GetGump(i));
-            Ultima.Gumps.ReplaceGump(i, copy);
-            FiddlerControls.Options.ChangedUltimaClass["Gumps"] = true;
+            Gumps.ReplaceGump(i, copy);
+            Options.ChangedUltimaClass["Gumps"] = true;
             FiddlerControls.Events.FireGumpChangeEvent(this, i);
-            m_Compare[i] = true;
+            _mCompare[i] = true;
             listBox1.BeginUpdate();
             bool done = false;
             for (int id = 0; id < 0x10000; id++)
@@ -346,11 +404,14 @@ namespace ComparePlugin
                 }
             }
             if (!done)
+            {
                 listBox1.Items.Add(i);
+            }
+
             listBox1.EndUpdate();
             listBox1.Invalidate();
             listBox2.Invalidate();
-            listbox_SelectedChange(listBox1, null);
+            Listbox_SelectedChange(listBox1, null);
         }
     }
 }

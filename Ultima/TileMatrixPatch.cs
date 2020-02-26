@@ -6,21 +6,21 @@ namespace Ultima
 {
     public sealed class TileMatrixPatch
     {
-        public int LandBlocksCount { get; private set; }
-        public int StaticBlocksCount { get; private set; }
+        public int LandBlocksCount { get; }
+        public int StaticBlocksCount { get; }
 
-        public Tile[][][] LandBlocks { get; private set; }
-        public HuedTile[][][][][] StaticBlocks { get; private set; }
+        public Tile[][][] LandBlocks { get; }
+        public HuedTile[][][][][] StaticBlocks { get; }
 
-        private int BlockWidth;
-        private int BlockHeight;
+        private readonly int _blockWidth;
+        private readonly int _blockHeight;
 
-        private static byte[] m_Buffer;
-        private static StaticTile[] m_TileBuffer = new StaticTile[128];
+        private static byte[] _mBuffer;
+        private static StaticTile[] _mTileBuffer = new StaticTile[128];
 
         public bool IsLandBlockPatched(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            if (x < 0 || y < 0 || x >= _blockWidth || y >= _blockHeight)
                 return false;
             if (LandBlocks[x] == null)
                 return false;
@@ -30,7 +30,7 @@ namespace Ultima
         }
         public Tile[] GetLandBlock(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            if (x < 0 || y < 0 || x >= _blockWidth || y >= _blockHeight)
                 return TileMatrix.InvalidLandBlock;
             if (LandBlocks[x]==null)
                 return TileMatrix.InvalidLandBlock;
@@ -44,7 +44,7 @@ namespace Ultima
 
         public bool IsStaticBlockPatched(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            if (x < 0 || y < 0 || x >= _blockWidth || y >= _blockHeight)
                 return false;
             if (StaticBlocks[x] == null)
                 return false;
@@ -55,7 +55,7 @@ namespace Ultima
 
         public HuedTile[][][] GetStaticBlock(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            if (x < 0 || y < 0 || x >= _blockWidth || y >= _blockHeight)
                 return TileMatrix.EmptyStaticBlock;
             if (StaticBlocks[x] == null)
                 return TileMatrix.EmptyStaticBlock;
@@ -69,8 +69,8 @@ namespace Ultima
 
         public TileMatrixPatch(TileMatrix matrix, int index, string path)
         {
-            BlockWidth = matrix.BlockWidth;
-            BlockHeight = matrix.BlockWidth;
+            _blockWidth = matrix.BlockWidth;
+            _blockHeight = matrix.BlockWidth;
 
             LandBlocksCount = StaticBlocksCount = 0;
             string mapDataPath, mapIndexPath;
@@ -81,10 +81,10 @@ namespace Ultima
             }
             else
             {
-                mapDataPath = Path.Combine(path, String.Format("mapdif{0}.mul", index));
+                mapDataPath = Path.Combine(path, $"mapdif{index}.mul");
                 if (!File.Exists(mapDataPath))
                     mapDataPath = null;
-                mapIndexPath = Path.Combine(path, String.Format("mapdifl{0}.mul", index));
+                mapIndexPath = Path.Combine(path, $"mapdifl{index}.mul");
                 if (!File.Exists(mapIndexPath))
                     mapIndexPath = null;
             }
@@ -104,13 +104,13 @@ namespace Ultima
             }
             else
             {
-                staDataPath = Path.Combine(path, String.Format("stadif{0}.mul", index));
+                staDataPath = Path.Combine(path, $"stadif{index}.mul");
                 if (!File.Exists(staDataPath))
                     staDataPath = null;
-                staIndexPath = Path.Combine(path, String.Format("stadifl{0}.mul", index));
+                staIndexPath = Path.Combine(path, $"stadifl{index}.mul");
                 if (!File.Exists(staIndexPath))
                     staIndexPath = null;
-                staLookupPath = Path.Combine(path, String.Format("stadifi{0}.mul", index));
+                staLookupPath = Path.Combine(path, $"stadifi{index}.mul");
                 if (!File.Exists(staLookupPath))
                     staLookupPath = null;
             }
@@ -133,9 +133,9 @@ namespace Ultima
 
                     for (int i = 0; i < count; ++i)
                     {
-                        int blockID = indexReader.ReadInt32();
-                        int x = blockID / matrix.BlockHeight;
-                        int y = blockID % matrix.BlockHeight;
+                        int blockId = indexReader.ReadInt32();
+                        int x = blockId / matrix.BlockHeight;
+                        int y = blockId % matrix.BlockHeight;
 
                         fsData.Seek(4, SeekOrigin.Current);
 
@@ -144,12 +144,12 @@ namespace Ultima
                         GCHandle gc = GCHandle.Alloc(tiles, GCHandleType.Pinned);
                         try
                         {
-                            if (m_Buffer == null || m_Buffer.Length < 192)
-                                m_Buffer = new byte[192];
+                            if (_mBuffer == null || _mBuffer.Length < 192)
+                                _mBuffer = new byte[192];
 
-                            fsData.Read(m_Buffer, 0, 192);
+                            fsData.Read(_mBuffer, 0, 192);
 
-                            Marshal.Copy(m_Buffer, 0, gc.AddrOfPinnedObject(), 192);
+                            Marshal.Copy(_mBuffer, 0, gc.AddrOfPinnedObject(), 192);
                         }
                         finally
                         {
@@ -188,9 +188,9 @@ namespace Ultima
 
                     for (int i = 0; i < count; ++i)
                     {
-                        int blockID = indexReader.ReadInt32();
-                        int blockX = blockID / matrix.BlockHeight;
-                        int blockY = blockID % matrix.BlockHeight;
+                        int blockId = indexReader.ReadInt32();
+                        int blockX = blockId / matrix.BlockHeight;
+                        int blockY = blockId % matrix.BlockHeight;
 
                         int offset = lookupReader.ReadInt32();
                         int length = lookupReader.ReadInt32();
@@ -209,25 +209,25 @@ namespace Ultima
 
                         int tileCount = length / 7;
 
-                        if (m_TileBuffer.Length < tileCount)
-                            m_TileBuffer = new StaticTile[tileCount];
+                        if (_mTileBuffer.Length < tileCount)
+                            _mTileBuffer = new StaticTile[tileCount];
 
-                        StaticTile[] staTiles = m_TileBuffer;
+                        StaticTile[] staTiles = _mTileBuffer;
 
                         GCHandle gc = GCHandle.Alloc(staTiles, GCHandleType.Pinned);
                         try
                         {
-                            if (m_Buffer == null || m_Buffer.Length < length)
-                                m_Buffer = new byte[length];
+                            if (_mBuffer == null || _mBuffer.Length < length)
+                                _mBuffer = new byte[length];
 
-                            fsData.Read(m_Buffer, 0, length);
+                            fsData.Read(_mBuffer, 0, length);
 
-                            Marshal.Copy(m_Buffer, 0, gc.AddrOfPinnedObject(), length);
+                            Marshal.Copy(_mBuffer, 0, gc.AddrOfPinnedObject(), length);
 
                             for (int j = 0; j < tileCount; ++j)
                             {
                                 StaticTile cur = staTiles[j];
-                                lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
+                                lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemId(cur.m_ID), cur.m_Hue, cur.m_Z);
                             }
 
                             HuedTile[][][] tiles = new HuedTile[8][][];

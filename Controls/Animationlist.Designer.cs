@@ -11,7 +11,7 @@
 
 namespace FiddlerControls
 {
-    partial class Animationlist
+    partial class AnimationList
     {
         /// <summary> 
         /// Required designer variable.
@@ -209,21 +209,21 @@ namespace FiddlerControls
             this.asBMpToolStripMenuItem.Name = "asBMpToolStripMenuItem";
             this.asBMpToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.asBMpToolStripMenuItem.Text = "As Bmp";
-            this.asBMpToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickBmp);
+            this.asBMpToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickTiff);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
             this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
-            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.extract_Image_ClickJpg);
+            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickJpg);
             // 
             // extractAnimationToolStripMenuItem
             // 
@@ -283,9 +283,9 @@ namespace FiddlerControls
             this.listView.TileSize = new System.Drawing.Size(81, 110);
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Tile;
-            this.listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView_DoubleClick);
-            this.listView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.listViewdrawItem);
-            this.listView.SelectedIndexChanged += new System.EventHandler(this.selectChanged_listView);
+            this.listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ListView_DoubleClick);
+            this.listView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.ListViewDrawItem);
+            this.listView.SelectedIndexChanged += new System.EventHandler(this.SelectChanged_listView);
             // 
             // tabPage3
             // 
@@ -416,7 +416,7 @@ namespace FiddlerControls
             this.rewriteXmlToolStripMenuItem.Name = "rewriteXmlToolStripMenuItem";
             this.rewriteXmlToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.rewriteXmlToolStripMenuItem.Text = "Rewrite xml";
-            this.rewriteXmlToolStripMenuItem.Click += new System.EventHandler(this.RewriteXML);
+            this.rewriteXmlToolStripMenuItem.Click += new System.EventHandler(this.RewriteXml);
             // 
             // tryToFindNewGraphicsToolStripMenuItem
             // 
@@ -430,7 +430,7 @@ namespace FiddlerControls
             this.animationEditToolStripMenuItem.Name = "animationEditToolStripMenuItem";
             this.animationEditToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.animationEditToolStripMenuItem.Text = "Animation Edit";
-            this.animationEditToolStripMenuItem.Click += new System.EventHandler(this.onClickAnimationEdit);
+            this.animationEditToolStripMenuItem.Click += new System.EventHandler(this.OnClickAnimationEdit);
             // 
             // GraphicLabel
             // 
@@ -468,7 +468,7 @@ namespace FiddlerControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
-            this.Name = "Animationlist";
+            this.Name = "AnimationList";
             this.Size = new System.Drawing.Size(619, 324);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);

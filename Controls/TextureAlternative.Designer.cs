@@ -77,7 +77,7 @@ namespace FiddlerControls
             this.pictureBox.TabIndex = 3;
             this.pictureBox.TabStop = false;
             this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.onPaint);
+            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
             // 
             // contextMenuStrip1
@@ -107,21 +107,21 @@ namespace FiddlerControls
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
             this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.onClickExportBmp);
+            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.onClickExportTiff);
+            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
             this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
-            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.onClickExportJpg);
+            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportJpg);
             // 
             // toolStripSeparator2
             // 
@@ -133,21 +133,21 @@ namespace FiddlerControls
             this.findNextFreeSlotToolStripMenuItem.Name = "findNextFreeSlotToolStripMenuItem";
             this.findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
-            this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.onClickFindNext);
+            this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.OnClickFindNext);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.removeToolStripMenuItem.Text = "Remove";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.onClickRemove);
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // replaceToolStripMenuItem
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
             this.replaceToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.replaceToolStripMenuItem.Text = "Replace";
-            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.onClickReplace);
+            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
             // insertAtToolStripMenuItem
             // 
@@ -161,8 +161,8 @@ namespace FiddlerControls
             // 
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 21);
-            this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownInsert);
-            this.InsertText.TextChanged += new System.EventHandler(this.onTextChangedInsert);
+            this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
+            this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
             // 
             // vScrollBar
             // 
@@ -228,7 +228,7 @@ namespace FiddlerControls
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(35, 22);
             this.SaveButton.Text = "Save";
-            this.SaveButton.Click += new System.EventHandler(this.onClickSave);
+            this.SaveButton.Click += new System.EventHandler(this.OnClickSave);
             // 
             // toolStripSeparator1
             // 

@@ -23,22 +23,25 @@ namespace FiddlerControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            LandTileText.Text = LandTile.ToString();
-            LightTileText.Text = LightTile.ToString();
+            LandTileText.Text = _landTile.ToString();
+            LightTileText.Text = _lightTile.ToString();
         }
 
-        private bool Loaded = false;
-        private int LandTile = 0x3;
-        private int LightTile = 0x0B20;
+        private bool _loaded;
+        private int _landTile = 0x3;
+        private int _lightTile = 0x0B20;
 
         /// <summary>
         /// ReLoads if loaded
         /// </summary>
         private void Reload()
         {
-            if (Loaded)
+            if (_loaded)
+            {
                 OnLoad(this, EventArgs.Empty);
+            }
         }
+
         private void OnLoad(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -50,17 +53,25 @@ namespace FiddlerControls
             {
                 if (Ultima.Light.TestLight(i))
                 {
-                    TreeNode treeNode = new TreeNode(i.ToString());
-                    treeNode.Tag = i;
+                    TreeNode treeNode = new TreeNode(i.ToString())
+                    {
+                        Tag = i
+                    };
                     treeView1.Nodes.Add(treeNode);
                 }
             }
             treeView1.EndUpdate();
             if (treeView1.Nodes.Count > 0)
+            {
                 treeView1.SelectedNode = treeView1.Nodes[0];
-            if (!Loaded)
-                FiddlerControls.Events.FilePathChangeEvent += new FiddlerControls.Events.FilePathChangeHandler(OnFilePathChangeEvent);
-            Loaded = true;
+            }
+
+            if (!_loaded)
+            {
+                FiddlerControls.Events.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
+            _loaded = true;
             Cursor.Current = Cursors.Default;
         }
 
@@ -72,26 +83,26 @@ namespace FiddlerControls
         private unsafe Bitmap GetImage()
         {
             if (treeView1.SelectedNode == null)
+            {
                 return null;
+            }
+
             if (!iGPreviewToolStripMenuItem.Checked)
+            {
                 return Ultima.Light.GetLight((int)treeView1.SelectedNode.Tag);
+            }
 
             Bitmap bit = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 
             using (Graphics g = Graphics.FromImage(bit))
             {
-                Bitmap background = Ultima.Art.GetLand(LandTile);
+                Bitmap background = Ultima.Art.GetLand(_landTile);
                 if (background != null)
                 {
                     int i = 0;
                     for (int y = -22; y <= bit.Height; y += 22)
                     {
-                        int x;
-                        if (i % 2 == 0)
-                            x = 0;
-                        else
-                            x = -22;
-
+                        int x = i % 2 == 0 ? 0 : -22;
                         for (; x <= bit.Width; x += 44)
                         {
                             g.DrawImage(background, x, y);
@@ -99,51 +110,58 @@ namespace FiddlerControls
                         ++i;
                     }
                 }
-                Bitmap lightbit = Ultima.Art.GetStatic(LightTile);
-                if (lightbit != null)
-                    g.DrawImage(lightbit, ((bit.Width - lightbit.Width) / 2), ((bit.Height - lightbit.Height) / 2));
+                Bitmap lightBit = Ultima.Art.GetStatic(_lightTile);
+                if (lightBit != null)
+                {
+                    g.DrawImage(lightBit, (bit.Width - lightBit.Width) / 2, (bit.Height - lightBit.Height) / 2);
+                }
             }
 
-            int lightwidth, lightheight;
-            byte[] light = Ultima.Light.GetRawLight((int)treeView1.SelectedNode.Tag, out lightwidth, out lightheight);
+            byte[] light = Ultima.Light.GetRawLight((int)treeView1.SelectedNode.Tag, out int lightWidth, out int lightHeight);
 
             if (light != null)
             {
                 BitmapData bd = bit.LockBits(new Rectangle(0, 0, bit.Width, bit.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                byte* imgPtr = (byte*)(bd.Scan0);
+                byte* imgPtr = (byte*)bd.Scan0;
 
-                int lightstartX = (bit.Width / 2) - (lightwidth / 2);
-                int lightstartY = 30 + (bit.Height / 2) - (lightheight / 2);
-                int lightendX = lightstartX + lightwidth;
-                int lightendY = lightstartY + lightwidth;
-                byte r, g, b;
+                int lightStartX = bit.Width / 2 - lightWidth / 2;
+                int lightStartY = 30 + bit.Height / 2 - lightHeight / 2;
+
+                int lightEndX = lightStartX + lightWidth;
+                int lightEndY = lightStartY + lightWidth;
 
                 for (int y = 0; y < bd.Height; ++y)
                 {
                     for (int x = 0; x < bd.Width; ++x)
                     {
-                        b = *(imgPtr + 0);
-                        g = *(imgPtr + 1);
-                        r = *(imgPtr + 2);
-                        double lightc = 0;
-                        if ((x >= lightstartX) && (x < lightendX) && (y >= lightstartY) && (y < lightendY))
+                        byte b = *(imgPtr + 0);
+                        byte g = *(imgPtr + 1);
+                        byte r = *(imgPtr + 2);
+
+                        double lightC = 0;
+
+                        if (x >= lightStartX && x < lightEndX && y >= lightStartY && y < lightEndY)
                         {
-                            int offset = (y - lightstartY) * lightheight + (x - lightstartX);
+                            int offset = (y - lightStartY) * lightHeight + (x - lightStartX);
                             if (offset < light.Length)
                             {
-                                lightc = light[offset];
-                                if (lightc > 31)
-                                    lightc = 0;
+                                lightC = light[offset];
+                                if (lightC > 31)
+                                {
+                                    lightC = 0;
+                                }
                                 else
-                                    lightc *= 3 / 31D;
+                                {
+                                    lightC *= 3 / 31D;
+                                }
                             }
                         }
                         r /= 3;
                         g /= 3;
                         b /= 3;
-                        r += (byte)(r * lightc);
-                        g += (byte)(g * lightc);
-                        b += (byte)(b * lightc);
+                        r += (byte)(r * lightC);
+                        g += (byte)(g * lightC);
+                        b += (byte)(b * lightC);
 
                         *imgPtr++ = b;
                         *imgPtr++ = g;
@@ -164,110 +182,135 @@ namespace FiddlerControls
         private void OnClickRemove(object sender, EventArgs e)
         {
             if (treeView1.SelectedNode == null)
+            {
                 return;
+            }
+
             int i = (int)treeView1.SelectedNode.Tag;
             DialogResult result =
-                        MessageBox.Show(String.Format("Are you sure to remove {0} (0x{0:X})", i),
+                        MessageBox.Show(string.Format("Are you sure to remove {0} (0x{0:X})", i),
                         "Remove",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes)
             {
-                Ultima.Light.Remove(i);
-                treeView1.Nodes.Remove(treeView1.SelectedNode);
-                treeView1.Invalidate();
-                Options.ChangedUltimaClass["Light"] = true;
+                return;
             }
+
+            Ultima.Light.Remove(i);
+            treeView1.Nodes.Remove(treeView1.SelectedNode);
+            treeView1.Invalidate();
+            Options.ChangedUltimaClass["Light"] = true;
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode != null)
+            if (treeView1.SelectedNode == null)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose image file to replace";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose image file to replace";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (dialog.FileName.Contains(".bmp"))
-                            bmp = Utils.ConvertBmp(bmp);
-                        int i = (int)treeView1.SelectedNode.Tag;
-                        Ultima.Light.Replace(i, bmp);
-                        treeView1.Invalidate();
-                        AfterSelect(this, (TreeViewEventArgs)null);
-                        Options.ChangedUltimaClass["Light"] = true;
-                    }
+                    return;
                 }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                int i = (int)treeView1.SelectedNode.Tag;
+                Ultima.Light.Replace(i, bmp);
+                treeView1.Invalidate();
+                AfterSelect(this, null);
+                Options.ChangedUltimaClass["Light"] = true;
             }
         }
 
         private void OnTextChangedInsert(object sender, EventArgs e)
         {
-            int index;
-            if (Utils.ConvertStringToInt(InsertText.Text, out index, 0, 99))
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 99))
             {
-                if (Ultima.Light.TestLight(index))
-                    InsertText.ForeColor = Color.Red;
-                else
-                    InsertText.ForeColor = Color.Black;
+                InsertText.ForeColor = Ultima.Light.TestLight(index) ? Color.Red : Color.Black;
             }
             else
+            {
                 InsertText.ForeColor = Color.Red;
+            }
         }
 
         private void OnKeyDownInsert(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                int index;
-                if (Utils.ConvertStringToInt(InsertText.Text, out index, 0, 99))
+                return;
+            }
+
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 99))
+            {
+                return;
+            }
+
+            if (Ultima.Light.TestLight(index))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = string.Format("Choose image file to insert at {0} (0x{0:X})", index);
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    if (Ultima.Light.TestLight(index))
-                        return;
-                    contextMenuStrip1.Close();
-                    using (OpenFileDialog dialog = new OpenFileDialog())
-                    {
-                        dialog.Multiselect = false;
-                        dialog.Title = String.Format("Choose image file to insert at {0} (0x{0:X})", index);
-                        dialog.CheckFileExists = true;
-                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                        {
-                            Bitmap bmp = new Bitmap(dialog.FileName);
-                            Ultima.Light.Replace(index, bmp);
-                            TreeNode treeNode = new TreeNode(index.ToString());
-                            treeNode.Tag = index;
-                            bool done = false;
-                            foreach (TreeNode node in treeView1.Nodes)
-                            {
-                                if ((int)node.Tag > index)
-                                {
-                                    treeView1.Nodes.Insert(node.Index, treeNode);
-                                    done = true;
-                                    break;
-                                }
-                            }
-                            if (!done)
-                                treeView1.Nodes.Add(treeNode);
-                            treeView1.Invalidate();
-                            treeView1.SelectedNode = treeNode;
-                            Options.ChangedUltimaClass["Light"] = true;
-                        }
-                    }
+                    return;
                 }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                Ultima.Light.Replace(index, bmp);
+                TreeNode treeNode = new TreeNode(index.ToString())
+                {
+                    Tag = index
+                };
+                bool done = false;
+                foreach (TreeNode node in treeView1.Nodes)
+                {
+                    if ((int)node.Tag <= index)
+                    {
+                        continue;
+                    }
+
+                    treeView1.Nodes.Insert(node.Index, treeNode);
+                    done = true;
+                    break;
+                }
+                if (!done)
+                {
+                    treeView1.Nodes.Add(treeNode);
+                }
+
+                treeView1.Invalidate();
+                treeView1.SelectedNode = treeNode;
+                Options.ChangedUltimaClass["Light"] = true;
             }
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            Ultima.Light.Save(FiddlerControls.Options.OutputPath);
+            Ultima.Light.Save(Options.OutputPath);
             MessageBox.Show(
-                    String.Format("Saved to {0}", FiddlerControls.Options.OutputPath),
+                $"Saved to {Options.OutputPath}",
                     "Save",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information,
@@ -278,13 +321,16 @@ namespace FiddlerControls
         private void OnClickExportBmp(object sender, EventArgs e)
         {
             if (treeView1.SelectedNode == null)
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
+            }
+
+            string path = Options.OutputPath;
             int i = (int)treeView1.SelectedNode.Tag;
-            string FileName = Path.Combine(path, String.Format("Light {0}.bmp", i));
-            Ultima.Light.GetLight(i).Save(FileName, ImageFormat.Bmp);
+            string fileName = Path.Combine(path, $"Light {i}.bmp");
+            Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
             MessageBox.Show(
-                String.Format("Light saved to {0}", FileName),
+                $"Light saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -294,13 +340,16 @@ namespace FiddlerControls
         private void OnClickExportTiff(object sender, EventArgs e)
         {
             if (treeView1.SelectedNode == null)
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
+            }
+
+            string path = Options.OutputPath;
             int i = (int)treeView1.SelectedNode.Tag;
-            string FileName = Path.Combine(path, String.Format("Light {0}.tiff", i));
-            Ultima.Light.GetLight(i).Save(FileName, ImageFormat.Tiff);
+            string fileName = Path.Combine(path, $"Light {i}.tiff");
+            Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Tiff);
             MessageBox.Show(
-                String.Format("Light saved to {0}", FileName),
+                $"Light saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -310,20 +359,23 @@ namespace FiddlerControls
         private void OnClickExportJpg(object sender, EventArgs e)
         {
             if (treeView1.SelectedNode == null)
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
+            }
+
+            string path = Options.OutputPath;
             int i = (int)treeView1.SelectedNode.Tag;
-            string FileName = Path.Combine(path, String.Format("Light {0}.jpg", i));
-            Ultima.Light.GetLight(i).Save(FileName, ImageFormat.Jpeg);
+            string fileName = Path.Combine(path, $"Light {i}.jpg");
+            Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Jpeg);
             MessageBox.Show(
-                String.Format("Light saved to {0}", FileName),
+                $"Light saved to {fileName}",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
-        private void IGPreviewClicked(object sender, EventArgs e)
+        private void IgPreviewClicked(object sender, EventArgs e)
         {
             iGPreviewToolStripMenuItem.Checked = !iGPreviewToolStripMenuItem.Checked;
             pictureBox1.Image = GetImage();
@@ -336,63 +388,73 @@ namespace FiddlerControls
 
         private void LandTileTextChanged(object sender, EventArgs e)
         {
-            if (!Loaded)
-                return;
-            int index;
-            if (Utils.ConvertStringToInt(LandTileText.Text, out index, 0, 0x3FFF))
+            if (!_loaded)
             {
-                if (!Ultima.Art.IsValidLand(index))
-                    LandTileText.ForeColor = Color.Red;
-                else
-                    LandTileText.ForeColor = Color.Black;
+                return;
+            }
+
+            if (Utils.ConvertStringToInt(LandTileText.Text, out int index, 0, 0x3FFF))
+            {
+                LandTileText.ForeColor = !Ultima.Art.IsValidLand(index) ? Color.Red : Color.Black;
             }
             else
+            {
                 LandTileText.ForeColor = Color.Red;
+            }
         }
 
         private void LandTileKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                int index;
-                if (Utils.ConvertStringToInt(LandTileText.Text, out index, 0, 0x3FFF))
-                {
-                    if (!Ultima.Art.IsValidLand(index))
-                        return;
-                    contextMenuStrip2.Close();
-                    LandTile = index;
-                    pictureBox1.Image = GetImage();
-                }
+                return;
             }
+
+            if (!Utils.ConvertStringToInt(LandTileText.Text, out int index, 0, 0x3FFF))
+            {
+                return;
+            }
+
+            if (!Ultima.Art.IsValidLand(index))
+            {
+                return;
+            }
+
+            contextMenuStrip2.Close();
+            _landTile = index;
+            pictureBox1.Image = GetImage();
         }
 
         private void LightTileTextChanged(object sender, EventArgs e)
         {
-            if (!Loaded)
-                return;
-            int index;
-            if (Utils.ConvertStringToInt(LightTileText.Text, out index, 0, Ultima.Art.GetMaxItemID()))
+            if (!_loaded)
             {
-                if (!Ultima.Art.IsValidStatic(index))
-                    LightTileText.ForeColor = Color.Red;
-                else
-                    LightTileText.ForeColor = Color.Black;
+                return;
+            }
+
+            if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()))
+            {
+                LightTileText.ForeColor = !Ultima.Art.IsValidStatic(index) ? Color.Red : Color.Black;
             }
             else
+            {
                 LightTileText.ForeColor = Color.Red;
+            }
         }
 
         private void LightTileKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                int index;
-                if (Utils.ConvertStringToInt(LightTileText.Text, out index, 0, Ultima.Art.GetMaxItemID()))
+                if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()))
                 {
                     if (!Ultima.Art.IsValidStatic(index))
+                    {
                         return;
+                    }
+
                     contextMenuStrip2.Close();
-                    LightTile = index;
+                    _lightTile = index;
                     pictureBox1.Image = GetImage();
                 }
             }

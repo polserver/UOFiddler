@@ -7,15 +7,15 @@ namespace Ultima
 {
     public sealed class StringList
     {
-        private int m_Header1;
-        private short m_Header2;
+        private int _mHeader1;
+        private short _mHeader2;
 
         public List<StringEntry> Entries { get; set; }
-        public string Language { get; private set; }
+        public string Language { get; }
 
-		private Dictionary<int, string> m_StringTable;
-		private Dictionary<int, StringEntry> m_EntryTable;
-        private static byte[] m_Buffer = new byte[1024];
+		private Dictionary<int, string> _mStringTable;
+		private Dictionary<int, StringEntry> _mEntryTable;
+        private static byte[] _mBuffer = new byte[1024];
 
         /// <summary>
         /// Initialize <see cref="StringList"/> of Language
@@ -24,7 +24,7 @@ namespace Ultima
         public StringList(string language)
         {
             Language = language;
-            LoadEntry(Files.GetFilePath(String.Format("cliloc.{0}", language)));
+            LoadEntry(Files.GetFilePath($"cliloc.{language}"));
         }
         /// <summary>
         /// Initialize <see cref="StringList"/> of Language from path
@@ -45,13 +45,13 @@ namespace Ultima
                 return;
             }
             Entries = new List<StringEntry>();
-			m_StringTable = new Dictionary<int, string>();
-			m_EntryTable = new Dictionary<int, StringEntry>();
+			_mStringTable = new Dictionary<int, string>();
+			_mEntryTable = new Dictionary<int, StringEntry>();
 
             using (BinaryReader bin = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
-                m_Header1 = bin.ReadInt32();
-                m_Header2 = bin.ReadInt16();
+                _mHeader1 = bin.ReadInt32();
+                _mHeader2 = bin.ReadInt16();
 
                 while (bin.BaseStream.Length != bin.BaseStream.Position)
                 {
@@ -59,17 +59,17 @@ namespace Ultima
                     byte flag = bin.ReadByte();
                     int length = bin.ReadInt16();
 
-                    if (length > m_Buffer.Length)
-                        m_Buffer = new byte[(length + 1023) & ~1023];
+                    if (length > _mBuffer.Length)
+                        _mBuffer = new byte[(length + 1023) & ~1023];
 
-                    bin.Read(m_Buffer, 0, length);
-                    string text = Encoding.UTF8.GetString(m_Buffer, 0, length);
+                    bin.Read(_mBuffer, 0, length);
+                    string text = Encoding.UTF8.GetString(_mBuffer, 0, length);
 
 					StringEntry se = new StringEntry(number, text, flag);
 					Entries.Add(se);
 
-					m_StringTable[number] = text;
-					m_EntryTable[number] = se;
+					_mStringTable[number] = text;
+					_mEntryTable[number] = se;
                 }
             }
         }
@@ -77,16 +77,16 @@ namespace Ultima
         /// <summary>
         /// Saves <see cref="SaveStringList"/> to FileName
         /// </summary>
-        /// <param name="FileName"></param>
-        public void SaveStringList(string FileName)
+        /// <param name="fileName"></param>
+        public void SaveStringList(string fileName)
         {
-            using (FileStream fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (BinaryWriter bin = new BinaryWriter(fs))
                 {
-                    bin.Write(m_Header1);
-                    bin.Write(m_Header2);
-                    Entries.Sort(new StringList.NumberComparer(false));
+                    bin.Write(_mHeader1);
+                    bin.Write(_mHeader2);
+                    Entries.Sort(new NumberComparer(false));
                     foreach (StringEntry entry in Entries)
                     {
                         bin.Write(entry.Number);
@@ -102,35 +102,35 @@ namespace Ultima
 
 		public string GetString(int number)
 		{
-			if (m_StringTable == null || !m_StringTable.ContainsKey(number))
+			if (_mStringTable == null || !_mStringTable.ContainsKey(number))
 				return null;
 
-			return m_StringTable[number];
+			return _mStringTable[number];
 		}
 
 		public StringEntry GetEntry(int number)
 		{
-			if (m_EntryTable == null || !m_EntryTable.ContainsKey(number))
+			if (_mEntryTable == null || !_mEntryTable.ContainsKey(number))
 				return null;
 
-			return m_EntryTable[number];
+			return _mEntryTable[number];
 		}
         #region SortComparer
 
         public class NumberComparer : IComparer<StringEntry>
         {
-            private bool m_desc;
+            private readonly bool _mDesc;
 
             public NumberComparer(bool desc)
             {
-                m_desc = desc;
+                _mDesc = desc;
             }
 
             public int Compare(StringEntry objA, StringEntry objB)
             {
                 if (objA.Number == objB.Number)
                     return 0;
-                else if (m_desc)
+                else if (_mDesc)
                     return (objA.Number < objB.Number) ? 1 : -1;
                 else
                     return (objA.Number < objB.Number) ? -1 : 1;
@@ -139,11 +139,11 @@ namespace Ultima
 
         public class FlagComparer : IComparer<StringEntry>
         {
-            private bool m_desc;
+            private readonly bool _mDesc;
 
             public FlagComparer(bool desc)
             {
-                m_desc = desc;
+                _mDesc = desc;
             }
 
             public int Compare(StringEntry objA, StringEntry objB)
@@ -152,12 +152,12 @@ namespace Ultima
                 {
                     if (objA.Number == objB.Number)
                         return 0;
-                    else if (m_desc)
+                    else if (_mDesc)
                         return (objA.Number < objB.Number) ? 1 : -1;
                     else
                         return (objA.Number < objB.Number) ? -1 : 1;
                 }
-                else if (m_desc)
+                else if (_mDesc)
                     return ((byte)objA.Flag < (byte)objB.Flag) ? 1 : -1;
                 else
                     return ((byte)objA.Flag < (byte)objB.Flag) ? -1 : 1;
@@ -166,19 +166,19 @@ namespace Ultima
 
         public class TextComparer : IComparer<StringEntry>
         {
-            private bool m_desc;
+            private readonly bool _mDesc;
 
             public TextComparer(bool desc)
             {
-                m_desc = desc;
+                _mDesc = desc;
             }
 
             public int Compare(StringEntry objA, StringEntry objB)
             {
-                if (m_desc)
-                    return String.Compare(objB.Text, objA.Text);
+                if (_mDesc)
+                    return string.Compare(objB.Text, objA.Text);
                 else
-                    return String.Compare(objA.Text, objB.Text);
+                    return string.Compare(objA.Text, objB.Text);
             }
         }
         #endregion

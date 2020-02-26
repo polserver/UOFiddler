@@ -16,20 +16,21 @@ namespace FiddlerControls
 {
     public partial class ClilocDetail : Form
     {
-        public ClilocDetail(int Number, string Text)
+        public ClilocDetail(int number, string text)
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = Options.GetFiddlerIcon();
             TopMost = true;
-            NumberLabel.Text = String.Format("Nr: {0}", Number);
-            m_Number = Number;
-            TextBox.AppendText(Text);
+            NumberLabel.Text = $"Nr: {number}";
+            _number = number;
+            TextBox.AppendText(text);
         }
 
-        private int m_Number;
+        private readonly int _number;
+
         private void OnClickSave(object sender, EventArgs e)
         {
-            Cliloc.SaveEntry(m_Number, TextBox.Text);
+            Cliloc.SaveEntry(_number, TextBox.Text);
         }
     }
 }

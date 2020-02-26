@@ -7,12 +7,12 @@ namespace Ultima
     {
         private const int ProcessAllAccess = 0x1F0FFF;
 
-        protected bool m_Open;
-        protected ClientProcessHandle m_Process;
+        protected bool MOpen;
+        protected ClientProcessHandle MProcess;
 
-        protected int m_Position;
+        protected int MPosition;
 
-        public abstract ClientProcessHandle ProcessID { get; }
+        public abstract ClientProcessHandle ProcessId { get; }
 
         public ProcessStream()
         {
@@ -20,22 +20,22 @@ namespace Ultima
 
         public virtual bool BeginAccess()
         {
-            if (m_Open)
+            if (MOpen)
                 return false;
 
-            m_Process = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessID);
-            m_Open = true;
+            MProcess = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessId);
+            MOpen = true;
 
             return true;
         }
 
         public virtual void EndAccess()
         {
-            if (!m_Open)
+            if (!MOpen)
                 return;
 
-            m_Process.Close();
-            m_Open = false;
+            MProcess.Close();
+            MOpen = false;
         }
 
         public override void Flush()
@@ -49,9 +49,9 @@ namespace Ultima
             int res = 0;
 
             fixed (byte* p = buffer)
-                NativeMethods.ReadProcessMemory(m_Process, m_Position, p + offset, count, ref res);
+                NativeMethods.ReadProcessMemory(MProcess, MPosition, p + offset, count, ref res);
 
-            m_Position += count;
+            MPosition += count;
 
             if (end)
                 EndAccess();
@@ -64,20 +64,22 @@ namespace Ultima
             bool end = !BeginAccess();
 
             fixed (byte* p = buffer)
-                NativeMethods.WriteProcessMemory(m_Process, m_Position, p + offset, count, 0);
+                NativeMethods.WriteProcessMemory(MProcess, MPosition, p + offset, count, 0);
 
-            m_Position += count;
+            MPosition += count;
 
             if (end)
                 EndAccess();
         }
 
-        public override bool CanRead { get { return true; } }
-        public override bool CanWrite { get { return true; } }
-        public override bool CanSeek { get { return true; } }
+        public override bool CanRead => true;
+        public override bool CanWrite => true;
+        public override bool CanSeek => true;
 
-        public override long Length { get { throw new NotSupportedException(); } }
-        public override long Position { get { return m_Position; } set { m_Position = (int)value; } }
+        public override long Length => throw new NotSupportedException();
+        public override long Position { get => MPosition;
+            set => MPosition = (int)value;
+        }
 
         public override void SetLength(long value)
         {
@@ -88,12 +90,12 @@ namespace Ultima
         {
             switch (origin)
             {
-                case SeekOrigin.Begin: m_Position = (int)offset; break;
-                case SeekOrigin.Current: m_Position += (int)offset; break;
+                case SeekOrigin.Begin: MPosition = (int)offset; break;
+                case SeekOrigin.Current: MPosition += (int)offset; break;
                 case SeekOrigin.End: throw new NotSupportedException();
             }
 
-            return m_Position;
+            return MPosition;
         }
     }
 }

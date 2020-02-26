@@ -94,7 +94,7 @@ namespace UoFiddler
             // 
             this.TextBoxRoot.Name = "TextBoxRoot";
             this.TextBoxRoot.Size = new System.Drawing.Size(150, 21);
-            this.TextBoxRoot.KeyDown += new System.Windows.Forms.KeyEventHandler(this.onKeyDownDir);
+            this.TextBoxRoot.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownDir);
             // 
             // PathSettings
             // 

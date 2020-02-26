@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace FiddlerControls
 {
@@ -14,22 +8,28 @@ namespace FiddlerControls
         {
             InitializeComponent();
         }
-    
-        public ProgressBar(int max, string desc,bool useFileSaveEvent=true)
+
+        public ProgressBar(int max, string desc, bool useFileSaveEvent = true)
         {
             InitializeComponent();
-            this.Text = desc;
+            Text = desc;
             progressBar1.Maximum = max;
             progressBar1.Minimum = 0;
             progressBar1.Value = 0;
             progressBar1.Step = 1;
             if (useFileSaveEvent)
-                Ultima.Files.FileSaveEvent += new Ultima.Files.FileSaveHandler(onChangeEvent);
+            {
+                Ultima.Files.FileSaveEvent += OnChangeEvent;
+            }
             else
-                FiddlerControls.Events.ProgressChangeEvent+=new FiddlerControls.Events.ProgressChangeHandler(onChangeEvent);
-            this.Show();
+            {
+                FiddlerControls.Events.ProgressChangeEvent += OnChangeEvent;
+            }
+
+            Show();
         }
-        void onChangeEvent()
+
+        private void OnChangeEvent()
         {
             progressBar1.PerformStep();
         }

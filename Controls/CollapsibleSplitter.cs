@@ -8,7 +8,6 @@ namespace FiddlerControls
     using System.Drawing;
     using System.Windows.Forms;
 
-    #region Enums
     /// <summary>
     /// Enumeration to sepcify the visual style to be applied to the CollapsibleSplitter control
     /// </summary>
@@ -16,7 +15,7 @@ namespace FiddlerControls
     {
         Mozilla = 0,
         XP,
-        Win9x,
+        Win9X,
         DoubleDots,
         Lines
     }
@@ -32,40 +31,30 @@ namespace FiddlerControls
         Collapsing
     }
 
-    #endregion
     /// <summary>
     /// A custom collapsible splitter that can resize, hide and show associated form controls
     /// </summary>
     [DesignerAttribute(typeof(CollapsibleSplitterDesigner))]
-    public partial class CollapsibleSplitter : System.Windows.Forms.Splitter
+    public partial class CollapsibleSplitter : Splitter
     {
-        #region Private Properties
-
         // declare and define some base properties
-        private bool hot;
-        private System.Drawing.Color hotColor = CalculateColor(SystemColors.Highlight, SystemColors.Window, 70);
-        private System.Windows.Forms.Control controlToHide;
-        private System.Drawing.Rectangle rr;
-        private System.Windows.Forms.Form parentForm;
-        private bool expandParentForm;
-        private VisualStyles visualStyle;
+        private bool _hot;
+        private readonly Color _hotColor = CalculateColor(SystemColors.Highlight, SystemColors.Window, 70);
+        private Rectangle _rr;
+        private Form _parentForm;
+        private VisualStyles _visualStyle;
 
         // Border added in version 1.3
-        private System.Windows.Forms.Border3DStyle borderStyle = System.Windows.Forms.Border3DStyle.Flat;
+        private Border3DStyle _borderStyle = Border3DStyle.Flat;
 
         // animation controls introduced in version 1.22
-        private System.Windows.Forms.Timer animationTimer;
-        private int controlWidth;
-        private int controlHeight;
-        private int parentFormWidth;
-        private int parentFormHeight;
-        private SplitterState currentState;
-        private int animationStep = 20;
-        private bool useAnimations;
-
-        #endregion
-
-        #region Public Properties
+        private readonly Timer _animationTimer;
+        private int _controlWidth;
+        private int _controlHeight;
+        private int _parentFormWidth;
+        private int _parentFormHeight;
+        private SplitterState _currentState;
+        private bool _useAnimations;
 
         /// <summary>
         /// The initial state of the Splitter. Set to True if the control to hide is not visible by default
@@ -76,10 +65,12 @@ namespace FiddlerControls
         {
             get
             {
-                if (this.controlToHide != null)
-                    return !this.controlToHide.Visible;
-                else
-                    return true;
+                if (ControlToHide != null)
+                {
+                    return !ControlToHide.Visible;
+                }
+
+                return true;
             }
         }
 
@@ -88,11 +79,7 @@ namespace FiddlerControls
         /// </summary>
         [Bindable(true), Category("Collapsing Options"), DefaultValue(""),
         Description("The System.Windows.Forms.Control that the splitter will collapse")]
-        public System.Windows.Forms.Control ControlToHide
-        {
-            get { return this.controlToHide; }
-            set { this.controlToHide = value; }
-        }
+        public Control ControlToHide { get; set; }
 
         /// <summary>
         /// Determines if the collapse and expanding actions will be animated
@@ -101,8 +88,8 @@ namespace FiddlerControls
         Description("Determines if the collapse and expanding actions will be animated")]
         public bool UseAnimations
         {
-            get { return this.useAnimations; }
-            set { this.useAnimations = value; }
+            get => _useAnimations;
+            set => _useAnimations = value;
         }
 
         /// <summary>
@@ -112,8 +99,8 @@ namespace FiddlerControls
         Description("The delay in millisenconds between animation steps")]
         public int AnimationDelay
         {
-            get { return this.animationTimer.Interval; }
-            set { this.animationTimer.Interval = value; }
+            get => _animationTimer.Interval;
+            set => _animationTimer.Interval = value;
         }
 
         /// <summary>
@@ -121,22 +108,14 @@ namespace FiddlerControls
         /// </summary>
         [Bindable(true), Category("Collapsing Options"), DefaultValue("20"),
         Description("The amount of pixels moved in each animation step")]
-        public int AnimationStep
-        {
-            get { return this.animationStep; }
-            set { this.animationStep = value; }
-        }
+        public int AnimationStep { get; set; } = 20;
 
         /// <summary>
         /// When true the entire parent form will be expanded and collapsed, otherwise just the contol to expand will be changed
         /// </summary>
         [Bindable(true), Category("Collapsing Options"), DefaultValue("False"),
         Description("When true the entire parent form will be expanded and collapsed, otherwise just the contol to expand will be changed")]
-        public bool ExpandParentForm
-        {
-            get { return this.expandParentForm; }
-            set { this.expandParentForm = value; }
-        }
+        public bool ExpandParentForm { get; set; }
 
         /// <summary>
         /// The visual style that will be painted on the control
@@ -145,11 +124,11 @@ namespace FiddlerControls
         Description("The visual style that will be painted on the control")]
         public VisualStyles VisualStyle
         {
-            get { return this.visualStyle; }
+            get => _visualStyle;
             set
             {
-                this.visualStyle = value;
-                this.Invalidate();
+                _visualStyle = value;
+                Invalidate();
             }
         }
 
@@ -158,148 +137,126 @@ namespace FiddlerControls
         /// </summary>
         [Bindable(true), Category("Collapsing Options"), DefaultValue("System.Windows.Forms.Border3DStyle.Flat"),
         Description("An optional border style to paint on the control. Set to Flat for no border")]
-        public System.Windows.Forms.Border3DStyle BorderStyle3D
+        public Border3DStyle BorderStyle3D
         {
-            get { return this.borderStyle; }
+            get => _borderStyle;
             set
             {
-                this.borderStyle = value;
-                this.Invalidate();
+                _borderStyle = value;
+                Invalidate();
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
         public void ToggleState()
         {
-            this.ToggleSplitter();
+            ToggleSplitter();
         }
-
-        #endregion
-
-        #region Constructor
 
         public CollapsibleSplitter()
         {
             // Register mouse events
-            this.Click += new System.EventHandler(OnClick);
-            this.Resize += new System.EventHandler(OnResize);
-            this.MouseLeave += new System.EventHandler(OnMouseLeave);
-            this.MouseMove += new MouseEventHandler(OnMouseMove);
+            Click += OnClick;
+            Resize += OnResize;
+            MouseLeave += OnMouseLeave;
+            MouseMove += OnMouseMove;
 
             // Setup the animation timer control
-            this.animationTimer = new System.Windows.Forms.Timer();
-            this.animationTimer.Interval = 20;
-            this.animationTimer.Tick += new System.EventHandler(this.animationTimerTick);
+            _animationTimer = new Timer
+            {
+                Interval = 20
+            };
+            _animationTimer.Tick += AnimationTimerTick;
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            this.parentForm = this.FindForm();
+            _parentForm = FindForm();
 
             // set the current state
-            if (this.controlToHide != null)
+            if (ControlToHide != null)
             {
-                if (this.controlToHide.Visible)
-                {
-                    this.currentState = SplitterState.Expanded;
-                }
-                else
-                {
-                    this.currentState = SplitterState.Collapsed;
-                }
+                _currentState = ControlToHide.Visible ? SplitterState.Expanded : SplitterState.Collapsed;
             }
         }
 
-        protected override void OnEnabledChanged(System.EventArgs e)
+        protected override void OnEnabledChanged(EventArgs e)
         {
             base.OnEnabledChanged(e);
-            this.Invalidate();
+            Invalidate();
         }
-
-        #endregion
-
-        #region Event Handlers
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             // if the hider control isn't hot, let the base resize action occur
-            if (this.controlToHide != null)
+            if (ControlToHide == null)
             {
-                if (!this.hot && this.controlToHide.Visible)
-                {
-                    base.OnMouseDown(e);
-                }
+                return;
+            }
+
+            if (!_hot && ControlToHide.Visible)
+            {
+                base.OnMouseDown(e);
             }
         }
 
-        private void OnResize(object sender, System.EventArgs e)
+        private void OnResize(object sender, EventArgs e)
         {
-            this.Invalidate();
+            Invalidate();
         }
 
         // this method was updated in version 1.11 to fix a flickering problem
         // discovered by John O'Byrne
-        private void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void OnMouseMove(object sender, MouseEventArgs e)
         {
             // check to see if the mouse cursor position is within the bounds of our control
-            if (e.X >= rr.X && e.X <= rr.X + rr.Width && e.Y >= rr.Y && e.Y <= rr.Y + rr.Height)
+            if (e.X >= _rr.X && e.X <= _rr.X + _rr.Width && e.Y >= _rr.Y && e.Y <= _rr.Y + _rr.Height)
             {
-                if (!this.hot)
+                if (!_hot)
                 {
-                    this.hot = true;
-                    this.Cursor = Cursors.Hand;
-                    this.Invalidate();
+                    _hot = true;
+                    Cursor = Cursors.Hand;
+                    Invalidate();
                 }
             }
             else
             {
-                if (this.hot)
+                if (_hot)
                 {
-                    this.hot = false;
-                    this.Invalidate(); ;
+                    _hot = false;
+                    Invalidate();
                 }
 
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
 
-                if (controlToHide != null)
+                if (ControlToHide == null)
                 {
-                    if (!controlToHide.Visible)
-                        this.Cursor = Cursors.Default;
-                    else // Changed in v1.2 to support Horizontal Splitters
-                    {
-                        if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
-                        {
-                            this.Cursor = Cursors.VSplit;
-                        }
-                        else
-                        {
-                            this.Cursor = Cursors.HSplit;
-                        }
-                    }
+                    return;
+                }
+
+                if (!ControlToHide.Visible)
+                {
+                    Cursor = Cursors.Default;
+                }
+                else // Changed in v1.2 to support Horizontal Splitters
+                {
+                    Cursor = Dock == DockStyle.Left || Dock == DockStyle.Right ? Cursors.VSplit : Cursors.HSplit;
                 }
             }
         }
 
-        private void OnMouseLeave(object sender, System.EventArgs e)
+        private void OnMouseLeave(object sender, EventArgs e)
         {
             // ensure that the hot state is removed
-            this.hot = false;
-            this.Invalidate(); ;
+            _hot = false;
+            Invalidate();
         }
 
-        private void OnClick(object sender, System.EventArgs e)
+        private void OnClick(object sender, EventArgs e)
         {
-            if (controlToHide != null && hot &&
-                currentState != SplitterState.Collapsing &&
-                currentState != SplitterState.Expanding)
+            if (ControlToHide != null && _hot &&
+                _currentState != SplitterState.Collapsing &&
+                _currentState != SplitterState.Expanding)
             {
                 ToggleSplitter();
             }
@@ -307,228 +264,226 @@ namespace FiddlerControls
 
         private void ToggleSplitter()
         {
-
             // if an animation is currently in progress for this control, drop out
-            if (currentState == SplitterState.Collapsing || currentState == SplitterState.Expanding)
-                return;
-
-            controlWidth = controlToHide.Width;
-            controlHeight = controlToHide.Height;
-
-            if (controlToHide.Visible)
+            if (_currentState == SplitterState.Collapsing || _currentState == SplitterState.Expanding)
             {
-                if (useAnimations)
-                {
-                    currentState = SplitterState.Collapsing;
+                return;
+            }
 
-                    if (parentForm != null)
+            _controlWidth = ControlToHide.Width;
+            _controlHeight = ControlToHide.Height;
+
+            if (ControlToHide.Visible)
+            {
+                if (_useAnimations)
+                {
+                    _currentState = SplitterState.Collapsing;
+
+                    if (_parentForm != null)
                     {
-                        if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+                        if (Dock == DockStyle.Left || Dock == DockStyle.Right)
                         {
-                            parentFormWidth = parentForm.Width - controlWidth;
+                            _parentFormWidth = _parentForm.Width - _controlWidth;
                         }
                         else
                         {
-                            parentFormHeight = parentForm.Height - controlHeight;
+                            _parentFormHeight = _parentForm.Height - _controlHeight;
                         }
                     }
 
-                    this.animationTimer.Enabled = true;
+                    _animationTimer.Enabled = true;
                 }
                 else
                 {
                     // no animations, so just toggle the visible state
-                    currentState = SplitterState.Collapsed;
-                    controlToHide.Visible = false;
-                    if (expandParentForm && parentForm != null)
+                    _currentState = SplitterState.Collapsed;
+                    ControlToHide.Visible = false;
+                    if (!ExpandParentForm || _parentForm == null)
                     {
-                        if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
-                        {
-                            parentForm.Width -= controlToHide.Width;
-                        }
-                        else
-                        {
-                            parentForm.Height -= controlToHide.Height;
-                        }
+                        return;
+                    }
+
+                    if (Dock == DockStyle.Left || Dock == DockStyle.Right)
+                    {
+                        _parentForm.Width -= ControlToHide.Width;
+                    }
+                    else
+                    {
+                        _parentForm.Height -= ControlToHide.Height;
                     }
                 }
             }
             else
             {
                 // control to hide is collapsed
-                if (useAnimations)
+                if (_useAnimations)
                 {
-                    currentState = SplitterState.Expanding;
+                    _currentState = SplitterState.Expanding;
 
-                    if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+                    if (Dock == DockStyle.Left || Dock == DockStyle.Right)
                     {
-                        if (parentForm != null)
+                        if (_parentForm != null)
                         {
-                            parentFormWidth = parentForm.Width + controlWidth;
+                            _parentFormWidth = _parentForm.Width + _controlWidth;
                         }
-                        controlToHide.Width = 0;
-
+                        ControlToHide.Width = 0;
                     }
                     else
                     {
-                        if (parentForm != null)
+                        if (_parentForm != null)
                         {
-                            parentFormHeight = parentForm.Height + controlHeight;
+                            _parentFormHeight = _parentForm.Height + _controlHeight;
                         }
-                        controlToHide.Height = 0;
+                        ControlToHide.Height = 0;
                     }
-                    controlToHide.Visible = true;
-                    this.animationTimer.Enabled = true;
+                    ControlToHide.Visible = true;
+                    _animationTimer.Enabled = true;
                 }
                 else
                 {
                     // no animations, so just toggle the visible state
-                    currentState = SplitterState.Expanded;
-                    controlToHide.Visible = true;
-                    if (expandParentForm && parentForm != null)
+                    _currentState = SplitterState.Expanded;
+                    ControlToHide.Visible = true;
+                    if (!ExpandParentForm || _parentForm == null)
                     {
-                        if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
-                        {
-                            parentForm.Width += controlToHide.Width;
-                        }
-                        else
-                        {
-                            parentForm.Height += controlToHide.Height;
-                        }
+                        return;
+                    }
+
+                    if (Dock == DockStyle.Left || Dock == DockStyle.Right)
+                    {
+                        _parentForm.Width += ControlToHide.Width;
+                    }
+                    else
+                    {
+                        _parentForm.Height += ControlToHide.Height;
                     }
                 }
             }
-
         }
 
-        #endregion
-
-        #region Implementation
-
-        #region Animation Timer Tick
-
-        private void animationTimerTick(object sender, System.EventArgs e)
+        private void AnimationTimerTick(object sender, EventArgs e)
         {
-            switch (currentState)
+            switch (_currentState)
             {
                 case SplitterState.Collapsing:
 
-                    if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+                    if (Dock == DockStyle.Left || Dock == DockStyle.Right)
                     {
                         // vertical splitter
-                        if (controlToHide.Width > animationStep)
+                        if (ControlToHide.Width > AnimationStep)
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Width -= animationStep;
+                                _parentForm.Width -= AnimationStep;
                             }
-                            controlToHide.Width -= animationStep;
+                            ControlToHide.Width -= AnimationStep;
                         }
                         else
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Width = parentFormWidth;
+                                _parentForm.Width = _parentFormWidth;
                             }
-                            controlToHide.Visible = false;
-                            animationTimer.Enabled = false;
-                            controlToHide.Width = controlWidth;
-                            currentState = SplitterState.Collapsed;
-                            this.Invalidate();
+                            ControlToHide.Visible = false;
+                            _animationTimer.Enabled = false;
+                            ControlToHide.Width = _controlWidth;
+                            _currentState = SplitterState.Collapsed;
+                            Invalidate();
                         }
                     }
                     else
                     {
                         // horizontal splitter
-                        if (controlToHide.Height > animationStep)
+                        if (ControlToHide.Height > AnimationStep)
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Height -= animationStep;
+                                _parentForm.Height -= AnimationStep;
                             }
-                            controlToHide.Height -= animationStep;
+                            ControlToHide.Height -= AnimationStep;
                         }
                         else
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Height = parentFormHeight;
+                                _parentForm.Height = _parentFormHeight;
                             }
-                            controlToHide.Visible = false;
-                            animationTimer.Enabled = false;
-                            controlToHide.Height = controlHeight;
-                            currentState = SplitterState.Collapsed;
-                            this.Invalidate();
+                            ControlToHide.Visible = false;
+                            _animationTimer.Enabled = false;
+                            ControlToHide.Height = _controlHeight;
+                            _currentState = SplitterState.Collapsed;
+                            Invalidate();
                         }
                     }
                     break;
 
                 case SplitterState.Expanding:
 
-                    if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+                    if (Dock == DockStyle.Left || Dock == DockStyle.Right)
                     {
                         // vertical splitter
-                        if (controlToHide.Width < (controlWidth - animationStep))
+                        if (ControlToHide.Width < _controlWidth - AnimationStep)
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Width += animationStep;
+                                _parentForm.Width += AnimationStep;
                             }
-                            controlToHide.Width += animationStep;
+                            ControlToHide.Width += AnimationStep;
                         }
                         else
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Width = parentFormWidth;
+                                _parentForm.Width = _parentFormWidth;
                             }
-                            controlToHide.Width = controlWidth;
-                            controlToHide.Visible = true;
-                            animationTimer.Enabled = false;
-                            currentState = SplitterState.Expanded;
-                            this.Invalidate();
+                            ControlToHide.Width = _controlWidth;
+                            ControlToHide.Visible = true;
+                            _animationTimer.Enabled = false;
+                            _currentState = SplitterState.Expanded;
+                            Invalidate();
                         }
                     }
                     else
                     {
                         // horizontal splitter
-                        if (controlToHide.Height < (controlHeight - animationStep))
+                        if (ControlToHide.Height < _controlHeight - AnimationStep)
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Height += animationStep;
+                                _parentForm.Height += AnimationStep;
                             }
-                            controlToHide.Height += animationStep;
+                            ControlToHide.Height += AnimationStep;
                         }
                         else
                         {
-                            if (expandParentForm && parentForm.WindowState != FormWindowState.Maximized
-                                && parentForm != null)
+                            if (ExpandParentForm && _parentForm.WindowState != FormWindowState.Maximized
+                                && _parentForm != null)
                             {
-                                parentForm.Height = parentFormHeight;
+                                _parentForm.Height = _parentFormHeight;
                             }
-                            controlToHide.Height = controlHeight;
-                            controlToHide.Visible = true;
-                            animationTimer.Enabled = false;
-                            currentState = SplitterState.Expanded;
-                            this.Invalidate();
+                            ControlToHide.Height = _controlHeight;
+                            ControlToHide.Visible = true;
+                            _animationTimer.Enabled = false;
+                            _currentState = SplitterState.Expanded;
+                            Invalidate();
                         }
-
                     }
                     break;
+                case SplitterState.Collapsed:
+                    break;
+                case SplitterState.Expanded:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
-
-        #endregion
-
-        #region Paint the control
 
         // OnPaint is now an override rather than an event in version 1.1
         protected override void OnPaint(PaintEventArgs e)
@@ -536,79 +491,78 @@ namespace FiddlerControls
             // create a Graphics object
             using (Graphics g = e.Graphics)
             {
-                Pen pen_controlLightLight = new Pen(SystemColors.ControlLightLight);
-                Pen pen_controlLight = new Pen(SystemColors.ControlLight);
-                Pen pen_controlDark = new Pen(SystemColors.ControlDark);
-                Pen pen_backColor = new Pen(this.BackColor);
-                Pen pen_hotColor = new Pen(this.hotColor);
-                Pen pen_controlDarkDark = new Pen(SystemColors.ControlDarkDark);
+                Pen penControlLightLight = new Pen(SystemColors.ControlLightLight);
+                Pen penControlLight = new Pen(SystemColors.ControlLight);
+                Pen penControlDark = new Pen(SystemColors.ControlDark);
+                Pen penBackColor = new Pen(BackColor);
+                Pen penHotColor = new Pen(_hotColor);
+                Pen penControlDarkDark = new Pen(SystemColors.ControlDarkDark);
 
-                Brush brush_controlDark = new SolidBrush(SystemColors.ControlDark);
-                Brush brush_controlDarkDark = new SolidBrush(SystemColors.ControlDarkDark);
-                Brush brush_backColor = new SolidBrush(this.BackColor);
-                Brush brush_hotColor = new SolidBrush(this.hotColor);
+                Brush brushControlDark = new SolidBrush(SystemColors.ControlDark);
+                Brush brushControlDarkDark = new SolidBrush(SystemColors.ControlDarkDark);
+                Brush brushBackColor = new SolidBrush(BackColor);
+                Brush brushHotColor = new SolidBrush(_hotColor);
 
                 // find the rectangle for the splitter and paint it
-                Rectangle r = this.ClientRectangle; // fixed in version 1.1
-                g.FillRectangle(brush_backColor, r);
+                Rectangle r = ClientRectangle; // fixed in version 1.1
+                g.FillRectangle(brushBackColor, r);
 
-                #region Vertical Splitter
                 // Check the docking style and create the control rectangle accordingly
-                if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+                if (Dock == DockStyle.Left || Dock == DockStyle.Right)
                 {
                     // create a new rectangle in the vertical center of the splitter for our collapse control button
-                    rr = new Rectangle(r.X, (int)r.Y + ((r.Height - 115) / 2), 8, 115);
+                    _rr = new Rectangle(r.X, r.Y + (r.Height - 115) / 2, 8, 115);
                     // force the width to 8px so that everything always draws correctly
-                    this.Width = 8;
+                    Width = 8;
 
                     // draw the background color for our control image
-                    if (hot)
+                    if (_hot)
                     {
-                        g.FillRectangle(brush_hotColor, new Rectangle(rr.X + 1, rr.Y, 6, 115));
+                        g.FillRectangle(brushHotColor, new Rectangle(_rr.X + 1, _rr.Y, 6, 115));
                     }
                     else
                     {
-                        g.FillRectangle(brush_backColor, new Rectangle(rr.X + 1, rr.Y, 6, 115));
+                        g.FillRectangle(brushBackColor, new Rectangle(_rr.X + 1, _rr.Y, 6, 115));
                     }
 
                     // draw the top & bottom lines for our control image
                     using (Pen pn = new Pen(SystemColors.ControlDark, 1))
                     {
-                        g.DrawLine(pn, rr.X + 1, rr.Y, rr.X + rr.Width - 2, rr.Y);
-                        g.DrawLine(pn, rr.X + 1, rr.Y + rr.Height, rr.X + rr.Width - 2, rr.Y + rr.Height);
+                        g.DrawLine(pn, _rr.X + 1, _rr.Y, _rr.X + _rr.Width - 2, _rr.Y);
+                        g.DrawLine(pn, _rr.X + 1, _rr.Y + _rr.Height, _rr.X + _rr.Width - 2, _rr.Y + _rr.Height);
                     }
 
-                    if (this.Enabled)
+                    if (Enabled)
                     {
                         // draw the arrows for our control image
                         // the ArrowPointArray is a point array that defines an arrow shaped polygon
-                        g.FillPolygon(brush_controlDarkDark, ArrowPointArray(rr.X + 2, rr.Y + 3));
-                        g.FillPolygon(brush_controlDarkDark, ArrowPointArray(rr.X + 2, rr.Y + rr.Height - 9));
+                        g.FillPolygon(brushControlDarkDark, ArrowPointArray(_rr.X + 2, _rr.Y + 3));
+                        g.FillPolygon(brushControlDarkDark, ArrowPointArray(_rr.X + 2, _rr.Y + _rr.Height - 9));
                     }
 
                     // draw the dots for our control image using a loop
-                    int x = rr.X + 3;
-                    int y = rr.Y + 14;
+                    int x = _rr.X + 3;
+                    int y = _rr.Y + 14;
 
                     // Visual Styles added in version 1.1
-                    switch (visualStyle)
+                    switch (_visualStyle)
                     {
                         case VisualStyles.Mozilla:
 
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawLine(pen_controlLightLight, x, y + (i * 3), x + 1, y + 1 + (i * 3));
+                                g.DrawLine(penControlLightLight, x, y + i * 3, x + 1, y + 1 + i * 3);
                                 // dark dot
-                                g.DrawLine(pen_controlDarkDark, x + 1, y + 1 + (i * 3), x + 2, y + 2 + (i * 3));
+                                g.DrawLine(penControlDarkDark, x + 1, y + 1 + i * 3, x + 2, y + 2 + i * 3);
                                 // overdraw the background color as we actually drew 2px diagonal lines, not just dots
-                                if (hot)
+                                if (_hot)
                                 {
-                                    g.DrawLine(pen_hotColor, x + 2, y + 1 + (i * 3), x + 2, y + 2 + (i * 3));
+                                    g.DrawLine(penHotColor, x + 2, y + 1 + i * 3, x + 2, y + 2 + i * 3);
                                 }
                                 else
                                 {
-                                    g.DrawLine(pen_backColor, x + 2, y + 1 + (i * 3), x + 2, y + 2 + (i * 3));
+                                    g.DrawLine(penBackColor, x + 2, y + 1 + i * 3, x + 2, y + 2 + i * 3);
                                 }
                             }
                             break;
@@ -617,23 +571,23 @@ namespace FiddlerControls
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(pen_controlLightLight, x, y + 1 + (i * 3), 1, 1);
+                                g.DrawRectangle(penControlLightLight, x, y + 1 + i * 3, 1, 1);
                                 // dark dot
-                                g.DrawRectangle(pen_controlDark, x - 1, y + (i * 3), 1, 1);
+                                g.DrawRectangle(penControlDark, x - 1, y + i * 3, 1, 1);
                                 ++i;
                                 // light dot
-                                g.DrawRectangle(pen_controlLightLight, x + 2, y + 1 + (i * 3), 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 2, y + 1 + i * 3, 1, 1);
                                 // dark dot
-                                g.DrawRectangle(pen_controlDark, x + 1, y + (i * 3), 1, 1);
+                                g.DrawRectangle(penControlDark, x + 1, y + i * 3, 1, 1);
                             }
                             break;
 
-                        case VisualStyles.Win9x:
+                        case VisualStyles.Win9X:
 
-                            g.DrawLine(pen_controlLightLight, x, y, x + 2, y);
-                            g.DrawLine(pen_controlLightLight, x, y, x, y + 90);
-                            g.DrawLine(pen_controlDark, x + 2, y, x + 2, y + 90);
-                            g.DrawLine(pen_controlDark, x, y + 90, x + 2, y + 90);
+                            g.DrawLine(penControlLightLight, x, y, x + 2, y);
+                            g.DrawLine(penControlLightLight, x, y, x, y + 90);
+                            g.DrawLine(penControlDark, x + 2, y, x + 2, y + 90);
+                            g.DrawLine(penControlDark, x, y + 90, x + 2, y + 90);
                             break;
 
                         case VisualStyles.XP:
@@ -641,14 +595,14 @@ namespace FiddlerControls
                             for (int i = 0; i < 18; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(pen_controlLight, x, y + (i * 5), 2, 2);
+                                g.DrawRectangle(penControlLight, x, y + i * 5, 2, 2);
                                 // light light dot
-                                g.DrawRectangle(pen_controlLightLight, x + 1, y + 1 + (i * 5), 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1, y + 1 + i * 5, 1, 1);
                                 // dark dark dot
-                                g.DrawRectangle(pen_controlDarkDark, x, y + (i * 5), 1, 1);
+                                g.DrawRectangle(penControlDarkDark, x, y + i * 5, 1, 1);
                                 // dark fill
-                                g.DrawLine(pen_controlDark, x, y + (i * 5), x, y + (i * 5) + 1);
-                                g.DrawLine(pen_controlDark, x, y + (i * 5), x + 1, y + (i * 5));
+                                g.DrawLine(penControlDark, x, y + i * 5, x, y + i * 5 + 1);
+                                g.DrawLine(penControlDark, x, y + i * 5, x + 1, y + i * 5);
                             }
                             break;
 
@@ -656,81 +610,77 @@ namespace FiddlerControls
 
                             for (int i = 0; i < 44; ++i)
                             {
-                                g.DrawLine(pen_controlDark, x, y + (i * 2), x + 2, y + (i * 2));
+                                g.DrawLine(penControlDark, x, y + i * 2, x + 2, y + i * 2);
                             }
 
                             break;
                     }
 
                     // Added in version 1.3
-                    if (this.borderStyle != System.Windows.Forms.Border3DStyle.Flat)
+                    if (_borderStyle != Border3DStyle.Flat)
                     {
                         // Paint the control border
-                        ControlPaint.DrawBorder3D(e.Graphics, this.ClientRectangle, this.borderStyle, Border3DSide.Left);
-                        ControlPaint.DrawBorder3D(e.Graphics, this.ClientRectangle, this.borderStyle, Border3DSide.Right);
+                        ControlPaint.DrawBorder3D(e.Graphics, ClientRectangle, _borderStyle, Border3DSide.Left);
+                        ControlPaint.DrawBorder3D(e.Graphics, ClientRectangle, _borderStyle, Border3DSide.Right);
                     }
                 }
 
-                #endregion
-
                 // Horizontal Splitter support added in v1.2
 
-                #region Horizontal Splitter
-
-                else if (this.Dock == DockStyle.Top || this.Dock == DockStyle.Bottom)
+                else if (Dock == DockStyle.Top || Dock == DockStyle.Bottom)
                 {
                     // create a new rectangle in the horizontal center of the splitter for our collapse control button
-                    rr = new Rectangle((int)r.X + ((r.Width - 115) / 2), r.Y, 115, 8);
+                    _rr = new Rectangle(r.X + (r.Width - 115) / 2, r.Y, 115, 8);
                     // force the height to 8px
-                    this.Height = 8;
+                    Height = 8;
 
                     // draw the background color for our control image
-                    if (hot)
+                    if (_hot)
                     {
-                        g.FillRectangle(brush_hotColor, new Rectangle(rr.X, rr.Y + 1, 115, 6));
+                        g.FillRectangle(brushHotColor, new Rectangle(_rr.X, _rr.Y + 1, 115, 6));
                     }
                     else
                     {
-                        g.FillRectangle(brush_backColor, new Rectangle(rr.X, rr.Y + 1, 115, 6));
+                        g.FillRectangle(brushBackColor, new Rectangle(_rr.X, _rr.Y + 1, 115, 6));
                     }
 
                     // draw the left & right lines for our control image
                     using (Pen pn = new Pen(SystemColors.ControlDark, 1))
                     {
-                        g.DrawLine(pn, rr.X, rr.Y + 1, rr.X, rr.Y + rr.Height - 2);
-                        g.DrawLine(pn, rr.X + rr.Width, rr.Y + 1, rr.X + rr.Width, rr.Y + rr.Height - 2);
+                        g.DrawLine(pn, _rr.X, _rr.Y + 1, _rr.X, _rr.Y + _rr.Height - 2);
+                        g.DrawLine(pn, _rr.X + _rr.Width, _rr.Y + 1, _rr.X + _rr.Width, _rr.Y + _rr.Height - 2);
                     }
-                    if (this.Enabled)
+                    if (Enabled)
                     {
                         // draw the arrows for our control image
                         // the ArrowPointArray is a point array that defines an arrow shaped polygon
-                        g.FillPolygon(brush_controlDarkDark, ArrowPointArray(rr.X + 3, rr.Y + 2));
-                        g.FillPolygon(brush_controlDarkDark, ArrowPointArray(rr.X + rr.Width - 9, rr.Y + 2));
+                        g.FillPolygon(brushControlDarkDark, ArrowPointArray(_rr.X + 3, _rr.Y + 2));
+                        g.FillPolygon(brushControlDarkDark, ArrowPointArray(_rr.X + _rr.Width - 9, _rr.Y + 2));
                     }
 
                     // draw the dots for our control image using a loop
-                    int x = rr.X + 14;
-                    int y = rr.Y + 3;
+                    int x = _rr.X + 14;
+                    int y = _rr.Y + 3;
 
                     // Visual Styles added in version 1.1
-                    switch (visualStyle)
+                    switch (_visualStyle)
                     {
                         case VisualStyles.Mozilla:
 
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawLine(pen_controlLightLight, x + (i * 3), y, x + 1 + (i * 3), y + 1);
+                                g.DrawLine(penControlLightLight, x + i * 3, y, x + 1 + i * 3, y + 1);
                                 // dark dot
-                                g.DrawLine(pen_controlDarkDark, x + 1 + (i * 3), y + 1, x + 2 + (i * 3), y + 2);
+                                g.DrawLine(penControlDarkDark, x + 1 + i * 3, y + 1, x + 2 + i * 3, y + 2);
                                 // overdraw the background color as we actually drew 2px diagonal lines, not just dots
-                                if (hot)
+                                if (_hot)
                                 {
-                                    g.DrawLine(pen_hotColor, x + 1 + (i * 3), y + 2, x + 2 + (i * 3), y + 2);
+                                    g.DrawLine(penHotColor, x + 1 + i * 3, y + 2, x + 2 + i * 3, y + 2);
                                 }
                                 else
                                 {
-                                    g.DrawLine(pen_backColor, x + 1 + (i * 3), y + 2, x + 2 + (i * 3), y + 2);
+                                    g.DrawLine(penBackColor, x + 1 + i * 3, y + 2, x + 2 + i * 3, y + 2);
                                 }
                             }
                             break;
@@ -740,23 +690,23 @@ namespace FiddlerControls
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(pen_controlLightLight, x + 1 + (i * 3), y, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1 + i * 3, y, 1, 1);
                                 // dark dot
-                                g.DrawRectangle(pen_controlDark, x + (i * 3), y - 1, 1, 1);
+                                g.DrawRectangle(penControlDark, x + i * 3, y - 1, 1, 1);
                                 ++i;
                                 // light dot
-                                g.DrawRectangle(pen_controlLightLight, x + 1 + (i * 3), y + 2, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1 + i * 3, y + 2, 1, 1);
                                 // dark dot
-                                g.DrawRectangle(pen_controlDark, x + (i * 3), y + 1, 1, 1);
+                                g.DrawRectangle(penControlDark, x + i * 3, y + 1, 1, 1);
                             }
                             break;
 
-                        case VisualStyles.Win9x:
+                        case VisualStyles.Win9X:
 
-                            g.DrawLine(pen_controlLightLight, x, y, x, y + 2);
-                            g.DrawLine(pen_controlLightLight, x, y, x + 88, y);
-                            g.DrawLine(pen_controlDark, x, y + 2, x + 88, y + 2);
-                            g.DrawLine(pen_controlDark, x + 88, y, x + 88, y + 2);
+                            g.DrawLine(penControlLightLight, x, y, x, y + 2);
+                            g.DrawLine(penControlLightLight, x, y, x + 88, y);
+                            g.DrawLine(penControlDark, x, y + 2, x + 88, y + 2);
+                            g.DrawLine(penControlDark, x + 88, y, x + 88, y + 2);
                             break;
 
                         case VisualStyles.XP:
@@ -764,14 +714,14 @@ namespace FiddlerControls
                             for (int i = 0; i < 18; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(pen_controlLight, x + (i * 5), y, 2, 2);
+                                g.DrawRectangle(penControlLight, x + i * 5, y, 2, 2);
                                 // light light dot
-                                g.DrawRectangle(pen_controlLightLight, x + 1 + (i * 5), y + 1, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1 + i * 5, y + 1, 1, 1);
                                 // dark dark dot
-                                g.DrawRectangle(pen_controlDarkDark, x + (i * 5), y, 1, 1);
+                                g.DrawRectangle(penControlDarkDark, x + i * 5, y, 1, 1);
                                 // dark fill
-                                g.DrawLine(pen_controlDark, x + (i * 5), y, x + (i * 5) + 1, y);
-                                g.DrawLine(pen_controlDark, x + (i * 5), y, x + (i * 5), y + 1);
+                                g.DrawLine(penControlDark, x + i * 5, y, x + i * 5 + 1, y);
+                                g.DrawLine(penControlDark, x + i * 5, y, x + i * 5, y + 1);
                             }
                             break;
 
@@ -779,57 +729,51 @@ namespace FiddlerControls
 
                             for (int i = 0; i < 44; ++i)
                             {
-                                g.DrawLine(pen_controlDark, x + (i * 2), y, x + (i * 2), y + 2);
+                                g.DrawLine(penControlDark, x + i * 2, y, x + i * 2, y + 2);
                             }
 
                             break;
                     }
 
                     // Added in version 1.3
-                    if (this.borderStyle != System.Windows.Forms.Border3DStyle.Flat)
+                    if (_borderStyle != Border3DStyle.Flat)
                     {
                         // Paint the control border
-                        ControlPaint.DrawBorder3D(e.Graphics, this.ClientRectangle, this.borderStyle, Border3DSide.Top);
-                        ControlPaint.DrawBorder3D(e.Graphics, this.ClientRectangle, this.borderStyle, Border3DSide.Bottom);
+                        ControlPaint.DrawBorder3D(e.Graphics, ClientRectangle, _borderStyle, Border3DSide.Top);
+                        ControlPaint.DrawBorder3D(e.Graphics, ClientRectangle, _borderStyle, Border3DSide.Bottom);
                     }
                 }
-
-                #endregion
-
                 else
                 {
                     throw new Exception("The Collapsible Splitter control cannot have the Filled or None Dockstyle property");
                 }
 
                 // dispose the Graphics objects
-                pen_controlLightLight.Dispose();
-                pen_controlLight.Dispose();
-                pen_controlDark.Dispose();
-                pen_backColor.Dispose();
-                pen_hotColor.Dispose();
-                pen_controlDarkDark.Dispose();
+                penControlLightLight.Dispose();
+                penControlLight.Dispose();
+                penControlDark.Dispose();
+                penBackColor.Dispose();
+                penHotColor.Dispose();
+                penControlDarkDark.Dispose();
 
-                brush_controlDark.Dispose();
-                brush_controlDarkDark.Dispose();
-                brush_backColor.Dispose();
-                brush_hotColor.Dispose();
+                brushControlDark.Dispose();
+                brushControlDarkDark.Dispose();
+                brushBackColor.Dispose();
+                brushHotColor.Dispose();
             }
         }
-        #endregion
-
-        #region Arrow Polygon Array
 
         // This creates a point array to draw a arrow-like polygon
         private Point[] ArrowPointArray(int x, int y)
         {
             Point[] point = new Point[3];
 
-            if (controlToHide != null)
+            if (ControlToHide != null)
             {
                 // decide which direction the arrow will point
                 if (
-                    (this.Dock == DockStyle.Right && controlToHide.Visible)
-                    || (this.Dock == DockStyle.Left && !controlToHide.Visible)
+                    Dock == DockStyle.Right && ControlToHide.Visible
+                    || Dock == DockStyle.Left && !ControlToHide.Visible
                     )
                 {
                     // right arrow
@@ -838,8 +782,8 @@ namespace FiddlerControls
                     point[2] = new Point(x, y + 6);
                 }
                 else if (
-                    (this.Dock == DockStyle.Right && !controlToHide.Visible)
-                    || (this.Dock == DockStyle.Left && controlToHide.Visible)
+                    Dock == DockStyle.Right && !ControlToHide.Visible
+                    || Dock == DockStyle.Left && ControlToHide.Visible
                     )
                 {
                     // left arrow
@@ -848,11 +792,11 @@ namespace FiddlerControls
                     point[2] = new Point(x + 3, y + 6);
                 }
 
-                    // Up/Down arrows added in v1.2
+                // Up/Down arrows added in v1.2
 
                 else if (
-                    (this.Dock == DockStyle.Top && controlToHide.Visible)
-                    || (this.Dock == DockStyle.Bottom && !controlToHide.Visible)
+                    Dock == DockStyle.Top && ControlToHide.Visible
+                    || Dock == DockStyle.Bottom && !ControlToHide.Visible
                     )
                 {
                     // up arrow
@@ -861,8 +805,8 @@ namespace FiddlerControls
                     point[2] = new Point(x, y + 4);
                 }
                 else if (
-                    (this.Dock == DockStyle.Top && !controlToHide.Visible)
-                    || (this.Dock == DockStyle.Bottom && controlToHide.Visible)
+                    Dock == DockStyle.Top && !ControlToHide.Visible
+                    || Dock == DockStyle.Bottom && ControlToHide.Visible
                     )
                 {
                     // down arrow
@@ -874,10 +818,6 @@ namespace FiddlerControls
 
             return point;
         }
-
-        #endregion
-
-        #region Color Calculator
 
         // this method was borrowed from the RichUI Control library by Sajith M
         private static Color CalculateColor(Color front, Color back, int alpha)
@@ -903,10 +843,6 @@ namespace FiddlerControls
 
             return Color.FromArgb(255, newRed, newGreen, newBlue);
         }
-
-        #endregion
-
-        #endregion
     }
 
     /// <summary>
@@ -915,10 +851,6 @@ namespace FiddlerControls
     /// </summary>
     public class CollapsibleSplitterDesigner : System.Windows.Forms.Design.ControlDesigner
     {
-        public CollapsibleSplitterDesigner()
-        {
-        }
-
         protected override void PreFilterProperties(System.Collections.IDictionary properties)
         {
             properties.Remove("IsCollapsed");

@@ -15,12 +15,12 @@ namespace Ultima.Helpers
                 throw new ArgumentNullException(nameof(bmp));
             }
 
-            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            var data = bmp.LockBits(rect, ImageLockMode.ReadOnly, format ?? bmp.PixelFormat);
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadOnly, format ?? bmp.PixelFormat);
             try
             {
-                var size = data.Stride * bmp.Height;
-                var buffer = new byte[size];
+                int size = data.Stride * bmp.Height;
+                byte[] buffer = new byte[size];
                 Marshal.Copy(data.Scan0, buffer, 0, size);
                 return buffer;
             }

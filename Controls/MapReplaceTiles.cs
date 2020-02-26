@@ -20,40 +20,54 @@ namespace FiddlerControls
 {
     public partial class MapReplaceTiles : Form
     {
-        private Ultima.Map Map;
-        private List<ModArea> toReplace;
+        private readonly Ultima.Map _map;
+        private List<ModArea> _toReplace;
 
         public MapReplaceTiles(Ultima.Map map)
         {
             InitializeComponent();
-            Map = map;
+            _map = map;
         }
 
         private void OnReplace(object sender, EventArgs e)
         {
             string file = textBox1.Text;
-            if (String.IsNullOrEmpty(file))
+            if (string.IsNullOrEmpty(file))
+            {
                 return;
+            }
+
             if (!File.Exists(file))
+            {
                 return;
+            }
+
             if (!LoadFile(file))
+            {
                 return;
-            string path = FiddlerControls.Options.OutputPath;
-            ReplaceMap(path, Map.FileIndex, Map.Width, Map.Height);
-            ReplaceStatic(path, Map.FileIndex, Map.Width, Map.Height);
+            }
+
+            string path = Options.OutputPath;
+            ReplaceMap(path, _map.FileIndex, _map.Width, _map.Height);
+            ReplaceStatic(path, _map.FileIndex, _map.Width, _map.Height);
         }
 
         private void OnBrowse(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            dialog.Title = "Choose xml file to open";
-            dialog.CheckFileExists = true;
-            dialog.Filter = "xml files (*.xml)|*.xml";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Choose xml file to open",
+                CheckFileExists = true,
+                Filter = "xml files (*.xml)|*.xml"
+            };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 if (!File.Exists(dialog.FileName))
+                {
                     return;
+                }
+
                 textBox1.Text = dialog.FileName;
             }
             dialog.Dispose();
@@ -61,7 +75,7 @@ namespace FiddlerControls
 
         private bool LoadFile(string file)
         {
-            toReplace = new List<ModArea>();
+            _toReplace = new List<ModArea>();
             XmlDocument dom = new XmlDocument();
             dom.Load(file);
             try
@@ -71,46 +85,57 @@ namespace FiddlerControls
                 foreach (XmlNode xNode in xRoot.SelectNodes("Area"))
                 {
                     if (xNode.NodeType == XmlNodeType.Comment)
+                    {
                         continue;
-                    
-                    int sx, sy, ex, ey;
-                    FiddlerControls.Utils.ConvertStringToInt(xNode.Attributes["StartX"].InnerText, out sx);
-                    FiddlerControls.Utils.ConvertStringToInt(xNode.Attributes["StartY"].InnerText, out sy);
-                    FiddlerControls.Utils.ConvertStringToInt(xNode.Attributes["EndX"].InnerText, out ex);
-                    FiddlerControls.Utils.ConvertStringToInt(xNode.Attributes["EndY"].InnerText, out ey);
+                    }
 
-                    Dictionary<ushort, ushort> ConvertDictLand = new Dictionary<ushort, ushort>();
-                    Dictionary<ushort, ushort> ConvertDictStatic = new Dictionary<ushort, ushort>();
+                    Utils.ConvertStringToInt(xNode.Attributes["StartX"].InnerText, out int sx);
+                    Utils.ConvertStringToInt(xNode.Attributes["StartY"].InnerText, out int sy);
+                    Utils.ConvertStringToInt(xNode.Attributes["EndX"].InnerText, out int ex);
+                    Utils.ConvertStringToInt(xNode.Attributes["EndY"].InnerText, out int ey);
 
-                    foreach(XmlNode xArea in xNode.ChildNodes)
+                    Dictionary<ushort, ushort> convertDictLand = new Dictionary<ushort, ushort>();
+                    Dictionary<ushort, ushort> convertDictStatic = new Dictionary<ushort, ushort>();
+
+                    foreach (XmlNode xArea in xNode.ChildNodes)
                     {
                         if (xArea.NodeType == XmlNodeType.Comment)
+                        {
                             continue;
+                        }
 
-                        int temp;
                         ushort convfrom, convto;
-                        if (FiddlerControls.Utils.ConvertStringToInt(xArea.Attributes["from"].InnerText, out temp))
+                        if (Utils.ConvertStringToInt(xArea.Attributes["from"].InnerText, out int temp))
+                        {
                             convfrom = (ushort)temp;
+                        }
                         else
+                        {
                             continue;
-                        if (FiddlerControls.Utils.ConvertStringToInt(xArea.Attributes["to"].InnerText, out temp))
+                        }
+
+                        if (Utils.ConvertStringToInt(xArea.Attributes["to"].InnerText, out temp))
+                        {
                             convto = (ushort)temp;
+                        }
                         else
+                        {
                             continue;
+                        }
 
                         switch (xArea.Name.ToLower())
                         {
                             case "static":
-                                ConvertDictStatic.Add(convfrom, convto);
+                                convertDictStatic.Add(convfrom, convto);
                                 break;
                             case "landtile":
-                                ConvertDictLand.Add(convfrom, convto);
+                                convertDictLand.Add(convfrom, convto);
                                 break;
                             default: break;
                         }
                     }
 
-                    toReplace.Add(new ModArea(Map, sx, sy, ex, ey, ConvertDictLand, ConvertDictStatic));
+                    _toReplace.Add(new ModArea(_map, sx, sy, ex, ey, convertDictLand, convertDictStatic));
                 }
             }
             catch
@@ -122,21 +147,23 @@ namespace FiddlerControls
 
         private void ReplaceMap(string path, int map, int width, int height)
         {
-            string mapPath = Files.GetFilePath(String.Format("map{0}.mul", map));
-            FileStream m_map;
-            BinaryReader m_mapReader;
+            string mapPath = Files.GetFilePath($"map{map}.mul");
+            FileStream mMap;
+            BinaryReader mMapReader;
             if (mapPath != null)
             {
-                m_map = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                m_mapReader = new BinaryReader(m_map);
+                mMap = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                mMapReader = new BinaryReader(mMap);
             }
             else
+            {
                 return;
+            }
 
             int blockx = width >> 3;
             int blocky = height >> 3;
 
-            string mul = Path.Combine(path, String.Format("map{0}.mul", map));
+            string mul = Path.Combine(path, $"map{map}.mul");
             using (FileStream fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (BinaryWriter binmul = new BinaryWriter(fsmul))
@@ -147,34 +174,45 @@ namespace FiddlerControls
                         {
                             try
                             {
-                                m_mapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
-                                int header = m_mapReader.ReadInt32();
+                                mMapReader.BaseStream.Seek((x * blocky + y) * 196, SeekOrigin.Begin);
+                                int header = mMapReader.ReadInt32();
                                 binmul.Write(header);
                                 for (int i = 0; i < 64; ++i)
                                 {
-                                    ushort tileid = m_mapReader.ReadUInt16();
-                                    int temp = ModArea.IsLandReplace(toReplace, tileid, x, y, i);
-                                    sbyte z = m_mapReader.ReadSByte();
-                                    if ((tileid < 0) || (tileid >= 0x4000))
+                                    ushort tileid = mMapReader.ReadUInt16();
+                                    int temp = ModArea.IsLandReplace(_toReplace, tileid, x, y, i);
+                                    sbyte z = mMapReader.ReadSByte();
+                                    if (tileid >= 0x4000)
+                                    {
                                         tileid = 0;
+                                    }
                                     else if (temp != -1)
+                                    {
                                         tileid = (ushort)temp;
+                                    }
+
                                     if (z < -128)
+                                    {
                                         z = -128;
+                                    }
+
                                     if (z > 127)
+                                    {
                                         z = 127;
+                                    }
+
                                     binmul.Write(tileid);
                                     binmul.Write(z);
                                 }
                             }
                             catch //fill rest
                             {
-                                binmul.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
+                                binmul.BaseStream.Seek((x * blocky + y) * 196, SeekOrigin.Begin);
                                 for (; x < blockx; ++x)
                                 {
                                     for (; y < blocky; ++y)
                                     {
-                                        binmul.Write((int)0);
+                                        binmul.Write(0);
                                         for (int i = 0; i < 64; ++i)
                                         {
                                             binmul.Write((short)0);
@@ -189,40 +227,43 @@ namespace FiddlerControls
                     }
                 }
             }
-            m_mapReader.Close();
+            mMapReader.Close();
         }
 
         private void ReplaceStatic(string path, int map, int width, int height)
         {
-            string indexPath = Files.GetFilePath(String.Format("staidx{0}.mul", map));
-            FileStream m_Index;
-            BinaryReader m_IndexReader;
+            string indexPath = Files.GetFilePath($"staidx{map}.mul");
+            FileStream mIndex;
+            BinaryReader mIndexReader;
             if (indexPath != null)
             {
-                m_Index = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                m_IndexReader = new BinaryReader(m_Index);
+                mIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                mIndexReader = new BinaryReader(mIndex);
             }
             else
+            {
                 return;
+            }
 
-            string staticsPath = Files.GetFilePath(String.Format("statics{0}.mul", map));
+            string staticsPath = Files.GetFilePath($"statics{map}.mul");
 
-            FileStream m_Statics;
-            BinaryReader m_StaticsReader;
+            FileStream mStatics;
+            BinaryReader mStaticsReader;
             if (staticsPath != null)
             {
-                m_Statics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                m_StaticsReader = new BinaryReader(m_Statics);
+                mStatics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                mStaticsReader = new BinaryReader(mStatics);
             }
             else
+            {
                 return;
-
+            }
 
             int blockx = width >> 3;
             int blocky = height >> 3;
 
-            string idx = Path.Combine(path, String.Format("staidx{0}.mul", map));
-            string mul = Path.Combine(path, String.Format("statics{0}.mul", map));
+            string idx = Path.Combine(path, $"staidx{map}.mul");
+            string mul = Path.Combine(path, $"statics{map}.mul");
             using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
                               fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
@@ -235,79 +276,93 @@ namespace FiddlerControls
                         {
                             try
                             {
-                                m_IndexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
-                                int lookup = m_IndexReader.ReadInt32();
-                                int length = m_IndexReader.ReadInt32();
-                                int extra = m_IndexReader.ReadInt32();
+                                mIndexReader.BaseStream.Seek((x * blocky + y) * 12, SeekOrigin.Begin);
+                                int lookup = mIndexReader.ReadInt32();
+                                int length = mIndexReader.ReadInt32();
+                                int extra = mIndexReader.ReadInt32();
 
-                                if ((lookup < 0 || length <= 0))
+                                if (lookup < 0 || length <= 0)
                                 {
-                                    binidx.Write((int)-1); // lookup
-                                    binidx.Write((int)-1); // length
-                                    binidx.Write((int)-1); // extra
+                                    binidx.Write(-1); // lookup
+                                    binidx.Write(-1); // length
+                                    binidx.Write(-1); // extra
                                 }
                                 else
                                 {
-                                    if ((lookup >= 0) && (length > 0))
-                                        m_Statics.Seek(lookup, SeekOrigin.Begin);
-
-                                    int fsmullength = (int)fsmul.Position;
-                                    int count = length / 7;
-
-                                    bool firstitem = true;
-                                    for (int i = 0; i < count; ++i)
+                                    if (lookup >= 0 && length > 0)
                                     {
-                                        ushort graphic = m_StaticsReader.ReadUInt16();
-                                        byte sx = m_StaticsReader.ReadByte();
-                                        byte sy = m_StaticsReader.ReadByte();
-                                        sbyte sz = m_StaticsReader.ReadSByte();
-                                        short shue = m_StaticsReader.ReadInt16();
-                                        int temp = ModArea.IsStaticReplace(toReplace, graphic, x, y, i);
-                                        if ((graphic >= 0) && (graphic <= Art.GetMaxItemID()))
-                                        {
-                                            if (shue < 0)
-                                                shue = 0;
-                                            if (firstitem)
-                                            {
-                                                binidx.Write((int)fsmul.Position); //lookup
-                                                firstitem = false;
-                                            }
-                                            if (temp != -1)
-                                                graphic = (ushort)temp;
-                                            binmul.Write(graphic);
-                                            binmul.Write(sx);
-                                            binmul.Write(sy);
-                                            binmul.Write(sz);
-                                            binmul.Write(shue);
-                                        }
+                                        mStatics.Seek(lookup, SeekOrigin.Begin);
                                     }
 
-                                    fsmullength = (int)fsmul.Position - fsmullength;
-                                    if (fsmullength > 0)
+                                    int fsMulLength = (int)fsmul.Position;
+                                    int count = length / 7;
+
+                                    bool firstItem = true;
+                                    for (int i = 0; i < count; ++i)
                                     {
-                                        binidx.Write(fsmullength); //length
+                                        ushort graphic = mStaticsReader.ReadUInt16();
+                                        byte sx = mStaticsReader.ReadByte();
+                                        byte sy = mStaticsReader.ReadByte();
+                                        sbyte sz = mStaticsReader.ReadSByte();
+                                        short sHue = mStaticsReader.ReadInt16();
+                                        int temp = ModArea.IsStaticReplace(_toReplace, graphic, x, y, i);
+                                        // TODO: first expression always false?
+                                        if (graphic < 0 || graphic > Art.GetMaxItemId())
+                                        {
+                                            continue;
+                                        }
+
+                                        if (sHue < 0)
+                                        {
+                                            sHue = 0;
+                                        }
+
+                                        if (firstItem)
+                                        {
+                                            binidx.Write((int)fsmul.Position); //lookup
+                                            firstItem = false;
+                                        }
+                                        if (temp != -1)
+                                        {
+                                            graphic = (ushort)temp;
+                                        }
+
+                                        binmul.Write(graphic);
+                                        binmul.Write(sx);
+                                        binmul.Write(sy);
+                                        binmul.Write(sz);
+                                        binmul.Write(sHue);
+                                    }
+
+                                    fsMulLength = (int)fsmul.Position - fsMulLength;
+                                    if (fsMulLength > 0)
+                                    {
+                                        binidx.Write(fsMulLength); //length
                                         if (extra == -1)
+                                        {
                                             extra = 0;
+                                        }
+
                                         binidx.Write(extra); //extra
                                     }
                                     else
                                     {
-                                        binidx.Write((int)-1); //lookup
-                                        binidx.Write((int)-1); //length
-                                        binidx.Write((int)-1); //extra
+                                        binidx.Write(-1); //lookup
+                                        binidx.Write(-1); //length
+                                        binidx.Write(-1); //extra
                                     }
                                 }
                             }
                             catch // fill the rest
                             {
-                                binidx.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
+                                binidx.BaseStream.Seek((x * blocky + y) * 12, SeekOrigin.Begin);
                                 for (; x < blockx; ++x)
                                 {
                                     for (; y < blocky; ++y)
                                     {
-                                        binidx.Write((int)-1); //lookup
-                                        binidx.Write((int)-1); //length
-                                        binidx.Write((int)-1); //extra
+                                        binidx.Write(-1); //lookup
+                                        binidx.Write(-1); //length
+                                        binidx.Write(-1); //extra
                                     }
                                     y = 0;
                                 }
@@ -317,115 +372,132 @@ namespace FiddlerControls
                     }
                 }
             }
-            m_IndexReader.Close();
-            m_StaticsReader.Close();
+            mIndexReader.Close();
+            mStaticsReader.Close();
         }
     }
 
     public class RectangleArea
     {
-        private int startx;
-        private int starty;
-        private int endx;
-        private int endy;
-
         public RectangleArea()
         {
-            startx = 0;
-            starty = 0;
-            endx = 0;
-            endy = 0;
+            StartX = 0;
+            StartY = 0;
+            EndX = 0;
+            EndY = 0;
         }
 
         public RectangleArea(Ultima.Map map, int sx, int sy, int ex, int ey) : this()
         {
-            if(map == null)
+            if (map == null)
+            {
                 return;
+            }
 
-            if(sx < 0 || sx > map.Width)
+            if (sx < 0 || sx > map.Width)
+            {
                 sx = 0;
+            }
 
-            if(sy < 0 || sy > map.Height)
+            if (sy < 0 || sy > map.Height)
+            {
                 sy = 0;
+            }
 
-            if(ex < startx || ex > map.Width)
+            if (ex < StartX || ex > map.Width)
+            {
                 ex = sx;
+            }
 
-            if(ey < starty || ey > map.Height)
+            if (ey < StartY || ey > map.Height)
+            {
                 ey = sy;
+            }
 
-            startx = sx;
-            starty = sy;
-            endx = ex;
-            endy = ey;
+            StartX = sx;
+            StartY = sy;
+            EndX = ex;
+            EndY = ey;
         }
 
-        public int startX { get { return startx; } }
-        public int startY { get { return starty; } }
-        public int endX { get { return endx; } }
-        public int endY { get { return endy; } }
+        public int StartX { get; }
+        public int StartY { get; }
+        public int EndX { get; }
+        public int EndY { get; }
     }
 
     public class ModArea
     {
-        private RectangleArea area;
-        private Dictionary<ushort, ushort> ConvertDictLand;
-        private Dictionary<ushort, ushort> ConvertDictStatic;
+        private readonly RectangleArea _area;
+        private readonly Dictionary<ushort, ushort> _convertDictLand;
+        private readonly Dictionary<ushort, ushort> _convertDictStatic;
 
         public ModArea(Ultima.Map map, int sx, int sy, int ex, int ey, Dictionary<ushort, ushort> toConvLand, Dictionary<ushort, ushort> toConvStatic)
         {
-            area = new RectangleArea(map, sx, sy, ex, ey);
-            ConvertDictLand = toConvLand;
-            ConvertDictStatic = toConvStatic;
+            _area = new RectangleArea(map, sx, sy, ex, ey);
+            _convertDictLand = toConvLand;
+            _convertDictStatic = toConvStatic;
         }
 
         public int IsStaticReplace(ushort tileid, int x, int y)
         {
-            if (x > area.endX || x < area.startX || y > area.endY || y < area.startY)
+            if (x > _area.EndX || x < _area.StartX || y > _area.EndY || y < _area.StartY)
+            {
                 return -1;
+            }
 
-            if (ConvertDictStatic.ContainsKey(tileid))
-                return ConvertDictStatic[tileid];
+            if (_convertDictStatic.ContainsKey(tileid))
+            {
+                return _convertDictStatic[tileid];
+            }
 
             return -1;
         }
 
         public int IsLandReplace(ushort tileid, int x, int y)
         {
-            if (x > area.endX || x < area.startX || y > area.endY || y < area.startY)
-                return -1;
-
-            if (ConvertDictLand.ContainsKey(tileid))
-                return ConvertDictLand[tileid];
-
-            return -1;
-        }
-
-        public static int IsStaticReplace(List<ModArea> list, ushort tileid, int BlockX, int BlockY, int Cell)
-        {
-            int x = ( BlockX * 8)  + ( Cell % 8 ); 
-            int y = (BlockY * 8 ) + ( Cell / 8 );
-
-            foreach(ModArea area in list)
+            if (x > _area.EndX || x < _area.StartX || y > _area.EndY || y < _area.StartY)
             {
-                int temp = area.IsStaticReplace(tileid, x, y);
-                if (temp != -1)
-                    return temp;
+                return -1;
+            }
+
+            if (_convertDictLand.ContainsKey(tileid))
+            {
+                return _convertDictLand[tileid];
             }
 
             return -1;
         }
 
-        public static int IsLandReplace(List<ModArea> list, ushort tileid, int BlockX, int BlockY, int Cell)
+        public static int IsStaticReplace(List<ModArea> list, ushort tileid, int blockX, int blockY, int cell)
         {
-            int x = (BlockX * 8) + (Cell % 8);
-            int y = (BlockY * 8) + (Cell / 8);
+            int x = blockX * 8 + cell % 8;
+            int y = blockY * 8 + cell / 8;
+
+            foreach (ModArea area in list)
+            {
+                int temp = area.IsStaticReplace(tileid, x, y);
+                if (temp != -1)
+                {
+                    return temp;
+                }
+            }
+
+            return -1;
+        }
+
+        public static int IsLandReplace(List<ModArea> list, ushort tileid, int blockX, int blockY, int cell)
+        {
+            int x = blockX * 8 + cell % 8;
+            int y = blockY * 8 + cell / 8;
 
             foreach (ModArea area in list)
             {
                 int temp = area.IsLandReplace(tileid, x, y);
                 if (temp != -1)
+                {
                     return temp;
+                }
             }
 
             return -1;

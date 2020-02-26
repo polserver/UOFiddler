@@ -19,7 +19,7 @@ namespace FiddlerPlugin
         public Option()
         {
             InitializeComponent();
-            this.Icon = FiddlerControls.Options.GetFiddlerIcon();
+            Icon = FiddlerControls.Options.GetFiddlerIcon();
             cmdtext.Text = SendItemPlugin.Cmd;
             argstext.Text = SendItemPlugin.CmdArg;
             SendOnClick.Checked = SendItemPlugin.OverrideClick;

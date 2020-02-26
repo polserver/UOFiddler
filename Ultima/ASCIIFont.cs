@@ -5,15 +5,15 @@ using System.IO;
 // ascii text support written by arul
 namespace Ultima
 {
-    public sealed class ASCIIFont
+    public sealed class AsciiFont
     {
-        public byte Header { get; private set; }
+        public byte Header { get; }
         public byte[] Unk { get; set; }
         public Bitmap[] Characters { get; set; }
         public int Height { get; set; }
 
 
-        public ASCIIFont(byte header)
+        public AsciiFont(byte header)
         {
             Header = header;
             Height = 0;
@@ -28,7 +28,7 @@ namespace Ultima
         /// <returns></returns>
         public Bitmap GetBitmap(char character)
         {
-            return Characters[(((((int)character) - 0x20) & 0x7FFFFFFF) % 224)];
+            return Characters[(((character - 0x20) & 0x7FFFFFFF) % 224)];
         }
 
         public int GetWidth(string text)
@@ -51,22 +51,22 @@ namespace Ultima
             Height = import.Height;
         }
 
-        public static ASCIIFont GetFixed(int font)
+        public static AsciiFont GetFixed(int font)
         {
             if (font < 0 || font > 9)
             {
-                return ASCIIText.Fonts[3];
+                return AsciiText.Fonts[3];
             }
 
-            return ASCIIText.Fonts[font];
+            return AsciiText.Fonts[font];
         }
     }
 
-    public static class ASCIIText
+    public static class AsciiText
     {
-        public static ASCIIFont[] Fonts = new ASCIIFont[10];
+        public static AsciiFont[] Fonts = new AsciiFont[10];
 
-        static ASCIIText()
+        static AsciiText()
         {
             Initialize();
         }
@@ -90,7 +90,7 @@ namespace Ultima
                         for (int i = 0; i < 10; ++i)
                         {
                             byte header = *read++;
-                            Fonts[i] = new ASCIIFont(header);
+                            Fonts[i] = new AsciiFont(header);
 
                             for (int k = 0; k < 224; ++k)
                             {
@@ -131,9 +131,9 @@ namespace Ultima
             }
         }
 
-        public static unsafe void Save(string FileName)
+        public static unsafe void Save(string fileName)
         {
-            using (FileStream fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (BinaryWriter bin = new BinaryWriter(fs))
                 {
@@ -175,7 +175,7 @@ namespace Ultima
         /// <returns></returns>
         public static Bitmap DrawText(int fontId, string text)
         {
-            ASCIIFont font = ASCIIFont.GetFixed(fontId);
+            AsciiFont font = AsciiFont.GetFixed(fontId);
             Bitmap result = new Bitmap(font.GetWidth(text) + 2, font.Height + 2);
 
             int dx = 2;

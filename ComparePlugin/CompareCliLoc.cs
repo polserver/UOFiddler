@@ -23,110 +23,140 @@ namespace ComparePlugin
         public CompareCliLoc()
         {
             InitializeComponent();
-            source = new BindingSource();
-            sortorder = SortOrder.Ascending;
-            sortcolumn = 0;
+            _source = new BindingSource();
+            _sortOrder = SortOrder.Ascending;
+            _sortColumn = 0;
         }
 
-        private static StringList cliloc1;
-        private static StringList cliloc2;
-        private static BindingSource source;
-        static Dictionary<int, CompareEntry> comparelist = new Dictionary<int, CompareEntry>();
-        static List<CompareEntry> list = new List<CompareEntry>();
-        static bool ShowOnlyDiff = false;
+        private static StringList _cliloc1;
+        private static StringList _cliloc2;
+        private static BindingSource _source;
+        private static readonly Dictionary<int, CompareEntry> CompareList = new Dictionary<int, CompareEntry>();
+        private static List<CompareEntry> _list = new List<CompareEntry>();
+        private static bool _showOnlyDiff;
 
-        private SortOrder sortorder;
-        private int sortcolumn;
+        private SortOrder _sortOrder;
+        private int _sortColumn;
 
         private void OnLoad1(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(textBox1.Text))
+            if (string.IsNullOrEmpty(textBox1.Text))
+            {
                 return;
+            }
 
             string path = textBox1.Text;
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                cliloc1 = new StringList("1", path);
-                cliloc1.Entries.Sort(new StringList.NumberComparer(false));
-                if (cliloc2 != null)
-                    BuildList();
+                return;
+            }
+
+            _cliloc1 = new StringList("1", path);
+            _cliloc1.Entries.Sort(new StringList.NumberComparer(false));
+
+            if (_cliloc2 != null)
+            {
+                BuildList();
             }
         }
 
         private void OnLoad2(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(textBox2.Text))
+            if (string.IsNullOrEmpty(textBox2.Text))
+            {
                 return;
+            }
 
             string path = textBox2.Text;
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                cliloc2 = new StringList("2", path);
-                cliloc2.Entries.Sort(new StringList.NumberComparer(false));
-                if (cliloc1 != null)
-                    BuildList();
+                return;
+            }
+
+            _cliloc2 = new StringList("2", path);
+            _cliloc2.Entries.Sort(new StringList.NumberComparer(false));
+
+            if (_cliloc1 != null)
+            {
+                BuildList();
             }
         }
 
         private void BuildList()
         {
-            if ((cliloc1 == null) || (cliloc2 == null))
-                return;
-            for (int i = 0; i < cliloc1.Entries.Count; i++)
+            if (_cliloc1 == null || _cliloc2 == null)
             {
-                CompareEntry entry = new CompareEntry();
-                entry.CompareResult = CompareEntry.CompareRes.NewIn1;
-                StringEntry entr = cliloc1.Entries[i];
+                return;
+            }
+
+            for (int i = 0; i < _cliloc1.Entries.Count; i++)
+            {
+                CompareEntry entry = new CompareEntry { CompareResult = CompareEntry.CompareRes.NewIn1 };
+                StringEntry entr = _cliloc1.Entries[i];
                 entry.Number = entr.Number;
                 entry.Text1 = entr.Text;
                 entry.Text2 = "";
-                comparelist.Add(entry.Number, entry);
+                CompareList.Add(entry.Number, entry);
             }
-            for (int i = 0; i < cliloc2.Entries.Count; i++)
+
+            for (int i = 0; i < _cliloc2.Entries.Count; i++)
             {
-                StringEntry entr = cliloc2.Entries[i];
-                if (comparelist.ContainsKey(entr.Number))
+                StringEntry entr = _cliloc2.Entries[i];
+                if (CompareList.ContainsKey(entr.Number))
                 {
-                    CompareEntry entr1 = comparelist[entr.Number];
+                    CompareEntry entr1 = CompareList[entr.Number];
                     entr1.Text2 = entr.Text;
-                    if (entr1.Text1 != entr.Text)
-                        entr1.CompareResult = CompareEntry.CompareRes.Diff;
-                    else
-                        entr1.CompareResult = CompareEntry.CompareRes.Equal;
+                    entr1.CompareResult = entr1.Text1 != entr.Text
+                        ? CompareEntry.CompareRes.Diff
+                        : CompareEntry.CompareRes.Equal;
                 }
                 else
                 {
-                    CompareEntry entry = new CompareEntry();
-                    entry.CompareResult = CompareEntry.CompareRes.NewIn2;
-                    entry.Number = entr.Number;
-                    entry.Text1 = "";
-                    entry.Text2 = entr.Text;
-                    comparelist.Add(entry.Number, entry);
+                    CompareEntry entry = new CompareEntry
+                    {
+                        CompareResult = CompareEntry.CompareRes.NewIn2,
+                        Number = entr.Number,
+                        Text1 = "",
+                        Text2 = entr.Text
+                    };
+                    CompareList.Add(entry.Number, entry);
                 }
             }
-            list = new List<CompareEntry>();
 
-            foreach (KeyValuePair<int, CompareEntry> key in comparelist)
+            _list = new List<CompareEntry>();
+
+            foreach (KeyValuePair<int, CompareEntry> key in CompareList)
             {
-                if (ShowOnlyDiff)
+                if (_showOnlyDiff)
                 {
                     if (key.Value.CompareResult == CompareEntry.CompareRes.Equal)
+                    {
                         continue;
+                    }
                 }
-                list.Add(key.Value);
 
+                _list.Add(key.Value);
             }
-            switch (sortcolumn)
+
+            switch (_sortColumn)
             {
-                case 0: list.Sort(new NumberComparer(sortorder == SortOrder.Descending)); break;
-                case 1: list.Sort(new TextComparer1(sortorder == SortOrder.Descending)); break;
-                case 2: list.Sort(new TextComparer2(sortorder == SortOrder.Descending)); break;
-                case 3: list.Sort(new FlagComparer(sortorder == SortOrder.Descending)); break;
+                case 0:
+                    _list.Sort(new NumberComparer(_sortOrder == SortOrder.Descending));
+                    break;
+                case 1:
+                    _list.Sort(new TextComparer1(_sortOrder == SortOrder.Descending));
+                    break;
+                case 2:
+                    _list.Sort(new TextComparer2(_sortOrder == SortOrder.Descending));
+                    break;
+                case 3:
+                    _list.Sort(new FlagComparer(_sortOrder == SortOrder.Descending));
+                    break;
             }
-            comparelist.Clear();
-            source = new BindingSource();
-            source.DataSource = list;
-            dataGridView1.DataSource = source;
+
+            CompareList.Clear();
+            _source = new BindingSource { DataSource = _list };
+            dataGridView1.DataSource = _source;
 
             if (dataGridView1.Columns.Count > 0)
             {
@@ -137,15 +167,19 @@ namespace ComparePlugin
                 dataGridView1.Columns[3].HeaderCell.SortGlyphDirection = SortOrder.None;
                 dataGridView1.Columns[3].Width = 105;
             }
-            dataGridView1.Invalidate();
 
+            dataGridView1.Invalidate();
         }
 
         private void CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if ((e.ColumnIndex == 1) || (e.ColumnIndex == 2)) //text1 & text2
+            if (e.ColumnIndex == 1 || e.ColumnIndex == 2) //text1 & text2
+            {
                 return;
-            CompareEntry entry = list[e.RowIndex];
+            }
+
+            CompareEntry entry = _list[e.RowIndex];
+
             switch (entry.CompareResult)
             {
                 case CompareEntry.CompareRes.Diff:
@@ -165,31 +199,41 @@ namespace ComparePlugin
 
         private void OnClickDirFile1(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            dialog.Title = "Choose Cliloc file to open";
-            dialog.CheckFileExists = true;
-            dialog.Filter = "cliloc files (cliloc.*)|cliloc.*";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Choose Cliloc file to open",
+                CheckFileExists = true,
+                Filter = "cliloc files (cliloc.*)|cliloc.*"
+            };
             if (dialog.ShowDialog() == DialogResult.OK)
+            {
                 textBox1.Text = dialog.FileName;
+            }
+
             dialog.Dispose();
         }
 
         private void OnClickDirFile2(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            dialog.Title = "Choose Cliloc file to open";
-            dialog.CheckFileExists = true;
-            dialog.Filter = "cliloc files (cliloc.*)|cliloc.*";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Choose Cliloc file to open",
+                CheckFileExists = true,
+                Filter = "cliloc files (cliloc.*)|cliloc.*"
+            };
             if (dialog.ShowDialog() == DialogResult.OK)
+            {
                 textBox2.Text = dialog.FileName;
+            }
+
             dialog.Dispose();
         }
 
         private void OnClickShowOnlyDiff(object sender, EventArgs e)
         {
-            ShowOnlyDiff = !ShowOnlyDiff;
+            _showOnlyDiff = !_showOnlyDiff;
             BuildList();
         }
 
@@ -199,9 +243,14 @@ namespace ComparePlugin
             {
                 int i;
                 if (dataGridView1.SelectedRows.Count > 0)
+                {
                     i = dataGridView1.SelectedRows[0].Index + 1;
+                }
                 else
+                {
                     i = 0;
+                }
+
                 for (; i < dataGridView1.RowCount; i++)
                 {
                     if ((CompareEntry.CompareRes)dataGridView1.Rows[i].Cells[3].Value != CompareEntry.CompareRes.Equal)
@@ -216,27 +265,35 @@ namespace ComparePlugin
 
         private void OnHeaderClicked(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (sortcolumn == e.ColumnIndex)
+            if (_sortColumn == e.ColumnIndex)
             {
-                if (sortorder == SortOrder.Ascending)
-                    sortorder = SortOrder.Descending;
-                else
-                    sortorder = SortOrder.Ascending;
+                _sortOrder = _sortOrder == SortOrder.Ascending
+                    ? SortOrder.Descending
+                    : SortOrder.Ascending;
             }
             else
             {
-                sortorder = SortOrder.Ascending;
-                dataGridView1.Columns[sortcolumn].HeaderCell.SortGlyphDirection = SortOrder.None;
+                _sortOrder = SortOrder.Ascending;
+                dataGridView1.Columns[_sortColumn].HeaderCell.SortGlyphDirection = SortOrder.None;
             }
-            dataGridView1.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortorder;
-            sortcolumn = e.ColumnIndex;
 
-            switch (sortcolumn)
+            dataGridView1.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = _sortOrder;
+            _sortColumn = e.ColumnIndex;
+
+            switch (_sortColumn)
             {
-                case 0: list.Sort(new NumberComparer(sortorder == SortOrder.Descending)); break;
-                case 1: list.Sort(new TextComparer1(sortorder == SortOrder.Descending)); break;
-                case 2: list.Sort(new TextComparer2(sortorder == SortOrder.Descending)); break;
-                case 3: list.Sort(new FlagComparer(sortorder == SortOrder.Descending)); break;
+                case 0:
+                    _list.Sort(new NumberComparer(_sortOrder == SortOrder.Descending));
+                    break;
+                case 1:
+                    _list.Sort(new TextComparer1(_sortOrder == SortOrder.Descending));
+                    break;
+                case 2:
+                    _list.Sort(new TextComparer2(_sortOrder == SortOrder.Descending));
+                    break;
+                case 3:
+                    _list.Sort(new FlagComparer(_sortOrder == SortOrder.Descending));
+                    break;
             }
 
             dataGridView1.Invalidate();
@@ -262,31 +319,37 @@ namespace ComparePlugin
 
     public class NumberComparer : IComparer<CompareEntry>
     {
-        private bool m_desc;
+        private readonly bool _mDesc;
 
         public NumberComparer(bool desc)
         {
-            m_desc = desc;
+            _mDesc = desc;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
         {
             if (objA.Number == objB.Number)
+            {
                 return 0;
-            else if (m_desc)
-                return (objA.Number < objB.Number) ? 1 : -1;
+            }
+            else if (_mDesc)
+            {
+                return objA.Number < objB.Number ? 1 : -1;
+            }
             else
-                return (objA.Number < objB.Number) ? -1 : 1;
+            {
+                return objA.Number < objB.Number ? -1 : 1;
+            }
         }
     }
 
     public class FlagComparer : IComparer<CompareEntry>
     {
-        private bool m_desc;
+        private readonly bool _mDesc;
 
         public FlagComparer(bool desc)
         {
-            m_desc = desc;
+            _mDesc = desc;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
@@ -294,51 +357,59 @@ namespace ComparePlugin
             if ((byte)objA.CompareResult == (byte)objB.CompareResult)
             {
                 if (objA.Number == objB.Number)
+                {
                     return 0;
-                else if (m_desc)
-                    return (objA.Number < objB.Number) ? 1 : -1;
-                else
-                    return (objA.Number < objB.Number) ? -1 : 1;
+                }
+
+                if (_mDesc)
+                {
+                    return objA.Number < objB.Number ? 1 : -1;
+                }
+
+                return objA.Number < objB.Number ? -1 : 1;
             }
-            else if (m_desc)
-                return ((byte)objA.CompareResult < (byte)objB.CompareResult) ? 1 : -1;
+            else if (_mDesc)
+            {
+                return (byte)objA.CompareResult < (byte)objB.CompareResult ? 1 : -1;
+            }
             else
-                return ((byte)objA.CompareResult < (byte)objB.CompareResult) ? -1 : 1;
+            {
+                return (byte)objA.CompareResult < (byte)objB.CompareResult ? -1 : 1;
+            }
         }
     }
 
     public class TextComparer1 : IComparer<CompareEntry>
     {
-        private bool m_desc;
+        private readonly bool _desc;
 
         public TextComparer1(bool desc)
         {
-            m_desc = desc;
+            _desc = desc;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
         {
-            if (m_desc)
-                return String.Compare(objB.Text1, objA.Text1);
-            else
-                return String.Compare(objA.Text1, objB.Text1);
+            return _desc
+                ? string.CompareOrdinal(objB.Text1, objA.Text1)
+                : string.CompareOrdinal(objA.Text1, objB.Text1);
         }
     }
+
     public class TextComparer2 : IComparer<CompareEntry>
     {
-        private bool m_desc;
+        private readonly bool _desc;
 
         public TextComparer2(bool desc)
         {
-            m_desc = desc;
+            _desc = desc;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
         {
-            if (m_desc)
-                return String.Compare(objB.Text2, objA.Text2);
-            else
-                return String.Compare(objA.Text2, objB.Text2);
+            return _desc
+                ? string.CompareOrdinal(objB.Text2, objA.Text2)
+                : string.CompareOrdinal(objA.Text2, objB.Text2);
         }
     }
 }
