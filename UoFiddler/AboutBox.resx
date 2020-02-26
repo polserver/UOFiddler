@@ -118,7 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.7 (aka. Alathair Fiddler 4.6.1.4 Merge)
+    <value>Version 4.8
+AsYlum added multiple selection in items tab using
+&lt;ctrl&gt; left-click used to with the test plug-in for exporting
+multiple items to an itemdesc.cfg file.
+AsYlum added graphic size &amp; offset information to Item details box.
+AsYlum added export all item's graphic offsets to offset.cfg. This is useful
+for properly positioning art tiles displayed in a gump using the TilePic gump command.
+Version 4.7 (aka. Alathair Fiddler 4.6.1.4 Merge)
 Fixed Art saving hash algorithm for duplicate finding was applied to odd data.
 Improved search usability: multiple enter results in search next
 Added Shortcut CTRL+F to open search dialog

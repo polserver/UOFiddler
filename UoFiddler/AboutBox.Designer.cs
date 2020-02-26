@@ -141,7 +141,7 @@ namespace UoFiddler
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(41, 300);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(195, 13);
+            this.label4.Size = new System.Drawing.Size(222, 13);
             this.label4.TabIndex = 8;
             this.label4.Text = "MuadDib, Soulblighter, Nibbio, Andreew, Ares";
             // 
