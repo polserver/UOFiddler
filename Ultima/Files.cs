@@ -10,12 +10,10 @@ namespace Ultima
     {
         public delegate void FileSaveHandler();
         public static event FileSaveHandler FileSaveEvent;
+
         public static void FireFileSaveEvent()
         {
-            if (FileSaveEvent != null)
-            {
-                FileSaveEvent();
-            }
+            FileSaveEvent?.Invoke();
         }
 
         private static bool m_CacheData = true;
@@ -461,28 +459,38 @@ namespace Ultima
         /// </summary>
         /// <param name="what"></param>
         /// <returns></returns>
-        public static bool CompareHashFile(string what,string path)
+        public static bool CompareHashFile(string what, string path)
         {
-            string FileName = Path.Combine(path, String.Format("UOFiddler{0}.hash", what));
-            if (File.Exists(FileName))
+            string FileName = Path.Combine(path, string.Format("UOFiddler{0}.hash", what));
+            if (!File.Exists(FileName))
             {
-                try
+                return false;
+            }
+
+            try
+            {
+                using (var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    using (var bin = new BinaryReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                    if (fs.Length == 0)
+                    {
+                        return false; // If file is empty there is nothing to compare
+                    }
+
+                    using (var bin = new BinaryReader(fs))
                     {
                         int length = bin.ReadInt32();
                         var buffer = new byte[length];
                         bin.Read(buffer, 0, length);
                         string hashold = BitConverter.ToString(buffer).Replace("-", "").ToLower();
-                        return CompareMD5(GetFilePath(String.Format("{0}.mul", what)), hashold);
+
+                        return CompareMD5(GetFilePath(string.Format("{0}.mul", what)), hashold);
                     }
                 }
-                catch
-                {
-                    return false;
-                }
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>

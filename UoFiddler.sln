@@ -1,21 +1,23 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ultima", "Ultima\Ultima.csproj", "{E08CFBE4-E013-44EE-8829-426D05BC083F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controls", "Controls\Controls.csproj", "{BBF3C337-3D0E-484D-8C59-BA8296C5897C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler.Controls", "UoFiddler.Controls\UoFiddler.Controls.csproj", "{BBF3C337-3D0E-484D-8C59-BA8296C5897C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler", "UoFiddler\UoFiddler.csproj", "{693F2BBC-7856-4751-9FAD-B06FABAAEE53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiddlerPlugin", "FiddlerPlugin\FiddlerPlugin.csproj", "{E22921FF-9EC8-4DEB-A4C1-CE67315F465E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler.Plugin.ExamplePlugin", "UoFiddler.Plugin.ExamplePlugin\UoFiddler.Plugin.ExamplePlugin.csproj", "{E22921FF-9EC8-4DEB-A4C1-CE67315F465E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendItem", "SendItem\SendItem.csproj", "{AF2D75B8-C71A-4582-AADF-B8CD9789427C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler.Plugin.SendItem", "UoFiddler.Plugin.SendItem\UoFiddler.Plugin.SendItem.csproj", "{AF2D75B8-C71A-4582-AADF-B8CD9789427C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComparePlugin", "ComparePlugin\ComparePlugin.csproj", "{1F84EDD1-C407-410A-BD9C-36E846BFA675}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler.Plugin.Compare", "UoFiddler.Plugin.Compare\UoFiddler.Plugin.Compare.csproj", "{1F84EDD1-C407-410A-BD9C-36E846BFA675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiEditor", "MultiEditor\MultiEditor.csproj", "{ACDF6427-85CF-4A38-AD97-75103EE8026E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler.Plugin.MultiEditor", "UoFiddler.Plugin.MultiEditor\UoFiddler.Plugin.MultiEditor.csproj", "{ACDF6427-85CF-4A38-AD97-75103EE8026E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassImportPlugin", "MassImportPlugin\MassImportPlugin.csproj", "{43393FEB-36CF-41B7-8ADA-A581D498FF40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UoFiddler.Plugin.MassImport", "UoFiddler.Plugin.MassImport\UoFiddler.Plugin.MassImport.csproj", "{43393FEB-36CF-41B7-8ADA-A581D498FF40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,27 +121,12 @@ Global
 		{43393FEB-36CF-41B7-8ADA-A581D498FF40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43393FEB-36CF-41B7-8ADA-A581D498FF40}.Release|x64.ActiveCfg = Release|Any CPU
 		{43393FEB-36CF-41B7-8ADA-A581D498FF40}.Release|x86.ActiveCfg = Release|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Release|x64.ActiveCfg = Release|Any CPU
-		{7DEA53AF-866D-4C4F-976B-4B0096F5B1C7}.Release|x86.ActiveCfg = Release|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Release|x64.ActiveCfg = Release|Any CPU
-		{45C15C6E-143D-4BA2-A0D5-A94F1C95819B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E47E542-800F-4E36-88FB-91DDA4779AD0}
 		AMDCaProjectFile = E:\UO-Stuff\UOFiddler\CodeAnalyst\UoFiddler.caw
 	EndGlobalSection
 EndGlobal

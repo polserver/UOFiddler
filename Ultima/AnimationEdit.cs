@@ -559,7 +559,7 @@ namespace Ultima
             {
                 return;
             }
-            Frames[index] = new FrameEdit(bit, Palette, ((FrameEdit)Frames[index]).Center.X, ((FrameEdit)Frames[index]).Center.Y);
+            Frames[index] = new FrameEdit(bit, Palette, Frames[index].Center.X, Frames[index].Center.Y);
         }
 
         public void RemoveFrame(int index)

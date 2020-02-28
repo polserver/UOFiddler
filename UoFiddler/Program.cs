@@ -11,6 +11,9 @@
 
 using System;
 using System.Windows.Forms;
+using UoFiddler.Classes;
+using UoFiddler.Controls.UserControls;
+using UoFiddler.Forms;
 
 namespace UoFiddler
 {
@@ -26,10 +29,10 @@ namespace UoFiddler
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Options.Startup();
-                Application.Run(new UoFiddler());
-                Options.Save();
-                FiddlerControls.Map.SaveMapOverlays();
+                FiddlerOptions.Startup();
+                Application.Run(new Forms.UoFiddler());
+                FiddlerOptions.Save();
+                Map.SaveMapOverlays();
             }
             catch (Exception err)
             {
