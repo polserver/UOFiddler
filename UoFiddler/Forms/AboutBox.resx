@@ -118,7 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.8
+    <value>Version 4.9
+Updating project to .NET Framework 4.8 
+You can download .NET Framework at https://dotnet.microsoft.com/download/dotnet-framework
+This is maintenance release focusing on updating framework and code cleanup.
+
+Version 4.8
 AsYlum added multiple selection in items tab using
 &lt;ctrl&gt; left-click used to with the test plug-in for exporting
 multiple items to an itemdesc.cfg file.
