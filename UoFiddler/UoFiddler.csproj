@@ -1,261 +1,169 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{693F2BBC-7856-4751-9FAD-B06FABAAEE53}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UoFiddler</RootNamespace>
-    <AssemblyName>UoFiddler</AssemblyName>
     <ApplicationIcon>UOFiddler.ico</ApplicationIcon>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
     <StartupObject>UoFiddler.Program</StartupObject>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <TargetZone>Custom</TargetZone>
-    <GenerateManifests>true</GenerateManifests>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <PublishUrl>E:\UO-Stuff\UoFiddler\publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>false</MapFileExtensions>
-    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>4.9.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFramework>net48</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AssemblyTitle>UoFiddler</AssemblyTitle>
+    <Product>UoFiddler</Product>
+    <Copyright>Copyright © 2019</Copyright>
+    <AssemblyVersion>4.9</AssemblyVersion>
+    <FileVersion>4.9</FileVersion>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>
-    </DocumentationFile>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <DefineConstants />
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <Optimize>true</Optimize>
-    <DebugType>
-    </DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <DebugType />
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <Optimize>true</Optimize>
-    <DebugType>
-    </DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <DebugType />
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>34BE64D55FF45AFC60137966BA1A054A189D1296</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>UoFiddler_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\AboutBox.cs">
+    <Compile Update="Forms\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AboutBox.Designer.cs">
+    <Compile Update="Forms\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ExceptionForm.cs">
+    <Compile Update="Forms\ExceptionForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ExceptionForm.Designer.cs">
+    <Compile Update="Forms\ExceptionForm.Designer.cs">
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\ExternTool.cs" />
-    <Compile Include="Forms\LoadProfile.cs">
+    <Compile Update="Forms\LoadProfile.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\LoadProfile.Designer.cs">
+    <Compile Update="Forms\LoadProfile.Designer.cs">
       <DependentUpon>LoadProfile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ManagePlugins.cs">
+    <Compile Update="Forms\ManagePlugins.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ManagePlugins.Designer.cs">
+    <Compile Update="Forms\ManagePlugins.Designer.cs">
       <DependentUpon>ManagePlugins.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ManageTools.cs">
+    <Compile Update="Forms\ManageTools.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ManageTools.Designer.cs">
+    <Compile Update="Forms\ManageTools.Designer.cs">
       <DependentUpon>ManageTools.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\FiddlerOptions.cs">
-    </Compile>
-    <Compile Include="Forms\OptionsForm.cs">
+    <Compile Update="Forms\OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\OptionsForm.Designer.cs">
+    <Compile Update="Forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PathSettings.cs">
+    <Compile Update="Forms\PathSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\PathSettings.Designer.cs">
+    <Compile Update="Forms\PathSettings.Designer.cs">
       <DependentUpon>PathSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UnDocked.cs">
+    <Compile Update="Forms\UnDocked.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UnDocked.Designer.cs">
+    <Compile Update="Forms\UnDocked.Designer.cs">
       <DependentUpon>UnDocked.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UoFiddler.cs">
+    <Compile Update="Forms\UoFiddler.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UoFiddler.Designer.cs">
+    <Compile Update="Forms\UoFiddler.Designer.cs">
       <DependentUpon>UoFiddler.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\AboutBox.resx">
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ExceptionForm.resx">
+    <EmbeddedResource Update="Forms\ExceptionForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LoadProfile.resx">
+    <EmbeddedResource Update="Forms\LoadProfile.resx">
       <DependentUpon>LoadProfile.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ManagePlugins.resx">
+    <EmbeddedResource Update="Forms\ManagePlugins.resx">
       <DependentUpon>ManagePlugins.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ManageTools.resx">
+    <EmbeddedResource Update="Forms\ManageTools.resx">
       <DependentUpon>ManageTools.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\OptionsForm.resx">
+    <EmbeddedResource Update="Forms\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PathSettings.resx">
+    <EmbeddedResource Update="Forms\PathSettings.resx">
       <DependentUpon>PathSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UnDocked.resx">
+    <EmbeddedResource Update="Forms\UnDocked.resx">
       <DependentUpon>UnDocked.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UoFiddler.resx">
+    <EmbeddedResource Update="Forms\UoFiddler.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UoFiddler.cs</DependentUpon>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ultima\Ultima.csproj">
-      <Project>{E08CFBE4-E013-44EE-8829-426D05BC083F}</Project>
-      <Name>Ultima</Name>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj">
-      <Project>{bbf3c337-3d0e-484d-8c59-ba8296c5897c}</Project>
-      <Name>UoFiddler.Controls</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Ultima\Ultima.csproj" />
+    <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Properties\app.manifest" />
     <None Include="UOFiddler.jpg" />
     <Content Include="Multilist.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -269,25 +177,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
 </Project>
