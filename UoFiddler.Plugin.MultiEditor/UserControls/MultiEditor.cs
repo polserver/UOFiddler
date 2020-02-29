@@ -60,7 +60,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             FloatingPreviewPanel.Tag = -1;
             BTN_Select.Checked = true;
             pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
-            pictureBoxMulti.ContextMenu = null;
+            pictureBoxMulti.ContextMenuStrip = null;
             _forceRefresh = true;
         }
 

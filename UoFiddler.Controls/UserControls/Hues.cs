@@ -80,7 +80,7 @@ namespace UoFiddler.Controls.UserControls
             if (Parent.GetType() == typeof(HuePopUpItem) || Parent.GetType() == typeof(HuePopUp) || Parent.GetType() == typeof(HuePopUpDress))
             {
                 pictureBox.MouseDoubleClick -= OnMouseDoubleClick;
-                pictureBox.ContextMenu = new ContextMenu();
+                pictureBox.ContextMenuStrip = new ContextMenuStrip();
             }
 
             vScrollBar.Maximum = Ultima.Hues.List.Length;
@@ -88,6 +88,7 @@ namespace UoFiddler.Controls.UserControls
             vScrollBar.Value = 0;
             vScrollBar.SmallChange = 1;
             vScrollBar.LargeChange = 10;
+
             if (_selected > 0)
             {
                 vScrollBar.Value = _selected;
