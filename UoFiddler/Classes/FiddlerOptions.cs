@@ -529,7 +529,7 @@ namespace UoFiddler.Classes
 
         private static void DownloadFile(string file)
         {
-            string fileName = Path.Combine(Options.OutputPath, file);
+            string fileName = Path.Combine(Options.OutputPath, file.Trim());
             using (WebClient web = new WebClient())
             {
                 web.DownloadFileCompleted += OnDownloadFileCompleted;

@@ -37,6 +37,11 @@ namespace UoFiddler.Forms
 
         private void OnClickUpdate(object sender, EventArgs e)
         {
+            CheckForUpdate();
+        }
+
+        private void CheckForUpdate()
+        {
             progresslabel.Text = "Checking...";
             progresslabel.Visible = true;
             string[] match = FiddlerOptions.CheckForUpdate(out string error);
@@ -56,7 +61,10 @@ namespace UoFiddler.Forms
                 {
                     DialogResult result =
                         MessageBox.Show(
-                            $"{string.Format("A new version was found: {1} your version: {0}", UoFiddler.Version, match[0])}\nDownload now?", "Check for Update", MessageBoxButtons.YesNo);
+                            $"A new version was found: {match[0]} your version: {UoFiddler.Version}\nDownload now?",
+                            "Check for Update",
+                            MessageBoxButtons.YesNo);
+
                     if (result == DialogResult.Yes)
                     {
                         DownloadFile(match[1]);
@@ -86,7 +94,7 @@ namespace UoFiddler.Forms
         {
             progresslabel.Text = "Starting download...";
             string filepath = Options.OutputPath;
-            string fileName = Path.Combine(filepath, file);
+            string fileName = Path.Combine(filepath, file.Trim());
 
             using (WebClient web = new WebClient())
             {
