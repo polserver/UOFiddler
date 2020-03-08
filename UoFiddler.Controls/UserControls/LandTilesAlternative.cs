@@ -73,7 +73,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                _refMarker.vScrollBar.Value = i / _refMarker._col + 1;
+                _refMarker.vScrollBar.Value = (i / _refMarker._col) + 1;
                 _refMarker.Selected = graphic;
                 return true;
             }
@@ -110,7 +110,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                _refMarker.vScrollBar.Value = i / _refMarker._col + 1;
+                _refMarker.vScrollBar.Value = (i / _refMarker._col) + 1;
                 _refMarker.Selected = _refMarker._tileList[i];
                 return true;
             }
@@ -134,7 +134,7 @@ namespace UoFiddler.Controls.UserControls
 
         private int GetIndex(int x, int y)
         {
-            int value = Math.Max(0, _col * (vScrollBar.Value - 1) + x + y * _col);
+            int value = Math.Max(0, (_col * (vScrollBar.Value - 1)) + x + (y * _col));
             return _tileList.Count > value ? _tileList[value] : -1;
         }
 
@@ -151,7 +151,7 @@ namespace UoFiddler.Controls.UserControls
                     _tileList.Add(i);
                 }
             }
-            vScrollBar.Maximum = _tileList.Count / _col + 1;
+            vScrollBar.Maximum = (_tileList.Count / _col) + 1;
             pictureBox.Invalidate();
             if (!IsLoaded)
             {
@@ -244,12 +244,12 @@ namespace UoFiddler.Controls.UserControls
                     _tileList.Add(index);
                 }
 
-                vScrollBar.Maximum = _tileList.Count / _col + 1;
+                vScrollBar.Maximum = (_tileList.Count / _col) + 1;
             }
             else
             {
                 _tileList.Remove(index);
-                vScrollBar.Maximum = _tileList.Count / _col + 1;
+                vScrollBar.Maximum = (_tileList.Count / _col) + 1;
             }
         }
 
@@ -314,7 +314,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    Point loc = new Point(x * 49 + 1, y * 49 + 1);
+                    Point loc = new Point((x * 49) + 1, (y * 49) + 1);
                     Size size = new Size(49 - 1, 49 - 1);
                     Rectangle rect = new Rectangle(loc, size);
 
@@ -353,8 +353,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _col = pictureBox.Width / 49;
-            _row = pictureBox.Height / 49 + 1;
-            vScrollBar.Maximum = _tileList.Count / _col + 1;
+            _row = (pictureBox.Height / 49) + 1;
+            vScrollBar.Maximum = (_tileList.Count / _col) + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
             vScrollBar.LargeChange = _row;
@@ -405,7 +405,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                vScrollBar.Value = i / _refMarker._col + 1;
+                vScrollBar.Value = (i / _refMarker._col) + 1;
                 Selected = _tileList[i];
                 break;
             }
@@ -518,14 +518,14 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     _tileList.Insert(i, index);
-                    vScrollBar.Value = i / _refMarker._col + 1;
+                    vScrollBar.Value = (i / _refMarker._col) + 1;
                     done = true;
                     break;
                 }
                 if (!done)
                 {
                     _tileList.Add(index);
-                    vScrollBar.Value = _tileList.Count / _refMarker._col + 1;
+                    vScrollBar.Value = (_tileList.Count / _refMarker._col) + 1;
                 }
                 Selected = index;
                 Options.ChangedUltimaClass["Art"] = true;

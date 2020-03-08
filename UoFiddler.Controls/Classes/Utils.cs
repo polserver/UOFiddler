@@ -97,7 +97,7 @@ namespace UoFiddler.Controls.Classes
         public static unsafe Bitmap ConvertBmpAnim(Bitmap bmp, int red, int green, int blue)
         {
             //Extra background
-            int extraBack = red / 8 * 1024 + green / 8 * 32 + blue / 8 + 32768;
+            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
 
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             ushort* line = (ushort*)bd.Scan0;
@@ -137,7 +137,7 @@ namespace UoFiddler.Controls.Classes
         public static unsafe Bitmap ConvertBmpAnimCv5(Bitmap bmp, int red, int green, int blue)
         {
             //Extra background
-            int extraBack = red / 8 * 1024 + green / 8 * 32 + blue / 8 + 32768;
+            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
 
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             ushort* line = (ushort*)bd.Scan0;
@@ -177,7 +177,7 @@ namespace UoFiddler.Controls.Classes
         public static unsafe Bitmap ConvertBmpAnimKr(Bitmap bmp, int red, int green, int blue)
         {
             //Extra background
-            int extraBack = red / 8 * 1024 + green / 8 * 32 + blue / 8 + 32768;
+            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
             //
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             ushort* line = (ushort*)bd.Scan0;

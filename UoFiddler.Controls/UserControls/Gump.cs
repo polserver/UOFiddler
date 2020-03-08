@@ -201,8 +201,8 @@ namespace UoFiddler.Controls.UserControls
 
             e.Graphics.DrawString($"0x{i:X} ({i})", Font, fontBrush,
                 new PointF(105,
-                e.Bounds.Y + (e.Bounds.Height / 2 -
-                e.Graphics.MeasureString($"0x{i:X} ({i})", Font).Height / 2)));
+                e.Bounds.Y + ((e.Bounds.Height / 2) -
+                (e.Graphics.MeasureString($"0x{i:X} ({i})", Font).Height / 2))));
         }
 
         private void ListBox_MeasureItem(object sender, MeasureItemEventArgs e)
@@ -660,7 +660,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int gumpId = (int)listBox.SelectedItem;
-            gumpId = gumpId < 60000 ? gumpId % 10000 + 60000 : gumpId % 10000 + 50000;
+            gumpId = gumpId < 60000 ? (gumpId % 10000) + 60000 : (gumpId % 10000) + 50000;
 
             Select(gumpId);
         }

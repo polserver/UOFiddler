@@ -1430,7 +1430,7 @@ namespace UoFiddler.Controls.Forms
         //Animation Speed
         private void TrackBar3_ValueChanged(object sender, EventArgs e)
         {
-            timer1.Interval = 50 + trackBar3.Value * 30;
+            timer1.Interval = 50 + (trackBar3.Value * 30);
         }
 
         private void ToolStripButton12_Click(object sender, EventArgs e)
@@ -2807,17 +2807,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 5 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 5 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 5 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -2870,17 +2870,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 5 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 5 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 5 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -2934,17 +2934,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 5 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 5 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 5 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -2997,17 +2997,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 5 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 5 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 5 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -3079,17 +3079,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -3142,17 +3142,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -3206,17 +3206,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -3269,17 +3269,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -3351,17 +3351,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 6 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 6 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 6 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -3414,17 +3414,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 6 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 6 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 6 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -3478,17 +3478,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 6 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 6 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 6 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -3541,17 +3541,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 6 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 6 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 6 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -3623,17 +3623,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 2 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 2 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 2 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -3686,17 +3686,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 2 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 2 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 2 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -3750,17 +3750,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 2 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 2 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 2 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -3813,17 +3813,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 2 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 2 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 2 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -3895,17 +3895,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 7 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 7 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 7 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -3958,17 +3958,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 7 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 7 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 8 * 7 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -4022,17 +4022,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 7 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 7 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 7 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -4085,17 +4085,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 7 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 7 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 8 * 7 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -4165,7 +4165,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 8 * 5 - 1)
+                                        if (index == (frameCount / 8 * 5) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -4212,7 +4212,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 8 - 1)
+                                        if (index == (frameCount / 8) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -4259,7 +4259,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 8 * 6 - 1)
+                                        if (index == (frameCount / 8 * 6) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -4306,7 +4306,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 8 * 2 - 1)
+                                        if (index == (frameCount / 8 * 2) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -4474,17 +4474,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 1 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 1 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 1 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -4537,17 +4537,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 1 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 1 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 1 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -4601,17 +4601,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 1 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 1 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 1 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -4664,17 +4664,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 1 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 1 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 1 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -4746,17 +4746,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 2 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 2 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 2 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -4809,17 +4809,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 2 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 2 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 2 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -4873,17 +4873,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 2 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 2 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 2 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -4936,17 +4936,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 2 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 2 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 2 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -5018,17 +5018,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 3 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 3 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 3 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -5081,17 +5081,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 3 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 3 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 3 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -5145,17 +5145,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 3 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 3 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 3 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -5208,17 +5208,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 3 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 3 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 3 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -5290,17 +5290,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 4 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 4 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 4 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -5353,17 +5353,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 4 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 4 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 4 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -5417,17 +5417,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 4 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 4 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 4 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -5480,17 +5480,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 4 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 4 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 4 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -5562,17 +5562,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 5 - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
                                                 {
                                                     top += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 5 - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
                                                 {
                                                     top++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 5 - 1 && regressT != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressT != -1)
                                                 {
                                                     top -= regressT;
                                                     breakOk = true;
@@ -5625,17 +5625,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 5 - 1 && regressB == -1 && yf > 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressB == -1 && yf > 9)
                                                 {
                                                     bot += 10;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 5 - 1 && regressB == -1 && yf <= 9)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressB == -1 && yf <= 9)
                                                 {
                                                     bot++;
                                                 }
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount / 5 * 5 - 1 && regressB != -1)
+                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressB != -1)
                                                 {
                                                     bot -= regressB;
                                                     breakOk = true;
@@ -5689,17 +5689,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 5 - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
                                                 {
                                                     left += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 5 - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
                                                 {
                                                     left++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 5 - 1 && regressL != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressL != -1)
                                                 {
                                                     left -= regressL;
                                                     breakOk = true;
@@ -5752,17 +5752,17 @@ namespace UoFiddler.Controls.Forms
                                                         break;
                                                     }
                                                 }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 5 - 1 && regressR == -1 && xf > 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressR == -1 && xf > 9)
                                                 {
                                                     right += 10;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 5 - 1 && regressR == -1 && xf <= 9)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressR == -1 && xf <= 9)
                                                 {
                                                     right++;
                                                 }
 
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount / 5 * 5 - 1 && regressR != -1)
+                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressR != -1)
                                                 {
                                                     right -= regressR;
                                                     breakOk = true;
@@ -5832,7 +5832,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 5 * 1 - 1)
+                                        if (index == (frameCount / 5 * 1) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -5879,7 +5879,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 5 * 2 - 1)
+                                        if (index == (frameCount / 5 * 2) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -5926,7 +5926,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 5 * 3 - 1)
+                                        if (index == (frameCount / 5 * 3) - 1)
                                         {
                                             trackBar1.Value++;
                                         }
@@ -5973,7 +5973,7 @@ namespace UoFiddler.Controls.Forms
                                             progressBar1.Value++;
                                             progressBar1.Invalidate();
                                         }
-                                        if (index == frameCount / 5 * 4 - 1)
+                                        if (index == (frameCount / 5 * 4) - 1)
                                         {
                                             trackBar1.Value++;
                                         }

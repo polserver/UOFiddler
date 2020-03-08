@@ -196,7 +196,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 _mTimer = new Timer
                 {
-                    Interval = 100 * _selData.FrameInterval + 1
+                    Interval = (100 * _selData.FrameInterval) + 1
                 };
                 _mTimer.Tick += Timer_Tick;
                 _timerFrame = 0;
@@ -236,7 +236,7 @@ namespace UoFiddler.Controls.UserControls
             _selData.FrameInterval = (byte)numericUpDownFrameDelay.Value;
             if (_mTimer != null)
             {
-                _mTimer.Interval = 100 * _selData.FrameInterval + 1;
+                _mTimer.Interval = (100 * _selData.FrameInterval) + 1;
             }
 
             Options.ChangedUltimaClass["Animdata"] = true;

@@ -65,8 +65,8 @@ namespace UoFiddler.Controls.Forms
                 using (Graphics g = Graphics.FromImage(pictureBoxPreview.Image))
                 {
                     g.Clear(Color.White);
-                    int x = pictureBoxPreview.Image.Width / 2 - bmp.Width / 2;
-                    int y = pictureBoxPreview.Image.Height / 2 - bmp.Height / 2;
+                    int x = (pictureBoxPreview.Image.Width / 2) - (bmp.Width / 2);
+                    int y = (pictureBoxPreview.Image.Height / 2) - (bmp.Height / 2);
                     g.DrawImage(bmp, x, y);
                 }
             }
@@ -183,8 +183,8 @@ namespace UoFiddler.Controls.Forms
 
             for (int i = 1; i < diff; ++i)
             {
-                Color newC = Color.FromArgb((int)(startC.R + i * rDiv), (int)(startC.G + i * gDiv),
-                    (int)(startC.B + i * bDiv));
+                Color newC = Color.FromArgb((int)(startC.R + (i * rDiv)), (int)(startC.G + (i * gDiv)),
+                    (int)(startC.B + (i * bDiv)));
 
                 _colors[start + i] = Ultima.Hues.ColorToHue(newC);
             }
@@ -233,9 +233,9 @@ namespace UoFiddler.Controls.Forms
             for (int i = 1; i < diff; ++i)
             {
                 Color newc = Color.FromArgb(
-                    (int)(startc.R + rfac * Math.Pow(i, rdiv)),
-                    (int)(startc.G + gfac * Math.Pow(i, gdiv)),
-                    (int)(startc.B + bfac * Math.Pow(i, bdiv)));
+                    (int)(startc.R + (rfac * Math.Pow(i, rdiv))),
+                    (int)(startc.G + (gfac * Math.Pow(i, gdiv))),
+                    (int)(startc.B + (bfac * Math.Pow(i, bdiv))));
                 _colors[start + i] = Ultima.Hues.ColorToHue(newc);
             }
             pictureBox.Invalidate();

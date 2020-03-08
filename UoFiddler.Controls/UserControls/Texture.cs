@@ -328,7 +328,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Bitmap bmp = new Bitmap(dialog.FileName);
-                if (bmp.Width == 64 && bmp.Height == 64 || bmp.Width == 128 && bmp.Height == 128)
+                if ((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128))
                 {
                     if (dialog.FileName.Contains(".bmp"))
                     {
@@ -391,7 +391,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Bitmap bmp = new Bitmap(dialog.FileName);
-                if (bmp.Width == 64 && bmp.Height == 64 || bmp.Width == 128 && bmp.Height == 128)
+                if ((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128))
                 {
                     Textures.Replace(index, bmp);
                     ControlEvents.FireTextureChangeEvent(this, index);

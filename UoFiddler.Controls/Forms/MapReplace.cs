@@ -192,13 +192,13 @@ namespace UoFiddler.Controls.Forms
                             {
                                 if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
                                 {
-                                    mMapReaderCopy.BaseStream.Seek(((x - tox + x1) * blockYReplace + (y - toy) + y1) * 196, SeekOrigin.Begin);
+                                    mMapReaderCopy.BaseStream.Seek((((x - tox + x1) * blockYReplace) + (y - toy) + y1) * 196, SeekOrigin.Begin);
                                     int header = mMapReaderCopy.ReadInt32();
                                     binMul.Write(header);
                                 }
                                 else
                                 {
-                                    mMapReader.BaseStream.Seek((x * blockY + y) * 196, SeekOrigin.Begin);
+                                    mMapReader.BaseStream.Seek(((x * blockY) + y) * 196, SeekOrigin.Begin);
                                     int header = mMapReader.ReadInt32();
                                     binMul.Write(header);
                                 }
@@ -309,14 +309,14 @@ namespace UoFiddler.Controls.Forms
                                 int lookup, length, extra;
                                 if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
                                 {
-                                    mIndexReaderCopy.BaseStream.Seek(((x - tox + x1) * blockYReplace + (y - toy) + y1) * 12, SeekOrigin.Begin);
+                                    mIndexReaderCopy.BaseStream.Seek((((x - tox + x1) * blockYReplace) + (y - toy) + y1) * 12, SeekOrigin.Begin);
                                     lookup = mIndexReaderCopy.ReadInt32();
                                     length = mIndexReaderCopy.ReadInt32();
                                     extra = mIndexReaderCopy.ReadInt32();
                                 }
                                 else
                                 {
-                                    mIndexReader.BaseStream.Seek((x * blockY + y) * 12, SeekOrigin.Begin);
+                                    mIndexReader.BaseStream.Seek(((x * blockY) + y) * 12, SeekOrigin.Begin);
                                     lookup = mIndexReader.ReadInt32();
                                     length = mIndexReader.ReadInt32();
                                     extra = mIndexReader.ReadInt32();
