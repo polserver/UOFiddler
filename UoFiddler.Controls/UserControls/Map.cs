@@ -440,8 +440,8 @@ namespace UoFiddler.Controls.UserControls
             _clientZ = z;
             _clientMap = mapClient;
             SetScrollBarValues();
-            hScrollBar.Value = (int)Math.Max(0, x - pictureBox.Right / Zoom / 2);
-            vScrollBar.Value = (int)Math.Max(0, y - pictureBox.Bottom / Zoom / 2);
+            hScrollBar.Value = (int)Math.Max(0, x - (pictureBox.Right / Zoom / 2));
+            vScrollBar.Value = (int)Math.Max(0, y - (pictureBox.Bottom / Zoom / 2));
             pictureBox.Invalidate();
             ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{Options.MapNames[mapClient]}";
         }
@@ -518,8 +518,8 @@ namespace UoFiddler.Controls.UserControls
         {
             ChangeScrollBar();
             ZoomLabel.Text = $"Zoom: {Zoom}";
-            int x = Math.Max(0, _currPoint.X - (int)(pictureBox.ClientSize.Width / Zoom) / 2);
-            int y = Math.Max(0, _currPoint.Y - (int)(pictureBox.ClientSize.Height / Zoom) / 2);
+            int x = Math.Max(0, _currPoint.X - ((int)(pictureBox.ClientSize.Width / Zoom) / 2));
+            int y = Math.Max(0, _currPoint.Y - ((int)(pictureBox.ClientSize.Height / Zoom) / 2));
             x = Math.Min(x, hScrollBar.Maximum);
             y = Math.Min(y, vScrollBar.Maximum);
             hScrollBar.Value = Round(x);
@@ -530,7 +530,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnPaint(object sender, PaintEventArgs e)
         {
             _map = _currMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                (int)(e.ClipRectangle.Width / Zoom + 8) >> 3, (int)(e.ClipRectangle.Height / Zoom + 8) >> 3,
+                (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
                 showStaticsToolStripMenuItem1.Checked);
             ZoomMap(ref _map);
             e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
@@ -552,9 +552,9 @@ namespace UoFiddler.Controls.UserControls
                 if (Client.Running)
                 {
                     if (_clientX > hScrollBar.Value &&
-                        _clientX < hScrollBar.Value + e.ClipRectangle.Width / Zoom &&
+                        _clientX < hScrollBar.Value + (e.ClipRectangle.Width / Zoom) &&
                         _clientY > vScrollBar.Value &&
-                        _clientY < vScrollBar.Value + e.ClipRectangle.Height / Zoom &&
+                        _clientY < vScrollBar.Value + (e.ClipRectangle.Height / Zoom) &&
                         _clientMap == _currMapInt)
                     {
                         Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow));
@@ -610,8 +610,8 @@ namespace UoFiddler.Controls.UserControls
                             if (x <= _currMap.Width && x <= _currMap.Height)
                             {
                                 contextMenuStrip1.Close();
-                                hScrollBar.Value = (int)Math.Max(0, x - pictureBox.Right / Zoom / 2);
-                                vScrollBar.Value = (int)Math.Max(0, y - pictureBox.Bottom / Zoom / 2);
+                                hScrollBar.Value = (int)Math.Max(0, x - (pictureBox.Right / Zoom / 2));
+                                vScrollBar.Value = (int)Math.Max(0, y - (pictureBox.Bottom / Zoom / 2));
                             }
                         }
                     }
@@ -944,8 +944,8 @@ namespace UoFiddler.Controls.UserControls
                 _currMapInt = o.DefMap;
             }
             SetScrollBarValues();
-            hScrollBar.Value = (int)Math.Max(0, o.Loc.X - pictureBox.Right / Zoom / 2);
-            vScrollBar.Value = (int)Math.Max(0, o.Loc.Y - pictureBox.Bottom / Zoom / 2);
+            hScrollBar.Value = (int)Math.Max(0, o.Loc.X - (pictureBox.Right / Zoom / 2));
+            vScrollBar.Value = (int)Math.Max(0, o.Loc.Y - (pictureBox.Bottom / Zoom / 2));
             pictureBox.Invalidate();
         }
 
@@ -1274,9 +1274,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             return Loc.X > Map.HScrollBar &&
-                Loc.X < Map.HScrollBar + bounds.Width / Map.Zoom &&
+                Loc.X < Map.HScrollBar + (bounds.Width / Map.Zoom) &&
                 Loc.Y > Map.VScrollBar &&
-                Loc.Y < Map.VScrollBar + bounds.Height / Map.Zoom;
+                Loc.Y < Map.VScrollBar + (bounds.Height / Map.Zoom);
         }
 
         public override void Draw(Graphics g)

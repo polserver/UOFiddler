@@ -511,7 +511,7 @@ namespace UoFiddler.Controls.UserControls
                 if (Dock == DockStyle.Left || Dock == DockStyle.Right)
                 {
                     // create a new rectangle in the vertical center of the splitter for our collapse control button
-                    _rr = new Rectangle(r.X, r.Y + (r.Height - 115) / 2, 8, 115);
+                    _rr = new Rectangle(r.X, r.Y + ((r.Height - 115) / 2), 8, 115);
                     // force the width to 8px so that everything always draws correctly
                     Width = 8;
 
@@ -552,17 +552,17 @@ namespace UoFiddler.Controls.UserControls
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawLine(penControlLightLight, x, y + i * 3, x + 1, y + 1 + i * 3);
+                                g.DrawLine(penControlLightLight, x, y + (i * 3), x + 1, y + 1 + (i * 3));
                                 // dark dot
-                                g.DrawLine(penControlDarkDark, x + 1, y + 1 + i * 3, x + 2, y + 2 + i * 3);
+                                g.DrawLine(penControlDarkDark, x + 1, y + 1 + (i * 3), x + 2, y + 2 + (i * 3));
                                 // overdraw the background color as we actually drew 2px diagonal lines, not just dots
                                 if (_hot)
                                 {
-                                    g.DrawLine(penHotColor, x + 2, y + 1 + i * 3, x + 2, y + 2 + i * 3);
+                                    g.DrawLine(penHotColor, x + 2, y + 1 + (i * 3), x + 2, y + 2 + (i * 3));
                                 }
                                 else
                                 {
-                                    g.DrawLine(penBackColor, x + 2, y + 1 + i * 3, x + 2, y + 2 + i * 3);
+                                    g.DrawLine(penBackColor, x + 2, y + 1 + (i * 3), x + 2, y + 2 + (i * 3));
                                 }
                             }
                             break;
@@ -571,14 +571,14 @@ namespace UoFiddler.Controls.UserControls
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(penControlLightLight, x, y + 1 + i * 3, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x, y + 1 + (i * 3), 1, 1);
                                 // dark dot
-                                g.DrawRectangle(penControlDark, x - 1, y + i * 3, 1, 1);
+                                g.DrawRectangle(penControlDark, x - 1, y + (i * 3), 1, 1);
                                 ++i;
                                 // light dot
-                                g.DrawRectangle(penControlLightLight, x + 2, y + 1 + i * 3, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 2, y + 1 + (i * 3), 1, 1);
                                 // dark dot
-                                g.DrawRectangle(penControlDark, x + 1, y + i * 3, 1, 1);
+                                g.DrawRectangle(penControlDark, x + 1, y + (i * 3), 1, 1);
                             }
                             break;
 
@@ -595,14 +595,14 @@ namespace UoFiddler.Controls.UserControls
                             for (int i = 0; i < 18; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(penControlLight, x, y + i * 5, 2, 2);
+                                g.DrawRectangle(penControlLight, x, y + (i * 5), 2, 2);
                                 // light light dot
-                                g.DrawRectangle(penControlLightLight, x + 1, y + 1 + i * 5, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1, y + 1 + (i * 5), 1, 1);
                                 // dark dark dot
-                                g.DrawRectangle(penControlDarkDark, x, y + i * 5, 1, 1);
+                                g.DrawRectangle(penControlDarkDark, x, y + (i * 5), 1, 1);
                                 // dark fill
-                                g.DrawLine(penControlDark, x, y + i * 5, x, y + i * 5 + 1);
-                                g.DrawLine(penControlDark, x, y + i * 5, x + 1, y + i * 5);
+                                g.DrawLine(penControlDark, x, y + (i * 5), x, y + (i * 5) + 1);
+                                g.DrawLine(penControlDark, x, y + (i * 5), x + 1, y + (i * 5));
                             }
                             break;
 
@@ -610,7 +610,7 @@ namespace UoFiddler.Controls.UserControls
 
                             for (int i = 0; i < 44; ++i)
                             {
-                                g.DrawLine(penControlDark, x, y + i * 2, x + 2, y + i * 2);
+                                g.DrawLine(penControlDark, x, y + (i * 2), x + 2, y + (i * 2));
                             }
 
                             break;
@@ -630,7 +630,7 @@ namespace UoFiddler.Controls.UserControls
                 else if (Dock == DockStyle.Top || Dock == DockStyle.Bottom)
                 {
                     // create a new rectangle in the horizontal center of the splitter for our collapse control button
-                    _rr = new Rectangle(r.X + (r.Width - 115) / 2, r.Y, 115, 8);
+                    _rr = new Rectangle(r.X + ((r.Width - 115) / 2), r.Y, 115, 8);
                     // force the height to 8px
                     Height = 8;
 
@@ -670,17 +670,17 @@ namespace UoFiddler.Controls.UserControls
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawLine(penControlLightLight, x + i * 3, y, x + 1 + i * 3, y + 1);
+                                g.DrawLine(penControlLightLight, x + (i * 3), y, x + 1 + (i * 3), y + 1);
                                 // dark dot
-                                g.DrawLine(penControlDarkDark, x + 1 + i * 3, y + 1, x + 2 + i * 3, y + 2);
+                                g.DrawLine(penControlDarkDark, x + 1 + (i * 3), y + 1, x + 2 + (i * 3), y + 2);
                                 // overdraw the background color as we actually drew 2px diagonal lines, not just dots
                                 if (_hot)
                                 {
-                                    g.DrawLine(penHotColor, x + 1 + i * 3, y + 2, x + 2 + i * 3, y + 2);
+                                    g.DrawLine(penHotColor, x + 1 + (i * 3), y + 2, x + 2 + (i * 3), y + 2);
                                 }
                                 else
                                 {
-                                    g.DrawLine(penBackColor, x + 1 + i * 3, y + 2, x + 2 + i * 3, y + 2);
+                                    g.DrawLine(penBackColor, x + 1 + (i * 3), y + 2, x + 2 + (i * 3), y + 2);
                                 }
                             }
                             break;
@@ -690,14 +690,14 @@ namespace UoFiddler.Controls.UserControls
                             for (int i = 0; i < 30; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(penControlLightLight, x + 1 + i * 3, y, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1 + (i * 3), y, 1, 1);
                                 // dark dot
-                                g.DrawRectangle(penControlDark, x + i * 3, y - 1, 1, 1);
+                                g.DrawRectangle(penControlDark, x + (i * 3), y - 1, 1, 1);
                                 ++i;
                                 // light dot
-                                g.DrawRectangle(penControlLightLight, x + 1 + i * 3, y + 2, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1 + (i * 3), y + 2, 1, 1);
                                 // dark dot
-                                g.DrawRectangle(penControlDark, x + i * 3, y + 1, 1, 1);
+                                g.DrawRectangle(penControlDark, x + (i * 3), y + 1, 1, 1);
                             }
                             break;
 
@@ -714,14 +714,14 @@ namespace UoFiddler.Controls.UserControls
                             for (int i = 0; i < 18; ++i)
                             {
                                 // light dot
-                                g.DrawRectangle(penControlLight, x + i * 5, y, 2, 2);
+                                g.DrawRectangle(penControlLight, x + (i * 5), y, 2, 2);
                                 // light light dot
-                                g.DrawRectangle(penControlLightLight, x + 1 + i * 5, y + 1, 1, 1);
+                                g.DrawRectangle(penControlLightLight, x + 1 + (i * 5), y + 1, 1, 1);
                                 // dark dark dot
-                                g.DrawRectangle(penControlDarkDark, x + i * 5, y, 1, 1);
+                                g.DrawRectangle(penControlDarkDark, x + (i * 5), y, 1, 1);
                                 // dark fill
-                                g.DrawLine(penControlDark, x + i * 5, y, x + i * 5 + 1, y);
-                                g.DrawLine(penControlDark, x + i * 5, y, x + i * 5, y + 1);
+                                g.DrawLine(penControlDark, x + (i * 5), y, x + (i * 5) + 1, y);
+                                g.DrawLine(penControlDark, x + (i * 5), y, x + (i * 5), y + 1);
                             }
                             break;
 
@@ -729,7 +729,7 @@ namespace UoFiddler.Controls.UserControls
 
                             for (int i = 0; i < 44; ++i)
                             {
-                                g.DrawLine(penControlDark, x + i * 2, y, x + i * 2, y + 2);
+                                g.DrawLine(penControlDark, x + (i * 2), y, x + (i * 2), y + 2);
                             }
 
                             break;
@@ -772,8 +772,8 @@ namespace UoFiddler.Controls.UserControls
             {
                 // decide which direction the arrow will point
                 if (
-                    Dock == DockStyle.Right && ControlToHide.Visible
-                    || Dock == DockStyle.Left && !ControlToHide.Visible
+                    (Dock == DockStyle.Right && ControlToHide.Visible)
+                    || (Dock == DockStyle.Left && !ControlToHide.Visible)
                     )
                 {
                     // right arrow
@@ -782,8 +782,8 @@ namespace UoFiddler.Controls.UserControls
                     point[2] = new Point(x, y + 6);
                 }
                 else if (
-                    Dock == DockStyle.Right && !ControlToHide.Visible
-                    || Dock == DockStyle.Left && ControlToHide.Visible
+                    (Dock == DockStyle.Right && !ControlToHide.Visible)
+                    || (Dock == DockStyle.Left && ControlToHide.Visible)
                     )
                 {
                     // left arrow
@@ -795,8 +795,8 @@ namespace UoFiddler.Controls.UserControls
                 // Up/Down arrows added in v1.2
 
                 else if (
-                    Dock == DockStyle.Top && ControlToHide.Visible
-                    || Dock == DockStyle.Bottom && !ControlToHide.Visible
+                    (Dock == DockStyle.Top && ControlToHide.Visible)
+                    || (Dock == DockStyle.Bottom && !ControlToHide.Visible)
                     )
                 {
                     // up arrow
@@ -805,8 +805,8 @@ namespace UoFiddler.Controls.UserControls
                     point[2] = new Point(x, y + 4);
                 }
                 else if (
-                    Dock == DockStyle.Top && !ControlToHide.Visible
-                    || Dock == DockStyle.Bottom && ControlToHide.Visible
+                    (Dock == DockStyle.Top && !ControlToHide.Visible)
+                    || (Dock == DockStyle.Bottom && ControlToHide.Visible)
                     )
                 {
                     // down arrow
@@ -834,11 +834,11 @@ namespace UoFiddler.Controls.UserControls
             float backGreen = backColor.G;
             float backBlue = backColor.B;
 
-            float fRed = frontRed * alpha / 255 + backRed * ((float)(255 - alpha) / 255);
+            float fRed = (frontRed * alpha / 255) + (backRed * ((float)(255 - alpha) / 255));
             byte newRed = (byte)fRed;
-            float fGreen = frontGreen * alpha / 255 + backGreen * ((float)(255 - alpha) / 255);
+            float fGreen = (frontGreen * alpha / 255) + (backGreen * ((float)(255 - alpha) / 255));
             byte newGreen = (byte)fGreen;
-            float fBlue = frontBlue * alpha / 255 + backBlue * ((float)(255 - alpha) / 255);
+            float fBlue = (frontBlue * alpha / 255) + (backBlue * ((float)(255 - alpha) / 255));
             byte newBlue = (byte)fBlue;
 
             return Color.FromArgb(255, newRed, newGreen, newBlue);

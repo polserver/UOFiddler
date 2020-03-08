@@ -126,8 +126,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
                 new PointF(85,
-                e.Bounds.Y + (e.Bounds.Height / 2 -
-                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
+                e.Bounds.Y + ((e.Bounds.Height / 2) -
+                (e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2))));
         }
 
         private void Listbox_measureItem(object sender, MeasureItemEventArgs e)

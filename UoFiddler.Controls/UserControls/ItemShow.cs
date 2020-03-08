@@ -99,7 +99,7 @@ namespace UoFiddler.Controls.UserControls
             for (int i = index; i < RefMarker.listView1.Items.Count; ++i)
             {
                 ListViewItem item = RefMarker.listView1.Items[i];
-                if ((int)item.Tag == graphic || (int)item.Tag == -1 && i == graphic)
+                if ((int)item.Tag == graphic || ((int)item.Tag == -1 && i == graphic))
                 {
                     if (RefMarker.listView1.SelectedItems.Count == 1)
                     {

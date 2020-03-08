@@ -268,13 +268,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
             if (showMap1ToolStripMenuItem.Checked)
             {
                 _map = _origMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                   (int)(e.ClipRectangle.Width / _zoom + 8) >> 3, (int)(e.ClipRectangle.Height / _zoom + 8) >> 3,
+                   (int)((e.ClipRectangle.Width / _zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / _zoom) + 8) >> 3,
                    true);
             }
             else
             {
                 _map = _currMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                   (int)(e.ClipRectangle.Width / _zoom + 8) >> 3, (int)(e.ClipRectangle.Height / _zoom + 8) >> 3,
+                   (int)((e.ClipRectangle.Width / _zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / _zoom) + 8) >> 3,
                    true);
             }
 
@@ -284,8 +284,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 {
                     using (Graphics mapg = Graphics.FromImage(_map))
                     {
-                        int maxx = ((int)(e.ClipRectangle.Width / _zoom + 8) >> 3) + (hScrollBar.Value >> 3);
-                        int maxy = ((int)(e.ClipRectangle.Height / _zoom + 8) >> 3) + (vScrollBar.Value >> 3);
+                        int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
+                        int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
                         if (maxx > _origMap.Width >> 3)
                         {
                             maxx = _origMap.Width >> 3;
@@ -332,8 +332,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 {
                     using (Graphics mapg = Graphics.FromImage(_map))
                     {
-                        int maxx = ((int)(e.ClipRectangle.Width / _zoom + 8) >> 3) + (hScrollBar.Value >> 3);
-                        int maxy = ((int)(e.ClipRectangle.Height / _zoom + 8) >> 3) + (vScrollBar.Value >> 3);
+                        int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
+                        int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
                         if (maxx > drawMap.Width >> 3)
                         {
                             maxx = drawMap.Width >> 3;
@@ -450,8 +450,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             ChangeScrollBar();
             ZoomLabel.Text = $"Zoom: {_zoom}";
-            int x = Math.Max(0, _currPoint.X - (int)(pictureBox.ClientSize.Width / _zoom) / 2);
-            int y = Math.Max(0, _currPoint.Y - (int)(pictureBox.ClientSize.Height / _zoom) / 2);
+            int x = Math.Max(0, _currPoint.X - ((int)(pictureBox.ClientSize.Width / _zoom) / 2));
+            int y = Math.Max(0, _currPoint.Y - ((int)(pictureBox.ClientSize.Height / _zoom) / 2));
             x = Math.Min(x, hScrollBar.Maximum);
             y = Math.Min(y, vScrollBar.Maximum);
             hScrollBar.Value = Round(x);

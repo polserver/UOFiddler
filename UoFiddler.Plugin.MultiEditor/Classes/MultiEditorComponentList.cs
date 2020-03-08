@@ -181,7 +181,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     YMin = floorZMod;
                 }
 
-                floorZMod = (Width + Height) * 22 - _parent.DrawFloorZ << 2;
+                floorZMod = ((Width + Height) * 22) - _parent.DrawFloorZ << 2;
                 if (YMaxOrg < floorZMod)
                 {
                     YMax = floorZMod;
@@ -658,8 +658,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             // CalcEdgeTiles
             YMin = -44; // 0,0
             YMax = (Width + Height) * 22; // width,height
-            XMin = -Height * 22 - 22; // 0,height
-            XMax = Width * 22 + 22; // width,0
+            XMin = (-Height * 22) - 22; // 0,height
+            XMax = (Width * 22) + 22; // width,0
             ZMin = 127;
             ZMax = -128;
 

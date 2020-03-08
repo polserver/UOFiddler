@@ -174,7 +174,7 @@ namespace UoFiddler.Controls.Forms
                         {
                             try
                             {
-                                mMapReader.BaseStream.Seek((x * blocky + y) * 196, SeekOrigin.Begin);
+                                mMapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
                                 int header = mMapReader.ReadInt32();
                                 binmul.Write(header);
                                 for (int i = 0; i < 64; ++i)
@@ -207,7 +207,7 @@ namespace UoFiddler.Controls.Forms
                             }
                             catch //fill rest
                             {
-                                binmul.BaseStream.Seek((x * blocky + y) * 196, SeekOrigin.Begin);
+                                binmul.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
                                 for (; x < blockx; ++x)
                                 {
                                     for (; y < blocky; ++y)
@@ -275,7 +275,7 @@ namespace UoFiddler.Controls.Forms
                         {
                             try
                             {
-                                mIndexReader.BaseStream.Seek((x * blocky + y) * 12, SeekOrigin.Begin);
+                                mIndexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
                                 int lookup = mIndexReader.ReadInt32();
                                 int length = mIndexReader.ReadInt32();
                                 int extra = mIndexReader.ReadInt32();
@@ -354,7 +354,7 @@ namespace UoFiddler.Controls.Forms
                             }
                             catch // fill the rest
                             {
-                                binidx.BaseStream.Seek((x * blocky + y) * 12, SeekOrigin.Begin);
+                                binidx.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
                                 for (; x < blockx; ++x)
                                 {
                                     for (; y < blocky; ++y)
@@ -470,8 +470,8 @@ namespace UoFiddler.Controls.Forms
 
         public static int IsStaticReplace(List<ModArea> list, ushort tileid, int blockX, int blockY, int cell)
         {
-            int x = blockX * 8 + cell % 8;
-            int y = blockY * 8 + cell / 8;
+            int x = (blockX * 8) + (cell % 8);
+            int y = (blockY * 8) + (cell / 8);
 
             foreach (ModArea area in list)
             {
@@ -487,8 +487,8 @@ namespace UoFiddler.Controls.Forms
 
         public static int IsLandReplace(List<ModArea> list, ushort tileid, int blockX, int blockY, int cell)
         {
-            int x = blockX * 8 + cell % 8;
-            int y = blockY * 8 + cell / 8;
+            int x = (blockX * 8) + (cell % 8);
+            int y = (blockY * 8) + (cell / 8);
 
             foreach (ModArea area in list)
             {

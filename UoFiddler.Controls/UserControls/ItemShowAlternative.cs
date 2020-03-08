@@ -68,7 +68,7 @@ namespace UoFiddler.Controls.UserControls
         {
             _col = pictureBox.Width / Options.ArtItemSizeWidth;
             _row = pictureBox.Height / Options.ArtItemSizeHeight;
-            vScrollBar.Maximum = _itemList.Count / _col + 1;
+            vScrollBar.Maximum = (_itemList.Count / _col) + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
             vScrollBar.LargeChange = _row;
@@ -120,7 +120,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (RefMarker._itemList[i] == graphic)
                 {
-                    RefMarker.vScrollBar.Value = i / RefMarker._col + 1;
+                    RefMarker.vScrollBar.Value = (i / RefMarker._col) + 1;
                     RefMarker.Selected = graphic;
                     return true;
                 }
@@ -155,7 +155,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (regex.IsMatch(TileData.ItemTable[RefMarker._itemList[i]].Name))
                 {
-                    RefMarker.vScrollBar.Value = i / RefMarker._col + 1;
+                    RefMarker.vScrollBar.Value = (i / RefMarker._col) + 1;
                     RefMarker.Selected = RefMarker._itemList[i];
                     return true;
                 }
@@ -239,7 +239,7 @@ namespace UoFiddler.Controls.UserControls
                     MakeHashFile();
                 }
             }
-            vScrollBar.Maximum = _itemList.Count / _col + 1;
+            vScrollBar.Maximum = (_itemList.Count / _col) + 1;
             pictureBox.Invalidate();
             if (!IsLoaded)
             {
@@ -328,21 +328,21 @@ namespace UoFiddler.Controls.UserControls
                     _itemList.Add(index);
                 }
 
-                vScrollBar.Maximum = _itemList.Count / _col + 1;
+                vScrollBar.Maximum = (_itemList.Count / _col) + 1;
             }
             else
             {
                 if (!_showFreeSlots)
                 {
                     _itemList.Remove(index);
-                    vScrollBar.Maximum = _itemList.Count / _col + 1;
+                    vScrollBar.Maximum = (_itemList.Count / _col) + 1;
                 }
             }
         }
 
         private int GetIndex(int x, int y)
         {
-            int value = Math.Max(0, _col * (vScrollBar.Value - 1) + x + y * _col);
+            int value = Math.Max(0, (_col * (vScrollBar.Value - 1)) + x + (y * _col));
             return _itemList.Count > value ? _itemList[value] : -1;
         }
 
@@ -410,7 +410,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (b != null)
                     {
-                        Point loc = new Point(x * Options.ArtItemSizeWidth + 1, y * Options.ArtItemSizeHeight + 1);
+                        Point loc = new Point((x * Options.ArtItemSizeWidth) + 1, (y * Options.ArtItemSizeHeight) + 1);
                         Size size = new Size(Options.ArtItemSizeWidth - 1, Options.ArtItemSizeHeight - 1);
                         Rectangle rect = new Rectangle(loc, size);
 
@@ -448,7 +448,7 @@ namespace UoFiddler.Controls.UserControls
                     }
                     else
                     {
-                        Point loc = new Point(x * Options.ArtItemSizeWidth + 1, y * Options.ArtItemSizeHeight + 1);
+                        Point loc = new Point((x * Options.ArtItemSizeWidth) + 1, (y * Options.ArtItemSizeHeight) + 1);
                         Size size = new Size(Options.ArtItemSizeWidth - 1, Options.ArtItemSizeHeight - 1);
                         Rectangle rect = new Rectangle(loc, size);
 
@@ -476,8 +476,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _col = pictureBox.Width / Options.ArtItemSizeWidth;
-            _row = pictureBox.Height / Options.ArtItemSizeHeight + 1;
-            vScrollBar.Maximum = _itemList.Count / _col + 1;
+            _row = (pictureBox.Height / Options.ArtItemSizeHeight) + 1;
+            vScrollBar.Maximum = (_itemList.Count / _col) + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
             vScrollBar.LargeChange = _row;
@@ -603,7 +603,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    vScrollBar.Value = i / RefMarker._col + 1;
+                    vScrollBar.Value = (i / RefMarker._col) + 1;
                     Selected = _itemList[i];
                     break;
                 }
@@ -628,7 +628,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    vScrollBar.Value = i / RefMarker._col + 1;
+                    vScrollBar.Value = (i / RefMarker._col) + 1;
                     Selected = _itemList[i];
                     break;
                 }
@@ -749,7 +749,7 @@ namespace UoFiddler.Controls.UserControls
                 if (_showFreeSlots)
                 {
                     _selected = index;
-                    vScrollBar.Value = index / RefMarker._col + 1;
+                    vScrollBar.Value = (index / RefMarker._col) + 1;
                     namelabel.Text = $"Name: {TileData.ItemTable[_selected].Name}";
                     graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", _selected);
                     UpdateDetail(_selected);
@@ -766,7 +766,7 @@ namespace UoFiddler.Controls.UserControls
                         }
 
                         _itemList.Insert(i, index);
-                        vScrollBar.Value = i / RefMarker._col + 1;
+                        vScrollBar.Value = (i / RefMarker._col) + 1;
                         done = true;
                         break;
                     }
@@ -774,7 +774,7 @@ namespace UoFiddler.Controls.UserControls
                     if (!done)
                     {
                         _itemList.Add(index);
-                        vScrollBar.Value = _itemList.Count / RefMarker._col + 1;
+                        vScrollBar.Value = (_itemList.Count / RefMarker._col) + 1;
                     }
                     _selected = index;
                     namelabel.Text = $"Name: {TileData.ItemTable[_selected].Name}";
@@ -829,7 +829,7 @@ namespace UoFiddler.Controls.UserControls
                         _itemList.Insert(j, j);
                     }
                 }
-                vScrollBar.Maximum = _itemList.Count / _col + 1;
+                vScrollBar.Maximum = (_itemList.Count / _col) + 1;
                 pictureBox.Invalidate();
             }
             else

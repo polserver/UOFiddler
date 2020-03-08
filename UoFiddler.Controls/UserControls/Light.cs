@@ -125,8 +125,8 @@ namespace UoFiddler.Controls.UserControls
                 BitmapData bd = bit.LockBits(new Rectangle(0, 0, bit.Width, bit.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                 byte* imgPtr = (byte*)bd.Scan0;
 
-                int lightStartX = bit.Width / 2 - lightWidth / 2;
-                int lightStartY = 30 + bit.Height / 2 - lightHeight / 2;
+                int lightStartX = (bit.Width / 2) - (lightWidth / 2);
+                int lightStartY = 30 + (bit.Height / 2) - (lightHeight / 2);
 
                 int lightEndX = lightStartX + lightWidth;
                 int lightEndY = lightStartY + lightWidth;
@@ -143,7 +143,7 @@ namespace UoFiddler.Controls.UserControls
 
                         if (x >= lightStartX && x < lightEndX && y >= lightStartY && y < lightEndY)
                         {
-                            int offset = (y - lightStartY) * lightHeight + (x - lightStartX);
+                            int offset = ((y - lightStartY) * lightHeight) + (x - lightStartX);
                             if (offset < light.Length)
                             {
                                 lightC = light[offset];
@@ -168,7 +168,7 @@ namespace UoFiddler.Controls.UserControls
                         *imgPtr++ = g;
                         *imgPtr++ = r;
                     }
-                    imgPtr += bd.Stride - bd.Width * 3;
+                    imgPtr += bd.Stride - (bd.Width * 3);
                 }
                 bit.UnlockBits(bd);
             }

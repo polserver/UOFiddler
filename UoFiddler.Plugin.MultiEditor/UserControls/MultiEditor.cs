@@ -376,8 +376,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             double my = point.Y - cy;
             double xx = mx;
             double yy = my;
-            my = xx * CoordinateTransform - yy * CoordinateTransform; //Rotate 45° Coordinate system
-            mx = yy * CoordinateTransform + xx * CoordinateTransform;
+            my = (xx * CoordinateTransform) - (yy * CoordinateTransform); //Rotate 45° Coordinate system
+            mx = (yy * CoordinateTransform) + (xx * CoordinateTransform);
             mx /= CoordinateTransform * 44; //Math.Sqrt(2)*22==CoordinateTransform*44
             my /= CoordinateTransform * 44; //CoordinateTransform=Math.Sqrt(2)/2
             my *= -1;
@@ -897,13 +897,13 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             if (BTN_Floor.Checked)
             {
-                int floorZMod = -DrawFloorZ * 4 - 44;
+                int floorZMod = (-DrawFloorZ * 4) - 44;
                 if (yMin > floorZMod)
                 {
                     yMin = floorZMod;
                 }
 
-                floorZMod = (_compList.Width + _compList.Height) * 22 - DrawFloorZ * 4;
+                floorZMod = ((_compList.Width + _compList.Height) * 22) - (DrawFloorZ * 4);
 
                 if (yMax < floorZMod)
                 {
@@ -911,8 +911,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 }
             }
 
-            int height = yMax - yMin + MultiEditorComponentList.GapYMod * 3;
-            int width = _compList.XMax - _compList.XMin + MultiEditorComponentList.GapXMod * 2;
+            int height = yMax - yMin + (MultiEditorComponentList.GapYMod * 3);
+            int width = _compList.XMax - _compList.XMin + (MultiEditorComponentList.GapXMod * 2);
 
             if (height <= pictureBoxMulti.Height + hScrollBar.Height)
             {
@@ -1157,7 +1157,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             _drawTilesList = (List<int>)e.Node.Tag;
-            vScrollBarDrawTiles.Maximum = _drawTilesList.Count / _pictureBoxDrawTilesCol + 1;
+            vScrollBarDrawTiles.Maximum = (_drawTilesList.Count / _pictureBoxDrawTilesCol) + 1;
             vScrollBarDrawTiles.Minimum = 1;
             vScrollBarDrawTiles.SmallChange = 1;
             vScrollBarDrawTiles.LargeChange = 1;
@@ -1288,7 +1288,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             int value = Math.Max(0,
-                _pictureBoxDrawTilesCol * (vScrollBarDrawTiles.Value - 1) + x + y * _pictureBoxDrawTilesCol);
+                (_pictureBoxDrawTilesCol * (vScrollBarDrawTiles.Value - 1)) + x + (y * _pictureBoxDrawTilesCol));
 
             if (_drawTilesList.Count > value)
             {
@@ -1369,7 +1369,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                         continue;
                     }
 
-                    Point loc = new Point(x * DrawTileSizeWidth + 1, y * DrawTileSizeHeight + 1);
+                    Point loc = new Point((x * DrawTileSizeWidth) + 1, (y * DrawTileSizeHeight) + 1);
                     Size size = new Size(DrawTileSizeWidth - 1, DrawTileSizeHeight - 1);
                     Rectangle rect = new Rectangle(loc, size);
 
@@ -1405,8 +1405,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             _pictureBoxDrawTilesCol = pictureBoxDrawTiles.Width / DrawTileSizeWidth;
-            _pictureBoxDrawTilesRow = pictureBoxDrawTiles.Height / DrawTileSizeHeight + 1;
-            vScrollBarDrawTiles.Maximum = _drawTilesList.Count / _pictureBoxDrawTilesCol + 1;
+            _pictureBoxDrawTilesRow = (pictureBoxDrawTiles.Height / DrawTileSizeHeight) + 1;
+            vScrollBarDrawTiles.Maximum = (_drawTilesList.Count / _pictureBoxDrawTilesCol) + 1;
             vScrollBarDrawTiles.Minimum = 1;
             vScrollBarDrawTiles.SmallChange = 1;
             vScrollBarDrawTiles.LargeChange = _pictureBoxDrawTilesRow;

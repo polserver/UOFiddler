@@ -61,7 +61,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 _refMarker._selected = graphic;
-                _refMarker.vScrollBar.Value = i / _refMarker._col + 1;
+                _refMarker.vScrollBar.Value = (i / _refMarker._col) + 1;
                 _refMarker.GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}]", graphic, Textures.GetTexture(graphic));
                 _refMarker.pictureBox.Invalidate();
                 return true;
@@ -71,7 +71,7 @@ namespace UoFiddler.Controls.UserControls
 
         public int GetIndex(int x, int y)
         {
-            int value = Math.Max(0, _col * (vScrollBar.Value - 1) + x + y * _col);
+            int value = Math.Max(0, (_col * (vScrollBar.Value - 1)) + x + (y * _col));
 
             return _textureList.Count > value
                 ? _textureList[value]
@@ -91,7 +91,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            vScrollBar.Maximum = _textureList.Count / _col + 1;
+            vScrollBar.Maximum = (_textureList.Count / _col) + 1;
             pictureBox.Invalidate();
 
             if (!_loaded)
@@ -146,12 +146,12 @@ namespace UoFiddler.Controls.UserControls
                     _textureList.Add(index);
                 }
 
-                vScrollBar.Maximum = _textureList.Count / _col + 1;
+                vScrollBar.Maximum = (_textureList.Count / _col) + 1;
             }
             else
             {
                 _textureList.Remove(index);
-                vScrollBar.Maximum = _textureList.Count / _col + 1;
+                vScrollBar.Maximum = (_textureList.Count / _col) + 1;
             }
         }
 
@@ -222,7 +222,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    Point loc = new Point(x * 64 + 1, y * 64 + 1);
+                    Point loc = new Point((x * 64) + 1, (y * 64) + 1);
                     Size size = new Size(64 - 1, 64 - 1);
                     Rectangle rect = new Rectangle(loc, size);
 
@@ -263,8 +263,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _col = pictureBox.Width / 64;
-            _row = pictureBox.Height / 64 + 1;
-            vScrollBar.Maximum = _textureList.Count / _col + 1;
+            _row = (pictureBox.Height / 64) + 1;
+            vScrollBar.Maximum = (_textureList.Count / _col) + 1;
             vScrollBar.Minimum = 1;
             vScrollBar.SmallChange = 1;
             vScrollBar.LargeChange = _row;
@@ -325,7 +325,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 _selected = _textureList[i];
-                vScrollBar.Value = i / _refMarker._col + 1;
+                vScrollBar.Value = (i / _refMarker._col) + 1;
                 GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}", _selected, Textures.GetTexture(_selected));
                 pictureBox.Invalidate();
                 break;
@@ -431,7 +431,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Bitmap bmp = new Bitmap(dialog.FileName);
-                if (bmp.Width == 64 && bmp.Height == 64 || bmp.Width == 128 && bmp.Height == 128)
+                if ((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128))
                 {
                     if (dialog.FileName.Contains(".bmp"))
                     {
@@ -449,14 +449,14 @@ namespace UoFiddler.Controls.UserControls
                         }
 
                         _textureList.Insert(i, index);
-                        vScrollBar.Value = i / _refMarker._col + 1;
+                        vScrollBar.Value = (i / _refMarker._col) + 1;
                         done = true;
                         break;
                     }
                     if (!done)
                     {
                         _textureList.Add(index);
-                        vScrollBar.Value = _textureList.Count / _refMarker._col + 1;
+                        vScrollBar.Value = (_textureList.Count / _refMarker._col) + 1;
                     }
                     _selected = index;
                     GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}]", _selected, Textures.GetTexture(_selected));

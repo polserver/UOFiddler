@@ -95,8 +95,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
                 new PointF(5,
-                e.Bounds.Y + (e.Bounds.Height / 2 -
-                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
+                e.Bounds.Y + ((e.Bounds.Height / 2) -
+                (e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2))));
         }
 
         private void MeasureOrg(object sender, MeasureItemEventArgs e)
@@ -161,8 +161,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
                 new PointF(5,
-                e.Bounds.Y + (e.Bounds.Height / 2 -
-                e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2)));
+                e.Bounds.Y + ((e.Bounds.Height / 2) -
+                (e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2))));
         }
 
         private void MeasureSec(object sender, MeasureItemEventArgs e)

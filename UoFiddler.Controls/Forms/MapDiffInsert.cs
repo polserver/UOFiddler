@@ -117,7 +117,7 @@ namespace UoFiddler.Controls.Forms
                         {
                             for (int y = 0; y < blocky; ++y)
                             {
-                                mMapReader.BaseStream.Seek((x * blocky + y) * 196, SeekOrigin.Begin);
+                                mMapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
                                 int header = mMapReader.ReadInt32();
                                 binmul.Write(header);
                                 ushort tileid;
@@ -222,7 +222,7 @@ namespace UoFiddler.Controls.Forms
                         {
                             for (int y = 0; y < blocky; ++y)
                             {
-                                mIndexReader.BaseStream.Seek((x * blocky + y) * 12, SeekOrigin.Begin);
+                                mIndexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
                                 var lookup = mIndexReader.ReadInt32();
                                 var length = mIndexReader.ReadInt32();
                                 var extra = mIndexReader.ReadInt32();

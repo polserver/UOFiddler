@@ -176,7 +176,7 @@ namespace UoFiddler.Controls.UserControls
                 e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             }
 
-            e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + e.Bounds.Width / 2, e.Bounds.Y + e.Bounds.Height / 2);
+            e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
             if (bmp != null)
             {
                 int width = bmp.Width;
