@@ -24,15 +24,15 @@ using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Forms
 {
-    public partial class UoFiddler : Form
+    public partial class MainForm : Form
     {
         public static string Version => Assembly.GetExecutingAssembly().GetCustomAttributes(true).OfType<AssemblyFileVersionAttribute>().First().Version;
         private ItemShowAlternative _controlItemShowAlt;
         private TextureAlternative _controlTextureAlt;
         private LandTilesAlternative _controlLandTilesAlt;
-        private static UoFiddler _refMarker;
+        private static MainForm _refMarker;
 
-        public UoFiddler()
+        public MainForm()
         {
             _refMarker = this;
             InitializeComponent();

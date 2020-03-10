@@ -38,7 +38,7 @@ namespace UoFiddler.Forms
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
-            UoFiddler.LoadExternToolStripMenu();
+            MainForm.LoadExternToolStripMenu();
         }
 
         private void OnToolIndexChanged(object sender, EventArgs e)

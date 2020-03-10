@@ -505,7 +505,7 @@ namespace UoFiddler.Classes
                 }
 
                 DialogResult result = MessageBox.Show(
-                    $"{string.Format("A new version was found: {1}\nYour version: {0}", Forms.UoFiddler.Version, match[0])}\n\nDownload now?",
+                    $"{string.Format("A new version was found: {1}\nYour version: {0}", Forms.MainForm.Version, match[0])}\n\nDownload now?",
                     "Check for Update",
                     MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
@@ -521,7 +521,7 @@ namespace UoFiddler.Classes
 
         public static bool VersionCheck(string newVersionParam)
         {
-            Version.TryParse(Forms.UoFiddler.Version, out Version currentVersion);
+            Version.TryParse(Forms.MainForm.Version, out Version currentVersion);
             Version.TryParse(newVersionParam, out Version newVersion);
 
             return newVersion > currentVersion;
