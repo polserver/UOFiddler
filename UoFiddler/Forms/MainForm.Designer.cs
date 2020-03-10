@@ -13,7 +13,7 @@ using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Forms
 {
-    partial class UoFiddler
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.

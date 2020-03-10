@@ -48,7 +48,7 @@ namespace UoFiddler.Forms
             if (checkBoxAltDesign.Checked != Options.DesignAlternative)
             {
                 Options.DesignAlternative = checkBoxAltDesign.Checked;
-                UoFiddler.ChangeDesign();
+                MainForm.ChangeDesign();
                 PluginEvents.FireDesignChangeEvent();
             }
 
@@ -66,7 +66,7 @@ namespace UoFiddler.Forms
                     Map.Felucca.Width = 6144;
                     Map.Trammel.Width = 6144;
                 }
-                UoFiddler.ChangeMapSize();
+                MainForm.ChangeMapSize();
             }
 
             if (checkBoxuseDiff.Checked != Map.UseDiff)
@@ -80,13 +80,13 @@ namespace UoFiddler.Forms
             {
                 Options.ArtItemSizeWidth = (int)numericUpDownItemSizeWidth.Value;
                 Options.ArtItemSizeHeight = (int)numericUpDownItemSizeHeight.Value;
-                UoFiddler.ReloadItemTab();
+                MainForm.ReloadItemTab();
             }
 
             if (checkBoxItemClip.Checked != Options.ArtItemClip)
             {
                 Options.ArtItemClip = checkBoxItemClip.Checked;
-                UoFiddler.ReloadItemTab();
+                MainForm.ReloadItemTab();
             }
 
             Files.UseHashFile = checkBoxUseHash.Checked;

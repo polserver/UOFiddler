@@ -52,7 +52,7 @@ namespace UoFiddler.Forms
             }
             else if (match.Length == 2)
             {
-                if (UoFiddler.Version.Equals(match[0]))
+                if (MainForm.Version.Equals(match[0]))
                 {
                     MessageBox.Show("Your Version is up-to-date", "Check for Update");
                     progresslabel.Text = "";
@@ -61,7 +61,7 @@ namespace UoFiddler.Forms
                 {
                     DialogResult result =
                         MessageBox.Show(
-                            $"A new version was found: {match[0]} your version: {UoFiddler.Version}\nDownload now?",
+                            $"A new version was found: {match[0]} your version: {MainForm.Version}\nDownload now?",
                             "Check for Update",
                             MessageBoxButtons.YesNo);
 
@@ -72,7 +72,7 @@ namespace UoFiddler.Forms
                 }
                 else
                 {
-                    DialogResult result = MessageBox.Show($"Your version differs: {UoFiddler.Version} Found: {match[0]}\nDownload now?", "Check for Update", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                    DialogResult result = MessageBox.Show($"Your version differs: {MainForm.Version} Found: {match[0]}\nDownload now?", "Check for Update", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Yes)
                     {
                         DownloadFile(match[1]);

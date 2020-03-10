@@ -56,7 +56,7 @@ namespace UoFiddler.Forms
             _oldTab.Controls.Clear();
             _oldTab.Controls.Add(contr);
 
-            UoFiddler.ReDock(_oldTab);
+            MainForm.ReDock(_oldTab);
         }
     }
 }
