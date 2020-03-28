@@ -89,7 +89,7 @@ namespace Ultima
         {
             bin.Write(2560); // width
             bin.Write(2048); // height
-            byte data = 1;
+            byte data = 0;
             byte mask = 0x0;
             ushort curcolor = 0;
             BitmapData bd = image.LockBits(
@@ -121,10 +121,10 @@ namespace Ultima
 
                             data |= mask;
                             bin.Write(data);
-                            data = 1;
+                            data = 0;
                         }
                     }
-                    else
+                    else if (data > 0)
                     {
                         if (curcolor == 0xffff)
                         {
@@ -140,19 +140,27 @@ namespace Ultima
                         curcolor = c;
                         data = 1;
                     }
+                    else
+                    {
+                        curcolor = c;
+                        data = 1;
+                    }
                 }
             }
-            if (curcolor == 0xffff)
+            if (data > 0)
             {
-                mask = 0x0;
-            }
-            else
-            {
-                mask = 0x80;
-            }
+                if (curcolor == 0xffff)
+                {
+                    mask = 0x0;
+                }
+                else
+                {
+                    mask = 0x80;
+                }
 
-            data |= mask;
-            bin.Write(data);
+                data |= mask;
+                bin.Write(data);
+            }
             image.UnlockBits(bd);
         }
 
