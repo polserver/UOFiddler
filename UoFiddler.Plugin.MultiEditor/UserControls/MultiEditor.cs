@@ -401,6 +401,11 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void NumericUpDown_Floor_Changed(object sender, EventArgs e)
         {
+            if (_compList is null)
+            {
+                return;
+            }
+
             DrawFloorZ = (int)numericUpDown_Floor.Value;
             _compList.SetFloorZ(DrawFloorZ);
             if (!BTN_Floor.Checked)

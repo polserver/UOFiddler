@@ -175,13 +175,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             if (drawFloor)
             {
-                int floorZMod = -_parent.DrawFloorZ << 2 - 44; // TODO: that shift count is what -42?
+                int floorZMod = (-_parent.DrawFloorZ * 4) - 44;
                 if (YMin > floorZMod)
                 {
                     YMin = floorZMod;
                 }
 
-                floorZMod = ((Width + Height) * 22) - _parent.DrawFloorZ << 2;
+                floorZMod = ((Width + Height) * 22) - (_parent.DrawFloorZ * 4);
                 if (YMaxOrg < floorZMod)
                 {
                     YMax = floorZMod;
