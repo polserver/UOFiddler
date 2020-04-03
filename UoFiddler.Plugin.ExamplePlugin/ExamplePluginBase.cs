@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -120,6 +121,19 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
         private void ExportToOffsetClicked(object sender, EventArgs e)
         {
+            List<int> itemIds = new List<int>();
+            if (Options.DesignAlternative)
+            {
+                itemIds.AddRange(Host.GetItemShowAltControl().ItemList);
+            }
+            else
+            {
+                foreach (ListViewItem item in Host.GetItemShowListView().Items)
+                {
+                    itemIds.Add((int)item.Tag);
+                }
+            }
+
             string fileName = Path.Combine(Options.OutputPath, "offset.cfg");
 
             string inputMessage = "Do you want to export all items to offset.cfg?\r\n"
@@ -133,12 +147,9 @@ namespace UoFiddler.Plugin.ExamplePlugin
                 return;
             }
 
-            ListView listView = Host.GetItemShowListView();
             StringBuilder sb = new StringBuilder();
-            foreach (ListViewItem item in listView.Items)
+            foreach (int itemId in itemIds)
             {
-                int itemId = (int)item.Tag;
-
                 if (itemId <= -1 || !Art.IsValidStatic(itemId))
                 {
                     continue;

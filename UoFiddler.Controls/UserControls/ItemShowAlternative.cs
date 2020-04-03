@@ -42,6 +42,8 @@ namespace UoFiddler.Controls.UserControls
         private int _selected = -1;
         private bool _showFreeSlots;
 
+        public IReadOnlyList<int> ItemList { get => _itemList.AsReadOnly(); }
+
         public static ItemShowAlternative RefMarker { get; private set; }
         public static PictureBox ItemPictureBox => RefMarker.pictureBox;
         public bool IsLoaded { get; private set; }
