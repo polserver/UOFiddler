@@ -12,7 +12,6 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Plugin.SendItem;
 
 namespace UoFiddler.Plugin.SendItem.Forms
 {
