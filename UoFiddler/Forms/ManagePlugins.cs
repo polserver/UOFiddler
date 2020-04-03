@@ -70,7 +70,7 @@ namespace UoFiddler.Forms
         {
             foreach (AvailablePlugin plug in GlobalPlugins.Plugins.AvailablePlugins)
             {
-                if (!Options.PluginsToLoad.Contains(plug.Type.ToString()))
+                if (Options.PluginsToLoad?.Contains(plug.Type.ToString()) == false)
                 {
                     if (checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
                     {

@@ -108,7 +108,7 @@ namespace UoFiddler.Controls.Plugin
                     Type = pluginAssembly.GetType(pluginType.ToString())
                 };
 
-                if (Options.PluginsToLoad.Contains(pluginType.ToString()))
+                if (Options.PluginsToLoad?.Contains(pluginType.ToString()) == true)
                 {
                     newPlugin.CreateInstance();
                     newPlugin.Instance.Host = this;
@@ -116,9 +116,7 @@ namespace UoFiddler.Controls.Plugin
                 }
 
                 AvailablePlugins.Add(newPlugin);
-                //newPlugin = null; // TODO: to be removed?
             }
-            //pluginAssembly = null; // TODO: to be removed?
         }
 
         public ItemShow GetItemShowControl()

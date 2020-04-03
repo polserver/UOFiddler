@@ -55,7 +55,7 @@ namespace UoFiddler.Controls.Classes
         /// <summary>
         /// Defines which Plugins to load on startup
         /// </summary>
-        public static List<string> PluginsToLoad { get; set; }
+        public static List<string> PluginsToLoad { get; set; } = new List<string>();
 
         /// <summary>
         /// Defines which muls are loaded

@@ -41,7 +41,7 @@ namespace UoFiddler.Classes
         // TODO: unused?
         //public static string OutputPath { get; set; }
 
-        private static void MoveFile(IEnumerable<FileInfo> files, string path)
+        private static void MoveFiles(IEnumerable<FileInfo> files, string path)
         {
             foreach (FileInfo file in files)
             {
@@ -51,14 +51,7 @@ namespace UoFiddler.Classes
                     continue;
                 }
 
-                try
-                {
-                    file.MoveTo(destFileName);
-                }
-                catch
-                {
-                    file.CopyTo(destFileName);
-                }
+                file.CopyTo(destFileName);
             }
         }
 
@@ -77,12 +70,12 @@ namespace UoFiddler.Classes
             }
 
             DirectoryInfo di = new DirectoryInfo(Application.StartupPath);
-            MoveFile(di.GetFiles("Options_default.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
-            MoveFile(di.GetFiles("Animationlist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
-            MoveFile(di.GetFiles("Multilist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
+            MoveFiles(di.GetFiles("Options_default.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
+            MoveFiles(di.GetFiles("Animationlist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
+            MoveFiles(di.GetFiles("Multilist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
 
             di = new DirectoryInfo(Path.Combine(Application.StartupPath, "plugins"));
-            MoveFile(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
+            MoveFiles(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
 
             Load();
 
@@ -388,7 +381,6 @@ namespace UoFiddler.Classes
                 ExternTools.Add(tool);
             }
 
-            Options.PluginsToLoad = new List<string>();
             foreach (XmlElement xPlug in xOptions.SelectNodes("Plugin"))
             {
                 string name = xPlug.GetAttribute("name");
