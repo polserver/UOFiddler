@@ -28,12 +28,23 @@ namespace UoFiddler.Forms
 
         private void OnLoad(object sender, EventArgs e)
         {
-            listBoxTools.BeginUpdate();
-            for (int i = 0; i < FiddlerOptions.ExternTools.Count; i++)
+            if (FiddlerOptions.ExternTools is null)
             {
-                listBoxTools.Items.Add(i);
+                return;
             }
-            listBoxTools.EndUpdate();
+
+            listBoxTools.BeginUpdate();
+            try
+            {
+                for (int i = 0; i < FiddlerOptions.ExternTools.Count; i++)
+                {
+                    listBoxTools.Items.Add(i);
+                }
+            }
+            finally
+            {
+                listBoxTools.EndUpdate();
+            }
         }
 
         private void OnClosing(object sender, FormClosingEventArgs e)
@@ -47,7 +58,7 @@ namespace UoFiddler.Forms
             {
                 listBoxArgs.BeginUpdate();
                 listBoxArgs.Items.Clear();
-                ExternTool tool = Classes.FiddlerOptions.ExternTools[listBoxTools.SelectedIndex];
+                ExternTool tool = FiddlerOptions.ExternTools[listBoxTools.SelectedIndex];
                 for (int i = 0; i < tool.Args.Count; i++)
                 {
                     listBoxArgs.Items.Add(i);

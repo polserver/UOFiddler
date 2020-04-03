@@ -244,6 +244,11 @@ namespace UoFiddler.Forms
             _refMarker.ExternToolsDropDown.DropDownItems.Add(item);
             _refMarker.ExternToolsDropDown.DropDownItems.Add(new ToolStripSeparator());
 
+            if (FiddlerOptions.ExternTools is null)
+            {
+                return;
+            }
+
             for (int i = 0; i < FiddlerOptions.ExternTools.Count; i++)
             {
                 ExternTool tool = FiddlerOptions.ExternTools[i];
