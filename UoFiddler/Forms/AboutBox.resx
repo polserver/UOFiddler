@@ -123,6 +123,7 @@ Updating project to .NET Framework 4.8
 You can download .NET Framework at https://dotnet.microsoft.com/download/dotnet-framework
 This is maintenance release focusing on updating framework and code cleanup.
 Fixed bitmap to multimap saving (author: brndd).
+Instead of moving configuration files to AppData we no copy them if they don't exist.
 
 Version 4.8
 AsYlum added multiple selection in items tab using
