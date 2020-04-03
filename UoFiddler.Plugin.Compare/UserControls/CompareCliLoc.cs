@@ -31,7 +31,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private static StringList _cliloc1;
         private static StringList _cliloc2;
         private static BindingSource _source;
-        private static readonly Dictionary<int, CompareEntry> CompareList = new Dictionary<int, CompareEntry>();
+        private static readonly Dictionary<int, CompareEntry> _compareList = new Dictionary<int, CompareEntry>();
         private static List<CompareEntry> _list = new List<CompareEntry>();
         private static bool _showOnlyDiff;
 
@@ -96,15 +96,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 entry.Number = entr.Number;
                 entry.Text1 = entr.Text;
                 entry.Text2 = "";
-                CompareList.Add(entry.Number, entry);
+                _compareList.Add(entry.Number, entry);
             }
 
             for (int i = 0; i < _cliloc2.Entries.Count; i++)
             {
                 StringEntry entr = _cliloc2.Entries[i];
-                if (CompareList.ContainsKey(entr.Number))
+                if (_compareList.ContainsKey(entr.Number))
                 {
-                    CompareEntry entr1 = CompareList[entr.Number];
+                    CompareEntry entr1 = _compareList[entr.Number];
                     entr1.Text2 = entr.Text;
                     entr1.CompareResult = entr1.Text1 != entr.Text
                         ? CompareEntry.CompareRes.Diff
@@ -119,13 +119,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         Text1 = "",
                         Text2 = entr.Text
                     };
-                    CompareList.Add(entry.Number, entry);
+                    _compareList.Add(entry.Number, entry);
                 }
             }
 
             _list = new List<CompareEntry>();
 
-            foreach (KeyValuePair<int, CompareEntry> key in CompareList)
+            foreach (KeyValuePair<int, CompareEntry> key in _compareList)
             {
                 if (_showOnlyDiff)
                 {
@@ -154,7 +154,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     break;
             }
 
-            CompareList.Clear();
+            _compareList.Clear();
             _source = new BindingSource { DataSource = _list };
             dataGridView1.DataSource = _source;
 
@@ -308,7 +308,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Diff = 0x0,
             NewIn1 = 0x1,
             NewIn2 = 0x2,
-            Equal = 0x3
+            Equal = NewIn1 | NewIn2
         }
 
         public int Number { get; set; }

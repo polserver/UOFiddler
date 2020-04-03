@@ -30,7 +30,7 @@ namespace UoFiddler
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 FiddlerOptions.Startup();
-                Application.Run(new Forms.MainForm());
+                Application.Run(new MainForm());
                 FiddlerOptions.Save();
                 Map.SaveMapOverlays();
             }

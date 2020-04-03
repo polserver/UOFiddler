@@ -24,7 +24,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 {
     public class ExamplePluginBase : PluginBase
     {
-        private const string ItemDescFileName = "itemdesc.cfg";
+        private const string _itemDescFileName = "itemdesc.cfg";
 
         public ExamplePluginBase()
         {
@@ -181,7 +181,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
             }
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, ItemDescFileName);
+            string fileName = Path.Combine(path, _itemDescFileName);
 
             using (StreamWriter streamWriter = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
             {
@@ -205,7 +205,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
             }
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, ItemDescFileName);
+            string fileName = Path.Combine(path, _itemDescFileName);
 
             using (StreamWriter streamWriter = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
             {

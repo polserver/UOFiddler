@@ -26,9 +26,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private MultiEditorComponentList _compList;
 
         //Sin/Cos(45°)
-        private static readonly double CoordinateTransform = Math.Sqrt(2) / 2;
-        private const int DrawTileSizeHeight = 45;
-        private const int DrawTileSizeWidth = 45;
+        private static readonly double _coordinateTransform = Math.Sqrt(2) / 2;
+        private const int _drawTileSizeHeight = 45;
+        private const int _drawTileSizeWidth = 45;
         private List<int> _drawTilesList = new List<int>();
         private readonly List<MultiTile> _overlayList = new List<MultiTile>();
         private bool _loaded;
@@ -376,10 +376,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             double my = point.Y - cy;
             double xx = mx;
             double yy = my;
-            my = (xx * CoordinateTransform) - (yy * CoordinateTransform); //Rotate 45° Coordinate system
-            mx = (yy * CoordinateTransform) + (xx * CoordinateTransform);
-            mx /= CoordinateTransform * 44; //Math.Sqrt(2)*22==CoordinateTransform*44
-            my /= CoordinateTransform * 44; //CoordinateTransform=Math.Sqrt(2)/2
+            my = (xx * _coordinateTransform) - (yy * _coordinateTransform); //Rotate 45° Coordinate system
+            mx = (yy * _coordinateTransform) + (xx * _coordinateTransform);
+            mx /= _coordinateTransform * 44; //Math.Sqrt(2)*22==CoordinateTransform*44
+            my /= _coordinateTransform * 44; //CoordinateTransform=Math.Sqrt(2)/2
             my *= -1;
             x = (int)mx;
             y = (int)my;
@@ -1306,8 +1306,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxDrawTiles_OnMouseClick(object sender, MouseEventArgs e)
         {
             pictureBoxDrawTiles.Focus();
-            int x = e.X / (DrawTileSizeWidth - 1);
-            int y = e.Y / (DrawTileSizeHeight - 1);
+            int x = e.X / (_drawTileSizeWidth - 1);
+            int y = e.Y / (_drawTileSizeHeight - 1);
 
             int index = GetIndex(x, y);
             if (index < 0)
@@ -1322,8 +1322,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         private void PictureBoxDrawTilesMouseMove(object sender, MouseEventArgs e)
         {
-            int x = e.X / (DrawTileSizeWidth - 1);
-            int y = e.Y / (DrawTileSizeHeight - 1);
+            int x = e.X / (_drawTileSizeWidth - 1);
+            int y = e.Y / (_drawTileSizeHeight - 1);
             int index = GetIndex(x, y);
             if (index >= 0)
             {
@@ -1374,8 +1374,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                         continue;
                     }
 
-                    Point loc = new Point((x * DrawTileSizeWidth) + 1, (y * DrawTileSizeHeight) + 1);
-                    Size size = new Size(DrawTileSizeWidth - 1, DrawTileSizeHeight - 1);
+                    Point loc = new Point((x * _drawTileSizeWidth) + 1, (y * _drawTileSizeHeight) + 1);
+                    Size size = new Size(_drawTileSizeWidth - 1, _drawTileSizeHeight - 1);
                     Rectangle rect = new Rectangle(loc, size);
 
                     e.Graphics.Clip = new Region(rect);
@@ -1409,8 +1409,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
-            _pictureBoxDrawTilesCol = pictureBoxDrawTiles.Width / DrawTileSizeWidth;
-            _pictureBoxDrawTilesRow = (pictureBoxDrawTiles.Height / DrawTileSizeHeight) + 1;
+            _pictureBoxDrawTilesCol = pictureBoxDrawTiles.Width / _drawTileSizeWidth;
+            _pictureBoxDrawTilesRow = (pictureBoxDrawTiles.Height / _drawTileSizeHeight) + 1;
             vScrollBarDrawTiles.Maximum = (_drawTilesList.Count / _pictureBoxDrawTilesCol) + 1;
             vScrollBarDrawTiles.Minimum = 1;
             vScrollBarDrawTiles.SmallChange = 1;

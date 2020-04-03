@@ -20,7 +20,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 {
     internal class MultiEditorComponentList
     {
-        private const int UndoListMaxSize = 10;
+        private const int _undoListMaxSize = 10;
 
         private bool _modified;
         private static MultiEditor.UserControls.MultiEditor _parent;
@@ -49,7 +49,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
-            UndoList = new UndoStruct[UndoListMaxSize];
+            UndoList = new UndoStruct[_undoListMaxSize];
             _modified = true;
             RecalculateMinMax();
         }
@@ -83,7 +83,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             CalcSolver();
             Tiles.Sort();
-            UndoList = new UndoStruct[UndoListMaxSize];
+            UndoList = new UndoStruct[_undoListMaxSize];
             _modified = true;
             RecalculateMinMax();
         }
@@ -513,7 +513,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public void UndoClear()
         {
-            for (int i = 0; i < UndoListMaxSize; ++i)
+            for (int i = 0; i < _undoListMaxSize; ++i)
             {
                 UndoList[i].Action = null;
                 UndoList[i].Tiles = null;
@@ -632,7 +632,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         private void AddToUndoList(string action)
         {
-            for (int i = UndoListMaxSize - 2; i >= 0; --i)
+            for (int i = _undoListMaxSize - 2; i >= 0; --i)
             {
                 UndoList[i + 1] = UndoList[i];
             }
@@ -840,7 +840,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
     public class MultiTile : IComparable
     {
-        private static readonly ColorMatrix DrawMatrix = new ColorMatrix(new float[][]
+        private static readonly ColorMatrix _drawMatrix = new ColorMatrix(new float[][]
         {
             new float[] {0, 0, 0, 0, 0},
             new float[] {0, 0, 0, 0, 0},
@@ -849,7 +849,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             new float[] {0, 0, 0, 0, 1}
         });
 
-        private static readonly ColorMatrix HoverMatrix = new ColorMatrix(new float[][]
+        private static readonly ColorMatrix _hoverMatrix = new ColorMatrix(new float[][]
         {
             new float[] {1, 0, 0, 0, 0},
             new float[] {0, 1, 0, 0, 0},
@@ -858,7 +858,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             new float[] {0, 0, .8f, 0, 1}
         });
 
-        private static readonly ColorMatrix SelectedMatrix = new ColorMatrix(new float[][]
+        private static readonly ColorMatrix _selectedMatrix = new ColorMatrix(new float[][]
         {
             new float[] {0, 1, 0, 0, 0},
             new float[] {0, 0, 1, 0, 0},
@@ -867,7 +867,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             new float[] {.8f, 0, 0, 0, 1}
         });
 
-        private static readonly ColorMatrix TransMatrix = new ColorMatrix(new float[][]
+        private static readonly ColorMatrix _transMatrix = new ColorMatrix(new float[][]
         {
             new float[] {1, 0, 0, 0, 0},
             new float[] {0, 1, 0, 0, 0},
@@ -876,7 +876,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             new float[] {0, 0, 0, 0, 1}
         });
 
-        private static readonly ColorMatrix StandableMatrix = new ColorMatrix(new float[][]
+        private static readonly ColorMatrix _standableMatrix = new ColorMatrix(new float[][]
         {
             new float[] {0, 0, .5f, 0, 0},
             new float[] {0, .8f, 0, .8f, 0},
@@ -926,31 +926,31 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             if (HoverColor == null)
             {
                 HoverColor = new ImageAttributes();
-                HoverColor.SetColorMatrix(HoverMatrix);
+                HoverColor.SetColorMatrix(_hoverMatrix);
             }
 
             if (SelectedColor == null)
             {
                 SelectedColor = new ImageAttributes();
-                SelectedColor.SetColorMatrix(SelectedMatrix);
+                SelectedColor.SetColorMatrix(_selectedMatrix);
             }
 
             if (DrawColor == null)
             {
                 DrawColor = new ImageAttributes();
-                DrawColor.SetColorMatrix(DrawMatrix);
+                DrawColor.SetColorMatrix(_drawMatrix);
             }
 
             if (TransColor == null)
             {
                 TransColor = new ImageAttributes();
-                TransColor.SetColorMatrix(TransMatrix);
+                TransColor.SetColorMatrix(_transMatrix);
             }
 
             if (StandableColor == null)
             {
                 StandableColor = new ImageAttributes();
-                StandableColor.SetColorMatrix(StandableMatrix);
+                StandableColor.SetColorMatrix(_standableMatrix);
             }
         }
 
@@ -1159,7 +1159,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
         }
 
-        private const TileFlag ImpassableOrSurface = TileFlag.Impassable | TileFlag.Surface;
+        private const TileFlag _impassableOrSurface = TileFlag.Impassable | TileFlag.Surface;
 
         public bool IsWalkable(int z, List<MultiTile> tiles)
         {
@@ -1168,7 +1168,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             foreach (MultiTile tile in tiles)
             {
                 ItemData itemData = TileData.ItemTable[tile.Id];
-                if ((itemData.Flags & ImpassableOrSurface) == 0)
+                if ((itemData.Flags & _impassableOrSurface) == 0)
                 {
                     continue;
                 }

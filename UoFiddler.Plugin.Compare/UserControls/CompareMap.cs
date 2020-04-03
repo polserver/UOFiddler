@@ -256,7 +256,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Cursor = Cursors.Default;
         }
 
-        private static readonly Pen RedPen = Pens.Red;
+        private static readonly Pen _redPen = Pens.Red;
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
@@ -308,9 +308,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                                     {
                                         if (_diffs[x][y][xb][yb])
                                         {
-                                            mapg.DrawRectangle(RedPen, gx + xb, gy + yb, 1, 1);
-                                            mapg.DrawRectangle(RedPen, gx + xb, 0, 1, 2);
-                                            mapg.DrawRectangle(RedPen, 0, gy + yb, 2, 1);
+                                            mapg.DrawRectangle(_redPen, gx + xb, gy + yb, 1, 1);
+                                            mapg.DrawRectangle(_redPen, gx + xb, 0, 1, 2);
+                                            mapg.DrawRectangle(_redPen, 0, gy + yb, 2, 1);
                                         }
                                     }
                                 }
