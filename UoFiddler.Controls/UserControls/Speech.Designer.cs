@@ -53,7 +53,7 @@ namespace UoFiddler.Controls.UserControls
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collapsibleSplitter1 = new CollapsibleSplitter();
+            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -84,6 +84,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // IDEntry
             // 
+            this.IDEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.IDEntry.MaxLength = 10;
             this.IDEntry.Name = "IDEntry";
             this.IDEntry.Size = new System.Drawing.Size(100, 25);
@@ -114,6 +115,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // KeyWordEntry
             // 
+            this.KeyWordEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyWordEntry.Name = "KeyWordEntry";
             this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
             this.KeyWordEntry.Text = "KeyWord..";
@@ -186,7 +188,7 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.TabIndex = 5;
             this.collapsibleSplitter1.TabStop = false;
             this.collapsibleSplitter1.UseAnimations = false;
-            this.collapsibleSplitter1.VisualStyle = VisualStyles.DoubleDots;
+            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
             // toolStrip2
             // 
