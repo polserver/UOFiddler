@@ -50,7 +50,7 @@ namespace UoFiddler.Controls.UserControls
             this.toUOAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toWscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collapsibleSplitter1 = new CollapsibleSplitter();
+            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportAllImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -211,7 +211,7 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.TabIndex = 2;
             this.collapsibleSplitter1.TabStop = false;
             this.collapsibleSplitter1.UseAnimations = false;
-            this.collapsibleSplitter1.VisualStyle = VisualStyles.DoubleDots;
+            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
             // toolStrip1
             // 
@@ -384,7 +384,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer4.Panel2.Controls.Add(this.statusMulti);
             this.splitContainer4.Panel2MinSize = 22;
             this.splitContainer4.Size = new System.Drawing.Size(334, 268);
-            this.splitContainer4.SplitterDistance = 241;
+            this.splitContainer4.SplitterDistance = 239;
             this.splitContainer4.SplitterWidth = 1;
             this.splitContainer4.TabIndex = 1;
             // 
@@ -396,7 +396,7 @@ namespace UoFiddler.Controls.UserControls
             this.MultiPictureBox.Location = new System.Drawing.Point(0, 0);
             this.MultiPictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.MultiPictureBox.Name = "MultiPictureBox";
-            this.MultiPictureBox.Size = new System.Drawing.Size(334, 241);
+            this.MultiPictureBox.Size = new System.Drawing.Size(334, 239);
             this.MultiPictureBox.TabIndex = 0;
             this.MultiPictureBox.TabStop = false;
             this.MultiPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint_MultiPic);
@@ -443,7 +443,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.statusMulti.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusMultiText});
-            this.statusMulti.Location = new System.Drawing.Point(0, 4);
+            this.statusMulti.Location = new System.Drawing.Point(0, 6);
             this.statusMulti.Name = "statusMulti";
             this.statusMulti.Size = new System.Drawing.Size(334, 22);
             this.statusMulti.TabIndex = 0;

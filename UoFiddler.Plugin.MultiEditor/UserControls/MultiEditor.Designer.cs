@@ -216,7 +216,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // DummyContextMenu
             // 
             this.DummyContextMenu.Name = "DummyContextMenu";
-            this.DummyContextMenu.Size = new System.Drawing.Size(181, 26);
+            this.DummyContextMenu.Size = new System.Drawing.Size(61, 4);
             this.DummyContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.OnDummyContextMenuOpening);
             // 
             // imageListTreeView

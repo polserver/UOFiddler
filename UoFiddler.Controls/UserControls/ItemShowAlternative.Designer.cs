@@ -67,7 +67,7 @@ namespace UoFiddler.Controls.UserControls
             this.namelabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.graphiclabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.PreLoader = new System.ComponentModel.BackgroundWorker();
-            this.collapsibleSplitter1 = new CollapsibleSplitter();
+            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.ProgressBar = new System.Windows.Forms.ToolStripProgressBar();
@@ -283,6 +283,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsertText);
@@ -349,7 +350,7 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.TabIndex = 8;
             this.collapsibleSplitter1.TabStop = false;
             this.collapsibleSplitter1.UseAnimations = false;
-            this.collapsibleSplitter1.VisualStyle = VisualStyles.DoubleDots;
+            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
             // toolStrip1
             // 
