@@ -35,8 +35,8 @@ namespace UoFiddler.Controls.Forms
             listView1.MultiSelect = true;
         }
 
-        private static readonly int[] AnimCx = new int[5];
-        private static readonly int[] AnimCy = new int[5];
+        private static readonly int[] _animCx = new int[5];
+        private static readonly int[] _animCy = new int[5];
         private bool _loaded;
         private int _fileType;
         private int _currAction;
@@ -48,9 +48,9 @@ namespace UoFiddler.Controls.Forms
         private static bool _drawFull;
         private static Pen _blackUndraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
         private static SolidBrush _whiteUndraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
-        private static readonly SolidBrush WhiteTrasparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255));
-        private static readonly Color WhiteConvert = Color.FromArgb(255, 255, 255, 255);
-        private static readonly Color GreyConvert = Color.FromArgb(255, 170, 170, 170);
+        private static readonly SolidBrush _whiteTrasparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255));
+        private static readonly Color _whiteConvert = Color.FromArgb(255, 255, 255, 255);
+        private static readonly Color _greyConvert = Color.FromArgb(255, 170, 170, 170);
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -340,7 +340,7 @@ namespace UoFiddler.Controls.Forms
                     int x = _framePoint.X - edit.Frames[trackBar2.Value].Center.X;
                     int y = _framePoint.Y - edit.Frames[trackBar2.Value].Center.Y - currbits[trackBar2.Value].Height;
 
-                    e.Graphics.FillRectangle(WhiteTrasparent, new Rectangle(x, y, varFw, varFh));
+                    e.Graphics.FillRectangle(_whiteTrasparent, new Rectangle(x, y, varFw, varFh));
                     e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, varW, varH));
                     e.Graphics.DrawImage(currbits[trackBar2.Value], x, y);
                     //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(pictureBox1.Width, 335-(int)numericUpDown1.Value));
@@ -1527,12 +1527,12 @@ namespace UoFiddler.Controls.Forms
                                                         for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                                         {
                                                             Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                             {
                                                                 var = true;
                                                             }
 
-                                                            if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                             {
                                                                 var = false;
                                                                 if (yf != 0)
@@ -1590,12 +1590,12 @@ namespace UoFiddler.Controls.Forms
                                                         for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                                         {
                                                             Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                             {
                                                                 var = true;
                                                             }
 
-                                                            if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                             {
                                                                 var = false;
                                                                 if (yf != bitbmp[0].Height - 1)
@@ -1654,12 +1654,12 @@ namespace UoFiddler.Controls.Forms
                                                         for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                                         {
                                                             Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                             {
                                                                 var = true;
                                                             }
 
-                                                            if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                             {
                                                                 var = false;
                                                                 if (xf != 0)
@@ -1717,12 +1717,12 @@ namespace UoFiddler.Controls.Forms
                                                         for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                                         {
                                                             Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                             {
                                                                 var = true;
                                                             }
 
-                                                            if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                             {
                                                                 var = false;
                                                                 if (xf != bitbmp[0].Width - 1)
@@ -1897,12 +1897,12 @@ namespace UoFiddler.Controls.Forms
                                                             for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                                             {
                                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                                 {
                                                                     var = true;
                                                                 }
 
-                                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                                 {
                                                                     var = false;
                                                                     if (yf != 0)
@@ -1960,12 +1960,12 @@ namespace UoFiddler.Controls.Forms
                                                             for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                                             {
                                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                                 {
                                                                     var = true;
                                                                 }
 
-                                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                                 {
                                                                     var = false;
                                                                     if (yf != bitbmp[0].Height - 1)
@@ -2024,12 +2024,12 @@ namespace UoFiddler.Controls.Forms
                                                             for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                                             {
                                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                                 {
                                                                     var = true;
                                                                 }
 
-                                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                                 {
                                                                     var = false;
                                                                     if (xf != 0)
@@ -2087,12 +2087,12 @@ namespace UoFiddler.Controls.Forms
                                                             for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                                             {
                                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                                 {
                                                                     var = true;
                                                                 }
 
-                                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                                 {
                                                                     var = false;
                                                                     if (xf != bitbmp[0].Width - 1)
@@ -2276,12 +2276,12 @@ namespace UoFiddler.Controls.Forms
                                                 for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                                 {
                                                     Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                     {
                                                         var = true;
                                                     }
 
-                                                    if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                     {
                                                         var = false;
                                                         if (yf != 0)
@@ -2339,12 +2339,12 @@ namespace UoFiddler.Controls.Forms
                                                 for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                                 {
                                                     Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                     {
                                                         var = true;
                                                     }
 
-                                                    if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                     {
                                                         var = false;
                                                         if (yf != bitbmp[0].Height - 1)
@@ -2403,12 +2403,12 @@ namespace UoFiddler.Controls.Forms
                                                 for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                                 {
                                                     Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                     {
                                                         var = true;
                                                     }
 
-                                                    if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                     {
                                                         var = false;
                                                         if (xf != 0)
@@ -2466,12 +2466,12 @@ namespace UoFiddler.Controls.Forms
                                                 for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                                 {
                                                     Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                     {
                                                         var = true;
                                                     }
 
-                                                    if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                     {
                                                         var = false;
                                                         if (xf != bitbmp[0].Width - 1)
@@ -2656,24 +2656,24 @@ namespace UoFiddler.Controls.Forms
                 {
                     if (trackBar1.Value < 4)
                     {
-                        AnimCx[trackBar1.Value] = (int)numericUpDownCx.Value;
-                        AnimCy[trackBar1.Value] = (int)numericUpDownCy.Value;
+                        _animCx[trackBar1.Value] = (int)numericUpDownCx.Value;
+                        _animCy[trackBar1.Value] = (int)numericUpDownCy.Value;
                         trackBar1.Value++;
                         count++;
                     }
                     else
                     {
-                        AnimCx[trackBar1.Value] = (int)numericUpDownCx.Value;
-                        AnimCy[trackBar1.Value] = (int)numericUpDownCy.Value;
+                        _animCx[trackBar1.Value] = (int)numericUpDownCx.Value;
+                        _animCy[trackBar1.Value] = (int)numericUpDownCy.Value;
                         trackBar1.Value = 0;
                         count++;
                     }
                 }
-                toolStripLabel8.Text = "1: " + AnimCx[0] + "/" + AnimCy[0];
-                toolStripLabel9.Text = "2: " + AnimCx[1] + "/" + AnimCy[1];
-                toolStripLabel10.Text = "3: " + AnimCx[2] + "/" + AnimCy[2];
-                toolStripLabel11.Text = "4: " + AnimCx[3] + "/" + AnimCy[3];
-                toolStripLabel12.Text = "5: " + AnimCx[4] + "/" + AnimCy[4];
+                toolStripLabel8.Text = "1: " + _animCx[0] + "/" + _animCy[0];
+                toolStripLabel9.Text = "2: " + _animCx[1] + "/" + _animCy[1];
+                toolStripLabel10.Text = "3: " + _animCx[2] + "/" + _animCy[2];
+                toolStripLabel11.Text = "4: " + _animCx[3] + "/" + _animCy[3];
+                toolStripLabel12.Text = "5: " + _animCx[4] + "/" + _animCy[4];
                 trackBar1.Enabled = true;
             }
             else
@@ -2705,7 +2705,7 @@ namespace UoFiddler.Controls.Forms
                             {
                                 for (int index = 0; index < edit.Frames.Count; index++)
                                 {
-                                    edit.Frames[index].ChangeCenter(AnimCx[i], AnimCy[i]);
+                                    edit.Frames[index].ChangeCenter(_animCx[i], _animCy[i]);
                                     Options.ChangedUltimaClass["Animations"] = true;
                                     pictureBox1.Invalidate();
                                 }
@@ -2786,12 +2786,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 4].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -2849,12 +2849,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 4].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 8 * 4].Height - 1)
@@ -2913,12 +2913,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 4].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -2976,12 +2976,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 4].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 8 * 4].Width - 1)
@@ -3058,12 +3058,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -3121,12 +3121,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[0].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[0].Height - 1)
@@ -3185,12 +3185,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -3248,12 +3248,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[0].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[0].Width - 1)
@@ -3330,12 +3330,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 5].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -3393,12 +3393,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 5].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 8 * 5].Height - 1)
@@ -3457,12 +3457,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 5].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -3520,12 +3520,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 5].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 8 * 5].Width - 1)
@@ -3602,12 +3602,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 1].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -3665,12 +3665,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 1].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 8 * 1].Height - 1)
@@ -3729,12 +3729,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 1].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -3792,12 +3792,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 1].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 8 * 1].Width - 1)
@@ -3874,12 +3874,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 6].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -3937,12 +3937,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 8 * 6].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 8 * 6].Height - 1)
@@ -4001,12 +4001,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 6].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -4064,12 +4064,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 8 * 6].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == GreyConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != GreyConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 8 * 6].Width - 1)
@@ -4453,12 +4453,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 0].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -4516,12 +4516,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 0].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 5 * 0].Height - 1)
@@ -4580,12 +4580,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 0].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -4643,12 +4643,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 0].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 5 * 0].Width - 1)
@@ -4725,12 +4725,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 1].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -4788,12 +4788,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 1].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 5 * 1].Height - 1)
@@ -4852,12 +4852,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 1].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -4915,12 +4915,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 1].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 5 * 1].Width - 1)
@@ -4997,12 +4997,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 2].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -5060,12 +5060,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 2].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 5 * 2].Height - 1)
@@ -5124,12 +5124,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 2].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -5187,12 +5187,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 2].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 5 * 2].Width - 1)
@@ -5269,12 +5269,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 3].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -5332,12 +5332,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 3].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 5 * 3].Height - 1)
@@ -5396,12 +5396,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 3].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -5459,12 +5459,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 3].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 5 * 3].Width - 1)
@@ -5541,12 +5541,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 4].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != 0)
@@ -5604,12 +5604,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int xf = 0; xf < bitbmp[frameCount / 5 * 4].Width; xf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (yf != bitbmp[frameCount / 5 * 4].Height - 1)
@@ -5668,12 +5668,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 4].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != 0)
@@ -5731,12 +5731,12 @@ namespace UoFiddler.Controls.Forms
                                             for (int yf = 0; yf < bitbmp[frameCount / 5 * 4].Height; yf++)
                                             {
                                                 Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == WhiteConvert | pixel == customConvert | pixel.A == 0)
+                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
                                                 {
                                                     var = true;
                                                 }
 
-                                                if (pixel != WhiteConvert & pixel != customConvert & pixel.A != 0)
+                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
                                                 {
                                                     var = false;
                                                     if (xf != bitbmp[frameCount / 5 * 4].Width - 1)

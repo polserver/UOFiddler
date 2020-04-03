@@ -375,10 +375,10 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.Invalidate();
         }
 
-        private static readonly Brush BrushLightBlue = Brushes.LightBlue;
-        private static readonly Brush BrushLightCoral = Brushes.LightCoral;
-        private static readonly Brush BrushRed = Brushes.Red;
-        private static readonly Pen PenGray = Pens.Gray;
+        private static readonly Brush _brushLightBlue = Brushes.LightBlue;
+        private static readonly Brush _brushLightCoral = Brushes.LightCoral;
+        private static readonly Brush _brushRed = Brushes.Red;
+        private static readonly Pen _penGray = Pens.Gray;
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
@@ -386,13 +386,13 @@ namespace UoFiddler.Controls.UserControls
 
             for (int x = 0; x <= _col; ++x)
             {
-                e.Graphics.DrawLine(PenGray, new Point(x * Options.ArtItemSizeWidth, 0),
+                e.Graphics.DrawLine(_penGray, new Point(x * Options.ArtItemSizeWidth, 0),
                     new Point(x * Options.ArtItemSizeWidth, _row * Options.ArtItemSizeHeight));
             }
 
             for (int y = 0; y <= _row; ++y)
             {
-                e.Graphics.DrawLine(PenGray, new Point(0, y * Options.ArtItemSizeHeight),
+                e.Graphics.DrawLine(_penGray, new Point(0, y * Options.ArtItemSizeHeight),
                     new Point(_col * Options.ArtItemSizeWidth, y * Options.ArtItemSizeHeight));
             }
 
@@ -418,11 +418,11 @@ namespace UoFiddler.Controls.UserControls
 
                         if (index == _selected)
                         {
-                            e.Graphics.FillRectangle(BrushLightBlue, rect);
+                            e.Graphics.FillRectangle(_brushLightBlue, rect);
                         }
                         else if (patched)
                         {
-                            e.Graphics.FillRectangle(BrushLightCoral, rect);
+                            e.Graphics.FillRectangle(_brushLightCoral, rect);
                         }
 
                         if (Options.ArtItemClip)
@@ -455,14 +455,14 @@ namespace UoFiddler.Controls.UserControls
                         e.Graphics.Clip = new Region(rect);
                         if (index == _selected)
                         {
-                            e.Graphics.FillRectangle(BrushLightBlue, rect);
+                            e.Graphics.FillRectangle(_brushLightBlue, rect);
                         }
 
                         rect.X += 5;
                         rect.Y += 5;
                         rect.Width -= 10;
                         rect.Height -= 10;
-                        e.Graphics.FillRectangle(BrushRed, rect);
+                        e.Graphics.FillRectangle(_brushRed, rect);
                     }
                 }
             }

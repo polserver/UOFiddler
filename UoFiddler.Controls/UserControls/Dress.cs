@@ -31,7 +31,7 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
         }
 
-        private static readonly int[] Draworder ={
+        private static readonly int[] _draworder ={
             0x00,// - Background
             0x14,// - Back (Cloak)
             0x05,// - Chest Clothing/Female Chest Armor
@@ -58,7 +58,7 @@ namespace UoFiddler.Controls.UserControls
             0x15 // - BackPack
         };
 
-        private static readonly int[] Draworder2 ={
+        private static readonly int[] _draworder2 ={
             0x00,// - Background
             0x05,// - Chest Clothing/Female Chest Armor
             0x04,// - Pants
@@ -223,19 +223,19 @@ namespace UoFiddler.Controls.UserControls
                         graphpic.DrawImage(background, _drawpoint);
                     }
                 }
-                for (int i = 1; i < Draworder.Length; ++i)
+                for (int i = 1; i < _draworder.Length; ++i)
                 {
-                    if ((int)_layers[Draworder[i]] == 0)
+                    if ((int)_layers[_draworder[i]] == 0)
                     {
                         continue;
                     }
 
-                    if (!_layervisible[Draworder[i]])
+                    if (!_layervisible[_draworder[i]])
                     {
                         continue;
                     }
 
-                    int ani = TileData.ItemTable[(int)_layers[Draworder[i]]].Animation;
+                    int ani = TileData.ItemTable[(int)_layers[_draworder[i]]].Animation;
                     int gump = ani + 50000;
                     int hue = 0;
 
@@ -267,9 +267,9 @@ namespace UoFiddler.Controls.UserControls
 
                     using (Bitmap bmp = new Bitmap(Gumps.GetGump(gump)))
                     {
-                        if (_hues[Draworder[i]] > 0)
+                        if (_hues[_draworder[i]] > 0)
                         {
-                            hue = _hues[Draworder[i]];
+                            hue = _hues[_draworder[i]];
                         }
 
                         bool onlyHueGrayPixels = (hue & 0x8000) != 0;
@@ -353,13 +353,13 @@ namespace UoFiddler.Controls.UserControls
                     draw.Y = _drawpointAni.Y - background[0].Center.Y - background[0].Bitmap.Height;
                     graphPic.DrawImage(background[0].Bitmap, draw);
                 }
-                int[] animorder = Draworder2;
+                int[] animorder = _draworder2;
                 if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
                 {
-                    animorder = Draworder;
+                    animorder = _draworder;
                 }
 
-                for (int i = 1; i < Draworder.Length; ++i)
+                for (int i = 1; i < _draworder.Length; ++i)
                 {
                     if ((int)_layers[animorder[i]] != 0)
                     {
@@ -428,10 +428,10 @@ namespace UoFiddler.Controls.UserControls
 
                 int count = mobile.Length;
                 _mAnimation = new Bitmap[count];
-                int[] animorder = Draworder2;
+                int[] animorder = _draworder2;
                 if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
                 {
-                    animorder = Draworder;
+                    animorder = _draworder;
                 }
 
                 for (int i = 0; i < count; ++i)
@@ -611,7 +611,7 @@ namespace UoFiddler.Controls.UserControls
             TextBox.AppendText(
                 $"ValidGump: {Gumps.IsValidIndex(gump)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}\n");
             TextBox.AppendText(
-                $"ValidLayer: {Array.IndexOf(Draworder, TileData.ItemTable[(int)e.Node.Tag].Quality) != -1}");
+                $"ValidLayer: {Array.IndexOf(_draworder, TileData.ItemTable[(int)e.Node.Tag].Quality) != -1}");
         }
 
         private void OnClick_Animate(object sender, EventArgs e)
@@ -642,7 +642,7 @@ namespace UoFiddler.Controls.UserControls
 
             int objType = (int)treeViewItems.SelectedNode.Tag;
             int layer = TileData.ItemTable[objType].Quality;
-            if (Array.IndexOf(Draworder, layer) == -1)
+            if (Array.IndexOf(_draworder, layer) == -1)
             {
                 return;
             }
@@ -789,7 +789,7 @@ namespace UoFiddler.Controls.UserControls
                         Tag = i
                     };
 
-                    if (Array.IndexOf(Draworder, TileData.ItemTable[i].Quality) == -1)
+                    if (Array.IndexOf(_draworder, TileData.ItemTable[i].Quality) == -1)
                     {
                         node.ForeColor = Color.DarkRed;
                     }

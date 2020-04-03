@@ -149,10 +149,10 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private static readonly Brush BrushLightSteelBlue = Brushes.LightSteelBlue;
-        private static readonly Brush BrushLightCoral = Brushes.LightCoral;
-        private static readonly Brush BrushRed = Brushes.Red;
-        private static readonly Brush BrushGray = Brushes.Gray;
+        private static readonly Brush _brushLightSteelBlue = Brushes.LightSteelBlue;
+        private static readonly Brush _brushLightCoral = Brushes.LightCoral;
+        private static readonly Brush _brushRed = Brushes.Red;
+        private static readonly Brush _brushGray = Brushes.Gray;
 
         private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -161,7 +161,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Brush fontBrush = BrushGray;
+            Brush fontBrush = _brushGray;
 
             int i = int.Parse(listBox.Items[e.Index].ToString());
             if (Gumps.IsValidIndex(i))
@@ -175,28 +175,28 @@ namespace UoFiddler.Controls.UserControls
 
                     if (listBox.SelectedIndex == e.Index)
                     {
-                        e.Graphics.FillRectangle(BrushLightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
+                        e.Graphics.FillRectangle(_brushLightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
                     }
                     else if (patched)
                     {
-                        e.Graphics.FillRectangle(BrushLightCoral, e.Bounds.X, e.Bounds.Y, 105, 60);
+                        e.Graphics.FillRectangle(_brushLightCoral, e.Bounds.X, e.Bounds.Y, 105, 60);
                     }
 
                     e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 3, width, height));
                 }
                 else
                 {
-                    fontBrush = BrushRed;
+                    fontBrush = _brushRed;
                 }
             }
             else
             {
                 if (listBox.SelectedIndex == e.Index)
                 {
-                    e.Graphics.FillRectangle(BrushLightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
+                    e.Graphics.FillRectangle(_brushLightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
                 }
 
-                fontBrush = BrushRed;
+                fontBrush = _brushRed;
             }
 
             e.Graphics.DrawString($"0x{i:X} ({i})", Font, fontBrush,

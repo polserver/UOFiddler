@@ -33,7 +33,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _hue2Loaded = false;
         }
 
-        private const int ItemHeight = 20;
+        private const int _itemHeight = 20;
         private Bitmap _bmp1;
         private Bitmap _bmp2;
         private int _selected;
@@ -53,7 +53,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _bmp1 = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             _bmp2 = new Bitmap(pictureBox2.Width, pictureBox2.Height);
             _loaded = true;
-            _row = pictureBox1.Height / ItemHeight;
+            _row = pictureBox1.Height / _itemHeight;
             PaintBox1();
         }
 
@@ -74,7 +74,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     int index = GetIndex(y);
                     if (index >= 0)
                     {
-                        Rectangle rect = new Rectangle(0, y * ItemHeight, 200, ItemHeight);
+                        Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
                         if (index == _selected)
                         {
                             g.FillRectangle(SystemBrushes.Highlight, rect);
@@ -90,12 +90,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                         float size = (float)(pictureBox1.Width - 200) / 32;
                         Hue hue = Hues.List[index];
-                        Rectangle stringRect = new Rectangle(3, y * ItemHeight, pictureBox1.Width, ItemHeight);
+                        Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox1.Width, _itemHeight);
                         g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
 
                         for (int i = 0; i < hue.Colors.Length; i++)
                         {
-                            Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * ItemHeight, (int)Math.Round(size + 1f), ItemHeight);
+                            Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
                             g.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
                         }
                     }
@@ -116,7 +116,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     int index = GetIndex(y);
                     if (index >= 0)
                     {
-                        Rectangle rect = new Rectangle(0, y * ItemHeight, 200, ItemHeight);
+                        Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
                         if (index == _selected)
                         {
                             g.FillRectangle(SystemBrushes.Highlight, rect);
@@ -132,12 +132,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                         float size = (float)(pictureBox2.Width - 200) / 32;
                         Hue hue = SecondHue.List[index];
-                        Rectangle stringRect = new Rectangle(3, y * ItemHeight, pictureBox2.Width, ItemHeight);
+                        Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox2.Width, _itemHeight);
                         g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
 
                         for (int i = 0; i < hue.Colors.Length; i++)
                         {
-                            Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * ItemHeight, (int)Math.Round(size + 1f), ItemHeight);
+                            Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
                             g.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
                         }
                     }
@@ -154,7 +154,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            _row = pictureBox1.Height / ItemHeight;
+            _row = pictureBox1.Height / _itemHeight;
             _bmp1 = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             _bmp2 = new Bitmap(pictureBox2.Width, pictureBox2.Height);
             PaintBox1();
@@ -231,7 +231,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             pictureBox1.Focus();
             Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / ItemHeight);
+            int index = GetIndex(m.Y / _itemHeight);
             if (index < 0)
             {
                 return;
@@ -249,7 +249,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             pictureBox2.Focus();
             Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / ItemHeight);
+            int index = GetIndex(m.Y / _itemHeight);
             if (index < 0)
             {
                 return;

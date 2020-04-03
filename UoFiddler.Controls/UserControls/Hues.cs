@@ -31,7 +31,7 @@ namespace UoFiddler.Controls.UserControls
             _refMarker = this;
         }
 
-        private const int ItemHeight = 20;
+        private const int _itemHeight = 20;
         private int _selected;
         private bool _loaded;
         private int _row;
@@ -127,7 +127,7 @@ namespace UoFiddler.Controls.UserControls
                 int index = GetIndex(y);
                 if (index >= 0)
                 {
-                    Rectangle rect = new Rectangle(0, y * ItemHeight, 200, ItemHeight);
+                    Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
                     if (index == _selected)
                     {
                         e.Graphics.FillRectangle(SystemBrushes.Highlight, rect);
@@ -139,13 +139,13 @@ namespace UoFiddler.Controls.UserControls
 
                     float size = (float)(pictureBox.Width - 200) / 32;
                     Hue hue = Ultima.Hues.List[index];
-                    Rectangle stringRect = new Rectangle(3, y * ItemHeight, pictureBox.Width, ItemHeight);
+                    Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox.Width, _itemHeight);
                     e.Graphics.DrawString(
                         $"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
 
                     for (int i = 0; i < hue.Colors.Length; ++i)
                     {
-                        Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * ItemHeight, (int)Math.Round(size + 1f), ItemHeight);
+                        Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
                         e.Graphics.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
                     }
                 }
@@ -179,7 +179,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnResize(object sender, EventArgs e)
         {
-            _row = pictureBox.Height / ItemHeight;
+            _row = pictureBox.Height / _itemHeight;
             if (!_loaded)
             {
                 return;
@@ -192,7 +192,7 @@ namespace UoFiddler.Controls.UserControls
         {
             pictureBox.Focus();
             Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / ItemHeight);
+            int index = GetIndex(m.Y / _itemHeight);
             if (index >= 0)
             {
                 Selected = index;
@@ -202,7 +202,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnMouseDoubleClick(object sender, MouseEventArgs e)
         {
             Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / ItemHeight);
+            int index = GetIndex(m.Y / _itemHeight);
             if (index >= 0)
             {
                 Selected = index;
