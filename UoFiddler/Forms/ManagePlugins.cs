@@ -12,6 +12,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Types;
@@ -25,15 +26,16 @@ namespace UoFiddler.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
-            foreach (AvailablePlugin plug in GlobalPlugins.Plugins.AvailablePlugins)
+            foreach (AvailablePlugin plugin in GlobalPlugins.Plugins.AvailablePlugins)
             {
                 bool loaded = true;
-                if (plug.Instance == null)
+                if (plugin.Instance == null)
                 {
-                    plug.CreateInstance();
+                    FiddlerOptions.Logger.Information("ManagePlugins - creating plugin instance: {plugin} path: {assemblyPath}", plugin.Type, plugin.AssemblyPath);
+                    plugin.CreateInstance();
                     loaded = false;
                 }
-                checkedListBox1.Items.Add(plug.Instance.Name, loaded);
+                checkedListBox1.Items.Add(plugin.Instance.Name, loaded);
             }
         }
 
@@ -74,6 +76,7 @@ namespace UoFiddler.Forms
                 {
                     if (checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
                     {
+                        FiddlerOptions.Logger.Information("ManagePlugins - adding plugin to profile: {plugin}", plug.Type.ToString());
                         Options.PluginsToLoad.Add(plug.Type.ToString());
                     }
 
@@ -83,6 +86,7 @@ namespace UoFiddler.Forms
                 {
                     if (!checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
                     {
+                        FiddlerOptions.Logger.Information("ManagePlugins - removing plugin from profile: {plugin}", plug.Type.ToString());
                         Options.PluginsToLoad.Remove(plug.Type.ToString());
                     }
                 }
