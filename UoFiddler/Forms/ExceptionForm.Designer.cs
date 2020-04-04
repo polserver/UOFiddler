@@ -46,9 +46,9 @@ namespace UoFiddler.Forms
             // OK
             // 
             this.OK.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.OK.Location = new System.Drawing.Point(0, 258);
+            this.OK.Location = new System.Drawing.Point(0, 224);
             this.OK.Name = "OK";
-            this.OK.Size = new System.Drawing.Size(304, 23);
+            this.OK.Size = new System.Drawing.Size(572, 23);
             this.OK.TabIndex = 0;
             this.OK.Text = "OK";
             this.OK.UseVisualStyleBackColor = true;
@@ -60,7 +60,7 @@ namespace UoFiddler.Forms
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ReadOnly = true;
-            this.richTextBox.Size = new System.Drawing.Size(304, 258);
+            this.richTextBox.Size = new System.Drawing.Size(572, 224);
             this.richTextBox.TabIndex = 1;
             this.richTextBox.Text = "";
             // 
@@ -68,7 +68,7 @@ namespace UoFiddler.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 281);
+            this.ClientSize = new System.Drawing.Size(572, 247);
             this.Controls.Add(this.richTextBox);
             this.Controls.Add(this.OK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
