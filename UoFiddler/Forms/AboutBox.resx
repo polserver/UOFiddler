@@ -124,6 +124,7 @@ You can download .NET Framework at https://dotnet.microsoft.com/download/dotnet-
 This is maintenance release focusing on updating framework and code cleanup.
 Fixed bitmap to multimap saving (author: brndd).
 Instead of moving configuration files to AppData we now copy them if the file doesn't exist.
+Moved update checking to github releases API.
 
 Version 4.8
 AsYlum added multiple selection in items tab using

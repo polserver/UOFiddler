@@ -11,11 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -28,18 +25,20 @@ namespace UoFiddler.Classes
     {
         public static List<ExternTool> ExternTools { get; private set; }
 
+        public static Version AppVersion => typeof(FiddlerOptions).Assembly.GetName().Version;
+
         /// <summary>
         /// Defines if an Update Check should be made on startup
         /// </summary>
         public static bool UpdateCheckOnStart { get; set; } = true;
 
+        public static string RepositoryOwner { get; } = "polserver";
+        public static string RepositoryName { get; } = "UOFiddler";
+
         public static bool StoreFormState { get; set; }
         public static bool MaximisedForm { get; set; }
         public static Point FormPosition { get; set; }
         public static Size FormSize { get; set; }
-
-        // TODO: unused?
-        //public static string OutputPath { get; set; }
 
         private static void MoveFiles(IEnumerable<FileInfo> files, string path)
         {
@@ -57,7 +56,6 @@ namespace UoFiddler.Classes
 
         public static void Startup()
         {
-            // Move xml files to AppData
             if (!Directory.Exists(Options.AppDataPath))
             {
                 Directory.CreateDirectory(Options.AppDataPath);
@@ -77,26 +75,20 @@ namespace UoFiddler.Classes
             di = new DirectoryInfo(Path.Combine(Application.StartupPath, "plugins"));
             MoveFiles(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
 
-            Load();
-
-            if (UpdateCheckOnStart)
+            string fileName = Path.Combine(Options.AppDataPath, "Options_default.xml");
+            if (!File.Exists(fileName))
             {
-                RunUpdater();
-            }
-        }
-
-        private static void RunUpdater()
-        {
-            using (BackgroundWorker updater = new BackgroundWorker())
-            {
-                updater.DoWork += Updater_DoWork;
-                updater.RunWorkerCompleted += Updater_RunWorkerCompleted;
-                updater.RunWorkerAsync();
+                throw new FileNotFoundException($"Can't load default profile file {fileName}", "Options_default.xml");
             }
         }
 
         public static void Save()
         {
+            if (Options.ProfileName is null)
+            {
+                return;
+            }
+
             string fileName = Path.Combine(Options.AppDataPath, Options.ProfileName);
 
             XmlDocument dom = new XmlDocument();
@@ -255,23 +247,6 @@ namespace UoFiddler.Classes
             dom.Save(fileName);
         }
 
-        private static void Load()
-        {
-            string fileName = Path.Combine(Options.AppDataPath, "Options_default.xml");
-            if (!File.Exists(fileName))
-            {
-                return;
-            }
-
-            LoadProfile profile = new LoadProfile
-            {
-                TopMost = true
-            };
-            profile.ShowDialog();
-
-            //loadProfile(FileName);
-        }
-
         public static void LoadProfile(string filename)
         {
             string fileName = Path.Combine(Options.AppDataPath, filename);
@@ -418,127 +393,6 @@ namespace UoFiddler.Classes
             Options.TileDataDirectlySaveOnChange = elem != null && (elem.GetAttribute("value") ?? "").Equals("true", StringComparison.OrdinalIgnoreCase);
 
             Files.CheckForNewMapSize();
-        }
-
-        /// <summary>
-        /// Checks polserver forum for updates
-        /// </summary>
-        /// <returns></returns>
-        public static string[] CheckForUpdate(out string error)
-        {
-            StringBuilder sb = new StringBuilder();
-            byte[] buf = new byte[8192];
-
-            error = "";
-            string[] match;
-
-            try
-            {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://uofiddler.polserver.com/latestversion");
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream resStream = response.GetResponseStream();
-
-                int count = 0;
-                do
-                {
-                    if (resStream != null)
-                    {
-                        count = resStream.Read(buf, 0, buf.Length);
-                    }
-
-                    if (count == 0)
-                    {
-                        continue;
-                    }
-
-                    string tempString = Encoding.ASCII.GetString(buf, 0, count);
-                    sb.Append(tempString);
-                }
-                while (count > 0);
-
-                match = sb.ToString().Split(new[] { "\r\n" }, StringSplitOptions.None);
-
-                response.Close();
-                resStream?.Dispose();
-            }
-            catch (Exception e)
-            {
-                match = null;
-                error = e.Message;
-            }
-
-            return match;
-        }
-
-        private static void Updater_DoWork(object sender, DoWorkEventArgs e)
-        {
-            e.Result = CheckForUpdate(out string error);
-
-            if (e.Result == null)
-            {
-                throw new Exception(error);
-            }
-        }
-
-        private static void Updater_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error != null)
-            {
-                MessageBox.Show($"Error:\n{e.Error}", "Check for Update");
-                return;
-            }
-
-            string[] match = (string[])e.Result;
-            if (match != null)
-            {
-                if (!VersionCheck(match[0]))
-                {
-                    return;
-                }
-
-                DialogResult result = MessageBox.Show(
-                    $"{string.Format("A new version was found: {1}\nYour version: {0}", Forms.MainForm.Version, match[0])}\n\nDownload now?",
-                    "Check for Update",
-                    MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
-                {
-                    DownloadFile(match[1]);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Failed to get version info", "Check for Update");
-            }
-        }
-
-        public static bool VersionCheck(string newVersionParam)
-        {
-            Version.TryParse(Forms.MainForm.Version, out Version currentVersion);
-            Version.TryParse(newVersionParam, out Version newVersion);
-
-            return newVersion > currentVersion;
-        }
-
-        private static void DownloadFile(string file)
-        {
-            string fileName = Path.Combine(Options.OutputPath, file.Trim());
-            using (WebClient web = new WebClient())
-            {
-                web.DownloadFileCompleted += OnDownloadFileCompleted;
-                web.DownloadFileAsync(new Uri(
-                    $"http://downloads.polserver.com/browser.php?download=./Projects/uofiddler/{file}"), fileName);
-            }
-        }
-
-        private static void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            if (e.Error != null)
-            {
-                MessageBox.Show($"An error occurred while downloading UOFiddler\n{e.Error.Message}",
-                    "Updater");
-                return;
-            }
-            MessageBox.Show("Finished Download", "Updater");
         }
     }
 }

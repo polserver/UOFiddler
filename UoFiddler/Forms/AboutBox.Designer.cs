@@ -42,7 +42,6 @@ namespace UoFiddler.Forms
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.checkBoxCheckOnStart = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.progresslabel = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -85,15 +84,6 @@ namespace UoFiddler.Forms
             this.button1.Text = "Check for Update";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.OnClickUpdate);
-            // 
-            // progresslabel
-            // 
-            this.progresslabel.AutoSize = true;
-            this.progresslabel.Location = new System.Drawing.Point(225, 420);
-            this.progresslabel.Name = "progresslabel";
-            this.progresslabel.Size = new System.Drawing.Size(70, 13);
-            this.progresslabel.TabIndex = 3;
-            this.progresslabel.Text = "Progresslabel";
             // 
             // linkLabel1
             // 
@@ -198,7 +188,6 @@ namespace UoFiddler.Forms
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.progresslabel);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBoxCheckOnStart);
             this.Controls.Add(this.richTextBox1);
@@ -220,7 +209,6 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.CheckBox checkBoxCheckOnStart;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label progresslabel;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
