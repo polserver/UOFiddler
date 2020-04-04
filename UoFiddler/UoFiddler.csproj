@@ -177,6 +177,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Octokit" Version="0.46.0" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

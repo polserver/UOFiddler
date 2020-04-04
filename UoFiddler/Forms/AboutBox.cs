@@ -10,9 +10,6 @@
  ***************************************************************************/
 
 using System;
-using System.ComponentModel;
-using System.IO;
-using System.Net;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
@@ -25,7 +22,7 @@ namespace UoFiddler.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
-            progresslabel.Visible = false;
+
             checkBoxCheckOnStart.Checked = FiddlerOptions.UpdateCheckOnStart;
             checkBoxFormState.Checked = FiddlerOptions.StoreFormState;
         }
@@ -35,89 +32,9 @@ namespace UoFiddler.Forms
             FiddlerOptions.UpdateCheckOnStart = checkBoxCheckOnStart.Checked;
         }
 
-        private void OnClickUpdate(object sender, EventArgs e)
+        private async void OnClickUpdate(object sender, EventArgs e)
         {
-            CheckForUpdate();
-        }
-
-        private void CheckForUpdate()
-        {
-            progresslabel.Text = "Checking...";
-            progresslabel.Visible = true;
-            string[] match = FiddlerOptions.CheckForUpdate(out string error);
-            if (match == null)
-            {
-                MessageBox.Show($"Error:\n{error}", "Check for Update", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                progresslabel.Text = "";
-            }
-            else if (match.Length == 2)
-            {
-                if (MainForm.Version.Equals(match[0]))
-                {
-                    MessageBox.Show("Your Version is up-to-date", "Check for Update");
-                    progresslabel.Text = "";
-                }
-                else if (FiddlerOptions.VersionCheck(match[0]))
-                {
-                    DialogResult result =
-                        MessageBox.Show(
-                            $"A new version was found: {match[0]} your version: {MainForm.Version}\nDownload now?",
-                            "Check for Update",
-                            MessageBoxButtons.YesNo);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        DownloadFile(match[1]);
-                    }
-                }
-                else
-                {
-                    DialogResult result = MessageBox.Show($"Your version differs: {MainForm.Version} Found: {match[0]}\nDownload now?", "Check for Update", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Yes)
-                    {
-                        DownloadFile(match[1]);
-                    }
-                    else
-                    {
-                        progresslabel.Text = "";
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Failed to get version info", "Check for Update", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                progresslabel.Text = "";
-            }
-        }
-
-        private void DownloadFile(string file)
-        {
-            progresslabel.Text = "Starting download...";
-            string filepath = Options.OutputPath;
-            string fileName = Path.Combine(filepath, file.Trim());
-
-            using (WebClient web = new WebClient())
-            {
-                web.DownloadProgressChanged += OnDownloadProgressChanged;
-                web.DownloadFileCompleted += OnDownloadFileCompleted;
-                web.DownloadFileAsync(new Uri($"http://downloads.polserver.com/browser.php?download=./Projects/uofiddler/{file}"), fileName);
-            }
-        }
-
-        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            progresslabel.Text = $"Downloading... bytes {e.BytesReceived}/{e.TotalBytesToReceive}";
-        }
-
-        private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            if (e.Error != null)
-            {
-                MessageBox.Show($"An error occurred while downloading UOFiddler\n{e.Error.Message}",
-                    "Updater", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
-            progresslabel.Text = "Finished Download";
+            await UpdateRunner.RunAsync(FiddlerOptions.RepositoryOwner, FiddlerOptions.RepositoryName, FiddlerOptions.AppVersion).ConfigureAwait(false);
         }
 
         private void OnClickLink(object sender, LinkLabelLinkClickedEventArgs e)

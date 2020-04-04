@@ -9,13 +9,11 @@ namespace UoFiddler.Forms
     {
         private readonly string[] _profiles;
 
-        private bool _exit;
-
         public LoadProfile()
         {
-            _exit = true;
-            Icon = Options.GetFiddlerIcon();
             InitializeComponent();
+
+            Icon = Options.GetFiddlerIcon();
             _profiles = GetProfiles();
 
             foreach (string profile in _profiles)
@@ -27,12 +25,6 @@ namespace UoFiddler.Forms
 
             comboBoxLoad.SelectedIndex = 0;
             comboBoxBasedOn.SelectedIndex = 0;
-        }
-
-        private void OnFormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_exit)
-                Application.Exit();
         }
 
         private static string[] GetProfiles()
@@ -63,7 +55,7 @@ namespace UoFiddler.Forms
 
             Options.ProfileName = $"{_profiles[comboBoxLoad.SelectedIndex]}.xml";
             Classes.FiddlerOptions.LoadProfile($"{_profiles[comboBoxLoad.SelectedIndex]}.xml");
-            _exit = false;
+
             Close();
         }
 
@@ -77,7 +69,7 @@ namespace UoFiddler.Forms
 
             Options.ProfileName = $"Options_{textBoxCreate.Text}.xml";
             Classes.FiddlerOptions.LoadProfile($"{_profiles[comboBoxBasedOn.SelectedIndex]}.xml");
-            _exit = false;
+
             Close();
         }
 
@@ -97,6 +89,14 @@ namespace UoFiddler.Forms
         private void ComboBoxLoad_KeyUp(object sender, KeyEventArgs e)
         {
             button1.Enabled = comboBoxLoad.SelectedIndex != -1;
+        }
+
+        private void LoadProfile_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (DialogResult == DialogResult.Cancel)
+            {
+                Application.Exit();
+            }
         }
     }
 }

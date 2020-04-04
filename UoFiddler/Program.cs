@@ -17,6 +17,39 @@ using UoFiddler.Forms;
 
 namespace UoFiddler
 {
+    internal class FiddlerAppContext : ApplicationContext
+    {
+        internal FiddlerAppContext()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.ApplicationExit += OnApplicationExit;
+
+            FiddlerOptions.Startup();
+
+            var profile = new LoadProfile { TopMost = true };
+            var profileResult = profile.ShowDialog();
+            if (profileResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            if (FiddlerOptions.UpdateCheckOnStart)
+            {
+                UpdateRunner.RunAsync(FiddlerOptions.RepositoryOwner, FiddlerOptions.RepositoryName, FiddlerOptions.AppVersion, false).GetAwaiter().GetResult();
+            }
+
+            MainForm = new MainForm();
+            MainForm.Show();
+        }
+
+        private void OnApplicationExit(object sender, EventArgs e)
+        {
+            FiddlerOptions.Save();
+            Map.SaveMapOverlays();
+        }
+    }
+
     internal static class Program
     {
         /// <summary>
@@ -27,12 +60,8 @@ namespace UoFiddler
         {
             try
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                FiddlerOptions.Startup();
-                Application.Run(new MainForm());
-                FiddlerOptions.Save();
-                Map.SaveMapOverlays();
+                FiddlerAppContext fiddlerAppContext = new FiddlerAppContext();
+                Application.Run(fiddlerAppContext);
             }
             catch (Exception err)
             {

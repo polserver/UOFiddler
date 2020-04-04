@@ -13,8 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
@@ -26,7 +24,6 @@ namespace UoFiddler.Forms
 {
     public partial class MainForm : Form
     {
-        public static string Version => Assembly.GetExecutingAssembly().GetCustomAttributes(true).OfType<AssemblyFileVersionAttribute>().First().Version;
         private ItemShowAlternative _controlItemShowAlt;
         private TextureAlternative _controlTextureAlt;
         private LandTilesAlternative _controlLandTilesAlt;
@@ -57,24 +54,10 @@ namespace UoFiddler.Forms
             }
 
             Icon = Options.GetFiddlerIcon();
-            {
-                int commaCountA = 0;
-                string majorVersion = new string(
-                    Version.TakeWhile(
-                        x =>
-                            {
-                                if (x == '.')
-                                {
-                                    commaCountA++;
-                                }
 
-                                return commaCountA < 2;
-                            }).ToArray());
-
-                Versionlabel.Text = $"Version {majorVersion}";
-            }
-
+            Versionlabel.Text = $"Version {FiddlerOptions.AppVersion.Major}.{FiddlerOptions.AppVersion.Minor}.{FiddlerOptions.AppVersion.Build}";
             Versionlabel.Left = Start.Size.Width - Versionlabel.Width - 5;
+
             ChangeDesign();
             LoadExternToolStripMenu();
             GlobalPlugins.Plugins.FindPlugins($@"{Application.StartupPath}\plugins");
