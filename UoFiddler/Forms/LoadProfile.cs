@@ -56,7 +56,7 @@ namespace UoFiddler.Forms
             }
 
             Options.ProfileName = $"{_profiles[comboBoxLoad.SelectedIndex]}.xml";
-            FiddlerOptions.Logger.Information("Loading existing profile: {profileName}", Options.ProfileName);
+            FiddlerOptions.Logger.Information("Loading profile: {profileName}", Options.ProfileName);
             FiddlerOptions.LoadProfile($"{_profiles[comboBoxLoad.SelectedIndex]}.xml");
 
             Close();
@@ -71,7 +71,7 @@ namespace UoFiddler.Forms
             }
 
             Options.ProfileName = $"Options_{textBoxCreate.Text}.xml";
-            FiddlerOptions.Logger.Information("Creating new profile: {profileName}", Options.ProfileName);
+            FiddlerOptions.Logger.Information("Creating profile: {profileName}", Options.ProfileName);
             FiddlerOptions.LoadProfile($"{_profiles[comboBoxBasedOn.SelectedIndex]}.xml");
 
             Close();
