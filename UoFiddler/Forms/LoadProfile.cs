@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Classes;
 
 namespace UoFiddler.Forms
 {
@@ -15,6 +16,7 @@ namespace UoFiddler.Forms
 
             Icon = Options.GetFiddlerIcon();
             _profiles = GetProfiles();
+            FiddlerOptions.Logger.Information("Found profiles: {profiles}", _profiles);
 
             foreach (string profile in _profiles)
             {
@@ -54,7 +56,8 @@ namespace UoFiddler.Forms
             }
 
             Options.ProfileName = $"{_profiles[comboBoxLoad.SelectedIndex]}.xml";
-            Classes.FiddlerOptions.LoadProfile($"{_profiles[comboBoxLoad.SelectedIndex]}.xml");
+            FiddlerOptions.Logger.Information("Loading existing profile: {profileName}", Options.ProfileName);
+            FiddlerOptions.LoadProfile($"{_profiles[comboBoxLoad.SelectedIndex]}.xml");
 
             Close();
         }
@@ -68,7 +71,8 @@ namespace UoFiddler.Forms
             }
 
             Options.ProfileName = $"Options_{textBoxCreate.Text}.xml";
-            Classes.FiddlerOptions.LoadProfile($"{_profiles[comboBoxBasedOn.SelectedIndex]}.xml");
+            FiddlerOptions.Logger.Information("Creating new profile: {profileName}", Options.ProfileName);
+            FiddlerOptions.LoadProfile($"{_profiles[comboBoxBasedOn.SelectedIndex]}.xml");
 
             Close();
         }

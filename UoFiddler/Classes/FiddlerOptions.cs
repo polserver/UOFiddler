@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using System.Xml;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Forms;
+using Serilog;
 
 namespace UoFiddler.Classes
 {
@@ -26,6 +26,14 @@ namespace UoFiddler.Classes
         public static List<ExternTool> ExternTools { get; private set; }
 
         public static Version AppVersion => typeof(FiddlerOptions).Assembly.GetName().Version;
+
+        public static ILogger Logger { get; private set; }
+
+        internal static void SetLogger(ILogger logger)
+        {
+            Logger = logger;
+            Options.SetLogger(logger);
+        }
 
         /// <summary>
         /// Defines if an Update Check should be made on startup
@@ -47,9 +55,11 @@ namespace UoFiddler.Classes
                 string destFileName = Path.Combine(path, file.Name);
                 if (File.Exists(destFileName))
                 {
+                    Logger.Information("MoveFiles. File exists. Skipping: {file}", destFileName);
                     continue;
                 }
 
+                Logger.Information("MoveFiles. Copying file: {file}", destFileName);
                 file.CopyTo(destFileName);
             }
         }
@@ -58,12 +68,14 @@ namespace UoFiddler.Classes
         {
             if (!Directory.Exists(Options.AppDataPath))
             {
+                Logger.Information("Creating main app data path {AppDataPath}", Options.AppDataPath);
                 Directory.CreateDirectory(Options.AppDataPath);
             }
 
             string plugInPath = Path.Combine(Options.AppDataPath, "plugins");
             if (!Directory.Exists(plugInPath))
             {
+                Logger.Information("Creating app data plugin {AppDataPath}", plugInPath);
                 Directory.CreateDirectory(plugInPath);
             }
 
@@ -78,18 +90,21 @@ namespace UoFiddler.Classes
             string fileName = Path.Combine(Options.AppDataPath, "Options_default.xml");
             if (!File.Exists(fileName))
             {
+                Logger.Fatal("Can't find default profile file: {fileName}", fileName);
                 throw new FileNotFoundException($"Can't load default profile file {fileName}", "Options_default.xml");
             }
         }
 
-        public static void Save()
+        public static void SaveProfile()
         {
             if (Options.ProfileName is null)
             {
+                Logger.Warning("SaveProfile - ProfileName is null!");
                 return;
             }
 
             string fileName = Path.Combine(Options.AppDataPath, Options.ProfileName);
+            Logger.Information("SaveProfile - start {filename}", fileName);
 
             XmlDocument dom = new XmlDocument();
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -191,6 +206,7 @@ namespace UoFiddler.Classes
             {
                 foreach (string plugIn in Options.PluginsToLoad)
                 {
+                    Logger.Information("SaveProfile - saving plugin {plugIn}", plugIn);
                     XmlElement xmlPlugin = dom.CreateElement("Plugin");
                     xmlPlugin.SetAttribute("name", plugIn);
                     sr.AppendChild(xmlPlugin);
@@ -245,13 +261,17 @@ namespace UoFiddler.Classes
             sr.AppendChild(elem);
 
             dom.Save(fileName);
+            Logger.Information("SaveProfile - done {filename}", fileName);
         }
 
         public static void LoadProfile(string filename)
         {
+            Logger.Information("LoadProfile - start: {filename}", filename);
+
             string fileName = Path.Combine(Options.AppDataPath, filename);
             if (!File.Exists(fileName))
             {
+                Logger.Warning("LoadProfile: profile file doesn't exist: {filename}", filename);
                 return;
             }
 
@@ -359,6 +379,7 @@ namespace UoFiddler.Classes
             foreach (XmlElement xPlug in xOptions.SelectNodes("Plugin"))
             {
                 string name = xPlug.GetAttribute("name");
+                Logger.Information("LoadProfile: adding plugin to load: {pluginName}", name);
                 Options.PluginsToLoad.Add(name);
             }
 
@@ -393,6 +414,8 @@ namespace UoFiddler.Classes
             Options.TileDataDirectlySaveOnChange = elem != null && (elem.GetAttribute("value") ?? "").Equals("true", StringComparison.OrdinalIgnoreCase);
 
             Files.CheckForNewMapSize();
+
+            Logger.Information("LoadProfile - done: {filename}", filename);
         }
     }
 }

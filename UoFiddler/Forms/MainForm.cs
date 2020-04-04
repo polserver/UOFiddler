@@ -520,6 +520,7 @@ namespace UoFiddler.Forms
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
+            FiddlerOptions.Logger.Information("MainForm - OnClosing - start.");
             string files = "";
 
             foreach (KeyValuePair<string, bool> key in Options.ChangedUltimaClass)
@@ -548,7 +549,10 @@ namespace UoFiddler.Forms
             FiddlerOptions.FormPosition = Location;
             FiddlerOptions.FormSize = Size;
 
+            FiddlerOptions.Logger.Information("MainForm - OnClosing - unloading plugins.");
             GlobalPlugins.Plugins.ClosePlugins();
+
+            FiddlerOptions.Logger.Information("MainForm - OnClosing - done.");
         }
 
         private void OnClickHelp(object sender, EventArgs e)
