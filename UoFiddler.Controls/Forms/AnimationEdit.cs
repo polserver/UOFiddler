@@ -624,7 +624,7 @@ namespace UoFiddler.Controls.Forms
                         }
                         else
                         {
-                            TreeNode node = GetNode(_currBody); // TODO: unused variable?
+                            //TreeNode node = GetNode(_currBody); // TODO: unused variable?
                             trackBar2.Maximum = 0;
                         }
                         listView1.Invalidate();
@@ -1042,7 +1042,7 @@ namespace UoFiddler.Controls.Forms
                         {
                             FrameDimension dimension = new FrameDimension(bit.FrameDimensionsList[0]);
                             // Number of frames 
-                            int frameCount = bit.GetFrameCount(dimension); // TODO: unused variable?
+                            //int frameCount = bit.GetFrameCount(dimension); // TODO: unused variable?
                             bit.SelectActiveFrame(dimension, 0);
                             edit.GetGifPalette(bit);
                             SetPaletteBox();

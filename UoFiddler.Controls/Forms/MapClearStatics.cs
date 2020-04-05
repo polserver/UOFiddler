@@ -62,7 +62,7 @@ namespace UoFiddler.Controls.Forms
             {
                 for (int y = blocky1; y <= blocky2; ++y)
                 {
-                    HuedTile[][][] tiles = _map.Tiles.GetStaticBlock(x, y, false); // TODO: unused variable? do we need to call GetStaticBlock() here?
+                    //HuedTile[][][] tiles = _map.Tiles.GetStaticBlock(x, y, false); // TODO: unused variable? do we need to call GetStaticBlock() here?
                     _map.Tiles.RemoveStaticBlock(x, y);
                 }
             }

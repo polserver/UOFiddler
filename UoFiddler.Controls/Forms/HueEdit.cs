@@ -20,7 +20,7 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class HueEdit : Form
     {
-        private readonly Hues _refMarker;
+        private readonly Hues _refMarker; // TODO: unused?
         private readonly Hue _hue;
         private readonly short[] _colors;
         private int _selected;
