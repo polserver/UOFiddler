@@ -38,15 +38,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\Example.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\Example.cs" />
     <Compile Update="Forms\Example.Designer.cs">
       <DependentUpon>Example.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\ExampleUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="UserControls\ExampleUserControl.cs" />
     <Compile Update="UserControls\ExampleUserControl.Designer.cs">
       <DependentUpon>ExampleUserControl.cs</DependentUpon>
     </Compile>
@@ -61,7 +57,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="UserControls\ExampleUserControl.resx">
       <DependentUpon>ExampleUserControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

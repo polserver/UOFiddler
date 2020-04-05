@@ -35,9 +35,6 @@
     <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent />
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ultima\Ultima.csproj" />
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />

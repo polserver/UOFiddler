@@ -44,9 +44,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\Option.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\Option.cs" />
     <Compile Update="Forms\Option.Designer.cs">
       <DependentUpon>Option.cs</DependentUpon>
     </Compile>
@@ -58,7 +56,6 @@
   <ItemGroup>
     <EmbeddedResource Update="Forms\Option.resx">
       <DependentUpon>Option.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

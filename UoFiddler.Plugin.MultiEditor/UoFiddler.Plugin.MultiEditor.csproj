@@ -40,9 +40,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="UserControls\MultiEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="UserControls\MultiEditor.cs" />
     <Compile Update="UserControls\MultiEditor.Designer.cs">
       <DependentUpon>MultiEditor.cs</DependentUpon>
     </Compile>
@@ -59,12 +57,10 @@
   <ItemGroup>
     <EmbeddedResource Update="UserControls\MultiEditor.resx">
       <DependentUpon>MultiEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
