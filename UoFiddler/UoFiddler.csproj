@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <ApplicationIcon>UOFiddler.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\UOFiddlerIcon.ico</ApplicationIcon>
     <StartupObject>UoFiddler.Program</StartupObject>
     <TargetFramework>net48</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -13,80 +13,76 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DefineConstants />
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-    <DebugType />
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-    <DebugType />
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\UOFiddler.jpg" />
+    <None Remove="Resources\UOFiddlerIcon.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Deployment" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\AboutBox.cs" />
+    <Compile Update="Forms\AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\ExceptionForm.cs" />
+    <Compile Update="Forms\ExceptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\ExceptionForm.Designer.cs">
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\LoadProfile.cs" />
+    <Compile Update="Forms\LoadProfile.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\LoadProfile.Designer.cs">
       <DependentUpon>LoadProfile.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\ManagePlugins.cs" />
+    <Compile Update="Forms\ManagePlugins.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\ManagePlugins.Designer.cs">
       <DependentUpon>ManagePlugins.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\ManageTools.cs" />
+    <Compile Update="Forms\ManageTools.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\ManageTools.Designer.cs">
       <DependentUpon>ManageTools.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\OptionsForm.cs" />
+    <Compile Update="Forms\OptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\PathSettings.cs" />
+    <Compile Update="Forms\PathSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\PathSettings.Designer.cs">
       <DependentUpon>PathSettings.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\UnDocked.cs" />
+    <Compile Update="Forms\UnDocked.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\UnDocked.Designer.cs">
       <DependentUpon>UnDocked.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\MainForm.cs" />
+    <Compile Update="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
@@ -141,11 +137,11 @@
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="UOFiddler.jpg" />
     <Content Include="Multilist.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="UOFiddler.ico" />
+    <EmbeddedResource Include="Resources\UOFiddler.jpg" />
+    <EmbeddedResource Include="Resources\UOFiddlerIcon.ico" />
     <None Include="Options_default.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

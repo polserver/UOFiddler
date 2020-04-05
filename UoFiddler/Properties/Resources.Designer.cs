@@ -73,9 +73,9 @@ namespace UoFiddler.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon UOFiddler1 {
+        public static System.Drawing.Icon UOFiddlerIcon {
             get {
-                object obj = ResourceManager.GetObject("UOFiddler1", resourceCulture);
+                object obj = ResourceManager.GetObject("UOFiddlerIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
