@@ -12,62 +12,57 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-    <DefineConstants />
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>none</DebugType>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>none</DebugType>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="UserControls\CompareCliLoc.cs" />
+    <Compile Update="UserControls\CompareCliLoc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareCliLoc.Designer.cs">
       <DependentUpon>CompareCliLoc.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareGump.cs" />
+    <Compile Update="UserControls\CompareGump.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareGump.Designer.cs">
       <DependentUpon>CompareGump.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareHues.cs" />
+    <Compile Update="UserControls\CompareHues.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareHues.Designer.cs">
       <DependentUpon>CompareHues.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareItem.cs" />
+    <Compile Update="UserControls\CompareItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareItem.Designer.cs">
       <DependentUpon>CompareItem.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareLand.cs" />
+    <Compile Update="UserControls\CompareLand.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareLand.Designer.cs">
       <DependentUpon>CompareLand.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareMap.cs" />
+    <Compile Update="UserControls\CompareMap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareMap.Designer.cs">
       <DependentUpon>CompareMap.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareTexture.cs" />
+    <Compile Update="UserControls\CompareTexture.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\CompareTexture.designer.cs">
       <DependentUpon>CompareTexture.cs</DependentUpon>
     </Compile>

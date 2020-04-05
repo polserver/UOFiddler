@@ -11,7 +11,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -19,28 +19,14 @@
     <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Design" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="UserControls\MultiEditor.cs" />
+    <Compile Update="UserControls\MultiEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControls\MultiEditor.Designer.cs">
       <DependentUpon>MultiEditor.cs</DependentUpon>
     </Compile>

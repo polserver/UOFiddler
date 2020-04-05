@@ -192,7 +192,7 @@ namespace UoFiddler.Controls.Classes
 
         public static Icon GetFiddlerIcon()
         {
-            return new Icon(System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceStream("UoFiddler.UOFiddler.ico"));
+            return new Icon(System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceStream("UoFiddler.Resources.UOFiddlerIcon.ico"));
         }
 
         public static bool TileDataDirectlySaveOnChange { get; set; }

@@ -11,40 +11,21 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-    <DefineConstants />
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DefineConstants />
-    <DebugType>none</DebugType>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\UoFiddler\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <DefineConstants />
-    <DebugType>none</DebugType>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\Option.cs" />
+    <Compile Update="Forms\Option.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\Option.Designer.cs">
       <DependentUpon>Option.cs</DependentUpon>
     </Compile>
