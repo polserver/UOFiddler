@@ -31,6 +31,54 @@
   <Multi name="Large Dragon Boat [east]" id="21" type="0" />
   <Multi name="Large Dragon Boat [south]" id="22" type="0" />
   <Multi name="Large Dragon Boat [west]" id="23" type="0" />
+  <Multi name="Orcish Galleon [north]" id="24" type="0" />
+  <Multi name="Orcish Galleon [east]" id="25" type="0" />
+  <Multi name="Orcish Galleon [south]" id="26" type="0" />
+  <Multi name="Orcish Galleon [west]" id="27" type="0" />
+  <Multi name="Orcish Galleon [damaged][north]" id="28" type="0" />
+  <Multi name="Orcish Galleon [damaged][east]" id="29" type="0" />
+  <Multi name="Orcish Galleon [damaged][south]" id="30" type="0" />
+  <Multi name="Orcish Galleon [damaged][west]" id="31" type="0" />
+  <Multi name="Orcish Galleon [destroyed][north]" id="32" type="0" />
+  <Multi name="Orcish Galleon [destroyed][east]" id="33" type="0" />
+  <Multi name="Orcish Galleon [destroyed][south]" id="34" type="0" />
+  <Multi name="Orcish Galleon [destroyed][west]" id="35" type="0" />
+  <Multi name="Gargish Galleon [north]" id="36" type="0" />
+  <Multi name="Gargish Galleon [east]" id="37" type="0" />
+  <Multi name="Gargish Galleon [south]" id="38" type="0" />
+  <Multi name="Gargish Galleon [west]" id="39" type="0" />
+  <Multi name="Gargish Galleon [damaged][north]" id="40" type="0" />
+  <Multi name="Gargish Galleon [damaged][east]" id="41" type="0" />
+  <Multi name="Gargish Galleon [damaged][south]" id="42" type="0" />
+  <Multi name="Gargish Galleon [damaged][west]" id="43" type="0" />
+  <Multi name="Gargish Galleon [destroyed][north]" id="44" type="0" />
+  <Multi name="Gargish Galleon [destroyed][east]" id="45" type="0" />
+  <Multi name="Gargish Galleon [destroyed][south]" id="46" type="0" />
+  <Multi name="Gargish Galleon [destroyed][west]" id="47" type="0" />
+  <Multi name="Tokuno Galleon [north]" id="48" type="0" />
+  <Multi name="Tokuno Galleon [east]" id="49" type="0" />
+  <Multi name="Tokuno Galleon [south]" id="50" type="0" />
+  <Multi name="Tokuno Galleon [west]" id="51" type="0" />
+  <Multi name="Tokuno Galleon [damaged][north]" id="52" type="0" />
+  <Multi name="Tokuno Galleon [damaged][east]" id="53" type="0" />
+  <Multi name="Tokuno Galleon [damaged][south]" id="54" type="0" />
+  <Multi name="Tokuno Galleon [damaged][west]" id="55" type="0" />
+  <Multi name="Tokuno Galleon [destroyed][north]" id="56" type="0" />
+  <Multi name="Tokuno Galleon [destroyed][east]" id="57" type="0" />
+  <Multi name="Tokuno Galleon [destroyed][south]" id="58" type="0" />
+  <Multi name="Tokuno Galleon [destroyed][west]" id="59" type="0" />
+  <Multi name="Rowbaot [north]" id="60" type="0" />
+  <Multi name="Rowboat [east]" id="61" type="0" />
+  <Multi name="Rowboat [south]" id="62" type="0" />
+  <Multi name="Rowboat [west]" id="63" type="0" />
+  <Multi name="British Galleon [north]" id="64" type="0" />
+  <Multi name="British Galleon [east]" id="65" type="0" />
+  <Multi name="British Galleon [south]" id="66" type="0" />
+  <Multi name="British Galleon [west]" id="67" type="0" />
+  <Multi name="British Galleon [damaged][north]" id="68" type="0" />
+  <Multi name="British Galleon [damaged][east]" id="69" type="0" />
+  <Multi name="British Galleon [damaged][south]" id="70" type="0" />
+  <Multi name="British Galleon [damaged][west]" id="71" type="0" />
   <Multi name="Small Stone and Plaster House" id="100" type="1" />
   <Multi name="Small Stone and Plaster House" id="101" type="1" />
   <Multi name="Small Fieldstone House" id="102" type="1" />
@@ -69,6 +117,8 @@
   <Multi name="Two-Story Villa" id="158" type="1" />
   <Multi name="Small Stone Workshop" id="160" type="1" />
   <Multi name="Small Marble Workshop" id="162" type="1" />
+  <Multi name="Mine's Elevator" id="201" type="4" />
+  <Multi name="Lifting Bridge" id="202" type="4" />
   <Multi name="Wandering Healer Camp" id="500" type="1" />
   <Multi name="Wandering Mage Camp" id="501" type="1" />
   <Multi name="Wandering Bank Camp" id="502" type="1" />
