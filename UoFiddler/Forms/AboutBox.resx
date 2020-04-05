@@ -126,6 +126,7 @@ Fixed bitmap to multimap saving (author: brndd).
 Instead of moving configuration files to AppData we now copy them if the file doesn't exist.
 Fixed exporting offset.cfg for items alternative design mode.
 Moved update checking to github releases API.
+Added UOP Packer plugin (authors: Feeh / Epila / cbnolok)
 
 Version 4.8
 AsYlum added multiple selection in items tab using
