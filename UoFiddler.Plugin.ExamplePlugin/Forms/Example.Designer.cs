@@ -41,13 +41,13 @@ namespace UoFiddler.Plugin.ExamplePlugin.Forms
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // Example
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(320, 258);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "Example";
+            this.Text = "Example";
             this.ResumeLayout(false);
 
         }
