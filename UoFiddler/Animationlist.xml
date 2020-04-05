@@ -298,6 +298,8 @@
   <Mob name="spirits_blade_spirit (574)" body="574" type="0" />
   <Mob name="h_male1 (605)" body="605" type="3" />
   <Mob name="h_female1 (606)" body="606" type="3" />
+  <Mob name="h_male_gargoyle (666)" body="666" type="3" />
+  <Mob name="h_female_gargoyle (667)" body="667" type="3" />
   <Mob name="h_male3 (744)" body="744" type="3" />
   <Mob name="h_female3 (745)" body="745" type="3" />
   <Mob name="four_armed_demon (746)" body="746" type="0" />
@@ -360,6 +362,7 @@
   <Mob name="character_blackthorn (991)" body="991" type="3" />
   <Mob name="character_dupre (994)" body="994" type="3" />
   <Mob name="Multi Colored Horde Deamon (999)" body="999" type="0" />
+  <Mob name="Lion (1426)" body="1426" type="2" />
   <Equip name="floppy hat (404)" body="404" type="3" />
   <Equip name="wide-brim hat (405)" body="405" type="3" />
   <Equip name="cap (406)" body="406" type="3" />

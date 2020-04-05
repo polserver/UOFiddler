@@ -1862,6 +1862,9 @@
     </subgroup>
   </group>
   <group id="0" name="Floors">
+    <subgroup name="Building Generical">
+      <entry index="1" count="1" asback="true"/>
+    </subgroup>
     <subgroup name="Combos">
       <entry index="1180" count="1" asback="true"/>
       <entry index="1173" count="4" asback="true"/>
