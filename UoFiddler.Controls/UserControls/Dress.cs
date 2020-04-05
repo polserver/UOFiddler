@@ -991,81 +991,33 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExtractImageBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            if (_showPd)
-            {
-                string fileName = Path.Combine(path, "Dress PD.bmp");
-                DressPic.Image.Save(fileName, ImageFormat.Bmp);
-                MessageBox.Show(
-                    $"Paperdoll saved to {fileName}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
-            }
-            else
-            {
-                string fileName = Path.Combine(path, "Dress IG.bmp");
-                if (_animate)
-                {
-                    _mAnimation[0].Save(fileName, ImageFormat.Bmp);
-                }
-                else
-                {
-                    DressPic.Image.Save(fileName, ImageFormat.Bmp);
-                }
-
-                MessageBox.Show(
-                    $"InGame saved to {fileName}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
-            }
+            ExportImage(ImageFormat.Bmp);
         }
 
         private void OnClickExtractImageTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            if (_showPd)
-            {
-                string fileName = Path.Combine(path, "Dress PD.tiff");
-                DressPic.Image.Save(fileName, ImageFormat.Tiff);
-                MessageBox.Show(
-                    $"Paperdoll saved to {fileName}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
-            }
-            else
-            {
-                string fileName = Path.Combine(path, "Dress IG.tiff");
-                if (_animate)
-                {
-                    _mAnimation[0].Save(fileName, ImageFormat.Tiff);
-                }
-                else
-                {
-                    DressPic.Image.Save(fileName, ImageFormat.Tiff);
-                }
-
-                MessageBox.Show(
-                    $"InGame saved to {fileName}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
-            }
+            ExportImage(ImageFormat.Tiff);
         }
 
         private void OnClickExtractImageJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
+            ExportImage(ImageFormat.Jpeg);
+        }
+
+        private void OnClickExtractImagePng(object sender, EventArgs e)
+        {
+            ExportImage(ImageFormat.Png);
+        }
+
+        private void ExportImage(ImageFormat imageFormat)
+        {
+            string outputPath = Options.OutputPath;
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
             if (_showPd)
             {
-                string fileName = Path.Combine(path, "Dress PD.jpg");
-                DressPic.Image.Save(fileName, ImageFormat.Jpeg);
+                string fileName = Path.Combine(outputPath, $"Dress PD.{fileExtension}");
+                DressPic.Image.Save(fileName, imageFormat);
                 MessageBox.Show(
                     $"Paperdoll saved to {fileName}",
                     "Saved",
@@ -1075,14 +1027,14 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                string fileName = Path.Combine(path, "Dress IG.jpg");
+                string fileName = Path.Combine(outputPath, $"Dress IG.{fileExtension}");
                 if (_animate)
                 {
-                    _mAnimation[0].Save(fileName, ImageFormat.Jpeg);
+                    _mAnimation[0].Save(fileName, imageFormat);
                 }
                 else
                 {
-                    DressPic.Image.Save(fileName, ImageFormat.Jpeg);
+                    DressPic.Image.Save(fileName, imageFormat);
                 }
 
                 MessageBox.Show(
@@ -1096,49 +1048,38 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExtractAnimBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            const string fileName = "Dress Anim";
-
-            for (int i = 0; i < _mAnimation.Length; ++i)
-            {
-                _mAnimation[i].Save(Path.Combine(path, $"{fileName}-{i}.bmp"), ImageFormat.Bmp);
-            }
-            MessageBox.Show(
-                $"InGame Anim saved to '{fileName}-X.bmp'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportAnimation(ImageFormat.Bmp);
         }
 
         private void OnClickExtractAnimTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            const string fileName = "Dress Anim";
-
-            for (int i = 0; i < _mAnimation.Length; ++i)
-            {
-                _mAnimation[i].Save(Path.Combine(path, $"{fileName}-{i}.tiff"), ImageFormat.Tiff);
-            }
-            MessageBox.Show(
-                $"InGame Anim saved to '{fileName}-X.tiff'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportAnimation(ImageFormat.Tiff);
         }
 
         private void OnClickExtractAnimJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
+            ExportAnimation(ImageFormat.Jpeg);
+        }
+
+        private void OnClickExtractAnimPng(object sender, EventArgs e)
+        {
+            ExportAnimation(ImageFormat.Png);
+        }
+
+        private void ExportAnimation(ImageFormat imageFormat)
+        {
             const string fileName = "Dress Anim";
+
+            string path = Options.OutputPath;
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
 
             for (int i = 0; i < _mAnimation.Length; ++i)
             {
-                _mAnimation[i].Save(Path.Combine(path, $"{fileName}-{i}.jpg"), ImageFormat.Jpeg);
+                _mAnimation[i].Save(Path.Combine(path, $"{fileName}-{i}.{fileExtension}"), imageFormat);
             }
+
             MessageBox.Show(
-                $"InGame Anim saved to '{fileName}-X.jpg'",
+                $"InGame Anim saved to '{fileName}-X.{fileExtension}'",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,

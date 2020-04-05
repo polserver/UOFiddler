@@ -186,30 +186,37 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{CheckedToString()}.bmp");
-            Bitmap bit = new Bitmap(pictureBox.Image);
-            bit.Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"{CheckedToString()} saved to {fileName}", "Export",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExportMultiMapImage(ImageFormat.Bmp);
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{CheckedToString()}.tiff");
-            pictureBox.Image.Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show($"{CheckedToString()} saved to {fileName}", "Export",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExportMultiMapImage(ImageFormat.Tiff);
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{CheckedToString()}.jpg");
-            pictureBox.Image.Save(fileName, ImageFormat.Jpeg);
-            MessageBox.Show($"{CheckedToString()} saved to {fileName}", "Export",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExportMultiMapImage(ImageFormat.Jpeg);
+        }
+
+        private void OnClickExportPng(object sender, EventArgs e)
+        {
+            ExportMultiMapImage(ImageFormat.Png);
+        }
+
+        private void ExportMultiMapImage(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"{CheckedToString()}.{fileExtension}");
+
+            pictureBox.Image.Save(fileName, imageFormat);
+
+            MessageBox.Show(
+                $"{CheckedToString()} saved to {fileName}",
+                "Export",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private string CheckedToString()

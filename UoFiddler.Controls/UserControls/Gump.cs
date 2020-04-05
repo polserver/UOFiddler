@@ -451,44 +451,38 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
             int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-            string fileName = Path.Combine(path, $"Gump {i}.bmp");
-            Bitmap bit = new Bitmap(Gumps.GetGump(i));
-            bit.Save(fileName, ImageFormat.Bmp);
-            bit.Dispose();
-            MessageBox.Show(
-                $"Gump saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportGumpImage(i, ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
             int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-            string fileName = Path.Combine(path, $"Gump {i}.tiff");
-            Bitmap bit = new Bitmap(Gumps.GetGump(i));
-            bit?.Save(fileName, ImageFormat.Tiff);
-            bit.Dispose();
-            MessageBox.Show(
-                $"Gump saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportGumpImage(i, ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
             int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-            string fileName = Path.Combine(path, $"Gump {i}.jpg");
-            Bitmap bit = new Bitmap(Gumps.GetGump(i));
-            bit?.Save(fileName, ImageFormat.Jpeg);
-            bit.Dispose();
+            ExportGumpImage(i, ImageFormat.Jpeg);
+        }
+
+        private void Extract_Image_ClickPng(object sender, EventArgs e)
+        {
+            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            ExportGumpImage(i, ImageFormat.Png);
+        }
+
+        private void ExportGumpImage(int index, ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"Gump {index}.{fileExtension}");
+
+            using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
+            {
+                bit.Save(fileName, imageFormat);
+            }
+
             MessageBox.Show(
                 $"Gump saved to {fileName}",
                 "Saved",
@@ -499,6 +493,28 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
         {
+            ExportAllGumps(ImageFormat.Bmp);
+        }
+
+        private void OnClick_SaveAllTiff(object sender, EventArgs e)
+        {
+            ExportAllGumps(ImageFormat.Tiff);
+        }
+
+        private void OnClick_SaveAllJpg(object sender, EventArgs e)
+        {
+            ExportAllGumps(ImageFormat.Jpeg);
+        }
+
+        private void OnClick_SaveAllPng(object sender, EventArgs e)
+        {
+            ExportAllGumps(ImageFormat.Png);
+        }
+
+        private void ExportAllGumps(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description = "Select directory";
@@ -516,62 +532,10 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.bmp");
-                    Bitmap bit = new Bitmap(Gumps.GetGump(index));
-                    bit?.Save(fileName, ImageFormat.Bmp);
-                    bit.Dispose();
-                }
-
-                MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
-        }
-
-        private void OnClick_SaveAllTiff(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < listBox.Items.Count; ++i)
-                {
-                    int index = int.Parse(listBox.Items[i].ToString());
-                    if (index >= 0)
+                    string FileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.{fileExtension}");
+                    using (Bitmap bit = new Bitmap(Gumps.GetGump(index)))
                     {
-                        string fileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.tiff");
-                        Bitmap bit = new Bitmap(Gumps.GetGump(index));
-                        bit?.Save(fileName, ImageFormat.Tiff);
-                        bit.Dispose();
-                    }
-                }
-                MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
-        }
-
-        private void OnClick_SaveAllJpg(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < listBox.Items.Count; ++i)
-                {
-                    int index = int.Parse(listBox.Items[i].ToString());
-                    if (index >= 0)
-                    {
-                        string fileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.jpg");
-                        Bitmap bit = new Bitmap(Gumps.GetGump(index));
-                        bit?.Save(fileName, ImageFormat.Jpeg);
-                        bit.Dispose();
+                        bit?.Save(FileName, imageFormat);
                     }
                 }
                 MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);

@@ -216,7 +216,7 @@ namespace UoFiddler.Controls.UserControls
             this.selectInItemsToolStripMenuItem,
             this.selectRadarColorToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(201, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(201, 70);
             // 
             // selectInItemsToolStripMenuItem
             // 

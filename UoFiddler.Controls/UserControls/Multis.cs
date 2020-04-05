@@ -332,35 +332,42 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}.bmp");
-            int h = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
-            Bitmap bit = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(h);
-            bit.Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExtractMultiImage(ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}.tiff");
-            int h = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
-            Bitmap bit = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(h);
-            bit.Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExtractMultiImage(ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}.jpg");
-            int h = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
-            Bitmap bit = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(h);
-            bit.Save(fileName, ImageFormat.Jpeg);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExtractMultiImage(ImageFormat.Jpeg);
+        }
+
+        private void Extract_Image_ClickPng(object sender, EventArgs e)
+        {
+            ExtractMultiImage(ImageFormat.Png);
+        }
+
+        private void ExtractMultiImage(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}.{fileExtension}");
+
+            int selectedMaxHeight = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
+
+            using (Bitmap bit = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(selectedMaxHeight))
+            {
+                bit.Save(fileName, imageFormat);
+            }
+
+            MessageBox.Show(
+                $"Multi saved to {fileName}",
+                "Saved",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickFreeSlots(object sender, EventArgs e)
@@ -584,64 +591,28 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
-                {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.bmp");
-                    const int h = 120;
-                    Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(h);
-                    bit?.Save(fileName, ImageFormat.Bmp);
-                    bit?.Dispose();
-                }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
+            ExportAllMultis(ImageFormat.Bmp);
         }
 
         private void OnClick_SaveAllTiff(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
-                {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.tiff");
-                    const int h = 120;
-                    Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(h);
-                    bit?.Save(fileName, ImageFormat.Tiff);
-                    bit?.Dispose();
-                }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
+            ExportAllMultis(ImageFormat.Tiff);
         }
 
         private void OnClick_SaveAllJpg(object sender, EventArgs e)
         {
+            ExportAllMultis(ImageFormat.Jpeg);
+        }
+
+        private void OnClick_SaveAllPng(object sender, EventArgs e)
+        {
+            ExportAllMultis(ImageFormat.Png);
+        }
+
+        private void ExportAllMultis(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description = "Select directory";
@@ -659,13 +630,19 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.jpg");
-                    const int h = 120;
-                    Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(h);
-                    bit?.Save(fileName, ImageFormat.Jpeg);
-                    bit?.Dispose();
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.{fileExtension}");
+                    using (Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maxheight: 120))
+                    {
+                        bit?.Save(fileName, imageFormat);
+                    }
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                MessageBox.Show(
+                    $"All Multis saved to {dialog.SelectedPath}",
+                    "Saved",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 

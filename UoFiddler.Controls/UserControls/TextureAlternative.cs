@@ -483,43 +483,36 @@ namespace UoFiddler.Controls.UserControls
             Options.ChangedUltimaClass["Texture"] = false;
         }
 
-        private void OnClickExportTiff(object sender, EventArgs e)
-        {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Texture {_selected}.tiff");
-            Bitmap bit = new Bitmap(Textures.GetTexture(_selected));
-            bit.Save(fileName, ImageFormat.Tiff);
-            bit.Dispose();
-            MessageBox.Show(
-                $"Texture saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
-        }
-
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Texture {_selected}.bmp");
-            Bitmap bit = new Bitmap(Textures.GetTexture(_selected));
-            bit.Save(fileName, ImageFormat.Bmp);
-            bit.Dispose();
-            MessageBox.Show(
-                $"Texture saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportTextureImage(_selected, ImageFormat.Bmp);
+        }
+
+        private void OnClickExportTiff(object sender, EventArgs e)
+        {
+            ExportTextureImage(_selected, ImageFormat.Tiff);
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Texture {_selected}.jpg");
-            Bitmap bit = new Bitmap(Textures.GetTexture(_selected));
-            bit.Save(fileName, ImageFormat.Jpeg);
-            bit.Dispose();
+            ExportTextureImage(_selected, ImageFormat.Jpeg);
+        }
+
+        private void OnClickExportPng(object sender, EventArgs e)
+        {
+            ExportTextureImage(_selected, ImageFormat.Png);
+        }
+
+        private void ExportTextureImage(int index, ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"Texture {index}.{fileExtension}");
+
+            using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
+            {
+                bit.Save(fileName, imageFormat);
+            }
+
             MessageBox.Show(
                 $"Texture saved to {fileName}",
                 "Saved",

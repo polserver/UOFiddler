@@ -46,6 +46,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.multiMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.facet00ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.facet01ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.facet02ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.facet03ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,12 +54,12 @@ namespace UoFiddler.Controls.UserControls
             this.facet05ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.multiMapFromImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.facetFromImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             this.asBmpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.facetFromImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.facet00ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -127,14 +128,21 @@ namespace UoFiddler.Controls.UserControls
             // multiMapToolStripMenuItem
             // 
             this.multiMapToolStripMenuItem.Name = "multiMapToolStripMenuItem";
-            this.multiMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.multiMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.multiMapToolStripMenuItem.Text = "MultiMap";
             this.multiMapToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
+            // 
+            // facet00ToolStripMenuItem
+            // 
+            this.facet00ToolStripMenuItem.Name = "facet00ToolStripMenuItem";
+            this.facet00ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.facet00ToolStripMenuItem.Text = "Facet00";
+            this.facet00ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
             // 
             // facet01ToolStripMenuItem
             // 
             this.facet01ToolStripMenuItem.Name = "facet01ToolStripMenuItem";
-            this.facet01ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.facet01ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.facet01ToolStripMenuItem.Tag = "";
             this.facet01ToolStripMenuItem.Text = "Facet01";
             this.facet01ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
@@ -142,7 +150,7 @@ namespace UoFiddler.Controls.UserControls
             // facet02ToolStripMenuItem
             // 
             this.facet02ToolStripMenuItem.Name = "facet02ToolStripMenuItem";
-            this.facet02ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.facet02ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.facet02ToolStripMenuItem.Tag = "";
             this.facet02ToolStripMenuItem.Text = "Facet02";
             this.facet02ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
@@ -150,7 +158,7 @@ namespace UoFiddler.Controls.UserControls
             // facet03ToolStripMenuItem
             // 
             this.facet03ToolStripMenuItem.Name = "facet03ToolStripMenuItem";
-            this.facet03ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.facet03ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.facet03ToolStripMenuItem.Tag = "";
             this.facet03ToolStripMenuItem.Text = "Facet03";
             this.facet03ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
@@ -158,7 +166,7 @@ namespace UoFiddler.Controls.UserControls
             // facet04ToolStripMenuItem
             // 
             this.facet04ToolStripMenuItem.Name = "facet04ToolStripMenuItem";
-            this.facet04ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.facet04ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.facet04ToolStripMenuItem.Tag = "";
             this.facet04ToolStripMenuItem.Text = "Facet04";
             this.facet04ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
@@ -166,7 +174,7 @@ namespace UoFiddler.Controls.UserControls
             // facet05ToolStripMenuItem
             // 
             this.facet05ToolStripMenuItem.Name = "facet05ToolStripMenuItem";
-            this.facet05ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.facet05ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.facet05ToolStripMenuItem.Tag = "";
             this.facet05ToolStripMenuItem.Text = "Facet05";
             this.facet05ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
@@ -190,40 +198,6 @@ namespace UoFiddler.Controls.UserControls
             this.multiMapFromImageToolStripMenuItem.Text = "MultiMap from Image";
             this.multiMapFromImageToolStripMenuItem.Click += new System.EventHandler(this.OnClickGenerateRLE);
             // 
-            // toolStripDropDownButton3
-            // 
-            this.toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.asBmpToolStripMenuItem1,
-            this.asTiffToolStripMenuItem1,
-            this.asPngToolStripMenuItem});
-            this.toolStripDropDownButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton3.Image")));
-            this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
-            this.toolStripDropDownButton3.Size = new System.Drawing.Size(59, 22);
-            this.toolStripDropDownButton3.Text = "Export..";
-            // 
-            // asBmpToolStripMenuItem1
-            // 
-            this.asBmpToolStripMenuItem1.Name = "asBmpToolStripMenuItem1";
-            this.asBmpToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.asBmpToolStripMenuItem1.Text = "As Bmp..";
-            this.asBmpToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportBmp);
-            // 
-            // asTiffToolStripMenuItem1
-            // 
-            this.asTiffToolStripMenuItem1.Name = "asTiffToolStripMenuItem1";
-            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.asTiffToolStripMenuItem1.Text = "As Tiff..";
-            this.asTiffToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportTiff);
-            // 
-            // asPngToolStripMenuItem
-            // 
-            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.asPngToolStripMenuItem.Text = "As Jpg..";
-            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportJpg);
-            // 
             // facetFromImageToolStripMenuItem
             // 
             this.facetFromImageToolStripMenuItem.Name = "facetFromImageToolStripMenuItem";
@@ -231,12 +205,47 @@ namespace UoFiddler.Controls.UserControls
             this.facetFromImageToolStripMenuItem.Text = "Facet from Image";
             this.facetFromImageToolStripMenuItem.Click += new System.EventHandler(this.OnClickGenerateFacetFromImage);
             // 
-            // facet00ToolStripMenuItem
+            // toolStripDropDownButton3
             // 
-            this.facet00ToolStripMenuItem.Name = "facet00ToolStripMenuItem";
-            this.facet00ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.facet00ToolStripMenuItem.Text = "Facet00";
-            this.facet00ToolStripMenuItem.Click += new System.EventHandler(this.ShowImage);
+            this.toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.asBmpToolStripMenuItem1,
+            this.asTiffToolStripMenuItem1,
+            this.asPngToolStripMenuItem,
+            this.asPngToolStripMenuItem1});
+            this.toolStripDropDownButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton3.Image")));
+            this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
+            this.toolStripDropDownButton3.Size = new System.Drawing.Size(60, 22);
+            this.toolStripDropDownButton3.Text = "Export..";
+            // 
+            // asBmpToolStripMenuItem1
+            // 
+            this.asBmpToolStripMenuItem1.Name = "asBmpToolStripMenuItem1";
+            this.asBmpToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asBmpToolStripMenuItem1.Text = "As Bmp..";
+            this.asBmpToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportBmp);
+            // 
+            // asTiffToolStripMenuItem1
+            // 
+            this.asTiffToolStripMenuItem1.Name = "asTiffToolStripMenuItem1";
+            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asTiffToolStripMenuItem1.Text = "As Tiff..";
+            this.asTiffToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportTiff);
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem.Text = "As Jpg..";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportJpg);
+            // 
+            // asPngToolStripMenuItem1
+            // 
+            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
+            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem1.Text = "As Png..";
+            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportPng);
             // 
             // MultiMap
             // 
@@ -278,5 +287,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem facetFromImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem facet00ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
     }
 }
