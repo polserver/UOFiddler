@@ -695,19 +695,13 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            string path = Options.OutputPath;
             int i = (int)listView1.SelectedItems[0].Tag;
             if (i == -1)
             {
                 return;
             }
 
-            string fileName = Path.Combine(path, $"Landtile {i}.bmp");
-            Bitmap bit = new Bitmap(Art.GetLand(i));
-            bit.Save(fileName, ImageFormat.Bmp);
-            bit.Dispose();
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExportLandTileImage(i, ImageFormat.Bmp);
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
@@ -717,19 +711,13 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            string path = Options.OutputPath;
             int i = (int)listView1.SelectedItems[0].Tag;
             if (i == -1)
             {
                 return;
             }
 
-            string fileName = Path.Combine(path, $"Landtile {i}.tiff");
-            Bitmap bit = new Bitmap(Art.GetLand(i));
-            bit.Save(fileName, ImageFormat.Tiff);
-            bit.Dispose();
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExportLandTileImage(i, ImageFormat.Tiff);
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
@@ -739,19 +727,47 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            string path = Options.OutputPath;
             int i = (int)listView1.SelectedItems[0].Tag;
             if (i == -1)
             {
                 return;
             }
 
-            string fileName = Path.Combine(path, $"Landtile {i}.jpg");
-            Bitmap bit = new Bitmap(Art.GetLand(i));
-            bit.Save(fileName, ImageFormat.Jpeg);
-            bit.Dispose();
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExportLandTileImage(i, ImageFormat.Jpeg);
+        }
+
+        private void OnClickExportPng(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count != 1)
+            {
+                return;
+            }
+
+            int i = (int)listView1.SelectedItems[0].Tag;
+            if (i == -1)
+            {
+                return;
+            }
+
+            ExportLandTileImage(i, ImageFormat.Png);
+        }
+
+        private void ExportLandTileImage(int index, ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile {index}.{fileExtension}");
+
+            using (Bitmap bit = new Bitmap(Art.GetLand(index)))
+            {
+                bit.Save(fileName, imageFormat);
+            }
+
+            MessageBox.Show(
+                $"Landtile saved to {fileName}",
+                "Saved",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
@@ -778,62 +794,28 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < listView1.Items.Count; ++i)
-                {
-                    int index = (int)listView1.Items[i].Tag;
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.bmp");
-                    Bitmap bit = new Bitmap(Art.GetLand(index));
-                    bit.Save(fileName, ImageFormat.Bmp);
-                    bit.Dispose();
-                }
-                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
+            ExportAllLandTiles(ImageFormat.Bmp);
         }
 
         private void OnClick_SaveAllTiff(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < listView1.Items.Count; ++i)
-                {
-                    int index = (int)listView1.Items[i].Tag;
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.tiff");
-                    Bitmap bit = new Bitmap(Art.GetLand(index));
-                    bit.Save(fileName, ImageFormat.Tiff);
-                    bit.Dispose();
-                }
-                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
+            ExportAllLandTiles(ImageFormat.Tiff);
         }
 
         private void OnClick_SaveAllJpg(object sender, EventArgs e)
         {
+            ExportAllLandTiles(ImageFormat.Jpeg);
+        }
+
+        private void OnClick_SaveAllPng(object sender, EventArgs e)
+        {
+            ExportAllLandTiles(ImageFormat.Png);
+        }
+
+        private void ExportAllLandTiles(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description = "Select directory";
@@ -851,12 +833,18 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.jpg");
-                    Bitmap bit = new Bitmap(Art.GetLand(index));
-                    bit.Save(fileName, ImageFormat.Jpeg);
-                    bit.Dispose();
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.{fileExtension}");
+                    using (Bitmap bit = new Bitmap(Art.GetLand(index)))
+                    {
+                        bit.Save(fileName, imageFormat);
+                    }
                 }
-                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show(
+                    $"All LandTiles saved to {dialog.SelectedPath}",
+                    "Saved",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 

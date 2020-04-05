@@ -79,6 +79,8 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.MultiComponentBox = new System.Windows.Forms.RichTextBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -243,9 +245,10 @@ namespace UoFiddler.Controls.UserControls
             this.exportAllImagesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aToolStripMenuItem,
             this.asTiffToolStripMenuItem1,
-            this.asJpgToolStripMenuItem});
+            this.asJpgToolStripMenuItem,
+            this.asPngToolStripMenuItem1});
             this.exportAllImagesToolStripMenuItem.Name = "exportAllImagesToolStripMenuItem";
-            this.exportAllImagesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.exportAllImagesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportAllImagesToolStripMenuItem.Text = "Export All Image";
             // 
             // aToolStripMenuItem
@@ -413,29 +416,30 @@ namespace UoFiddler.Controls.UserControls
             this.extractImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.asBmpToolStripMenuItem,
             this.asTiffToolStripMenuItem,
-            this.asJpgToolStripMenuItem1});
+            this.asJpgToolStripMenuItem1,
+            this.asPngToolStripMenuItem});
             this.extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
-            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.extractImageToolStripMenuItem.Text = "extract Image..";
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickTiff);
             // 
             // asJpgToolStripMenuItem1
             // 
             this.asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
-            this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.asJpgToolStripMenuItem1.Text = "As Jpg";
             this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.Extract_Image_ClickJpg);
             // 
@@ -475,6 +479,20 @@ namespace UoFiddler.Controls.UserControls
             this.MultiComponentBox.Size = new System.Drawing.Size(334, 302);
             this.MultiComponentBox.TabIndex = 0;
             this.MultiComponentBox.Text = "";
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem.Text = "As Png";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickPng);
+            // 
+            // asPngToolStripMenuItem1
+            // 
+            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
+            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem1.Text = "As Png";
+            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllPng);
             // 
             // Multis
             // 
@@ -555,5 +573,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
     }
 }

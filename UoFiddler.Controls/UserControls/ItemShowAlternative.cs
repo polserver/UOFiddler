@@ -847,22 +847,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Art.IsValidStatic(_selected))
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Item 0x{_selected:X}.bmp");
-            Bitmap bit = new Bitmap(Art.GetStatic(_selected));
-            bit.Save(fileName, ImageFormat.Bmp);
-            bit.Dispose();
-            MessageBox.Show(
-                $"Item saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportItemImage(_selected, ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
@@ -872,22 +857,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Art.IsValidStatic(_selected))
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Item 0x{_selected:X}.tiff");
-            Bitmap bit = new Bitmap(Art.GetStatic(_selected));
-            bit.Save(fileName, ImageFormat.Tiff);
-            bit.Dispose();
-            MessageBox.Show(
-                $"Item saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportItemImage(_selected, ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
@@ -897,16 +867,34 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Art.IsValidStatic(_selected))
+            ExportItemImage(_selected, ImageFormat.Jpeg);
+        }
+
+        private void Extract_Image_ClickPng(object sender, EventArgs e)
+        {
+            if (_selected == -1)
             {
                 return;
             }
 
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Item 0x{_selected:X}.jpg");
-            Bitmap bit = new Bitmap(Art.GetStatic(_selected));
-            bit.Save(fileName, ImageFormat.Jpeg);
-            bit.Dispose();
+            ExportItemImage(_selected, ImageFormat.Png);
+        }
+
+        private void ExportItemImage(int index, ImageFormat imageFormat)
+        {
+            if (!Art.IsValidStatic(index))
+            {
+                return;
+            }
+
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"Item 0x{index:X}.{fileExtension}");
+
+            using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
+            {
+                bit?.Save(fileName, imageFormat);
+            }
+
             MessageBox.Show(
                 $"Item saved to {fileName}",
                 "Saved",
@@ -933,74 +921,28 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                Cursor.Current = Cursors.WaitCursor;
-                ProgressBar bar = new ProgressBar(_itemList.Count, "Export to bmp", false);
-                for (int i = 0; i < _itemList.Count; ++i)
-                {
-                    ControlEvents.FireProgressChangeEvent();
-                    Application.DoEvents();
-                    int index = _itemList[i];
-                    if (!Art.IsValidStatic(index))
-                    {
-                        continue;
-                    }
-
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.bmp");
-                    Bitmap bit = new Bitmap(Art.GetStatic(index));
-                    bit.Save(fileName, ImageFormat.Bmp);
-                    bit.Dispose();
-                }
-                bar.Dispose();
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"All Item saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
+            ExportAllItemImages(ImageFormat.Bmp);
         }
 
         private void OnClick_SaveAllTiff(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select directory";
-                dialog.ShowNewFolderButton = true;
-                if (dialog.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-
-                Cursor.Current = Cursors.WaitCursor;
-                ProgressBar bar = new ProgressBar(_itemList.Count, "Export to tiff", false);
-                for (int i = 0; i < _itemList.Count; ++i)
-                {
-                    ControlEvents.FireProgressChangeEvent();
-                    Application.DoEvents();
-                    int index = _itemList[i];
-                    if (!Art.IsValidStatic(index))
-                    {
-                        continue;
-                    }
-
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.tiff");
-                    Bitmap bit = new Bitmap(Art.GetStatic(index));
-                    bit.Save(fileName, ImageFormat.Tiff);
-                    bit.Dispose();
-                }
-                bar.Dispose();
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"All Item saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
+            ExportAllItemImages(ImageFormat.Tiff);
         }
 
         private void OnClick_SaveAllJpg(object sender, EventArgs e)
         {
+            ExportAllItemImages(ImageFormat.Jpeg);
+        }
+
+        private void OnClick_SaveAllPng(object sender, EventArgs e)
+        {
+            ExportAllItemImages(ImageFormat.Png);
+        }
+
+        private void ExportAllItemImages(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description = "Select directory";
@@ -1011,25 +953,37 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Cursor.Current = Cursors.WaitCursor;
-                ProgressBar bar = new ProgressBar(_itemList.Count, "Export to jpeg", false);
-                for (int i = 0; i < _itemList.Count; ++i)
-                {
-                    ControlEvents.FireProgressChangeEvent();
-                    Application.DoEvents();
-                    int index = _itemList[i];
-                    if (!Art.IsValidStatic(index))
-                    {
-                        continue;
-                    }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.Jpg");
-                    Bitmap bit = new Bitmap(Art.GetStatic(index));
-                    bit.Save(fileName, ImageFormat.Jpeg);
-                    bit.Dispose();
+                using (ProgressBar bar = new ProgressBar(_itemList.Count, $"Export to {fileExtension}", false))
+                {
+                    for (int i = 0; i < _itemList.Count; ++i)
+                    {
+                        // TODO: maybe fire progress event only every X iterations?
+                        ControlEvents.FireProgressChangeEvent();
+                        Application.DoEvents();
+
+                        int index = _itemList[i];
+                        if (index < 0)
+                        {
+                            continue;
+                        }
+
+                        string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.{fileExtension}");
+                        using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
+                        {
+                            bit?.Save(fileName, imageFormat);
+                        }
+                    }
                 }
-                bar.Dispose();
+
                 Cursor.Current = Cursors.Default;
-                MessageBox.Show($"All Item saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                MessageBox.Show(
+                    $"All items saved to {dialog.SelectedPath}",
+                    "Saved",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 

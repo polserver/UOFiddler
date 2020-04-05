@@ -651,80 +651,61 @@ namespace UoFiddler.Controls.UserControls
 
         private void ExtractMapBmp(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            string path = Options.OutputPath;
-            string name = $"{Options.MapNames[_currMapInt]}.bmp";
-            string fileName = Path.Combine(path, name);
-            Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
-            if (showMarkersToolStripMenuItem.Checked)
-            {
-                Graphics g = Graphics.FromImage(extract);
-                foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
-                {
-                    OverlayObject o = (OverlayObject)obj.Tag;
-                    if (o.Visible)
-                    {
-                        o.Draw(g);
-                    }
-                }
-                g.Save();
-            }
-            extract.Save(fileName, ImageFormat.Bmp);
-            Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Map saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExtractMapImage(ImageFormat.Bmp);
         }
 
         private void ExtractMapTiff(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            string path = Options.OutputPath;
-            string name = $"{Options.MapNames[_currMapInt]}.tiff";
-            string fileName = Path.Combine(path, name);
-            Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
-            if (showMarkersToolStripMenuItem.Checked)
-            {
-                Graphics g = Graphics.FromImage(extract);
-                foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
-                {
-                    OverlayObject o = (OverlayObject)obj.Tag;
-                    if (o.Visible)
-                    {
-                        o.Draw(g);
-                    }
-                }
-                g.Save();
-            }
-            extract.Save(fileName, ImageFormat.Tiff);
-            Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Map saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            ExtractMapImage(ImageFormat.Tiff);
         }
 
         private void ExtractMapJpg(object sender, EventArgs e)
         {
+            ExtractMapImage(ImageFormat.Jpeg);
+        }
+
+        private void ExtractMapPng(object sender, EventArgs e)
+        {
+            ExtractMapImage(ImageFormat.Png);
+        }
+
+        private void ExtractMapImage(ImageFormat imageFormat)
+        {
             Cursor.Current = Cursors.WaitCursor;
-            string path = Options.OutputPath;
-            string name = $"{Options.MapNames[_currMapInt]}.jpg";
-            string fileName = Path.Combine(path, name);
-            Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
-            if (showMarkersToolStripMenuItem.Checked)
+
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"{Options.MapNames[_currMapInt]}.{fileExtension}");
+
+            try
             {
-                Graphics g = Graphics.FromImage(extract);
-                foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
+                Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
+
+                if (showMarkersToolStripMenuItem.Checked)
                 {
-                    OverlayObject o = (OverlayObject)obj.Tag;
-                    if (o.Visible)
+                    Graphics g = Graphics.FromImage(extract);
+                    foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
                     {
-                        o.Draw(g);
+                        OverlayObject o = (OverlayObject)obj.Tag;
+                        if (o.Visible)
+                        {
+                            o.Draw(g);
+                        }
                     }
+                    g.Save();
                 }
-                g.Save();
+                extract.Save(fileName, imageFormat);
             }
-            extract.Save(fileName, ImageFormat.Jpeg);
-            Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Map saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+
+            MessageBox.Show(
+                $"Map saved to {fileName}",
+                "Saved",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private MapMarker _mapMarker;
@@ -757,62 +738,75 @@ namespace UoFiddler.Controls.UserControls
 
         private void LoadMapOverlays()
         {
-            string path = Options.AppDataPath;
             // TODO: possible null for path variable and Path.GetDirectoryName(path) later on.
-            string fileName = Path.Combine(Path.GetDirectoryName(path), "MapOverlays.xml");
+            string fileName = Path.Combine(Path.GetDirectoryName(Options.AppDataPath), "MapOverlays.xml");
+
             OverlayObjectTree.BeginUpdate();
-            OverlayObjectTree.Nodes.Clear();
-            TreeNode node = new TreeNode(Options.MapNames[0])
+            try
             {
-                Tag = 0
-            };
-            OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[1])
-            {
-                Tag = 1
-            };
-            OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[2])
-            {
-                Tag = 2
-            };
-            OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[3])
-            {
-                Tag = 3
-            };
-            OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[4])
-            {
-                Tag = 4
-            };
-            OverlayObjectTree.Nodes.Add(node);
-            node = new TreeNode(Options.MapNames[5])
-            {
-                Tag = 5
-            };
-            OverlayObjectTree.Nodes.Add(node);
-            if (File.Exists(fileName))
-            {
-                XmlDocument dom = new XmlDocument();
-                dom.Load(fileName);
-                XmlElement xOptions = dom["Overlays"];
-                foreach (XmlElement xMarker in xOptions.SelectNodes("Marker"))
+                OverlayObjectTree.Nodes.Clear();
+
+                TreeNode node = new TreeNode(Options.MapNames[0])
                 {
-                    int x = int.Parse(xMarker.GetAttribute("x"));
-                    int y = int.Parse(xMarker.GetAttribute("y"));
-                    int m = int.Parse(xMarker.GetAttribute("map"));
-                    int c = int.Parse(xMarker.GetAttribute("color"));
-                    string text = xMarker.GetAttribute("text");
-                    OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
-                    node = new TreeNode(text)
+                    Tag = 0
+                };
+                OverlayObjectTree.Nodes.Add(node);
+
+                node = new TreeNode(Options.MapNames[1])
+                {
+                    Tag = 1
+                };
+                OverlayObjectTree.Nodes.Add(node);
+
+                node = new TreeNode(Options.MapNames[2])
+                {
+                    Tag = 2
+                };
+                OverlayObjectTree.Nodes.Add(node);
+
+                node = new TreeNode(Options.MapNames[3])
+                {
+                    Tag = 3
+                };
+                OverlayObjectTree.Nodes.Add(node);
+
+                node = new TreeNode(Options.MapNames[4])
+                {
+                    Tag = 4
+                };
+                OverlayObjectTree.Nodes.Add(node);
+
+                node = new TreeNode(Options.MapNames[5])
+                {
+                    Tag = 5
+                };
+                OverlayObjectTree.Nodes.Add(node);
+
+                if (File.Exists(fileName))
+                {
+                    XmlDocument dom = new XmlDocument();
+                    dom.Load(fileName);
+                    XmlElement xOptions = dom["Overlays"];
+                    foreach (XmlElement xMarker in xOptions.SelectNodes("Marker"))
                     {
-                        Tag = o
-                    };
-                    OverlayObjectTree.Nodes[m].Nodes.Add(node);
+                        int x = int.Parse(xMarker.GetAttribute("x"));
+                        int y = int.Parse(xMarker.GetAttribute("y"));
+                        int m = int.Parse(xMarker.GetAttribute("map"));
+                        int c = int.Parse(xMarker.GetAttribute("color"));
+                        string text = xMarker.GetAttribute("text");
+                        OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
+                        node = new TreeNode(text)
+                        {
+                            Tag = o
+                        };
+                        OverlayObjectTree.Nodes[m].Nodes.Add(node);
+                    }
                 }
             }
-            OverlayObjectTree.EndUpdate();
+            finally
+            {
+                OverlayObjectTree.EndUpdate();
+            }
         }
 
         public static void SaveMapOverlays()

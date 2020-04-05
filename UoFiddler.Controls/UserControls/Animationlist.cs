@@ -737,7 +737,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _animEditEntry = new AnimationEdit();
-            //animEditEntry.TopMost = true;
+            //animEditEntry.TopMost = true; // TODO: should it be topMost?
             _animEditEntry.Show();
         }
 
@@ -806,119 +806,45 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string what = "Mob";
-            if (_displayType == 1)
-            {
-                what = "Equipment";
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}.bmp");
-
-            if (Animate)
-            {
-                using (Bitmap newBitmap = new Bitmap(_animation[0].Width, _animation[0].Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_animation[0], new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save(fileName, ImageFormat.Bmp);
-                }
-            }
-            else
-            {
-                using (Bitmap newBitmap = new Bitmap(_mainPicture.Width, _mainPicture.Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_mainPicture, new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save(fileName, ImageFormat.Bmp);
-                }
-            }
-            MessageBox.Show(
-                $"{what} saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExtractImage(ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string what = "Mob";
-            if (_displayType == 1)
-            {
-                what = "Equipment";
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}.tiff");
-
-            if (Animate)
-            {
-                using (Bitmap newBitmap = new Bitmap(_animation[0].Width, _animation[0].Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_animation[0], new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save(fileName, ImageFormat.Tiff);
-                }
-            }
-            else
-            {
-                using (Bitmap newBitmap = new Bitmap(_mainPicture.Width, _mainPicture.Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_mainPicture, new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save(fileName, ImageFormat.Tiff);
-                }
-            }
-            MessageBox.Show(
-                $"{what} saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExtractImage(ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
+            ExtractImage(ImageFormat.Jpeg);
+        }
+
+        private void Extract_Image_ClickPng(object sender, EventArgs e)
+        {
+            ExtractImage(ImageFormat.Png);
+        }
+
+        private void ExtractImage(ImageFormat imageFormat)
+        {
             string what = "Mob";
             if (_displayType == 1)
             {
                 what = "Equipment";
             }
 
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}.jpg");
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}.{fileExtension}");
 
-            if (Animate)
+            Bitmap sourceBitmap = Animate ? _animation[0] : _mainPicture;
+            using (Bitmap newBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height))
             {
-                using (Bitmap newBitmap = new Bitmap(_animation[0].Width, _animation[0].Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_animation[0], new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save(fileName, ImageFormat.Jpeg);
-                }
+                Graphics newGraph = Graphics.FromImage(newBitmap);
+                newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
+                newGraph.DrawImage(sourceBitmap, new Point(0, 0));
+                newGraph.Save();
+                newBitmap.Save(fileName, imageFormat);
             }
-            else
-            {
-                using (Bitmap newBitmap = new Bitmap(_mainPicture.Width, _mainPicture.Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_mainPicture, new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save(fileName, ImageFormat.Tiff);
-                }
-            }
+
             MessageBox.Show(
                 $"{what} saved to {fileName}",
                 "Saved",
@@ -929,84 +855,39 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExtractAnimBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string what = "Mob";
-            if (_displayType == 1)
-            {
-                what = "Equipment";
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}");
-            if (!Animate)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _animation.Length; ++i)
-            {
-                Bitmap newBitmap = new Bitmap(_animation[i].Width, _animation[i].Height);
-                Graphics newGraph = Graphics.FromImage(newBitmap);
-                newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                newGraph.DrawImage(_animation[i], new Point(0, 0));
-                newGraph.Save();
-                newBitmap.Save($"{fileName}-{i}.bmp", ImageFormat.Bmp);
-            }
-            MessageBox.Show(
-                $"{what} saved to '{fileName}-X.bmp'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportAnimationFrames(ImageFormat.Bmp);
         }
 
         private void OnClickExtractAnimTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string what = "Mob";
-            if (_displayType == 1)
-            {
-                what = "Equipment";
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}");
-            if (!Animate)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _animation.Length; ++i)
-            {
-                using (Bitmap newBitmap = new Bitmap(_animation[i].Width, _animation[i].Height))
-                {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_animation[i], new Point(0, 0));
-                    newGraph.Save();
-                    newBitmap.Save($"{fileName}-{i}.tiff", ImageFormat.Tiff);
-                }
-            }
-            MessageBox.Show(
-                $"{what} saved to '{fileName}-X.tiff'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ExportAnimationFrames(ImageFormat.Tiff);
         }
 
         private void OnClickExtractAnimJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
+            ExportAnimationFrames(ImageFormat.Jpeg);
+        }
+
+        private void OnClickExtractAnimPng(object sender, EventArgs e)
+        {
+            ExportAnimationFrames(ImageFormat.Png);
+        }
+
+        private void ExportAnimationFrames(ImageFormat imageFormat)
+        {
+            if (!Animate)
+            {
+                return;
+            }
+
             string what = "Mob";
             if (_displayType == 1)
             {
                 what = "Equipment";
             }
 
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}");
-            if (!Animate)
-            {
-                return;
-            }
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}");
 
             for (int i = 0; i < _animation.Length; ++i)
             {
@@ -1016,11 +897,12 @@ namespace UoFiddler.Controls.UserControls
                     newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
                     newGraph.DrawImage(_animation[i], new Point(0, 0));
                     newGraph.Save();
-                    newBitmap.Save($"{fileName}-{i}.jpg", ImageFormat.Jpeg);
+                    newBitmap.Save($"{fileName}-{i}.{fileExtension}", imageFormat);
                 }
             }
+
             MessageBox.Show(
-                $"{what} saved to '{fileName}-X.jpg'",
+                $"{what} saved to '{fileName}-X.{fileExtension}'",
                 "Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
@@ -1029,73 +911,39 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportFrameBmp(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string what = "Mob";
-            if (_displayType == 1)
-            {
-                what = "Equipment";
-            }
-
-            if (listView1.SelectedItems.Count < 1)
-            {
-                return;
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}");
-
-            Bitmap bit = _animation[(int)listView1.SelectedItems[0].Tag];
-            using (Bitmap newBitmap = new Bitmap(bit.Width, bit.Height))
-            {
-                Graphics newGraph = Graphics.FromImage(newBitmap);
-                newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                newGraph.DrawImage(bit, new Point(0, 0));
-                newGraph.Save();
-                newBitmap.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.bmp", ImageFormat.Bmp);
-            }
+            ExportSingleFrame(ImageFormat.Bmp);
         }
 
         private void OnClickExportFrameTiff(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string what = "Mob";
-            if (_displayType == 1)
-            {
-                what = "Equipment";
-            }
-
-            if (listView1.SelectedItems.Count < 1)
-            {
-                return;
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}");
-
-            Bitmap bit = _animation[(int)listView1.SelectedItems[0].Tag];
-            using (Bitmap newBmp = new Bitmap(bit.Width, bit.Height))
-            {
-                Graphics newGraph = Graphics.FromImage(newBmp);
-                newGraph.FillRectangle(Brushes.White, 0, 0, newBmp.Width, newBmp.Height);
-                newGraph.DrawImage(bit, new Point(0, 0));
-                newGraph.Save();
-                newBmp.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.tiff", ImageFormat.Tiff);
-            }
+            ExportSingleFrame(ImageFormat.Tiff);
         }
 
         private void OnClickExportFrameJpg(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
+            ExportSingleFrame(ImageFormat.Jpeg);
+        }
+
+        private void OnClickExportFramePng(object sender, EventArgs e)
+        {
+            ExportSingleFrame(ImageFormat.Png);
+        }
+
+        private void ExportSingleFrame(ImageFormat imageFormat)
+        {
+            if (listView1.SelectedItems.Count < 1)
+            {
+                return;
+            }
+
             string what = "Mob";
             if (_displayType == 1)
             {
                 what = "Equipment";
             }
 
-            if (listView1.SelectedItems.Count < 1)
-            {
-                return;
-            }
-
-            string fileName = Path.Combine(path, $"{what} {_currentSelect}");
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}");
 
             Bitmap bit = _animation[(int)listView1.SelectedItems[0].Tag];
             using (Bitmap newBitmap = new Bitmap(bit.Width, bit.Height))
@@ -1105,7 +953,7 @@ namespace UoFiddler.Controls.UserControls
                 newGraph.DrawImage(bit, new Point(0, 0));
                 newGraph.Save();
 
-                newBitmap.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.jpg", ImageFormat.Jpeg);
+                newBitmap.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.{fileExtension}", imageFormat);
             }
         }
     }

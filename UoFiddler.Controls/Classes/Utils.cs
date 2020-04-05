@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -230,6 +231,30 @@ namespace UoFiddler.Controls.Classes
             bmp.UnlockBits(bd);
             bmpNew.UnlockBits(bdNew);
             return bmpNew;
+        }
+
+        public static string GetFileExtensionFor(ImageFormat imageFormat)
+        {
+            if (imageFormat == ImageFormat.Bmp)
+            {
+                return "bmp";
+            }
+            else if (imageFormat == ImageFormat.Tiff)
+            {
+                return "tiff";
+            }
+            else if (imageFormat == ImageFormat.Jpeg)
+            {
+                return "jpg";
+            }
+            else if (imageFormat == ImageFormat.Png)
+            {
+                return "png";
+            }
+            else
+            {
+                throw new ArgumentException($"Image format {imageFormat} is not supported", nameof(imageFormat));
+            }
         }
     }
 }
