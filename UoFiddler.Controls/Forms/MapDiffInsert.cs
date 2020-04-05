@@ -277,8 +277,8 @@ namespace UoFiddler.Controls.Forms
                                                             m_Y = (byte)j,
                                                             m_Hue = (short)htile.Hue
                                                         };
-                                                        // TODO: first expression always false?
-                                                        if (tile.m_ID < 0 || tile.m_ID > Art.GetMaxItemID())
+
+                                                        if (tile.m_ID > Art.GetMaxItemID())
                                                         {
                                                             continue;
                                                         }
@@ -330,8 +330,8 @@ namespace UoFiddler.Controls.Forms
                                                         ushort graphic = tile.ID;
                                                         sbyte sz = (sbyte)tile.Z;
                                                         short sHue = (short)tile.Hue;
-                                                        // TODO: first expression always false?
-                                                        if (graphic < 0 || graphic > Art.GetMaxItemID())
+
+                                                        if (graphic > Art.GetMaxItemID())
                                                         {
                                                             continue;
                                                         }
@@ -398,7 +398,7 @@ namespace UoFiddler.Controls.Forms
                                                     m_Hue = mStaticsReader.ReadInt16()
                                                 };
 
-                                                if (tile.m_ID >= 0 && tile.m_ID <= Art.GetMaxItemID())
+                                                if (tile.m_ID <= Art.GetMaxItemID())
                                                 {
                                                     if (tile.m_Hue < 0)
                                                     {
@@ -443,8 +443,8 @@ namespace UoFiddler.Controls.Forms
                                                 var sy = mStaticsReader.ReadByte();
                                                 var sz = mStaticsReader.ReadSByte();
                                                 var shue = mStaticsReader.ReadInt16();
-                                                // TODO: first expression always true?
-                                                if (graphic >= 0 && graphic <= Art.GetMaxItemID())
+
+                                                if (graphic <= Art.GetMaxItemID())
                                                 {
                                                     if (shue < 0)
                                                     {

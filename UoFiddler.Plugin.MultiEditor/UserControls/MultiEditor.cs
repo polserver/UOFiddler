@@ -45,7 +45,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private Point _movingLoc;
         private int _pictureBoxDrawTilesCol;
         private int _pictureBoxDrawTilesRow;
-        private bool _forceRefresh; // TODO: unused?
+        //private bool _forceRefresh; // TODO: unused?
 
         public MultiEditor()
         {
@@ -61,7 +61,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Select.Checked = true;
             pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
             pictureBoxMulti.ContextMenuStrip = null;
-            _forceRefresh = true;
+            //_forceRefresh = true;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -147,7 +147,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -197,7 +197,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         {
             DrawFloorZ = (int)numericUpDown_Floor.Value;
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -212,7 +212,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = true;
             BTN_Trans.Checked = false;
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -227,7 +227,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -250,7 +250,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -277,7 +277,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -321,7 +321,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = true;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -333,7 +333,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = true;
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -392,7 +392,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         {
             ScrollbarsSetValue();
             toolTip1.SetToolTip(MaxHeightTrackBar, MaxHeightTrackBar.Value.ToString());
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -414,7 +414,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -426,7 +426,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (_compList != null && SelectedTile != null && (int)numericUpDown_Selected_X.Value != SelectedTile.X)
             {
                 _compList.TileMove(SelectedTile, (int)numericUpDown_Selected_X.Value, SelectedTile.Y);
-                _forceRefresh = true;
+                //_forceRefresh = true;
                 pictureBoxMulti.Invalidate();
             }
         }
@@ -439,7 +439,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (_compList != null && SelectedTile != null && (int)numericUpDown_Selected_Y.Value != SelectedTile.Y)
             {
                 _compList.TileMove(SelectedTile, SelectedTile.X, (int)numericUpDown_Selected_Y.Value);
-                _forceRefresh = true;
+                //_forceRefresh = true;
                 pictureBoxMulti.Invalidate();
             }
         }
@@ -464,7 +464,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 MaxHeightTrackBar.Value = SelectedTile.Z;
             }
 
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -692,20 +692,16 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (BTN_Draw.Checked)
             {
-                // TODO: something wrong? looks like always true. Maybe it was meant to be > 0 ?
-                if (_mDrawTile.Id >= 0)
-                {
-                    ConvertCoords(_mouseLoc, out int x, out int y, out int z);
+                ConvertCoords(_mouseLoc, out int x, out int y, out int z);
 
-                    if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
+                if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
+                {
+                    _compList.TileAdd(x, y, z, _mDrawTile.Id);
+                    MaxHeightTrackBar.Minimum = _compList.ZMin;
+                    MaxHeightTrackBar.Maximum = _compList.ZMax;
+                    if (MaxHeightTrackBar.Value < z)
                     {
-                        _compList.TileAdd(x, y, z, _mDrawTile.Id);
-                        MaxHeightTrackBar.Minimum = _compList.ZMin;
-                        MaxHeightTrackBar.Maximum = _compList.ZMax;
-                        if (MaxHeightTrackBar.Value < z)
-                        {
-                            MaxHeightTrackBar.Value = z;
-                        }
+                        MaxHeightTrackBar.Value = z;
                     }
                 }
             }
@@ -787,7 +783,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 _overlayList.Clear();
             }
 
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -812,7 +808,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             _compList.GetImage(e.Graphics, hScrollBar.Value, vScrollBar.Value, MaxHeightTrackBar.Value, _mouseLoc,
                 BTN_Floor.Checked);
-            _forceRefresh = false;
+            //_forceRefresh = false;
 
             if (ShowWalkables)
             {
@@ -832,12 +828,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             if (BTN_Draw.Checked)
             {
-                // TODO: always true again? > 0 ?
-                if (_mDrawTile.Id < 0)
-                {
-                    return;
-                }
-
                 if (x < 0 || x >= _compList.Width || y < 0 || y >= _compList.Height)
                 {
                     return;
@@ -886,7 +876,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxMultiOnResize(object sender, EventArgs e)
         {
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -947,7 +937,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void ScrollBarsValueChanged(object sender, EventArgs e)
         {
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -1048,7 +1038,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                             vScrollBar.Value = 0;
                             hScrollBar.Value = 0;
                             ScrollbarsSetValue();
-                            _forceRefresh = true;
+                            //_forceRefresh = true;
                             pictureBoxMulti.Invalidate();
                             break;
                         }
@@ -1131,7 +1121,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             vScrollBar.Value = 0;
             hScrollBar.Value = 0;
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -1188,7 +1178,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
             ScrollbarsSetValue();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -1491,7 +1481,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             _compList.CalcWalkable();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -1507,7 +1497,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 tile.Transparent = false;
             }
 
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -1520,7 +1510,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             _compList.CalcDoubleSurface();
-            _forceRefresh = true;
+            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
