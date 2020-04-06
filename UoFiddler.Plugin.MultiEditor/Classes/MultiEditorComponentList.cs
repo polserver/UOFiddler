@@ -1143,7 +1143,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 XMod -= GetBitmap().Width / 2;
                 XMod += MultiEditorComponentList.GapXMod;
                 YMod = (_x + _y) * 22;
-                YMod -= _z << 2;
+                YMod -= _z * 4;
                 YMod -= GetBitmap().Height;
                 YMod += MultiEditorComponentList.GapYMod;
             }
@@ -1153,7 +1153,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 XMod -= 44 / 2;
                 XMod += MultiEditorComponentList.GapXMod;
                 YMod = (_x + _y) * 22;
-                YMod -= _z << 2;
+                YMod -= _z * 4;
                 YMod -= 44;
                 YMod += MultiEditorComponentList.GapYMod;
             }
