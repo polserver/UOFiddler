@@ -6,6 +6,9 @@ root = true
 
 #### Core EditorConfig Options ####
 
+# UoFiddler file header banner
+file_header_template = /***************************************************************************\n *\n * $Author: Turley\n * \n * "THE BEER-WARE LICENSE"\n * As long as you retain this notice you can do whatever you want with \n * this stuff. If we meet some day, and you think this stuff is worth it,\n * you can buy me a beer in return.\n *\n ***************************************************************************/
+
 # Indentation and spacing
 indent_size = 4
 indent_style = space
