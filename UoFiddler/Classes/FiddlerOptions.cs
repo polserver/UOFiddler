@@ -38,7 +38,7 @@ namespace UoFiddler.Classes
         /// <summary>
         /// Defines if an Update Check should be made on startup
         /// </summary>
-        public static bool UpdateCheckOnStart { get; set; } = true;
+        public static bool UpdateCheckOnStart { get; set; }
 
         public static string RepositoryOwner { get; } = "polserver";
         public static string RepositoryName { get; } = "UOFiddler";
