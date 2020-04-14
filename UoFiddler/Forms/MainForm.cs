@@ -209,7 +209,7 @@ namespace UoFiddler.Forms
 
         private void OnClickAbout(object sender, EventArgs e)
         {
-            new AboutBox().Show();
+            new AboutBox().Show(this);
         }
 
         /// <summary>
