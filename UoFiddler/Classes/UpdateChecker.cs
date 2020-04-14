@@ -32,7 +32,7 @@ namespace UoFiddler.Classes
                 var rateLimit = await _githubClient.Miscellaneous.GetRateLimits().ConfigureAwait(false);
                 if (rateLimit.Resources.Core.Remaining == 0)
                 {
-                    return UpdateResponse.Error($"Update API rate limit exceeded. Limit will reset at {rateLimit.Resources.Core.Reset}. Please try again later.");
+                    return UpdateResponse.Error($"Update API rate limit exceeded. Limit will reset at {rateLimit.Resources.Core.Reset.LocalDateTime}. Please try again later.");
                 }
 
                 var latestRelease = await _githubClient.Repository.Release.GetLatest(_repositoryOwner, _repositoryName).ConfigureAwait(false);
