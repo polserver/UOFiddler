@@ -22,87 +22,101 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class AnimationEdit : Form
     {
-        public AnimationEdit()
-        {
-            InitializeComponent();
-            Icon = Options.GetFiddlerIcon();
-            _fileType = 0;
-            _currDir = 0;
-            toolStripComboBox1.SelectedIndex = 0;
-            _framePoint = new Point(pictureBox1.Width / 2, pictureBox1.Height / 2);
-            _showOnlyValid = false;
-            _loaded = false;
-            listView1.MultiSelect = true;
-        }
-
         private static readonly int[] _animCx = new int[5];
         private static readonly int[] _animCy = new int[5];
         private bool _loaded;
         private int _fileType;
-        private int _currAction;
-        private int _currBody;
-        private int _currDir;
+        private int _currentAction;
+        private int _currentBody;
+        private int _currentDir;
         private Point _framePoint;
         private bool _showOnlyValid;
         private static bool _drawEmpty;
         private static bool _drawFull;
-        private static Pen _blackUndraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-        private static SolidBrush _whiteUndraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
-        private static readonly SolidBrush _whiteTrasparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255));
+        private static Pen _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+        private static SolidBrush _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+        private static readonly SolidBrush _whiteTransparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255));
         private static readonly Color _whiteConvert = Color.FromArgb(255, 255, 255, 255);
-        private static readonly Color _greyConvert = Color.FromArgb(255, 170, 170, 170);
+
+        public AnimationEdit()
+        {
+            InitializeComponent();
+            Icon = Options.GetFiddlerIcon();
+
+            toolStripComboBox1.SelectedIndex = 0;
+            listView1.MultiSelect = true;
+
+            _fileType = 0;
+            _currentDir = 0;
+            _framePoint = new Point(pictureBox1.Width / 2, pictureBox1.Height / 2);
+            _showOnlyValid = false;
+            _loaded = false;
+        }
 
         private void OnLoad(object sender, EventArgs e)
         {
             Options.LoadedUltimaClass["AnimationEdit"] = true;
+
             treeView1.BeginUpdate();
-            treeView1.Nodes.Clear();
-            if (_fileType != 0)
+            try
             {
-                int count = Animations.GetAnimCount(_fileType);
-                List<TreeNode> nodes = new List<TreeNode>();
-                for (int i = 0; i < count; ++i)
+                treeView1.Nodes.Clear();
+                if (_fileType != 0)
                 {
-                    int animlength = Animations.GetAnimLength(i, _fileType);
-                    string type = animlength == 22 ? "H" : animlength == 13 ? "L" : "P";
-                    TreeNode node = new TreeNode
+                    int count = Animations.GetAnimCount(_fileType);
+                    List<TreeNode> nodes = new List<TreeNode>();
+                    for (int i = 0; i < count; ++i)
                     {
-                        Tag = i,
-                        Text = string.Format("{0}: {1} ({2})", type, i, BodyConverter.GetTrueBody(_fileType, i))
-                    };
-                    bool valid = false;
-                    for (int j = 0; j < animlength; ++j)
-                    {
-                        TreeNode subnode = new TreeNode
+                        int animLength = Animations.GetAnimLength(i, _fileType);
+                        string type = animLength == 22 ? "H" : animLength == 13 ? "L" : "P";
+                        TreeNode node = new TreeNode
                         {
-                            Tag = j,
-                            Text = j.ToString()
+                            Tag = i,
+                            Text = $"{type}: {i} ({BodyConverter.GetTrueBody(_fileType, i)})"
                         };
-                        if (Ultima.AnimationEdit.IsActionDefinied(_fileType, i, j))
+
+                        bool valid = false;
+                        for (int j = 0; j < animLength; ++j)
                         {
-                            valid = true;
-                        }
-                        else
-                        {
-                            subnode.ForeColor = Color.Red;
+                            TreeNode treeNode = new TreeNode
+                            {
+                                Tag = j,
+                                Text = j.ToString()
+                            };
+
+                            if (Ultima.AnimationEdit.IsActionDefinied(_fileType, i, j))
+                            {
+                                valid = true;
+                            }
+                            else
+                            {
+                                treeNode.ForeColor = Color.Red;
+                            }
+
+                            node.Nodes.Add(treeNode);
                         }
 
-                        node.Nodes.Add(subnode);
-                    }
-                    if (!valid)
-                    {
-                        if (_showOnlyValid)
+                        if (!valid)
                         {
-                            continue;
+                            if (_showOnlyValid)
+                            {
+                                continue;
+                            }
+
+                            node.ForeColor = Color.Red;
                         }
 
-                        node.ForeColor = Color.Red;
+                        nodes.Add(node);
                     }
-                    nodes.Add(node);
+
+                    treeView1.Nodes.AddRange(nodes.ToArray());
                 }
-                treeView1.Nodes.AddRange(nodes.ToArray());
             }
-            treeView1.EndUpdate();
+            finally
+            {
+                treeView1.EndUpdate();
+            }
+
             if (treeView1.Nodes.Count > 0)
             {
                 treeView1.SelectedNode = treeView1.Nodes[0];
@@ -124,9 +138,9 @@ namespace UoFiddler.Controls.Forms
             }
 
             _fileType = 0;
-            _currDir = 0;
-            _currAction = 0;
-            _currBody = 0;
+            _currentDir = 0;
+            _currentAction = 0;
+            _currentBody = 0;
             toolStripComboBox1.SelectedIndex = 0;
             _framePoint = new Point(pictureBox1.Width / 2, pictureBox1.Height / 2);
             _showOnlyValid = false;
@@ -155,64 +169,74 @@ namespace UoFiddler.Controls.Forms
 
         private unsafe void SetPaletteBox()
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                Bitmap bmp = new Bitmap(0x100, pictureBoxPalette.Height, PixelFormat.Format16bppArgb1555);
-                if (edit != null)
-                {
-                    BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 0x100, pictureBoxPalette.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                    ushort* line = (ushort*)bd.Scan0;
-                    int delta = bd.Stride >> 1;
-                    for (int y = 0; y < bd.Height; ++y, line += delta)
-                    {
-                        ushort* cur = line;
-                        for (int i = 0; i < 0x100; ++i)
-                        {
-                            *cur++ = edit.Palette[i];
-                        }
-                    }
-                    bmp.UnlockBits(bd);
-                }
-                pictureBoxPalette.Image = bmp;
+                return;
             }
+
+            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            Bitmap bmp = new Bitmap(0x100, pictureBoxPalette.Height, PixelFormat.Format16bppArgb1555);
+            if (edit != null)
+            {
+                BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 0x100, pictureBoxPalette.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                ushort* line = (ushort*)bd.Scan0;
+                int delta = bd.Stride >> 1;
+                for (int y = 0; y < bd.Height; ++y, line += delta)
+                {
+                    ushort* cur = line;
+                    for (int i = 0; i < 0x100; ++i)
+                    {
+                        *cur++ = edit.Palette[i];
+                    }
+                }
+
+                bmp.UnlockBits(bd);
+            }
+
+            pictureBoxPalette.Image = bmp;
         }
 
         private void AfterSelectTreeView(object sender, TreeViewEventArgs e)
         {
-            if (treeView1.SelectedNode != null)
+            if (treeView1.SelectedNode == null)
             {
-                if (treeView1.SelectedNode.Parent == null)
-                {
-                    if (treeView1.SelectedNode.Tag != null)
-                    {
-                        _currBody = (int)treeView1.SelectedNode.Tag;
-                    }
+                return;
+            }
 
-                    _currAction = 0;
-                }
-                else
+            if (treeView1.SelectedNode.Parent == null)
+            {
+                if (treeView1.SelectedNode.Tag != null)
                 {
-                    if (treeView1.SelectedNode.Parent.Tag != null)
-                    {
-                        _currBody = (int)treeView1.SelectedNode.Parent.Tag;
-                    }
-
-                    _currAction = (int)treeView1.SelectedNode.Tag;
+                    _currentBody = (int)treeView1.SelectedNode.Tag;
                 }
-                listView1.BeginUpdate();
+
+                _currentAction = 0;
+            }
+            else
+            {
+                if (treeView1.SelectedNode.Parent.Tag != null)
+                {
+                    _currentBody = (int)treeView1.SelectedNode.Parent.Tag;
+                }
+
+                _currentAction = (int)treeView1.SelectedNode.Tag;
+            }
+
+            listView1.BeginUpdate();
+            try
+            {
                 listView1.Clear();
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 if (edit != null)
                 {
                     int width = 80;
                     int height = 110;
-                    Bitmap[] currbits = edit.GetFrames();
-                    if (currbits != null)
+                    Bitmap[] currentBits = edit.GetFrames();
+                    if (currentBits != null)
                     {
-                        for (int i = 0; i < currbits.Length; ++i)
+                        for (int i = 0; i < currentBits.Length; ++i)
                         {
-                            if (currbits[i] == null)
+                            if (currentBits[i] == null)
                             {
                                 continue;
                             }
@@ -222,18 +246,18 @@ namespace UoFiddler.Controls.Forms
                                 Tag = i
                             };
                             listView1.Items.Add(item);
-                            if (currbits[i].Width > width)
+                            if (currentBits[i].Width > width)
                             {
-                                width = currbits[i].Width;
+                                width = currentBits[i].Width;
                             }
 
-                            if (currbits[i].Height > height)
+                            if (currentBits[i].Height > height)
                             {
-                                height = currbits[i].Height;
+                                height = currentBits[i].Height;
                             }
                         }
                         listView1.TileSize = new Size(width + 5, height + 5);
-                        trackBar2.Maximum = currbits.Length - 1;
+                        trackBar2.Maximum = currentBits.Length - 1;
                         trackBar2.Value = 0;
                         trackBar2.Invalidate();
 
@@ -249,45 +273,41 @@ namespace UoFiddler.Controls.Forms
                     }
                     //End of Soulblighter Modification
                 }
-                listView1.EndUpdate();
-                pictureBox1.Invalidate();
-                SetPaletteBox();
             }
+            finally
+            {
+                listView1.EndUpdate();
+            }
+
+            pictureBox1.Invalidate();
+            SetPaletteBox();
         }
 
         private void DrawFrameItem(object sender, DrawListViewItemEventArgs e)
         {
-            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-            Bitmap[] currbits = edit.GetFrames();
-            Bitmap bmp = currbits[(int)e.Item.Tag];
-            int width = bmp.Width;
-            int height = bmp.Height;
-
-            if (listView1.SelectedItems.Contains(e.Item))
-            {
-                e.Graphics.DrawRectangle(new Pen(Color.Red), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-            else
-            {
-                e.Graphics.DrawRectangle(new Pen(Color.Gray), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-
-            e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);
+            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            Bitmap[] currentBits = edit.GetFrames();
+            Bitmap bmp = currentBits[(int)e.Item.Tag];
+            var penColor = listView1.SelectedItems.Contains(e.Item) ? Color.Red : Color.Gray;
+            e.Graphics.DrawRectangle(new Pen(penColor), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, bmp.Width,  bmp.Height);
             e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
         }
 
         private void OnAnimChanged(object sender, EventArgs e)
         {
-            if (toolStripComboBox1.SelectedIndex != _fileType)
+            if (toolStripComboBox1.SelectedIndex == _fileType)
             {
-                _fileType = toolStripComboBox1.SelectedIndex;
-                OnLoad(this, EventArgs.Empty);
+                return;
             }
+
+            _fileType = toolStripComboBox1.SelectedIndex;
+            OnLoad(this, EventArgs.Empty);
         }
 
         private void OnDirectionChanged(object sender, EventArgs e)
         {
-            _currDir = trackBar1.Value;
+            _currentDir = trackBar1.Value;
             AfterSelectTreeView(null, null);
         }
 
@@ -300,82 +320,87 @@ namespace UoFiddler.Controls.Forms
 
         private void OnPaintFrame(object sender, PaintEventArgs e)
         {
-            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-            if (edit != null)
+            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            if (edit == null)
             {
-                Bitmap[] currbits = edit.GetFrames();
+                return;
+            }
 
-                e.Graphics.Clear(Color.LightGray);
-                e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, pictureBox1.Height));
-                e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(pictureBox1.Width, _framePoint.Y));
+            Bitmap[] currentBits = edit.GetFrames();
 
-                if (currbits?.Length > 0 && currbits[trackBar2.Value] != null)
+            e.Graphics.Clear(Color.LightGray);
+            e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, pictureBox1.Height));
+            e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(pictureBox1.Width, _framePoint.Y));
+
+            if (currentBits?.Length > 0 && currentBits[trackBar2.Value] != null)
+            {
+                int varW;
+                int varH;
+                if (!_drawEmpty)
                 {
-                    int varW;
-                    int varH;
-                    if (!_drawEmpty)
-                    {
-                        varW = 0;
-                        varH = 0;
-                    }
-                    else
-                    {
-                        varW = currbits[trackBar2.Value].Width;
-                        varH = currbits[trackBar2.Value].Height;
-                    }
-
-                    int varFw;
-                    int varFh;
-                    if (!_drawFull)
-                    {
-                        varFw = 0;
-                        varFh = 0;
-                    }
-                    else
-                    {
-                        varFw = currbits[trackBar2.Value].Width;
-                        varFh = currbits[trackBar2.Value].Height;
-                    }
-
-                    int x = _framePoint.X - edit.Frames[trackBar2.Value].Center.X;
-                    int y = _framePoint.Y - edit.Frames[trackBar2.Value].Center.Y - currbits[trackBar2.Value].Height;
-
-                    e.Graphics.FillRectangle(_whiteTrasparent, new Rectangle(x, y, varFw, varFh));
-                    e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, varW, varH));
-                    e.Graphics.DrawImage(currbits[trackBar2.Value], x, y);
-                    //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(pictureBox1.Width, 335-(int)numericUpDown1.Value));
+                    varW = 0;
+                    varH = 0;
+                }
+                else
+                {
+                    varW = currentBits[trackBar2.Value].Width;
+                    varH = currentBits[trackBar2.Value].Height;
                 }
 
-                //Draw Referencial Point Arrow
-                Point point1 = new Point(418 - (int)numericUpDown2.Value, 335 - (int)numericUpDown1.Value);
-                Point point2 = new Point(418 - (int)numericUpDown2.Value, 352 - (int)numericUpDown1.Value);
-                Point point3 = new Point(422 - (int)numericUpDown2.Value, 348 - (int)numericUpDown1.Value);
-                Point point4 = new Point(425 - (int)numericUpDown2.Value, 353 - (int)numericUpDown1.Value);
-                Point point5 = new Point(427 - (int)numericUpDown2.Value, 352 - (int)numericUpDown1.Value);
-                Point point6 = new Point(425 - (int)numericUpDown2.Value, 347 - (int)numericUpDown1.Value);
-                Point point7 = new Point(430 - (int)numericUpDown2.Value, 347 - (int)numericUpDown1.Value);
-                Point[] arrayPoints = { point1, point2, point3, point4, point5, point6, point7 };
-                e.Graphics.FillPolygon(_whiteUndraw, arrayPoints);
-                e.Graphics.DrawPolygon(_blackUndraw, arrayPoints);
+                int varFw;
+                int varFh;
+                if (!_drawFull)
+                {
+                    varFw = 0;
+                    varFh = 0;
+                }
+                else
+                {
+                    varFw = currentBits[trackBar2.Value].Width;
+                    varFh = currentBits[trackBar2.Value].Height;
+                }
+
+                int x = _framePoint.X - edit.Frames[trackBar2.Value].Center.X;
+                int y = _framePoint.Y - edit.Frames[trackBar2.Value].Center.Y - currentBits[trackBar2.Value].Height;
+
+                e.Graphics.FillRectangle(_whiteTransparent, new Rectangle(x, y, varFw, varFh));
+                e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, varW, varH));
+                e.Graphics.DrawImage(currentBits[trackBar2.Value], x, y);
+                //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(pictureBox1.Width, 335-(int)numericUpDown1.Value));
             }
+
+            // Draw Reference Point Arrow
+            Point[] arrayPoints = {
+                new Point(418 - (int)numericUpDown2.Value, 335 - (int)numericUpDown1.Value),
+                new Point(418 - (int)numericUpDown2.Value, 352 - (int)numericUpDown1.Value),
+                new Point(422 - (int)numericUpDown2.Value, 348 - (int)numericUpDown1.Value),
+                new Point(425 - (int)numericUpDown2.Value, 353 - (int)numericUpDown1.Value),
+                new Point(427 - (int)numericUpDown2.Value, 352 - (int)numericUpDown1.Value),
+                new Point(425 - (int)numericUpDown2.Value, 347 - (int)numericUpDown1.Value),
+                new Point(430 - (int)numericUpDown2.Value, 347 - (int)numericUpDown1.Value)
+            };
+
+            e.Graphics.FillPolygon(_whiteUnDraw, arrayPoints);
+            e.Graphics.DrawPolygon(_blackUnDraw, arrayPoints);
         }
         //End of Soulblighter Modification
+
         //Soulblighter Modification
         private void OnFrameCountBarChanged(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                if (edit != null)
-                {
-                    if (edit.Frames.Count >= trackBar2.Value)
-                    {
-                        numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                        numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
-                    }
-                }
-                pictureBox1.Invalidate();
+                return;
             }
+
+            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            if (edit != null && edit.Frames.Count >= trackBar2.Value)
+            {
+                numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
+                numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+            }
+
+            pictureBox1.Invalidate();
         }
         //End of Soulblighter Modification
 
@@ -383,286 +408,306 @@ namespace UoFiddler.Controls.Forms
         {
             try
             {
-                if (_fileType != 0)
+                if (_fileType == 0)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                    if (edit != null)
-                    {
-                        if (edit.Frames.Count >= trackBar2.Value)
-                        {
-                            FrameEdit frame = edit.Frames[trackBar2.Value];
-                            if (numericUpDownCx.Value != frame.Center.X)
-                            {
-                                frame.ChangeCenter((int)numericUpDownCx.Value, frame.Center.Y);
-                                Options.ChangedUltimaClass["Animations"] = true;
-                                pictureBox1.Invalidate();
-                            }
-                        }
-                    }
+                    return;
                 }
+
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null || edit.Frames.Count < trackBar2.Value)
+                {
+                    return;
+                }
+
+                FrameEdit frame = edit.Frames[trackBar2.Value];
+                if (numericUpDownCx.Value == frame.Center.X)
+                {
+                    return;
+                }
+
+                frame.ChangeCenter((int)numericUpDownCx.Value, frame.Center.Y);
+                Options.ChangedUltimaClass["Animations"] = true;
+                pictureBox1.Invalidate();
             }
-            catch (NullReferenceException) { }
+            catch (NullReferenceException)
+            {
+                // TODO: add logging or fix?
+                // ignored
+            }
         }
 
         private void OnCenterYValueChanged(object sender, EventArgs e)
         {
             try
             {
-                if (_fileType != 0)
+                if (_fileType == 0)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                    if (edit != null)
-                    {
-                        if (edit.Frames.Count >= trackBar2.Value)
-                        {
-                            FrameEdit frame = edit.Frames[trackBar2.Value];
-                            if (numericUpDownCy.Value != frame.Center.Y)
-                            {
-                                frame.ChangeCenter(frame.Center.X, (int)numericUpDownCy.Value);
-                                Options.ChangedUltimaClass["Animations"] = true;
-                                pictureBox1.Invalidate();
-                            }
-                        }
-                    }
+                    return;
                 }
+
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null || edit.Frames.Count < trackBar2.Value)
+                {
+                    return;
+                }
+
+                FrameEdit frame = edit.Frames[trackBar2.Value];
+                if (numericUpDownCy.Value == frame.Center.Y)
+                {
+                    return;
+                }
+
+                frame.ChangeCenter(frame.Center.X, (int)numericUpDownCy.Value);
+                Options.ChangedUltimaClass["Animations"] = true;
+                pictureBox1.Invalidate();
             }
-            catch (NullReferenceException) { }
+            catch (NullReferenceException)
+            {
+                // TODO: add logging or fix?
+                // ignored
+            }
         }
 
         private void OnClickExtractImages(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                ToolStripMenuItem menu = (ToolStripMenuItem)sender;
-                ImageFormat format = ImageFormat.Bmp;
-                if ((string)menu.Tag == ".tiff")
-                {
-                    format = ImageFormat.Tiff;
-                }
+                return;
+            }
 
-                string path = Options.OutputPath;
-                int body, action;
-                if (treeView1.SelectedNode.Parent == null)
-                {
-                    body = (int)treeView1.SelectedNode.Tag;
-                    action = -1;
-                }
-                else
-                {
-                    body = (int)treeView1.SelectedNode.Parent.Tag;
-                    action = (int)treeView1.SelectedNode.Tag;
-                }
+            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+            ImageFormat format = ImageFormat.Bmp;
+            if ((string)menu.Tag == ".tiff")
+            {
+                format = ImageFormat.Tiff;
+            }
 
-                if (action == -1)
-                {
-                    for (int a = 0; a < Animations.GetAnimLength(body, _fileType); ++a)
-                    {
-                        for (int i = 0; i < 5; ++i)
-                        {
-                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, body, a, i);
-                            if (edit != null)
-                            {
-                                Bitmap[] bits = edit.GetFrames();
-                                if (bits != null)
-                                {
-                                    for (int j = 0; j < bits.Length; ++j)
-                                    {
-                                        string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, a, i, j, menu.Tag, _fileType);
-                                        string file = Path.Combine(path, filename);
-                                        Bitmap bit = new Bitmap(bits[j]);
-                                        bit?.Save(file, format);
-                                        bit.Dispose();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else
+            string path = Options.OutputPath;
+            int body, action;
+            if (treeView1.SelectedNode.Parent == null)
+            {
+                body = (int)treeView1.SelectedNode.Tag;
+                action = -1;
+            }
+            else
+            {
+                body = (int)treeView1.SelectedNode.Parent.Tag;
+                action = (int)treeView1.SelectedNode.Tag;
+            }
+
+            if (action == -1)
+            {
+                for (int a = 0; a < Animations.GetAnimLength(body, _fileType); ++a)
                 {
                     for (int i = 0; i < 5; ++i)
                     {
-                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, body, action, i);
-                        if (edit != null)
+                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, body, a, i);
+                        Bitmap[] bits = edit?.GetFrames();
+                        if (bits == null)
                         {
-                            Bitmap[] bits = edit.GetFrames();
-                            if (bits != null)
+                            continue;
+                        }
+
+                        for (int j = 0; j < bits.Length; ++j)
+                        {
+                            string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, a, i, j, menu.Tag, _fileType);
+                            string file = Path.Combine(path, filename);
+                            using (Bitmap bit = new Bitmap(bits[j]))
                             {
-                                for (int j = 0; j < bits.Length; ++j)
-                                {
-                                    string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, action, i, j, menu.Tag, _fileType);
-                                    string file = Path.Combine(path, filename);
-                                    Bitmap bit = new Bitmap(bits[j]);
-                                    bit?.Save(file, format);
-                                    bit.Dispose();
-                                }
+                                bit.Save(file, format);
                             }
                         }
                     }
                 }
-                MessageBox.Show(
-                        string.Format("Frames saved to {0}", path),
-                        "Saved",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information,
-                        MessageBoxDefaultButton.Button1);
             }
+            else
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, body, action, i);
+                    Bitmap[] bits = edit?.GetFrames();
+                    if (bits == null)
+                    {
+                        continue;
+                    }
+
+                    for (int j = 0; j < bits.Length; ++j)
+                    {
+                        string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, action, i, j, menu.Tag, _fileType);
+                        string file = Path.Combine(path, filename);
+                        using (Bitmap bit = new Bitmap(bits[j]))
+                        {
+                            bit.Save(file, format);
+                        }
+                    }
+                }
+            }
+
+            MessageBox.Show($"Frames saved to {path}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickRemoveAction(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                if (treeView1.SelectedNode.Parent == null)
-                {
-                    DialogResult result =
-                           MessageBox.Show(string.Format("Are you sure to remove animation {0}", _currBody),
-                           "Remove",
-                           MessageBoxButtons.YesNo,
-                           MessageBoxIcon.Question,
-                           MessageBoxDefaultButton.Button2);
-                    if (result == DialogResult.Yes)
-                    {
-                        treeView1.SelectedNode.ForeColor = Color.Red;
-                        for (int i = 0; i < treeView1.SelectedNode.Nodes.Count; ++i)
-                        {
-                            treeView1.SelectedNode.Nodes[i].ForeColor = Color.Red;
-                            for (int d = 0; d < 5; ++d)
-                            {
-                                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, i, d);
-                                edit?.ClearFrames();
-                            }
-                        }
-                        if (_showOnlyValid)
-                        {
-                            treeView1.SelectedNode.Remove();
-                        }
+                return;
+            }
 
-                        Options.ChangedUltimaClass["Animations"] = true;
-                        AfterSelectTreeView(this, null);
-                    }
-                }
-                else
+            if (treeView1.SelectedNode.Parent == null)
+            {
+                DialogResult result = MessageBox.Show($"Are you sure to remove animation {_currentBody}", "Remove",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                if (result != DialogResult.Yes)
                 {
-                    DialogResult result =
-                           MessageBox.Show(string.Format("Are you sure to remove action {0}", _currAction),
-                           "Remove",
-                           MessageBoxButtons.YesNo,
-                           MessageBoxIcon.Question,
-                           MessageBoxDefaultButton.Button2);
-                    if (result == DialogResult.Yes)
+                    return;
+                }
+
+                treeView1.SelectedNode.ForeColor = Color.Red;
+                for (int i = 0; i < treeView1.SelectedNode.Nodes.Count; ++i)
+                {
+                    treeView1.SelectedNode.Nodes[i].ForeColor = Color.Red;
+                    for (int d = 0; d < 5; ++d)
                     {
-                        for (int i = 0; i < 5; ++i)
-                        {
-                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, i);
-                            edit?.ClearFrames();
-                        }
-                        treeView1.SelectedNode.Parent.Nodes[_currAction].ForeColor = Color.Red;
-                        bool valid = false;
-                        foreach (TreeNode node in treeView1.SelectedNode.Parent.Nodes)
-                        {
-                            if (node.ForeColor != Color.Red)
-                            {
-                                valid = true;
-                                break;
-                            }
-                        }
-                        if (!valid)
-                        {
-                            if (_showOnlyValid)
-                            {
-                                treeView1.SelectedNode.Parent.Remove();
-                            }
-                            else
-                            {
-                                treeView1.SelectedNode.Parent.ForeColor = Color.Red;
-                            }
-                        }
-                        Options.ChangedUltimaClass["Animations"] = true;
-                        AfterSelectTreeView(this, null);
+                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, i, d);
+                        edit?.ClearFrames();
                     }
                 }
+
+                if (_showOnlyValid)
+                {
+                    treeView1.SelectedNode.Remove();
+                }
+
+                Options.ChangedUltimaClass["Animations"] = true;
+                AfterSelectTreeView(this, null);
+            }
+            else
+            {
+                DialogResult result = MessageBox.Show($"Are you sure to remove action {_currentAction}", "Remove",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < 5; ++i)
+                {
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, i);
+                    edit?.ClearFrames();
+                }
+
+                treeView1.SelectedNode.Parent.Nodes[_currentAction].ForeColor = Color.Red;
+                bool valid = false;
+                foreach (TreeNode node in treeView1.SelectedNode.Parent.Nodes)
+                {
+                    if (node.ForeColor == Color.Red)
+                    {
+                        continue;
+                    }
+
+                    valid = true;
+                    break;
+                }
+
+                if (!valid)
+                {
+                    if (_showOnlyValid)
+                    {
+                        treeView1.SelectedNode.Parent.Remove();
+                    }
+                    else
+                    {
+                        treeView1.SelectedNode.Parent.ForeColor = Color.Red;
+                    }
+                }
+
+                Options.ChangedUltimaClass["Animations"] = true;
+                AfterSelectTreeView(this, null);
             }
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                Ultima.AnimationEdit.Save(_fileType, Options.OutputPath);
-                MessageBox.Show(
-                        string.Format("AnimationFile saved to {0}", Options.OutputPath),
-                        "Saved",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information,
-                        MessageBoxDefaultButton.Button1);
-                Options.ChangedUltimaClass["Animations"] = false;
+                return;
             }
+
+            Ultima.AnimationEdit.Save(_fileType, Options.OutputPath);
+            Options.ChangedUltimaClass["Animations"] = false;
+
+            MessageBox.Show($"AnimationFile saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
+
         //My Soulblighter Modification
         private void OnClickRemoveFrame(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                int corrector = 0;
-                int[] frameindex = new int[listView1.SelectedItems.Count];
-                for (int i = 0; i < listView1.SelectedItems.Count; i++)
+                return;
+            }
+
+            int corrector = 0;
+            int[] frameIndex = new int[listView1.SelectedItems.Count];
+            for (int i = 0; i < listView1.SelectedItems.Count; i++)
+            {
+                frameIndex[i] = listView1.SelectedIndices[i] - corrector;
+                corrector++;
+            }
+
+            for (int i = 0; i < frameIndex.Length; i++)
+            {
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null)
                 {
-                    frameindex[i] = listView1.SelectedIndices[i] - corrector;
-                    corrector++;
+                    continue;
                 }
-                for (int i = 0; i < frameindex.Length; i++)
-                {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                    if (edit != null)
-                    {
-                        edit.RemoveFrame(frameindex[i]);
-                        listView1.Items.RemoveAt(listView1.Items.Count - 1);
-                        if (edit.Frames.Count != 0)
-                        {
-                            trackBar2.Maximum = edit.Frames.Count - 1;
-                        }
-                        else
-                        {
-                            //TreeNode node = GetNode(_currBody); // TODO: unused variable?
-                            trackBar2.Maximum = 0;
-                        }
-                        listView1.Invalidate();
-                        Options.ChangedUltimaClass["Animations"] = true;
-                    }
-                }
+
+                edit.RemoveFrame(frameIndex[i]);
+                listView1.Items.RemoveAt(listView1.Items.Count - 1);
+                trackBar2.Maximum = edit.Frames.Count != 0 ? edit.Frames.Count - 1 : 0;
+                listView1.Invalidate();
+                Options.ChangedUltimaClass["Animations"] = true;
             }
         }
-
         //End of Soulblighter Modification
+
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
-                {
-                    int frameindex = (int)listView1.SelectedItems[0].Tag;
-                    dialog.Multiselect = false;
-                    dialog.Title = string.Format("Choose image file to replace at {0}", frameindex);
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (dialog.FileName.Contains(".bmp"))
-                        {
-                            bmp = Utils.ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                        }
+                return;
+            }
 
-                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                        if (edit != null)
-                        {
-                            edit.ReplaceFrame(bmp, frameindex);
-                            listView1.Invalidate();
-                            Options.ChangedUltimaClass["Animations"] = true;
-                        }
-                    }
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                int frameIndex = (int)listView1.SelectedItems[0].Tag;
+                dialog.Multiselect = false;
+                dialog.Title = $"Choose image file to replace at {frameIndex}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
                 }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                }
+
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null)
+                {
+                    return;
+                }
+
+                edit.ReplaceFrame(bmp, frameIndex);
+                listView1.Invalidate();
+                Options.ChangedUltimaClass["Animations"] = true;
             }
         }
 
@@ -679,42 +724,48 @@ namespace UoFiddler.Controls.Forms
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         listView1.BeginUpdate();
-                        //My Soulblighter Modifications
-                        for (int w = 0; w < dialog.FileNames.Length; w++)
+                        try
                         {
-                            Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
-                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                            if (dialog.FileName.Contains(".bmp") | dialog.FileName.Contains(".tiff") | dialog.FileName.Contains(".png") | dialog.FileName.Contains(".jpeg") | dialog.FileName.Contains(".jpg"))
+                            //My Soulblighter Modifications
+                            for (int w = 0; w < dialog.FileNames.Length; w++)
                             {
-                                bmp = Utils.ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                //edit.GetImagePalette(bmp);
-                            }
+                                Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
+                                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                                if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") || dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") || dialog.FileName.Contains(".jpg"))
+                                {
+                                    bmp = Utils.ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                                    //edit.GetImagePalette(bmp);
+                                }
 
-                            if (edit != null)
-                            {
+                                if (edit == null)
+                                {
+                                    continue;
+                                }
+
                                 //Gif Especial Properties
                                 if (dialog.FileName.Contains(".gif"))
                                 {
                                     FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
                                     // Number of frames 
                                     int frameCount = bmp.GetFrameCount(dimension);
-                                    Bitmap[] bitbmp = new Bitmap[frameCount];
+                                    Bitmap[] bitBmp = new Bitmap[frameCount];
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     progressBar1.Maximum = frameCount;
                                     // Return an Image at a certain index 
                                     for (int index = 0; index < frameCount; index++)
                                     {
-                                        bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+                                        bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                                         bmp.SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bmp;
-                                        bitbmp[index] = Utils.ConvertBmpAnim(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
+                                        bitBmp[index] = bmp;
+                                        bitBmp[index] = Utils.ConvertBmpAnim(bitBmp[index], (int)numericUpDown3.Value,
+                                            (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                                        edit.AddFrame(bitBmp[index]);
+                                        TreeNode node = GetNode(_currentBody);
                                         if (node != null)
                                         {
                                             node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
+                                            node.Nodes[_currentAction].ForeColor = Color.Black;
                                         }
 
                                         int i = edit.Frames.Count - 1;
@@ -755,11 +806,11 @@ namespace UoFiddler.Controls.Forms
                                 else
                                 {
                                     edit.AddFrame(bmp);
-                                    TreeNode node = GetNode(_currBody);
+                                    TreeNode node = GetNode(_currentBody);
                                     if (node != null)
                                     {
                                         node.ForeColor = Color.Black;
-                                        node.Nodes[_currAction].ForeColor = Color.Black;
+                                        node.Nodes[_currentAction].ForeColor = Color.Black;
                                     }
 
                                     int i = edit.Frames.Count - 1;
@@ -788,209 +839,222 @@ namespace UoFiddler.Controls.Forms
                                 }
                             }
                         }
-                        listView1.EndUpdate();
+                        finally
+                        {
+                            listView1.EndUpdate();
+                        }
+
                         listView1.Invalidate();
                     }
                 }
             }
-            //Refresh List
-            _currDir = trackBar1.Value;
+
+            // Refresh List
+            _currentDir = trackBar1.Value;
             AfterSelectTreeView(null, null);
         }
 
         private void OnClickExtractPalette(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                ToolStripMenuItem menu = (ToolStripMenuItem)sender;
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                if (edit != null)
-                {
-                    string name = string.Format("palette_anim{0}_{1}_{2}_{3}", _fileType, _currBody, _currAction, _currDir);
-                    if ((string)menu.Tag == "txt")
-                    {
-                        string path = Path.Combine(Options.OutputPath, name + ".txt");
-                        edit.ExportPalette(path, 0);
-                    }
-                    else
-                    {
-                        string path = Path.Combine(Options.OutputPath, name + "." + (string)menu.Tag);
-                        if ((string)menu.Tag == "bmp")
-                        {
-                            edit.ExportPalette(path, 1);
-                        }
-                        else
-                        {
-                            edit.ExportPalette(path, 2);
-                        }
-                    }
-                    MessageBox.Show(
-                        string.Format("Palette saved to {0}", Options.OutputPath),
-                        "Saved",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information,
-                        MessageBoxDefaultButton.Button1);
-                }
+                return;
             }
+
+            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            if (edit == null)
+            {
+                return;
+            }
+
+            string name = $"palette_anim{_fileType}_{_currentBody}_{_currentAction}_{_currentDir}";
+            if ((string)menu.Tag == "txt")
+            {
+                string path = Path.Combine(Options.OutputPath, name + ".txt");
+                edit.ExportPalette(path, 0);
+            }
+            else
+            {
+                string path = Path.Combine(Options.OutputPath, name + "." + (string)menu.Tag);
+                edit.ExportPalette(path, (string)menu.Tag == "bmp" ? 1 : 2);
+            }
+
+            MessageBox.Show($"Palette saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickImportPalette(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
-                {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose palette file";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "txt files (*.txt)|*.txt";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                        if (edit != null)
-                        {
-                            using (StreamReader sr = new StreamReader(dialog.FileName))
-                            {
-                                string line;
-                                ushort[] palette = new ushort[0x100];
-                                int i = 0;
-                                while ((line = sr.ReadLine()) != null)
-                                {
-                                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
-                                    {
-                                        continue;
-                                    }
+                return;
+            }
 
-                                    palette[i++] = ushort.Parse(line);
-                                    //My Soulblighter Modification
-                                    if (palette[i++] == 32768)
-                                    {
-                                        palette[i++] = 32769;
-                                    }
-                                    //End of Soulblighter Modification
-                                    if (i >= 0x100)
-                                    {
-                                        break;
-                                    }
-                                }
-                                edit.ReplacePalette(palette);
-                            }
-                            SetPaletteBox();
-                            listView1.Invalidate();
-                            Options.ChangedUltimaClass["Animations"] = true;
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose palette file";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "txt files (*.txt)|*.txt";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null)
+                {
+                    return;
+                }
+
+                using (StreamReader sr = new StreamReader(dialog.FileName))
+                {
+                    string line;
+                    ushort[] palette = new ushort[0x100];
+                    int i = 0;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                        {
+                            continue;
+                        }
+
+                        palette[i++] = ushort.Parse(line);
+                        //My Soulblighter Modification
+                        if (palette[i++] == 32768)
+                        {
+                            palette[i++] = 32769;
+                        }
+                        //End of Soulblighter Modification
+                        if (i >= 0x100)
+                        {
+                            break;
                         }
                     }
+                    edit.ReplacePalette(palette);
                 }
+                SetPaletteBox();
+                listView1.Invalidate();
+                Options.ChangedUltimaClass["Animations"] = true;
             }
         }
 
         private void OnClickImportFromVD(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose palette file";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "vd files (*.vd)|*.vd";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose palette file";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "vd files (*.vd)|*.vd";
-                    if (dialog.ShowDialog() == DialogResult.OK)
+                    return;
+                }
+
+                int animLength = Animations.GetAnimLength(_currentBody, _fileType);
+                int currentType;
+                if (animLength == 22)
+                {
+                    currentType = 0;
+                }
+                else
+                {
+                    currentType = animLength == 13 ? 1 : 2;
+                }
+
+                using (FileStream fs = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    using (BinaryReader bin = new BinaryReader(fs))
                     {
-                        int animlength = Animations.GetAnimLength(_currBody, _fileType);
-                        int currtype = animlength == 22 ? 0 : animlength == 13 ? 1 : 2;
-                        using (FileStream fs = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        int fileType = bin.ReadInt16();
+                        int animType = bin.ReadInt16();
+                        if (fileType != 6)
                         {
-                            using (BinaryReader bin = new BinaryReader(fs))
-                            {
-                                int filetype = bin.ReadInt16();
-                                int animtype = bin.ReadInt16();
-                                if (filetype != 6)
-                                {
-                                    MessageBox.Show(
-                                        "Not an Anim File.",
-                                        "Import",
-                                        MessageBoxButtons.OK,
-                                        MessageBoxIcon.Information,
-                                        MessageBoxDefaultButton.Button1);
-                                    return;
-                                }
-
-                                if (animtype != currtype)
-                                {
-                                    MessageBox.Show(
-                                        "Wrong Anim Id ( Type )",
-                                        "Import",
-                                        MessageBoxButtons.OK,
-                                        MessageBoxIcon.Information,
-                                        MessageBoxDefaultButton.Button1);
-                                    return;
-                                }
-                                Ultima.AnimationEdit.LoadFromVD(_fileType, _currBody, bin);
-                            }
+                            MessageBox.Show("Not an Anim File.", "Import", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                            return;
                         }
 
-                        bool valid = false;
-                        TreeNode node = GetNode(_currBody);
-                        if (node != null)
+                        if (animType != currentType)
                         {
-                            for (int j = 0; j < animlength; ++j)
-                            {
-                                if (Ultima.AnimationEdit.IsActionDefinied(_fileType, _currBody, j))
-                                {
-                                    node.Nodes[j].ForeColor = Color.Black;
-                                    valid = true;
-                                }
-                                else
-                                {
-                                    node.Nodes[j].ForeColor = Color.Red;
-                                }
-                            }
-                            node.ForeColor = valid ? Color.Black : Color.Red;
+                            MessageBox.Show("Wrong Anim Id ( Type )", "Import", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                            return;
                         }
-
-                        Options.ChangedUltimaClass["Animations"] = true;
-                        AfterSelectTreeView(this, null);
-                        MessageBox.Show(
-                                        "Finished",
-                                        "Import",
-                                        MessageBoxButtons.OK,
-                                        MessageBoxIcon.Information,
-                                        MessageBoxDefaultButton.Button1);
+                        Ultima.AnimationEdit.LoadFromVD(_fileType, _currentBody, bin);
                     }
                 }
+
+                bool valid = false;
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    for (int j = 0; j < animLength; ++j)
+                    {
+                        if (Ultima.AnimationEdit.IsActionDefinied(_fileType, _currentBody, j))
+                        {
+                            node.Nodes[j].ForeColor = Color.Black;
+                            valid = true;
+                        }
+                        else
+                        {
+                            node.Nodes[j].ForeColor = Color.Red;
+                        }
+                    }
+                    node.ForeColor = valid ? Color.Black : Color.Red;
+                }
+
+                Options.ChangedUltimaClass["Animations"] = true;
+                AfterSelectTreeView(this, null);
+
+                MessageBox.Show("Finished", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 
         private void OnClickExportToVD(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                string path = Options.OutputPath;
-                string fileName = Path.Combine(path, string.Format("anim{0}_0x{1:X}.vd", _fileType, _currBody));
-                Ultima.AnimationEdit.ExportToVD(_fileType, _currBody, fileName);
-                MessageBox.Show(
-                        string.Format("Animation saved to {0}", Options.OutputPath),
-                        "Export",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information,
-                        MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"anim{_fileType}_0x{_currentBody:X}.vd");
+            Ultima.AnimationEdit.ExportToVD(_fileType, _currentBody, fileName);
+
+            MessageBox.Show($"Animation saved to {Options.OutputPath}", "Export", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickShowOnlyValid(object sender, EventArgs e)
         {
             _showOnlyValid = !_showOnlyValid;
+
             if (_showOnlyValid)
             {
                 treeView1.BeginUpdate();
-                for (int i = treeView1.Nodes.Count - 1; i >= 0; --i)
+                try
                 {
-                    if (treeView1.Nodes[i].ForeColor == Color.Red)
+                    for (int i = treeView1.Nodes.Count - 1; i >= 0; --i)
                     {
-                        treeView1.Nodes[i].Remove();
+                        if (treeView1.Nodes[i].ForeColor == Color.Red)
+                        {
+                            treeView1.Nodes[i].Remove();
+                        }
                     }
                 }
-                treeView1.EndUpdate();
+                finally
+                {
+                    treeView1.EndUpdate();
+                }
             }
             else
             {
@@ -1003,146 +1067,181 @@ namespace UoFiddler.Controls.Forms
         {
             try
             {
-                if (_fileType != 0)
+                if (_fileType == 0)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                    if (edit != null && edit.Frames.Count >= trackBar2.Value)
-                    {
-                        FrameEdit[] frame = new FrameEdit[edit.Frames.Count];
-                        for (int index = 0; index < edit.Frames.Count; index++)
-                        {
-                            frame[index] = edit.Frames[index];
-                            frame[index].ChangeCenter((int)numericUpDownCx.Value, (int)numericUpDownCy.Value);
-                            Options.ChangedUltimaClass["Animations"] = true;
-                            pictureBox1.Invalidate();
-                        }
-                    }
+                    return;
+                }
+
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null || edit.Frames.Count < trackBar2.Value)
+                {
+                    return;
+                }
+
+                FrameEdit[] frame = new FrameEdit[edit.Frames.Count];
+                for (int index = 0; index < edit.Frames.Count; index++)
+                {
+                    frame[index] = edit.Frames[index];
+                    frame[index].ChangeCenter((int)numericUpDownCx.Value, (int)numericUpDownCy.Value);
+                    Options.ChangedUltimaClass["Animations"] = true;
+                    pictureBox1.Invalidate();
                 }
             }
-            catch (NullReferenceException) { }
+            catch (NullReferenceException)
+            {
+                // TODO: add logging or fix?
+                // ignored
+            }
         }
         //End of Soulblighter Modification
 
         //My Soulblighter Modification
         private void FromGifToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose palette file";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Gif files (*.gif)|*.gif";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose palette file";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Gif files (*.gif)|*.gif";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bit = new Bitmap(dialog.FileName);
-                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                        if (edit != null)
-                        {
-                            FrameDimension dimension = new FrameDimension(bit.FrameDimensionsList[0]);
-                            // Number of frames 
-                            //int frameCount = bit.GetFrameCount(dimension); // TODO: unused variable?
-                            bit.SelectActiveFrame(dimension, 0);
-                            edit.GetGifPalette(bit);
-                            SetPaletteBox();
-                            listView1.Invalidate();
-                            Options.ChangedUltimaClass["Animations"] = true;
-                        }
-                    }
+                    return;
                 }
+
+                Bitmap bit = new Bitmap(dialog.FileName);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null)
+                {
+                    return;
+                }
+
+                FrameDimension dimension = new FrameDimension(bit.FrameDimensionsList[0]);
+                // Number of frames
+                //int frameCount = bit.GetFrameCount(dimension); // TODO: unused variable?
+                bit.SelectActiveFrame(dimension, 0);
+                edit.GetGifPalette(bit);
+                SetPaletteBox();
+                listView1.Invalidate();
+                Options.ChangedUltimaClass["Animations"] = true;
             }
         }
 
-        private void ReferencialPointX(object sender, EventArgs e)
+        private void ReferencePointX(object sender, EventArgs e)
         {
             pictureBox1.Invalidate();
         }
 
-        private void ReferencialPointY(object sender, EventArgs e)
+        private void ReferencePointY(object sender, EventArgs e)
         {
             pictureBox1.Invalidate();
         }
 
-        private static bool _lockbutton; //Lock button variable
+        private static bool _lockButton;
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!_lockbutton && toolStripButton6.Enabled)
+            if (_lockButton || !toolStripButton6.Enabled)
             {
-                numericUpDown2.Value = 418 - e.X;
-                numericUpDown1.Value = 335 - e.Y;
-                pictureBox1.Invalidate();
+                return;
             }
+
+            numericUpDown2.Value = 418 - e.X;
+            numericUpDown1.Value = 335 - e.Y;
+
+            pictureBox1.Invalidate();
         }
 
-        //Change center of frame on key press
+        // Change center of frame on key press
         private void TxtSendData_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!timer1.Enabled)
+            if (timer1.Enabled)
             {
-                if (e.KeyCode == Keys.Right)
+                return;
+            }
+
+            switch (e.KeyCode)
+            {
+                case Keys.Right:
                 {
                     numericUpDownCx.Value--;
                     numericUpDownCx.Invalidate();
+                    break;
                 }
-                else if (e.KeyCode == Keys.Left)
+                case Keys.Left:
                 {
                     numericUpDownCx.Value++;
                     numericUpDownCx.Invalidate();
+                    break;
                 }
-                else if (e.KeyCode == Keys.Up)
+                case Keys.Up:
                 {
                     numericUpDownCy.Value++;
                     numericUpDownCy.Invalidate();
+                    break;
                 }
-                else if (e.KeyCode == Keys.Down)
+                case Keys.Down:
                 {
                     numericUpDownCy.Value--;
                     numericUpDownCy.Invalidate();
+                    break;
                 }
-                pictureBox1.Invalidate();
             }
+            pictureBox1.Invalidate();
         }
 
-        //Change center of Referencial Point on key press
+        // Change center of Reference Point on key press
         private void TxtSendData_KeyDown2(object sender, KeyEventArgs e)
         {
-            if (!_lockbutton && toolStripButton6.Enabled)
+            if (_lockButton || !toolStripButton6.Enabled)
             {
-                if (e.KeyCode == Keys.Right)
+                return;
+            }
+
+            switch (e.KeyCode)
+            {
+                case Keys.Right:
                 {
                     numericUpDown2.Value--;
                     numericUpDown2.Invalidate();
+                    break;
                 }
-                else if (e.KeyCode == Keys.Left)
+                case Keys.Left:
                 {
                     numericUpDown2.Value++;
                     numericUpDown2.Invalidate();
+                    break;
                 }
-                else if (e.KeyCode == Keys.Up)
+                case Keys.Up:
                 {
                     numericUpDown1.Value++;
                     numericUpDown1.Invalidate();
+                    break;
                 }
-                else if (e.KeyCode == Keys.Down)
+                case Keys.Down:
                 {
                     numericUpDown1.Value--;
                     numericUpDown1.Invalidate();
+                    break;
                 }
-                pictureBox1.Invalidate();
             }
+            pictureBox1.Invalidate();
         }
 
-        //Lock Button
+        // Lock Button
         private void ToolStripButton6_Click(object sender, EventArgs e)
         {
-            _lockbutton = !_lockbutton;
-            numericUpDown2.Enabled = !_lockbutton;
-            numericUpDown1.Enabled = !_lockbutton;
+            _lockButton = !_lockButton;
+            numericUpDown2.Enabled = !_lockButton;
+            numericUpDown1.Enabled = !_lockButton;
         }
 
-        //Add in all Directions
+        // Add in all Directions
         private void AllDirectionsAddToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_fileType != 0)
@@ -1150,7 +1249,7 @@ namespace UoFiddler.Controls.Forms
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
                     dialog.Multiselect = true;
-                    dialog.Title = "Choose 5 Gifs to add";
+                    dialog.Title = "Choose 5 GIFs to add";
                     dialog.CheckFileExists = true;
                     dialog.Filter = "Gif files (*.gif;)|*.gif;";
                     if (dialog.ShowDialog() == DialogResult.OK)
@@ -1159,83 +1258,11 @@ namespace UoFiddler.Controls.Forms
                         if (dialog.FileNames.Length == 5)
                         {
                             trackBar1.Value = 0;
-                            for (int w = 0; w < dialog.FileNames.Length; w++)
-                            {
-                                if (w < 5)
-                                {
-                                    Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
-                                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    if (edit != null)
-                                    {
-                                        //Gif Especial Properties
-                                        if (dialog.FileName.Contains(".gif"))
-                                        {
-                                            FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                            // Number of frames 
-                                            int frameCount = bmp.GetFrameCount(dimension);
-                                            progressBar1.Maximum = frameCount;
-                                            bmp.SelectActiveFrame(dimension, 0);
-                                            edit.GetGifPalette(bmp);
-                                            Bitmap[] bitbmp = new Bitmap[frameCount];
-                                            // Return an Image at a certain index 
-                                            for (int index = 0; index < frameCount; index++)
-                                            {
-                                                bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                                                bmp.SelectActiveFrame(dimension, index);
-                                                bitbmp[index] = bmp;
-                                                bitbmp[index] = Utils.ConvertBmpAnim(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                                edit.AddFrame(bitbmp[index]);
-                                                TreeNode node = GetNode(_currBody);
-                                                if (node != null)
-                                                {
-                                                    node.ForeColor = Color.Black;
-                                                    node.Nodes[_currAction].ForeColor = Color.Black;
-                                                }
 
-                                                int i = edit.Frames.Count - 1;
-                                                var item = new ListViewItem(i.ToString(), 0)
-                                                {
-                                                    Tag = i
-                                                };
-                                                listView1.Items.Add(item);
-                                                int width = listView1.TileSize.Width - 5;
-                                                if (bmp.Width > listView1.TileSize.Width)
-                                                {
-                                                    width = bmp.Width;
-                                                }
-
-                                                int height = listView1.TileSize.Height - 5;
-                                                if (bmp.Height > listView1.TileSize.Height)
-                                                {
-                                                    height = bmp.Height;
-                                                }
-
-                                                listView1.TileSize = new Size(width + 5, height + 5);
-                                                trackBar2.Maximum = i;
-                                                Options.ChangedUltimaClass["Animations"] = true;
-                                                if (progressBar1.Value < progressBar1.Maximum)
-                                                {
-                                                    progressBar1.Value++;
-                                                    progressBar1.Invalidate();
-                                                }
-                                            }
-                                            progressBar1.Value = 0;
-                                            progressBar1.Invalidate();
-                                            SetPaletteBox();
-                                            listView1.Invalidate();
-                                            numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                            numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
-                                            Options.ChangedUltimaClass["Animations"] = true;
-                                        }
-                                    }
-                                    if ((w < 4) & (w < dialog.FileNames.Length - 1))
-                                    {
-                                        trackBar1.Value++;
-                                    }
-                                }
-                            }
+                            AddFilesAllDirections(dialog);
                         }
-                        //Looping if dialog.FileNames.Length != 5
+
+                        // Looping if dialog.FileNames.Length != 5
                         while (dialog.FileNames.Length != 5)
                         {
                             if (dialog.ShowDialog() == DialogResult.Cancel)
@@ -1248,93 +1275,109 @@ namespace UoFiddler.Controls.Forms
                                 dialog.ShowDialog();
                             }
 
-                            if (dialog.FileNames.Length == 5)
+                            if (dialog.FileNames.Length != 5)
                             {
-                                trackBar1.Value = 0;
-                                for (int w = 0; w < dialog.FileNames.Length; w++)
-                                {
-                                    if (w < 5)
-                                    {
-                                        Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
-                                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                        if (edit != null)
-                                        {
-                                            //Gif Especial Properties
-                                            if (dialog.FileName.Contains(".gif"))
-                                            {
-                                                FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                                // Number of frames 
-                                                int frameCount = bmp.GetFrameCount(dimension);
-                                                progressBar1.Maximum = frameCount;
-                                                bmp.SelectActiveFrame(dimension, 0);
-                                                edit.GetGifPalette(bmp);
-                                                Bitmap[] bitbmp = new Bitmap[frameCount];
-                                                // Return an Image at a certain index 
-                                                for (int index = 0; index < frameCount; index++)
-                                                {
-                                                    bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                                                    bmp.SelectActiveFrame(dimension, index);
-                                                    bitbmp[index] = bmp;
-                                                    bitbmp[index] = Utils.ConvertBmpAnim(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                                    edit.AddFrame(bitbmp[index]);
-                                                    TreeNode node = GetNode(_currBody);
-                                                    if (node != null)
-                                                    {
-                                                        node.ForeColor = Color.Black;
-                                                        node.Nodes[_currAction].ForeColor = Color.Black;
-                                                    }
-
-                                                    int i = edit.Frames.Count - 1;
-                                                    var item = new ListViewItem(i.ToString(), 0)
-                                                    {
-                                                        Tag = i
-                                                    };
-                                                    listView1.Items.Add(item);
-                                                    int width = listView1.TileSize.Width - 5;
-                                                    if (bmp.Width > listView1.TileSize.Width)
-                                                    {
-                                                        width = bmp.Width;
-                                                    }
-
-                                                    int height = listView1.TileSize.Height - 5;
-                                                    if (bmp.Height > listView1.TileSize.Height)
-                                                    {
-                                                        height = bmp.Height;
-                                                    }
-
-                                                    listView1.TileSize = new Size(width + 5, height + 5);
-                                                    trackBar2.Maximum = i;
-                                                    Options.ChangedUltimaClass["Animations"] = true;
-                                                    if (progressBar1.Value < progressBar1.Maximum)
-                                                    {
-                                                        progressBar1.Value++;
-                                                        progressBar1.Invalidate();
-                                                    }
-                                                }
-                                                progressBar1.Value = 0;
-                                                progressBar1.Invalidate();
-                                                SetPaletteBox();
-                                                listView1.Invalidate();
-                                                numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                                numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
-                                                Options.ChangedUltimaClass["Animations"] = true;
-                                            }
-                                        }
-                                        if ((w < 4) & (w < dialog.FileNames.Length - 1))
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                }
+                                continue;
                             }
+
+                            trackBar1.Value = 0;
+
+                            AddFilesAllDirections(dialog);
                         }
                         trackBar1.Enabled = true;
                     }
                 }
             }
-            //Refresh List
-            _currDir = trackBar1.Value;
+
+            // Refresh List
+            _currentDir = trackBar1.Value;
             AfterSelectTreeView(null, null);
+        }
+
+        private void AddFilesAllDirections(OpenFileDialog dialog)
+        {
+            for (int w = 0; w < dialog.FileNames.Length; w++)
+            {
+                if (w >= 5)
+                {
+                    continue;
+                }
+
+                // dialog.Filename replaced by dialog.FileNames[w]
+                Bitmap bmp = new Bitmap(dialog.FileNames[w]);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit != null)
+                {
+                    // Gif Especial Properties
+                    if (dialog.FileName.Contains(".gif"))
+                    {
+                        FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
+                        // Number of frames 
+                        int frameCount = bmp.GetFrameCount(dimension);
+                        progressBar1.Maximum = frameCount;
+                        bmp.SelectActiveFrame(dimension, 0);
+                        edit.GetGifPalette(bmp);
+                        Bitmap[] bitBmp = new Bitmap[frameCount];
+                        // Return an Image at a certain index 
+                        for (int index = 0; index < frameCount; index++)
+                        {
+                            bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+                            bmp.SelectActiveFrame(dimension, index);
+                            bitBmp[index] = bmp;
+                            bitBmp[index] = Utils.ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
+                                (int) numericUpDown4.Value, (int) numericUpDown5.Value);
+                            edit.AddFrame(bitBmp[index]);
+                            TreeNode node = GetNode(_currentBody);
+                            if (node != null)
+                            {
+                                node.ForeColor = Color.Black;
+                                node.Nodes[_currentAction].ForeColor = Color.Black;
+                            }
+
+                            int i = edit.Frames.Count - 1;
+                            var item = new ListViewItem(i.ToString(), 0)
+                            {
+                                Tag = i
+                            };
+                            listView1.Items.Add(item);
+
+                            int width = listView1.TileSize.Width - 5;
+                            if (bmp.Width > listView1.TileSize.Width)
+                            {
+                                width = bmp.Width;
+                            }
+
+                            int height = listView1.TileSize.Height - 5;
+                            if (bmp.Height > listView1.TileSize.Height)
+                            {
+                                height = bmp.Height;
+                            }
+
+                            listView1.TileSize = new Size(width + 5, height + 5);
+                            trackBar2.Maximum = i;
+                            Options.ChangedUltimaClass["Animations"] = true;
+                            if (progressBar1.Value < progressBar1.Maximum)
+                            {
+                                progressBar1.Value++;
+                                progressBar1.Invalidate();
+                            }
+                        }
+
+                        progressBar1.Value = 0;
+                        progressBar1.Invalidate();
+                        SetPaletteBox();
+                        listView1.Invalidate();
+                        numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
+                        numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                        Options.ChangedUltimaClass["Animations"] = true;
+                    }
+                }
+
+                if ((w < 4) && (w < dialog.FileNames.Length - 1))
+                {
+                    trackBar1.Value++;
+                }
+            }
         }
 
         private void ToolStripButton10_Click(object sender, EventArgs e)
@@ -1353,15 +1396,15 @@ namespace UoFiddler.Controls.Forms
         {
             _drawFull = false;
             _drawEmpty = false;
-            _lockbutton = false;
+            _lockButton = false;
             timer1.Enabled = false;
-            _blackUndraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-            _whiteUndraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+            _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+            _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
             _loaded = false;
             ControlEvents.FilePathChangeEvent -= OnFilePathChangeEvent;
         }
 
-        //Play Button Timer
+        // Play Button Timer
         private void Timer1_Tick(object sender, EventArgs e)
         {
             if (trackBar2.Value < trackBar2.Maximum)
@@ -1376,7 +1419,7 @@ namespace UoFiddler.Controls.Forms
             pictureBox1.Invalidate();
         }
 
-        //Play Button
+        // Play Button
         private void ToolStripButton11_Click(object sender, EventArgs e)
         {
             if (timer1.Enabled)
@@ -1385,20 +1428,22 @@ namespace UoFiddler.Controls.Forms
                 numericUpDownCx.Enabled = true;
                 numericUpDownCy.Enabled = true;
                 trackBar2.Enabled = true;
-                button2.Enabled = true; //Same Center button
-                toolStripButton12.Enabled = true; //Undraw Referencial Point button
+                button2.Enabled = true; // Same Center button
+                toolStripButton12.Enabled = true; // UnDraw Reference Point button
+
                 if (toolStripButton12.Checked)
                 {
-                    toolStripButton6.Enabled = false; //Lock button
-                    _blackUndraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
-                    _whiteUndraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
+                    toolStripButton6.Enabled = false; // Lock button
+                    _blackUnDraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
+                    _whiteUnDraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
                 }
                 else
                 {
                     toolStripButton6.Enabled = true;
-                    _blackUndraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-                    _whiteUndraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+                    _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+                    _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
                 }
+
                 if (toolStripButton6.Checked || toolStripButton12.Checked)
                 {
                     numericUpDown2.Enabled = false;
@@ -1418,16 +1463,17 @@ namespace UoFiddler.Controls.Forms
                 numericUpDown2.Enabled = false;
                 numericUpDown1.Enabled = false;
                 trackBar2.Enabled = false;
-                button2.Enabled = false; //Same Center button
-                toolStripButton12.Enabled = false; //Undraw Referencial Point button
-                toolStripButton6.Enabled = false; //Lock button
-                _blackUndraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
-                _whiteUndraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
+                button2.Enabled = false; // Same Center button
+                toolStripButton12.Enabled = false; // UnDraw Reference Point button
+                toolStripButton6.Enabled = false; // Lock button
+                _blackUnDraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
+                _whiteUnDraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
             }
+
             pictureBox1.Invalidate();
         }
 
-        //Animation Speed
+        // Animation Speed
         private void TrackBar3_ValueChanged(object sender, EventArgs e)
         {
             timer1.Interval = 50 + (trackBar3.Value * 30);
@@ -1437,8 +1483,8 @@ namespace UoFiddler.Controls.Forms
         {
             if (!toolStripButton12.Checked)
             {
-                _blackUndraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-                _whiteUndraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+                _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+                _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
                 toolStripButton6.Enabled = true;
                 if (toolStripButton6.Checked)
                 {
@@ -1453,8 +1499,8 @@ namespace UoFiddler.Controls.Forms
             }
             else
             {
-                _blackUndraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
-                _whiteUndraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
+                _blackUnDraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
+                _whiteUnDraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
                 toolStripButton6.Enabled = false;
                 numericUpDown2.Enabled = false;
                 numericUpDown1.Enabled = false;
@@ -1462,7 +1508,7 @@ namespace UoFiddler.Controls.Forms
             pictureBox1.Invalidate();
         }
 
-        //All Directions with Canvas
+        // All Directions with Canvas
         private void AllDirectionsAddWithCanvasToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -1472,7 +1518,7 @@ namespace UoFiddler.Controls.Forms
                     using (OpenFileDialog dialog = new OpenFileDialog())
                     {
                         dialog.Multiselect = true;
-                        dialog.Title = "Choose 5 Gifs to add";
+                        dialog.Title = "Choose 5 GIFs to add";
                         dialog.CheckFileExists = true;
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
@@ -1482,361 +1528,10 @@ namespace UoFiddler.Controls.Forms
                             if (dialog.FileNames.Length == 5)
                             {
                                 trackBar1.Value = 0;
-                                for (int w = 0; w < dialog.FileNames.Length; w++)
-                                {
-                                    if (w < 5)
-                                    {
-                                        Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
-                                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                        if (edit != null)
-                                        {
-                                            //Gif Especial Properties
-                                            if (dialog.FileName.Contains(".gif"))
-                                            {
-                                                FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                                // Number of frames 
-                                                int frameCount = bmp.GetFrameCount(dimension);
-                                                progressBar1.Maximum = frameCount;
-                                                bmp.SelectActiveFrame(dimension, 0);
-                                                edit.GetGifPalette(bmp);
-                                                Bitmap[] bitbmp = new Bitmap[frameCount];
-                                                // Return an Image at a certain index 
-                                                for (int index = 0; index < frameCount; index++)
-                                                {
-                                                    bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                                                    bmp.SelectActiveFrame(dimension, index);
-                                                    bitbmp[index] = bmp;
-                                                }
-                                                //Canvas algorithm
-                                                int top = 0;
-                                                int bot = 0;
-                                                int left = 0;
-                                                int right = 0;
-                                                int regressT = -1;
-                                                int regressB = -1;
-                                                int regressL = -1;
-                                                int regressR = -1;
-                                                bool var = true;
-                                                bool breakOk = false;
-                                                //Top
-                                                for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                {
-                                                    for (int fram = 0; fram < frameCount; fram++)
-                                                    {
-                                                        bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                        for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                        {
-                                                            Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                            {
-                                                                var = true;
-                                                            }
-
-                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                            {
-                                                                var = false;
-                                                                if (yf != 0)
-                                                                {
-                                                                    regressT++;
-                                                                    yf -= 1;
-                                                                    xf = -1;
-                                                                    fram = 0;
-                                                                }
-                                                                else
-                                                                {
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                            {
-                                                                top += 10;
-                                                            }
-
-                                                            if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                            {
-                                                                top++;
-                                                            }
-
-                                                            if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT != -1)
-                                                            {
-                                                                top -= regressT;
-                                                                breakOk = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (breakOk)
-                                                        {
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (yf < bitbmp[0].Height - 9)
-                                                    {
-                                                        yf += 9; // 1 of for + 9
-                                                    }
-
-                                                    if (breakOk)
-                                                    {
-                                                        breakOk = false;
-                                                        break;
-                                                    }
-                                                }
-                                                //Bot
-                                                for (int yf = bitbmp[0].Height - 1; yf > 0; yf--)
-                                                {
-                                                    for (int fram = 0; fram < frameCount; fram++)
-                                                    {
-                                                        bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                        for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                        {
-                                                            Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                            {
-                                                                var = true;
-                                                            }
-
-                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                            {
-                                                                var = false;
-                                                                if (yf != bitbmp[0].Height - 1)
-                                                                {
-                                                                    regressB++;
-                                                                    yf += 1;
-                                                                    xf = -1;
-                                                                    fram = 0;
-                                                                }
-                                                                else
-                                                                {
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB == -1 && yf > 9)
-                                                            {
-                                                                bot += 10;
-                                                            }
-
-                                                            if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB == -1 && yf <= 9)
-                                                            {
-                                                                bot++;
-                                                            }
-
-                                                            if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB != -1)
-                                                            {
-                                                                bot -= regressB;
-                                                                breakOk = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (breakOk)
-                                                        {
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (yf > 9)
-                                                    {
-                                                        yf -= 9; // 1 of for + 9
-                                                    }
-
-                                                    if (breakOk)
-                                                    {
-                                                        breakOk = false;
-                                                        break;
-                                                    }
-                                                }
-                                                //Left
-
-                                                for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                {
-                                                    for (int fram = 0; fram < frameCount; fram++)
-                                                    {
-                                                        bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                        for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                        {
-                                                            Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                            {
-                                                                var = true;
-                                                            }
-
-                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                            {
-                                                                var = false;
-                                                                if (xf != 0)
-                                                                {
-                                                                    regressL++;
-                                                                    xf -= 1;
-                                                                    yf = -1;
-                                                                    fram = 0;
-                                                                }
-                                                                else
-                                                                {
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                            {
-                                                                left += 10;
-                                                            }
-
-                                                            if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                            {
-                                                                left++;
-                                                            }
-
-                                                            if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL != -1)
-                                                            {
-                                                                left -= regressL;
-                                                                breakOk = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (breakOk)
-                                                        {
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (xf < bitbmp[0].Width - 9)
-                                                    {
-                                                        xf += 9; // 1 of for + 9
-                                                    }
-
-                                                    if (breakOk)
-                                                    {
-                                                        breakOk = false;
-                                                        break;
-                                                    }
-                                                }
-                                                //Right
-                                                for (int xf = bitbmp[0].Width - 1; xf > 0; xf--)
-                                                {
-                                                    for (int fram = 0; fram < frameCount; fram++)
-                                                    {
-                                                        bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                        for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                        {
-                                                            Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                            if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                            {
-                                                                var = true;
-                                                            }
-
-                                                            if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                            {
-                                                                var = false;
-                                                                if (xf != bitbmp[0].Width - 1)
-                                                                {
-                                                                    regressR++;
-                                                                    xf += 1;
-                                                                    yf = -1;
-                                                                    fram = 0;
-                                                                }
-                                                                else
-                                                                {
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR == -1 && xf > 9)
-                                                            {
-                                                                right += 10;
-                                                            }
-
-                                                            if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR == -1 && xf <= 9)
-                                                            {
-                                                                right++;
-                                                            }
-
-                                                            if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR != -1)
-                                                            {
-                                                                right -= regressR;
-                                                                breakOk = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (breakOk)
-                                                        {
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (xf > 9)
-                                                    {
-                                                        xf -= 9; // 1 of for + 9
-                                                    }
-
-                                                    if (breakOk)
-                                                    {
-                                                        breakOk = false;
-                                                        break;
-                                                    }
-                                                }
-
-                                                for (int index = 0; index < frameCount; index++)
-                                                {
-                                                    Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                                    bitbmp[index].SelectActiveFrame(dimension, index);
-                                                    bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                                }
-
-                                                //End of Canvas
-                                                for (int index = 0; index < frameCount; index++)
-                                                {
-                                                    bitbmp[index].SelectActiveFrame(dimension, index);
-                                                    bitbmp[index] = Utils.ConvertBmpAnim(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                                    edit.AddFrame(bitbmp[index]);
-                                                    TreeNode node = GetNode(_currBody);
-                                                    if (node != null)
-                                                    {
-                                                        node.ForeColor = Color.Black;
-                                                        node.Nodes[_currAction].ForeColor = Color.Black;
-                                                    }
-
-                                                    int i = edit.Frames.Count - 1;
-                                                    var item = new ListViewItem(i.ToString(), 0)
-                                                    {
-                                                        Tag = i
-                                                    };
-                                                    listView1.Items.Add(item);
-                                                    int width = listView1.TileSize.Width - 5;
-                                                    if (bmp.Width > listView1.TileSize.Width)
-                                                    {
-                                                        width = bmp.Width;
-                                                    }
-
-                                                    int height = listView1.TileSize.Height - 5;
-                                                    if (bmp.Height > listView1.TileSize.Height)
-                                                    {
-                                                        height = bmp.Height;
-                                                    }
-
-                                                    listView1.TileSize = new Size(width + 5, height + 5);
-                                                    trackBar2.Maximum = i;
-                                                    Options.ChangedUltimaClass["Animations"] = true;
-                                                    if (progressBar1.Value < progressBar1.Maximum)
-                                                    {
-                                                        progressBar1.Value++;
-                                                        progressBar1.Invalidate();
-                                                    }
-                                                }
-                                                progressBar1.Value = 0;
-                                                progressBar1.Invalidate();
-                                                SetPaletteBox();
-                                                listView1.Invalidate();
-                                                numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                                numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
-                                                Options.ChangedUltimaClass["Animations"] = true;
-                                            }
-                                        }
-                                        if ((w < 4) & (w < dialog.FileNames.Length - 1))
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                }
+                                AddSelectedFiles(dialog, customConvert);
                             }
 
-                            //Looping if dialog.FileNames.Length != 5
+                            // Looping if dialog.FileNames.Length != 5
                             while (dialog.FileNames.Length != 5)
                             {
                                 if (dialog.ShowDialog() == DialogResult.Cancel)
@@ -1849,373 +1544,428 @@ namespace UoFiddler.Controls.Forms
                                     dialog.ShowDialog();
                                 }
 
-                                if (dialog.FileNames.Length == 5)
+                                if (dialog.FileNames.Length != 5)
                                 {
-                                    trackBar1.Value = 0;
-                                    for (int w = 0; w < dialog.FileNames.Length; w++)
-                                    {
-                                        if (w < 5)
-                                        {
-                                            Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
-                                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                            if (edit != null)
-                                            {
-                                                //Gif Especial Properties
-                                                if (dialog.FileName.Contains(".gif"))
-                                                {
-                                                    FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                                    // Number of frames 
-                                                    int frameCount = bmp.GetFrameCount(dimension);
-                                                    bmp.SelectActiveFrame(dimension, 0);
-                                                    edit.GetGifPalette(bmp);
-                                                    Bitmap[] bitbmp = new Bitmap[frameCount];
-                                                    progressBar1.Maximum = frameCount;
-                                                    // Return an Image at a certain index 
-                                                    for (int index = 0; index < frameCount; index++)
-                                                    {
-                                                        bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                                                        bmp.SelectActiveFrame(dimension, index);
-                                                        bitbmp[index] = bmp;
-                                                    }
-                                                    //Canvas algorithm
-                                                    int top = 0;
-                                                    int bot = 0;
-                                                    int left = 0;
-                                                    int right = 0;
-                                                    int regressT = -1;
-                                                    int regressB = -1;
-                                                    int regressL = -1;
-                                                    int regressR = -1;
-                                                    bool var = true;
-                                                    bool breakOk = false;
-                                                    //Top
-                                                    for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                    {
-                                                        for (int fram = 0; fram < frameCount; fram++)
-                                                        {
-                                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                            for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                            {
-                                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                                {
-                                                                    var = true;
-                                                                }
-
-                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                                {
-                                                                    var = false;
-                                                                    if (yf != 0)
-                                                                    {
-                                                                        regressT++;
-                                                                        yf -= 1;
-                                                                        xf = -1;
-                                                                        fram = 0;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        breakOk = true;
-                                                                        break;
-                                                                    }
-                                                                }
-                                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                                {
-                                                                    top += 10;
-                                                                }
-
-                                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                                {
-                                                                    top++;
-                                                                }
-
-                                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT != -1)
-                                                                {
-                                                                    top -= regressT;
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (breakOk)
-                                                            {
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (yf < bitbmp[0].Height - 9)
-                                                        {
-                                                            yf += 9; // 1 of for + 9
-                                                        }
-
-                                                        if (breakOk)
-                                                        {
-                                                            breakOk = false;
-                                                            break;
-                                                        }
-                                                    }
-                                                    //Bot
-                                                    for (int yf = bitbmp[0].Height - 1; yf > 0; yf--)
-                                                    {
-                                                        for (int fram = 0; fram < frameCount; fram++)
-                                                        {
-                                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                            for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                            {
-                                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                                {
-                                                                    var = true;
-                                                                }
-
-                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                                {
-                                                                    var = false;
-                                                                    if (yf != bitbmp[0].Height - 1)
-                                                                    {
-                                                                        regressB++;
-                                                                        yf += 1;
-                                                                        xf = -1;
-                                                                        fram = 0;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        breakOk = true;
-                                                                        break;
-                                                                    }
-                                                                }
-                                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB == -1 && yf > 9)
-                                                                {
-                                                                    bot += 10;
-                                                                }
-
-                                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB == -1 && yf <= 9)
-                                                                {
-                                                                    bot++;
-                                                                }
-
-                                                                if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB != -1)
-                                                                {
-                                                                    bot -= regressB;
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (breakOk)
-                                                            {
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (yf > 9)
-                                                        {
-                                                            yf -= 9; // 1 of for + 9
-                                                        }
-
-                                                        if (breakOk)
-                                                        {
-                                                            breakOk = false;
-                                                            break;
-                                                        }
-                                                    }
-                                                    //Left
-
-                                                    for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                    {
-                                                        for (int fram = 0; fram < frameCount; fram++)
-                                                        {
-                                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                            for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                            {
-                                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                                {
-                                                                    var = true;
-                                                                }
-
-                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                                {
-                                                                    var = false;
-                                                                    if (xf != 0)
-                                                                    {
-                                                                        regressL++;
-                                                                        xf -= 1;
-                                                                        yf = -1;
-                                                                        fram = 0;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        breakOk = true;
-                                                                        break;
-                                                                    }
-                                                                }
-                                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                                {
-                                                                    left += 10;
-                                                                }
-
-                                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                                {
-                                                                    left++;
-                                                                }
-
-                                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL != -1)
-                                                                {
-                                                                    left -= regressL;
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (breakOk)
-                                                            {
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (xf < bitbmp[0].Width - 9)
-                                                        {
-                                                            xf += 9; // 1 of for + 9
-                                                        }
-
-                                                        if (breakOk)
-                                                        {
-                                                            breakOk = false;
-                                                            break;
-                                                        }
-                                                    }
-                                                    //Right
-                                                    for (int xf = bitbmp[0].Width - 1; xf > 0; xf--)
-                                                    {
-                                                        for (int fram = 0; fram < frameCount; fram++)
-                                                        {
-                                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                            for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                            {
-                                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                                {
-                                                                    var = true;
-                                                                }
-
-                                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                                {
-                                                                    var = false;
-                                                                    if (xf != bitbmp[0].Width - 1)
-                                                                    {
-                                                                        regressR++;
-                                                                        xf += 1;
-                                                                        yf = -1;
-                                                                        fram = 0;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        breakOk = true;
-                                                                        break;
-                                                                    }
-                                                                }
-                                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR == -1 && xf > 9)
-                                                                {
-                                                                    right += 10;
-                                                                }
-
-                                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR == -1 && xf <= 9)
-                                                                {
-                                                                    right++;
-                                                                }
-
-                                                                if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR != -1)
-                                                                {
-                                                                    right -= regressR;
-                                                                    breakOk = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (breakOk)
-                                                            {
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (xf > 9)
-                                                        {
-                                                            xf -= 9; // 1 of for + 9
-                                                        }
-
-                                                        if (breakOk)
-                                                        {
-                                                            breakOk = false;
-                                                            break;
-                                                        }
-                                                    }
-
-                                                    for (int index = 0; index < frameCount; index++)
-                                                    {
-                                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                                    }
-
-                                                    //End of Canvas
-                                                    for (int index = 0; index < frameCount; index++)
-                                                    {
-                                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                                        bitbmp[index] = Utils.ConvertBmpAnim(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                                        edit.AddFrame(bitbmp[index]);
-                                                        TreeNode node = GetNode(_currBody);
-                                                        if (node != null)
-                                                        {
-                                                            node.ForeColor = Color.Black;
-                                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                                        }
-
-                                                        int i = edit.Frames.Count - 1;
-                                                        var item = new ListViewItem(i.ToString(), 0)
-                                                        {
-                                                            Tag = i
-                                                        };
-                                                        listView1.Items.Add(item);
-                                                        int width = listView1.TileSize.Width - 5;
-                                                        if (bmp.Width > listView1.TileSize.Width)
-                                                        {
-                                                            width = bmp.Width;
-                                                        }
-
-                                                        int height = listView1.TileSize.Height - 5;
-                                                        if (bmp.Height > listView1.TileSize.Height)
-                                                        {
-                                                            height = bmp.Height;
-                                                        }
-
-                                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                                        trackBar2.Maximum = i;
-                                                        Options.ChangedUltimaClass["Animations"] = true;
-                                                        if (progressBar1.Value < progressBar1.Maximum)
-                                                        {
-                                                            progressBar1.Value++;
-                                                            progressBar1.Invalidate();
-                                                        }
-                                                    }
-                                                    progressBar1.Value = 0;
-                                                    progressBar1.Invalidate();
-                                                    SetPaletteBox();
-                                                    listView1.Invalidate();
-                                                    numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                                    numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
-                                                    Options.ChangedUltimaClass["Animations"] = true;
-                                                }
-                                            }
-                                            if ((w < 4) & (w < dialog.FileNames.Length - 1))
-                                            {
-                                                trackBar1.Value++;
-                                            }
-                                        }
-                                    }
+                                    continue;
                                 }
+
+                                trackBar1.Value = 0;
+                                AddSelectedFiles(dialog, customConvert);
                             }
+
                             trackBar1.Enabled = true;
                         }
                     }
                 }
-                //Refresh List after Canvas reduction
-                _currDir = trackBar1.Value;
+
+                // Refresh List after Canvas reduction
+                _currentDir = trackBar1.Value;
                 AfterSelectTreeView(null, null);
             }
-            catch (OutOfMemoryException) { }
+            catch (OutOfMemoryException)
+            {
+                // TODO: add logging or fix?
+                // ignored
+            }
         }
+
+        private void AddSelectedFiles(OpenFileDialog dialog, Color customConvert)
+        {
+            for (int w = 0; w < dialog.FileNames.Length; w++)
+            {
+                if (w >= 5)
+                {
+                    continue;
+                }
+
+                // dialog.Filename replaced by dialog.FileNames[w]
+                Bitmap bmp = new Bitmap(dialog.FileNames[w]);
+
+                // TODO: fix checking file extension
+                // Gif Especial Properties
+                if (!dialog.FileNames[w].Contains(".gif"))
+                {
+                    continue;
+                }
+
+                AddAnimationX1(customConvert, bmp);
+
+                if ((w < 4) && (w < dialog.FileNames.Length - 1))
+                {
+                    trackBar1.Value++;
+                }
+            }
+        }
+
+        private void AddAnimationX1(Color customConvert, Bitmap bmp)
+        {
+            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            if (edit == null)
+            {
+                return;
+            }
+
+            FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
+            // Number of frames
+            int frameCount = bmp.GetFrameCount(dimension);
+            progressBar1.Maximum = frameCount;
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            Bitmap[] bitBmp = new Bitmap[frameCount];
+            // Return an Image at a certain index 
+            for (int index = 0; index < frameCount; index++)
+            {
+                bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+                bmp.SelectActiveFrame(dimension, index);
+                bitBmp[index] = bmp;
+            }
+
+            //Canvas algorithm
+            int top = 0;
+            int bot = 0;
+            int left = 0;
+            int right = 0;
+            int regressT = -1;
+            int regressB = -1;
+            int regressL = -1;
+            int regressR = -1;
+            bool var = true;
+            bool breakOk = false;
+            //Top
+            for (int yf = 0; yf < bitBmp[0].Height; yf++)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[0].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == frameCount - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == frameCount - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == frameCount - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[0].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[0].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[0].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[0].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == frameCount - 1 && regressB == -1 &&
+                            yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == frameCount - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == frameCount - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+            //Left
+
+            for (int xf = 0; xf < bitBmp[0].Width; xf++)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[0].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == frameCount - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == frameCount - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == frameCount - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[0].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[0].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[0].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[0].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == frameCount - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == frameCount - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == frameCount - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = 0; index < frameCount; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right,
+                    bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            //End of Canvas
+            for (int index = 0; index < frameCount; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
+                    (int) numericUpDown4.Value, (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+            }
+
+            progressBar1.Value = 0;
+            progressBar1.Invalidate();
+            SetPaletteBox();
+            listView1.Invalidate();
+            numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
+            numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+            Options.ChangedUltimaClass["Animations"] = true;
+        }
+
         //Add with Canvas
         private void AddWithCanvasToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2231,365 +1981,39 @@ namespace UoFiddler.Controls.Forms
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value,
+                                (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                             //My Soulblighter Modifications
                             for (int w = 0; w < dialog.FileNames.Length; w++)
                             {
-                                Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
-                                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                if (edit != null)
+                                // dialog.Filename replaced by dialog.FileNames[w]
+                                Bitmap bmp = new Bitmap(dialog.FileNames[w]);
+
+                                // TODO: fix checking file extension
+                                // Gif Especial Properties
+                                if (!dialog.FileNames[w].Contains(".gif"))
                                 {
-                                    //Gif Especial Properties
-                                    if (dialog.FileName.Contains(".gif"))
-                                    {
-                                        FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                        // Number of frames 
-                                        int frameCount = bmp.GetFrameCount(dimension);
-                                        bmp.SelectActiveFrame(dimension, 0);
-                                        edit.GetGifPalette(bmp);
-                                        Bitmap[] bitbmp = new Bitmap[frameCount];
-                                        progressBar1.Maximum = frameCount;
-                                        // Return an Image at a certain index 
-                                        for (int index = 0; index < frameCount; index++)
-                                        {
-                                            bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                                            bmp.SelectActiveFrame(dimension, index);
-                                            bitbmp[index] = bmp;
-                                        }
-                                        //Canvas algorithm
-                                        int top = 0;
-                                        int bot = 0;
-                                        int left = 0;
-                                        int right = 0;
-                                        int regressT = -1;
-                                        int regressB = -1;
-                                        int regressL = -1;
-                                        int regressR = -1;
-                                        bool var = true;
-                                        bool breakOk = false;
-                                        //Top
-                                        for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                        {
-                                            for (int fram = 0; fram < frameCount; fram++)
-                                            {
-                                                bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                {
-                                                    Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                    {
-                                                        var = true;
-                                                    }
-
-                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                    {
-                                                        var = false;
-                                                        if (yf != 0)
-                                                        {
-                                                            regressT++;
-                                                            yf -= 1;
-                                                            xf = -1;
-                                                            fram = 0;
-                                                        }
-                                                        else
-                                                        {
-                                                            breakOk = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                    {
-                                                        top += 10;
-                                                    }
-
-                                                    if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                    {
-                                                        top++;
-                                                    }
-
-                                                    if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressT != -1)
-                                                    {
-                                                        top -= regressT;
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (breakOk)
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                            if (yf < bitbmp[0].Height - 9)
-                                            {
-                                                yf += 9; // 1 of for + 9
-                                            }
-
-                                            if (breakOk)
-                                            {
-                                                breakOk = false;
-                                                break;
-                                            }
-                                        }
-                                        //Bot
-                                        for (int yf = bitbmp[0].Height - 1; yf > 0; yf--)
-                                        {
-                                            for (int fram = 0; fram < frameCount; fram++)
-                                            {
-                                                bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                                {
-                                                    Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                    {
-                                                        var = true;
-                                                    }
-
-                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                    {
-                                                        var = false;
-                                                        if (yf != bitbmp[0].Height - 1)
-                                                        {
-                                                            regressB++;
-                                                            yf += 1;
-                                                            xf = -1;
-                                                            fram = 0;
-                                                        }
-                                                        else
-                                                        {
-                                                            breakOk = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB == -1 && yf > 9)
-                                                    {
-                                                        bot += 10;
-                                                    }
-
-                                                    if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB == -1 && yf <= 9)
-                                                    {
-                                                        bot++;
-                                                    }
-
-                                                    if (var && xf == bitbmp[fram].Width - 1 && fram == frameCount - 1 && regressB != -1)
-                                                    {
-                                                        bot -= regressB;
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (breakOk)
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                            if (yf > 9)
-                                            {
-                                                yf -= 9; // 1 of for + 9
-                                            }
-
-                                            if (breakOk)
-                                            {
-                                                breakOk = false;
-                                                break;
-                                            }
-                                        }
-                                        //Left
-
-                                        for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                        {
-                                            for (int fram = 0; fram < frameCount; fram++)
-                                            {
-                                                bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                {
-                                                    Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                    {
-                                                        var = true;
-                                                    }
-
-                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                    {
-                                                        var = false;
-                                                        if (xf != 0)
-                                                        {
-                                                            regressL++;
-                                                            xf -= 1;
-                                                            yf = -1;
-                                                            fram = 0;
-                                                        }
-                                                        else
-                                                        {
-                                                            breakOk = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                    {
-                                                        left += 10;
-                                                    }
-
-                                                    if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                    {
-                                                        left++;
-                                                    }
-
-                                                    if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressL != -1)
-                                                    {
-                                                        left -= regressL;
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (breakOk)
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                            if (xf < bitbmp[0].Width - 9)
-                                            {
-                                                xf += 9; // 1 of for + 9
-                                            }
-
-                                            if (breakOk)
-                                            {
-                                                breakOk = false;
-                                                break;
-                                            }
-                                        }
-                                        //Right
-                                        for (int xf = bitbmp[0].Width - 1; xf > 0; xf--)
-                                        {
-                                            for (int fram = 0; fram < frameCount; fram++)
-                                            {
-                                                bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                                for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                                {
-                                                    Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                    if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                    {
-                                                        var = true;
-                                                    }
-
-                                                    if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                    {
-                                                        var = false;
-                                                        if (xf != bitbmp[0].Width - 1)
-                                                        {
-                                                            regressR++;
-                                                            xf += 1;
-                                                            yf = -1;
-                                                            fram = 0;
-                                                        }
-                                                        else
-                                                        {
-                                                            breakOk = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR == -1 && xf > 9)
-                                                    {
-                                                        right += 10;
-                                                    }
-
-                                                    if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR == -1 && xf <= 9)
-                                                    {
-                                                        right++;
-                                                    }
-
-                                                    if (var && yf == bitbmp[fram].Height - 1 && fram == frameCount - 1 && regressR != -1)
-                                                    {
-                                                        right -= regressR;
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (breakOk)
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                            if (xf > 9)
-                                            {
-                                                xf -= 9; // 1 of for + 9
-                                            }
-
-                                            if (breakOk)
-                                            {
-                                                breakOk = false;
-                                                break;
-                                            }
-                                        }
-
-                                        for (int index = 0; index < frameCount; index++)
-                                        {
-                                            Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                            bitbmp[index].SelectActiveFrame(dimension, index);
-                                            bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                        }
-
-                                        //End of Canvas
-                                        for (int index = 0; index < frameCount; index++)
-                                        {
-                                            bitbmp[index].SelectActiveFrame(dimension, index);
-                                            bitbmp[index] = Utils.ConvertBmpAnim(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                            edit.AddFrame(bitbmp[index]);
-                                            TreeNode node = GetNode(_currBody);
-                                            if (node != null)
-                                            {
-                                                node.ForeColor = Color.Black;
-                                                node.Nodes[_currAction].ForeColor = Color.Black;
-                                            }
-
-                                            int i = edit.Frames.Count - 1;
-                                            var item = new ListViewItem(i.ToString(), 0)
-                                            {
-                                                Tag = i
-                                            };
-                                            listView1.Items.Add(item);
-                                            int width = listView1.TileSize.Width - 5;
-                                            if (bmp.Width > listView1.TileSize.Width)
-                                            {
-                                                width = bmp.Width;
-                                            }
-
-                                            int height = listView1.TileSize.Height - 5;
-                                            if (bmp.Height > listView1.TileSize.Height)
-                                            {
-                                                height = bmp.Height;
-                                            }
-
-                                            listView1.TileSize = new Size(width + 5, height + 5);
-                                            trackBar2.Maximum = i;
-                                            Options.ChangedUltimaClass["Animations"] = true;
-                                            if (progressBar1.Value < progressBar1.Maximum)
-                                            {
-                                                progressBar1.Value++;
-                                                progressBar1.Invalidate();
-                                            }
-                                        }
-                                        progressBar1.Value = 0;
-                                        progressBar1.Invalidate();
-                                        SetPaletteBox();
-                                        listView1.Invalidate();
-                                        numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                        numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                    }
-                                    //End of Soulblighter Modifications
+                                    continue;
                                 }
+
+                                AddAnimationX1(customConvert, bmp);
                             }
                         }
                     }
                 }
-                //Refresh List after Canvas reduction
-                _currDir = trackBar1.Value;
+
+                // Refresh List after Canvas reduction
+                _currentDir = trackBar1.Value;
                 AfterSelectTreeView(null, null);
             }
-            catch (OutOfMemoryException) { }
+            catch (OutOfMemoryException)
+            {
+                // TODO: add logging or fix?
+                // ignored
+            }
         }
 
-        private unsafe void OnClickGeneratePalette(object sender, EventArgs e)
+        private void OnClickGeneratePalette(object sender, EventArgs e)
         {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -2597,22 +2021,24 @@ namespace UoFiddler.Controls.Forms
                 dialog.Title = "Choose images to generate from";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp;*.png;*.jpg;*.jpeg)|*.tif;*.tiff;*.bmp;*.png;*.jpg;*.jpeg";
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    foreach (string filename in dialog.FileNames)
+                    return;
+                }
+
+                foreach (string filename in dialog.FileNames)
+                {
+                    Bitmap bit = new Bitmap(filename);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                    if (edit != null)
                     {
-                        Bitmap bit = new Bitmap(filename);
-                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                        if (edit != null)
-                        {
-                            bit = Utils.ConvertBmpAnim(bit, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                            edit.GetImagePalette(bit);
-                        }
-                        SetPaletteBox();
-                        listView1.Invalidate();
-                        Options.ChangedUltimaClass["Animations"] = true;
-                        SetPaletteBox();
+                        bit = Utils.ConvertBmpAnim(bit, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                        edit.GetImagePalette(bit);
                     }
+                    SetPaletteBox();
+                    listView1.Invalidate();
+                    Options.ChangedUltimaClass["Animations"] = true;
+                    SetPaletteBox();
                 }
             }
         }
@@ -2620,27 +2046,35 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClickExportAllToVD(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+                return;
+            }
+
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select directory";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Description = "Select directory";
-                    dialog.ShowNewFolderButton = true;
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        for (int i = 0; i < treeView1.Nodes.Count; ++i)
-                        {
-                            int index = (int)treeView1.Nodes[i].Tag;
-                            if (index >= 0 && treeView1.Nodes[i].Parent == null && treeView1.Nodes[i].ForeColor != Color.Red)
-                            {
-                                string fileName = Path.Combine(dialog.SelectedPath, string.Format("anim{0}_0x{1:X}.vd", _fileType, index));
-                                Ultima.AnimationEdit.ExportToVD(_fileType, index, fileName);
-                            }
-                        }
-                        MessageBox.Show(string.Format("All Animations saved to {0}", dialog.SelectedPath),
-                                "Export", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-                    }
+                    return;
                 }
+
+                for (int i = 0; i < treeView1.Nodes.Count; ++i)
+                {
+                    int index = (int)treeView1.Nodes[i].Tag;
+                    if (index < 0 || treeView1.Nodes[i].Parent != null ||
+                        treeView1.Nodes[i].ForeColor == Color.Red)
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"anim{_fileType}_0x{index:X}.vd");
+                    Ultima.AnimationEdit.ExportToVD(_fileType, index, fileName);
+                }
+
+                MessageBox.Show($"All Animations saved to {dialog.SelectedPath}",
+                    "Export", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -2669,11 +2103,11 @@ namespace UoFiddler.Controls.Forms
                         count++;
                     }
                 }
-                toolStripLabel8.Text = "1: " + _animCx[0] + "/" + _animCy[0];
-                toolStripLabel9.Text = "2: " + _animCx[1] + "/" + _animCy[1];
-                toolStripLabel10.Text = "3: " + _animCx[2] + "/" + _animCy[2];
-                toolStripLabel11.Text = "4: " + _animCx[3] + "/" + _animCy[3];
-                toolStripLabel12.Text = "5: " + _animCx[4] + "/" + _animCy[4];
+                toolStripLabel8.Text = $"1: {_animCx[0]}/{_animCy[0]}";
+                toolStripLabel9.Text = $"2: {_animCx[1]}/{_animCy[1]}";
+                toolStripLabel10.Text = $"3: {_animCx[2]}/{_animCy[2]}";
+                toolStripLabel11.Text = $"4: {_animCx[3]}/{_animCy[3]}";
+                toolStripLabel12.Text = $"5: {_animCx[4]}/{_animCy[4]}";
                 trackBar1.Enabled = true;
             }
             else
@@ -2687,7 +2121,7 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        //Set Button
+        // Set Button
         private void Button1_Click(object sender, EventArgs e)
         {
             trackBar1.Value = 0;
@@ -2698,22 +2132,24 @@ namespace UoFiddler.Controls.Forms
                 {
                     if (_fileType != 0)
                     {
-                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                        if (edit != null)
+                        AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                        if (edit != null && edit.Frames.Count >= trackBar2.Value)
                         {
-                            if (edit.Frames.Count >= trackBar2.Value)
+                            for (int index = 0; index < edit.Frames.Count; index++)
                             {
-                                for (int index = 0; index < edit.Frames.Count; index++)
-                                {
-                                    edit.Frames[index].ChangeCenter(_animCx[i], _animCy[i]);
-                                    Options.ChangedUltimaClass["Animations"] = true;
-                                    pictureBox1.Invalidate();
-                                }
+                                edit.Frames[index].ChangeCenter(_animCx[i], _animCy[i]);
+                                Options.ChangedUltimaClass["Animations"] = true;
+                                pictureBox1.Invalidate();
                             }
                         }
                     }
                 }
-                catch (NullReferenceException) { }
+                catch (NullReferenceException)
+                {
+                    // TODO: add logging or fix?
+                    // ignored
+                }
+
                 if (trackBar1.Value < trackBar1.Maximum)
                 {
                     trackBar1.Value++;
@@ -2726,7 +2162,7 @@ namespace UoFiddler.Controls.Forms
             trackBar1.Enabled = true;
         }
 
-        //Add Directions with Canvas ( CV5 style GIF )
+        // Add Directions with Canvas ( CV5 style GIF )
         private void AddDirectionsAddWithCanvasUniqueImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -2741,11 +2177,13 @@ namespace UoFiddler.Controls.Forms
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value,
+                                (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                             trackBar1.Enabled = false;
                             trackBar1.Value = 0;
                             Bitmap bmp = new Bitmap(dialog.FileName);
-                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
+                                _currentDir);
                             if (edit != null)
                             {
                                 //Gif Especial Properties
@@ -2757,1603 +2195,20 @@ namespace UoFiddler.Controls.Forms
                                     progressBar1.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
-                                    Bitmap[] bitbmp = new Bitmap[frameCount];
+                                    Bitmap[] bitBmp = new Bitmap[frameCount];
                                     // Return an Image at a certain index 
                                     for (int index = 0; index < frameCount; index++)
                                     {
-                                        bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+                                        bitBmp[index] = new Bitmap(bmp.Width, bmp.Height,
+                                            PixelFormat.Format16bppArgb1555);
                                         bmp.SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bmp;
-                                    }
-                                    //Canvas algorithm
-                                    int top = 0;
-                                    int bot = 0;
-                                    int left = 0;
-                                    int right = 0;
-                                    int regressT = -1;
-                                    int regressB = -1;
-                                    int regressL = -1;
-                                    int regressR = -1;
-                                    bool var = true;
-                                    bool breakOk = false;
-                                    // position 0
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 8 * 4].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 4; fram < frameCount / 8 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 4].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 8 * 4].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 8 * 4].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 4; fram < frameCount / 8 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 4].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 8 * 4].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 5) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 8 * 4].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 4; fram < frameCount / 8 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 4].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 8 * 4].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 8 * 4].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 4; fram < frameCount / 8 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 4].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 8 * 4].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 5) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+                                        bitBmp[index] = bmp;
                                     }
 
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 1
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                    {
-                                        for (int fram = 0; fram < frameCount / 8; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
+                                    Cv5CanvasAlgorithm(bitBmp, frameCount, dimension, customConvert);
 
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
+                                    edit = AnimIdxCv5Positions(frameCount, bitBmp, dimension, edit, bmp);
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[0].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[0].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = 0; fram < frameCount / 8; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[0].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[0].Width; xf++)
-                                    {
-                                        for (int fram = 0; fram < frameCount / 8; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[0].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[0].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = 0; fram < frameCount / 8; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[0].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[0].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = 0; index < frameCount / 8; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 2
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 8 * 5].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 5; fram < frameCount / 8 * 6; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 5].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 5;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 8 * 5].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 8 * 5].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 5; fram < frameCount / 8 * 6; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 5].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 8 * 5].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 5;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 6) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 8 * 5].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 5; fram < frameCount / 8 * 6; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 5].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 5;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 8 * 5].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 8 * 5].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 5; fram < frameCount / 8 * 6; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 5].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 8 * 5].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 5;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 6) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 3
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 8 * 1].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 1; fram < frameCount / 8 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 1].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 8 * 1].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 8 * 1].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 1; fram < frameCount / 8 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 1].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 8 * 1].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 2) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 8 * 1].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 1; fram < frameCount / 8 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 1].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 8 * 1].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 8 * 1].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 1; fram < frameCount / 8 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 1].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 8 * 1].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 2) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 4
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 8 * 6].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 6; fram < frameCount / 8 * 7; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 6].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 6;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 8 * 6].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 8 * 6].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 6; fram < frameCount / 8 * 7; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 8 * 6].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 8 * 6].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 8 * 6;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 8 * 7) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 8 * 6].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 8 * 6; fram < frameCount / 8 * 7; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 6].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 6;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 8 * 6].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 8 * 6].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 8 * 6; fram < frameCount / 8 * 7; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 8 * 6].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == _greyConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != _greyConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 8 * 6].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 8 * 6;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 8 * 7) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //End of Canvas
-                                    //posicao 0
-                                    for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimCv5(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 8 * 5) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 1
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = 0; index < frameCount / 8; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimCv5(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-                                        ListViewItem item;
-                                        int i = edit.Frames.Count - 1;
-                                        item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 8) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 2
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimCv5(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 8 * 6) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 3
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimCv5(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 8 * 2) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 4
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimCv5(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                    }
                                     progressBar1.Value = 0;
                                     progressBar1.Invalidate();
                                     SetPaletteBox();
@@ -4363,15 +2218,1752 @@ namespace UoFiddler.Controls.Forms
                                     Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
+
                             trackBar1.Enabled = true;
                         }
                     }
                 }
-                //Refresh List after Canvas reduction
-                _currDir = trackBar1.Value;
+
+                // Refresh List after Canvas reduction
+                _currentDir = trackBar1.Value;
                 AfterSelectTreeView(null, null);
             }
-            catch (NullReferenceException) { trackBar1.Enabled = true; }
+            catch (NullReferenceException)
+            {
+                // TODO: add logging or fix?
+                trackBar1.Enabled = true;
+            }
+        }
+
+        private AnimIdx AnimIdxCv5Positions(int frameCount, Bitmap[] bitBmp, FrameDimension dimension, AnimIdx edit, Bitmap bmp)
+        {
+            // position 0
+            for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 8 * 5) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 1
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = 0; index < frameCount / 8; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                ListViewItem item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 8) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 2
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 8 * 6) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 3
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 8 * 2) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 4
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+            }
+
+            return edit;
+        }
+
+        private static readonly Color _greyConvert = Color.FromArgb(255, 170, 170, 170);
+
+        private static void Cv5CanvasAlgorithm(Bitmap[] bitBmp, int frameCount, FrameDimension dimension, Color customConvert)
+        {
+            // Canvas algorithm
+            int top = 0;
+            int bot = 0;
+            int left = 0;
+            int right = 0;
+            int regressT = -1;
+            int regressB = -1;
+            int regressL = -1;
+            int regressR = -1;
+            bool var = true;
+            bool breakOk = false;
+
+            // position 0
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 8 * 4].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 8 * 4; frameIdx < frameCount / 8 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 4].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 8 * 4].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 8 * 4].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 8 * 4; frameIdx < frameCount / 8 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 4].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 8 * 4].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 8 * 4].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 8 * 4; frameIdx < frameCount / 8 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 4].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 8 * 4].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 8 * 4].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 8 * 4; frameIdx < frameCount / 8 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 4].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 8 * 4].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 5) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 1
+
+            //Top
+            for (int yf = 0; yf < bitBmp[0].Height; yf++)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount / 8; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[0].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[0].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[0].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount / 8; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[0].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[0].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8) - 1 && regressB == -1 && yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[0].Width; xf++)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount / 8; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[0].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[0].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[0].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = 0; frameIdx < frameCount / 8; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[0].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[0].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8) - 1 && regressR == -1 && xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8) - 1 && regressR == -1 && xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = 0; index < frameCount / 8; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 2
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 8 * 5].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 8 * 5; frameIdx < frameCount / 8 * 6; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 5].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 5;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 8 * 5].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 8 * 5].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 8 * 5; frameIdx < frameCount / 8 * 6; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 5].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 8 * 5].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 5;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 8 * 5].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 8 * 5; frameIdx < frameCount / 8 * 6; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 5].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 5;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 8 * 5].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 8 * 5].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 8 * 5; frameIdx < frameCount / 8 * 6; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 5].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 8 * 5].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 5;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 6) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 3
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 8 * 1].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 8 * 1; frameIdx < frameCount / 8 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 1].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 8 * 1].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 8 * 1].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 8 * 1; frameIdx < frameCount / 8 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 1].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 8 * 1].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 8 * 1].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 8 * 1; frameIdx < frameCount / 8 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 1].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 8 * 1].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 8 * 1].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 8 * 1; frameIdx < frameCount / 8 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 1].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 8 * 1].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 2) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 4
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 8 * 6].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 8 * 6; frameIdx < frameCount / 8 * 7; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 6].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 6;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 8 * 6].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 8 * 6].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 8 * 6; frameIdx < frameCount / 8 * 7; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 8 * 6].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 8 * 6].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 8 * 6;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 8 * 6].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 8 * 6; frameIdx < frameCount / 8 * 7; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 6].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 6;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 8 * 6].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 8 * 6].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 8 * 6; frameIdx < frameCount / 8 * 7; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 8 * 6].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == _greyConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != _greyConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 8 * 6].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 8 * 6;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 8 * 7) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            //End of Canvas
         }
 
         private void CheckBox2_CheckedChanged(object sender, EventArgs e)
@@ -4387,14 +3979,15 @@ namespace UoFiddler.Controls.Forms
                 numericUpDown3.Enabled = false;
                 numericUpDown4.Enabled = false;
                 numericUpDown5.Enabled = false;
+
                 numericUpDown3.Value = 255;
                 numericUpDown4.Value = 255;
                 numericUpDown5.Value = 255;
             }
         }
 
-        //All directions Add KRframeViewer 
-        private void AllDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem_Click(object sender, EventArgs e)
+        // All directions Add KRFrameViewer
+        private void AllDirectionsAddWithCanvasKRFrameEditorColorCorrectorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
@@ -4403,16 +3996,18 @@ namespace UoFiddler.Controls.Forms
                     using (OpenFileDialog dialog = new OpenFileDialog())
                     {
                         dialog.Multiselect = false;
-                        dialog.Title = "Choose 1 Gif ( with all directions in KRframeViewer Style ) to add";
+                        dialog.Title = "Choose 1 Gif ( with all directions in KRFrameViewer Style ) to add";
                         dialog.CheckFileExists = true;
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value,
+                                (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                             trackBar1.Enabled = false;
                             trackBar1.Value = 0;
                             Bitmap bmp = new Bitmap(dialog.FileName);
-                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                            AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
+                                _currentDir);
                             if (edit != null)
                             {
                                 //Gif Especial Properties
@@ -4424,1603 +4019,20 @@ namespace UoFiddler.Controls.Forms
                                     progressBar1.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
-                                    Bitmap[] bitbmp = new Bitmap[frameCount];
+                                    Bitmap[] bitBmp = new Bitmap[frameCount];
                                     // Return an Image at a certain index 
                                     for (int index = 0; index < frameCount; index++)
                                     {
-                                        bitbmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+                                        bitBmp[index] = new Bitmap(bmp.Width, bmp.Height,
+                                            PixelFormat.Format16bppArgb1555);
                                         bmp.SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bmp;
-                                    }
-                                    //Canvas algorithm
-                                    int top = 0;
-                                    int bot = 0;
-                                    int left = 0;
-                                    int right = 0;
-                                    int regressT = -1;
-                                    int regressB = -1;
-                                    int regressL = -1;
-                                    int regressR = -1;
-                                    bool var = true;
-                                    bool breakOk = false;
-                                    // position 0
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 5 * 0].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 0; fram < frameCount / 5 * 1; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 0].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 5 * 0].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 5 * 0].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 0; fram < frameCount / 5 * 1; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 0].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 5 * 0].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 1) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 5 * 0].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 0; fram < frameCount / 5 * 1; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 0].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 5 * 0].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 5 * 0].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 0; fram < frameCount / 5 * 1; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 0].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 5 * 0].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 1) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+                                        bitBmp[index] = bmp;
                                     }
 
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 1
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 5 * 1].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 1; fram < frameCount / 5 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 1].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
+                                    KrCanvasAlgorithm(bitBmp, frameCount, dimension, customConvert);
 
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
+                                    edit = AnimIdxKrPositions(frameCount, bitBmp, dimension, edit, bmp);
 
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 5 * 1].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 5 * 1].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 1; fram < frameCount / 5 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 1].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 5 * 1].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 2) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 5 * 1].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 1; fram < frameCount / 5 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 1].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 5 * 1].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 5 * 1].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 1; fram < frameCount / 5 * 2; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 1].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 5 * 1].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 2) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 2
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 5 * 2].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 2; fram < frameCount / 5 * 3; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 2].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 2;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 5 * 2].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 5 * 2].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 2; fram < frameCount / 5 * 3; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 2].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 5 * 2].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 2;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 3) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 5 * 2].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 2; fram < frameCount / 5 * 3; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 2].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 2;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 5 * 2].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 5 * 2].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 2; fram < frameCount / 5 * 3; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 2].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 5 * 2].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 2;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 3) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 3
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 5 * 3].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 3; fram < frameCount / 5 * 4; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 3].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 3;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 5 * 3].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 5 * 3].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 3; fram < frameCount / 5 * 4; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 3].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 5 * 3].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 3;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 4) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 5 * 3].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 3; fram < frameCount / 5 * 4; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 3].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 3;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 5 * 3].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 5 * 3].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 3; fram < frameCount / 5 * 4; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 3].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 5 * 3].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 3;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 4) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //Reseta cordenadas
-                                    top = 0;
-                                    bot = 0;
-                                    left = 0;
-                                    right = 0;
-                                    regressT = -1;
-                                    regressB = -1;
-                                    regressL = -1;
-                                    regressR = -1;
-                                    var = true;
-                                    breakOk = false;
-                                    // position 4
-                                    //Top
-                                    for (int yf = 0; yf < bitbmp[frameCount / 5 * 4].Height; yf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 4; fram < frameCount / 5 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 4].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != 0)
-                                                    {
-                                                        regressT++;
-                                                        yf -= 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressT == -1 && yf < bitbmp[0].Height - 9)
-                                                {
-                                                    top += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressT == -1 && yf >= bitbmp[0].Height - 9)
-                                                {
-                                                    top++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressT != -1)
-                                                {
-                                                    top -= regressT;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf < bitbmp[frameCount / 5 * 4].Height - 9)
-                                        {
-                                            yf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Bot
-                                    for (int yf = bitbmp[frameCount / 5 * 4].Height - 1; yf > 0; yf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 4; fram < frameCount / 5 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int xf = 0; xf < bitbmp[frameCount / 5 * 4].Width; xf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (yf != bitbmp[frameCount / 5 * 4].Height - 1)
-                                                    {
-                                                        regressB++;
-                                                        yf += 1;
-                                                        xf = -1;
-                                                        fram = frameCount / 5 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressB == -1 && yf > 9)
-                                                {
-                                                    bot += 10;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressB == -1 && yf <= 9)
-                                                {
-                                                    bot++;
-                                                }
-
-                                                if (var && xf == bitbmp[fram].Width - 1 && fram == (frameCount / 5 * 5) - 1 && regressB != -1)
-                                                {
-                                                    bot -= regressB;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (yf > 9)
-                                        {
-                                            yf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Left
-
-                                    for (int xf = 0; xf < bitbmp[frameCount / 5 * 4].Width; xf++)
-                                    {
-                                        for (int fram = frameCount / 5 * 4; fram < frameCount / 5 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 4].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != 0)
-                                                    {
-                                                        regressL++;
-                                                        xf -= 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressL == -1 && xf < bitbmp[0].Width - 9)
-                                                {
-                                                    left += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressL == -1 && xf >= bitbmp[0].Width - 9)
-                                                {
-                                                    left++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressL != -1)
-                                                {
-                                                    left -= regressL;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf < bitbmp[frameCount / 5 * 4].Width - 9)
-                                        {
-                                            xf += 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    //Right
-                                    for (int xf = bitbmp[frameCount / 5 * 4].Width - 1; xf > 0; xf--)
-                                    {
-                                        for (int fram = frameCount / 5 * 4; fram < frameCount / 5 * 5; fram++)
-                                        {
-                                            bitbmp[fram].SelectActiveFrame(dimension, fram);
-                                            for (int yf = 0; yf < bitbmp[frameCount / 5 * 4].Height; yf++)
-                                            {
-                                                Color pixel = bitbmp[fram].GetPixel(xf, yf);
-                                                if (pixel == _whiteConvert | pixel == customConvert | pixel.A == 0)
-                                                {
-                                                    var = true;
-                                                }
-
-                                                if (pixel != _whiteConvert & pixel != customConvert & pixel.A != 0)
-                                                {
-                                                    var = false;
-                                                    if (xf != bitbmp[frameCount / 5 * 4].Width - 1)
-                                                    {
-                                                        regressR++;
-                                                        xf += 1;
-                                                        yf = -1;
-                                                        fram = frameCount / 5 * 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        breakOk = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressR == -1 && xf > 9)
-                                                {
-                                                    right += 10;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressR == -1 && xf <= 9)
-                                                {
-                                                    right++;
-                                                }
-
-                                                if (var && yf == bitbmp[fram].Height - 1 && fram == (frameCount / 5 * 5) - 1 && regressR != -1)
-                                                {
-                                                    right -= regressR;
-                                                    breakOk = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (breakOk)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (xf > 9)
-                                        {
-                                            xf -= 9; // 1 of for + 9
-                                        }
-
-                                        if (breakOk)
-                                        {
-                                            breakOk = false;
-                                            break;
-                                        }
-                                    }
-                                    for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
-                                    {
-                                        Rectangle rect = new Rectangle(left, top, bitbmp[index].Width - left - right, bitbmp[index].Height - top - bot);
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = bitbmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
-                                    }
-
-                                    //End of Canvas
-                                    //posicao 0
-                                    for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimKr(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 5 * 1) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 1
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimKr(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 5 * 2) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 2
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimKr(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 5 * 3) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 3
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimKr(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                        if (index == (frameCount / 5 * 4) - 1)
-                                        {
-                                            trackBar1.Value++;
-                                        }
-                                    }
-                                    //posicao 4
-                                    edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
-                                    for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
-                                    {
-                                        bitbmp[index].SelectActiveFrame(dimension, index);
-                                        bitbmp[index] = Utils.ConvertBmpAnimKr(bitbmp[index], (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                                        edit.AddFrame(bitbmp[index]);
-                                        TreeNode node = GetNode(_currBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                    }
                                     progressBar1.Value = 0;
                                     progressBar1.Invalidate();
                                     SetPaletteBox();
@@ -6030,15 +4042,1753 @@ namespace UoFiddler.Controls.Forms
                                     Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
+
                             trackBar1.Enabled = true;
                         }
                     }
                 }
-                //Refresh List after Canvas reduction
-                _currDir = trackBar1.Value;
+
+                // Refresh List after Canvas reduction
+                _currentDir = trackBar1.Value;
                 AfterSelectTreeView(null, null);
             }
-            catch (NullReferenceException) { trackBar1.Enabled = true; }
+            catch (NullReferenceException)
+            {
+                // TODO: add logging or fix?
+                trackBar1.Enabled = true;
+            }
+        }
+
+        private AnimIdx AnimIdxKrPositions(int frameCount, Bitmap[] bitBmp, FrameDimension dimension, AnimIdx edit, Bitmap bmp)
+        {
+            // position 0
+            for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 5 * 1) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 1
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 5 * 2) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 2
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 5 * 3) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 3
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+
+                if (index == (frameCount / 5 * 4) - 1)
+                {
+                    trackBar1.Value++;
+                }
+            }
+
+            // position 4
+            edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            bmp.SelectActiveFrame(dimension, 0);
+            edit.GetGifPalette(bmp);
+            for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
+            {
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                    (int) numericUpDown5.Value);
+                edit.AddFrame(bitBmp[index]);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+            }
+
+            return edit;
+        }
+
+        private static void KrCanvasAlgorithm(Bitmap[] bitBmp, int frameCount, FrameDimension dimension, Color customConvert)
+        {
+            //Canvas algorithm
+            int top = 0;
+            int bot = 0;
+            int left = 0;
+            int right = 0;
+            int regressT = -1;
+            int regressB = -1;
+            int regressL = -1;
+            int regressR = -1;
+            bool var = true;
+            bool breakOk = false;
+
+            // position 0
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 5 * 0].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 5 * 0; frameIdx < frameCount / 5 * 1; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 0].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 5 * 0].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 5 * 0].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 5 * 0; frameIdx < frameCount / 5 * 1; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 0].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 5 * 0].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 5 * 0].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 5 * 0; frameIdx < frameCount / 5 * 1; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 0].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 5 * 0].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 5 * 0].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 5 * 0; frameIdx < frameCount / 5 * 1; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 0].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 5 * 0].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 0;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 1) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 1
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 5 * 1].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 5 * 1; frameIdx < frameCount / 5 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 1].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 5 * 1].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 5 * 1].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 5 * 1; frameIdx < frameCount / 5 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 1].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 5 * 1].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 5 * 1].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 5 * 1; frameIdx < frameCount / 5 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 1].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 5 * 1].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 5 * 1].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 5 * 1; frameIdx < frameCount / 5 * 2; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 1].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 5 * 1].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 1;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 2) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 2
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 5 * 2].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 5 * 2; frameIdx < frameCount / 5 * 3; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 2].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 2;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 5 * 2].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 5 * 2].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 5 * 2; frameIdx < frameCount / 5 * 3; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 2].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 5 * 2].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 2;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 5 * 2].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 5 * 2; frameIdx < frameCount / 5 * 3; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 2].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 2;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 5 * 2].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 5 * 2].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 5 * 2; frameIdx < frameCount / 5 * 3; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 2].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 5 * 2].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 2;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 3) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 3
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 5 * 3].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 5 * 3; frameIdx < frameCount / 5 * 4; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 3].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 3;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 5 * 3].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 5 * 3].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 5 * 3; frameIdx < frameCount / 5 * 4; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 3].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 5 * 3].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 3;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 5 * 3].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 5 * 3; frameIdx < frameCount / 5 * 4; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 3].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 3;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 5 * 3].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 5 * 3].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 5 * 3; frameIdx < frameCount / 5 * 4; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 3].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 5 * 3].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 3;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 4) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            // Reset coordinates
+            top = 0;
+            bot = 0;
+            left = 0;
+            right = 0;
+            regressT = -1;
+            regressB = -1;
+            regressL = -1;
+            regressR = -1;
+            var = true;
+            breakOk = false;
+
+            // position 4
+
+            //Top
+            for (int yf = 0; yf < bitBmp[frameCount / 5 * 4].Height; yf++)
+            {
+                for (int frameIdx = frameCount / 5 * 4; frameIdx < frameCount / 5 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 4].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != 0)
+                            {
+                                regressT++;
+                                yf -= 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressT == -1 &&
+                            yf < bitBmp[0].Height - 9)
+                        {
+                            top += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressT == -1 &&
+                            yf >= bitBmp[0].Height - 9)
+                        {
+                            top++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressT != -1)
+                        {
+                            top -= regressT;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf < bitBmp[frameCount / 5 * 4].Height - 9)
+                {
+                    yf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Bot
+            for (int yf = bitBmp[frameCount / 5 * 4].Height - 1; yf > 0; yf--)
+            {
+                for (int frameIdx = frameCount / 5 * 4; frameIdx < frameCount / 5 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int xf = 0; xf < bitBmp[frameCount / 5 * 4].Width; xf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (yf != bitBmp[frameCount / 5 * 4].Height - 1)
+                            {
+                                regressB++;
+                                yf += 1;
+                                xf = -1;
+                                frameIdx = frameCount / 5 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressB == -1 && yf > 9)
+                        {
+                            bot += 10;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressB == -1 &&
+                            yf <= 9)
+                        {
+                            bot++;
+                        }
+
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressB != -1)
+                        {
+                            bot -= regressB;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (yf > 9)
+                {
+                    yf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Left
+            for (int xf = 0; xf < bitBmp[frameCount / 5 * 4].Width; xf++)
+            {
+                for (int frameIdx = frameCount / 5 * 4; frameIdx < frameCount / 5 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 4].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != 0)
+                            {
+                                regressL++;
+                                xf -= 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressL == -1 &&
+                            xf < bitBmp[0].Width - 9)
+                        {
+                            left += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressL == -1 &&
+                            xf >= bitBmp[0].Width - 9)
+                        {
+                            left++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressL != -1)
+                        {
+                            left -= regressL;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf < bitBmp[frameCount / 5 * 4].Width - 9)
+                {
+                    xf += 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            //Right
+            for (int xf = bitBmp[frameCount / 5 * 4].Width - 1; xf > 0; xf--)
+            {
+                for (int frameIdx = frameCount / 5 * 4; frameIdx < frameCount / 5 * 5; frameIdx++)
+                {
+                    bitBmp[frameIdx].SelectActiveFrame(dimension, frameIdx);
+                    for (int yf = 0; yf < bitBmp[frameCount / 5 * 4].Height; yf++)
+                    {
+                        Color pixel = bitBmp[frameIdx].GetPixel(xf, yf);
+                        if (pixel == _whiteConvert || pixel == customConvert || pixel.A == 0)
+                        {
+                            var = true;
+                        }
+
+                        if (pixel != _whiteConvert && pixel != customConvert && pixel.A != 0)
+                        {
+                            var = false;
+                            if (xf != bitBmp[frameCount / 5 * 4].Width - 1)
+                            {
+                                regressR++;
+                                xf += 1;
+                                yf = -1;
+                                frameIdx = frameCount / 5 * 4;
+                            }
+                            else
+                            {
+                                breakOk = true;
+                                break;
+                            }
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressR == -1 &&
+                            xf > 9)
+                        {
+                            right += 10;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressR == -1 &&
+                            xf <= 9)
+                        {
+                            right++;
+                        }
+
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (frameCount / 5 * 5) - 1 && regressR != -1)
+                        {
+                            right -= regressR;
+                            breakOk = true;
+                            break;
+                        }
+                    }
+
+                    if (breakOk)
+                    {
+                        break;
+                    }
+                }
+
+                if (xf > 9)
+                {
+                    xf -= 9; // 1 of for + 9
+                }
+
+                if (breakOk)
+                {
+                    breakOk = false;
+                    break;
+                }
+            }
+
+            for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
+            {
+                Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bot);
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+            }
+
+            //End of Canvas
         }
 
         private void Button3_Click(object sender, EventArgs e)
@@ -6048,37 +5798,37 @@ namespace UoFiddler.Controls.Forms
                 //RGB
                 if (radioButton1.Checked)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(1);
                 }
                 //RBG
                 if (radioButton2.Checked)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(2);
                 }
                 //GRB
                 if (radioButton3.Checked)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(3);
                 }
                 //GBR
                 if (radioButton4.Checked)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(4);
                 }
                 //BGR
                 if (radioButton5.Checked)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(5);
                 }
                 //BRG
                 if (radioButton6.Checked)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(6);
                 }
                 SetPaletteBox();
@@ -6100,7 +5850,7 @@ namespace UoFiddler.Controls.Forms
         {
             for (int x = 0; x < 5; x++)
             {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 edit?.PaletteConversor(2);
                 SetPaletteBox();
                 listView1.Invalidate();
@@ -6121,7 +5871,7 @@ namespace UoFiddler.Controls.Forms
         {
             for (int x = 0; x < 5; x++)
             {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 edit?.PaletteConversor(3);
                 SetPaletteBox();
                 listView1.Invalidate();
@@ -6144,10 +5894,11 @@ namespace UoFiddler.Controls.Forms
             {
                 for (int x = 0; x < 5; x++)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     if (edit != null)
                     {
-                        edit.PaletteConversor(4);
+                        // TODO: why this is called 2 times?
+                        //edit.PaletteConversor(4);
                         edit.PaletteConversor(4);
                     }
                     SetPaletteBox();
@@ -6168,7 +5919,7 @@ namespace UoFiddler.Controls.Forms
             {
                 for (int x = 0; x < 5; x++)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(4);
                     SetPaletteBox();
                     listView1.Invalidate();
@@ -6190,7 +5941,7 @@ namespace UoFiddler.Controls.Forms
         {
             for (int x = 0; x < 5; x++)
             {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 edit?.PaletteConversor(5);
                 SetPaletteBox();
                 listView1.Invalidate();
@@ -6213,10 +5964,11 @@ namespace UoFiddler.Controls.Forms
             {
                 for (int x = 0; x < 5; x++)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     if (edit != null)
                     {
-                        edit.PaletteConversor(6);
+                        // TODO: why this is called 2 times?
+                        //edit.PaletteConversor(6);
                         edit.PaletteConversor(6);
                     }
                     SetPaletteBox();
@@ -6237,7 +5989,7 @@ namespace UoFiddler.Controls.Forms
             {
                 for (int x = 0; x < 5; x++)
                 {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConversor(6);
                     SetPaletteBox();
                     listView1.Invalidate();
@@ -6259,7 +6011,7 @@ namespace UoFiddler.Controls.Forms
         {
             for (int x = 0; x < 5; x++)
             {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currBody, _currAction, _currDir);
+                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 edit?.PaletteReductor((int)numericUpDown6.Value, (int)numericUpDown7.Value, (int)numericUpDown8.Value);
                 SetPaletteBox();
                 listView1.Invalidate();

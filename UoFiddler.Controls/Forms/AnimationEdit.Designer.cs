@@ -720,7 +720,7 @@
             this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
             this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Text = "All directions add with Canvas ( KRframeViewer Color Corrector)";
             this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.ToolTipText = "Add image removing all green colors";
-            this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Click += new System.EventHandler(this.AllDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem_Click);
+            this.allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Click += new System.EventHandler(this.AllDirectionsAddWithCanvasKRFrameEditorColorCorrectorToolStripMenuItem_Click);
             // 
             // addToolStripMenuItem1
             // 
@@ -1006,7 +1006,7 @@
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(43, 20);
             this.numericUpDown2.TabIndex = 5;
-            this.numericUpDown2.ValueChanged += new System.EventHandler(this.ReferencialPointX);
+            this.numericUpDown2.ValueChanged += new System.EventHandler(this.ReferencePointX);
             this.numericUpDown2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown2);
             // 
             // numericUpDownCx
@@ -1070,7 +1070,7 @@
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(43, 20);
             this.numericUpDown1.TabIndex = 4;
-            this.numericUpDown1.ValueChanged += new System.EventHandler(this.ReferencialPointY);
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.ReferencePointY);
             this.numericUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown2);
             // 
             // trackBar2
