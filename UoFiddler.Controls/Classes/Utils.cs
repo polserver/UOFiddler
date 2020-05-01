@@ -60,10 +60,8 @@ namespace UoFiddler.Controls.Classes
                 string convert = text.Replace("0x", "");
                 return int.TryParse(convert, NumberStyles.HexNumber, null, out result);
             }
-            else
-            {
-                return int.TryParse(text, NumberStyles.Integer, null, out result);
-            }
+
+            return int.TryParse(text, NumberStyles.Integer, null, out result);
         }
 
         public static unsafe Bitmap ConvertBmp(Bitmap bmp)
@@ -235,26 +233,27 @@ namespace UoFiddler.Controls.Classes
 
         public static string GetFileExtensionFor(ImageFormat imageFormat)
         {
-            if (imageFormat == ImageFormat.Bmp)
+            if (Equals(imageFormat, ImageFormat.Bmp))
             {
                 return "bmp";
             }
-            else if (imageFormat == ImageFormat.Tiff)
+
+            if (Equals(imageFormat, ImageFormat.Tiff))
             {
                 return "tiff";
             }
-            else if (imageFormat == ImageFormat.Jpeg)
+
+            if (Equals(imageFormat, ImageFormat.Jpeg))
             {
                 return "jpg";
             }
-            else if (imageFormat == ImageFormat.Png)
+
+            if (Equals(imageFormat, ImageFormat.Png))
             {
                 return "png";
             }
-            else
-            {
-                throw new ArgumentException($"Image format {imageFormat} is not supported", nameof(imageFormat));
-            }
+
+            throw new ArgumentException($"Image format {imageFormat} is not supported", nameof(imageFormat));
         }
     }
 }
