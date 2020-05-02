@@ -36,29 +36,97 @@ namespace UoFiddler.Controls.UserControls
             // Monster
             new[]
             {
-                "Walk", "Idle", "Die1", "Die2", "Attack1", "Attack2", "Attack3", "AttackBow", "AttackCrossBow",
-                "AttackThrow", "GetHit", "Pillage", "Stomp", "Cast2", "Cast3", "BlockRight", "BlockLeft", "Idle",
-                "Fidget", "Fly", "TakeOff", "GetHitInAir"
+                "Walk",
+                "Idle",
+                "Die1",
+                "Die2",
+                "Attack1",
+                "Attack2",
+                "Attack3",
+                "AttackBow",
+                "AttackCrossBow",
+                "AttackThrow",
+                "GetHit",
+                "Pillage",
+                "Stomp",
+                "Cast2",
+                "Cast3",
+                "BlockRight",
+                "BlockLeft",
+                "Idle",
+                "Fidget",
+                "Fly",
+                "TakeOff",
+                "GetHitInAir"
             },
             // Sea
-            new[] { "Walk", "Run", "Idle", "Idle", "Fidget", "Attack1", "Attack2", "GetHit", "Die1" },
+            new[]
+            {
+                "Walk",
+                "Run",
+                "Idle",
+                "Idle",
+                "Fidget",
+                "Attack1",
+                "Attack2",
+                "GetHit",
+                "Die1"
+            },
             // Animal
             new[]
             {
-                "Walk", "Run", "Idle", "Eat", "Alert", "Attack1", "Attack2", "GetHit", "Die1", "Idle", "Fidget",
-                "LieDown", "Die2"
+                "Walk",
+                "Run",
+                "Idle",
+                "Eat",
+                "Alert",
+                "Attack1",
+                "Attack2",
+                "GetHit",
+                "Die1",
+                "Idle",
+                "Fidget",
+                "LieDown",
+                "Die2"
             },
             // Human
             new[]
             {
-                "Walk_01", "WalkStaff_01", "Run_01", "RunStaff_01", "Idle_01", "Idle_01", "Fidget_Yawn_Stretch_01",
-                "CombatIdle1H_01", "CombatIdle1H_01", "AttackSlash1H_01", "AttackPierce1H_01", "AttackBash1H_01",
-                "AttackBash2H_01", "AttackSlash2H_01", "AttackPierce2H_01", "CombatAdvance_1H_01", "Spell1",
-                "Spell2", "AttackBow_01", "AttackCrossbow_01", "GetHit_Fr_Hi_01", "Die_Hard_Fwd_01",
-                "Die_Hard_Back_01", "Horse_Walk_01", "Horse_Run_01", "Horse_Idle_01",
-                "Horse_Attack1H_SlashRight_01", "Horse_AttackBow_01", "Horse_AttackCrossbow_01",
-                "Horse_Attack2H_SlashRight_01", "Block_Shield_Hard_01", "Punch_Punch_Jab_01", "Bow_Lesser_01",
-                "Salute_Armed1h_01", "Ingest_Eat_01"
+                "Walk_01",
+                "WalkStaff_01",
+                "Run_01",
+                "RunStaff_01",
+                "Idle_01",
+                "Idle_01",
+                "Fidget_Yawn_Stretch_01",
+                "CombatIdle1H_01",
+                "CombatIdle1H_01",
+                "AttackSlash1H_01",
+                "AttackPierce1H_01",
+                "AttackBash1H_01",
+                "AttackBash2H_01",
+                "AttackSlash2H_01",
+                "AttackPierce2H_01",
+                "CombatAdvance_1H_01",
+                "Spell1",
+                "Spell2",
+                "AttackBow_01",
+                "AttackCrossbow_01",
+                "GetHit_Fr_Hi_01",
+                "Die_Hard_Fwd_01",
+                "Die_Hard_Back_01",
+                "Horse_Walk_01",
+                "Horse_Run_01",
+                "Horse_Idle_01",
+                "Horse_Attack1H_SlashRight_01",
+                "Horse_AttackBow_01",
+                "Horse_AttackCrossbow_01",
+                "Horse_Attack2H_SlashRight_01",
+                "Block_Shield_Hard_01",
+                "Punch_Punch_Jab_01",
+                "Bow_Lesser_01",
+                "Salute_Armed1h_01",
+                "Ingest_Eat_01"
             }
         };
 
@@ -67,7 +135,7 @@ namespace UoFiddler.Controls.UserControls
         private int _currentSelectAction;
         private bool _animate;
         private int _frameIndex;
-        private Bitmap[] _animation;
+        private Bitmap[] _animationList;
         private bool _imageInvalidated = true;
         private Timer _timer;
         private Frame[] _frames;
@@ -258,15 +326,15 @@ namespace UoFiddler.Controls.UserControls
                 _timer = null;
             }
 
-            if (_animation != null)
+            if (_animationList != null)
             {
-                for (int i = 0; i < _animation.Length; ++i)
+                foreach (var animationBmp in _animationList)
                 {
-                    _animation[i]?.Dispose();
+                    animationBmp?.Dispose();
                 }
             }
 
-            _animation = null;
+            _animationList = null;
             _frameIndex = 0;
         }
 
@@ -344,8 +412,8 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_timer != null)
             {
-                return _animation[_frameIndex] != null
-                    ? new Bitmap(_animation[_frameIndex])
+                return _animationList[_frameIndex] != null
+                    ? new Bitmap(_animationList[_frameIndex])
                     : null;
             }
 
@@ -371,11 +439,17 @@ namespace UoFiddler.Controls.UserControls
             GraphicLabel.Text = $"Graphic: {_currentSelect}(0x{_currentSelect:X})";
             HueLabel.Text = $"Hue: {hue + 1}";
             int count = _frames.Length;
-            _animation = new Bitmap[count];
+            _animationList = new Bitmap[count];
 
             for (int i = 0; i < count; ++i)
             {
-                _animation[i] = _frames[i].Bitmap;
+                _animationList[i] = _frames[i].Bitmap;
+            }
+
+            // TODO: avoid division by 0 - needs checking if this is valid logic for count.
+            if (count <= 0)
+            {
+                count = 1;
             }
 
             _timer = new Timer
@@ -386,21 +460,23 @@ namespace UoFiddler.Controls.UserControls
             _timer.Start();
 
             _frameIndex = 0;
+
             LoadListViewFrames(); // Reload FrameTab
 
-            return _animation[0] != null ? new Bitmap(_animation[0]) : null;
+            return _animationList[0] != null ? new Bitmap(_animationList[0]) : null;
         }
 
         private void AnimTick(object sender, EventArgs e)
         {
             ++_frameIndex;
 
-            if (_frameIndex == _animation.Length)
+            if (_frameIndex == _animationList.Length)
             {
                 _frameIndex = 0;
             }
 
             _imageInvalidated = true;
+
             MainPictureBox.Invalidate();
         }
 
@@ -486,108 +562,122 @@ namespace UoFiddler.Controls.UserControls
 
         private bool LoadXml()
         {
-            string path = Options.AppDataPath;
-
-            string fileName = Path.Combine(path, "Animationlist.xml");
+            string fileName = Path.Combine(Options.AppDataPath, "Animationlist.xml");
             if (!File.Exists(fileName))
             {
                 return false;
             }
 
             TreeViewMobs.BeginUpdate();
-            TreeViewMobs.Nodes.Clear();
-
-            XmlDocument dom = new XmlDocument();
-            dom.Load(fileName);
-            XmlElement xMobs = dom["Graphics"];
-            List<TreeNode> nodes = new List<TreeNode>();
-            TreeNode node;
-            TreeNode typeNode;
-            TreeNode rootNode = new TreeNode("Mobs")
+            try
             {
-                Name = "Mobs",
-                Tag = -1
-            };
-            nodes.Add(rootNode);
+                TreeViewMobs.Nodes.Clear();
 
-            foreach (XmlElement xMob in xMobs.SelectNodes("Mob"))
-            {
-                string name = xMob.GetAttribute("name");
-                int value = int.Parse(xMob.GetAttribute("body"));
-                int type = int.Parse(xMob.GetAttribute("type"));
-                node = new TreeNode(name)
+                XmlDocument dom = new XmlDocument();
+                dom.Load(fileName);
+
+                XmlElement xMobs = dom["Graphics"];
+                List<TreeNode> nodes = new List<TreeNode>();
+                TreeNode node;
+                TreeNode typeNode;
+
+                TreeNode rootNode = new TreeNode("Mobs")
                 {
-                    Tag = new[] { value, type },
-                    ToolTipText = Animations.GetFileName(value)
+                    Name = "Mobs",
+                    Tag = -1
                 };
-                rootNode.Nodes.Add(node);
+                nodes.Add(rootNode);
 
-                for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+                foreach (XmlElement xMob in xMobs.SelectNodes("Mob"))
                 {
-                    if (!Animations.IsActionDefined(value, i, 0))
+                    string name = xMob.GetAttribute("name");
+                    int value = int.Parse(xMob.GetAttribute("body"));
+                    int type = int.Parse(xMob.GetAttribute("type"));
+                    node = new TreeNode(name)
                     {
-                        continue;
-                    }
-
-                    typeNode = new TreeNode($"{i} {GetAnimNames[type][i]}")
-                    {
-                        Tag = i
+                        Tag = new[] { value, type },
+                        ToolTipText = Animations.GetFileName(value)
                     };
-                    node.Nodes.Add(typeNode);
-                }
-            }
-            rootNode = new TreeNode("Equipment")
-            {
-                Name = "Equipment",
-                Tag = -2
-            };
-            nodes.Add(rootNode);
+                    rootNode.Nodes.Add(node);
 
-            foreach (XmlElement xMob in xMobs.SelectNodes("Equip"))
-            {
-                string name = xMob.GetAttribute("name");
-                int value = int.Parse(xMob.GetAttribute("body"));
-                int type = int.Parse(xMob.GetAttribute("type"));
-                node = new TreeNode(name)
+                    for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+                    {
+                        if (!Animations.IsActionDefined(value, i, 0))
+                        {
+                            continue;
+                        }
+
+                        typeNode = new TreeNode($"{i} {GetAnimNames[type][i]}")
+                        {
+                            Tag = i
+                        };
+                        node.Nodes.Add(typeNode);
+                    }
+                }
+
+                rootNode = new TreeNode("Equipment")
                 {
-                    Tag = new[] { value, type },
-                    ToolTipText = Animations.GetFileName(value)
+                    Name = "Equipment",
+                    Tag = -2
                 };
-                rootNode.Nodes.Add(node);
+                nodes.Add(rootNode);
 
-                for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+                foreach (XmlElement xMob in xMobs.SelectNodes("Equip"))
                 {
-                    if (!Animations.IsActionDefined(value, i, 0))
+                    string name = xMob.GetAttribute("name");
+                    int value = int.Parse(xMob.GetAttribute("body"));
+                    int type = int.Parse(xMob.GetAttribute("type"));
+                    node = new TreeNode(name)
                     {
-                        continue;
-                    }
-
-                    typeNode = new TreeNode($"{i} {GetAnimNames[type][i]}")
-                    {
-                        Tag = i
+                        Tag = new[] { value, type },
+                        ToolTipText = Animations.GetFileName(value)
                     };
-                    node.Nodes.Add(typeNode);
+                    rootNode.Nodes.Add(node);
+
+                    for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+                    {
+                        if (!Animations.IsActionDefined(value, i, 0))
+                        {
+                            continue;
+                        }
+
+                        typeNode = new TreeNode($"{i} {GetAnimNames[type][i]}")
+                        {
+                            Tag = i
+                        };
+                        node.Nodes.Add(typeNode);
+                    }
                 }
+                TreeViewMobs.Nodes.AddRange(nodes.ToArray());
+                nodes.Clear();
             }
-            TreeViewMobs.Nodes.AddRange(nodes.ToArray());
-            nodes.Clear();
-            TreeViewMobs.EndUpdate();
+            finally
+            {
+                TreeViewMobs.EndUpdate();
+            }
+
             return true;
         }
 
         private void LoadListView()
         {
             listView.BeginUpdate();
-            listView.Clear();
-            foreach (TreeNode node in TreeViewMobs.Nodes[_displayType].Nodes)
+            try
             {
-                ListViewItem item = new ListViewItem($"({((int[])node.Tag)[0]})", 0)
+                listView.Clear();
+                foreach (TreeNode node in TreeViewMobs.Nodes[_displayType].Nodes)
                 {
-                    Tag = ((int[])node.Tag)[0]
-                };
-                listView.Items.Add(item);
+                    ListViewItem item = new ListViewItem($"({((int[])node.Tag)[0]})", 0)
+                    {
+                        Tag = ((int[])node.Tag)[0]
+                    };
+                    listView.Items.Add(item);
+                }
             }
-            listView.EndUpdate();
+            finally
+            {
+                listView.EndUpdate();
+            }
         }
 
         private void SelectChanged_listView(object sender, EventArgs e)
@@ -658,21 +748,27 @@ namespace UoFiddler.Controls.UserControls
         private void LoadListViewFrames()
         {
             listView1.BeginUpdate();
-            listView1.Clear();
-            for (int frame = 0; frame < _animation.Length; ++frame)
+            try
             {
-                ListViewItem item = new ListViewItem(frame.ToString(), 0)
+                listView1.Clear();
+                for (int frame = 0; frame < _animationList.Length; ++frame)
                 {
-                    Tag = frame
-                };
-                listView1.Items.Add(item);
+                    ListViewItem item = new ListViewItem(frame.ToString(), 0)
+                    {
+                        Tag = frame
+                    };
+                    listView1.Items.Add(item);
+                }
             }
-            listView1.EndUpdate();
+            finally
+            {
+                listView1.EndUpdate();
+            }
         }
 
         private void Frames_ListView_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
-            Bitmap bmp = _animation[(int)e.Item.Tag];
+            Bitmap bmp = _animationList[(int)e.Item.Tag];
             int width = bmp.Width;
             int height = bmp.Height;
 
@@ -700,13 +796,18 @@ namespace UoFiddler.Controls.UserControls
         private void OnClick_Sort(object sender, EventArgs e)
         {
             _sortAlpha = !_sortAlpha;
-            TreeViewMobs.BeginUpdate();
-            TreeViewMobs.TreeViewNodeSorter = !_sortAlpha
-                ? new GraphicSorter()
-                : (IComparer)new AlphaSorter();
 
-            TreeViewMobs.Sort();
-            TreeViewMobs.EndUpdate();
+            TreeViewMobs.BeginUpdate();
+            try
+            {
+                TreeViewMobs.TreeViewNodeSorter = !_sortAlpha ? new GraphicSorter() : (IComparer)new AlphaSorter();
+                TreeViewMobs.Sort();
+            }
+            finally
+            {
+                TreeViewMobs.EndUpdate();
+            }
+
             LoadListView();
         }
 
@@ -760,13 +861,17 @@ namespace UoFiddler.Controls.UserControls
         private void RewriteXml(object sender, EventArgs e)
         {
             TreeViewMobs.BeginUpdate();
-            TreeViewMobs.TreeViewNodeSorter = new GraphicSorter();
-            TreeViewMobs.Sort();
-            TreeViewMobs.EndUpdate();
+            try
+            {
+                TreeViewMobs.TreeViewNodeSorter = new GraphicSorter();
+                TreeViewMobs.Sort();
+            }
+            finally
+            {
+                TreeViewMobs.EndUpdate();
+            }
 
-            string filepath = Options.AppDataPath;
-
-            string fileName = Path.Combine(filepath, "Animationlist.xml");
+            string fileName = Path.Combine(Options.AppDataPath, "Animationlist.xml");
 
             XmlDocument dom = new XmlDocument();
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -791,6 +896,7 @@ namespace UoFiddler.Controls.UserControls
 
                 sr.AppendChild(elem);
             }
+
             foreach (TreeNode node in TreeViewMobs.Nodes[1].Nodes)
             {
                 elem = dom.CreateElement("Equip");
@@ -801,7 +907,9 @@ namespace UoFiddler.Controls.UserControls
             }
             dom.AppendChild(sr);
             dom.Save(fileName);
-            MessageBox.Show("XML saved", "Rewrite", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            MessageBox.Show("XML saved", "Rewrite", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
@@ -835,21 +943,18 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}.{fileExtension}");
 
-            Bitmap sourceBitmap = Animate ? _animation[0] : _mainPicture;
+            Bitmap sourceBitmap = Animate ? _animationList[0] : _mainPicture;
             using (Bitmap newBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height))
             {
                 Graphics newGraph = Graphics.FromImage(newBitmap);
                 newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
                 newGraph.DrawImage(sourceBitmap, new Point(0, 0));
                 newGraph.Save();
+
                 newBitmap.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"{what} saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"{what} saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -889,24 +994,21 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}");
 
-            for (int i = 0; i < _animation.Length; ++i)
+            for (int i = 0; i < _animationList.Length; ++i)
             {
-                using (Bitmap newBitmap = new Bitmap(_animation[i].Width, _animation[i].Height))
+                using (Bitmap newBitmap = new Bitmap(_animationList[i].Width, _animationList[i].Height))
                 {
                     Graphics newGraph = Graphics.FromImage(newBitmap);
                     newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_animation[i], new Point(0, 0));
+                    newGraph.DrawImage(_animationList[i], new Point(0, 0));
                     newGraph.Save();
+
                     newBitmap.Save($"{fileName}-{i}.{fileExtension}", imageFormat);
                 }
             }
 
-            MessageBox.Show(
-                $"{what} saved to '{fileName}-X.{fileExtension}'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"{what} saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickExportFrameBmp(object sender, EventArgs e)
@@ -945,7 +1047,7 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}");
 
-            Bitmap bit = _animation[(int)listView1.SelectedItems[0].Tag];
+            Bitmap bit = _animationList[(int)listView1.SelectedItems[0].Tag];
             using (Bitmap newBitmap = new Bitmap(bit.Width, bit.Height))
             {
                 Graphics newGraph = Graphics.FromImage(newBitmap);
@@ -964,7 +1066,7 @@ namespace UoFiddler.Controls.UserControls
         {
             TreeNode tx = x as TreeNode;
             TreeNode ty = y as TreeNode;
-            if (tx.Parent == null)  // dont change Mob and Equipment
+            if (tx.Parent == null) // don't change Mob and Equipment
             {
                 return (int)tx.Tag == -1 ? -1 : 1;
             }
