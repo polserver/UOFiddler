@@ -199,8 +199,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.Controls.Add(this.trackBar1);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(1131, 397);
-            this.splitContainer1.SplitterDistance = 373;
+            this.splitContainer1.Size = new System.Drawing.Size(1141, 425);
+            this.splitContainer1.SplitterDistance = 376;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.TabStop = false;
             // 
@@ -211,7 +211,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 25);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(373, 372);
+            this.treeView1.Size = new System.Drawing.Size(376, 400);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeView);
             // 
@@ -224,18 +224,18 @@
             this.importToolStripMenuItem1,
             this.exportToolStripMenuItem1});
             this.contextMenuStripTreeView.Name = "contextMenuStrip2";
-            this.contextMenuStripTreeView.Size = new System.Drawing.Size(157, 114);
+            this.contextMenuStripTreeView.Size = new System.Drawing.Size(158, 114);
             // 
             // addToolStripMenuItem
             // 
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.addToolStripMenuItem.Text = "Replace";
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemoveAction);
             // 
@@ -245,7 +245,7 @@
             this.asBmpToolStripMenuItem,
             this.asTiffToolStripMenuItem});
             this.extractImagesToolStripMenuItem1.Name = "extractImagesToolStripMenuItem1";
-            this.extractImagesToolStripMenuItem1.Size = new System.Drawing.Size(156, 22);
+            this.extractImagesToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.extractImagesToolStripMenuItem1.Text = "Extract Images..";
             // 
             // asBmpToolStripMenuItem
@@ -269,7 +269,7 @@
             this.importToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fromvdToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(156, 22);
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.importToolStripMenuItem1.Text = "Import..";
             // 
             // fromvdToolStripMenuItem
@@ -284,13 +284,13 @@
             this.exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tovdToolStripMenuItem});
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
-            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(156, 22);
+            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.exportToolStripMenuItem1.Text = "Export..";
             // 
             // tovdToolStripMenuItem
             // 
             this.tovdToolStripMenuItem.Name = "tovdToolStripMenuItem";
-            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
             this.tovdToolStripMenuItem.Text = "To .vd";
             this.tovdToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportToVD);
             // 
@@ -301,7 +301,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(373, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(376, 25);
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -321,7 +321,7 @@
             // progressBar1
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(542, 377);
+            this.progressBar1.Location = new System.Drawing.Point(549, 405);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(100, 17);
             this.progressBar1.TabIndex = 8;
@@ -334,7 +334,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(754, 375);
+            this.tabControl1.Size = new System.Drawing.Size(761, 403);
             this.tabControl1.TabIndex = 7;
             this.tabControl1.TabStop = false;
             // 
@@ -369,7 +369,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(746, 349);
+            this.tabPage1.Size = new System.Drawing.Size(753, 377);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Frame";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -666,7 +666,7 @@
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
-            this.listView1.Size = new System.Drawing.Size(740, 303);
+            this.listView1.Size = new System.Drawing.Size(747, 331);
             this.listView1.TabIndex = 0;
             this.listView1.TileSize = new System.Drawing.Size(81, 110);
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -762,7 +762,7 @@
             this.pictureBox2.MaximumSize = new System.Drawing.Size(0, 20);
             this.pictureBox2.MinimumSize = new System.Drawing.Size(256, 20);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(740, 20);
+            this.pictureBox2.Size = new System.Drawing.Size(747, 20);
             this.pictureBox2.TabIndex = 10;
             this.pictureBox2.TabStop = false;
             // 
@@ -847,7 +847,7 @@
             this.pictureBoxPalette.MaximumSize = new System.Drawing.Size(0, 20);
             this.pictureBoxPalette.MinimumSize = new System.Drawing.Size(256, 20);
             this.pictureBoxPalette.Name = "pictureBoxPalette";
-            this.pictureBoxPalette.Size = new System.Drawing.Size(740, 20);
+            this.pictureBoxPalette.Size = new System.Drawing.Size(747, 20);
             this.pictureBoxPalette.TabIndex = 1;
             this.pictureBoxPalette.TabStop = false;
             // 
@@ -1388,7 +1388,7 @@
             // 
             this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.AutoSize = false;
-            this.trackBar1.Location = new System.Drawing.Point(648, 375);
+            this.trackBar1.Location = new System.Drawing.Point(655, 403);
             this.trackBar1.Maximum = 4;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(94, 19);
@@ -1399,9 +1399,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 375);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 403);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(754, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(761, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -1420,7 +1420,7 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -1428,14 +1428,14 @@
             // 
             this.showOnlyValidToolStripMenuItem.CheckOnClick = true;
             this.showOnlyValidToolStripMenuItem.Name = "showOnlyValidToolStripMenuItem";
-            this.showOnlyValidToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.showOnlyValidToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.showOnlyValidToolStripMenuItem.Text = "Show Only Valid";
             this.showOnlyValidToolStripMenuItem.Click += new System.EventHandler(this.OnClickShowOnlyValid);
             // 
             // exportAllToVDToolStripMenuItem
             // 
             this.exportAllToVDToolStripMenuItem.Name = "exportAllToVDToolStripMenuItem";
-            this.exportAllToVDToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.exportAllToVDToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.exportAllToVDToolStripMenuItem.Text = "Export All Valid To VD";
             this.exportAllToVDToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportAllToVD);
             // 
@@ -1447,7 +1447,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1131, 397);
+            this.ClientSize = new System.Drawing.Size(1141, 425);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "AnimationEdit";

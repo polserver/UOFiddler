@@ -35,7 +35,7 @@
     <Compile Update="Forms\AnimationListNewEntries.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\AnimationlistNewEntries.Designer.cs">
+    <Compile Update="Forms\AnimationListNewEntries.Designer.cs">
       <DependentUpon>AnimationListNewEntries.cs</DependentUpon>
     </Compile>
     <Compile Update="UserControls\AnimData.cs">
@@ -239,7 +239,7 @@
     <Compile Update="UserControls\AnimationList.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\Animationlist.Designer.cs">
+    <Compile Update="UserControls\AnimationList.Designer.cs">
       <DependentUpon>AnimationList.cs</DependentUpon>
     </Compile>
     <Compile Update="Forms\MapMarker.cs">
@@ -345,7 +345,7 @@
     <EmbeddedResource Update="Forms\AnimationEdit.resx">
       <DependentUpon>AnimationEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\AnimationlistNewEntries.resx">
+    <EmbeddedResource Update="Forms\AnimationListNewEntries.resx">
       <DependentUpon>AnimationListNewEntries.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="UserControls\AnimData.resx">
