@@ -367,7 +367,7 @@ namespace UoFiddler.Controls.UserControls
             this.Preload.Name = "Preload";
             this.Preload.Size = new System.Drawing.Size(51, 19);
             this.Preload.Text = "Preload";
-            this.Preload.Click += new System.EventHandler(this.OnClickPreload);
+            this.Preload.Click += new System.EventHandler(this.OnClickPreLoad);
             // 
             // toolStripSeparator3
             // 

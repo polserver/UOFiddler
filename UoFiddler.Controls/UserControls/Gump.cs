@@ -201,8 +201,8 @@ namespace UoFiddler.Controls.UserControls
 
             e.Graphics.DrawString($"0x{i:X} ({i})", Font, fontBrush,
                 new PointF(105,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString($"0x{i:X} ({i})", Font).Height / 2))));
+                    e.Bounds.Y + ((e.Bounds.Height / 2) -
+                                  (e.Graphics.MeasureString($"0x{i:X} ({i})", Font).Height / 2))));
         }
 
         private void ListBox_MeasureItem(object sender, MeasureItemEventArgs e)
@@ -473,12 +473,12 @@ namespace UoFiddler.Controls.UserControls
             ExportGumpImage(i, ImageFormat.Png);
         }
 
-        private void ExportGumpImage(int index, ImageFormat imageFormat)
+        private static void ExportGumpImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"Gump {index}.{fileExtension}");
 
-            using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
+            using (Bitmap bit = new Bitmap(Gumps.GetGump(index)))
             {
                 bit.Save(fileName, imageFormat);
             }
@@ -532,10 +532,10 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string FileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.{fileExtension}");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.{fileExtension}");
                     using (Bitmap bit = new Bitmap(Gumps.GetGump(index)))
                     {
-                        bit?.Save(FileName, imageFormat);
+                        bit.Save(fileName, imageFormat);
                     }
                 }
                 MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
@@ -567,7 +567,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void OnClickPreload(object sender, EventArgs e)
+        private void OnClickPreLoad(object sender, EventArgs e)
         {
             if (PreLoader.IsBusy)
             {
@@ -629,20 +629,17 @@ namespace UoFiddler.Controls.UserControls
             Select(gumpId);
         }
 
-        private GumpSearch _showform;
+        private GumpSearch _showForm;
 
         private void Search_Click(object sender, EventArgs e)
         {
-            if (_showform?.IsDisposed == false)
+            if (_showForm?.IsDisposed == false)
             {
                 return;
             }
 
-            _showform = new GumpSearch
-            {
-                TopMost = true
-            };
-            _showform.Show();
+            _showForm = new GumpSearch {TopMost = true};
+            _showForm.Show();
         }
 
         public static bool Search(int graphic)
