@@ -444,7 +444,7 @@
     <EmbeddedResource Update="Forms\MapDetails.resx">
       <DependentUpon>MapDetails.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\Animationlist.resx">
+    <EmbeddedResource Update="UserControls\AnimationList.resx">
       <DependentUpon>AnimationList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\MapMarker.resx">
