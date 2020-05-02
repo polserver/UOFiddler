@@ -47,14 +47,15 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         {
             // Same for all UOP files
             const long firstTable = 0x200;
-            const int tableSize = 0x3E8;
+            const int tableSize = 0x64;
 
-            // TODO: hmm... something is wrong here? Why this if is here if we have it initialized just line before?
+#pragma warning disable 162
             // Sanity, in case firstTable is customized by you!
-            // if (firstTable < 0x28)
-            // {
-            //     throw new Exception("At least 0x28 bytes are needed for the header.");
-            // }
+            if (firstTable < 0x28)
+            {
+                throw new Exception( "At least 0x28 bytes are needed for the header." );
+            }
+#pragma warning restore 162
 
             using (BinaryReader reader = OpenInput(inFile))
             using (BinaryReader readerIdx = OpenInput(inFileIdx))
@@ -143,7 +144,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     int idxEnd = Math.Min((i + 1) * tableSize, idxEntries.Count);
 
                     // Table header
-                    writer.Write(tableSize);
+                    writer.Write(idxEnd - idxStart);
                     writer.Write((long)0); // next table, filled in later
                     writer.Seek(34 * tableSize, SeekOrigin.Current); // table entries, filled in later
 
@@ -300,7 +301,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                             #region Idx
                             writerIdx.Seek(chunkId * 12, SeekOrigin.Begin);
-                            writerIdx.Write((int)writer.BaseStream.Position); // Position
+                            writerIdx.Write((uint)writer.BaseStream.Position); // Position
 
                             switch (type)
                             {
@@ -310,7 +311,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                         int width = chunkData[0] | chunkData[1] << 8 | chunkData[2] << 16 | chunkData[3] << 24;
                                         int height = chunkData[4] | chunkData[5] << 8 | chunkData[6] << 16 | chunkData[7] << 24;
 
-                                        writerIdx.Write(offsets[i].m_Size - 8);
+                                        writerIdx.Write(chunkData.Length - 8);
                                         writerIdx.Write(width << 16 | height);
                                         dataOffset = 8;
                                         break;
@@ -318,7 +319,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 case FileType.SoundLegacyMul:
                                     {
                                         // Extra contains the ID of this sound file + 1
-                                        writerIdx.Write(offsets[i].m_Size);
+                                        writerIdx.Write(chunkData.Length);
                                         writerIdx.Write(chunkId + 1);
                                         break;
                                     }
@@ -328,7 +329,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                     break;
                                 default:
                                     {
-                                        writerIdx.Write(offsets[i].m_Size); // Size
+                                        writerIdx.Write(chunkData.Length); // Size
                                         writerIdx.Write(0); // Extra
                                         break;
                                     }
@@ -356,18 +357,16 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     return;
                 }
 
+                for (int i = 0; i < used.Length; ++i)
                 {
-                    for (int i = 0; i < used.Length; ++i)
+                    if (used[i])
                     {
-                        if (used[i])
-                        {
-                            continue;
-                        }
-
-                        writerIdx.Seek(i * 12, SeekOrigin.Begin);
-                        writerIdx.Write(-1);
-                        writerIdx.Write((long)0);
+                        continue;
                     }
+
+                    writerIdx.Seek(i * 12, SeekOrigin.Begin);
+                    writerIdx.Write(-1);
+                    writerIdx.Write((long)0);
                 }
             }
         }
@@ -381,7 +380,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
              * MaxID is only used for constructing a lookup table.
              * Decrease to save some possibly unneeded computation.
              */
-            maxId = 0x10000;
+            maxId = 0x7FFFF;
 
             switch (type)
             {
