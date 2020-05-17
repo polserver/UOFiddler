@@ -127,6 +127,7 @@ Instead of moving configuration files to AppData we now copy them if the file do
 Fixed exporting offset.cfg for items alternative design mode.
 Moved update checking to github releases API.
 Added UOP Packer plugin (authors: Feeh / Epila / cbnolok)
+Fixed Sounds tab description labels - indexes were off by 1.
 
 Version 4.8
 AsYlum added multiple selection in items tab using
