@@ -126,9 +126,9 @@ namespace UoFiddler.Controls.Forms
         private void OnLoad(object sender, EventArgs e)
         {
             facingbar.Value = (_facing + 3) & 7;
-            treeView1.BeginUpdate();
-            treeView1.Nodes.Clear();
-            treeView1.TreeViewNodeSorter = new AnimNewListGraphicSorter();
+            tvAnimationList.BeginUpdate();
+            tvAnimationList.Nodes.Clear();
+            tvAnimationList.TreeViewNodeSorter = new AnimNewListGraphicSorter();
 
             MobTypes();
 
@@ -152,7 +152,7 @@ namespace UoFiddler.Controls.Forms
                     ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewID)}"
                 };
                 node.Tag = new[] { entry.NewID, 0 };
-                treeView1.Nodes.Add(node);
+                tvAnimationList.Nodes.Add(node);
                 SetActionType(node, entry.NewID, 0);
             }
 
@@ -181,7 +181,7 @@ namespace UoFiddler.Controls.Forms
                         Tag = entry
                     };
                     node.Tag = new[] { entry, 0 };
-                    treeView1.Nodes.Add(node);
+                    tvAnimationList.Nodes.Add(node);
                     SetActionType(node, entry, 0);
                 }
             }
@@ -211,7 +211,7 @@ namespace UoFiddler.Controls.Forms
                         Tag = entry
                     };
                     node.Tag = new[] { entry, 0 };
-                    treeView1.Nodes.Add(node);
+                    tvAnimationList.Nodes.Add(node);
                     SetActionType(node, entry, 0);
                 }
             }
@@ -241,7 +241,7 @@ namespace UoFiddler.Controls.Forms
                         Tag = entry
                     };
                     node.Tag = new[] { entry, 0 };
-                    treeView1.Nodes.Add(node);
+                    tvAnimationList.Nodes.Add(node);
                     SetActionType(node, entry, 0);
                 }
             }
@@ -271,17 +271,17 @@ namespace UoFiddler.Controls.Forms
                         Tag = entry
                     };
                     node.Tag = new[] { entry, 0 };
-                    treeView1.Nodes.Add(node);
+                    tvAnimationList.Nodes.Add(node);
                     SetActionType(node, entry, 0);
                 }
             }
 
-            treeView1.EndUpdate();
+            tvAnimationList.EndUpdate();
         }
 
         private bool AlreadyFound(int graphic)
         {
-            foreach (TreeNode node in treeView1.Nodes)
+            foreach (TreeNode node in tvAnimationList.Nodes)
             {
                 if (((int[])node.Tag)[0] == graphic)
                 {
@@ -333,7 +333,7 @@ namespace UoFiddler.Controls.Forms
                                     case "EQUIPMENT": type = 3; break;
                                 }
                                 node.Tag = new[] { graphic, type };
-                                treeView1.Nodes.Add(node);
+                                tvAnimationList.Nodes.Add(node);
                                 SetActionType(node, graphic, type);
                             }
                         }
@@ -433,12 +433,12 @@ namespace UoFiddler.Controls.Forms
 
         private void OnChangeType(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (tvAnimationList.SelectedNode == null)
             {
                 return;
             }
 
-            TreeNode node = treeView1.SelectedNode;
+            TreeNode node = tvAnimationList.SelectedNode;
             if (node.Parent != null)
             {
                 node = node.Parent;
@@ -454,19 +454,19 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClickAdd(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (tvAnimationList.SelectedNode == null)
             {
                 return;
             }
 
-            TreeNode node = treeView1.SelectedNode;
+            TreeNode node = tvAnimationList.SelectedNode;
             if (node.Parent != null)
             {
                 node = node.Parent;
             }
 
             _form.AddGraphic(((int[])node.Tag)[0], ((int[])node.Tag)[1], node.Text);
-            treeView1.SelectedNode.Remove();
+            tvAnimationList.SelectedNode.Remove();
         }
     }
 
