@@ -82,7 +82,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     if (Ultima.Sounds.IsValidSound(i - 1, out string name, out bool translated))
                     {
-                        TreeNode node = new TreeNode($"0x{i - 1:X3} {name}")
+                        TreeNode node = new TreeNode($"0x{i:X3} {name}")
                         {
                             Tag = i
                         };
@@ -97,7 +97,7 @@ namespace UoFiddler.Controls.UserControls
                     }
                     else if (showFreeSlotsToolStripMenuItem.Checked)
                     {
-                        TreeNode node = new TreeNode($"0x{i - 1:X3} ")
+                        TreeNode node = new TreeNode($"0x{i:X3} ")
                         {
                             Tag = i,
                             ForeColor = Color.Red
