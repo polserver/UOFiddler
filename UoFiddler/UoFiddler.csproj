@@ -28,7 +28,6 @@
     <None Remove="Resources\UOFiddlerIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
