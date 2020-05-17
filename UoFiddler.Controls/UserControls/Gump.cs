@@ -123,6 +123,7 @@ namespace UoFiddler.Controls.UserControls
                         done = true;
                         break;
                     }
+
                     if (j == index)
                     {
                         done = true;
@@ -271,72 +272,74 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (listBox.SelectedItems.Count == 1)
+            if (listBox.SelectedItems.Count != 1)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
-                {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose image file to replace";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (dialog.FileName.Contains(".bmp"))
-                        {
-                            bmp = Utils.ConvertBmp(bmp);
-                        }
+                return;
+            }
 
-                        int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-                        Gumps.ReplaceGump(i, bmp);
-                        ControlEvents.FireGumpChangeEvent(this, i);
-                        listBox.Invalidate();
-                        ListBox_SelectedIndexChanged(this, EventArgs.Empty);
-                        Options.ChangedUltimaClass["Gumps"] = true;
-                    }
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose image file to replace";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
                 }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+                Gumps.ReplaceGump(i, bmp);
+                ControlEvents.FireGumpChangeEvent(this, i);
+                listBox.Invalidate();
+                ListBox_SelectedIndexChanged(this, EventArgs.Empty);
+                Options.ChangedUltimaClass["Gumps"] = true;
             }
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            DialogResult result =
-                        MessageBox.Show("Are you sure? Will take a while", "Save",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
             {
-                Cursor.Current = Cursors.WaitCursor;
-                Gumps.Save(Options.OutputPath);
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show(
-                    $"Saved to {Options.OutputPath}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
-                Options.ChangedUltimaClass["Gumps"] = false;
+                return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+            Gumps.Save(Options.OutputPath);
+            Cursor.Current = Cursors.Default;
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
+            Options.ChangedUltimaClass["Gumps"] = false;
         }
 
         private void OnClickRemove(object sender, EventArgs e)
         {
             int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-            DialogResult result =
-                        MessageBox.Show($"Are you sure to remove {i}", "Remove",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            DialogResult result = MessageBox.Show($"Are you sure to remove {i}", "Remove", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
             {
-                Gumps.RemoveGump(i);
-                ControlEvents.FireGumpChangeEvent(this, i);
-                if (!_showFreeSlots)
-                {
-                    listBox.Items.RemoveAt(listBox.SelectedIndex);
-                }
-
-                pictureBox.BackgroundImage = null;
-                listBox.Invalidate();
-                Options.ChangedUltimaClass["Gumps"] = true;
+                return;
             }
+
+            Gumps.RemoveGump(i);
+            ControlEvents.FireGumpChangeEvent(this, i);
+            if (!_showFreeSlots)
+            {
+                listBox.Items.RemoveAt(listBox.SelectedIndex);
+            }
+
+            pictureBox.BackgroundImage = null;
+            listBox.Invalidate();
+            Options.ChangedUltimaClass["Gumps"] = true;
         }
 
         private void OnClickFindFree(object sender, EventArgs e)

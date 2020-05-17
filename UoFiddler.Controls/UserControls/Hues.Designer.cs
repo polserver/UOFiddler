@@ -55,9 +55,9 @@ namespace UoFiddler.Controls.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(601, 1);
+            this.vScrollBar.Location = new System.Drawing.Point(608, 1);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 322);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 329);
             this.vScrollBar.TabIndex = 0;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
             // 
@@ -67,13 +67,13 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(1, 1);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(600, 322);
+            this.pictureBox.Size = new System.Drawing.Size(607, 329);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
-            this.pictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseDoubleClick);
-            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
+            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            this.pictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseDoubleClick);
             // 
             // contextMenuStrip1
             // 
@@ -83,12 +83,12 @@ namespace UoFiddler.Controls.UserControls
             this.exportToolStripMenuItem,
             this.importToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(157, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(150, 92);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -97,27 +97,28 @@ namespace UoFiddler.Controls.UserControls
             this.replaceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ReplaceText});
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.replaceToolStripMenuItem.Text = "Replace With..";
             // 
             // ReplaceText
             // 
+            this.ReplaceText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceText.Name = "ReplaceText";
-            this.ReplaceText.Size = new System.Drawing.Size(100, 21);
+            this.ReplaceText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
             this.ReplaceText.TextChanged += new System.EventHandler(this.OnTextChangedReplace);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.exportToolStripMenuItem.Text = "Export..";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.OnExport);
             // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.importToolStripMenuItem.Text = "Import..";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.OnImport);
             // 
@@ -130,7 +131,7 @@ namespace UoFiddler.Controls.UserControls
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "Hues";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(626, 331);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);

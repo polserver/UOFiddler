@@ -25,8 +25,9 @@ namespace UoFiddler.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
-            propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-            TextBoxRoot.Text = Files.RootDir;
+
+            pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
+            tsTbRootPath.Text = Files.RootDir;
         }
 
         private void ReloadPath(object sender, EventArgs e)
@@ -34,10 +35,10 @@ namespace UoFiddler.Forms
             Files.ReLoadDirectory();
             Files.LoadMulPath();
             Files.CheckForNewMapSize();
-            propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-            propertyGrid1.Invalidate();
-            propertyGrid1.Update();
-            TextBoxRoot.Text = Files.RootDir;
+            pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
+            pgPaths.Invalidate();
+            pgPaths.Update();
+            tsTbRootPath.Text = Files.RootDir;
         }
 
         private void OnClickManual(object sender, EventArgs e)
@@ -52,10 +53,10 @@ namespace UoFiddler.Forms
                 }
 
                 Files.SetMulPath(dialog.SelectedPath);
-                propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-                propertyGrid1.Invalidate();
-                propertyGrid1.Update();
-                TextBoxRoot.Text = Files.RootDir;
+                pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
+                pgPaths.Invalidate();
+                pgPaths.Update();
+                tsTbRootPath.Text = Files.RootDir;
                 Files.CheckForNewMapSize();
             }
         }
@@ -67,11 +68,11 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            Files.SetMulPath(TextBoxRoot.Text);
-            propertyGrid1.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-            propertyGrid1.Invalidate();
-            propertyGrid1.Update();
-            TextBoxRoot.Text = Files.RootDir;
+            Files.SetMulPath(tsTbRootPath.Text);
+            pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
+            pgPaths.Invalidate();
+            pgPaths.Update();
+            tsTbRootPath.Text = Files.RootDir;
             Files.CheckForNewMapSize();
         }
     }

@@ -39,75 +39,76 @@ namespace UoFiddler.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.TextBoxRoot = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStrip1.SuspendLayout();
+            this.pgPaths = new System.Windows.Forms.PropertyGrid();
+            this.tsPathSettingsMenu = new System.Windows.Forms.ToolStrip();
+            this.tsBtnReloadPaths = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnSetPathManual = new System.Windows.Forms.ToolStripButton();
+            this.tsTbRootPath = new System.Windows.Forms.ToolStripTextBox();
+            this.tsPathSettingsMenu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // propertyGrid1
+            // pgPaths
             // 
-            this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid1.HelpVisible = false;
-            this.propertyGrid1.Location = new System.Drawing.Point(0, 25);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            this.propertyGrid1.Size = new System.Drawing.Size(346, 241);
-            this.propertyGrid1.TabIndex = 0;
-            this.propertyGrid1.ToolbarVisible = false;
+            this.pgPaths.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgPaths.HelpVisible = false;
+            this.pgPaths.Location = new System.Drawing.Point(0, 25);
+            this.pgPaths.Name = "pgPaths";
+            this.pgPaths.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
+            this.pgPaths.Size = new System.Drawing.Size(524, 276);
+            this.pgPaths.TabIndex = 0;
+            this.pgPaths.ToolbarVisible = false;
             // 
-            // toolStrip1
+            // tsPathSettingsMenu
             // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton2,
-            this.TextBoxRoot});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(346, 25);
-            this.toolStrip1.TabIndex = 1;
-            this.toolStrip1.Text = "toolStrip1";
+            this.tsPathSettingsMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.tsPathSettingsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBtnReloadPaths,
+            this.tsBtnSetPathManual,
+            this.tsTbRootPath});
+            this.tsPathSettingsMenu.Location = new System.Drawing.Point(0, 0);
+            this.tsPathSettingsMenu.Name = "tsPathSettingsMenu";
+            this.tsPathSettingsMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.tsPathSettingsMenu.Size = new System.Drawing.Size(524, 25);
+            this.tsPathSettingsMenu.TabIndex = 1;
+            this.tsPathSettingsMenu.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // tsBtnReloadPaths
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(74, 22);
-            this.toolStripButton1.Text = "Reload Paths";
-            this.toolStripButton1.Click += new System.EventHandler(this.ReloadPath);
+            this.tsBtnReloadPaths.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsBtnReloadPaths.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnReloadPaths.Name = "tsBtnReloadPaths";
+            this.tsBtnReloadPaths.Size = new System.Drawing.Size(79, 22);
+            this.tsBtnReloadPaths.Text = "Reload Paths";
+            this.tsBtnReloadPaths.Click += new System.EventHandler(this.ReloadPath);
             // 
-            // toolStripButton2
+            // tsBtnSetPathManual
             // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(89, 22);
-            this.toolStripButton2.Text = "Set Path Manual";
-            this.toolStripButton2.Click += new System.EventHandler(this.OnClickManual);
+            this.tsBtnSetPathManual.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsBtnSetPathManual.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnSetPathManual.Name = "tsBtnSetPathManual";
+            this.tsBtnSetPathManual.Size = new System.Drawing.Size(97, 22);
+            this.tsBtnSetPathManual.Text = "Set Path Manual";
+            this.tsBtnSetPathManual.Click += new System.EventHandler(this.OnClickManual);
             // 
-            // TextBoxRoot
+            // tsTbRootPath
             // 
-            this.TextBoxRoot.Name = "TextBoxRoot";
-            this.TextBoxRoot.Size = new System.Drawing.Size(150, 21);
-            this.TextBoxRoot.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownDir);
+            this.tsTbRootPath.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.tsTbRootPath.Name = "tsTbRootPath";
+            this.tsTbRootPath.Size = new System.Drawing.Size(150, 25);
+            this.tsTbRootPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownDir);
             // 
             // PathSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(346, 266);
-            this.Controls.Add(this.propertyGrid1);
-            this.Controls.Add(this.toolStrip1);
+            this.ClientSize = new System.Drawing.Size(524, 301);
+            this.Controls.Add(this.pgPaths);
+            this.Controls.Add(this.tsPathSettingsMenu);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "PathSettings";
             this.Text = "Path Settings";
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.tsPathSettingsMenu.ResumeLayout(false);
+            this.tsPathSettingsMenu.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -115,13 +116,11 @@ namespace UoFiddler.Forms
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.ToolStripTextBox TextBoxRoot;
-
-
+        private System.Windows.Forms.PropertyGrid pgPaths;
+        private System.Windows.Forms.ToolStrip tsPathSettingsMenu;
+        private System.Windows.Forms.ToolStripButton tsBtnReloadPaths;
+        private System.Windows.Forms.ToolStripButton tsBtnSetPathManual;
+        private System.Windows.Forms.ToolStripTextBox tsTbRootPath;
 
     }
 }

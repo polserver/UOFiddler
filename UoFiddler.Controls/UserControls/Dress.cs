@@ -31,7 +31,7 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
         }
 
-        private static readonly int[] _draworder ={
+        private static readonly int[] _drawOrder ={
             0x00,// - Background
             0x14,// - Back (Cloak)
             0x05,// - Chest Clothing/Female Chest Armor
@@ -58,7 +58,7 @@ namespace UoFiddler.Controls.UserControls
             0x15 // - BackPack
         };
 
-        private static readonly int[] _draworder2 ={
+        private static readonly int[] _drawOrder2 ={
             0x00,// - Background
             0x05,// - Chest Clothing/Female Chest Armor
             0x04,// - Pants
@@ -85,11 +85,11 @@ namespace UoFiddler.Controls.UserControls
             0x15 // - BackPack
         };
 
-        private readonly Point _drawpoint = new Point(0, 0);
-        private Point _drawpointAni = new Point(100, 100);
+        private readonly Point _drawPoint = new Point(0, 0);
+        private Point _drawPointAni = new Point(100, 100);
 
         private object[] _layers = new object[25];
-        private readonly bool[] _layervisible = new bool[25];
+        private readonly bool[] _layerVisible = new bool[25];
         private bool _female;
         private bool _elve;
         private bool _showPd = true;
@@ -172,7 +172,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 _layers[i] = 0;
                 checkedListBoxWear.Items.Add($"0x{i:X2}", true);
-                _layervisible[i] = true;
+                _layerVisible[i] = true;
             }
             checkedListBoxWear.EndUpdate();
 
@@ -199,10 +199,10 @@ namespace UoFiddler.Controls.UserControls
                 DrawAnimation();
                 return;
             }
-            using (Graphics graphpic = Graphics.FromImage(DressPic.Image))
+            using (Graphics graphPic = Graphics.FromImage(DressPic.Image))
             {
-                graphpic.Clear(Color.Black);
-                if (_layervisible[0])
+                graphPic.Clear(Color.Black);
+                if (_layerVisible[0])
                 {
                     Bitmap background = !_female ? !_elve ? Gumps.GetGump(0xC) : Gumps.GetGump(0xE) : !_elve ? Gumps.GetGump(0xD) : Gumps.GetGump(0xF);
                     if (background != null)
@@ -220,22 +220,22 @@ namespace UoFiddler.Controls.UserControls
                             Ultima.Hues.List[hue].ApplyTo(b, gray);
                             background = b;
                         }
-                        graphpic.DrawImage(background, _drawpoint);
+                        graphPic.DrawImage(background, _drawPoint);
                     }
                 }
-                for (int i = 1; i < _draworder.Length; ++i)
+                for (int i = 1; i < _drawOrder.Length; ++i)
                 {
-                    if ((int)_layers[_draworder[i]] == 0)
+                    if ((int)_layers[_drawOrder[i]] == 0)
                     {
                         continue;
                     }
 
-                    if (!_layervisible[_draworder[i]])
+                    if (!_layerVisible[_drawOrder[i]])
                     {
                         continue;
                     }
 
-                    int ani = TileData.ItemTable[(int)_layers[_draworder[i]]].Animation;
+                    int ani = TileData.ItemTable[(int)_layers[_drawOrder[i]]].Animation;
                     int gump = ani + 50000;
                     int hue = 0;
 
@@ -267,9 +267,9 @@ namespace UoFiddler.Controls.UserControls
 
                     using (Bitmap bmp = new Bitmap(Gumps.GetGump(gump)))
                     {
-                        if (_hues[_draworder[i]] > 0)
+                        if (_hues[_drawOrder[i]] > 0)
                         {
-                            hue = _hues[_draworder[i]];
+                            hue = _hues[_drawOrder[i]];
                         }
 
                         bool onlyHueGrayPixels = (hue & 0x8000) != 0;
@@ -279,7 +279,7 @@ namespace UoFiddler.Controls.UserControls
                             Hue hueObject = Ultima.Hues.List[hue];
                             hueObject.ApplyTo(bmp, onlyHueGrayPixels);
                         }
-                        graphpic.DrawImage(bmp, _drawpoint);
+                        graphPic.DrawImage(bmp, _drawPoint);
                     }
                 }
             }
@@ -298,7 +298,7 @@ namespace UoFiddler.Controls.UserControls
                 graphPic.Clear(Color.WhiteSmoke);
                 int hue = 0;
                 int back = 0;
-                if (_layervisible[0])
+                if (_layerVisible[0])
                 {
                     back = !_female ? !_elve ? 400 : 605 : !_elve ? 401 : 606;
                 }
@@ -318,90 +318,89 @@ namespace UoFiddler.Controls.UserControls
                 {
                     if (_action >= 23 && _action <= 29) //mount animations
                     {
-                        int mountaction;
+                        int mountAction;
                         switch (_action)
                         {
                             case 23:
-                                mountaction = 0;
+                                mountAction = 0;
                                 break;
                             case 24:
-                                mountaction = 1;
+                                mountAction = 1;
                                 break;
                             case 25:
-                                mountaction = 2;
+                                mountAction = 2;
                                 break;
                             default:
-                                mountaction = 5;
+                                mountAction = 5;
                                 break;
                         }
-                        if (Animations.IsActionDefined(_mount, mountaction, _facing))
+                        if (Animations.IsActionDefined(_mount, mountAction, _facing))
                         {
                             hue = 0;
-                            Frame[] mountframe = Animations.GetAnimation(_mount, mountaction, _facing, ref hue, false, false);
-                            if (mountframe.Length > 0 && mountframe[0].Bitmap != null)
+                            Frame[] mountFrame = Animations.GetAnimation(_mount, mountAction, _facing, ref hue, false, false);
+                            if (mountFrame.Length > 0 && mountFrame[0].Bitmap != null)
                             {
-                                draw.X = _drawpointAni.X - mountframe[0].Center.X;
-                                draw.Y = _drawpointAni.Y - mountframe[0].Center.Y - mountframe[0].Bitmap.Height;
-                                graphPic.DrawImage(mountframe[0].Bitmap, draw);
+                                draw.X = _drawPointAni.X - mountFrame[0].Center.X;
+                                draw.Y = _drawPointAni.Y - mountFrame[0].Center.Y - mountFrame[0].Bitmap.Height;
+                                graphPic.DrawImage(mountFrame[0].Bitmap, draw);
                             }
                         }
                     }
                 }
                 if (background != null)
                 {
-                    draw.X = _drawpointAni.X - background[0].Center.X;
-                    draw.Y = _drawpointAni.Y - background[0].Center.Y - background[0].Bitmap.Height;
+                    draw.X = _drawPointAni.X - background[0].Center.X;
+                    draw.Y = _drawPointAni.Y - background[0].Center.Y - background[0].Bitmap.Height;
                     graphPic.DrawImage(background[0].Bitmap, draw);
                 }
-                int[] animorder = _draworder2;
+                int[] animOrder = _drawOrder2;
                 if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
                 {
-                    animorder = _draworder;
+                    animOrder = _drawOrder;
                 }
 
-                for (int i = 1; i < _draworder.Length; ++i)
+                for (int i = 1; i < _drawOrder.Length; ++i)
                 {
-                    if ((int)_layers[animorder[i]] != 0)
+                    if ((int)_layers[animOrder[i]] == 0 || !_layerVisible[animOrder[i]])
                     {
-                        if (_layervisible[animorder[i]])
-                        {
-                            if (TileData.ItemTable == null)
-                            {
-                                break;
-                            }
-
-                            int ani = TileData.ItemTable[(int)_layers[animorder[i]]].Animation;
-                            int gump = ani + 50000;
-                            hue = 0;
-                            ConvertBody(ref ani, ref gump, ref hue);
-                            if (!Animations.IsActionDefined(ani, _action, _facing))
-                            {
-                                continue;
-                            }
-
-                            Frame[] frames;
-                            if (_hues[animorder[i]] > 0)
-                            {
-                                hue = _hues[animorder[i]];
-                                frames = Animations.GetAnimation(ani, _action, _facing, ref hue, true, true);
-                            }
-                            else
-                            {
-                                frames = Animations.GetAnimation(ani, _action, _facing, ref hue, false, true);
-                            }
-
-                            Bitmap bmp = frames[0].Bitmap;
-                            if (bmp == null)
-                            {
-                                continue;
-                            }
-
-                            draw.X = _drawpointAni.X - frames[0].Center.X;
-                            draw.Y = _drawpointAni.Y - frames[0].Center.Y - frames[0].Bitmap.Height;
-
-                            graphPic.DrawImage(bmp, draw);
-                        }
+                        continue;
                     }
+
+                    if (TileData.ItemTable == null)
+                    {
+                        break;
+                    }
+
+                    int ani = TileData.ItemTable[(int)_layers[animOrder[i]]].Animation;
+                    int gump = ani + 50000;
+                    hue = 0;
+                    ConvertBody(ref ani, ref gump, ref hue);
+                    if (!Animations.IsActionDefined(ani, _action, _facing))
+                    {
+                        continue;
+                    }
+
+                    Frame[] frames;
+                    if (_hues[animOrder[i]] > 0)
+                    {
+                        hue = _hues[animOrder[i]];
+                        frames = Animations.GetAnimation(ani, _action, _facing, ref hue, true, true);
+                    }
+                    else
+                    {
+                        frames = Animations.GetAnimation(ani, _action, _facing, ref hue, false, true);
+                    }
+
+                    Bitmap bmp = frames[0].Bitmap;
+                    if (bmp == null)
+                    {
+                        continue;
+                    }
+
+                    draw.X = _drawPointAni.X - frames[0].Center.X;
+                    draw.Y = _drawPointAni.Y - frames[0].Center.Y - frames[0].Bitmap.Height;
+
+                    graphPic.DrawImage(bmp, draw);
                 }
             }
             DressPic.Invalidate();
@@ -409,121 +408,122 @@ namespace UoFiddler.Controls.UserControls
 
         private void DoAnimation()
         {
-            if (_mTimer == null)
+            if (_mTimer != null)
             {
-                int hue = 0;
-                int back = !_female ? !_elve ? 400 : 605 : !_elve ? 401 : 606;
-                Frame[] mobile;
-                if (_hues[0] > 0)
-                {
-                    hue = _hues[0];
-                    mobile = Animations.GetAnimation(back, _action, _facing, ref hue, true, false);
-                }
-                else
-                {
-                    mobile = Animations.GetAnimation(back, _action, _facing, ref hue, false, false);
-                }
+                return;
+            }
 
-                Point draw = new Point();
+            int hue = 0;
+            int back = !_female ? !_elve ? 400 : 605 : !_elve ? 401 : 606;
+            Frame[] mobile;
+            if (_hues[0] > 0)
+            {
+                hue = _hues[0];
+                mobile = Animations.GetAnimation(back, _action, _facing, ref hue, true, false);
+            }
+            else
+            {
+                mobile = Animations.GetAnimation(back, _action, _facing, ref hue, false, false);
+            }
 
-                int count = mobile.Length;
-                _mAnimation = new Bitmap[count];
-                int[] animorder = _draworder2;
-                if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
-                {
-                    animorder = _draworder;
-                }
+            Point draw = new Point();
 
-                for (int i = 0; i < count; ++i)
+            int count = mobile.Length;
+            _mAnimation = new Bitmap[count];
+            int[] animorder = _drawOrder2;
+            if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
+            {
+                animorder = _drawOrder;
+            }
+
+            for (int i = 0; i < count; ++i)
+            {
+                _mAnimation[i] = new Bitmap(DressPic.Width, DressPic.Height);
+                using (Graphics graph = Graphics.FromImage(_mAnimation[i]))
                 {
-                    _mAnimation[i] = new Bitmap(DressPic.Width, DressPic.Height);
-                    using (Graphics graph = Graphics.FromImage(_mAnimation[i]))
+                    graph.Clear(Color.WhiteSmoke);
+                    if (_mount != 0)
                     {
-                        graph.Clear(Color.WhiteSmoke);
-                        if (_mount != 0)
+                        if (_action >= 23 && _action <= 29) //mount animations
                         {
-                            if (_action >= 23 && _action <= 29) //mount animations
+                            int mountAction;
+                            switch (_action)
                             {
-                                int mountaction;
-                                switch (_action)
-                                {
-                                    case 23:
-                                        mountaction = 0;
-                                        break;
-                                    case 24:
-                                        mountaction = 1;
-                                        break;
-                                    case 25:
-                                        mountaction = 2;
-                                        break;
-                                    default:
-                                        mountaction = 5;
-                                        break;
-                                }
-                                if (Animations.IsActionDefined(_mount, mountaction, _facing))
-                                {
-                                    hue = 0;
-                                    Frame[] mountframe = Animations.GetAnimation(_mount, mountaction, _facing, ref hue, false, false);
-                                    if (mountframe.Length > i && mountframe[i].Bitmap != null)
-                                    {
-                                        draw.X = _drawpointAni.X - mountframe[i].Center.X;
-                                        draw.Y = _drawpointAni.Y - mountframe[i].Center.Y - mountframe[i].Bitmap.Height;
-                                        graph.DrawImage(mountframe[i].Bitmap, draw);
-                                    }
-                                }
+                                case 23:
+                                    mountAction = 0;
+                                    break;
+                                case 24:
+                                    mountAction = 1;
+                                    break;
+                                case 25:
+                                    mountAction = 2;
+                                    break;
+                                default:
+                                    mountAction = 5;
+                                    break;
                             }
-                        }
-                        draw.X = _drawpointAni.X - mobile[i].Center.X;
-                        draw.Y = _drawpointAni.Y - mobile[i].Center.Y - mobile[i].Bitmap.Height;
-                        graph.DrawImage(mobile[i].Bitmap, draw);
-                        for (int j = 1; j < animorder.Length; ++j)
-                        {
-                            if ((int)_layers[animorder[j]] != 0)
+                            if (Animations.IsActionDefined(_mount, mountAction, _facing))
                             {
-                                if (_layervisible[animorder[j]])
+                                hue = 0;
+                                Frame[] mountFrame = Animations.GetAnimation(_mount, mountAction, _facing, ref hue, false, false);
+                                if (mountFrame.Length > i && mountFrame[i].Bitmap != null)
                                 {
-                                    int ani = TileData.ItemTable[(int)_layers[animorder[j]]].Animation;
-                                    int gump = ani + 50000;
-                                    hue = 0;
-                                    ConvertBody(ref ani, ref gump, ref hue);
-                                    if (!Animations.IsActionDefined(ani, _action, _facing))
-                                    {
-                                        continue;
-                                    }
-
-                                    Frame[] frames;
-                                    if (_hues[animorder[j]] > 0)
-                                    {
-                                        hue = _hues[animorder[j]];
-                                        frames = Animations.GetAnimation(ani, _action, _facing, ref hue, true, false);
-                                    }
-                                    else
-                                    {
-                                        frames = Animations.GetAnimation(ani, _action, _facing, ref hue, false, false);
-                                    }
-
-                                    if (frames.Length < i || frames[i].Bitmap == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    draw.X = _drawpointAni.X - frames[i].Center.X;
-                                    draw.Y = _drawpointAni.Y - frames[i].Center.Y - frames[i].Bitmap.Height;
-
-                                    graph.DrawImage(frames[i].Bitmap, draw);
+                                    draw.X = _drawPointAni.X - mountFrame[i].Center.X;
+                                    draw.Y = _drawPointAni.Y - mountFrame[i].Center.Y - mountFrame[i].Bitmap.Height;
+                                    graph.DrawImage(mountFrame[i].Bitmap, draw);
                                 }
                             }
                         }
                     }
+                    draw.X = _drawPointAni.X - mobile[i].Center.X;
+                    draw.Y = _drawPointAni.Y - mobile[i].Center.Y - mobile[i].Bitmap.Height;
+                    graph.DrawImage(mobile[i].Bitmap, draw);
+                    for (int j = 1; j < animorder.Length; ++j)
+                    {
+                        if ((int)_layers[animorder[j]] == 0 || !_layerVisible[animorder[j]])
+                        {
+                            continue;
+                        }
+
+                        int ani = TileData.ItemTable[(int)_layers[animorder[j]]].Animation;
+                        int gump = ani + 50000;
+                        hue = 0;
+                        ConvertBody(ref ani, ref gump, ref hue);
+                        if (!Animations.IsActionDefined(ani, _action, _facing))
+                        {
+                            continue;
+                        }
+
+                        Frame[] frames;
+                        if (_hues[animorder[j]] > 0)
+                        {
+                            hue = _hues[animorder[j]];
+                            frames = Animations.GetAnimation(ani, _action, _facing, ref hue, true, false);
+                        }
+                        else
+                        {
+                            frames = Animations.GetAnimation(ani, _action, _facing, ref hue, false, false);
+                        }
+
+                        if (frames.Length < i || frames[i].Bitmap == null)
+                        {
+                            continue;
+                        }
+
+                        draw.X = _drawPointAni.X - frames[i].Center.X;
+                        draw.Y = _drawPointAni.Y - frames[i].Center.Y - frames[i].Bitmap.Height;
+
+                        graph.DrawImage(frames[i].Bitmap, draw);
+                    }
                 }
-                _mFrameIndex = 0;
-                _mTimer = new Timer
-                {
-                    Interval = 150// 1000 / count;
-                };
-                _mTimer.Tick += AnimTick;
-                _mTimer.Start();
             }
+            _mFrameIndex = 0;
+            _mTimer = new Timer
+            {
+                Interval = 150// 1000 / count;
+            };
+            _mTimer.Tick += AnimTick;
+            _mTimer.Start();
         }
 
         private void AnimTick(object sender, EventArgs e)
@@ -542,7 +542,7 @@ namespace UoFiddler.Controls.UserControls
 
             using (Graphics graph = Graphics.FromImage(DressPic.Image))
             {
-                graph.DrawImage(_mAnimation[_mFrameIndex], _drawpoint);
+                graph.DrawImage(_mAnimation[_mFrameIndex], _drawPoint);
             }
             DressPic.Invalidate();
         }
@@ -551,7 +551,7 @@ namespace UoFiddler.Controls.UserControls
         {
             int ani = TileData.ItemTable[(int)e.Node.Tag].Animation;
             int gump = ani + 50000;
-            int gumporig = gump;
+            int gumpOrig = gump;
             int hue = 0;
             Animations.Translate(ref ani);
             ConvertBody(ref ani, ref gump, ref hue);
@@ -606,12 +606,12 @@ namespace UoFiddler.Controls.UserControls
             TextBox.Clear();
             TextBox.AppendText(
                 $"Objtype: 0x{(int)e.Node.Tag:X4}  Layer: 0x{TileData.ItemTable[(int)e.Node.Tag].Quality:X2}\n");
-            TextBox.AppendText($"GumpID: 0x{gump:X4} (0x{gumporig:X4}) Hue: {hue + 1}\n");
+            TextBox.AppendText($"GumpID: 0x{gump:X4} (0x{gumpOrig:X4}) Hue: {hue + 1}\n");
             TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[(int)e.Node.Tag].Animation:X4})\n");
             TextBox.AppendText(
                 $"ValidGump: {Gumps.IsValidIndex(gump)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}\n");
             TextBox.AppendText(
-                $"ValidLayer: {Array.IndexOf(_draworder, TileData.ItemTable[(int)e.Node.Tag].Quality) != -1}");
+                $"ValidLayer: {Array.IndexOf(_drawOrder, TileData.ItemTable[(int)e.Node.Tag].Quality) != -1}");
         }
 
         private void OnClick_Animate(object sender, EventArgs e)
@@ -642,7 +642,7 @@ namespace UoFiddler.Controls.UserControls
 
             int objType = (int)treeViewItems.SelectedNode.Tag;
             int layer = TileData.ItemTable[objType].Quality;
-            if (Array.IndexOf(_draworder, layer) == -1)
+            if (Array.IndexOf(_drawOrder, layer) == -1)
             {
                 return;
             }
@@ -680,11 +680,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void CheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            if (_loaded)
+            if (!_loaded)
             {
-                _layervisible[e.Index] = e.NewValue == CheckState.Checked;
-                RefreshDrawing();
+                return;
             }
+
+            _layerVisible[e.Index] = e.NewValue == CheckState.Checked;
+            RefreshDrawing();
         }
 
         private void CheckedListBox_Change(object sender, EventArgs e)
@@ -698,36 +700,36 @@ namespace UoFiddler.Controls.UserControls
             int layer = checkedListBoxWear.SelectedIndex;
             int objtype = (int)_layers[layer];
             int ani = TileData.ItemTable[objtype].Animation;
-            int gumpidorig = ani + 50000;
-            int gumpid = gumpidorig;
+            int gumpIdOrig = ani + 50000;
+            int gumpId = gumpIdOrig;
             int hue = 0;
             Animations.Translate(ref ani);
-            ConvertBody(ref ani, ref gumpid, ref hue);
+            ConvertBody(ref ani, ref gumpId, ref hue);
             if (_female)
             {
-                gumpid += 10000;
-                if (!Gumps.IsValidIndex(gumpid))  // female gump.def entry?
+                gumpId += 10000;
+                if (!Gumps.IsValidIndex(gumpId))  // female gump.def entry?
                 {
-                    ConvertGump(ref gumpid, ref hue);
+                    ConvertGump(ref gumpId, ref hue);
                 }
 
-                if (!Gumps.IsValidIndex(gumpid)) // nope so male gump
+                if (!Gumps.IsValidIndex(gumpId)) // nope so male gump
                 {
-                    gumpid -= 10000;
+                    gumpId -= 10000;
                 }
             }
 
-            if (!Gumps.IsValidIndex(gumpid)) // male (or invalid female)
+            if (!Gumps.IsValidIndex(gumpId)) // male (or invalid female)
             {
-                ConvertGump(ref gumpid, ref hue);
+                ConvertGump(ref gumpId, ref hue);
             }
 
             TextBox.Clear();
             TextBox.AppendText($"Objtype: 0x{objtype:X4}  Layer: 0x{layer:X2}\n");
-            TextBox.AppendText($"GumpID: 0x{gumpid:X4} (0x{gumpidorig:X4}) Hue: {hue}\n");
+            TextBox.AppendText($"GumpID: 0x{gumpId:X4} (0x{gumpIdOrig:X4}) Hue: {hue}\n");
             TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[objtype].Animation:X4})\n");
             TextBox.AppendText(
-                $"ValidGump: {Gumps.IsValidIndex(gumpid)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}");
+                $"ValidGump: {Gumps.IsValidIndex(gumpId)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}");
         }
 
         private void OnChangeSort(object sender, EventArgs e)
@@ -789,7 +791,7 @@ namespace UoFiddler.Controls.UserControls
                         Tag = i
                     };
 
-                    if (Array.IndexOf(_draworder, TileData.ItemTable[i].Quality) == -1)
+                    if (Array.IndexOf(_drawOrder, TileData.ItemTable[i].Quality) == -1)
                     {
                         node.ForeColor = Color.DarkRed;
                     }
@@ -858,7 +860,7 @@ namespace UoFiddler.Controls.UserControls
             RefreshDrawing();
         }
 
-        private void OnResizepictureDress(object sender, EventArgs e)
+        private void OnResizePictureDress(object sender, EventArgs e)
         {
             if (treeViewItems.SelectedNode == null)
             {
@@ -872,7 +874,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnResizeDressPic(object sender, EventArgs e)
         {
             DressPic.Image = new Bitmap(DressPic.Width, DressPic.Height);
-            if (_loaded) // inital event
+            if (_loaded) // initial event
             {
                 RefreshDrawing();
             }
@@ -982,11 +984,13 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (Utils.ConvertStringToInt(toolStripTextBox1.Text, out int index, 0, Ultima.Hues.List.Length))
+            if (!Utils.ConvertStringToInt(toolStripTextBox1.Text, out int index, 0, Ultima.Hues.List.Length))
             {
-                _hues[checkedListBoxWear.SelectedIndex] = index;
-                RefreshDrawing();
+                return;
             }
+
+            _hues[checkedListBoxWear.SelectedIndex] = index;
+            RefreshDrawing();
         }
 
         private void OnClickExtractImageBmp(object sender, EventArgs e)
@@ -1018,12 +1022,8 @@ namespace UoFiddler.Controls.UserControls
             {
                 string fileName = Path.Combine(outputPath, $"Dress PD.{fileExtension}");
                 DressPic.Image.Save(fileName, imageFormat);
-                MessageBox.Show(
-                    $"Paperdoll saved to {fileName}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"Paperdoll saved to {fileName}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -1037,12 +1037,8 @@ namespace UoFiddler.Controls.UserControls
                     DressPic.Image.Save(fileName, imageFormat);
                 }
 
-                MessageBox.Show(
-                    $"InGame saved to {fileName}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"InGame saved to {fileName}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -1078,12 +1074,8 @@ namespace UoFiddler.Controls.UserControls
                 _mAnimation[i].Save(Path.Combine(path, $"{fileName}-{i}.{fileExtension}"), imageFormat);
             }
 
-            MessageBox.Show(
-                $"InGame Anim saved to '{fileName}-X.{fileExtension}'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"InGame Anim saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickBuildAnimationList(object sender, EventArgs e)
@@ -1097,6 +1089,7 @@ namespace UoFiddler.Controls.UserControls
                     FirstGump = i + 50000,
                     FirstGumpFemale = i + 60000
                 };
+
                 if (EquipTable.HumanMale.Contains(i))
                 {
                     animEntries[i].EquipTable[400] = (EquipTableEntry)EquipTable.HumanMale[i];
@@ -1126,6 +1119,7 @@ namespace UoFiddler.Controls.UserControls
                         animEntries[i].EquipTable[itr.Key] = (EquipTableEntry)itr.Value;
                     }
                 }
+
                 itr = animEntries[i].EquipTable.GetEnumerator();
                 if (animEntries[i].EquipTable.Count == 0)
                 {
@@ -1145,7 +1139,9 @@ namespace UoFiddler.Controls.UserControls
                         }
                     }
                 }
+
                 itr.Reset();
+
                 if (animEntries[i].EquipTable.Count == 0)
                 {
                     int tmp = i;
@@ -1337,11 +1333,7 @@ namespace UoFiddler.Controls.UserControls
                 tex.WriteLine("</table> </body> </html>");
             }
 
-            MessageBox.Show(
-                $"Report saved to '{fileName}'",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Report saved to '{fileName}'", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
