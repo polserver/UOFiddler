@@ -24,11 +24,21 @@ namespace UoFiddler.Controls.UserControls
 {
     public partial class Sounds : UserControl
     {
+        private System.Media.SoundPlayer _sp;
+        private readonly Timer _spTimer;
+        private int _spTimerMax;
+        private DateTime _spTimerStart;
+
+        private bool _loaded;
+        public static Sounds RefMarker { get; private set; }
+
         public Sounds()
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             RefMarker = this;
+
             _spTimer = new Timer();
             _spTimer.Tick += OnSpTimerTick;
 
@@ -36,15 +46,6 @@ namespace UoFiddler.Controls.UserControls
             treeView.BeforeLabelEdit += TreeView_BeforeLabelEdit;
             treeView.AfterLabelEdit += TreeViewOnAfterLabelEdit;
         }
-
-        public static Sounds RefMarker { get; private set; }
-
-        private System.Media.SoundPlayer _sp;
-        private readonly Timer _spTimer;
-        private int _spTimerMax;
-        private DateTime _spTimerStart;
-
-        private bool _loaded;
 
         /// <summary>
         /// ReLoads if loaded
@@ -72,38 +73,47 @@ namespace UoFiddler.Controls.UserControls
             }
 
             treeView.BeginUpdate();
-            treeView.Nodes.Clear();
-
-            var cache = new List<TreeNode>();
-            for (int i = 1; i <= 0xFFF; ++i)
+            try
             {
-                if (Ultima.Sounds.IsValidSound(i - 1, out string name, out bool translated))
+                treeView.Nodes.Clear();
+
+                var cache = new List<TreeNode>();
+                for (int i = 1; i <= 0xFFF; ++i)
                 {
-                    TreeNode node = new TreeNode($"0x{i - 1:X3} {name}")
+                    if (Ultima.Sounds.IsValidSound(i - 1, out string name, out bool translated))
                     {
-                        Tag = i
-                    };
-                    if (translated)
-                    {
-                        node.ForeColor = Color.Blue;
-                        node.NodeFont = new Font(Font, FontStyle.Underline);
+                        TreeNode node = new TreeNode($"0x{i - 1:X3} {name}")
+                        {
+                            Tag = i
+                        };
+
+                        if (translated)
+                        {
+                            node.ForeColor = Color.Blue;
+                            node.NodeFont = new Font(Font, FontStyle.Underline);
+                        }
+
+                        cache.Add(node);
                     }
-
-                    cache.Add(node);
-                }
-                else if (showFreeSlotsToolStripMenuItem.Checked)
-                {
-                    TreeNode node = new TreeNode($"0x{i - 1:X3} ")
+                    else if (showFreeSlotsToolStripMenuItem.Checked)
                     {
-                        Tag = i,
-                        ForeColor = Color.Red
-                    };
-                    cache.Add(node);
-                }
-            }
-            treeView.Nodes.AddRange(cache.ToArray());
+                        TreeNode node = new TreeNode($"0x{i - 1:X3} ")
+                        {
+                            Tag = i,
+                            ForeColor = Color.Red
+                        };
 
-            treeView.EndUpdate();
+                        cache.Add(node);
+                    }
+                }
+
+                treeView.Nodes.AddRange(cache.ToArray());
+            }
+            finally
+            {
+                treeView.EndUpdate();
+            }
+
             if (treeView.Nodes.Count > 0)
             {
                 treeView.SelectedNode = treeView.Nodes[0];
@@ -188,15 +198,15 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            UOSound s = Ultima.Sounds.GetSound(id);
-            if (s == null)
+            UOSound sound = Ultima.Sounds.GetSound(id);
+            if (sound == null)
             {
                 return;
             }
 
-            using (MemoryStream m = new MemoryStream(s.buffer))
+            using (MemoryStream mStream = new MemoryStream(sound.buffer))
             {
-                _sp.Stream = m;
+                _sp.Stream = mStream;
                 _sp.Play();
 
                 playing.Value = 0;
@@ -220,13 +230,18 @@ namespace UoFiddler.Controls.UserControls
                 replaceToolStripMenuItem.Text = "Insert/Replace";
             }
 
-            double length = Ultima.Sounds.GetSoundLength((int)treeView.SelectedNode.Tag - 1);
-            seconds.Text = length > 0 ? $"{length:f}s" : "Empty Slot";
-            bool isValidSound = Ultima.Sounds.IsValidSound((int)treeView.SelectedNode.Tag - 1, out _, out _);
+            if (treeView.SelectedNode != null)
+            {
+                double length = Ultima.Sounds.GetSoundLength((int)treeView.SelectedNode.Tag - 1);
+                seconds.Text = length > 0 ? $"{length:f}s" : "Empty Slot";
+            }
+
+            bool isValidSound = treeView.SelectedNode != null && Ultima.Sounds.IsValidSound((int)treeView.SelectedNode.Tag - 1, out _, out _);
 
             playSoundToolStripMenuItem.Enabled = isValidSound;
             extractSoundToolStripMenuItem.Enabled = isValidSound;
             removeSoundToolStripMenuItem.Enabled = isValidSound;
+
             replaceToolStripMenuItem.Enabled = true;
             replaceToolStripMenuItem.Text = isValidSound ? "Replace" : "Insert";
         }

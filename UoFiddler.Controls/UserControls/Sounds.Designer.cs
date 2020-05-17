@@ -41,12 +41,12 @@ namespace UoFiddler.Controls.UserControls
         {
             this.components = new System.ComponentModel.Container();
             this.treeView = new System.Windows.Forms.TreeView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmStripSounds = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.nameSortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.playSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,20 +58,20 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.itemExtractSoundlist = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusStripSounds = new System.Windows.Forms.StatusStrip();
             this.seconds = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusSpacer = new System.Windows.Forms.ToolStripStatusLabel();
             this.playing = new System.Windows.Forms.ToolStripProgressBar();
             this.stopButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.contextMenuStrip1.SuspendLayout();
+            this.cmStripSounds.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
+            this.statusStripSounds.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeView
             // 
-            this.treeView.ContextMenuStrip = this.contextMenuStrip1;
+            this.treeView.ContextMenuStrip = this.cmStripSounds;
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(3, 28);
@@ -82,41 +82,41 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClick);
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TreeView_KeyDown);
             // 
-            // contextMenuStrip1
+            // cmStripSounds
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmStripSounds.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.nameSortToolStripMenuItem,
-            this.toolStripSeparator1,
+            this.tsSeparator1,
             this.showFreeSlotsToolStripMenuItem,
             this.nextFreeSlotToolStripMenuItem,
-            this.toolStripSeparator2,
+            this.tsSeparator2,
             this.playSoundToolStripMenuItem,
             this.replaceToolStripMenuItem,
             this.extractSoundToolStripMenuItem,
             this.removeSoundToolStripMenuItem,
             this.toolStripMenuItem1,
             this.itemSave});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(169, 198);
+            this.cmStripSounds.Name = "contextMenuStrip1";
+            this.cmStripSounds.Size = new System.Drawing.Size(181, 220);
             // 
             // nameSortToolStripMenuItem
             // 
             this.nameSortToolStripMenuItem.CheckOnClick = true;
             this.nameSortToolStripMenuItem.Name = "nameSortToolStripMenuItem";
-            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.nameSortToolStripMenuItem.Text = "Name Sort";
             this.nameSortToolStripMenuItem.Click += new System.EventHandler(this.OnChangeSort);
             // 
-            // toolStripSeparator1
+            // tsSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(165, 6);
+            this.tsSeparator1.Name = "tsSeparator1";
+            this.tsSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // showFreeSlotsToolStripMenuItem
             // 
             this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
             this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
-            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showFreeSlotsToolStripMenuItem.Text = "Show free slots";
             this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsClick);
             // 
@@ -124,21 +124,21 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.nextFreeSlotToolStripMenuItem.Enabled = false;
             this.nextFreeSlotToolStripMenuItem.Name = "nextFreeSlotToolStripMenuItem";
-            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.nextFreeSlotToolStripMenuItem.Text = "Find next free slot";
             this.nextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.NextFreeSlotToolStripMenuItem_Click);
             // 
-            // toolStripSeparator2
+            // tsSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(165, 6);
+            this.tsSeparator2.Name = "tsSeparator2";
+            this.tsSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // playSoundToolStripMenuItem
             // 
             this.playSoundToolStripMenuItem.Enabled = false;
             this.playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playSoundToolStripMenuItem.Name = "playSoundToolStripMenuItem";
-            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.playSoundToolStripMenuItem.Text = "Play";
             this.playSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickPlay);
             // 
@@ -146,7 +146,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.replaceToolStripMenuItem.Enabled = false;
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.replaceToolStripMenuItem.Text = "Insert/Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
@@ -154,7 +154,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.extractSoundToolStripMenuItem.Enabled = false;
             this.extractSoundToolStripMenuItem.Name = "extractSoundToolStripMenuItem";
-            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.extractSoundToolStripMenuItem.Text = "Extract";
             this.extractSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtract);
             // 
@@ -162,19 +162,19 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.removeSoundToolStripMenuItem.Enabled = false;
             this.removeSoundToolStripMenuItem.Name = "removeSoundToolStripMenuItem";
-            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeSoundToolStripMenuItem.Text = "Remove";
             this.removeSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // itemSave
             // 
             this.itemSave.Name = "itemSave";
-            this.itemSave.Size = new System.Drawing.Size(168, 22);
+            this.itemSave.Size = new System.Drawing.Size(180, 22);
             this.itemSave.Text = "Save";
             this.itemSave.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -189,7 +189,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(619, 25);
             this.toolStrip1.TabIndex = 2;
-            this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip1.Text = "tsSoundsMenu";
             // 
             // toolStripButton2
             // 
@@ -213,7 +213,7 @@ namespace UoFiddler.Controls.UserControls
             // itemExtractSoundlist
             // 
             this.itemExtractSoundlist.Name = "itemExtractSoundlist";
-            this.itemExtractSoundlist.Size = new System.Drawing.Size(162, 22);
+            this.itemExtractSoundlist.Size = new System.Drawing.Size(180, 22);
             this.itemExtractSoundlist.Text = "Extract Soundlist";
             this.itemExtractSoundlist.Click += new System.EventHandler(this.OnClickExtractSoundList);
             // 
@@ -222,7 +222,7 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.treeView, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.statusStrip1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.statusStripSounds, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.toolStrip1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -235,19 +235,19 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel1.Size = new System.Drawing.Size(619, 324);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
-            // statusStrip1
+            // statusStripSounds
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusStripSounds.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.seconds,
             this.toolStripStatusSpacer,
             this.playing,
             this.stopButton});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 304);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(619, 20);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStripSounds.Location = new System.Drawing.Point(0, 304);
+            this.statusStripSounds.Name = "statusStripSounds";
+            this.statusStripSounds.Size = new System.Drawing.Size(619, 20);
+            this.statusStripSounds.SizingGrip = false;
+            this.statusStripSounds.TabIndex = 1;
+            this.statusStripSounds.Text = "statusStrip1";
             // 
             // seconds
             // 
@@ -286,13 +286,13 @@ namespace UoFiddler.Controls.UserControls
             this.Name = "Sounds";
             this.Size = new System.Drawing.Size(619, 324);
             this.Load += new System.EventHandler(this.OnLoad);
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.cmStripSounds.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
+            this.statusStripSounds.ResumeLayout(false);
+            this.statusStripSounds.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -304,9 +304,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripMenuItem itemExtractSoundlist;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip cmStripSounds;
         private System.Windows.Forms.ToolStripMenuItem nameSortToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator tsSeparator2;
         private System.Windows.Forms.ToolStripMenuItem playSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeSoundToolStripMenuItem;
@@ -314,9 +314,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem itemSave;
         private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStripSounds;
         private System.Windows.Forms.ToolStripStatusLabel seconds;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator tsSeparator1;
         private System.Windows.Forms.ToolStripMenuItem nextFreeSlotToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton stopButton;
         private System.Windows.Forms.ToolStripProgressBar playing;
