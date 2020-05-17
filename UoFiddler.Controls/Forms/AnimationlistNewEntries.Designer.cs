@@ -41,7 +41,7 @@ namespace UoFiddler.Controls.Forms
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tvAnimationList = new System.Windows.Forms.TreeView();
             this.facingbar = new System.Windows.Forms.TrackBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -67,7 +67,7 @@ namespace UoFiddler.Controls.Forms
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
+            this.splitContainer1.Panel1.Controls.Add(this.tvAnimationList);
             // 
             // splitContainer1.Panel2
             // 
@@ -78,16 +78,16 @@ namespace UoFiddler.Controls.Forms
             this.splitContainer1.SplitterDistance = 169;
             this.splitContainer1.TabIndex = 0;
             // 
-            // treeView1
+            // tvAnimationList
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.LabelEdit = true;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.ShowNodeToolTips = true;
-            this.treeView1.Size = new System.Drawing.Size(169, 253);
-            this.treeView1.TabIndex = 0;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnAfterSelectTreeView);
+            this.tvAnimationList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvAnimationList.LabelEdit = true;
+            this.tvAnimationList.Location = new System.Drawing.Point(0, 0);
+            this.tvAnimationList.Name = "tvAnimationList";
+            this.tvAnimationList.ShowNodeToolTips = true;
+            this.tvAnimationList.Size = new System.Drawing.Size(169, 253);
+            this.tvAnimationList.TabIndex = 0;
+            this.tvAnimationList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnAfterSelectTreeView);
             // 
             // facingbar
             // 
@@ -190,7 +190,7 @@ namespace UoFiddler.Controls.Forms
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView tvAnimationList;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
