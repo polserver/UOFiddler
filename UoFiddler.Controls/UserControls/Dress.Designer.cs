@@ -73,14 +73,14 @@ namespace UoFiddler.Controls.UserControls
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asJpgToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.TextBox = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -124,8 +124,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer1.Size = new System.Drawing.Size(619, 324);
-            this.splitContainer1.SplitterDistance = 279;
+            this.splitContainer1.Size = new System.Drawing.Size(626, 326);
+            this.splitContainer1.SplitterDistance = 282;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -141,8 +141,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(279, 324);
-            this.splitContainer2.SplitterDistance = 169;
+            this.splitContainer2.Size = new System.Drawing.Size(282, 326);
+            this.splitContainer2.SplitterDistance = 170;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeViewItems
@@ -150,7 +150,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewItems.Location = new System.Drawing.Point(0, 0);
             this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(169, 324);
+            this.treeViewItems.Size = new System.Drawing.Size(170, 326);
             this.treeViewItems.TabIndex = 0;
             this.treeViewItems.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeView);
             // 
@@ -172,7 +172,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.pictureBoxDress);
-            this.splitContainer3.Size = new System.Drawing.Size(106, 324);
+            this.splitContainer3.Size = new System.Drawing.Size(108, 326);
             this.splitContainer3.SplitterDistance = 129;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -236,10 +236,10 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxDress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxDress.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxDress.Name = "pictureBoxDress";
-            this.pictureBoxDress.Size = new System.Drawing.Size(106, 191);
+            this.pictureBoxDress.Size = new System.Drawing.Size(108, 193);
             this.pictureBoxDress.TabIndex = 0;
             this.pictureBoxDress.TabStop = false;
-            this.pictureBoxDress.SizeChanged += new System.EventHandler(this.OnResizepictureDress);
+            this.pictureBoxDress.SizeChanged += new System.EventHandler(this.OnResizePictureDress);
             // 
             // splitContainer4
             // 
@@ -255,8 +255,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(336, 324);
-            this.splitContainer4.SplitterDistance = 139;
+            this.splitContainer4.Size = new System.Drawing.Size(340, 326);
+            this.splitContainer4.SplitterDistance = 140;
             this.splitContainer4.TabIndex = 1;
             // 
             // checkedListBoxWear
@@ -267,7 +267,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBoxWear.FormattingEnabled = true;
             this.checkedListBoxWear.Location = new System.Drawing.Point(0, 0);
             this.checkedListBoxWear.Name = "checkedListBoxWear";
-            this.checkedListBoxWear.Size = new System.Drawing.Size(139, 277);
+            this.checkedListBoxWear.Size = new System.Drawing.Size(140, 279);
             this.checkedListBoxWear.TabIndex = 0;
             this.checkedListBoxWear.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBox_ItemCheck);
             this.checkedListBoxWear.SelectedIndexChanged += new System.EventHandler(this.CheckedListBox_Change);
@@ -307,7 +307,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // toolStripTextBox1
             // 
-            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
             this.toolStripTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownHue);
@@ -328,9 +327,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.groupBox1.Controls.Add(this.textBoxMount);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox1.Location = new System.Drawing.Point(0, 277);
+            this.groupBox1.Location = new System.Drawing.Point(0, 279);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(139, 47);
+            this.groupBox1.Size = new System.Drawing.Size(140, 47);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Mount";
@@ -358,8 +357,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.TextBox);
-            this.splitContainer5.Size = new System.Drawing.Size(193, 324);
-            this.splitContainer5.SplitterDistance = 250;
+            this.splitContainer5.Size = new System.Drawing.Size(196, 326);
+            this.splitContainer5.SplitterDistance = 251;
             this.splitContainer5.TabIndex = 1;
             // 
             // groupBoxAnimate
@@ -368,9 +367,9 @@ namespace UoFiddler.Controls.UserControls
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxAnimate.Controls.Add(this.ActionBar);
             this.groupBoxAnimate.Controls.Add(this.FacingBar);
-            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 150);
+            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 151);
             this.groupBoxAnimate.Name = "groupBoxAnimate";
-            this.groupBoxAnimate.Size = new System.Drawing.Size(190, 97);
+            this.groupBoxAnimate.Size = new System.Drawing.Size(193, 97);
             this.groupBoxAnimate.TabIndex = 1;
             this.groupBoxAnimate.TabStop = false;
             this.groupBoxAnimate.Text = "Facing/Action";
@@ -383,7 +382,7 @@ namespace UoFiddler.Controls.UserControls
             this.ActionBar.Location = new System.Drawing.Point(2, 53);
             this.ActionBar.Maximum = 34;
             this.ActionBar.Name = "ActionBar";
-            this.ActionBar.Size = new System.Drawing.Size(185, 35);
+            this.ActionBar.Size = new System.Drawing.Size(188, 35);
             this.ActionBar.TabIndex = 1;
             this.toolTip1.SetToolTip(this.ActionBar, "0 Walk_01");
             this.ActionBar.Scroll += new System.EventHandler(this.OnScroll_Action);
@@ -396,7 +395,7 @@ namespace UoFiddler.Controls.UserControls
             this.FacingBar.Location = new System.Drawing.Point(2, 20);
             this.FacingBar.Maximum = 7;
             this.FacingBar.Name = "FacingBar";
-            this.FacingBar.Size = new System.Drawing.Size(185, 36);
+            this.FacingBar.Size = new System.Drawing.Size(188, 36);
             this.FacingBar.TabIndex = 0;
             this.toolTip1.SetToolTip(this.FacingBar, "1");
             this.FacingBar.Scroll += new System.EventHandler(this.OnScroll_Facing);
@@ -407,7 +406,7 @@ namespace UoFiddler.Controls.UserControls
             this.DressPic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DressPic.Location = new System.Drawing.Point(0, 0);
             this.DressPic.Name = "DressPic";
-            this.DressPic.Size = new System.Drawing.Size(193, 250);
+            this.DressPic.Size = new System.Drawing.Size(196, 251);
             this.DressPic.TabIndex = 0;
             this.DressPic.TabStop = false;
             this.DressPic.SizeChanged += new System.EventHandler(this.OnResizeDressPic);
@@ -451,23 +450,30 @@ namespace UoFiddler.Controls.UserControls
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImageBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImageTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImageJpg);
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem.Text = "As Png";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImagePng);
             // 
             // extractAnimationToolStripMenuItem
             // 
@@ -501,6 +507,13 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem1.Text = "As Jpg";
             this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimJpg);
             // 
+            // asPngToolStripMenuItem1
+            // 
+            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
+            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem1.Text = "As Png";
+            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimPng);
+            // 
             // TextBox
             // 
             this.TextBox.BackColor = System.Drawing.SystemColors.Control;
@@ -509,23 +522,9 @@ namespace UoFiddler.Controls.UserControls
             this.TextBox.Location = new System.Drawing.Point(0, 0);
             this.TextBox.Name = "TextBox";
             this.TextBox.ReadOnly = true;
-            this.TextBox.Size = new System.Drawing.Size(193, 70);
+            this.TextBox.Size = new System.Drawing.Size(196, 71);
             this.TextBox.TabIndex = 0;
             this.TextBox.Text = "";
-            // 
-            // asPngToolStripMenuItem
-            // 
-            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.asPngToolStripMenuItem.Text = "As Png";
-            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImagePng);
-            // 
-            // asPngToolStripMenuItem1
-            // 
-            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
-            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.asPngToolStripMenuItem1.Text = "As Png";
-            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimPng);
             // 
             // Dress
             // 
@@ -533,7 +532,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "Dress";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(626, 326);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
@@ -521,23 +522,16 @@ namespace UoFiddler.Forms
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
             FiddlerOptions.Logger.Information("MainForm - OnClosing - start.");
-            string files = "";
-
-            foreach (KeyValuePair<string, bool> key in Options.ChangedUltimaClass)
-            {
-                if (key.Value)
-                {
-                    files += $"{key.Key} ";
-                }
-            }
+            string files = Options.ChangedUltimaClass
+                                    .Where(key => key.Value)
+                                    .Aggregate(string.Empty, (current, key) => current + $"- {key.Key} \r\n");
 
             if (files.Length > 0)
             {
-                DialogResult result = MessageBox.Show($"Are you sure you want to quit?\r\n{files}",
-                    "UnSaved Changes",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
+                DialogResult result =
+                    MessageBox.Show($"Are you sure you want to quit?\r\nThere are unsaved files:\r\n{files}",
+                        "UnSaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)
                 {
                     e.Cancel = true;

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace UoFiddler.Controls.UserControls
 {
     /// <summary>
-    /// Enumeration to sepcify the visual style to be applied to the CollapsibleSplitter control
+    /// Enumeration to specify the visual style to be applied to the CollapsibleSplitter control
     /// </summary>
     public enum VisualStyles
     {
@@ -93,7 +93,7 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
-        /// The delay in millisenconds between animation steps
+        /// The delay in milliseconds between animation steps
         /// </summary>
         [Bindable(true), Category("Collapsing Options"), DefaultValue("20"),
         Description("The delay in millisenconds between animation steps")]

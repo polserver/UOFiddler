@@ -120,12 +120,14 @@ namespace UoFiddler.Controls.UserControls
 
             for (int i = 0; i < RefMarker._itemList.Count; ++i)
             {
-                if (RefMarker._itemList[i] == graphic)
+                if (RefMarker._itemList[i] != graphic)
                 {
-                    RefMarker.vScrollBar.Value = (i / RefMarker._col) + 1;
-                    RefMarker.Selected = graphic;
-                    return true;
+                    continue;
                 }
+
+                RefMarker.vScrollBar.Value = (i / RefMarker._col) + 1;
+                RefMarker.Selected = graphic;
+                return true;
             }
             return false;
         }
@@ -155,12 +157,14 @@ namespace UoFiddler.Controls.UserControls
             Regex regex = new Regex(name, RegexOptions.IgnoreCase);
             for (int i = index; i < RefMarker._itemList.Count; ++i)
             {
-                if (regex.IsMatch(TileData.ItemTable[RefMarker._itemList[i]].Name))
+                if (!regex.IsMatch(TileData.ItemTable[RefMarker._itemList[i]].Name))
                 {
-                    RefMarker.vScrollBar.Value = (i / RefMarker._col) + 1;
-                    RefMarker.Selected = RefMarker._itemList[i];
-                    return true;
+                    continue;
                 }
+
+                RefMarker.vScrollBar.Value = (i / RefMarker._col) + 1;
+                RefMarker.Selected = RefMarker._itemList[i];
+                return true;
             }
             return false;
         }
@@ -189,6 +193,7 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Art"] = true;
             Options.LoadedUltimaClass["Animdata"] = true;
             Options.LoadedUltimaClass["Hues"] = true;
+
             if (!IsLoaded) // only once
             {
                 Plugin.PluginEvents.FireModifyItemShowContextMenuEvent(contextMenuStrip1);
@@ -211,8 +216,8 @@ namespace UoFiddler.Controls.UserControls
                             bin.Read(buffer, 0, (int)bin.Length);
                             fixed (byte* bf = buffer)
                             {
-                                int* poffset = (int*)bf;
-                                int offset = *poffset + 4;
+                                int* pOffset = (int*)bf;
+                                int offset = *pOffset + 4;
                                 int* dat = (int*)(bf + offset);
                                 int i = offset;
                                 while (i < buffer.Length)
@@ -228,8 +233,8 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                int staticlength = Art.GetMaxItemID() + 1;
-                for (int i = 0; i < staticlength; ++i)
+                int staticLength = Art.GetMaxItemID() + 1;
+                for (int i = 0; i < staticLength; ++i)
                 {
                     if (Art.IsValidStatic(i))
                     {
@@ -284,11 +289,14 @@ namespace UoFiddler.Controls.UserControls
             }
 
             id -= 0x4000;
-            if (_selected == id)
+
+            if (_selected != id)
             {
-                graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", id);
-                UpdateDetail(id);
+                return;
             }
+
+            graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", id);
+            UpdateDetail(id);
         }
 
         private void OnItemChangeEvent(object sender, int index)
@@ -319,11 +327,14 @@ namespace UoFiddler.Controls.UserControls
                         done = true;
                         break;
                     }
-                    if (index == _itemList[i])
+
+                    if (index != _itemList[i])
                     {
-                        done = true;
-                        break;
+                        continue;
                     }
+
+                    done = true;
+                    break;
                 }
                 if (!done)
                 {
@@ -334,11 +345,13 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                if (!_showFreeSlots)
+                if (_showFreeSlots)
                 {
-                    _itemList.Remove(index);
-                    vScrollBar.Maximum = (_itemList.Count / _col) + 1;
+                    return;
                 }
+
+                _itemList.Remove(index);
+                vScrollBar.Maximum = (_itemList.Count / _col) + 1;
             }
         }
 
@@ -613,6 +626,7 @@ namespace UoFiddler.Controls.UserControls
             else
             {
                 int id, i;
+
                 if (_selected > -1)
                 {
                     id = _selected + 1;
@@ -623,6 +637,7 @@ namespace UoFiddler.Controls.UserControls
                     id = 0;
                     i = 0;
                 }
+
                 for (; i < _itemList.Count; ++i, ++id)
                 {
                     if (id >= _itemList[i])
@@ -675,12 +690,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            DialogResult result =
-                        MessageBox.Show($"Are you sure to remove 0x{_selected:X}",
-                        "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selected:X}", "Save",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
@@ -789,11 +800,8 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            DialogResult result =
-                        MessageBox.Show("Are you sure? Will take a while", "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning,
-                        MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 
             if (result != DialogResult.Yes)
             {
@@ -806,10 +814,8 @@ namespace UoFiddler.Controls.UserControls
             bar.Dispose();
             Cursor.Current = Cursors.Default;
             Options.ChangedUltimaClass["Art"] = false;
-            MessageBox.Show(
-                $"Saved to {Options.OutputPath}",
-                "Save",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickShowFreeSlots(object sender, EventArgs e)
@@ -880,7 +886,7 @@ namespace UoFiddler.Controls.UserControls
             ExportItemImage(_selected, ImageFormat.Png);
         }
 
-        private void ExportItemImage(int index, ImageFormat imageFormat)
+        private static void ExportItemImage(int index, ImageFormat imageFormat)
         {
             if (!Art.IsValidStatic(index))
             {
@@ -892,14 +898,10 @@ namespace UoFiddler.Controls.UserControls
 
             using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
             {
-                bit?.Save(fileName, imageFormat);
+                bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Item saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -954,7 +956,7 @@ namespace UoFiddler.Controls.UserControls
 
                 Cursor.Current = Cursors.WaitCursor;
 
-                using (ProgressBar bar = new ProgressBar(_itemList.Count, $"Export to {fileExtension}", false))
+                using (new ProgressBar(_itemList.Count, $"Export to {fileExtension}", false))
                 {
                     for (int i = 0; i < _itemList.Count; ++i)
                     {
@@ -971,23 +973,19 @@ namespace UoFiddler.Controls.UserControls
                         string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.{fileExtension}");
                         using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
                         {
-                            bit?.Save(fileName, imageFormat);
+                            bit.Save(fileName, imageFormat);
                         }
                     }
                 }
 
                 Cursor.Current = Cursors.Default;
 
-                MessageBox.Show(
-                    $"All items saved to {dialog.SelectedPath}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All items saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
-        private void OnClickPreload(object sender, EventArgs e)
+        private void OnClickPreLoad(object sender, EventArgs e)
         {
             if (PreLoader.IsBusy)
             {

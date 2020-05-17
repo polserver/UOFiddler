@@ -99,18 +99,20 @@ namespace UoFiddler.Controls.UserControls
             for (int i = index; i < RefMarker.listView1.Items.Count; ++i)
             {
                 ListViewItem item = RefMarker.listView1.Items[i];
-                if ((int)item.Tag == graphic || ((int)item.Tag == -1 && i == graphic))
+                if ((int)item.Tag != graphic && ((int)item.Tag != -1 || i != graphic))
                 {
-                    if (RefMarker.listView1.SelectedItems.Count == 1)
-                    {
-                        RefMarker.listView1.SelectedItems[0].Selected = false;
-                    }
-
-                    item.Selected = true;
-                    item.Focused = true;
-                    item.EnsureVisible();
-                    return true;
+                    continue;
                 }
+
+                if (RefMarker.listView1.SelectedItems.Count == 1)
+                {
+                    RefMarker.listView1.SelectedItems[0].Selected = false;
+                }
+
+                item.Selected = true;
+                item.Focused = true;
+                item.EnsureVisible();
+                return true;
             }
             return false;
         }
@@ -146,18 +148,20 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                if (regex.IsMatch(TileData.ItemTable[(int)item.Tag].Name))
+                if (!regex.IsMatch(TileData.ItemTable[(int)item.Tag].Name))
                 {
-                    if (RefMarker.listView1.SelectedItems.Count == 1)
-                    {
-                        RefMarker.listView1.SelectedItems[0].Selected = false;
-                    }
-
-                    item.Selected = true;
-                    item.Focused = true;
-                    item.EnsureVisible();
-                    return true;
+                    continue;
                 }
+
+                if (RefMarker.listView1.SelectedItems.Count == 1)
+                {
+                    RefMarker.listView1.SelectedItems[0].Selected = false;
+                }
+
+                item.Selected = true;
+                item.Focused = true;
+                item.EnsureVisible();
+                return true;
             }
             return false;
         }
@@ -175,8 +179,7 @@ namespace UoFiddler.Controls.UserControls
 
         public void OnLoad(object sender, EventArgs e)
         {
-            MyEventArgs args = e as MyEventArgs;
-            if (IsLoaded && (args == null || args.Type != MyEventArgs.Types.ForceReload))
+            if (IsLoaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))
             {
                 return;
             }
@@ -186,6 +189,7 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Art"] = true;
             Options.LoadedUltimaClass["Animdata"] = true;
             Options.LoadedUltimaClass["Hues"] = true;
+
             if (!IsLoaded) // only once
             {
                 Plugin.PluginEvents.FireModifyItemShowContextMenuEvent(contextMenuStrip1);
@@ -195,7 +199,7 @@ namespace UoFiddler.Controls.UserControls
             showFreeSlotsToolStripMenuItem.Checked = false;
             listView1.BeginUpdate();
             listView1.Clear();
-            List<ListViewItem> itemcache = new List<ListViewItem>();
+            List<ListViewItem> itemCache = new List<ListViewItem>();
             if (Files.UseHashFile && Files.CompareHashFile("Art", Options.AppDataPath) && !Art.Modified)
             {
                 string path = Options.AppDataPath;
@@ -210,8 +214,8 @@ namespace UoFiddler.Controls.UserControls
                             bin.Read(buffer, 0, (int)bin.Length);
                             fixed (byte* bf = buffer)
                             {
-                                int* poffset = (int*)bf;
-                                int offset = *poffset + 4;
+                                int* pOffset = (int*)bf;
+                                int offset = *pOffset + 4;
                                 int* dat = (int*)(bf + offset);
                                 int i = offset;
                                 while (i < buffer.Length)
@@ -221,30 +225,32 @@ namespace UoFiddler.Controls.UserControls
                                     {
                                         Tag = j
                                     };
-                                    itemcache.Add(item);
+                                    itemCache.Add(item);
                                     i += 4;
                                 }
                             }
                         }
                     }
-                    listView1.Items.AddRange(itemcache.ToArray());
+                    listView1.Items.AddRange(itemCache.ToArray());
                 }
             }
             else
             {
-                int staticlength = Art.GetMaxItemID() + 1;
-                for (int i = 0; i < staticlength; ++i)
+                int staticLength = Art.GetMaxItemID() + 1;
+                for (int i = 0; i < staticLength; ++i)
                 {
-                    if (Art.IsValidStatic(i))
+                    if (!Art.IsValidStatic(i))
                     {
-                        ListViewItem item = new ListViewItem(i.ToString(), 0)
-                        {
-                            Tag = i
-                        };
-                        itemcache.Add(item);
+                        continue;
                     }
+
+                    ListViewItem item = new ListViewItem(i.ToString(), 0)
+                    {
+                        Tag = i
+                    };
+                    itemCache.Add(item);
                 }
-                listView1.Items.AddRange(itemcache.ToArray());
+                listView1.Items.AddRange(itemCache.ToArray());
 
                 if (Files.UseHashFile)
                 {
@@ -289,14 +295,13 @@ namespace UoFiddler.Controls.UserControls
             }
 
             id -= 0x4000;
-            if (listView1.SelectedItems.Count == 1)
+            if (listView1.SelectedItems.Count != 1 || (int)listView1.SelectedItems[0].Tag != id)
             {
-                if ((int)listView1.SelectedItems[0].Tag == id)
-                {
-                    namelabel.Text = $"Name: {TileData.ItemTable[id].Name}";
-                    UpdateDetail(id);
-                }
+                return;
             }
+
+            namelabel.Text = $"Name: {TileData.ItemTable[id].Name}";
+            UpdateDetail(id);
         }
 
         private void OnFilePathChangeEvent()
@@ -330,6 +335,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     Tag = index
                 };
+
                 if (_showFreeSlots)
                 {
                     listView1.Items[index] = item;
@@ -346,17 +352,22 @@ namespace UoFiddler.Controls.UserControls
                             done = true;
                             break;
                         }
-                        if ((int)i.Tag == index)
+
+                        if ((int)i.Tag != index)
                         {
-                            done = true;
-                            break;
+                            continue;
                         }
+
+                        done = true;
+                        break;
                     }
+
                     if (!done)
                     {
                         listView1.Items.Add(item);
                     }
                 }
+
                 listView1.View = View.Details; // that works fascinating
                 listView1.View = View.Tile;
             }
@@ -366,11 +377,13 @@ namespace UoFiddler.Controls.UserControls
                 {
                     foreach (ListViewItem i in listView1.Items)
                     {
-                        if ((int)i.Tag == index)
+                        if ((int)i.Tag != index)
                         {
-                            listView1.Items.RemoveAt(i.Index);
-                            break;
+                            continue;
                         }
+
+                        listView1.Items.RemoveAt(i.Index);
+                        break;
                     }
                 }
                 else
@@ -384,23 +397,25 @@ namespace UoFiddler.Controls.UserControls
 
         private void ListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 1)
+            if (listView1.SelectedItems.Count != 1)
             {
-                int i = (int)listView1.SelectedItems[0].Tag;
-                if (i == -1)
-                {
-                    namelabel.Text = "Name: FREE";
-                    graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", listView1.SelectedIndices[0]);
-                    UpdateDetail(listView1.SelectedIndices[0]);
-                    selectInGumpsTabToolStripMenuItem.Enabled = false;
-                }
-                else
-                {
-                    namelabel.Text = $"Name: {TileData.ItemTable[i].Name}";
-                    graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", i);
-                    UpdateDetail(i);
-                    selectInGumpsTabToolStripMenuItem.Enabled = TileData.ItemTable[i].Animation != 0;
-                }
+                return;
+            }
+
+            int i = (int)listView1.SelectedItems[0].Tag;
+            if (i == -1)
+            {
+                namelabel.Text = "Name: FREE";
+                graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", listView1.SelectedIndices[0]);
+                UpdateDetail(listView1.SelectedIndices[0]);
+                selectInGumpsTabToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                namelabel.Text = $"Name: {TileData.ItemTable[i].Name}";
+                graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", i);
+                UpdateDetail(i);
+                selectInGumpsTabToolStripMenuItem.Enabled = TileData.ItemTable[i].Animation != 0;
             }
         }
 
@@ -430,75 +445,84 @@ namespace UoFiddler.Controls.UserControls
 
             Bitmap bmp = Art.GetStatic(i, out bool patched);
 
-            if (bmp != null)
+            if (bmp == null)
             {
-                if (e.Item.Selected)
+                return;
+            }
+
+            if (e.Item.Selected)
+            {
+                e.Graphics.FillRectangle(_brushLightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
+            else if (patched)
+            {
+                e.Graphics.FillRectangle(_brushLightCoral, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(_brushWhite, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
+
+            if (Options.ArtItemClip)
+            {
+                e.Graphics.DrawImage(bmp, e.Bounds.X + 1, e.Bounds.Y + 1,
+                    new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1),
+                    GraphicsUnit.Pixel);
+            }
+            else
+            {
+                int width = bmp.Width;
+                int height = bmp.Height;
+                if (width > e.Bounds.Width)
                 {
-                    e.Graphics.FillRectangle(_brushLightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-                }
-                else if (patched)
-                {
-                    e.Graphics.FillRectangle(_brushLightCoral, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-                }
-                else
-                {
-                    e.Graphics.FillRectangle(_brushWhite, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                    width = e.Bounds.Width;
+                    height = e.Bounds.Height * bmp.Height / bmp.Width;
                 }
 
-                if (Options.ArtItemClip)
+                if (height > e.Bounds.Height)
                 {
-                    e.Graphics.DrawImage(bmp, e.Bounds.X + 1, e.Bounds.Y + 1,
-                                         new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1),
-                                         GraphicsUnit.Pixel);
+                    height = e.Bounds.Height;
+                    width = e.Bounds.Width * bmp.Width / bmp.Height;
                 }
-                else
-                {
-                    int width = bmp.Width;
-                    int height = bmp.Height;
-                    if (width > e.Bounds.Width)
-                    {
-                        width = e.Bounds.Width;
-                        height = e.Bounds.Height * bmp.Height / bmp.Width;
-                    }
-                    if (height > e.Bounds.Height)
-                    {
-                        height = e.Bounds.Height;
-                        width = e.Bounds.Width * bmp.Width / bmp.Height;
-                    }
-                    e.Graphics.DrawImage(bmp,
-                                         new Rectangle(e.Bounds.X + 1, e.Bounds.Y + 1, width, height));
-                }
-                if (!e.Item.Selected)
-                {
-                    e.Graphics.DrawRectangle(_penGray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-                }
+
+                e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 1, e.Bounds.Y + 1, width, height));
+            }
+
+            if (!e.Item.Selected)
+            {
+                e.Graphics.DrawRectangle(_penGray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             }
         }
 
         public void ListView_DoubleClicked(object sender, MouseEventArgs e)
         {
-            if (listView1.SelectedItems.Count == 1)
+            if (listView1.SelectedItems.Count != 1)
             {
-                ItemDetail f = (int)listView1.SelectedItems[0].Tag == -1
-                    ? new ItemDetail(listView1.SelectedIndices[0])
-                    : new ItemDetail((int)listView1.SelectedItems[0].Tag);
-                f.TopMost = true;
-                f.Show();
+                return;
             }
+
+            ItemDetail f = (int)listView1.SelectedItems[0].Tag == -1
+                ? new ItemDetail(listView1.SelectedIndices[0])
+                : new ItemDetail((int)listView1.SelectedItems[0].Tag);
+
+            f.TopMost = true;
+            f.Show();
         }
 
-        private ItemSearch _showform;
+        private ItemSearch _showForm;
 
         private void Search_Click(object sender, EventArgs e)
         {
-            if (_showform?.IsDisposed != false)
+            if (_showForm?.IsDisposed == false)
             {
-                _showform = new ItemSearch
-                {
-                    TopMost = true
-                };
-                _showform.Show();
+                return;
             }
+
+            _showForm = new ItemSearch
+            {
+                TopMost = true
+            };
+            _showForm.Show();
         }
 
         private void UpdateDetail(int id)
@@ -534,14 +558,16 @@ namespace UoFiddler.Controls.UserControls
             DetailTextBox.AppendText($"Graphic pixel size width, height: {bit?.Width ?? 0} {bit?.Height ?? 0} \n");
             DetailTextBox.AppendText($"Graphic pixel offset xMin, yMin, xMax, yMax: {xMin} {yMin} {xMax} {yMax}\n");
 
-            if ((item.Flags & TileFlag.Animation) != 0)
+            if ((item.Flags & TileFlag.Animation) == 0)
             {
-                Animdata.Data info = Animdata.GetAnimData(id);
-                if (info != null)
-                {
-                    DetailTextBox.AppendText(
-                        $"Animation FrameCount: {info.FrameCount} Interval: {info.FrameInterval}\n");
-                }
+                return;
+            }
+
+            Animdata.Data info = Animdata.GetAnimData(id);
+            if (info != null)
+            {
+                DetailTextBox.AppendText(
+                    $"Animation FrameCount: {info.FrameCount} Interval: {info.FrameInterval}\n");
             }
         }
 
@@ -549,103 +575,103 @@ namespace UoFiddler.Controls.UserControls
         {
             e.Graphics.Clear(Color.White);
             int id = (int)DetailPictureBox.Tag;
-            if (id >= 0)
+            if (id < 0)
             {
-                Bitmap bit = Art.GetStatic(id);
-                if (bit != null)
-                {
-                    e.Graphics.DrawImage(bit, (e.ClipRectangle.Width - bit.Width) / 2, 5);
-                }
+                return;
+            }
+
+            Bitmap bit = Art.GetStatic(id);
+            if (bit != null)
+            {
+                e.Graphics.DrawImage(bit, (e.ClipRectangle.Width - bit.Width) / 2, 5);
             }
         }
 
         private void DetailSplitContainer_SizeChange(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                int id = (int)DetailPictureBox.Tag;
-                if (id >= 0)
-                {
-                    Bitmap bit = Art.GetStatic(id);
-                    splitContainer2.SplitterDistance = bit == null ? 10 : bit.Size.Height + 10;
-
-                    DetailPictureBox.Invalidate();
-                }
+                return;
             }
+
+            int id = (int)DetailPictureBox.Tag;
+            if (id < 0)
+            {
+                return;
+            }
+
+            Bitmap bit = Art.GetStatic(id);
+            splitContainer2.SplitterDistance = bit?.Size.Height + 10 ?? 10;
+
+            DetailPictureBox.Invalidate();
         }
 
         private void OnResize(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                listView1.SelectedItems[0].EnsureVisible();
-                int i = (int)listView1.SelectedItems[0].Tag;
-                if (i == -1)
-                {
-                    UpdateDetail(listView1.SelectedItems[0].Index);
-                }
-                else
-                {
-                    UpdateDetail(i);
-                }
+                return;
             }
+
+            listView1.SelectedItems[0].EnsureVisible();
+            int i = (int)listView1.SelectedItems[0].Tag;
+            UpdateDetail(i == -1 ? listView1.SelectedItems[0].Index : i);
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            DialogResult result =
-                        MessageBox.Show("Are you sure? Will take a while",
-                        "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning,
-                        MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
             {
-                ProgressBar bar = new ProgressBar(Art.GetIdxLength(), "Save");
-                Cursor.Current = Cursors.WaitCursor;
-                Art.Save(Options.OutputPath);
-                bar.Dispose();
-                Cursor.Current = Cursors.Default;
-                Options.ChangedUltimaClass["Art"] = false;
-                MessageBox.Show($"Saved to {Options.OutputPath}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                return;
             }
+
+            ProgressBar bar = new ProgressBar(Art.GetIdxLength(), "Save");
+            Cursor.Current = Cursors.WaitCursor;
+            Art.Save(Options.OutputPath);
+            bar.Dispose();
+            Cursor.Current = Cursors.Default;
+            Options.ChangedUltimaClass["Art"] = false;
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 1)
+            if (listView1.SelectedItems.Count != 1)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose image file to replace";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = false;
-                    dialog.Title = "Choose image file to replace";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (dialog.FileName.Contains(".bmp"))
-                        {
-                            bmp = Utils.ConvertBmp(bmp);
-                        }
-
-                        int id = (int)listView1.SelectedItems[0].Tag;
-                        if (id == -1)
-                        {
-                            listView1.SelectedItems[0].Tag = id = listView1.SelectedItems[0].Index;
-                        }
-
-                        Art.ReplaceStatic(id, bmp);
-                        ControlEvents.FireItemChangeEvent(this, id);
-                        listView1.Invalidate();
-                        UpdateDetail(id);
-                        Options.ChangedUltimaClass["Art"] = true;
-                    }
+                    return;
                 }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                int id = (int)listView1.SelectedItems[0].Tag;
+                if (id == -1)
+                {
+                    listView1.SelectedItems[0].Tag = id = listView1.SelectedItems[0].Index;
+                }
+
+                Art.ReplaceStatic(id, bmp);
+                ControlEvents.FireItemChangeEvent(this, id);
+                listView1.Invalidate();
+                UpdateDetail(id);
+                Options.ChangedUltimaClass["Art"] = true;
             }
         }
 
@@ -663,72 +689,80 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnKeyDown_Insert(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter ||
+                !Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemID()))
             {
-                if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemID()))
+                return;
+            }
+
+            if (Art.IsValidStatic(index))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    if (Art.IsValidStatic(index))
+                    return;
+                }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                Art.ReplaceStatic(index, bmp);
+                ControlEvents.FireItemChangeEvent(this, index);
+                ListViewItem item = new ListViewItem(index.ToString(), 0)
+                {
+                    Tag = index
+                };
+
+                if (_showFreeSlots)
+                {
+                    listView1.Items[index] = item;
+                    listView1.Invalidate();
+                }
+                else
+                {
+                    bool done = false;
+                    foreach (ListViewItem i in listView1.Items)
                     {
-                        return;
+                        if ((int)i.Tag <= index)
+                        {
+                            continue;
+                        }
+
+                        listView1.Items.Insert(i.Index, item);
+                        done = true;
+                        break;
                     }
 
-                    contextMenuStrip1.Close();
-                    using (OpenFileDialog dialog = new OpenFileDialog())
+                    if (!done)
                     {
-                        dialog.Multiselect = false;
-                        dialog.Title = $"Choose image file to insert at 0x{index:X}";
-                        dialog.CheckFileExists = true;
-                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                        {
-                            Bitmap bmp = new Bitmap(dialog.FileName);
-                            if (dialog.FileName.Contains(".bmp"))
-                            {
-                                bmp = Utils.ConvertBmp(bmp);
-                            }
-
-                            Art.ReplaceStatic(index, bmp);
-                            ControlEvents.FireItemChangeEvent(this, index);
-                            ListViewItem item = new ListViewItem(index.ToString(), 0)
-                            {
-                                Tag = index
-                            };
-                            if (_showFreeSlots)
-                            {
-                                listView1.Items[index] = item;
-                                listView1.Invalidate();
-                            }
-                            else
-                            {
-                                bool done = false;
-                                foreach (ListViewItem i in listView1.Items)
-                                {
-                                    if ((int)i.Tag > index)
-                                    {
-                                        listView1.Items.Insert(i.Index, item);
-                                        done = true;
-                                        break;
-                                    }
-                                }
-                                if (!done)
-                                {
-                                    listView1.Items.Add(item);
-                                }
-                            }
-                            listView1.View = View.Details; // that works faszinating
-                            listView1.View = View.Tile;
-                            if (listView1.SelectedItems.Count == 1)
-                            {
-                                listView1.SelectedItems[0].Selected = false;
-                            }
-
-                            item.Selected = true;
-                            item.Focused = true;
-                            item.EnsureVisible();
-                            Options.ChangedUltimaClass["Art"] = true;
-                        }
+                        listView1.Items.Add(item);
                     }
                 }
+
+                listView1.View = View.Details; // that works fascinating
+                listView1.View = View.Tile;
+
+                if (listView1.SelectedItems.Count == 1)
+                {
+                    listView1.SelectedItems[0].Selected = false;
+                }
+
+                item.Selected = true;
+                item.Focused = true;
+                item.EnsureVisible();
+                Options.ChangedUltimaClass["Art"] = true;
             }
         }
 
@@ -740,30 +774,28 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            DialogResult result =
-                        MessageBox.Show($"Are you sure to remove 0x{i:X}",
-                        "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{i:X}", "Save", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
             {
-                Art.RemoveStatic(i);
-                ControlEvents.FireItemChangeEvent(this, i);
-                i = listView1.SelectedItems[0].Index;
-                if (!_showFreeSlots)
-                {
-                    listView1.SelectedItems[0].Selected = false;
-                    listView1.Items.RemoveAt(i);
-                }
-                else
-                {
-                    listView1.Items[i].Tag = -1;
-                }
-
-                listView1.Invalidate();
-                Options.ChangedUltimaClass["Art"] = true;
+                return;
             }
+
+            Art.RemoveStatic(i);
+            ControlEvents.FireItemChangeEvent(this, i);
+            i = listView1.SelectedItems[0].Index;
+            if (!_showFreeSlots)
+            {
+                listView1.SelectedItems[0].Selected = false;
+                listView1.Items.RemoveAt(i);
+            }
+            else
+            {
+                listView1.Items[i].Tag = -1;
+            }
+
+            listView1.Invalidate();
+            Options.ChangedUltimaClass["Art"] = true;
         }
 
         private void OnClickFindFree(object sender, EventArgs e)
@@ -773,19 +805,21 @@ namespace UoFiddler.Controls.UserControls
                 int i = listView1.SelectedItems.Count > 0 ? listView1.SelectedItems[0].Index + 1 : 0;
                 for (; i < listView1.Items.Count; ++i)
                 {
-                    if ((int)listView1.Items[i].Tag == -1)
+                    if ((int)listView1.Items[i].Tag != -1)
                     {
-                        ListViewItem item = listView1.Items[i];
-                        if (listView1.SelectedItems.Count == 1)
-                        {
-                            listView1.SelectedItems[0].Selected = false;
-                        }
-
-                        item.Selected = true;
-                        item.Focused = true;
-                        item.EnsureVisible();
-                        break;
+                        continue;
                     }
+
+                    ListViewItem item = listView1.Items[i];
+                    if (listView1.SelectedItems.Count == 1)
+                    {
+                        listView1.SelectedItems[0].Selected = false;
+                    }
+
+                    item.Selected = true;
+                    item.Focused = true;
+                    item.EnsureVisible();
+                    break;
                 }
             }
             else
@@ -803,19 +837,21 @@ namespace UoFiddler.Controls.UserControls
                 }
                 for (; i < listView1.Items.Count; ++i, ++id)
                 {
-                    if (id < (int)listView1.Items[i].Tag)
+                    if (id >= (int)listView1.Items[i].Tag)
                     {
-                        ListViewItem item = listView1.Items[i];
-                        if (listView1.SelectedItems.Count == 1)
-                        {
-                            listView1.SelectedItems[0].Selected = false;
-                        }
-
-                        item.Selected = true;
-                        item.Focused = true;
-                        item.EnsureVisible();
-                        break;
+                        continue;
                     }
+
+                    ListViewItem item = listView1.Items[i];
+                    if (listView1.SelectedItems.Count == 1)
+                    {
+                        listView1.SelectedItems[0].Selected = false;
+                    }
+
+                    item.Selected = true;
+                    item.Focused = true;
+                    item.EnsureVisible();
+                    break;
                 }
             }
         }
@@ -833,14 +869,16 @@ namespace UoFiddler.Controls.UserControls
                     ListViewItem item;
                     if (listView1.Items.Count > j)
                     {
-                        if ((int)listView1.Items[j].Tag != j)
+                        if ((int)listView1.Items[j].Tag == j)
                         {
-                            item = new ListViewItem(j.ToString(), 0)
-                            {
-                                Tag = -1
-                            };
-                            listView1.Items.Insert(j, item);
+                            continue;
                         }
+
+                        item = new ListViewItem(j.ToString(), 0)
+                        {
+                            Tag = -1
+                        };
+                        listView1.Items.Insert(j, item);
                     }
                     else
                     {
@@ -906,7 +944,7 @@ namespace UoFiddler.Controls.UserControls
             ExportItemImage(i, ImageFormat.Png);
         }
 
-        private void ExportItemImage(int index, ImageFormat imageFormat)
+        private static void ExportItemImage(int index, ImageFormat imageFormat)
         {
             if (!Art.IsValidStatic(index))
             {
@@ -918,58 +956,60 @@ namespace UoFiddler.Controls.UserControls
 
             using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
             {
-                bit?.Save(fileName, imageFormat);
+                bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Item saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                int id = (int)listView1.SelectedItems[0].Tag;
-                if (id == -1)
-                {
-                    id = listView1.SelectedItems[0].Index;
-                }
-
-                TileDatas.Select(id, false);
+                return;
             }
+
+            int id = (int)listView1.SelectedItems[0].Tag;
+            if (id == -1)
+            {
+                id = listView1.SelectedItems[0].Index;
+            }
+
+            TileDatas.Select(id, false);
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                int id = (int)listView1.SelectedItems[0].Tag;
-                if (id == -1)
-                {
-                    id = listView1.SelectedItems[0].Index;
-                }
-
-                RadarColor.Select(id, false);
+                return;
             }
+
+            int id = (int)listView1.SelectedItems[0].Tag;
+            if (id == -1)
+            {
+                id = listView1.SelectedItems[0].Index;
+            }
+
+            RadarColor.Select(id, false);
         }
 
         private void OnClickSelectGump(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (listView1.SelectedItems.Count <= 0)
             {
-                int id = (int)listView1.SelectedItems[0].Tag;
-                if (id == -1)
-                {
-                    id = listView1.SelectedItems[0].Index;
-                }
-
-                ItemData item = TileData.ItemTable[id];
-                Gump.Select(item.Animation + 50000);
+                return;
             }
+
+            int id = (int)listView1.SelectedItems[0].Tag;
+            if (id == -1)
+            {
+                id = listView1.SelectedItems[0].Index;
+            }
+
+            ItemData item = TileData.ItemTable[id];
+            Gump.Select(item.Animation + 50000);
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
@@ -1007,7 +1047,7 @@ namespace UoFiddler.Controls.UserControls
 
                 Cursor.Current = Cursors.WaitCursor;
 
-                using (ProgressBar bar = new ProgressBar(listView1.Items.Count, $"Export to {fileExtension}", false))
+                using (new ProgressBar(listView1.Items.Count, $"Export to {fileExtension}", false))
                 {
                     for (int i = 0; i < listView1.Items.Count; ++i)
                     {
@@ -1024,23 +1064,19 @@ namespace UoFiddler.Controls.UserControls
                         string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X}.{fileExtension}");
                         using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
                         {
-                            bit?.Save(fileName, imageFormat);
+                            bit.Save(fileName, imageFormat);
                         }
                     }
                 }
 
                 Cursor.Current = Cursors.Default;
 
-                MessageBox.Show(
-                    $"All items saved to {dialog.SelectedPath}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All items saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
-        private void OnClickPreload(object sender, EventArgs e)
+        private void OnClickPreLoad(object sender, EventArgs e)
         {
             if (PreLoader.IsBusy)
             {
@@ -1075,12 +1111,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void ItemShow_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F && e.Control)
+            if (e.KeyCode != Keys.F || !e.Control)
             {
-                Search_Click(sender, e);
-                e.SuppressKeyPress = true;
-                e.Handled = true;
+                return;
             }
+
+            Search_Click(sender, e);
+            e.SuppressKeyPress = true;
+            e.Handled = true;
         }
     }
 }

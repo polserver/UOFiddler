@@ -163,7 +163,7 @@ namespace UoFiddler.Controls.UserControls
             listView1.EndUpdate();
         }
 
-        private void Drawitem(object sender, DrawListViewItemEventArgs e)
+        private void DrawItem(object sender, DrawListViewItemEventArgs e)
         {
             int i = int.Parse(e.Item.Text);
             char c = (char)i;
@@ -236,11 +236,7 @@ namespace UoFiddler.Controls.UserControls
                 ((Bitmap)listView1.SelectedItems[0].Tag).Save(fileName, ImageFormat.Tiff);
             }
 
-            MessageBox.Show(
-                $"Character saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Character saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -291,23 +287,15 @@ namespace UoFiddler.Controls.UserControls
             if ((int)treeView.SelectedNode.Parent.Tag == 1)
             {
                 string fileName = UnicodeFonts.Save(path, (int)treeView.SelectedNode.Tag);
-                MessageBox.Show(
-                    $"Unicode saved to {fileName}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"Unicode saved to {fileName}", "Save", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                 Options.ChangedUltimaClass["UnicodeFont"] = false;
             }
             else
             {
                 string fileName = Path.Combine(path, "fonts.mul");
                 ASCIIText.Save(fileName);
-                MessageBox.Show(
-                    $"Fonts saved to {fileName}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
+                MessageBox.Show($"Fonts saved to {fileName}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
                     MessageBoxDefaultButton.Button1);
                 Options.ChangedUltimaClass["ASCIIFont"] = false;
             }

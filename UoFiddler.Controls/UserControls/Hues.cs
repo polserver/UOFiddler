@@ -125,29 +125,24 @@ namespace UoFiddler.Controls.UserControls
             for (int y = 0; y <= _row; ++y)
             {
                 int index = GetIndex(y);
-                if (index >= 0)
+                if (index < 0)
                 {
-                    Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
-                    if (index == _selected)
-                    {
-                        e.Graphics.FillRectangle(SystemBrushes.Highlight, rect);
-                    }
-                    else
-                    {
-                        e.Graphics.FillRectangle(SystemBrushes.Window, rect);
-                    }
+                    continue;
+                }
 
-                    float size = (float)(pictureBox.Width - 200) / 32;
-                    Hue hue = Ultima.Hues.List[index];
-                    Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox.Width, _itemHeight);
-                    e.Graphics.DrawString(
-                        $"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
+                e.Graphics.FillRectangle(index == _selected ? SystemBrushes.Highlight : SystemBrushes.Window, rect);
 
-                    for (int i = 0; i < hue.Colors.Length; ++i)
-                    {
-                        Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
-                        e.Graphics.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
-                    }
+                float size = (float)(pictureBox.Width - 200) / 32;
+                Hue hue = Ultima.Hues.List[index];
+                Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox.Width, _itemHeight);
+                e.Graphics.DrawString(
+                    $"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+
+                for (int i = 0; i < hue.Colors.Length; ++i)
+                {
+                    Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
+                    e.Graphics.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
                 }
             }
         }
@@ -161,19 +156,23 @@ namespace UoFiddler.Controls.UserControls
         {
             if (e.Delta < 0)
             {
-                if (vScrollBar.Value < vScrollBar.Maximum)
+                if (vScrollBar.Value >= vScrollBar.Maximum)
                 {
-                    vScrollBar.Value++;
-                    pictureBox.Invalidate();
+                    return;
                 }
+
+                vScrollBar.Value++;
+                pictureBox.Invalidate();
             }
             else
             {
-                if (vScrollBar.Value > 1)
+                if (vScrollBar.Value <= 1)
                 {
-                    vScrollBar.Value--;
-                    pictureBox.Invalidate();
+                    return;
                 }
+
+                vScrollBar.Value--;
+                pictureBox.Invalidate();
             }
         }
 
@@ -215,11 +214,7 @@ namespace UoFiddler.Controls.UserControls
         {
             string path = Options.OutputPath;
             Ultima.Hues.Save(path);
-            MessageBox.Show(
-                $"Hue saved to {path}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Hue saved to {path}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Hues"] = false;
         }
@@ -264,12 +259,14 @@ namespace UoFiddler.Controls.UserControls
                 Filter = "txt files (*.txt)|*.txt"
             };
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() != DialogResult.OK)
             {
-                Ultima.Hues.List[_selected].Import(dialog.FileName);
-                Options.ChangedUltimaClass["Hues"] = true;
-                ControlEvents.FireHueChangeEvent();
+                return;
             }
+
+            Ultima.Hues.List[_selected].Import(dialog.FileName);
+            Options.ChangedUltimaClass["Hues"] = true;
+            ControlEvents.FireHueChangeEvent();
         }
 
         /// <summary>
@@ -284,9 +281,9 @@ namespace UoFiddler.Controls.UserControls
             Color borderColor = VisualStyleInformation.TextControlBorder;
 
             ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle, borderColor,
-                      borderWidth, ButtonBorderStyle.Solid, borderColor, borderWidth,
-                      ButtonBorderStyle.Solid, borderColor, borderWidth, ButtonBorderStyle.Solid,
-                      borderColor, borderWidth, ButtonBorderStyle.Solid);
+                borderWidth, ButtonBorderStyle.Solid, borderColor, borderWidth,
+                ButtonBorderStyle.Solid, borderColor, borderWidth, ButtonBorderStyle.Solid,
+                borderColor, borderWidth, ButtonBorderStyle.Solid);
         }
     }
 }
