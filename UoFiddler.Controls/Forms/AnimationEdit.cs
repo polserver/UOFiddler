@@ -696,7 +696,7 @@ namespace UoFiddler.Controls.Forms
                 Bitmap bmp = new Bitmap(dialog.FileName);
                 if (dialog.FileName.Contains(".bmp"))
                 {
-                    bmp = Utils.ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                    bmp = ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                 }
 
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
@@ -733,7 +733,7 @@ namespace UoFiddler.Controls.Forms
                                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                                 if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") || dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") || dialog.FileName.Contains(".jpg"))
                                 {
-                                    bmp = Utils.ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                                    bmp = ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                                     //edit.GetImagePalette(bmp);
                                 }
 
@@ -758,7 +758,7 @@ namespace UoFiddler.Controls.Forms
                                         bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                                         bmp.SelectActiveFrame(dimension, index);
                                         bitBmp[index] = bmp;
-                                        bitBmp[index] = Utils.ConvertBmpAnim(bitBmp[index], (int)numericUpDown3.Value,
+                                        bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int)numericUpDown3.Value,
                                             (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                                         edit.AddFrame(bitBmp[index]);
                                         TreeNode node = GetNode(_currentBody);
@@ -1324,7 +1324,7 @@ namespace UoFiddler.Controls.Forms
                             bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                             bmp.SelectActiveFrame(dimension, index);
                             bitBmp[index] = bmp;
-                            bitBmp[index] = Utils.ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
+                            bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
                                 (int) numericUpDown4.Value, (int) numericUpDown5.Value);
                             edit.AddFrame(bitBmp[index]);
                             TreeNode node = GetNode(_currentBody);
@@ -1924,7 +1924,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
+                bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
                     (int) numericUpDown4.Value, (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2037,7 +2037,7 @@ namespace UoFiddler.Controls.Forms
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     if (edit != null)
                     {
-                        bit = Utils.ConvertBmpAnim(bit, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                        bit = ConvertBmpAnim(bit, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
                         edit.GetImagePalette(bit);
                     }
                     SetPaletteBox();
@@ -2048,6 +2048,46 @@ namespace UoFiddler.Controls.Forms
             }
         }
         //End of Soulblighter Modification
+
+        private static unsafe Bitmap ConvertBmpAnim(Bitmap bmp, int red, int green, int blue)
+        {
+            //Extra background
+            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
+
+            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            ushort* line = (ushort*)bd.Scan0;
+            int delta = bd.Stride >> 1;
+
+            Bitmap bmpNew = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+            BitmapData bdNew = bmpNew.LockBits(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            ushort* lineNew = (ushort*)bdNew.Scan0;
+            int deltaNew = bdNew.Stride >> 1;
+
+            for (int y = 0; y < bmp.Height; ++y, line += delta, lineNew += deltaNew)
+            {
+                ushort* cur = line;
+                ushort* curNew = lineNew;
+                for (int x = 0; x < bmp.Width; ++x)
+                {
+                    //My Soulblighter Modification
+                    // Convert color 0,0,0 to 0,0,8
+                    if (cur[x] == 32768)
+                    {
+                        curNew[x] = 32769;
+                    }
+
+                    if (cur[x] != 65535 && cur[x] != extraBack && cur[x] > 32768) //True White == BackGround
+                    {
+                        curNew[x] = cur[x];
+                    }
+                    //End of Soulblighter Modification
+                }
+            }
+            bmp.UnlockBits(bd);
+            bmpNew.UnlockBits(bdNew);
+            return bmpNew;
+        }
 
         private void OnClickExportAllToVD(object sender, EventArgs e)
         {
@@ -2246,7 +2286,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2296,7 +2336,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount / 8; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2346,7 +2386,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2396,7 +2436,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2446,7 +2486,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2485,6 +2525,46 @@ namespace UoFiddler.Controls.Forms
             }
 
             return edit;
+        }
+
+        private static unsafe Bitmap ConvertBmpAnimCv5(Bitmap bmp, int red, int green, int blue)
+        {
+            //Extra background
+            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
+
+            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            ushort* line = (ushort*)bd.Scan0;
+            int delta = bd.Stride >> 1;
+
+            Bitmap bmpNew = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+            BitmapData bdNew = bmpNew.LockBits(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            ushort* lineNew = (ushort*)bdNew.Scan0;
+            int deltaNew = bdNew.Stride >> 1;
+
+            for (int y = 0; y < bmp.Height; ++y, line += delta, lineNew += deltaNew)
+            {
+                ushort* cur = line;
+                ushort* curNew = lineNew;
+                for (int x = 0; x < bmp.Width; ++x)
+                {
+                    //My Soulblighter Modification
+                    // Convert color 0,0,0 to 0,0,8
+                    if (cur[x] == 32768)
+                    {
+                        curNew[x] = 32769;
+                    }
+
+                    if (cur[x] != 65535 && cur[x] != 54965 && cur[x] != extraBack && cur[x] > 32768) //True White == BackGround
+                    {
+                        curNew[x] = cur[x];
+                    }
+                    //End of Soulblighter Modification
+                }
+            }
+            bmp.UnlockBits(bd);
+            bmpNew.UnlockBits(bdNew);
+            return bmpNew;
         }
 
         private static readonly Color _greyConvert = Color.FromArgb(255, 170, 170, 170);
@@ -2926,7 +3006,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -2976,7 +3056,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -3026,7 +3106,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -3076,7 +3156,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -3126,7 +3206,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = Utils.ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
                     (int) numericUpDown5.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
@@ -3165,6 +3245,64 @@ namespace UoFiddler.Controls.Forms
             }
 
             return edit;
+        }
+
+        private static unsafe Bitmap ConvertBmpAnimKr(Bitmap bmp, int red, int green, int blue)
+        {
+            //Extra background
+            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
+            //
+            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            ushort* line = (ushort*)bd.Scan0;
+            int delta = bd.Stride >> 1;
+
+            Bitmap bmpNew = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+            BitmapData bdNew = bmpNew.LockBits(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            ushort* lineNew = (ushort*)bdNew.Scan0;
+            int deltaNew = bdNew.Stride >> 1;
+
+            for (int y = 0; y < bmp.Height; ++y, line += delta, lineNew += deltaNew)
+            {
+                ushort* cur = line;
+                ushort* curNew = lineNew;
+                for (int x = 0; x < bmp.Width; ++x)
+                {
+                    //if (cur[X] != 53235)
+                    //{
+                    // Convert back to RGB
+                    int blueTemp = (cur[x] - 32768) / 32;
+                    blueTemp *= 32;
+                    blueTemp = cur[x] - 32768 - blueTemp;
+                    int greenTemp = (cur[x] - 32768) / 1024;
+                    greenTemp *= 1024;
+                    greenTemp = cur[x] - 32768 - greenTemp - blueTemp;
+                    greenTemp /= 32;
+                    int redTemp = (cur[x] - 32768) / 1024;
+                    // remove green colors
+                    if (greenTemp > blueTemp && greenTemp > redTemp && greenTemp > 10)
+                    {
+                        cur[x] = 65535;
+                    }
+                    //}
+
+                    //My Soulblighter Modification
+                    // Convert color 0,0,0 to 0,0,8
+                    if (cur[x] == 32768)
+                    {
+                        curNew[x] = 32769;
+                    }
+
+                    if (cur[x] != 65535 && cur[x] != 54965 && cur[x] != extraBack && cur[x] > 32768) //True White == BackGround
+                    {
+                        curNew[x] = cur[x];
+                    }
+                    //End of Soulblighter Modification
+                }
+            }
+            bmp.UnlockBits(bd);
+            bmpNew.UnlockBits(bdNew);
+            return bmpNew;
         }
 
         private static void KrCanvasAlgorithm(Bitmap[] bitBmp, int frameCount, FrameDimension dimension, Color customConvert)
