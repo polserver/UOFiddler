@@ -9,8 +9,10 @@ namespace Ultima
 {
     public sealed class Multis
     {
-        private static MultiComponentList[] m_Components = new MultiComponentList[0x3000];
-        private static FileIndex m_FileIndex = new FileIndex("Multi.idx", "Multi.mul", 0x3000, 14);
+        public const int MaximumMultiIndex = 0x2200;
+
+        private static MultiComponentList[] m_Components = new MultiComponentList[MaximumMultiIndex];
+        private static FileIndex m_FileIndex = new FileIndex("Multi.idx", "Multi.mul", MaximumMultiIndex, 14);
 
         public enum ImportType
         {
@@ -28,8 +30,8 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("Multi.idx", "Multi.mul", 0x3000, 14);
-            m_Components = new MultiComponentList[0x3000];
+            m_FileIndex = new FileIndex("Multi.idx", "Multi.mul", MaximumMultiIndex, 14);
+            m_Components = new MultiComponentList[MaximumMultiIndex];
         }
 
         /// <summary>
@@ -40,8 +42,6 @@ namespace Ultima
         public static MultiComponentList GetComponents(int index)
         {
             MultiComponentList mcl;
-
-            index &= 0x2FFF;
 
             if (index >= 0 && index < m_Components.Length)
             {
@@ -332,7 +332,7 @@ namespace Ultima
             {
                 using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
                 {
-                    for (int index = 0; index < 0x3000; ++index)
+                    for (int index = 0; index < MaximumMultiIndex; ++index)
                     {
                         MultiComponentList comp = GetComponents(index);
 
