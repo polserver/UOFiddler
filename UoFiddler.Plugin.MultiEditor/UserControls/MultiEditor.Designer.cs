@@ -352,7 +352,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Save.Location = new System.Drawing.Point(4, 22);
             this.Save.Name = "Save";
             this.Save.Padding = new System.Windows.Forms.Padding(3);
-            this.Save.Size = new System.Drawing.Size(192, 160);
+            this.Save.Size = new System.Drawing.Size(192, 155);
             this.Save.TabIndex = 3;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;

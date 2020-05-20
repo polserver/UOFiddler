@@ -25,8 +25,8 @@ namespace UoFiddler.Controls.UserControls
     public partial class Multis : UserControl
     {
         private readonly string _multiXmlFileName = Path.Combine(Options.AppDataPath, "Multilist.xml");
-        private readonly XmlDocument _xDom;
-        private readonly XmlElement _xMultis;
+        private readonly XmlDocument _xmlDocument;
+        private readonly XmlElement _xmlElementMultis;
 
         public Multis()
         {
@@ -39,9 +39,9 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _xDom = new XmlDocument();
-            _xDom.Load(_multiXmlFileName);
-            _xMultis = _xDom["Multis"];
+            _xmlDocument = new XmlDocument();
+            _xmlDocument.Load(_multiXmlFileName);
+            _xmlElementMultis = _xmlDocument["Multis"];
         }
 
         private bool _loaded;
@@ -71,7 +71,7 @@ namespace UoFiddler.Controls.UserControls
             TreeViewMulti.BeginUpdate();
             TreeViewMulti.Nodes.Clear();
             var cache = new List<TreeNode>();
-            for (int i = 0; i < 0x3000; ++i)
+            for (int i = 0; i < Ultima.Multis.MaximumMultiIndex; ++i)
             {
                 MultiComponentList multi = Ultima.Multis.GetComponents(i);
                 if (multi == MultiComponentList.Empty)
@@ -80,24 +80,27 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 TreeNode node = null;
-                if (_xDom == null)
+                if (_xmlDocument == null)
                 {
                     node = new TreeNode(string.Format("{0,5} (0x{0:X})", i));
                 }
                 else
                 {
-                    XmlNodeList xMultiNodeList = _xMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
+                    XmlNodeList xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
                     string j = "";
+
                     foreach (XmlNode xMultiNode in xMultiNodeList)
                     {
                         j = xMultiNode.Attributes["name"].Value;
                     }
-                    node = new TreeNode(string.Format("{0,5} (0x{0:X}) {1}", i, j));
-                    xMultiNodeList = _xMultis.SelectNodes("/Multis/ToolTip[@id='" + i + "']");
+
+                    node = new TreeNode($"{i,5} (0x{i:X}) {j}");
+                    xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/ToolTip[@id='" + i + "']");
                     foreach (XmlNode xMultiNode in xMultiNodeList)
                     {
                         node.ToolTipText = j + "\r\n" + xMultiNode.Attributes["text"].Value;
                     }
+
                     if (xMultiNodeList.Count == 0)
                     {
                         node.ToolTipText = j;
@@ -312,19 +315,12 @@ namespace UoFiddler.Controls.UserControls
             {
                 for (int y = 0; y < multi.Height; ++y)
                 {
-                    MTile[] tiles = multi.Tiles[x][y];
-                    for (int i = 0; i < tiles.Length; ++i)
+                    foreach (var mTile in multi.Tiles[x][y])
                     {
-                        if (isUohsa)
-                        {
-                            MultiComponentBox.AppendText(
-                                $"0x{tiles[i].ID:X4} {x,3} {y,3} {tiles[i].Z,2} {tiles[i].Flag,2} {tiles[i].Unk1,2}\n");
-                        }
-                        else
-                        {
-                            MultiComponentBox.AppendText(
-                                $"0x{tiles[i].ID:X4} {x,3} {y,3} {tiles[i].Z,2} {tiles[i].Flag,2}\n");
-                        }
+                        MultiComponentBox.AppendText(
+                            isUohsa
+                                ? $"0x{mTile.ID:X4} {x,3} {y,3} {mTile.Z,2} {mTile.Flag,2} {mTile.Unk1,2}\n"
+                                : $"0x{mTile.ID:X4} {x,3} {y,3} {mTile.Z,2} {mTile.Flag,2}\n");
                     }
                 }
             }
@@ -362,11 +358,7 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Multi saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -378,17 +370,17 @@ namespace UoFiddler.Controls.UserControls
 
             if (_showFreeSlots)
             {
-                for (int i = 0; i < 0x3000; ++i)
+                for (int i = 0; i < Ultima.Multis.MaximumMultiIndex; ++i)
                 {
                     MultiComponentList multi = Ultima.Multis.GetComponents(i);
                     TreeNode node;
-                    if (_xDom == null)
+                    if (_xmlDocument == null)
                     {
                         node = new TreeNode($"{i,5} (0x{i:X})");
                     }
                     else
                     {
-                        XmlNodeList xMultiNodeList = _xMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
+                        XmlNodeList xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
                         string j = "";
                         foreach (XmlNode xMultiNode in xMultiNodeList)
                         {
@@ -408,7 +400,7 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                for (int i = 0; i < 0x3000; ++i)
+                for (int i = 0; i < Ultima.Multis.MaximumMultiIndex; ++i)
                 {
                     MultiComponentList multi = Ultima.Multis.GetComponents(i);
                     if (multi == MultiComponentList.Empty)
@@ -417,13 +409,13 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     TreeNode node;
-                    if (_xDom == null)
+                    if (_xmlDocument == null)
                     {
                         node = new TreeNode($"{i,5} (0x{i:X})");
                     }
                     else
                     {
-                        XmlNodeList xMultiNodeList = _xMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
+                        XmlNodeList xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
                         string j = "";
                         foreach (XmlNode xMultiNode in xMultiNodeList)
                         {
@@ -457,10 +449,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.txt");
             multi.ExportToTextFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -482,10 +471,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.wsc");
             multi.ExportToWscFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -507,22 +493,15 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.uoa");
             multi.ExportToUOAFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
             Ultima.Multis.Save(Options.OutputPath);
-            MessageBox.Show(
-                $"Saved to {Options.OutputPath}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Multis"] = false;
         }
 
@@ -540,12 +519,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
-            DialogResult result =
-                        MessageBox.Show(string.Format("Are you sure to remove {0} (0x{0:X})", id),
-                        "Remove",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show(string.Format("Are you sure to remove {0} (0x{0:X})", id), "Remove",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
@@ -570,12 +545,8 @@ namespace UoFiddler.Controls.UserControls
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
             if (multi != MultiComponentList.Empty)
             {
-                DialogResult result =
-                    MessageBox.Show(string.Format("Are you sure to replace {0} (0x{0:X})", id),
-                        "Import",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
+                DialogResult result = MessageBox.Show(string.Format("Are you sure to replace {0} (0x{0:X})", id),
+                    "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                 if (result != DialogResult.Yes)
                 {
                     return;
@@ -637,12 +608,8 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                MessageBox.Show(
-                    $"All Multis saved to {dialog.SelectedPath}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
