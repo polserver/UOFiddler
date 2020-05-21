@@ -26,18 +26,22 @@ namespace UoFiddler.Controls.Forms
 
         private void Search_Id(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(textBoxId.Text, out int graphic, 0, 0xFFF))
+            if (!Utils.ConvertStringToInt(textBoxId.Text, out int graphic, 0, 0xFFF))
             {
-                bool res = Sounds.SearchId(graphic);
-                if (!res)
-                {
-                    DialogResult result = MessageBox.Show("No sound found", "Result",
-                        MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Cancel)
-                    {
-                        Close();
-                    }
-                }
+                return;
+            }
+
+            bool res = Sounds.SearchId(graphic);
+            if (res)
+            {
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No sound found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
@@ -45,28 +49,32 @@ namespace UoFiddler.Controls.Forms
         {
             _lastSearchedName = textBoxSoundName.Text;
             bool res = Sounds.SearchName(textBoxSoundName.Text, false);
-            if (!res)
+            if (res)
             {
-                DialogResult result = MessageBox.Show("No sound found", "Result",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                {
-                    Close();
-                }
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No sound found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 
         private void SearchNextName(object sender, EventArgs e)
         {
             bool res = Sounds.SearchName(textBoxSoundName.Text, true);
-            if (!res)
+            if (res)
             {
-                DialogResult result = MessageBox.Show("No sound found", "Result",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel)
-                {
-                    Close();
-                }
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No sound found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 

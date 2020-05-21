@@ -846,7 +846,7 @@ namespace UoFiddler.Controls.UserControls
     }
 
     /// <summary>
-    /// A simple designer class for the CollapsibleSplitter control to remove 
+    /// A simple designer class for the CollapsibleSplitter control to remove
     /// unwanted properties at design time.
     /// </summary>
     public class CollapsibleSplitterDesigner : System.Windows.Forms.Design.ControlDesigner

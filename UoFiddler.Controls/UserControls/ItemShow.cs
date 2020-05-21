@@ -30,7 +30,9 @@ namespace UoFiddler.Controls.UserControls
         public ItemShow()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             RefMarker = this;
             if (!Files.CacheData)
             {
@@ -60,25 +62,23 @@ namespace UoFiddler.Controls.UserControls
 
         private void MakeHashFile()
         {
-            string path = Options.AppDataPath;
-            string fileName = Path.Combine(path, "UOFiddlerArt.hash");
-            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
-            {
-                using (BinaryWriter bin = new BinaryWriter(fs))
-                {
-                    byte[] md5 = Files.GetMD5(Files.GetFilePath("Art.mul"));
-                    if (md5 == null)
-                    {
-                        return;
-                    }
+            string fileName = Path.Combine(Options.AppDataPath, "UOFiddlerArt.hash");
 
-                    int length = md5.Length;
-                    bin.Write(length);
-                    bin.Write(md5);
-                    foreach (ListViewItem item in listView1.Items)
-                    {
-                        bin.Write((int)item.Tag);
-                    }
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (BinaryWriter bin = new BinaryWriter(fs))
+            {
+                byte[] md5 = Files.GetMD5(Files.GetFilePath("Art.mul"));
+                if (md5 == null)
+                {
+                    return;
+                }
+
+                int length = md5.Length;
+                bin.Write(length);
+                bin.Write(md5);
+                foreach (ListViewItem item in listView1.Items)
+                {
+                    bin.Write((int)item.Tag);
                 }
             }
         }
@@ -197,69 +197,76 @@ namespace UoFiddler.Controls.UserControls
 
             _showFreeSlots = false;
             showFreeSlotsToolStripMenuItem.Checked = false;
+
             listView1.BeginUpdate();
-            listView1.Clear();
-            List<ListViewItem> itemCache = new List<ListViewItem>();
-            if (Files.UseHashFile && Files.CompareHashFile("Art", Options.AppDataPath) && !Art.Modified)
+            try
             {
-                string path = Options.AppDataPath;
-                string fileName = Path.Combine(path, "UOFiddlerArt.hash");
-                if (File.Exists(fileName))
+                listView1.Clear();
+                List<ListViewItem> itemCache = new List<ListViewItem>();
+                if (Files.UseHashFile && Files.CompareHashFile("Art", Options.AppDataPath) && !Art.Modified)
                 {
-                    using (FileStream bin = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    string path = Options.AppDataPath;
+                    string fileName = Path.Combine(path, "UOFiddlerArt.hash");
+                    if (File.Exists(fileName))
                     {
-                        unsafe
+                        using (FileStream bin = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            byte[] buffer = new byte[bin.Length];
-                            bin.Read(buffer, 0, (int)bin.Length);
-                            fixed (byte* bf = buffer)
+                            unsafe
                             {
-                                int* pOffset = (int*)bf;
-                                int offset = *pOffset + 4;
-                                int* dat = (int*)(bf + offset);
-                                int i = offset;
-                                while (i < buffer.Length)
+                                byte[] buffer = new byte[bin.Length];
+                                bin.Read(buffer, 0, (int)bin.Length);
+                                fixed (byte* bf = buffer)
                                 {
-                                    int j = *dat++;
-                                    ListViewItem item = new ListViewItem(j.ToString(), 0)
+                                    int* pOffset = (int*)bf;
+                                    int offset = *pOffset + 4;
+                                    int* dat = (int*)(bf + offset);
+                                    int i = offset;
+                                    while (i < buffer.Length)
                                     {
-                                        Tag = j
-                                    };
-                                    itemCache.Add(item);
-                                    i += 4;
+                                        int j = *dat++;
+                                        ListViewItem item = new ListViewItem(j.ToString(), 0)
+                                        {
+                                            Tag = j
+                                        };
+                                        itemCache.Add(item);
+                                        i += 4;
+                                    }
                                 }
                             }
                         }
+                        listView1.Items.AddRange(itemCache.ToArray());
+                    }
+                }
+                else
+                {
+                    int staticLength = Art.GetMaxItemID() + 1;
+                    for (int i = 0; i < staticLength; ++i)
+                    {
+                        if (!Art.IsValidStatic(i))
+                        {
+                            continue;
+                        }
+
+                        ListViewItem item = new ListViewItem(i.ToString(), 0)
+                        {
+                            Tag = i
+                        };
+                        itemCache.Add(item);
                     }
                     listView1.Items.AddRange(itemCache.ToArray());
-                }
-            }
-            else
-            {
-                int staticLength = Art.GetMaxItemID() + 1;
-                for (int i = 0; i < staticLength; ++i)
-                {
-                    if (!Art.IsValidStatic(i))
+
+                    if (Files.UseHashFile)
                     {
-                        continue;
+                        MakeHashFile();
                     }
-
-                    ListViewItem item = new ListViewItem(i.ToString(), 0)
-                    {
-                        Tag = i
-                    };
-                    itemCache.Add(item);
                 }
-                listView1.Items.AddRange(itemCache.ToArray());
 
-                if (Files.UseHashFile)
-                {
-                    MakeHashFile();
-                }
+                listView1.TileSize = new Size(Options.ArtItemSizeWidth, Options.ArtItemSizeHeight);
             }
-
-            listView1.TileSize = new Size(Options.ArtItemSizeWidth, Options.ArtItemSizeHeight);
-            listView1.EndUpdate();
+            finally
+            {
+                listView1.EndUpdate();
+            }
 
             if (!IsLoaded)
             {

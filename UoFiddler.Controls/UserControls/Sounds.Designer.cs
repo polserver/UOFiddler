@@ -97,26 +97,26 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripMenuItem1,
             this.itemSave});
             this.cmStripSounds.Name = "contextMenuStrip1";
-            this.cmStripSounds.Size = new System.Drawing.Size(181, 220);
+            this.cmStripSounds.Size = new System.Drawing.Size(169, 198);
             // 
             // nameSortToolStripMenuItem
             // 
             this.nameSortToolStripMenuItem.CheckOnClick = true;
             this.nameSortToolStripMenuItem.Name = "nameSortToolStripMenuItem";
-            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.nameSortToolStripMenuItem.Text = "Name Sort";
             this.nameSortToolStripMenuItem.Click += new System.EventHandler(this.OnChangeSort);
             // 
             // tsSeparator1
             // 
             this.tsSeparator1.Name = "tsSeparator1";
-            this.tsSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.tsSeparator1.Size = new System.Drawing.Size(165, 6);
             // 
             // showFreeSlotsToolStripMenuItem
             // 
             this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
             this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
-            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.showFreeSlotsToolStripMenuItem.Text = "Show free slots";
             this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsClick);
             // 
@@ -124,21 +124,21 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.nextFreeSlotToolStripMenuItem.Enabled = false;
             this.nextFreeSlotToolStripMenuItem.Name = "nextFreeSlotToolStripMenuItem";
-            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.nextFreeSlotToolStripMenuItem.Text = "Find next free slot";
             this.nextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.NextFreeSlotToolStripMenuItem_Click);
             // 
             // tsSeparator2
             // 
             this.tsSeparator2.Name = "tsSeparator2";
-            this.tsSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.tsSeparator2.Size = new System.Drawing.Size(165, 6);
             // 
             // playSoundToolStripMenuItem
             // 
             this.playSoundToolStripMenuItem.Enabled = false;
             this.playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playSoundToolStripMenuItem.Name = "playSoundToolStripMenuItem";
-            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.playSoundToolStripMenuItem.Text = "Play";
             this.playSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickPlay);
             // 
@@ -146,7 +146,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.replaceToolStripMenuItem.Enabled = false;
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.replaceToolStripMenuItem.Text = "Insert/Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
@@ -154,7 +154,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.extractSoundToolStripMenuItem.Enabled = false;
             this.extractSoundToolStripMenuItem.Name = "extractSoundToolStripMenuItem";
-            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.extractSoundToolStripMenuItem.Text = "Extract";
             this.extractSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtract);
             // 
@@ -162,19 +162,19 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.removeSoundToolStripMenuItem.Enabled = false;
             this.removeSoundToolStripMenuItem.Name = "removeSoundToolStripMenuItem";
-            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.removeSoundToolStripMenuItem.Text = "Remove";
             this.removeSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
             // 
             // itemSave
             // 
             this.itemSave.Name = "itemSave";
-            this.itemSave.Size = new System.Drawing.Size(180, 22);
+            this.itemSave.Size = new System.Drawing.Size(168, 22);
             this.itemSave.Text = "Save";
             this.itemSave.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -213,7 +213,7 @@ namespace UoFiddler.Controls.UserControls
             // itemExtractSoundlist
             // 
             this.itemExtractSoundlist.Name = "itemExtractSoundlist";
-            this.itemExtractSoundlist.Size = new System.Drawing.Size(180, 22);
+            this.itemExtractSoundlist.Size = new System.Drawing.Size(162, 22);
             this.itemExtractSoundlist.Text = "Extract Soundlist";
             this.itemExtractSoundlist.Click += new System.EventHandler(this.OnClickExtractSoundList);
             // 

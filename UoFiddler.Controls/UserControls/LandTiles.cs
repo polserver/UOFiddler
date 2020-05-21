@@ -27,6 +27,7 @@ namespace UoFiddler.Controls.UserControls
         public LandTiles()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             _refMarker = this;
         }
@@ -142,24 +143,31 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Art"] = true;
 
             listView1.BeginUpdate();
-            listView1.Clear();
-            var itemCache = new List<ListViewItem>();
-            for (int i = 0; i < 0x4000; ++i)
+            try
             {
-                if (!Art.IsValidLand(i))
+                listView1.Clear();
+                var itemCache = new List<ListViewItem>();
+                for (int i = 0; i < 0x4000; ++i)
                 {
-                    continue;
-                }
+                    if (!Art.IsValidLand(i))
+                    {
+                        continue;
+                    }
 
-                ListViewItem item = new ListViewItem(i.ToString(), 0)
-                {
-                    Tag = i
-                };
-                itemCache.Add(item);
+                    ListViewItem item = new ListViewItem(i.ToString(), 0)
+                    {
+                        Tag = i
+                    };
+                    itemCache.Add(item);
+                }
+                listView1.Items.AddRange(itemCache.ToArray());
+                listView1.TileSize = new Size(49, 49);
             }
-            listView1.Items.AddRange(itemCache.ToArray());
-            listView1.TileSize = new Size(49, 49);
-            listView1.EndUpdate();
+            finally
+            {
+                listView1.EndUpdate();
+            }
+
             if (!IsLoaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
@@ -237,6 +245,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     Tag = index
                 };
+
                 if (_showFreeSlots)
                 {
                     listView1.Items[index] = item;
@@ -262,6 +271,7 @@ namespace UoFiddler.Controls.UserControls
                         done = true;
                         break;
                     }
+
                     if (!done)
                     {
                         listView1.Items.Add(item);
@@ -449,21 +459,19 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            DialogResult result =
-                        MessageBox.Show("Are you sure? Will take a while", "Save",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-            if (result == DialogResult.Yes)
+            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
             {
-                Cursor.Current = Cursors.WaitCursor;
-                Art.Save(Options.OutputPath);
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show(
-                    $"Saved to {Options.OutputPath}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-                Options.ChangedUltimaClass["Art"] = false;
+                return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+            Art.Save(Options.OutputPath);
+            Cursor.Current = Cursors.Default;
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            Options.ChangedUltimaClass["Art"] = false;
         }
 
         private void OnTextChanged_Insert(object sender, EventArgs e)
@@ -480,85 +488,84 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnKeyDown_Insert(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter || !Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
             {
-                if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
+                return;
+            }
+
+            if (Art.IsValidLand(index))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    if (Art.IsValidLand(index))
+                    return;
+                }
+
+                Bitmap bmp = new Bitmap(dialog.FileName);
+                if (bmp.Height != 44 || bmp.Width != 44)
+                {
+                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    return;
+                }
+                if (dialog.FileName.Contains(".bmp"))
+                {
+                    bmp = Utils.ConvertBmp(bmp);
+                }
+
+                Art.ReplaceLand(index, bmp);
+                ControlEvents.FireLandTileChangeEvent(this, index);
+                Options.ChangedUltimaClass["Art"] = true;
+                ListViewItem item = new ListViewItem(index.ToString(), 0)
+                {
+                    Tag = index
+                };
+
+                if (_showFreeSlots)
+                {
+                    listView1.Items[index] = item;
+                    listView1.Invalidate();
+                }
+                else
+                {
+                    bool done = false;
+                    foreach (ListViewItem i in listView1.Items)
                     {
-                        return;
+                        if ((int)i.Tag <= index)
+                        {
+                            continue;
+                        }
+
+                        listView1.Items.Insert(i.Index, item);
+                        done = true;
+                        break;
                     }
 
-                    contextMenuStrip1.Close();
-                    using (OpenFileDialog dialog = new OpenFileDialog())
+                    if (!done)
                     {
-                        dialog.Multiselect = false;
-                        dialog.Title = $"Choose image file to insert at 0x{index:X}";
-                        dialog.CheckFileExists = true;
-                        dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-                        if (dialog.ShowDialog() != DialogResult.OK)
-                        {
-                            return;
-                        }
-
-                        Bitmap bmp = new Bitmap(dialog.FileName);
-                        if (bmp.Height != 44 || bmp.Width != 44)
-                        {
-                            MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                            return;
-                        }
-                        if (dialog.FileName.Contains(".bmp"))
-                        {
-                            bmp = Utils.ConvertBmp(bmp);
-                        }
-
-                        Art.ReplaceLand(index, bmp);
-                        ControlEvents.FireLandTileChangeEvent(this, index);
-                        Options.ChangedUltimaClass["Art"] = true;
-                        ListViewItem item = new ListViewItem(index.ToString(), 0)
-                        {
-                            Tag = index
-                        };
-
-                        if (_showFreeSlots)
-                        {
-                            listView1.Items[index] = item;
-                            listView1.Invalidate();
-                        }
-                        else
-                        {
-                            bool done = false;
-                            foreach (ListViewItem i in listView1.Items)
-                            {
-                                if ((int)i.Tag <= index)
-                                {
-                                    continue;
-                                }
-
-                                listView1.Items.Insert(i.Index, item);
-                                done = true;
-                                break;
-                            }
-
-                            if (!done)
-                            {
-                                listView1.Items.Add(item);
-                            }
-                        }
-
-                        listView1.View = View.Details; // that works fascinating
-                        listView1.View = View.Tile;
-
-                        if (listView1.SelectedItems.Count == 1)
-                        {
-                            listView1.SelectedItems[0].Selected = false;
-                        }
-
-                        item.Selected = true;
-                        item.Focused = true;
-                        item.EnsureVisible();
+                        listView1.Items.Add(item);
                     }
                 }
+
+                listView1.View = View.Details; // that works fascinating
+                listView1.View = View.Tile;
+
+                if (listView1.SelectedItems.Count == 1)
+                {
+                    listView1.SelectedItems[0].Selected = false;
+                }
+
+                item.Selected = true;
+                item.Focused = true;
+                item.EnsureVisible();
             }
         }
 
@@ -652,39 +659,46 @@ namespace UoFiddler.Controls.UserControls
         {
             SuspendLayout();
             listView1.View = View.Details; // that works fascinating
+
             listView1.BeginUpdate();
-            _showFreeSlots = !_showFreeSlots;
-            if (_showFreeSlots)
+            try
             {
-                for (int j = 0; j < 0x4000; ++j)
+                _showFreeSlots = !_showFreeSlots;
+                if (_showFreeSlots)
                 {
-                    ListViewItem item;
-                    if (listView1.Items.Count > j)
+                    for (int j = 0; j < 0x4000; ++j)
                     {
-                        if ((int)listView1.Items[j].Tag == j) continue;
-                        item = new ListViewItem(j.ToString(), 0)
+                        ListViewItem item;
+                        if (listView1.Items.Count > j)
                         {
-                            Tag = -1
-                        };
-                        listView1.Items.Insert(j, item);
-                    }
-                    else
-                    {
-                        item = new ListViewItem(j.ToString(), 0)
+                            if ((int)listView1.Items[j].Tag == j) continue;
+                            item = new ListViewItem(j.ToString(), 0)
+                            {
+                                Tag = -1
+                            };
+                            listView1.Items.Insert(j, item);
+                        }
+                        else
                         {
-                            Tag = -1
-                        };
-                        listView1.Items.Insert(j, item);
+                            item = new ListViewItem(j.ToString(), 0)
+                            {
+                                Tag = -1
+                            };
+                            listView1.Items.Insert(j, item);
+                        }
                     }
                 }
+                else
+                {
+                    Reload();
+                }
             }
-            else
+            finally
             {
-                Reload();
+                listView1.EndUpdate();
             }
-            listView1.EndUpdate();
-            ResumeLayout(false);
 
+            ResumeLayout(false);
             listView1.View = View.Tile;
         }
 
@@ -752,7 +766,7 @@ namespace UoFiddler.Controls.UserControls
             ExportLandTileImage(i, ImageFormat.Png);
         }
 
-        private void ExportLandTileImage(int index, ImageFormat imageFormat)
+        private static void ExportLandTileImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"Landtile {index}.{fileExtension}");
@@ -762,11 +776,7 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Landtile saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -839,12 +849,9 @@ namespace UoFiddler.Controls.UserControls
                         bit.Save(fileName, imageFormat);
                     }
                 }
-                MessageBox.Show(
-                    $"All LandTiles saved to {dialog.SelectedPath}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+
+                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 

@@ -29,6 +29,7 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             if (!Files.CacheData)
             {
                 PreloadMap.Visible = false;
@@ -448,34 +449,36 @@ namespace UoFiddler.Controls.UserControls
 
         private void SyncClientTimer(object sender, EventArgs e)
         {
-            if (_syncWithClient)
+            if (!_syncWithClient)
             {
-                int x = 0;
-                int y = 0;
-                int z = 0;
-                int mapClient = 0;
-                string mapname = "";
-                if (Client.Running)
-                {
-                    Client.Calibrate();
-                    if (Client.FindLocation(ref x, ref y, ref z, ref mapClient))
-                    {
-                        if (_clientX == x && _clientY == y && _clientZ == z && _clientMap == mapClient)
-                        {
-                            return;
-                        }
-
-                        _clientX = x;
-                        _clientY = y;
-                        _clientZ = z;
-                        _clientMap = mapClient;
-                        mapname = Options.MapNames[mapClient];
-                    }
-                }
-
-                ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{mapname}";
-                pictureBox.Invalidate();
+                return;
             }
+
+            int x = 0;
+            int y = 0;
+            int z = 0;
+            int mapClient = 0;
+            string mapName = "";
+            if (Client.Running)
+            {
+                Client.Calibrate();
+                if (Client.FindLocation(ref x, ref y, ref z, ref mapClient))
+                {
+                    if (_clientX == x && _clientY == y && _clientZ == z && _clientMap == mapClient)
+                    {
+                        return;
+                    }
+
+                    _clientX = x;
+                    _clientY = y;
+                    _clientZ = z;
+                    _clientMap = mapClient;
+                    mapName = Options.MapNames[mapClient];
+                }
+            }
+
+            ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{mapName}";
+            pictureBox.Invalidate();
         }
 
         private void GetMapInfo(object sender, EventArgs e)
@@ -547,26 +550,23 @@ namespace UoFiddler.Controls.UserControls
                 brush.Dispose();
             }
 
-            if (showClientCrossToolStripMenuItem.Checked)
+            if (showClientCrossToolStripMenuItem.Checked && Client.Running)
             {
-                if (Client.Running)
+                if (_clientX > hScrollBar.Value &&
+                    _clientX < hScrollBar.Value + (e.ClipRectangle.Width / Zoom) &&
+                    _clientY > vScrollBar.Value &&
+                    _clientY < vScrollBar.Value + (e.ClipRectangle.Height / Zoom) &&
+                    _clientMap == _currMapInt)
                 {
-                    if (_clientX > hScrollBar.Value &&
-                        _clientX < hScrollBar.Value + (e.ClipRectangle.Width / Zoom) &&
-                        _clientY > vScrollBar.Value &&
-                        _clientY < vScrollBar.Value + (e.ClipRectangle.Height / Zoom) &&
-                        _clientMap == _currMapInt)
-                    {
-                        Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow));
-                        Pen pen = new Pen(brush);
-                        int x = (int)((_clientX - Round(hScrollBar.Value)) * Zoom);
-                        int y = (int)((_clientY - Round(vScrollBar.Value)) * Zoom);
-                        e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
-                        e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
-                        e.Graphics.DrawEllipse(pen, x - 2, y - 2, 2 * 2, 2 * 2);
-                        pen.Dispose();
-                        brush.Dispose();
-                    }
+                    Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow));
+                    Pen pen = new Pen(brush);
+                    int x = (int)((_clientX - Round(hScrollBar.Value)) * Zoom);
+                    int y = (int)((_clientY - Round(vScrollBar.Value)) * Zoom);
+                    e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
+                    e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
+                    e.Graphics.DrawEllipse(pen, x - 2, y - 2, 2 * 2, 2 * 2);
+                    pen.Dispose();
+                    brush.Dispose();
                 }
             }
 
@@ -601,19 +601,13 @@ namespace UoFiddler.Controls.UserControls
                     args = line.Split(',');
                 }
 
-                if (args.Length == 2)
+                if (args.Length == 2 && int.TryParse(args[0], out int x) && int.TryParse(args[1], out int y))
                 {
-                    if (int.TryParse(args[0], out int x) && int.TryParse(args[1], out int y))
+                    if (x >= 0 && y >= 0 && x <= _currMap.Width && x <= _currMap.Height)
                     {
-                        if (x >= 0 && y >= 0)
-                        {
-                            if (x <= _currMap.Width && x <= _currMap.Height)
-                            {
-                                contextMenuStrip1.Close();
-                                hScrollBar.Value = (int)Math.Max(0, x - (pictureBox.Right / Zoom / 2));
-                                vScrollBar.Value = (int)Math.Max(0, y - (pictureBox.Bottom / Zoom / 2));
-                            }
-                        }
+                        contextMenuStrip1.Close();
+                        hScrollBar.Value = (int)Math.Max(0, x - (pictureBox.Right / Zoom / 2));
+                        vScrollBar.Value = (int)Math.Max(0, y - (pictureBox.Bottom / Zoom / 2));
                     }
                 }
             }
@@ -700,11 +694,7 @@ namespace UoFiddler.Controls.UserControls
                 Cursor.Current = Cursors.Default;
             }
 
-            MessageBox.Show(
-                $"Map saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Map saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -782,25 +772,27 @@ namespace UoFiddler.Controls.UserControls
                 };
                 OverlayObjectTree.Nodes.Add(node);
 
-                if (File.Exists(fileName))
+                if (!File.Exists(fileName))
                 {
-                    XmlDocument dom = new XmlDocument();
-                    dom.Load(fileName);
-                    XmlElement xOptions = dom["Overlays"];
-                    foreach (XmlElement xMarker in xOptions.SelectNodes("Marker"))
+                    return;
+                }
+
+                XmlDocument dom = new XmlDocument();
+                dom.Load(fileName);
+                XmlElement xOptions = dom["Overlays"];
+                foreach (XmlElement xMarker in xOptions.SelectNodes("Marker"))
+                {
+                    int x = int.Parse(xMarker.GetAttribute("x"));
+                    int y = int.Parse(xMarker.GetAttribute("y"));
+                    int m = int.Parse(xMarker.GetAttribute("map"));
+                    int c = int.Parse(xMarker.GetAttribute("color"));
+                    string text = xMarker.GetAttribute("text");
+                    OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
+                    node = new TreeNode(text)
                     {
-                        int x = int.Parse(xMarker.GetAttribute("x"));
-                        int y = int.Parse(xMarker.GetAttribute("y"));
-                        int m = int.Parse(xMarker.GetAttribute("map"));
-                        int c = int.Parse(xMarker.GetAttribute("color"));
-                        string text = xMarker.GetAttribute("text");
-                        OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
-                        node = new TreeNode(text)
-                        {
-                            Tag = o
-                        };
-                        OverlayObjectTree.Nodes[m].Nodes.Add(node);
-                    }
+                        Tag = o
+                    };
+                    OverlayObjectTree.Nodes[m].Nodes.Add(node);
                 }
             }
             finally
@@ -837,6 +829,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
             dom.AppendChild(sr);
+
             if (entries)
             {
                 dom.Save(fileName);
@@ -1010,7 +1003,8 @@ namespace UoFiddler.Controls.UserControls
             Ultima.Map.RewriteMap(Options.OutputPath,
                 _currMapInt, _currMap.Width, _currMap.Height);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Map saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Map saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickReportInvisStatics(object sender, EventArgs e)
@@ -1018,7 +1012,8 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             _currMap.ReportInvisStatics(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickReportInvalidMapIDs(object sender, EventArgs e)
@@ -1026,7 +1021,8 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             _currMap.ReportInvalidMapIDs(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private MapReplace _showForm;
@@ -1091,8 +1087,9 @@ namespace UoFiddler.Controls.UserControls
                 m_ID = 0xFFFF,
                 m_Hue = 0
             };
-            int blockY;
-            int blockX = blockY = 0;
+
+            int blockY = 0;
+            int blockX = 0;
             while ((line = ip.ReadLine()) != null)
             {
                 if ((line = line.Trim()).Length == 0 || line.StartsWith("#") || line.StartsWith("//"))
@@ -1159,6 +1156,7 @@ namespace UoFiddler.Controls.UserControls
                 }
                 catch
                 {
+                    // TODO: add logging?
                     // ignored
                 }
             }
@@ -1169,7 +1167,8 @@ namespace UoFiddler.Controls.UserControls
 
             ip.Close();
 
-            MessageBox.Show("Done", "Freeze Static", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show("Done", "Freeze Static", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
             _currMap.ResetCache();
             pictureBox.Invalidate();
         }

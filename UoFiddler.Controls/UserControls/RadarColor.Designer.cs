@@ -97,7 +97,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.Name = "treeViewItem";
             this.treeViewItem.Size = new System.Drawing.Size(191, 162);
             this.treeViewItem.TabIndex = 0;
-            this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewitem);
+            this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
             // 
             // contextMenuStrip1
             // 

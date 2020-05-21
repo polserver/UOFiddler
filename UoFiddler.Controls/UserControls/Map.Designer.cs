@@ -70,6 +70,7 @@ namespace UoFiddler.Controls.UserControls
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hScrollBar = new System.Windows.Forms.HScrollBar();
             this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -111,7 +112,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.collapsibleSplitter2 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
-            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -192,49 +192,49 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator1,
             this.extractMapToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 330);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(172, 308);
             this.contextMenuStrip1.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.OnContextClosed);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.OnOpenContext);
             // 
             // zoomToolStripMenuItem
             // 
             this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.zoomToolStripMenuItem.Text = "+Zoom";
             this.zoomToolStripMenuItem.Click += new System.EventHandler(this.OnZoomPlus);
             // 
             // zoomToolStripMenuItem1
             // 
             this.zoomToolStripMenuItem1.Name = "zoomToolStripMenuItem1";
-            this.zoomToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.zoomToolStripMenuItem1.Size = new System.Drawing.Size(171, 22);
             this.zoomToolStripMenuItem1.Text = "-Zoom";
             this.zoomToolStripMenuItem1.Click += new System.EventHandler(this.OnZoomMinus);
             // 
             // getMapInfoToolStripMenuItem
             // 
             this.getMapInfoToolStripMenuItem.Name = "getMapInfoToolStripMenuItem";
-            this.getMapInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.getMapInfoToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.getMapInfoToolStripMenuItem.Text = "GetMapInfo";
             this.getMapInfoToolStripMenuItem.Click += new System.EventHandler(this.GetMapInfo);
             // 
             // insertMarkerToolStripMenuItem
             // 
             this.insertMarkerToolStripMenuItem.Name = "insertMarkerToolStripMenuItem";
-            this.insertMarkerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.insertMarkerToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.insertMarkerToolStripMenuItem.Text = "Insert Marker";
             this.insertMarkerToolStripMenuItem.Click += new System.EventHandler(this.OnClickInsertMarker);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(168, 6);
             // 
             // gotoToolStripMenuItem
             // 
             this.gotoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.TextBoxGoto});
             this.gotoToolStripMenuItem.Name = "gotoToolStripMenuItem";
-            this.gotoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.gotoToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.gotoToolStripMenuItem.Text = "Goto...";
             this.gotoToolStripMenuItem.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
@@ -248,61 +248,61 @@ namespace UoFiddler.Controls.UserControls
             // sendClientToPosToolStripMenuItem
             // 
             this.sendClientToPosToolStripMenuItem.Name = "sendClientToPosToolStripMenuItem";
-            this.sendClientToPosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sendClientToPosToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.sendClientToPosToolStripMenuItem.Text = "Send Client To Pos";
             this.sendClientToPosToolStripMenuItem.Click += new System.EventHandler(this.OnClickSendClientToPos);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(168, 6);
             // 
             // feluccaToolStripMenuItem
             // 
             this.feluccaToolStripMenuItem.Name = "feluccaToolStripMenuItem";
-            this.feluccaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.feluccaToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.feluccaToolStripMenuItem.Text = "Felucca";
             this.feluccaToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapFelucca);
             // 
             // trammelToolStripMenuItem
             // 
             this.trammelToolStripMenuItem.Name = "trammelToolStripMenuItem";
-            this.trammelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.trammelToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.trammelToolStripMenuItem.Text = "Trammel";
             this.trammelToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapTrammel);
             // 
             // ilshenarToolStripMenuItem
             // 
             this.ilshenarToolStripMenuItem.Name = "ilshenarToolStripMenuItem";
-            this.ilshenarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ilshenarToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.ilshenarToolStripMenuItem.Text = "Ilshenar";
             this.ilshenarToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapIlshenar);
             // 
             // malasToolStripMenuItem
             // 
             this.malasToolStripMenuItem.Name = "malasToolStripMenuItem";
-            this.malasToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.malasToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.malasToolStripMenuItem.Text = "Malas";
             this.malasToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapMalas);
             // 
             // tokunoToolStripMenuItem
             // 
             this.tokunoToolStripMenuItem.Name = "tokunoToolStripMenuItem";
-            this.tokunoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tokunoToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.tokunoToolStripMenuItem.Text = "Tokuno";
             this.tokunoToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapTokuno);
             // 
             // terMurToolStripMenuItem
             // 
             this.terMurToolStripMenuItem.Name = "terMurToolStripMenuItem";
-            this.terMurToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.terMurToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.terMurToolStripMenuItem.Text = "TerMur";
             this.terMurToolStripMenuItem.Click += new System.EventHandler(this.ChangeMapTerMur);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(168, 6);
             // 
             // extractMapToolStripMenuItem
             // 
@@ -312,30 +312,37 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem,
             this.asPngToolStripMenuItem});
             this.extractMapToolStripMenuItem.Name = "extractMapToolStripMenuItem";
-            this.extractMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.extractMapToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.extractMapToolStripMenuItem.Text = "Extract Map..";
             this.extractMapToolStripMenuItem.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapJpg);
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem.Text = "As Png";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapPng);
             // 
             // hScrollBar
             // 
@@ -454,7 +461,7 @@ namespace UoFiddler.Controls.UserControls
             this.showStaticsToolStripMenuItem1.CheckOnClick = true;
             this.showStaticsToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showStaticsToolStripMenuItem1.Name = "showStaticsToolStripMenuItem1";
-            this.showStaticsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.showStaticsToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.showStaticsToolStripMenuItem1.Text = "Show Statics";
             this.showStaticsToolStripMenuItem1.Click += new System.EventHandler(this.OnChangeView);
             // 
@@ -464,7 +471,7 @@ namespace UoFiddler.Controls.UserControls
             this.showCenterCrossToolStripMenuItem1.CheckOnClick = true;
             this.showCenterCrossToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showCenterCrossToolStripMenuItem1.Name = "showCenterCrossToolStripMenuItem1";
-            this.showCenterCrossToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.showCenterCrossToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.showCenterCrossToolStripMenuItem1.Text = "Show Center Cross";
             this.showCenterCrossToolStripMenuItem1.Click += new System.EventHandler(this.OnChangeView);
             // 
@@ -474,7 +481,7 @@ namespace UoFiddler.Controls.UserControls
             this.showMarkersToolStripMenuItem.CheckOnClick = true;
             this.showMarkersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showMarkersToolStripMenuItem.Name = "showMarkersToolStripMenuItem";
-            this.showMarkersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showMarkersToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.showMarkersToolStripMenuItem.Text = "Show Markers";
             this.showMarkersToolStripMenuItem.Click += new System.EventHandler(this.OnChangeView);
             // 
@@ -484,7 +491,7 @@ namespace UoFiddler.Controls.UserControls
             this.showClientCrossToolStripMenuItem.CheckOnClick = true;
             this.showClientCrossToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showClientCrossToolStripMenuItem.Name = "showClientCrossToolStripMenuItem";
-            this.showClientCrossToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showClientCrossToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.showClientCrossToolStripMenuItem.Text = "Show Client Cross";
             // 
             // toolStripDropDownButton2
@@ -695,13 +702,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolTip1.SetToolTip(this.collapsibleSplitter1, "Click To Show/Hide Toolbar");
             this.collapsibleSplitter1.UseAnimations = false;
             this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
-            // 
-            // asPngToolStripMenuItem
-            // 
-            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.asPngToolStripMenuItem.Text = "As Png";
-            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.ExtractMapPng);
             // 
             // Map
             // 

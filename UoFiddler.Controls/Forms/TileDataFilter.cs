@@ -23,6 +23,7 @@ namespace UoFiddler.Controls.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+
             checkedListBox1.BeginUpdate();
             checkedListBox1.Items.Clear();
             string[] enumNames = Enum.GetNames(typeof(TileFlag));
@@ -31,6 +32,7 @@ namespace UoFiddler.Controls.Forms
                 checkedListBox1.Items.Add(enumNames[i], false);
             }
             checkedListBox1.EndUpdate();
+
             checkedListBox2.BeginUpdate();
             checkedListBox2.Items.Clear();
             checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Damaging), false);

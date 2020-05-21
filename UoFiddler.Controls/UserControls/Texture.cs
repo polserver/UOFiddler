@@ -209,11 +209,13 @@ namespace UoFiddler.Controls.UserControls
             {
                 foreach (ListViewItem i in listView1.Items)
                 {
-                    if ((int)i.Tag == index)
+                    if ((int)i.Tag != index)
                     {
-                        listView1.Items.RemoveAt(i.Index);
-                        break;
+                        continue;
                     }
+
+                    listView1.Items.RemoveAt(i.Index);
+                    break;
                 }
                 listView1.Invalidate();
             }
@@ -240,11 +242,8 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Textures.Save(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(
-                $"Saved to {Options.OutputPath}",
-                "Save",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Texture"] = false;
         }
 
@@ -261,6 +260,7 @@ namespace UoFiddler.Controls.UserControls
                 id = 1;
                 i = 0;
             }
+
             for (; i < listView1.Items.Count; ++i, ++id)
             {
                 if (id >= (int)listView1.Items[i].Tag)
@@ -289,12 +289,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int i = (int)listView1.SelectedItems[0].Tag;
-            DialogResult result =
-                        MessageBox.Show($"Are you sure to remove 0x{i:X}",
-                        "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{i:X}", "Save", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
@@ -344,7 +340,8 @@ namespace UoFiddler.Controls.UserControls
                 }
                 else
                 {
-                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
         }
@@ -431,7 +428,8 @@ namespace UoFiddler.Controls.UserControls
                 }
                 else
                 {
-                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
         }
@@ -470,11 +468,7 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Texture saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Texture saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 

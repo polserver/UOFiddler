@@ -345,12 +345,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             Ultima.Sounds.Save(path);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(
-                $"Saved to {path}",
-                    "Save",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Saved to {path}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Sound"] = false;
         }
 
@@ -362,9 +358,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int id = (int)treeView.SelectedNode.Tag - 1;
-            DialogResult result =
-                        MessageBox.Show($"Are you sure to remove {treeView.SelectedNode.Text}?", "Remove",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show($"Are you sure to remove {treeView.SelectedNode.Text}?", "Remove",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
@@ -389,10 +384,7 @@ namespace UoFiddler.Controls.UserControls
         {
             string fileName = Path.Combine(Options.OutputPath, "SoundList.csv");
             Ultima.Sounds.SaveSoundListToCSV(fileName);
-            MessageBox.Show($"SoundList saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"SoundList saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -470,12 +462,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (Ultima.Sounds.IsValidSound(id - 1, out _, out _))
             {
-                DialogResult result = MessageBox.Show(
-                    $"Are you sure to replace {treeView.SelectedNode.Text}?",
-                    "Replace",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
+                DialogResult result = MessageBox.Show($"Are you sure to replace {treeView.SelectedNode.Text}?",
+                    "Replace", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                 if (result != DialogResult.Yes)
                 {
                     return;

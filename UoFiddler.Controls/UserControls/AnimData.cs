@@ -25,9 +25,10 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
 
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             splitContainer2.Panel2MinSize = 190;
             splitContainer2.SplitterDistance = splitContainer2.Width - splitContainer2.Panel2MinSize - splitContainer2.SplitterWidth;
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
         private static bool _loaded;

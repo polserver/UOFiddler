@@ -69,49 +69,58 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Hues"] = true;
 
             TreeViewMulti.BeginUpdate();
-            TreeViewMulti.Nodes.Clear();
-            var cache = new List<TreeNode>();
-            for (int i = 0; i < Ultima.Multis.MaximumMultiIndex; ++i)
+            try
             {
-                MultiComponentList multi = Ultima.Multis.GetComponents(i);
-                if (multi == MultiComponentList.Empty)
+                TreeViewMulti.Nodes.Clear();
+                var cache = new List<TreeNode>();
+                for (int i = 0; i < Ultima.Multis.MaximumMultiIndex; ++i)
                 {
-                    continue;
-                }
-
-                TreeNode node = null;
-                if (_xmlDocument == null)
-                {
-                    node = new TreeNode(string.Format("{0,5} (0x{0:X})", i));
-                }
-                else
-                {
-                    XmlNodeList xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
-                    string j = "";
-
-                    foreach (XmlNode xMultiNode in xMultiNodeList)
+                    MultiComponentList multi = Ultima.Multis.GetComponents(i);
+                    if (multi == MultiComponentList.Empty)
                     {
-                        j = xMultiNode.Attributes["name"].Value;
+                        continue;
                     }
 
-                    node = new TreeNode($"{i,5} (0x{i:X}) {j}");
-                    xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/ToolTip[@id='" + i + "']");
-                    foreach (XmlNode xMultiNode in xMultiNodeList)
+                    TreeNode node = null;
+                    if (_xmlDocument == null)
                     {
-                        node.ToolTipText = j + "\r\n" + xMultiNode.Attributes["text"].Value;
+                        node = new TreeNode(string.Format("{0,5} (0x{0:X})", i));
+                    }
+                    else
+                    {
+                        XmlNodeList xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
+                        string j = "";
+
+                        foreach (XmlNode xMultiNode in xMultiNodeList)
+                        {
+                            j = xMultiNode.Attributes["name"].Value;
+                        }
+
+                        node = new TreeNode($"{i,5} (0x{i:X}) {j}");
+                        xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/ToolTip[@id='" + i + "']");
+                        foreach (XmlNode xMultiNode in xMultiNodeList)
+                        {
+                            node.ToolTipText = j + "\r\n" + xMultiNode.Attributes["text"].Value;
+                        }
+
+                        if (xMultiNodeList.Count == 0)
+                        {
+                            node.ToolTipText = j;
+                        }
                     }
 
-                    if (xMultiNodeList.Count == 0)
-                    {
-                        node.ToolTipText = j;
-                    }
+                    node.Tag = multi;
+                    node.Name = i.ToString();
+                    cache.Add(node);
                 }
-                node.Tag = multi;
-                node.Name = i.ToString();
-                cache.Add(node);
+
+                TreeViewMulti.Nodes.AddRange(cache.ToArray());
             }
-            TreeViewMulti.Nodes.AddRange(cache.ToArray());
-            TreeViewMulti.EndUpdate();
+            finally
+            {
+                TreeViewMulti.EndUpdate();
+            }
+
             if (TreeViewMulti.Nodes.Count > 0)
             {
                 TreeViewMulti.SelectedNode = TreeViewMulti.Nodes[0];
@@ -122,6 +131,7 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.MultiChangeEvent += OnMultiChangeEvent;
             }
+
             _loaded = true;
             Cursor.Current = Cursors.Default;
         }
@@ -607,7 +617,6 @@ namespace UoFiddler.Controls.UserControls
                         bit?.Save(fileName, imageFormat);
                     }
                 }
-
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
@@ -641,7 +650,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.txt");
                     multi.ExportToTextFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -673,7 +683,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.uoa");
                     multi.ExportToUOAFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -705,7 +716,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.wsc");
                     multi.ExportToWscFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
     }

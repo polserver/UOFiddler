@@ -16,7 +16,7 @@ namespace UoFiddler.Controls.Helpers
 
             public static void IsNullOrEmptyString(string argument, string argumentName)
             {
-                ThrowIf.Argument.IsNull(argument, argumentName);
+                IsNull(argument, argumentName);
 
                 if (string.IsNullOrWhiteSpace(argument))
                 {

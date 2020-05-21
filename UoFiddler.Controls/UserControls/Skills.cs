@@ -85,11 +85,7 @@ namespace UoFiddler.Controls.UserControls
             dataGridView1.CancelEdit();
             string path = Options.OutputPath;
             Ultima.Skills.Save(path);
-            MessageBox.Show(
-                $"Skills saved to {path}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Skills saved to {path}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Skills"] = false;
         }

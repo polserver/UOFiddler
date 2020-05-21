@@ -30,7 +30,9 @@ namespace UoFiddler.Controls.UserControls
         public ItemShowAlternative()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             RefMarker = this;
             pictureBox.MouseWheel += OnMouseWheel;
             DetailTextBox.AddBasicContextMenu();

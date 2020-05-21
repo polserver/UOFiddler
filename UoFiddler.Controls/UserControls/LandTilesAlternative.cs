@@ -27,6 +27,7 @@ namespace UoFiddler.Controls.UserControls
         public LandTilesAlternative()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             pictureBox.MouseWheel += OnMouseWheel;
             _refMarker = this;
@@ -602,11 +603,7 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Landtile saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -674,12 +671,8 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                MessageBox.Show(
-                    $"All LandTiles saved to {dialog.SelectedPath}",
-                    "Saved",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
     }

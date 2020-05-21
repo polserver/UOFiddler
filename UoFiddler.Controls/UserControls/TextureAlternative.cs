@@ -26,7 +26,9 @@ namespace UoFiddler.Controls.UserControls
         public TextureAlternative()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             pictureBox.MouseWheel += OnMouseWheel;
             _refMarker = this;
         }
@@ -339,12 +341,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            DialogResult result =
-                        MessageBox.Show($"Are you sure to remove 0x{_selected:X}",
-                        "Save",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selected:X}", "Save",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
@@ -465,7 +463,8 @@ namespace UoFiddler.Controls.UserControls
                 }
                 else
                 {
-                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
         }
@@ -475,11 +474,8 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Textures.Save(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(
-                $"Saved to {Options.OutputPath}",
-                "Save",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Texture"] = false;
         }
 
@@ -503,7 +499,7 @@ namespace UoFiddler.Controls.UserControls
             ExportTextureImage(_selected, ImageFormat.Png);
         }
 
-        private void ExportTextureImage(int index, ImageFormat imageFormat)
+        private static void ExportTextureImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"Texture {index}.{fileExtension}");
@@ -513,11 +509,7 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show(
-                $"Texture saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Texture saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
     }

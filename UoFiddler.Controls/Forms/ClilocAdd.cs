@@ -36,22 +36,14 @@ namespace UoFiddler.Controls.Forms
                 }
                 else
                 {
-                    MessageBox.Show(
-                       "Number not free.",
-                       "Error",
-                       MessageBoxButtons.OK,
-                       MessageBoxIcon.Error,
-                       MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("Number not free.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
             else
             {
-                MessageBox.Show(
-                   "Error reading Number",
-                   "Error",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Error,
-                   MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Error reading Number", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1);
             }
         }
 

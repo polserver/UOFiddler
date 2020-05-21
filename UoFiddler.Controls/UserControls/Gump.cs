@@ -48,11 +48,13 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void Reload()
         {
-            if (_loaded)
+            if (!_loaded)
             {
-                _loaded = false;
-                OnLoad(EventArgs.Empty);
+                return;
             }
+
+            _loaded = false;
+            OnLoad(EventArgs.Empty);
         }
 
         protected override void OnLoad(EventArgs e)

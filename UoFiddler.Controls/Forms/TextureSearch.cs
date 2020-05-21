@@ -49,7 +49,8 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            DialogResult result = MessageBox.Show("No texture found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            DialogResult result = MessageBox.Show("No texture found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             if (result == DialogResult.Cancel)
             {
                 Close();

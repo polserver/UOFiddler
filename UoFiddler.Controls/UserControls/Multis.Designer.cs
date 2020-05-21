@@ -50,6 +50,7 @@ namespace UoFiddler.Controls.UserControls
             this.toUOAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toWscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportAllImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,7 +81,6 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.MultiComponentBox = new System.Windows.Forms.RichTextBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -199,6 +199,21 @@ namespace UoFiddler.Controls.UserControls
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
+            // 
+            // collapsibleSplitter1
+            // 
+            this.collapsibleSplitter1.AnimationDelay = 20;
+            this.collapsibleSplitter1.AnimationStep = 20;
+            this.collapsibleSplitter1.BorderStyle3D = System.Windows.Forms.Border3DStyle.Flat;
+            this.collapsibleSplitter1.ControlToHide = this.toolStrip1;
+            this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.collapsibleSplitter1.ExpandParentForm = false;
+            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
+            this.collapsibleSplitter1.Name = "collapsibleSplitter1";
+            this.collapsibleSplitter1.TabIndex = 2;
+            this.collapsibleSplitter1.TabStop = false;
+            this.collapsibleSplitter1.UseAnimations = false;
+            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
             // toolStrip1
             // 
@@ -358,7 +373,7 @@ namespace UoFiddler.Controls.UserControls
             this.HeightChangeMulti.MaximumSize = new System.Drawing.Size(0, 33);
             this.HeightChangeMulti.MinimumSize = new System.Drawing.Size(0, 33);
             this.HeightChangeMulti.Name = "HeightChangeMulti";
-            this.HeightChangeMulti.Size = new System.Drawing.Size(0, 33);
+            this.HeightChangeMulti.Size = new System.Drawing.Size(340, 33);
             this.HeightChangeMulti.TabIndex = 0;
             this.HeightChangeMulti.ValueChanged += new System.EventHandler(this.OnValue_HeightChangeMulti);
             // 
@@ -478,21 +493,6 @@ namespace UoFiddler.Controls.UserControls
             this.MultiComponentBox.Size = new System.Drawing.Size(340, 308);
             this.MultiComponentBox.TabIndex = 0;
             this.MultiComponentBox.Text = "";
-            // 
-            // collapsibleSplitter1
-            // 
-            this.collapsibleSplitter1.AnimationDelay = 20;
-            this.collapsibleSplitter1.AnimationStep = 20;
-            this.collapsibleSplitter1.BorderStyle3D = System.Windows.Forms.Border3DStyle.Flat;
-            this.collapsibleSplitter1.ControlToHide = this.toolStrip1;
-            this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
-            this.collapsibleSplitter1.Name = "collapsibleSplitter1";
-            this.collapsibleSplitter1.TabIndex = 2;
-            this.collapsibleSplitter1.TabStop = false;
-            this.collapsibleSplitter1.UseAnimations = false;
-            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
             // Multis
             // 
