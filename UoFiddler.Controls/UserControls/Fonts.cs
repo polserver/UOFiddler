@@ -49,19 +49,23 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         public static void RefreshOnCharChange()
         {
-            if ((int)_refMarker.treeView.SelectedNode.Parent.Tag == 1) // Unicode
+            if ((int)_refMarker.treeView.SelectedNode.Parent.Tag != 1)
             {
-                _refMarker.listView1.Invalidate();
-                if (_refMarker.listView1.SelectedItems.Count > 0)
-                {
-                    int i = int.Parse(_refMarker.listView1.SelectedItems[0].Text);
-                    _refMarker.toolStripStatusLabel1.Text =
-                        string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}",
-                        (char)i, i,
-                        UnicodeFonts.Fonts[(int)_refMarker.treeView.SelectedNode.Tag].Chars[i].XOffset,
-                        UnicodeFonts.Fonts[(int)_refMarker.treeView.SelectedNode.Tag].Chars[i].YOffset);
-                }
+                return;
             }
+
+            _refMarker.listView1.Invalidate();
+            if (_refMarker.listView1.SelectedItems.Count <= 0)
+            {
+                return;
+            }
+
+            int i = int.Parse(_refMarker.listView1.SelectedItems[0].Text);
+            _refMarker.toolStripStatusLabel1.Text =
+                string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}",
+                    (char)i, i,
+                    UnicodeFonts.Fonts[(int)_refMarker.treeView.SelectedNode.Tag].Chars[i].XOffset,
+                    UnicodeFonts.Fonts[(int)_refMarker.treeView.SelectedNode.Tag].Chars[i].YOffset);
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -71,40 +75,52 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["UnicodeFont"] = true;
 
             treeView.BeginUpdate();
-            treeView.Nodes.Clear();
-            TreeNode node = new TreeNode("ASCII")
+            try
             {
-                Tag = 0
-            };
-            treeView.Nodes.Add(node);
-            for (int i = 0; i < ASCIIText.Fonts.Length; ++i)
-            {
-                node = new TreeNode(i.ToString())
+                treeView.Nodes.Clear();
+
+                TreeNode node = new TreeNode("ASCII")
                 {
-                    Tag = i
+                    Tag = 0
                 };
-                treeView.Nodes[0].Nodes.Add(node);
-            }
-            node = new TreeNode("Unicode")
-            {
-                Tag = 1
-            };
-            treeView.Nodes.Add(node);
-            for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
-            {
-                if (UnicodeFonts.Fonts[i] == null)
+                treeView.Nodes.Add(node);
+
+                for (int i = 0; i < ASCIIText.Fonts.Length; ++i)
                 {
-                    continue;
+                    node = new TreeNode(i.ToString())
+                    {
+                        Tag = i
+                    };
+                    treeView.Nodes[0].Nodes.Add(node);
                 }
 
-                node = new TreeNode(i.ToString())
+                node = new TreeNode("Unicode")
                 {
-                    Tag = i
+                    Tag = 1
                 };
-                treeView.Nodes[1].Nodes.Add(node);
+                treeView.Nodes.Add(node);
+
+                for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
+                {
+                    if (UnicodeFonts.Fonts[i] == null)
+                    {
+                        continue;
+                    }
+
+                    node = new TreeNode(i.ToString())
+                    {
+                        Tag = i
+                    };
+                    treeView.Nodes[1].Nodes.Add(node);
+                }
+
+                treeView.ExpandAll();
             }
-            treeView.ExpandAll();
-            treeView.EndUpdate();
+            finally
+            {
+                treeView.EndUpdate();
+            }
+
             treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
             if (!_loaded)
             {
@@ -128,39 +144,47 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int font = (int)treeView.SelectedNode.Tag;
-            listView1.Clear();
+
             listView1.BeginUpdate();
-            if ((int)treeView.SelectedNode.Parent.Tag == 1)
+            try
             {
-                setOffsetsToolStripMenuItem.Visible = true;
-                ListViewItem[] cache = new ListViewItem[0x10000];
-                for (int i = 0; i < 0x10000; ++i)
+                listView1.Clear();
+
+                if ((int)treeView.SelectedNode.Parent.Tag == 1)
                 {
-                    cache[i] = new ListViewItem(i.ToString(), 0)
+                    setOffsetsToolStripMenuItem.Visible = true;
+                    ListViewItem[] cache = new ListViewItem[0x10000];
+                    for (int i = 0; i < 0x10000; ++i)
                     {
-                        Tag = i
-                    };
-                }
-                listView1.Items.AddRange(cache);
-            }
-            else
-            {
-                setOffsetsToolStripMenuItem.Visible = false;
-                if (ASCIIText.Fonts[font] != null)
-                {
-                    ListViewItem[] cache = new ListViewItem[ASCIIText.Fonts[font].Characters.Length];
-                    for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
-                    {
-                        cache[i] = new ListViewItem((i + 32).ToString(), 0)
+                        cache[i] = new ListViewItem(i.ToString(), 0)
                         {
-                            Tag = ASCIIText.Fonts[font].Characters[i]
+                            Tag = i
                         };
                     }
                     listView1.Items.AddRange(cache);
                 }
+                else
+                {
+                    setOffsetsToolStripMenuItem.Visible = false;
+                    if (ASCIIText.Fonts[font] != null)
+                    {
+                        ListViewItem[] cache = new ListViewItem[ASCIIText.Fonts[font].Characters.Length];
+                        for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
+                        {
+                            cache[i] = new ListViewItem((i + 32).ToString(), 0)
+                            {
+                                Tag = ASCIIText.Fonts[font].Characters[i]
+                            };
+                        }
+                        listView1.Items.AddRange(cache);
+                    }
+                }
+                listView1.TileSize = new Size(30, 30);
             }
-            listView1.TileSize = new Size(30, 30);
-            listView1.EndUpdate();
+            finally
+            {
+                listView1.EndUpdate();
+            }
         }
 
         private void DrawItem(object sender, DrawListViewItemEventArgs e)

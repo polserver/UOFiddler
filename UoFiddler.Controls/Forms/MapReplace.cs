@@ -160,7 +160,8 @@ namespace UoFiddler.Controls.Forms
                 string copyMap = Path.Combine(path, $"map{replaceMap.Id}.mul");
                 if (!File.Exists(copyMap))
                 {
-                    MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                     return;
                 }
 
@@ -177,7 +178,8 @@ namespace UoFiddler.Controls.Forms
                 }
                 else
                 {
-                    MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                     return;
                 }
 

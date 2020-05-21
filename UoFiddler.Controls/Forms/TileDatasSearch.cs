@@ -20,11 +20,11 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly bool _land;
 
-        public TileDatasSearch(bool landtile)
+        public TileDatasSearch(bool landTile)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
-            _land = landtile;
+            _land = landTile;
         }
 
         private void SearchGraphic(object sender, EventArgs e)
@@ -40,7 +40,8 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.Cancel)
             {
                 Close();
@@ -56,7 +57,8 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             if (result == DialogResult.Cancel)
             {
                 Close();
@@ -71,7 +73,8 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            DialogResult result = MessageBox.Show("No item found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             if (result == DialogResult.Cancel)
             {
                 Close();

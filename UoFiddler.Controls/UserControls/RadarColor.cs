@@ -25,6 +25,7 @@ namespace UoFiddler.Controls.UserControls
         public RadarColor()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             _refMarker = this;
         }
@@ -42,18 +43,20 @@ namespace UoFiddler.Controls.UserControls
             get => _currCol;
             set
             {
-                if (_currCol != value)
+                if (_currCol == value)
                 {
-                    _currCol = value;
-                    _updating = true;
-                    numericUpDownShortCol.Value = _currCol;
-                    Color col = Ultima.Hues.HueToColor(_currCol);
-                    pictureBoxColor.BackColor = col;
-                    numericUpDownR.Value = col.R;
-                    numericUpDownG.Value = col.G;
-                    numericUpDownB.Value = col.B;
-                    _updating = false;
+                    return;
                 }
+
+                _currCol = value;
+                _updating = true;
+                numericUpDownShortCol.Value = _currCol;
+                Color col = Ultima.Hues.HueToColor(_currCol);
+                pictureBoxColor.BackColor = col;
+                numericUpDownR.Value = col.R;
+                numericUpDownG.Value = col.G;
+                numericUpDownB.Value = col.B;
+                _updating = false;
             }
         }
 
@@ -70,13 +73,15 @@ namespace UoFiddler.Controls.UserControls
                 for (int i = index; i < _refMarker.treeViewLand.Nodes.Count; ++i)
                 {
                     TreeNode node = _refMarker.treeViewLand.Nodes[i];
-                    if ((int)node.Tag == graphic)
+                    if ((int)node.Tag != graphic)
                     {
-                        _refMarker.tabControl2.SelectTab(1);
-                        _refMarker.treeViewLand.SelectedNode = node;
-                        node.EnsureVisible();
-                        break;
+                        continue;
                     }
+
+                    _refMarker.tabControl2.SelectTab(1);
+                    _refMarker.treeViewLand.SelectedNode = node;
+                    node.EnsureVisible();
+                    break;
                 }
             }
             else
@@ -84,13 +89,15 @@ namespace UoFiddler.Controls.UserControls
                 for (int i = index; i < _refMarker.treeViewItem.Nodes.Count; ++i)
                 {
                     TreeNode node = _refMarker.treeViewItem.Nodes[i];
-                    if ((int)node.Tag == graphic)
+                    if ((int)node.Tag != graphic)
                     {
-                        _refMarker.tabControl2.SelectTab(0);
-                        _refMarker.treeViewItem.SelectedNode = node;
-                        node.EnsureVisible();
-                        break;
+                        continue;
                     }
+
+                    _refMarker.tabControl2.SelectTab(0);
+                    _refMarker.treeViewItem.SelectedNode = node;
+                    node.EnsureVisible();
+                    break;
                 }
             }
         }
@@ -105,8 +112,7 @@ namespace UoFiddler.Controls.UserControls
 
         public void OnLoad(object sender, EventArgs e)
         {
-            MyEventArgs args = e as MyEventArgs;
-            if (IsLoaded && (args == null || args.Type != MyEventArgs.Types.ForceReload))
+            if (IsLoaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))
             {
                 return;
             }
@@ -117,35 +123,49 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["RadarColor"] = true;
 
             treeViewItem.BeginUpdate();
-            treeViewItem.Nodes.Clear();
-            if (TileData.ItemTable != null)
+            try
             {
-                TreeNode[] nodes = new TreeNode[Art.GetMaxItemID() + 1];
-                for (int i = 0; i < Art.GetMaxItemID() + 1; ++i)
+                treeViewItem.Nodes.Clear();
+                if (TileData.ItemTable != null)
                 {
-                    nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
+                    TreeNode[] nodes = new TreeNode[Art.GetMaxItemID() + 1];
+                    for (int i = 0; i < Art.GetMaxItemID() + 1; ++i)
                     {
-                        Tag = i
-                    };
+                        nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
+                        {
+                            Tag = i
+                        };
+                    }
+                    treeViewItem.Nodes.AddRange(nodes);
                 }
-                treeViewItem.Nodes.AddRange(nodes);
             }
-            treeViewItem.EndUpdate();
+            finally
+            {
+                treeViewItem.EndUpdate();
+            }
+
             treeViewLand.BeginUpdate();
-            treeViewLand.Nodes.Clear();
-            if (TileData.LandTable != null)
+            try
             {
-                TreeNode[] nodes = new TreeNode[TileData.LandTable.Length];
-                for (int i = 0; i < TileData.LandTable.Length; ++i)
+                treeViewLand.Nodes.Clear();
+                if (TileData.LandTable != null)
                 {
-                    nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.LandTable[i].Name))
+                    TreeNode[] nodes = new TreeNode[TileData.LandTable.Length];
+                    for (int i = 0; i < TileData.LandTable.Length; ++i)
                     {
-                        Tag = i
-                    };
+                        nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.LandTable[i].Name))
+                        {
+                            Tag = i
+                        };
+                    }
+                    treeViewLand.Nodes.AddRange(nodes);
                 }
-                treeViewLand.Nodes.AddRange(nodes);
             }
-            treeViewLand.EndUpdate();
+            finally
+            {
+                treeViewLand.EndUpdate();
+            }
+
             if (!IsLoaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
@@ -160,17 +180,17 @@ namespace UoFiddler.Controls.UserControls
             Reload();
         }
 
-        private void AfterSelectTreeViewitem(object sender, TreeViewEventArgs e)
+        private void AfterSelectTreeViewItem(object sender, TreeViewEventArgs e)
         {
             _selectedIndex = (int)e.Node.Tag;
             try
             {
-                Bitmap bit = Art.GetStatic(_selectedIndex);
-                Bitmap newbit = new Bitmap(pictureBoxArt.Size.Width, pictureBoxArt.Size.Height);
-                Graphics newgraph = Graphics.FromImage(newbit);
-                newgraph.Clear(Color.FromArgb(-1));
-                newgraph.DrawImage(bit, (pictureBoxArt.Size.Width - bit.Width) / 2, 1);
-                pictureBoxArt.Image = newbit;
+                Bitmap bitmap = Art.GetStatic(_selectedIndex);
+                Bitmap newBitmap = new Bitmap(pictureBoxArt.Size.Width, pictureBoxArt.Size.Height);
+                Graphics newGraphic = Graphics.FromImage(newBitmap);
+                newGraphic.Clear(Color.FromArgb(-1));
+                newGraphic.DrawImage(bitmap, (pictureBoxArt.Size.Width - bitmap.Width) / 2, 1);
+                pictureBoxArt.Image = newBitmap;
             }
             catch
             {
@@ -184,12 +204,12 @@ namespace UoFiddler.Controls.UserControls
             _selectedIndex = (int)e.Node.Tag;
             try
             {
-                Bitmap bit = Art.GetLand(_selectedIndex);
-                Bitmap newbit = new Bitmap(pictureBoxArt.Size.Width, pictureBoxArt.Size.Height);
-                Graphics newgraph = Graphics.FromImage(newbit);
-                newgraph.Clear(Color.FromArgb(-1));
-                newgraph.DrawImage(bit, (pictureBoxArt.Size.Width - bit.Width) / 2, 1);
-                pictureBoxArt.Image = newbit;
+                Bitmap bitmap = Art.GetLand(_selectedIndex);
+                Bitmap newBitmap = new Bitmap(pictureBoxArt.Size.Width, pictureBoxArt.Size.Height);
+                Graphics newGraphic = Graphics.FromImage(newBitmap);
+                newGraphic.Clear(Color.FromArgb(-1));
+                newGraphic.DrawImage(bitmap, (pictureBoxArt.Size.Width - bitmap.Width) / 2, 1);
+                pictureBoxArt.Image = newBitmap;
             }
             catch
             {
@@ -221,13 +241,15 @@ namespace UoFiddler.Controls.UserControls
                     cur = line;
                     for (int x = 0; x < image.Width; ++x)
                     {
-                        if (cur[x] != 0)
+                        if (cur[x] == 0)
                         {
-                            meanr += Ultima.Hues.HueToColorR((short)cur[x]);
-                            meang += Ultima.Hues.HueToColorG((short)cur[x]);
-                            meanb += Ultima.Hues.HueToColorB((short)cur[x]);
-                            ++count;
+                            continue;
                         }
+
+                        meanr += Ultima.Hues.HueToColorR((short)cur[x]);
+                        meang += Ultima.Hues.HueToColorG((short)cur[x]);
+                        meanb += Ultima.Hues.HueToColorB((short)cur[x]);
+                        ++count;
                     }
                 }
                 image.UnlockBits(bd);
@@ -244,55 +266,61 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "radarcol.mul");
             RadarCol.Save(fileName);
-            MessageBox.Show(
-                $"RadarCol saved to {fileName}",
-                "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            MessageBox.Show($"RadarCol saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["RadarCol"] = false;
         }
 
         private void OnClickSaveColor(object sender, EventArgs e)
         {
-            if (_selectedIndex >= 0)
+            if (_selectedIndex < 0)
             {
-                if (tabControl2.SelectedIndex == 0)
-                {
-                    RadarCol.SetItemColor(_selectedIndex, CurrColor);
-                }
-                else
-                {
-                    RadarCol.SetLandColor(_selectedIndex, CurrColor);
-                }
-
-                Options.ChangedUltimaClass["RadarCol"] = true;
+                return;
             }
+
+            if (tabControl2.SelectedIndex == 0)
+            {
+                RadarCol.SetItemColor(_selectedIndex, CurrColor);
+            }
+            else
+            {
+                RadarCol.SetLandColor(_selectedIndex, CurrColor);
+            }
+
+            Options.ChangedUltimaClass["RadarCol"] = true;
         }
 
         private void OnChangeR(object sender, EventArgs e)
         {
-            if (!_updating)
+            if (_updating)
             {
-                Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-                CurrColor = Ultima.Hues.ColorToHue(col);
+                return;
             }
+
+            Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
+            CurrColor = Ultima.Hues.ColorToHue(col);
         }
 
         private void OnChangeG(object sender, EventArgs e)
         {
-            if (!_updating)
+            if (_updating)
             {
-                Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-                CurrColor = Ultima.Hues.ColorToHue(col);
+                return;
             }
+
+            Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
+            CurrColor = Ultima.Hues.ColorToHue(col);
         }
 
         private void OnChangeB(object sender, EventArgs e)
         {
-            if (!_updating)
+            if (_updating)
             {
-                Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-                CurrColor = Ultima.Hues.ColorToHue(col);
+                return;
             }
+
+            Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
+            CurrColor = Ultima.Hues.ColorToHue(col);
         }
 
         private void OnNumericShortColChanged(object sender, EventArgs e)
@@ -445,7 +473,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     if (treeViewItem.SelectedNode != null)
                     {
-                        AfterSelectTreeViewitem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
+                        AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
                     }
                 }
                 else
@@ -464,7 +492,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "RadarColor.csv");
             RadarCol.ExportToCSV(fileName);
-            MessageBox.Show($"RadarColor saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"RadarColor saved to {fileName}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
     }
 }

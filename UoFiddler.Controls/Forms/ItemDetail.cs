@@ -236,11 +236,7 @@ namespace UoFiddler.Controls.Forms
             }
             newgraph.DrawImage(huebit, 0, 0);
             bit.Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show(
-                $"Item saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -264,11 +260,7 @@ namespace UoFiddler.Controls.Forms
             }
             newgraph.DrawImage(huebit, 0, 0);
             bit.Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show(
-                $"Item saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
+            MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 

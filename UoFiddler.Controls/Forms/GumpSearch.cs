@@ -26,17 +26,21 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchId(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemID()))
             {
-                if (!Gump.Search(graphic))
-                {
-                    DialogResult result = MessageBox.Show("No used index found", "Result",
-                        MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Cancel)
-                    {
-                        Close();
-                    }
-                }
+                return;
+            }
+
+            if (Gump.Search(graphic))
+            {
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("No used index found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Cancel)
+            {
+                Close();
             }
         }
 

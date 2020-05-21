@@ -430,10 +430,10 @@ namespace UoFiddler.Controls.UserControls
 
             int count = mobile.Length;
             _mAnimation = new Bitmap[count];
-            int[] animorder = _drawOrder2;
+            int[] animOrder = _drawOrder2;
             if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
             {
-                animorder = _drawOrder;
+                animOrder = _drawOrder;
             }
 
             for (int i = 0; i < count; ++i)
@@ -478,14 +478,14 @@ namespace UoFiddler.Controls.UserControls
                     draw.X = _drawPointAni.X - mobile[i].Center.X;
                     draw.Y = _drawPointAni.Y - mobile[i].Center.Y - mobile[i].Bitmap.Height;
                     graph.DrawImage(mobile[i].Bitmap, draw);
-                    for (int j = 1; j < animorder.Length; ++j)
+                    for (int j = 1; j < animOrder.Length; ++j)
                     {
-                        if ((int)_layers[animorder[j]] == 0 || !_layerVisible[animorder[j]])
+                        if ((int)_layers[animOrder[j]] == 0 || !_layerVisible[animOrder[j]])
                         {
                             continue;
                         }
 
-                        int ani = TileData.ItemTable[(int)_layers[animorder[j]]].Animation;
+                        int ani = TileData.ItemTable[(int)_layers[animOrder[j]]].Animation;
                         int gump = ani + 50000;
                         hue = 0;
                         ConvertBody(ref ani, ref gump, ref hue);
@@ -495,9 +495,9 @@ namespace UoFiddler.Controls.UserControls
                         }
 
                         Frame[] frames;
-                        if (_hues[animorder[j]] > 0)
+                        if (_hues[animOrder[j]] > 0)
                         {
-                            hue = _hues[animorder[j]];
+                            hue = _hues[animOrder[j]];
                             frames = Animations.GetAnimation(ani, _action, _facing, ref hue, true, false);
                         }
                         else
@@ -698,8 +698,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int layer = checkedListBoxWear.SelectedIndex;
-            int objtype = (int)_layers[layer];
-            int ani = TileData.ItemTable[objtype].Animation;
+            int objType = (int)_layers[layer];
+            int ani = TileData.ItemTable[objType].Animation;
             int gumpIdOrig = ani + 50000;
             int gumpId = gumpIdOrig;
             int hue = 0;
@@ -725,9 +725,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             TextBox.Clear();
-            TextBox.AppendText($"Objtype: 0x{objtype:X4}  Layer: 0x{layer:X2}\n");
+            TextBox.AppendText($"Objtype: 0x{objType:X4}  Layer: 0x{layer:X2}\n");
             TextBox.AppendText($"GumpID: 0x{gumpId:X4} (0x{gumpIdOrig:X4}) Hue: {hue}\n");
-            TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[objtype].Animation:X4})\n");
+            TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[objType].Animation:X4})\n");
             TextBox.AppendText(
                 $"ValidGump: {Gumps.IsValidIndex(gumpId)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}");
         }
@@ -846,17 +846,48 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnScroll_Action(object sender, EventArgs e)
         {
-            string[] tip = new[]{"Walk_01","WalkStaff_01","Run_01","RunStaff_01","Idle_01","Idle_01",
-                         "Fidget_Yawn_Stretch_01","CombatIdle1H_01","CombatIdle1H_01","AttackSlash1H_01",
-                         "AttackPierce1H_01","AttackBash1H_01","AttackBash2H_01","AttackSlash2H_01",
-                         "AttackPierce2H_01","CombatAdvance_1H_01","Spell1","Spell2","AttackBow_01",
-                         "AttackCrossbow_01","GetHit_Fr_Hi_01","Die_Hard_Fwd_01","Die_Hard_Back_01",
-                         "Horse_Walk_01","Horse_Run_01","Horse_Idle_01","Horse_Attack1H_SlashRight_01",
-                         "Horse_AttackBow_01","Horse_AttackCrossbow_01","Horse_Attack2H_SlashRight_01",
-                         "Block_Shield_Hard_01","Punch_Punch_Jab_01","Bow_Lesser_01","Salute_Armed1h_01",
-                         "Ingest_Eat_01"};
+            string[] tip =
+            {
+                "Walk_01",
+                "WalkStaff_01",
+                "Run_01",
+                "RunStaff_01",
+                "Idle_01",
+                "Idle_01",
+                "Fidget_Yawn_Stretch_01",
+                "CombatIdle1H_01",
+                "CombatIdle1H_01",
+                "AttackSlash1H_01",
+                "AttackPierce1H_01",
+                "AttackBash1H_01",
+                "AttackBash2H_01",
+                "AttackSlash2H_01",
+                "AttackPierce2H_01",
+                "CombatAdvance_1H_01",
+                "Spell1",
+                "Spell2",
+                "AttackBow_01",
+                "AttackCrossbow_01",
+                "GetHit_Fr_Hi_01",
+                "Die_Hard_Fwd_01",
+                "Die_Hard_Back_01",
+                "Horse_Walk_01",
+                "Horse_Run_01",
+                "Horse_Idle_01",
+                "Horse_Attack1H_SlashRight_01",
+                "Horse_AttackBow_01",
+                "Horse_AttackCrossbow_01",
+                "Horse_Attack2H_SlashRight_01",
+                "Block_Shield_Hard_01",
+                "Punch_Punch_Jab_01",
+                "Bow_Lesser_01",
+                "Salute_Armed1h_01",
+                "Ingest_Eat_01"
+            };
+
             toolTip1.SetToolTip(ActionBar, ActionBar.Value + " " + tip[ActionBar.Value]);
             _action = ActionBar.Value;
+
             RefreshDrawing();
         }
 

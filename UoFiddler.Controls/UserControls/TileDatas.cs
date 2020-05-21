@@ -27,27 +27,53 @@ namespace UoFiddler.Controls.UserControls
         {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             InitializeComponent();
-            checkedListBox1.BeginUpdate();
-            checkedListBox1.Items.Clear();
-            string[] enumNames = Enum.GetNames(typeof(TileFlag));
-            for (int i = 1; i < enumNames.Length; ++i)
-            {
-                checkedListBox1.Items.Add(enumNames[i], false);
-            }
-            checkedListBox1.EndUpdate();
-            checkedListBox2.BeginUpdate();
-            checkedListBox2.Items.Clear();
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Damaging), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wet), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Impassable), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wall), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Unknown3), false);
-            checkedListBox2.EndUpdate();
+
             _refMarker = this;
 
+            InitItemsFlagsCheckBoxes();
+            InitLandTilesFlagsCheckBoxes();
+
             treeViewItem.BeforeSelect += TreeViewItemOnBeforeSelect;
+
             saveDirectlyOnChangesToolStripMenuItem.Checked = Options.TileDataDirectlySaveOnChange;
             saveDirectlyOnChangesToolStripMenuItem.CheckedChanged += SaveDirectlyOnChangesToolStripMenuItemOnCheckedChanged;
+        }
+
+        private void InitLandTilesFlagsCheckBoxes()
+        {
+            checkedListBox2.BeginUpdate();
+            try
+            {
+                checkedListBox2.Items.Clear();
+                checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Damaging), false);
+                checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wet), false);
+                checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Impassable), false);
+                checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wall), false);
+                checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Unknown3), false);
+            }
+            finally
+            {
+                checkedListBox2.EndUpdate();
+            }
+        }
+
+        private void InitItemsFlagsCheckBoxes()
+        {
+            checkedListBox1.BeginUpdate();
+            try
+            {
+                checkedListBox1.Items.Clear();
+
+                string[] enumNames = Enum.GetNames(typeof(TileFlag));
+                for (int i = 1; i < enumNames.Length; ++i)
+                {
+                    checkedListBox1.Items.Add(enumNames[i], false);
+                }
+            }
+            finally
+            {
+                checkedListBox1.EndUpdate();
+            }
         }
 
         private static TileDatas _refMarker;

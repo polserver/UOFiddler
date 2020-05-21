@@ -84,7 +84,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // IDEntry
             // 
-            this.IDEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.IDEntry.MaxLength = 10;
             this.IDEntry.Name = "IDEntry";
             this.IDEntry.Size = new System.Drawing.Size(100, 25);
@@ -115,7 +114,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // KeyWordEntry
             // 
-            this.KeyWordEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyWordEntry.Name = "KeyWordEntry";
             this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
             this.KeyWordEntry.Text = "KeyWord..";

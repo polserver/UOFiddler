@@ -18,24 +18,23 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class MapDetails : Form
     {
-        public MapDetails(Map currmap, Point point)
+        public MapDetails(Map currentMap, Point point)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
             TopMost = true;
-            Tile currtile = currmap.Tiles.GetLandTile(point.X, point.Y);
+
+            Tile currentTile = currentMap.Tiles.GetLandTile(point.X, point.Y);
             richTextBox.AppendText($"X: {point.X} Y: {point.Y}\n\n");
             richTextBox.AppendText("LandTile:\n");
-            richTextBox.AppendText(
-                $"{TileData.LandTable[currtile.ID].Name}: 0x{currtile.ID:X} Altitute: {currtile.Z}\n\n");
-            HuedTile[] currStatics = currmap.Tiles.GetStaticTiles(point.X, point.Y);
+            richTextBox.AppendText($"{TileData.LandTable[currentTile.ID].Name}: 0x{currentTile.ID:X} Altitude: {currentTile.Z}\n\n");
+            HuedTile[] staticsAtPoint = currentMap.Tiles.GetStaticTiles(point.X, point.Y);
             richTextBox.AppendText("Statics:\n");
-
-            foreach (HuedTile currstatic in currStatics)
+            foreach (HuedTile @static in staticsAtPoint)
             {
-                ushort id = currstatic.ID;
-                richTextBox.AppendText(
-                    $"{TileData.ItemTable[id].Name}: 0x{id:X} Hue: {currstatic.Hue} Altitute: {currstatic.Z}\n");
+                ushort id = @static.ID;
+                richTextBox.AppendText($"{TileData.ItemTable[id].Name}: 0x{id:X} Hue: {@static.Hue} Altitude: {@static.Z}\n");
             }
         }
     }

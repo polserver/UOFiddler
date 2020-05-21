@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -29,6 +30,7 @@ namespace UoFiddler.Controls.UserControls
         public AnimationList()
         {
             InitializeComponent();
+
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
@@ -225,23 +227,8 @@ namespace UoFiddler.Controls.UserControls
         /// <returns></returns>
         public bool IsAlreadyDefined(int graphic)
         {
-            foreach (TreeNode node in TreeViewMobs.Nodes[0].Nodes)
-            {
-                if (((int[])node.Tag)[0] == graphic)
-                {
-                    return true;
-                }
-            }
-
-            foreach (TreeNode node in TreeViewMobs.Nodes[1].Nodes)
-            {
-                if (((int[])node.Tag)[0] == graphic)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return TreeViewMobs.Nodes[0].Nodes.Cast<TreeNode>().Any(node => ((int[])node.Tag)[0] == graphic) ||
+                   TreeViewMobs.Nodes[1].Nodes.Cast<TreeNode>().Any(node => ((int[])node.Tag)[0] == graphic);
         }
 
         /// <summary>
@@ -284,6 +271,7 @@ namespace UoFiddler.Controls.UserControls
 
                 nodeParent.Nodes.Add(node);
             }
+
             TreeViewMobs.TreeViewNodeSorter = !_sortAlpha
                 ? new GraphicSorter()
                 : (IComparer)new AlphaSorter();
@@ -739,7 +727,9 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = _customHue == 0 ? new HuePopUp(this, _defHue + 1) : new HuePopUp(this, _customHue - 1);
+            _showForm = _customHue == 0
+                ? new HuePopUp(this, _defHue + 1)
+                : new HuePopUp(this, _customHue - 1);
 
             _showForm.TopMost = true;
             _showForm.Show();

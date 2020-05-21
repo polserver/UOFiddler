@@ -89,12 +89,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnResize(object sender, EventArgs e)
         {
-            if (pictureBox.Image != null)
+            if (pictureBox.Image == null)
             {
-                DisplayScrollBars();
-                SetScrollBarValues();
-                Refresh();
+                return;
             }
+
+            DisplayScrollBars();
+            SetScrollBarValues();
+            Refresh();
         }
 
         private void HandleScroll(object sender, ScrollEventArgs e)
@@ -211,12 +213,8 @@ namespace UoFiddler.Controls.UserControls
 
             pictureBox.Image.Save(fileName, imageFormat);
 
-            MessageBox.Show(
-                $"{CheckedToString()} saved to {fileName}",
-                "Export",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"{CheckedToString()} saved to {fileName}", "Export", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private string CheckedToString()
@@ -322,6 +320,7 @@ namespace UoFiddler.Controls.UserControls
                 }
                 else
                 {
+                    // TODO: unreachable code?
                     MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 }
             }
@@ -349,6 +348,7 @@ namespace UoFiddler.Controls.UserControls
                 }
                 else
                 {
+                    // TODO: unreachable code?
                     MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 }
             }
