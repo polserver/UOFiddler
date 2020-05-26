@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,35 +12,26 @@ namespace Ultima
             Initialize();
         }
 
-        private static short[] m_Colors;
-        public static short[] Colors { get { return m_Colors; } }
+        public static short[] Colors { get; private set; }
 
         public static short GetItemColor(int index)
         {
-            if (index + 0x4000 < m_Colors.Length)
-            {
-                return m_Colors[index + 0x4000];
-            }
-
-            return 0;
+            return index + 0x4000 < Colors.Length ? Colors[index + 0x4000] : (short)0;
         }
+
         public static short GetLandColor(int index)
         {
-            if (index < m_Colors.Length)
-            {
-                return m_Colors[index];
-            }
-
-            return 0;
+            return index < Colors.Length ? Colors[index] : (short)0;
         }
 
         public static void SetItemColor(int index, short value)
         {
-            m_Colors[index + 0x4000] = value;
+            Colors[index + 0x4000] = value;
         }
+
         public static void SetLandColor(int index, short value)
         {
-            m_Colors[index] = value;
+            Colors[index] = value;
         }
 
         public static void Initialize()
@@ -51,8 +41,8 @@ namespace Ultima
             {
                 using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    m_Colors = new short[fs.Length / 2];
-                    GCHandle gc = GCHandle.Alloc(m_Colors, GCHandleType.Pinned);
+                    Colors = new short[fs.Length / 2];
+                    GCHandle gc = GCHandle.Alloc(Colors, GCHandleType.Pinned);
                     var buffer = new byte[(int)fs.Length];
                     fs.Read(buffer, 0, (int)fs.Length);
                     Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)fs.Length);
@@ -61,50 +51,50 @@ namespace Ultima
             }
             else
             {
-                m_Colors = new short[0x8000];
+                Colors = new short[0x8000];
             }
         }
 
-        public static void Save(string FileName)
+        public static void Save(string fileName)
         {
-            using (var fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (var bin = new BinaryWriter(fs))
                 {
-                    for (int i = 0; i < m_Colors.Length; ++i)
+                    for (int i = 0; i < Colors.Length; ++i)
                     {
-                        bin.Write(m_Colors[i]);
+                        bin.Write(Colors[i]);
                     }
                 }
             }
         }
 
-        public static void ExportToCSV(string FileName)
+        public static void ExportToCSV(string fileName)
         {
             using (
-                var Tex = new StreamWriter(
-                        new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+                var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
-                Tex.WriteLine("ID;Color");
+                tex.WriteLine("ID;Color");
 
-                for (int i = 0; i < m_Colors.Length; ++i)
+                for (int i = 0; i < Colors.Length; ++i)
                 {
-                    Tex.WriteLine(String.Format("0x{0:X4};{1}", i, m_Colors[i]));
+                    tex.WriteLine("0x{0:X4};{1}", i, Colors[i]);
                 }
             }
         }
 
-        public static void ImportFromCSV(string FileName)
+        public static void ImportFromCSV(string fileName)
         {
-            if (!File.Exists(FileName))
+            if (!File.Exists(fileName))
             {
                 return;
             }
 
-            using (var sr = new StreamReader(FileName))
+            using (var sr = new StreamReader(fileName))
             {
                 string line;
                 int count = 0;
+
                 while ((line = sr.ReadLine()) != null)
                 {
                     if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
@@ -119,9 +109,11 @@ namespace Ultima
 
                     ++count;
                 }
-                m_Colors = new short[count];
+
+                Colors = new short[count];
             }
-            using (var sr = new StreamReader(FileName))
+
+            using (var sr = new StreamReader(fileName))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
@@ -146,11 +138,13 @@ namespace Ultima
 
                         int id = ConvertStringToInt(split[0]);
                         int color = ConvertStringToInt(split[1]);
-                        m_Colors[id] = (short)color;
-                        
+                        Colors[id] = (short)color;
                     }
-                    catch 
-                    { }
+                    catch
+                    {
+                        // TODO: ignored?
+                        // ignored
+                    }
                 }
             }
         }

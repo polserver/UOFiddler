@@ -84,7 +84,7 @@ namespace UoFiddler.Controls.Forms
                                 Text = j.ToString()
                             };
 
-                            if (Ultima.AnimationEdit.IsActionDefinied(_fileType, i, j))
+                            if (Ultima.AnimationEdit.IsActionDefined(_fileType, i, j))
                             {
                                 valid = true;
                             }
@@ -998,7 +998,7 @@ namespace UoFiddler.Controls.Forms
                 {
                     for (int j = 0; j < animLength; ++j)
                     {
-                        if (Ultima.AnimationEdit.IsActionDefinied(_fileType, _currentBody, j))
+                        if (Ultima.AnimationEdit.IsActionDefined(_fileType, _currentBody, j))
                         {
                             node.Nodes[j].ForeColor = Color.Black;
                             valid = true;
@@ -3639,37 +3639,37 @@ namespace UoFiddler.Controls.Forms
                 if (radioButton1.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(1);
+                    edit?.PaletteConverter(1);
                 }
                 //RBG
                 if (radioButton2.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(2);
+                    edit?.PaletteConverter(2);
                 }
                 //GRB
                 if (radioButton3.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(3);
+                    edit?.PaletteConverter(3);
                 }
                 //GBR
                 if (radioButton4.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(4);
+                    edit?.PaletteConverter(4);
                 }
                 //BGR
                 if (radioButton5.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(5);
+                    edit?.PaletteConverter(5);
                 }
                 //BRG
                 if (radioButton6.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(6);
+                    edit?.PaletteConverter(6);
                 }
                 SetPaletteBox();
                 listView1.Invalidate();
@@ -3691,7 +3691,7 @@ namespace UoFiddler.Controls.Forms
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConversor(2);
+                edit?.PaletteConverter(2);
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -3712,7 +3712,7 @@ namespace UoFiddler.Controls.Forms
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConversor(3);
+                edit?.PaletteConverter(3);
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -3739,7 +3739,7 @@ namespace UoFiddler.Controls.Forms
                     {
                         // TODO: why this is called 2 times?
                         //edit.PaletteConversor(4);
-                        edit.PaletteConversor(4);
+                        edit.PaletteConverter(4);
                     }
                     SetPaletteBox();
                     listView1.Invalidate();
@@ -3760,7 +3760,7 @@ namespace UoFiddler.Controls.Forms
                 for (int x = 0; x < 5; x++)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(4);
+                    edit?.PaletteConverter(4);
                     SetPaletteBox();
                     listView1.Invalidate();
                     Options.ChangedUltimaClass["Animations"] = true;
@@ -3782,7 +3782,7 @@ namespace UoFiddler.Controls.Forms
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConversor(5);
+                edit?.PaletteConverter(5);
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -3809,7 +3809,7 @@ namespace UoFiddler.Controls.Forms
                     {
                         // TODO: why this is called 2 times?
                         //edit.PaletteConversor(6);
-                        edit.PaletteConversor(6);
+                        edit.PaletteConverter(6);
                     }
                     SetPaletteBox();
                     listView1.Invalidate();
@@ -3830,7 +3830,7 @@ namespace UoFiddler.Controls.Forms
                 for (int x = 0; x < 5; x++)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConversor(6);
+                    edit?.PaletteConverter(6);
                     SetPaletteBox();
                     listView1.Invalidate();
                     Options.ChangedUltimaClass["Animations"] = true;
@@ -3852,7 +3852,7 @@ namespace UoFiddler.Controls.Forms
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteReductor((int)numericUpDown6.Value, (int)numericUpDown7.Value, (int)numericUpDown8.Value);
+                edit?.PaletteReducer((int)numericUpDown6.Value, (int)numericUpDown7.Value, (int)numericUpDown8.Value);
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;

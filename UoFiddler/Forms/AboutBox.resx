@@ -215,7 +215,7 @@ Hues: added contextmenu Import,Export (simple txtfile)
 Map: added support for 7.x clients thx to Andreew
 MassImportPlugin: added support for hues
 fixed direct save of tiledata
-TileData: renamed Unk1 to MiscData (old UO Demo weapontemplate def)
+TileData: renamed Unk1 to miscData (old UO Demo weapontemplate def)
 "save directly on changes" no more needs enter key
 ComparePlugin Map: preload diffs for speedup
 ComparePlugin added Texture (thx to nibbio)
@@ -336,7 +336,7 @@ Version 3.9
 -Moved Cliloc Export context menu item to Button in toolbar for Cliloc Control.
 -some crashes/problems fixed.
 -PluginInterface changed a bit.
--Map tab added Insert Diff Data.. to write from definied region map/static diff file data into mapfiles.
+-Map tab added Insert Diff Data.. to write from defined region map/static diff file data into mapfiles.
 -Added View Menu to hide docked tabs.
 -View toggle states are now saved to file.
 -Optimized Dock/UnDock code.
@@ -546,7 +546,7 @@ Manuall UpdateCheck Button (with direct download option)
 
 Version 2.2
 -last but not least added speech.mul tab (with editing features)
--no crash if selecting a tab using a non definied filepath
+-no crash if selecting a tab using a non defined filepath
 
 Version 2.1
 -Sound tab:

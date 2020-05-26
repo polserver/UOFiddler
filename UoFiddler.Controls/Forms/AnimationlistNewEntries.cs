@@ -133,27 +133,27 @@ namespace UoFiddler.Controls.Forms
             MobTypes();
 
             TreeNode node;
-            foreach (DictionaryEntry key in BodyTable.m_Entries) //body.def
+            foreach (DictionaryEntry key in BodyTable._entries) //body.def
             {
                 BodyTableEntry entry = (BodyTableEntry)key.Value;
-                if (AlreadyFound(entry.NewID))
+                if (AlreadyFound(entry.NewId))
                 {
                     continue;
                 }
 
-                if (_form.IsAlreadyDefined(entry.NewID))
+                if (_form.IsAlreadyDefined(entry.NewId))
                 {
                     continue;
                 }
 
-                node = new TreeNode(entry.NewID.ToString())
+                node = new TreeNode(entry.NewId.ToString())
                 {
-                    Tag = entry.NewID,
-                    ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewID)}"
+                    Tag = entry.NewId,
+                    ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewId)}"
                 };
-                node.Tag = new[] { entry.NewID, 0 };
+                node.Tag = new[] { entry.NewId, 0 };
                 tvAnimationList.Nodes.Add(node);
-                SetActionType(node, entry.NewID, 0);
+                SetActionType(node, entry.NewId, 0);
             }
 
             if (BodyConverter.Table1 != null)

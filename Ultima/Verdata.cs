@@ -1,25 +1,28 @@
 using System.IO;
 
-// FileIDs
-//0 - map0.mul
-//1 - staidx0.mul
-//2 - statics0.mul
-//3 - artidx.mul
-//4 - art.mul
-//5 - anim.idx
-//6 - anim.mul
-//7 - soundidx.mul
-//8 - sound.mul
-//9 - texidx.mul
-//10 - texmaps.mul
-//11 - gumpidx.mul
-//12 - gumpart.mul
-//13 - multi.idx
-//14 - multi.mul
-//15 - skills.idx
-//16 - skills.mul
-//30 - tiledata.mul
-//31 - animdata.mul 
+/*
+FileIDs
+--------------
+ 0 - map0.mul
+ 1 - staidx0.mul
+ 2 - statics0.mul
+ 3 - artidx.mul
+ 4 - art.mul
+ 5 - anim.idx
+ 6 - anim.mul
+ 7 - soundidx.mul
+ 8 - sound.mul
+ 9 - texidx.mul
+10 - texmaps.mul
+11 - gumpidx.mul
+12 - gumpart.mul
+13 - multi.idx
+14 - multi.mul
+15 - skills.idx
+16 - skills.mul
+30 - tiledata.mul
+31 - animdata.mul
+*/
 
 namespace Ultima
 {
@@ -28,7 +31,7 @@ namespace Ultima
         public static Stream Stream { get; private set; }
         public static Entry5D[] Patches { get; private set; }
 
-        private static string path;
+        private static string _path;
 
         static Verdata()
         {
@@ -37,16 +40,16 @@ namespace Ultima
 
         public static void Initialize()
         {
-            path = Files.GetFilePath("verdata.mul");
+            _path = Files.GetFilePath("verdata.mul");
 
-            if (path == null)
+            if (_path == null)
             {
                 Patches = new Entry5D[0];
                 Stream = Stream.Null;
             }
             else
             {
-                using (Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     using (var bin = new BinaryReader(Stream))
                     {
@@ -70,11 +73,12 @@ namespace Ultima
         {
             if (Stream == null || !Stream.CanRead || !Stream.CanSeek)
             {
-                if (path != null)
+                if (_path != null)
                 {
-                    Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read);
                 }
             }
+
             Stream.Seek(lookup, SeekOrigin.Begin);
         }
     }
