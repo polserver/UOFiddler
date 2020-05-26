@@ -5,7 +5,7 @@ namespace Ultima
 {
     public abstract unsafe class ProcessStream : Stream
     {
-        private const int ProcessAllAccess = 0x1F0FFF;
+        private const int _processAllAccess = 0x1F0FFF;
 
         protected bool m_Open;
         protected ClientProcessHandle m_Process;
@@ -21,7 +21,7 @@ namespace Ultima
                 return false;
             }
 
-            m_Process = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessID);
+            m_Process = NativeMethods.OpenProcess(_processAllAccess, 0, ProcessID);
             m_Open = true;
 
             return true;
@@ -82,7 +82,6 @@ namespace Ultima
         public override bool CanRead { get { return true; } }
         public override bool CanWrite { get { return true; } }
         public override bool CanSeek { get { return true; } }
-
         public override long Length { get { throw new NotSupportedException(); } }
         public override long Position { get { return m_Position; } set { m_Position = (int)value; } }
 
@@ -95,13 +94,13 @@ namespace Ultima
         {
             switch (origin)
             {
-                case SeekOrigin.Begin: 
-                    m_Position = (int)offset; 
+                case SeekOrigin.Begin:
+                    m_Position = (int)offset;
                     break;
-                case SeekOrigin.Current: 
-                    m_Position += (int)offset; 
+                case SeekOrigin.Current:
+                    m_Position += (int)offset;
                     break;
-                case SeekOrigin.End: 
+                case SeekOrigin.End:
                     throw new NotSupportedException();
             }
 

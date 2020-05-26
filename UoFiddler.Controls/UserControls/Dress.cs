@@ -1177,7 +1177,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     int tmp = i;
                     animEntries[i].TranslateAnim[0] = new TranslateAnimEntry();
-                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyDef = BodyTable.m_Entries.ContainsKey(tmp);
+                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyDef = BodyTable._entries.ContainsKey(tmp);
                     Animations.Translate(ref tmp);
                     ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).FileIndex = BodyConverter.Convert(ref tmp);
                     ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyAndConf = tmp;
@@ -1188,7 +1188,7 @@ namespace UoFiddler.Controls.UserControls
                     {
                         int tmp = ((EquipTableEntry)itr.Value).NewAnim;
                         animEntries[i].TranslateAnim[itr.Key] = new TranslateAnimEntry();
-                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyDef = BodyTable.m_Entries.ContainsKey(tmp);
+                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyDef = BodyTable._entries.ContainsKey(tmp);
                         Animations.Translate(ref tmp);
                         ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).FileIndex = BodyConverter.Convert(ref tmp);
                         ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyAndConf = tmp;
@@ -1274,7 +1274,7 @@ namespace UoFiddler.Controls.UserControls
                         openFont = false;
                         if (animEntries[i].TranslateAnim.ContainsKey(itr.Key))
                         {
-                            if (!Animations.IsAnimDefinied(((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyAndConf, 0, 0,
+                            if (!Animations.IsAnimDefined(((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyAndConf, 0, 0,
                                 ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).FileIndex))
                             {
                                 tex.Write("<font color=#FF0000>");

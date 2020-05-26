@@ -244,11 +244,11 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                HeightChangeMulti.Maximum = multi.maxHeight;
+                HeightChangeMulti.Maximum = multi.MaxHeight;
                 toolTip.SetToolTip(HeightChangeMulti,
                     $"MaxHeight: {HeightChangeMulti.Maximum - HeightChangeMulti.Value}");
                 StatusMultiText.Text =
-                    $"Size: {multi.Width},{multi.Height} MaxHeight: {multi.maxHeight} MultiRegion: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} Surface: {multi.Surface}";
+                    $"Size: {multi.Width},{multi.Height} MaxHeight: {multi.MaxHeight} MultiRegion: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} Surface: {multi.Surface}";
             }
             ChangeComponentList(multi);
             MultiPictureBox.Invalidate();
@@ -612,7 +612,7 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.{fileExtension}");
-                    using (Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maxheight: 120))
+                    using (Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maximumHeight: 120))
                     {
                         bit?.Save(fileName, imageFormat);
                     }
