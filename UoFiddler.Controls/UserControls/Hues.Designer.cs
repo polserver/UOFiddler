@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -55,9 +55,9 @@ namespace UoFiddler.Controls.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(608, 1);
+            this.vScrollBar.Location = new System.Drawing.Point(610, 1);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 329);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 330);
             this.vScrollBar.TabIndex = 0;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
             // 
@@ -67,7 +67,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(1, 1);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(607, 329);
+            this.pictureBox.Size = new System.Drawing.Size(609, 330);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
@@ -102,7 +102,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceText
             // 
-            this.ReplaceText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceText.Name = "ReplaceText";
             this.ReplaceText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
@@ -131,7 +130,7 @@ namespace UoFiddler.Controls.UserControls
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "Hues";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(626, 331);
+            this.Size = new System.Drawing.Size(628, 332);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -139,17 +138,15 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.VScrollBar vScrollBar;
-        private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripTextBox ReplaceText;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.ToolStripTextBox ReplaceText;
+        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.VScrollBar vScrollBar;
 
-
+        #endregion
     }
 }

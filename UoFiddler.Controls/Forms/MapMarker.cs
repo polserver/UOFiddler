@@ -1,9 +1,9 @@
 ﻿/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -19,7 +19,7 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class MapMarker : Form
     {
-        private static Color _lastcolor = Color.FromArgb(180, Color.Yellow);
+        private static Color _lastColor = Color.FromArgb(180, Color.Yellow);
 
         public MapMarker(int x, int y, int map)
         {
@@ -29,14 +29,14 @@ namespace UoFiddler.Controls.Forms
             numericUpDown2.Value = y;
             comboBox1.Items.AddRange(Options.MapNames);
             comboBox1.SelectedIndex = map;
-            pictureBox1.BackColor = _lastcolor;
+            pictureBox1.BackColor = _lastColor;
         }
 
         private void OnClickColor(object sender, EventArgs e)
         {
             if (colorDialog1.ShowDialog() != DialogResult.Cancel)
             {
-                _lastcolor = pictureBox1.BackColor = colorDialog1.Color;
+                _lastColor = pictureBox1.BackColor = colorDialog1.Color;
             }
         }
 

@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -78,7 +78,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 33);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(622, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -146,7 +146,7 @@ namespace UoFiddler.Controls.UserControls
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(619, 266);
+            this.dataGridView1.Size = new System.Drawing.Size(622, 268);
             this.dataGridView1.TabIndex = 4;
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellValueChanged);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClick);
@@ -198,7 +198,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(622, 25);
             this.toolStrip2.TabIndex = 6;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -245,7 +245,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.toolStrip2);
             this.Name = "Speech";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(622, 326);
             this.Load += new System.EventHandler(this.OnLoad);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -258,25 +258,25 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripTextBox IDEntry;
-        private System.Windows.Forms.ToolStripButton IDButton;
-        private System.Windows.Forms.ToolStripTextBox KeyWordEntry;
-        private System.Windows.Forms.ToolStripButton KeyWordButton;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ToolStripButton IDNextButton;
-        private System.Windows.Forms.ToolStripButton KeyWordNextButton;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem addEntryToolStripMenuItem;
+        private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem deleteEntryToolStripMenuItem;
-        private CollapsibleSplitter collapsibleSplitter1;
+        private System.Windows.Forms.ToolStripButton IDButton;
+        private System.Windows.Forms.ToolStripTextBox IDEntry;
+        private System.Windows.Forms.ToolStripButton IDNextButton;
+        private System.Windows.Forms.ToolStripButton KeyWordButton;
+        private System.Windows.Forms.ToolStripTextBox KeyWordEntry;
+        private System.Windows.Forms.ToolStripButton KeyWordNextButton;
+        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+
+        #endregion
     }
 }

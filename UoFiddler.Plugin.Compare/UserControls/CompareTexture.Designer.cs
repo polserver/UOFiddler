@@ -63,6 +63,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOrg)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -76,7 +77,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.listBoxOrg.IntegralHeight = false;
             this.listBoxOrg.Location = new System.Drawing.Point(3, 3);
             this.listBoxOrg.Name = "listBoxOrg";
-            this.listBoxOrg.Size = new System.Drawing.Size(160, 321);
+            this.listBoxOrg.Size = new System.Drawing.Size(162, 323);
             this.listBoxOrg.TabIndex = 0;
             this.listBoxOrg.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.DrawitemOrg);
             this.listBoxOrg.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.MeasureOrg);
@@ -90,21 +91,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tableLayoutPanel1.Controls.Add(this.pictureBoxSec, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.pictureBoxOrg, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(169, 3);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(171, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(272, 321);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(274, 323);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // pictureBoxSec
             // 
             this.pictureBoxSec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.pictureBoxSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxSec.Location = new System.Drawing.Point(4, 164);
+            this.pictureBoxSec.Location = new System.Drawing.Point(4, 165);
             this.pictureBoxSec.Name = "pictureBoxSec";
-            this.pictureBoxSec.Size = new System.Drawing.Size(264, 153);
+            this.pictureBoxSec.Size = new System.Drawing.Size(266, 154);
             this.pictureBoxSec.TabIndex = 3;
             this.pictureBoxSec.TabStop = false;
             // 
@@ -114,7 +115,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.pictureBoxOrg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxOrg.Location = new System.Drawing.Point(4, 4);
             this.pictureBoxOrg.Name = "pictureBoxOrg";
-            this.pictureBoxOrg.Size = new System.Drawing.Size(264, 153);
+            this.pictureBoxOrg.Size = new System.Drawing.Size(266, 154);
             this.pictureBoxOrg.TabIndex = 2;
             this.pictureBoxOrg.TabStop = false;
             // 
@@ -139,7 +140,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(612, 327);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(617, 329);
             this.tableLayoutPanel2.TabIndex = 8;
             // 
             // listBoxSec
@@ -149,14 +150,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.listBoxSec.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBoxSec.FormattingEnabled = true;
             this.listBoxSec.IntegralHeight = false;
-            this.listBoxSec.Location = new System.Drawing.Point(447, 3);
+            this.listBoxSec.Location = new System.Drawing.Point(451, 3);
             this.listBoxSec.Name = "listBoxSec";
-            this.listBoxSec.Size = new System.Drawing.Size(162, 321);
+            this.listBoxSec.Size = new System.Drawing.Size(163, 323);
             this.listBoxSec.TabIndex = 1;
-            this.listBoxSec.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.CopyToLeft_Click);
             this.listBoxSec.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.DrawItemSec);
             this.listBoxSec.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.MeasureSec);
             this.listBoxSec.SelectedIndexChanged += new System.EventHandler(this.OnIndexChangedSec);
+            this.listBoxSec.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.CopyToLeft_Click);
             // 
             // contextMenuStrip1
             // 
@@ -164,7 +165,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.exportImageToolStripMenuItem,
             this.copyLandTile2To1ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(184, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(182, 48);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -172,27 +173,27 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.asBmpToolStripMenuItem,
             this.asTiffToolStripMenuItem});
             this.exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
-            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.exportImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.ExportAsBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.ExportAsTiff);
             // 
             // copyLandTile2To1ToolStripMenuItem
             // 
             this.copyLandTile2To1ToolStripMenuItem.Name = "copyLandTile2To1ToolStripMenuItem";
-            this.copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile 2 to 1";
             this.copyLandTile2To1ToolStripMenuItem.Click += new System.EventHandler(this.OnClickCopy);
             // 
@@ -240,8 +241,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel2.Controls.Add(this.textBoxSecondDir);
             this.splitContainer1.Panel2.Controls.Add(this.checkBox1);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(612, 372);
-            this.splitContainer1.SplitterDistance = 327;
+            this.splitContainer1.Size = new System.Drawing.Size(617, 374);
+            this.splitContainer1.SplitterDistance = 329;
             this.splitContainer1.TabIndex = 10;
             // 
             // CopyAddOnly
@@ -282,7 +283,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "CompareTexture";
-            this.Size = new System.Drawing.Size(612, 372);
+            this.Size = new System.Drawing.Size(617, 374);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSec)).EndInit();
@@ -292,6 +293,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 

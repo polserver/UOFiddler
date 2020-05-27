@@ -44,9 +44,9 @@ namespace UoFiddler.Plugin.ExamplePlugin.UserControls
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(132, 82);
+            this.button1.Location = new System.Drawing.Point(113, 71);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(87, 27);
+            this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Say Hello";
             this.button1.UseVisualStyleBackColor = true;
@@ -54,16 +54,17 @@ namespace UoFiddler.Plugin.ExamplePlugin.UserControls
             // 
             // ExampleUserControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.button1);
             this.Name = "ExampleUserControl";
-            this.Size = new System.Drawing.Size(570, 347);
+            this.Size = new System.Drawing.Size(487, 305);
             this.ResumeLayout(false);
+
         }
 
-        #endregion
-
         private System.Windows.Forms.Button button1;
+
+        #endregion
     }
 }

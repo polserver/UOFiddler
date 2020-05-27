@@ -539,10 +539,10 @@ namespace Ultima
                     }
 
                     // TODO: check what this was for. It looks unused/unfinished.
-                    int tx = (x - y) * 22;
-                    int ty = (x + y) * 22;
-                    tx -= xMin;
-                    ty -= yMin;
+                    //int tx = (x - y) * 22;
+                    //int ty = (x + y) * 22;
+                    //tx -= xMin;
+                    //ty -= yMin;
                 }
             }
 

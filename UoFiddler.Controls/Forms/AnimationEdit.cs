@@ -1,9 +1,9 @@
 ﻿/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -746,13 +746,13 @@ namespace UoFiddler.Controls.Forms
                                 if (dialog.FileName.Contains(".gif"))
                                 {
                                     FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                    // Number of frames 
+                                    // Number of frames
                                     int frameCount = bmp.GetFrameCount(dimension);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     progressBar1.Maximum = frameCount;
-                                    // Return an Image at a certain index 
+                                    // Return an Image at a certain index
                                     for (int index = 0; index < frameCount; index++)
                                     {
                                         bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
@@ -1312,13 +1312,13 @@ namespace UoFiddler.Controls.Forms
                     if (dialog.FileName.Contains(".gif"))
                     {
                         FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                        // Number of frames 
+                        // Number of frames
                         int frameCount = bmp.GetFrameCount(dimension);
                         progressBar1.Maximum = frameCount;
                         bmp.SelectActiveFrame(dimension, 0);
                         edit.GetGifPalette(bmp);
                         Bitmap[] bitBmp = new Bitmap[frameCount];
-                        // Return an Image at a certain index 
+                        // Return an Image at a certain index
                         for (int index = 0; index < frameCount; index++)
                         {
                             bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
@@ -1907,7 +1907,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (breakOk)
                 {
-                    breakOk = false;
+                    //breakOk = false;
                     break;
                 }
             }
@@ -2235,13 +2235,13 @@ namespace UoFiddler.Controls.Forms
                                 if (dialog.FileName.Contains(".gif"))
                                 {
                                     FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                    // Number of frames 
+                                    // Number of frames
                                     int frameCount = bmp.GetFrameCount(dimension);
                                     progressBar1.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
-                                    // Return an Image at a certain index 
+                                    // Return an Image at a certain index
                                     for (int index = 0; index < frameCount; index++)
                                     {
                                         bitBmp[index] = new Bitmap(bmp.Width, bmp.Height,
@@ -2650,19 +2650,19 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressT == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressT == -1 &&
                             yf < bitBmp[0].Height - 9)
                         {
                             top += 10;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressT == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressT == -1 &&
                             yf >= bitBmp[0].Height - 9)
                         {
                             top++;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressT != -1)
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressT != -1)
                         {
                             top -= regressT;
                             breakOk = true;
@@ -2719,19 +2719,19 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressB == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressB == -1 &&
                             yf > 9)
                         {
                             bottom += 10;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressB == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressB == -1 &&
                             yf <= 9)
                         {
                             bottom++;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressB != -1)
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressB != -1)
                         {
                             bottom -= regressB;
                             breakOk = true;
@@ -2788,21 +2788,21 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressL == -1 &&
                             xf < bitBmp[0].Width - 9)
                         {
                             left += 10;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressL == -1 &&
                             xf >= bitBmp[0].Width - 9)
                         {
                             left++;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 && regressL != -1)
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 && regressL != -1)
                         {
                             left -= regressL;
                             breakOk = true;
@@ -2859,21 +2859,21 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressR == -1 &&
                             xf > 9)
                         {
                             right += 10;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressR == -1 &&
                             xf <= 9)
                         {
                             right++;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 && regressR != -1)
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 && regressR != -1)
                         {
                             right -= regressR;
                             breakOk = true;
@@ -2894,7 +2894,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (breakOk)
                 {
-                    breakOk = false;
+                    //breakOk = false;
                     break;
                 }
             }
@@ -2955,13 +2955,13 @@ namespace UoFiddler.Controls.Forms
                                 if (dialog.FileName.Contains(".gif"))
                                 {
                                     FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                    // Number of frames 
+                                    // Number of frames
                                     int frameCount = bmp.GetFrameCount(dimension);
                                     progressBar1.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
-                                    // Return an Image at a certain index 
+                                    // Return an Image at a certain index
                                     for (int index = 0; index < frameCount; index++)
                                     {
                                         bitBmp[index] = new Bitmap(bmp.Width, bmp.Height,
@@ -3374,19 +3374,19 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressT == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressT == -1 &&
                             yf < bitBmp[0].Height - 9)
                         {
                             top += 10;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressT == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressT == -1 &&
                             yf >= bitBmp[0].Height - 9)
                         {
                             top++;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressT != -1)
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressT != -1)
                         {
                             top -= regressT;
                             breakOk = true;
@@ -3443,19 +3443,19 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressB == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressB == -1 &&
                             yf > 9)
                         {
                             bottom += 10;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressB == -1 &&
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressB == -1 &&
                             yf <= 9)
                         {
                             bottom++;
                         }
 
-                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == (maximumFrameIndex) - 1 && regressB != -1)
+                        if (var && xf == bitBmp[frameIdx].Width - 1 && frameIdx == maximumFrameIndex - 1 && regressB != -1)
                         {
                             bottom -= regressB;
                             breakOk = true;
@@ -3512,21 +3512,21 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressL == -1 &&
                             xf < bitBmp[0].Width - 9)
                         {
                             left += 10;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressL == -1 &&
                             xf >= bitBmp[0].Width - 9)
                         {
                             left++;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 && regressL != -1)
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 && regressL != -1)
                         {
                             left -= regressL;
                             breakOk = true;
@@ -3583,21 +3583,21 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressR == -1 &&
                             xf > 9)
                         {
                             right += 10;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 &&
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 &&
                             regressR == -1 &&
                             xf <= 9)
                         {
                             right++;
                         }
 
-                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == (maximumFrameIndex) - 1 && regressR != -1)
+                        if (var && yf == bitBmp[frameIdx].Height - 1 && frameIdx == maximumFrameIndex - 1 && regressR != -1)
                         {
                             right -= regressR;
                             breakOk = true;
@@ -3618,7 +3618,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (breakOk)
                 {
-                    breakOk = false;
+                    //breakOk = false;
                     break;
                 }
             }

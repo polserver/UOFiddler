@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -55,6 +55,8 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.numericUpDownShortCol = new System.Windows.Forms.NumericUpDown();
             this.textBoxMeanFrom = new System.Windows.Forms.TextBox();
             this.textBoxMeanTo = new System.Windows.Forms.TextBox();
@@ -65,27 +67,25 @@ namespace UoFiddler.Controls.UserControls
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.buttonMean = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArt)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxArt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxColor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.splitContainer6)).BeginInit();
             this.splitContainer6.Panel1.SuspendLayout();
             this.splitContainer6.Panel2.SuspendLayout();
             this.splitContainer6.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownShortCol)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownG)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownR)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownShortCol)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownG)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownR)).BeginInit();
             this.SuspendLayout();
             // 
             // treeViewItem
@@ -101,23 +101,21 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.selectInItemsTabToolStripMenuItem,
-            this.selectInTiledataTabToolStripMenuItem});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.selectInItemsTabToolStripMenuItem, this.selectInTiledataTabToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(186, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(183, 48);
             // 
             // selectInItemsTabToolStripMenuItem
             // 
             this.selectInItemsTabToolStripMenuItem.Name = "selectInItemsTabToolStripMenuItem";
-            this.selectInItemsTabToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.selectInItemsTabToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.selectInItemsTabToolStripMenuItem.Text = "Select in Items tab";
             this.selectInItemsTabToolStripMenuItem.Click += new System.EventHandler(this.OnClickSelectItemsTab);
             // 
             // selectInTiledataTabToolStripMenuItem
             // 
             this.selectInTiledataTabToolStripMenuItem.Name = "selectInTiledataTabToolStripMenuItem";
-            this.selectInTiledataTabToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.selectInTiledataTabToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.selectInTiledataTabToolStripMenuItem.Text = "Select in Tiledata tab";
             this.selectInTiledataTabToolStripMenuItem.Click += new System.EventHandler(this.OnClickSelectItemTiledataTab);
             // 
@@ -134,23 +132,21 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip2
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.toolStripMenuItem2});
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.toolStripMenuItem1, this.toolStripMenuItem2});
             this.contextMenuStrip2.Name = "contextMenuStrip1";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(190, 70);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(189, 48);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuItem1.Text = "Select in Landtiles tab";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.OnClickSelectLandtilesTab);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuItem2.Text = "Select in Tiledata tab";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.OnClickSelectLandTiledataTab);
             // 
@@ -159,7 +155,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxArt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxArt.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxArt.Name = "pictureBoxArt";
-            this.pictureBoxArt.Size = new System.Drawing.Size(205, 126);
+            this.pictureBoxArt.Size = new System.Drawing.Size(205, 127);
             this.pictureBoxArt.TabIndex = 0;
             this.pictureBoxArt.TabStop = false;
             // 
@@ -196,7 +192,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer5.Panel2.Controls.Add(this.button1);
             this.splitContainer5.Panel2.Controls.Add(this.buttonMean);
             this.splitContainer5.Panel2.Controls.Add(this.pictureBoxColor);
-            this.splitContainer5.Size = new System.Drawing.Size(619, 324);
+            this.splitContainer5.Size = new System.Drawing.Size(620, 325);
             this.splitContainer5.SplitterDistance = 205;
             this.splitContainer5.TabIndex = 1;
             // 
@@ -214,7 +210,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer6.Panel2
             // 
             this.splitContainer6.Panel2.Controls.Add(this.pictureBoxArt);
-            this.splitContainer6.Size = new System.Drawing.Size(205, 324);
+            this.splitContainer6.Size = new System.Drawing.Size(205, 325);
             this.splitContainer6.SplitterDistance = 194;
             this.splitContainer6.TabIndex = 0;
             // 
@@ -251,14 +247,30 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage4.Text = "Landtiles";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(83, 201);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 16;
+            this.button5.Text = "Import..";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.OnClickImport);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(2, 201);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 15;
+            this.button4.Text = "Export..";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.OnClickExport);
+            // 
             // numericUpDownShortCol
             // 
             this.numericUpDownShortCol.Location = new System.Drawing.Point(189, 10);
-            this.numericUpDownShortCol.Maximum = new decimal(new int[] {
-            32767,
-            0,
-            0,
-            0});
+            this.numericUpDownShortCol.Maximum = new decimal(new int[] {32767, 0, 0, 0});
             this.numericUpDownShortCol.Name = "numericUpDownShortCol";
             this.numericUpDownShortCol.Size = new System.Drawing.Size(100, 20);
             this.numericUpDownShortCol.TabIndex = 14;
@@ -292,11 +304,7 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownB
             // 
             this.numericUpDownB.Location = new System.Drawing.Point(295, 36);
-            this.numericUpDownB.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
+            this.numericUpDownB.Maximum = new decimal(new int[] {255, 0, 0, 0});
             this.numericUpDownB.Name = "numericUpDownB";
             this.numericUpDownB.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownB.TabIndex = 9;
@@ -305,11 +313,7 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownG
             // 
             this.numericUpDownG.Location = new System.Drawing.Point(242, 36);
-            this.numericUpDownG.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
+            this.numericUpDownG.Maximum = new decimal(new int[] {255, 0, 0, 0});
             this.numericUpDownG.Name = "numericUpDownG";
             this.numericUpDownG.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownG.TabIndex = 8;
@@ -318,11 +322,7 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownR
             // 
             this.numericUpDownR.Location = new System.Drawing.Point(189, 36);
-            this.numericUpDownR.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
+            this.numericUpDownR.Maximum = new decimal(new int[] {255, 0, 0, 0});
             this.numericUpDownR.Name = "numericUpDownR";
             this.numericUpDownR.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownR.TabIndex = 7;
@@ -358,86 +358,65 @@ namespace UoFiddler.Controls.UserControls
             this.buttonMean.UseVisualStyleBackColor = true;
             this.buttonMean.Click += new System.EventHandler(this.OnClickMeanColor);
             // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(2, 201);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 15;
-            this.button4.Text = "Export..";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.OnClickExport);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(83, 201);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 16;
-            this.button5.Text = "Import..";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.OnClickImport);
-            // 
             // RadarColor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer5);
             this.Name = "RadarColor";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(620, 325);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArt)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxArt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxColor)).EndInit();
             this.splitContainer5.Panel1.ResumeLayout(false);
             this.splitContainer5.Panel2.ResumeLayout(false);
             this.splitContainer5.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
             this.splitContainer6.Panel1.ResumeLayout(false);
             this.splitContainer6.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.splitContainer6)).EndInit();
             this.splitContainer6.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownShortCol)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownG)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownR)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownShortCol)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownG)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownR)).EndInit();
             this.ResumeLayout(false);
-
         }
 
-        #endregion
-
-        private System.Windows.Forms.TreeView treeViewItem;
-        private System.Windows.Forms.TreeView treeViewLand;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button buttonMean;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.NumericUpDown numericUpDownB;
+        private System.Windows.Forms.NumericUpDown numericUpDownG;
+        private System.Windows.Forms.NumericUpDown numericUpDownR;
+        private System.Windows.Forms.NumericUpDown numericUpDownShortCol;
         private System.Windows.Forms.PictureBox pictureBoxArt;
         private System.Windows.Forms.PictureBox pictureBoxColor;
+        private System.Windows.Forms.ToolStripMenuItem selectInItemsTabToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectInTiledataTabToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer5;
         private System.Windows.Forms.SplitContainer splitContainer6;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.Button buttonMean;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.NumericUpDown numericUpDownB;
-        private System.Windows.Forms.NumericUpDown numericUpDownG;
-        private System.Windows.Forms.NumericUpDown numericUpDownR;
         private System.Windows.Forms.TextBox textBoxMeanFrom;
         private System.Windows.Forms.TextBox textBoxMeanTo;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem selectInItemsTabToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem selectInTiledataTabToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.NumericUpDown numericUpDownShortCol;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TreeView treeViewItem;
+        private System.Windows.Forms.TreeView treeViewLand;
+
+        #endregion
     }
 }

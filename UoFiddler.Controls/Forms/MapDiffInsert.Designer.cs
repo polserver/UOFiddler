@@ -181,7 +181,7 @@ namespace UoFiddler.Controls.Forms
             // progressBar1
             // 
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar1.Location = new System.Drawing.Point(0, 205);
+            this.progressBar1.Location = new System.Drawing.Point(0, 209);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(329, 23);
             this.progressBar1.TabIndex = 13;
@@ -238,7 +238,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(329, 228);
+            this.ClientSize = new System.Drawing.Size(329, 232);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -263,23 +263,23 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
+        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBoxMap;
         private System.Windows.Forms.CheckBox checkBoxStatics;
-        private System.Windows.Forms.NumericUpDown numericUpDownX1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numericUpDownY1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown numericUpDownX2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown numericUpDownY2;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.CheckBox RemoveDupl;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown numericUpDownX1;
+        private System.Windows.Forms.NumericUpDown numericUpDownX2;
+        private System.Windows.Forms.NumericUpDown numericUpDownY1;
+        private System.Windows.Forms.NumericUpDown numericUpDownY2;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.CheckBox RemoveDupl;
+
+        #endregion
     }
 }

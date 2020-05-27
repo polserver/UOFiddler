@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -61,6 +61,7 @@ namespace UoFiddler.Controls.UserControls
             this.LandTileText = new System.Windows.Forms.ToolStripTextBox();
             this.lightTileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LightTileText = new System.Windows.Forms.ToolStripTextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -82,7 +83,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(619, 324);
+            this.splitContainer1.Size = new System.Drawing.Size(619, 325);
             this.splitContainer1.SplitterDistance = 205;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -93,7 +94,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(205, 324);
+            this.treeView1.Size = new System.Drawing.Size(205, 325);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect);
             // 
@@ -108,7 +109,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator2,
             this.saveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(159, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(151, 126);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -117,46 +118,46 @@ namespace UoFiddler.Controls.UserControls
             this.asTiffToolStripMenuItem,
             this.asJpgToolStripMenuItem});
             this.exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
-            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.exportImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportJpg);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(147, 6);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // replaceToolStripMenuItem
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.replaceToolStripMenuItem.Text = "Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
@@ -165,25 +166,25 @@ namespace UoFiddler.Controls.UserControls
             this.insertAtToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.InsertText});
             this.insertAtToolStripMenuItem.Name = "insertAtToolStripMenuItem";
-            this.insertAtToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.insertAtToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.insertAtToolStripMenuItem.Text = "Insert At..";
             // 
             // InsertText
             // 
             this.InsertText.Name = "InsertText";
-            this.InsertText.Size = new System.Drawing.Size(100, 21);
+            this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(155, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(147, 6);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnClickSave);
             // 
@@ -194,7 +195,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(410, 324);
+            this.pictureBox1.Size = new System.Drawing.Size(410, 325);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -207,12 +208,12 @@ namespace UoFiddler.Controls.UserControls
             this.backgroundLandTileToolStripMenuItem,
             this.lightTileToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(184, 92);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(186, 70);
             // 
             // iGPreviewToolStripMenuItem
             // 
             this.iGPreviewToolStripMenuItem.Name = "iGPreviewToolStripMenuItem";
-            this.iGPreviewToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.iGPreviewToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.iGPreviewToolStripMenuItem.Text = "IG Preview";
             this.iGPreviewToolStripMenuItem.Click += new System.EventHandler(this.IgPreviewClicked);
             // 
@@ -221,13 +222,13 @@ namespace UoFiddler.Controls.UserControls
             this.backgroundLandTileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.LandTileText});
             this.backgroundLandTileToolStripMenuItem.Name = "backgroundLandTileToolStripMenuItem";
-            this.backgroundLandTileToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.backgroundLandTileToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.backgroundLandTileToolStripMenuItem.Text = "Background LandTile";
             // 
             // LandTileText
             // 
             this.LandTileText.Name = "LandTileText";
-            this.LandTileText.Size = new System.Drawing.Size(100, 21);
+            this.LandTileText.Size = new System.Drawing.Size(100, 23);
             this.LandTileText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LandTileKeyDown);
             this.LandTileText.TextChanged += new System.EventHandler(this.LandTileTextChanged);
             // 
@@ -236,13 +237,13 @@ namespace UoFiddler.Controls.UserControls
             this.lightTileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.LightTileText});
             this.lightTileToolStripMenuItem.Name = "lightTileToolStripMenuItem";
-            this.lightTileToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.lightTileToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.lightTileToolStripMenuItem.Text = "LightTile";
             // 
             // LightTileText
             // 
             this.LightTileText.Name = "LightTileText";
-            this.LightTileText.Size = new System.Drawing.Size(100, 21);
+            this.LightTileText.Size = new System.Drawing.Size(100, 23);
             this.LightTileText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LightTileKeyDown);
             this.LightTileText.TextChanged += new System.EventHandler(this.LightTileTextChanged);
             // 
@@ -252,10 +253,11 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "Light";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(619, 325);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -264,28 +266,28 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backgroundLandTileToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem iGPreviewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem insertAtToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox InsertText;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
-        private System.Windows.Forms.ToolStripMenuItem iGPreviewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem backgroundLandTileToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox LandTileText;
-        private System.Windows.Forms.ToolStripMenuItem lightTileToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox LightTileText;
+        private System.Windows.Forms.ToolStripMenuItem lightTileToolStripMenuItem;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.TreeView treeView1;
+
+        #endregion
     }
 }

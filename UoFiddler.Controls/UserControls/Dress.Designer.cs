@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -124,7 +124,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer1.Size = new System.Drawing.Size(626, 326);
+            this.splitContainer1.Size = new System.Drawing.Size(628, 329);
             this.splitContainer1.SplitterDistance = 282;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -141,7 +141,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(282, 326);
+            this.splitContainer2.Size = new System.Drawing.Size(282, 329);
             this.splitContainer2.SplitterDistance = 170;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -150,7 +150,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewItems.Location = new System.Drawing.Point(0, 0);
             this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(170, 326);
+            this.treeViewItems.Size = new System.Drawing.Size(170, 329);
             this.treeViewItems.TabIndex = 0;
             this.treeViewItems.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeView);
             // 
@@ -172,8 +172,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.pictureBoxDress);
-            this.splitContainer3.Size = new System.Drawing.Size(108, 326);
-            this.splitContainer3.SplitterDistance = 129;
+            this.splitContainer3.Size = new System.Drawing.Size(108, 329);
+            this.splitContainer3.SplitterDistance = 130;
             this.splitContainer3.TabIndex = 0;
             // 
             // button1
@@ -236,7 +236,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxDress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxDress.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxDress.Name = "pictureBoxDress";
-            this.pictureBoxDress.Size = new System.Drawing.Size(108, 193);
+            this.pictureBoxDress.Size = new System.Drawing.Size(108, 195);
             this.pictureBoxDress.TabIndex = 0;
             this.pictureBoxDress.TabStop = false;
             this.pictureBoxDress.SizeChanged += new System.EventHandler(this.OnResizePictureDress);
@@ -255,7 +255,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(340, 326);
+            this.splitContainer4.Size = new System.Drawing.Size(342, 329);
             this.splitContainer4.SplitterDistance = 140;
             this.splitContainer4.TabIndex = 1;
             // 
@@ -267,7 +267,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBoxWear.FormattingEnabled = true;
             this.checkedListBoxWear.Location = new System.Drawing.Point(0, 0);
             this.checkedListBoxWear.Name = "checkedListBoxWear";
-            this.checkedListBoxWear.Size = new System.Drawing.Size(140, 279);
+            this.checkedListBoxWear.Size = new System.Drawing.Size(140, 282);
             this.checkedListBoxWear.TabIndex = 0;
             this.checkedListBoxWear.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBox_ItemCheck);
             this.checkedListBoxWear.SelectedIndexChanged += new System.EventHandler(this.CheckedListBox_Change);
@@ -327,7 +327,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.groupBox1.Controls.Add(this.textBoxMount);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox1.Location = new System.Drawing.Point(0, 279);
+            this.groupBox1.Location = new System.Drawing.Point(0, 282);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(140, 47);
             this.groupBox1.TabIndex = 1;
@@ -357,8 +357,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.TextBox);
-            this.splitContainer5.Size = new System.Drawing.Size(196, 326);
-            this.splitContainer5.SplitterDistance = 251;
+            this.splitContainer5.Size = new System.Drawing.Size(198, 329);
+            this.splitContainer5.SplitterDistance = 253;
             this.splitContainer5.TabIndex = 1;
             // 
             // groupBoxAnimate
@@ -367,9 +367,9 @@ namespace UoFiddler.Controls.UserControls
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxAnimate.Controls.Add(this.ActionBar);
             this.groupBoxAnimate.Controls.Add(this.FacingBar);
-            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 151);
+            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 153);
             this.groupBoxAnimate.Name = "groupBoxAnimate";
-            this.groupBoxAnimate.Size = new System.Drawing.Size(193, 97);
+            this.groupBoxAnimate.Size = new System.Drawing.Size(195, 97);
             this.groupBoxAnimate.TabIndex = 1;
             this.groupBoxAnimate.TabStop = false;
             this.groupBoxAnimate.Text = "Facing/Action";
@@ -382,7 +382,7 @@ namespace UoFiddler.Controls.UserControls
             this.ActionBar.Location = new System.Drawing.Point(2, 53);
             this.ActionBar.Maximum = 34;
             this.ActionBar.Name = "ActionBar";
-            this.ActionBar.Size = new System.Drawing.Size(188, 35);
+            this.ActionBar.Size = new System.Drawing.Size(190, 35);
             this.ActionBar.TabIndex = 1;
             this.toolTip1.SetToolTip(this.ActionBar, "0 Walk_01");
             this.ActionBar.Scroll += new System.EventHandler(this.OnScroll_Action);
@@ -395,7 +395,7 @@ namespace UoFiddler.Controls.UserControls
             this.FacingBar.Location = new System.Drawing.Point(2, 20);
             this.FacingBar.Maximum = 7;
             this.FacingBar.Name = "FacingBar";
-            this.FacingBar.Size = new System.Drawing.Size(188, 36);
+            this.FacingBar.Size = new System.Drawing.Size(190, 36);
             this.FacingBar.TabIndex = 0;
             this.toolTip1.SetToolTip(this.FacingBar, "1");
             this.FacingBar.Scroll += new System.EventHandler(this.OnScroll_Facing);
@@ -406,7 +406,7 @@ namespace UoFiddler.Controls.UserControls
             this.DressPic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DressPic.Location = new System.Drawing.Point(0, 0);
             this.DressPic.Name = "DressPic";
-            this.DressPic.Size = new System.Drawing.Size(196, 251);
+            this.DressPic.Size = new System.Drawing.Size(198, 253);
             this.DressPic.TabIndex = 0;
             this.DressPic.TabStop = false;
             this.DressPic.SizeChanged += new System.EventHandler(this.OnResizeDressPic);
@@ -522,7 +522,7 @@ namespace UoFiddler.Controls.UserControls
             this.TextBox.Location = new System.Drawing.Point(0, 0);
             this.TextBox.Name = "TextBox";
             this.TextBox.ReadOnly = true;
-            this.TextBox.Size = new System.Drawing.Size(196, 71);
+            this.TextBox.Size = new System.Drawing.Size(198, 72);
             this.TextBox.TabIndex = 0;
             this.TextBox.Text = "";
             // 
@@ -532,7 +532,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "Dress";
-            this.Size = new System.Drawing.Size(626, 326);
+            this.Size = new System.Drawing.Size(628, 329);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -568,48 +568,48 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.PictureBox DressPic;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TreeView treeViewItems;
-        private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.PictureBox pictureBoxDress;
-        private System.Windows.Forms.CheckBox checkBoxfemale;
-        private System.Windows.Forms.Button buttonDress;
-        private System.Windows.Forms.CheckBox checkBoxElve;
-        private System.Windows.Forms.SplitContainer splitContainer4;
-        private System.Windows.Forms.CheckedListBox checkedListBoxWear;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem unDressToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainer5;
-        private System.Windows.Forms.RichTextBox TextBox;
-        private System.Windows.Forms.CheckBox LayerSort;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
-        private System.Windows.Forms.ToolStripMenuItem showAnimationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBoxAnimate;
-        private System.Windows.Forms.TrackBar FacingBar;
         private System.Windows.Forms.TrackBar ActionBar;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem extractAnimationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem huToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem unDressAllToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ToolStripMenuItem hueToolStripMenuItem;
-        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox textBoxMount;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonDress;
+        private System.Windows.Forms.CheckBox checkBoxElve;
+        private System.Windows.Forms.CheckBox checkBoxfemale;
+        private System.Windows.Forms.CheckedListBox checkedListBoxWear;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.PictureBox DressPic;
+        private System.Windows.Forms.ToolStripMenuItem extractAnimationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;
+        private System.Windows.Forms.TrackBar FacingBar;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxAnimate;
+        private System.Windows.Forms.ToolStripMenuItem hueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem huToolStripMenuItem;
+        private System.Windows.Forms.CheckBox LayerSort;
+        private System.Windows.Forms.PictureBox pictureBoxDress;
+        private System.Windows.Forms.ToolStripMenuItem showAnimationToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.RichTextBox TextBox;
+        private System.Windows.Forms.TextBox textBoxMount;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TreeView treeViewItems;
+        private System.Windows.Forms.ToolStripMenuItem unDressAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unDressToolStripMenuItem;
+
+        #endregion
     }
 }

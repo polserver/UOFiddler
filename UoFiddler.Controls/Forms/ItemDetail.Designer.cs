@@ -55,6 +55,7 @@ namespace UoFiddler.Controls.Forms
             this.setHueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.animateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Data = new System.Windows.Forms.RichTextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -77,7 +78,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.Data);
-            this.splitContainer1.Size = new System.Drawing.Size(292, 266);
+            this.splitContainer1.Size = new System.Drawing.Size(295, 269);
             this.splitContainer1.SplitterDistance = 61;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
@@ -88,11 +89,11 @@ namespace UoFiddler.Controls.Forms
             this.Graphic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Graphic.Location = new System.Drawing.Point(0, 0);
             this.Graphic.Name = "Graphic";
-            this.Graphic.Size = new System.Drawing.Size(292, 61);
+            this.Graphic.Size = new System.Drawing.Size(295, 61);
             this.Graphic.TabIndex = 0;
             this.Graphic.TabStop = false;
-            this.Graphic.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             this.Graphic.SizeChanged += new System.EventHandler(this.OnSizeChange);
+            this.Graphic.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             // 
             // contextMenuStrip1
             // 
@@ -101,7 +102,7 @@ namespace UoFiddler.Controls.Forms
             this.setHueToolStripMenuItem,
             this.animateToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(154, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(151, 70);
             // 
             // extractImageToolStripMenuItem
             // 
@@ -109,7 +110,7 @@ namespace UoFiddler.Controls.Forms
             this.asBmpToolStripMenuItem,
             this.asTiffToolStripMenuItem});
             this.extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
-            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.extractImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBmpToolStripMenuItem
@@ -129,14 +130,14 @@ namespace UoFiddler.Controls.Forms
             // setHueToolStripMenuItem
             // 
             this.setHueToolStripMenuItem.Name = "setHueToolStripMenuItem";
-            this.setHueToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.setHueToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.setHueToolStripMenuItem.Text = "Set Hue";
             this.setHueToolStripMenuItem.Click += new System.EventHandler(this.OnClick_Hue);
             // 
             // animateToolStripMenuItem
             // 
             this.animateToolStripMenuItem.Name = "animateToolStripMenuItem";
-            this.animateToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.animateToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.animateToolStripMenuItem.Text = "Animate";
             this.animateToolStripMenuItem.Click += new System.EventHandler(this.OnClickAnimate);
             // 
@@ -146,7 +147,7 @@ namespace UoFiddler.Controls.Forms
             this.Data.Location = new System.Drawing.Point(0, 0);
             this.Data.Name = "Data";
             this.Data.ReadOnly = true;
-            this.Data.Size = new System.Drawing.Size(292, 204);
+            this.Data.Size = new System.Drawing.Size(295, 207);
             this.Data.TabIndex = 0;
             this.Data.Text = "";
             // 
@@ -154,15 +155,16 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 266);
+            this.ClientSize = new System.Drawing.Size(295, 269);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ItemDetail";
             this.Text = "ItemDetail";
-            this.Load += new System.EventHandler(this.OnLoad);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
+            this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Graphic)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -170,17 +172,16 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.PictureBox Graphic;
-        private System.Windows.Forms.RichTextBox Data;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem setHueToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.RichTextBox Data;
+        private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;
+        private System.Windows.Forms.PictureBox Graphic;
+        private System.Windows.Forms.ToolStripMenuItem setHueToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
 
+        #endregion
     }
 }

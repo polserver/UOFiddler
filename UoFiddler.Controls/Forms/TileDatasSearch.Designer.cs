@@ -63,7 +63,7 @@ namespace UoFiddler.Controls.Forms
             this.button2.AutoSize = true;
             this.button2.Location = new System.Drawing.Point(54, 105);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(84, 23);
+            this.button2.Size = new System.Drawing.Size(85, 23);
             this.button2.TabIndex = 9;
             this.button2.Text = "Search Name";
             this.button2.UseVisualStyleBackColor = true;
@@ -84,7 +84,7 @@ namespace UoFiddler.Controls.Forms
             this.button1.AutoSize = true;
             this.button1.Location = new System.Drawing.Point(101, 39);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(93, 23);
+            this.button1.Size = new System.Drawing.Size(94, 23);
             this.button1.TabIndex = 7;
             this.button1.Text = "Search ID";
             this.button1.UseVisualStyleBackColor = true;
@@ -118,12 +118,12 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox textBoxItemName;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox textBoxGraphic;
+        private System.Windows.Forms.TextBox textBoxItemName;
+
+        #endregion
     }
 }

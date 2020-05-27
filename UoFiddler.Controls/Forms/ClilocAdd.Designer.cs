@@ -85,7 +85,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(180, 72);
+            this.ClientSize = new System.Drawing.Size(181, 73);
             this.Controls.Add(this.Cancel_Button);
             this.Controls.Add(this.Add_Button);
             this.Controls.Add(this.label1);
@@ -98,11 +98,11 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.TextBox NumberBox;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button Add_Button;
         private System.Windows.Forms.Button Cancel_Button;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox NumberBox;
+
+        #endregion
     }
 }

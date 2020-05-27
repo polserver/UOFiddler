@@ -397,7 +397,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(542, 433);
+            this.tabControl1.Size = new System.Drawing.Size(547, 431);
             this.tabControl1.TabIndex = 43;
             // 
             // tabPage2
@@ -412,7 +412,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(534, 407);
+            this.tabPage2.Size = new System.Drawing.Size(539, 405);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Every file";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -432,9 +432,9 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statustext,
             this.toolStripStatusLabel2});
-            this.statusStrip2.Location = new System.Drawing.Point(3, 382);
+            this.statusStrip2.Location = new System.Drawing.Point(3, 380);
             this.statusStrip2.Name = "statusStrip2";
-            this.statusStrip2.Size = new System.Drawing.Size(528, 22);
+            this.statusStrip2.Size = new System.Drawing.Size(533, 22);
             this.statusStrip2.TabIndex = 11;
             this.statusStrip2.Text = "statusStrip2";
             // 
@@ -442,7 +442,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // 
             this.statustext.ForeColor = System.Drawing.Color.DarkRed;
             this.statustext.Name = "statustext";
-            this.statustext.Size = new System.Drawing.Size(231, 17);
+            this.statustext.Size = new System.Drawing.Size(236, 17);
             this.statustext.Spring = true;
             this.statustext.Text = "Status";
             this.statustext.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -552,7 +552,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.statusStrip1.Location = new System.Drawing.Point(0, 4);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.statusStrip1.Size = new System.Drawing.Size(542, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(547, 22);
             this.statusStrip1.Stretch = false;
             this.statusStrip1.TabIndex = 44;
             this.statusStrip1.Text = "statusStrip1";
@@ -589,8 +589,8 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(542, 463);
-            this.splitContainer1.SplitterDistance = 433;
+            this.splitContainer1.Size = new System.Drawing.Size(547, 461);
+            this.splitContainer1.SplitterDistance = 431;
             this.splitContainer1.TabIndex = 40;
             // 
             // UopPackerControl
@@ -601,7 +601,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Controls.Add(this.splitContainer1);
             this.Name = "UopPackerControl";
-            this.Size = new System.Drawing.Size(542, 463);
+            this.Size = new System.Drawing.Size(547, 461);
             ((System.ComponentModel.ISupportInitialize)(this.mulmaptype)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uopmaptype)).EndInit();
             this.tabControl1.ResumeLayout(false);
@@ -622,57 +622,56 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox inmul;
+        private System.Windows.Forms.RadioButton extract;
+        private System.Windows.Forms.ToolStripStatusLabel guilabel;
         private System.Windows.Forms.TextBox inidx;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button inmulbtn;
         private System.Windows.Forms.Button inidxbtn;
-        private System.Windows.Forms.Button multouop;
-        private System.Windows.Forms.OpenFileDialog selectfile;
-        private System.Windows.Forms.TextBox outuop;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ComboBox multype;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown mulmaptype;
-        private System.Windows.Forms.Button outuopbtn;
-        private System.Windows.Forms.Button inuopbtn;
-        private System.Windows.Forms.NumericUpDown uopmaptype;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox uoptype;
+        private System.Windows.Forms.TextBox inmul;
+        private System.Windows.Forms.Button inmulbtn;
+        private System.Windows.Forms.TextBox inputfolder;
         private System.Windows.Forms.TextBox inuop;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button uoptomul;
-        private System.Windows.Forms.Button outidxbtn;
-        private System.Windows.Forms.Button outmulbtn;
-        private System.Windows.Forms.TextBox outidx;
+        private System.Windows.Forms.Button inuopbtn;
+        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox outmul;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NumericUpDown mulmaptype;
+        private System.Windows.Forms.Button multouop;
+        private System.Windows.Forms.ComboBox multype;
+        private System.Windows.Forms.TextBox outidx;
+        private System.Windows.Forms.Button outidxbtn;
+        private System.Windows.Forms.TextBox outmul;
+        private System.Windows.Forms.Button outmulbtn;
+        private System.Windows.Forms.TextBox outuop;
+        private System.Windows.Forms.Button outuopbtn;
+        private System.Windows.Forms.RadioButton pack;
+        private System.Windows.Forms.OpenFileDialog selectfile;
+        private System.Windows.Forms.FolderBrowserDialog selectfolder;
+        private System.Windows.Forms.Button selectfolderbtn;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Button startfolder;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStrip2;
+        private System.Windows.Forms.ToolStripStatusLabel statustext;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel guilabel;
-        private System.Windows.Forms.ToolStripStatusLabel versionlabel;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox inputfolder;
-        private System.Windows.Forms.Button selectfolderbtn;
-        private System.Windows.Forms.FolderBrowserDialog selectfolder;
-        private System.Windows.Forms.RadioButton pack;
-        private System.Windows.Forms.RadioButton extract;
-        private System.Windows.Forms.StatusStrip statusStrip2;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ToolStripStatusLabel statustext;
-        private System.Windows.Forms.Button startfolder;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.NumericUpDown uopmaptype;
+        private System.Windows.Forms.Button uoptomul;
+        private System.Windows.Forms.ComboBox uoptype;
+        private System.Windows.Forms.ToolStripStatusLabel versionlabel;
 
+        #endregion
     }
 }

@@ -64,12 +64,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(
-                new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(
-                new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(
-                new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 17F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.pictureBox2, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.vScrollBar, 1, 0);
@@ -77,9 +74,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(
-                new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(722, 329);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(624, 283);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // pictureBox1
@@ -88,7 +84,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(345, 323);
+            this.pictureBox1.Size = new System.Drawing.Size(297, 277);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.SizeChanged += new System.EventHandler(this.OnResizeHue);
@@ -96,8 +92,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.applyHue1ToHue2ToolStripMenuItem});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applyHue1ToHue2ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(188, 26);
             // 
@@ -112,9 +108,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             this.pictureBox2.ContextMenuStrip = this.contextMenuStrip1;
             this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox2.Location = new System.Drawing.Point(374, 3);
+            this.pictureBox2.Location = new System.Drawing.Point(323, 3);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(345, 323);
+            this.pictureBox2.Size = new System.Drawing.Size(298, 277);
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.SizeChanged += new System.EventHandler(this.OnResizeHue);
@@ -123,9 +119,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.vScrollBar.Location = new System.Drawing.Point(351, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(303, 0);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(20, 329);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 283);
             this.vScrollBar.TabIndex = 2;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
             // 
@@ -147,18 +143,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
             this.splitContainer1.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(722, 374);
-            this.splitContainer1.SplitterDistance = 329;
-            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.Size = new System.Drawing.Size(624, 328);
+            this.splitContainer1.SplitterDistance = 283;
             this.splitContainer1.TabIndex = 1;
             // 
             // button2
             // 
             this.button2.AutoSize = true;
             this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Location = new System.Drawing.Point(437, 1);
+            this.button2.Location = new System.Drawing.Point(375, 1);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(26, 25);
+            this.button2.Size = new System.Drawing.Size(26, 23);
             this.button2.TabIndex = 2;
             this.button2.Text = "...";
             this.button2.UseVisualStyleBackColor = true;
@@ -166,15 +161,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // button1
             // 
-            this.button1.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top |
-                                                        System.Windows.Forms.AnchorStyles.Left) |
-                                                       System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(475, 1);
-            this.button1.MaximumSize = new System.Drawing.Size(87, 27);
-            this.button1.MinimumSize = new System.Drawing.Size(87, 27);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(407, 1);
+            this.button1.MaximumSize = new System.Drawing.Size(75, 23);
+            this.button1.MinimumSize = new System.Drawing.Size(75, 23);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(87, 27);
+            this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
             this.button1.Text = "Load";
             this.button1.UseVisualStyleBackColor = true;
@@ -182,25 +175,23 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // textBox1
             // 
-            this.textBox1.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top |
-                                                        System.Windows.Forms.AnchorStyles.Left) |
-                                                       System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(159, 5);
-            this.textBox1.MaximumSize = new System.Drawing.Size(271, 20);
-            this.textBox1.MinimumSize = new System.Drawing.Size(271, 20);
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.Location = new System.Drawing.Point(136, 4);
+            this.textBox1.MaximumSize = new System.Drawing.Size(233, 20);
+            this.textBox1.MinimumSize = new System.Drawing.Size(233, 20);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(271, 20);
+            this.textBox1.Size = new System.Drawing.Size(233, 20);
             this.textBox1.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox1, "Directory of hues.mul");
             // 
             // CompareHues
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "CompareHues";
-            this.Size = new System.Drawing.Size(722, 374);
+            this.Size = new System.Drawing.Size(624, 328);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -212,20 +203,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
-        #endregion
-
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStripMenuItem applyHue1ToHue2ToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.VScrollBar vScrollBar;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem applyHue1ToHue2ToolStripMenuItem;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.VScrollBar vScrollBar;
+
+        #endregion
     }
 }

@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -76,7 +76,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(3, 28);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(613, 273);
+            this.treeView.Size = new System.Drawing.Size(615, 276);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect);
             this.treeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClick);
@@ -187,7 +187,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(621, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "tsSoundsMenu";
             // 
@@ -232,7 +232,7 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(619, 324);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(621, 327);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // statusStripSounds
@@ -242,9 +242,9 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripStatusSpacer,
             this.playing,
             this.stopButton});
-            this.statusStripSounds.Location = new System.Drawing.Point(0, 304);
+            this.statusStripSounds.Location = new System.Drawing.Point(0, 307);
             this.statusStripSounds.Name = "statusStripSounds";
-            this.statusStripSounds.Size = new System.Drawing.Size(619, 20);
+            this.statusStripSounds.Size = new System.Drawing.Size(621, 20);
             this.statusStripSounds.SizingGrip = false;
             this.statusStripSounds.TabIndex = 1;
             this.statusStripSounds.Text = "statusStrip1";
@@ -257,7 +257,7 @@ namespace UoFiddler.Controls.UserControls
             // toolStripStatusSpacer
             // 
             this.toolStripStatusSpacer.Name = "toolStripStatusSpacer";
-            this.toolStripStatusSpacer.Size = new System.Drawing.Size(604, 15);
+            this.toolStripStatusSpacer.Size = new System.Drawing.Size(606, 15);
             this.toolStripStatusSpacer.Spring = true;
             // 
             // playing
@@ -284,7 +284,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Sounds";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(621, 327);
             this.Load += new System.EventHandler(this.OnLoad);
             this.cmStripSounds.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
@@ -297,29 +297,30 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-        private System.Windows.Forms.TreeView treeView;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.ToolStripMenuItem itemExtractSoundlist;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ContextMenuStrip cmStripSounds;
-        private System.Windows.Forms.ToolStripMenuItem nameSortToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator tsSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem playSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractSoundToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem removeSoundToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem itemExtractSoundlist;
         private System.Windows.Forms.ToolStripMenuItem itemSave;
-        private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
-        private System.Windows.Forms.StatusStrip statusStripSounds;
-        private System.Windows.Forms.ToolStripStatusLabel seconds;
-        private System.Windows.Forms.ToolStripSeparator tsSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem nameSortToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextFreeSlotToolStripMenuItem;
-        private System.Windows.Forms.ToolStripDropDownButton stopButton;
         private System.Windows.Forms.ToolStripProgressBar playing;
+        private System.Windows.Forms.ToolStripMenuItem playSoundToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeSoundToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel seconds;
+        private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStripSounds;
+        private System.Windows.Forms.ToolStripDropDownButton stopButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusSpacer;
+        private System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.ToolStripSeparator tsSeparator1;
+        private System.Windows.Forms.ToolStripSeparator tsSeparator2;
+
+        #endregion
     }
 }

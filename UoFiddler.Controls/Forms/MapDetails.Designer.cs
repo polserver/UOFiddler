@@ -66,8 +66,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
         private System.Windows.Forms.RichTextBox richTextBox;
+
+        #endregion
     }
 }

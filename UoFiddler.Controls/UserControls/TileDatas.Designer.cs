@@ -148,7 +148,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabcontrol.Location = new System.Drawing.Point(0, 33);
             this.tabcontrol.Name = "tabcontrol";
             this.tabcontrol.SelectedIndex = 0;
-            this.tabcontrol.Size = new System.Drawing.Size(619, 291);
+            this.tabcontrol.Size = new System.Drawing.Size(621, 294);
             this.tabcontrol.TabIndex = 0;
             // 
             // tabPageItems
@@ -157,7 +157,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(611, 265);
+            this.tabPageItems.Size = new System.Drawing.Size(613, 268);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Text = "Items";
             this.tabPageItems.UseVisualStyleBackColor = true;
@@ -175,7 +175,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(605, 259);
+            this.splitContainer1.Size = new System.Drawing.Size(607, 262);
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -193,8 +193,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxItem);
-            this.splitContainer2.Size = new System.Drawing.Size(200, 259);
-            this.splitContainer2.SplitterDistance = 161;
+            this.splitContainer2.Size = new System.Drawing.Size(200, 262);
+            this.splitContainer2.SplitterDistance = 162;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeViewItem
@@ -204,7 +204,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(0, 0);
             this.treeViewItem.Name = "treeViewItem";
-            this.treeViewItem.Size = new System.Drawing.Size(200, 161);
+            this.treeViewItem.Size = new System.Drawing.Size(200, 162);
             this.treeViewItem.TabIndex = 0;
             this.treeViewItem.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.OnItemDataNodeExpanded);
             this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
@@ -237,7 +237,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxItem.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxItem.Name = "pictureBoxItem";
-            this.pictureBoxItem.Size = new System.Drawing.Size(200, 94);
+            this.pictureBoxItem.Size = new System.Drawing.Size(200, 96);
             this.pictureBoxItem.TabIndex = 0;
             this.pictureBoxItem.TabStop = false;
             // 
@@ -282,7 +282,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(401, 259);
+            this.splitContainer3.Size = new System.Drawing.Size(403, 262);
             this.splitContainer3.SplitterDistance = 157;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
@@ -516,7 +516,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.MultiColumn = true;
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(401, 100);
+            this.checkedListBox1.Size = new System.Drawing.Size(403, 103);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnFlagItemCheckItems);
             // 
@@ -713,7 +713,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(621, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -830,7 +830,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "TileDatas";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(621, 327);
             this.Load += new System.EventHandler(this.OnLoad);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TileData_KeyUp);
             this.tabcontrol.ResumeLayout(false);
@@ -874,73 +874,73 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.TabControl tabcontrol;
-        private System.Windows.Forms.TabPage tabPageItems;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.PictureBox pictureBoxItem;
-        private System.Windows.Forms.TabPage tabPageLand;
-        private System.Windows.Forms.TreeView treeViewItem;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxWeight;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBoxAnim;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxName;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBoxQuality;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBoxValue;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBoxStackOff;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox textBoxHue;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBoxQuantity;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBoxUnk2;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox textBoxUnk1;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBoxHeigth;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox textBoxUnk3;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
-        private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.SplitContainer splitContainer5;
-        private System.Windows.Forms.SplitContainer splitContainer6;
-        private System.Windows.Forms.TreeView treeViewLand;
-        private System.Windows.Forms.PictureBox pictureBoxLand;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.TextBox textBoxNameLand;
-        private System.Windows.Forms.SplitContainer splitContainer7;
-        private System.Windows.Forms.TextBox textBoxTexID;
-        private System.Windows.Forms.Label label24;
         private System.Windows.Forms.CheckedListBox checkedListBox2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem selectInItemsToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ToolStripMenuItem memorySaveWarningToolStripMenuItem;
+        private System.Windows.Forms.PictureBox pictureBoxItem;
+        private System.Windows.Forms.PictureBox pictureBoxLand;
+        private System.Windows.Forms.ToolStripMenuItem saveDirectlyOnChangesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectInItemsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInLandtilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectRadarColorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setFilterToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.SplitContainer splitContainer6;
+        private System.Windows.Forms.SplitContainer splitContainer7;
+        private UoFiddler.Controls.UserControls.CollapsibleSplitter splitter1;
+        private System.Windows.Forms.TabControl tabcontrol;
+        private System.Windows.Forms.TabPage tabPageItems;
+        private System.Windows.Forms.TabPage tabPageLand;
+        private System.Windows.Forms.TextBox textBoxAnim;
+        private System.Windows.Forms.TextBox textBoxHeigth;
+        private System.Windows.Forms.TextBox textBoxHue;
+        private System.Windows.Forms.TextBox textBoxName;
+        private System.Windows.Forms.TextBox textBoxNameLand;
+        private System.Windows.Forms.TextBox textBoxQuality;
+        private System.Windows.Forms.TextBox textBoxQuantity;
+        private System.Windows.Forms.TextBox textBoxStackOff;
+        private System.Windows.Forms.TextBox textBoxTexID;
+        private System.Windows.Forms.TextBox textBoxUnk1;
+        private System.Windows.Forms.TextBox textBoxUnk1HSA;
+        private System.Windows.Forms.TextBox textBoxUnk2;
+        private System.Windows.Forms.TextBox textBoxUnk3;
+        private System.Windows.Forms.TextBox textBoxUnkLandHSA;
+        private System.Windows.Forms.TextBox textBoxValue;
+        private System.Windows.Forms.TextBox textBoxWeight;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private CollapsibleSplitter splitter1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem memorySaveWarningToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveDirectlyOnChangesToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.ToolStripButton toolStripButton5;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton toolStripButton5;
-        private System.Windows.Forms.ToolStripMenuItem setFilterToolStripMenuItem;
-        private System.Windows.Forms.TextBox textBoxUnk1HSA;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBoxUnkLandHSA;
-        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TreeView treeViewItem;
+        private System.Windows.Forms.TreeView treeViewLand;
+
+        #endregion
     }
 }

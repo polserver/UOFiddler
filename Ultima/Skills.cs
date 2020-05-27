@@ -81,6 +81,7 @@ namespace Ultima
         }
 
         private static readonly byte[] _stringBuffer = new byte[1024];
+
         private static string ReadNameString(BinaryReader bin, int length)
         {
             bin.Read(_stringBuffer, 0, length);
@@ -138,7 +139,7 @@ namespace Ultima
 
         public int Index { get; set; }
 
-        public bool IsAction { get; }
+        public bool IsAction { get; set; }
 
         public string Name
         {

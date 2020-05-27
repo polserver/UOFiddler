@@ -51,19 +51,18 @@ namespace UoFiddler.Controls.Forms
             this.TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextBox.Location = new System.Drawing.Point(0, 25);
             this.TextBox.Name = "TextBox";
-            this.TextBox.Size = new System.Drawing.Size(341, 282);
+            this.TextBox.Size = new System.Drawing.Size(297, 245);
             this.TextBox.TabIndex = 0;
             this.TextBox.Text = "";
             // 
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.NumberLabel, this.SaveButton});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.NumberLabel, this.SaveButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(341, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(297, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -85,9 +84,9 @@ namespace UoFiddler.Controls.Forms
             // 
             // ClilocDetail
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(341, 307);
+            this.ClientSize = new System.Drawing.Size(297, 270);
             this.Controls.Add(this.TextBox);
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -99,11 +98,11 @@ namespace UoFiddler.Controls.Forms
             this.PerformLayout();
         }
 
-        #endregion
-
-        private System.Windows.Forms.RichTextBox TextBox;
-        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripLabel NumberLabel;
         private System.Windows.Forms.ToolStripButton SaveButton;
+        private System.Windows.Forms.RichTextBox TextBox;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+
+        #endregion
     }
 }

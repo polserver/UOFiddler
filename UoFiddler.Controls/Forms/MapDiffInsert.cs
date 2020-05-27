@@ -1,9 +1,9 @@
 ﻿/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -19,18 +19,18 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class MapDiffInsert : Form
     {
-        private readonly Map _workingmap;
+        private readonly Map _workingMap;
 
-        public MapDiffInsert(Map currmap)
+        public MapDiffInsert(Map currentMap)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
-            _workingmap = currmap;
-            numericUpDownX1.Maximum = _workingmap.Width;
-            numericUpDownX2.Maximum = _workingmap.Width;
-            numericUpDownY1.Maximum = _workingmap.Height;
-            numericUpDownY2.Maximum = _workingmap.Height;
-            Text = $"Map Diff Insert ID:{_workingmap.FileIndex}";
+            _workingMap = currentMap;
+            numericUpDownX1.Maximum = _workingMap.Width;
+            numericUpDownX2.Maximum = _workingMap.Width;
+            numericUpDownY1.Maximum = _workingMap.Height;
+            numericUpDownY2.Maximum = _workingMap.Height;
+            Text = $"Map Diff Insert ID:{_workingMap.FileIndex}";
         }
 
         private void OnClickCopy(object sender, EventArgs e)
@@ -40,25 +40,25 @@ namespace UoFiddler.Controls.Forms
             int y1 = (int)numericUpDownY1.Value;
             int y2 = (int)numericUpDownY2.Value;
 
-            if (x1 < 0 || x1 > _workingmap.Width)
+            if (x1 < 0 || x1 > _workingMap.Width)
             {
                 MessageBox.Show("Invalid X1 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
 
-            if (x2 < 0 || x2 > _workingmap.Width)
+            if (x2 < 0 || x2 > _workingMap.Width)
             {
                 MessageBox.Show("Invalid X2 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
 
-            if (y1 < 0 || y1 > _workingmap.Height)
+            if (y1 < 0 || y1 > _workingMap.Height)
             {
                 MessageBox.Show("Invalid Y1 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
 
-            if (y2 < 0 || y2 > _workingmap.Height)
+            if (y2 < 0 || y2 > _workingMap.Height)
             {
                 MessageBox.Show("Invalid Y2 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
@@ -75,8 +75,8 @@ namespace UoFiddler.Controls.Forms
             y1 >>= 3;
             y2 >>= 3;
 
-            int blocky = _workingmap.Height >> 3;
-            int blockx = _workingmap.Width >> 3;
+            int blockY = _workingMap.Height >> 3;
+            int blockX = _workingMap.Width >> 3;
 
             progressBar1.Step = 1;
             progressBar1.Value = 0;
@@ -84,17 +84,17 @@ namespace UoFiddler.Controls.Forms
 
             if (checkBoxMap.Checked)
             {
-                progressBar1.Maximum += blocky * blockx;
+                progressBar1.Maximum += blockY * blockX;
             }
 
             if (checkBoxStatics.Checked)
             {
-                progressBar1.Maximum += blocky * blockx;
+                progressBar1.Maximum += blockY * blockX;
             }
 
             if (checkBoxMap.Checked)
             {
-                string mapPath = Files.GetFilePath($"map{_workingmap.FileIndex}.mul");
+                string mapPath = Files.GetFilePath($"map{_workingMap.FileIndex}.mul");
                 BinaryReader mMapReader;
 
                 if (mapPath != null)
@@ -108,16 +108,16 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                string mul = Path.Combine(Options.OutputPath, $"map{_workingmap.FileIndex}.mul");
+                string mul = Path.Combine(Options.OutputPath, $"map{_workingMap.FileIndex}.mul");
                 using (FileStream fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
                     using (BinaryWriter binmul = new BinaryWriter(fsmul))
                     {
-                        for (int x = 0; x < blockx; ++x)
+                        for (int x = 0; x < blockX; ++x)
                         {
-                            for (int y = 0; y < blocky; ++y)
+                            for (int y = 0; y < blockY; ++y)
                             {
-                                mMapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
+                                mMapReader.BaseStream.Seek(((x * blockY) + y) * 196, SeekOrigin.Begin);
                                 int header = mMapReader.ReadInt32();
                                 binmul.Write(header);
                                 ushort tileid;
@@ -125,10 +125,10 @@ namespace UoFiddler.Controls.Forms
                                 bool patched = false;
                                 if (x1 <= x && x <= x2 && y1 <= y && y <= y2)
                                 {
-                                    if (_workingmap.Tiles.Patch.IsLandBlockPatched(x, y))
+                                    if (_workingMap.Tiles.Patch.IsLandBlockPatched(x, y))
                                     {
                                         patched = true;
-                                        Tile[] patchtile = _workingmap.Tiles.Patch.GetLandBlock(x, y);
+                                        Tile[] patchtile = _workingMap.Tiles.Patch.GetLandBlock(x, y);
                                         for (int i = 0; i < 64; ++i)
                                         {
                                             tileid = patchtile[i].ID;
@@ -182,7 +182,7 @@ namespace UoFiddler.Controls.Forms
             }
             if (checkBoxStatics.Checked)
             {
-                string indexPath = Files.GetFilePath($"staidx{_workingmap.FileIndex}.mul");
+                string indexPath = Files.GetFilePath($"staidx{_workingMap.FileIndex}.mul");
                 BinaryReader mIndexReader;
                 if (indexPath != null)
                 {
@@ -195,7 +195,7 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                string staticsPath = Files.GetFilePath($"statics{_workingmap.FileIndex}.mul");
+                string staticsPath = Files.GetFilePath($"statics{_workingMap.FileIndex}.mul");
 
                 FileStream mStatics;
                 BinaryReader mStaticsReader;
@@ -210,26 +210,26 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                string idx = Path.Combine(Options.OutputPath, $"staidx{_workingmap.FileIndex}.mul");
-                string mul = Path.Combine(Options.OutputPath, $"statics{_workingmap.FileIndex}.mul");
+                string idx = Path.Combine(Options.OutputPath, $"staidx{_workingMap.FileIndex}.mul");
+                string mul = Path.Combine(Options.OutputPath, $"statics{_workingMap.FileIndex}.mul");
                 using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
                                   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
                     using (BinaryWriter binidx = new BinaryWriter(fsidx),
                                         binmul = new BinaryWriter(fsmul))
                     {
-                        for (int x = 0; x < blockx; ++x)
+                        for (int x = 0; x < blockX; ++x)
                         {
-                            for (int y = 0; y < blocky; ++y)
+                            for (int y = 0; y < blockY; ++y)
                             {
-                                mIndexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
+                                mIndexReader.BaseStream.Seek(((x * blockY) + y) * 12, SeekOrigin.Begin);
                                 var lookup = mIndexReader.ReadInt32();
                                 var length = mIndexReader.ReadInt32();
                                 var extra = mIndexReader.ReadInt32();
                                 bool patched = false;
                                 if (x1 <= x && x <= x2 && y1 <= y && y <= y2)
                                 {
-                                    if (_workingmap.Tiles.Patch.IsStaticBlockPatched(x, y))
+                                    if (_workingMap.Tiles.Patch.IsStaticBlockPatched(x, y))
                                     {
                                         patched = true;
                                     }
@@ -237,7 +237,7 @@ namespace UoFiddler.Controls.Forms
 
                                 if (patched)
                                 {
-                                    HuedTile[][][] patchstat = _workingmap.Tiles.Patch.GetStaticBlock(x, y);
+                                    HuedTile[][][] patchstat = _workingMap.Tiles.Patch.GetStaticBlock(x, y);
                                     int count = 0;
                                     for (int i = 0; i < 8; ++i)
                                     {

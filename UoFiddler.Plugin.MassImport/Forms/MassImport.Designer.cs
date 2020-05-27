@@ -52,14 +52,14 @@ namespace UoFiddler.Plugin.MassImport.Forms
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.AutoSize = true;
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Location = new System.Drawing.Point(13, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(399, 61);
+            this.groupBox1.Size = new System.Drawing.Size(403, 61);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "XML";
@@ -86,14 +86,14 @@ namespace UoFiddler.Plugin.MassImport.Forms
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.AutoSize = true;
             this.groupBox2.Controls.Add(this.OutputBox);
             this.groupBox2.Location = new System.Drawing.Point(13, 75);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(399, 218);
+            this.groupBox2.Size = new System.Drawing.Size(403, 219);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "OutPut";
@@ -103,7 +103,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             this.OutputBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OutputBox.Location = new System.Drawing.Point(3, 16);
             this.OutputBox.Name = "OutputBox";
-            this.OutputBox.Size = new System.Drawing.Size(393, 199);
+            this.OutputBox.Size = new System.Drawing.Size(397, 200);
             this.OutputBox.TabIndex = 0;
             this.OutputBox.Text = "";
             // 
@@ -111,7 +111,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button3.Enabled = false;
-            this.button3.Location = new System.Drawing.Point(20, 297);
+            this.button3.Location = new System.Drawing.Point(20, 298);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 2;
@@ -123,7 +123,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             // 
             this.checkBoxDirectSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxDirectSave.AutoSize = true;
-            this.checkBoxDirectSave.Location = new System.Drawing.Point(102, 302);
+            this.checkBoxDirectSave.Location = new System.Drawing.Point(102, 303);
             this.checkBoxDirectSave.Name = "checkBoxDirectSave";
             this.checkBoxDirectSave.Size = new System.Drawing.Size(79, 17);
             this.checkBoxDirectSave.TabIndex = 3;
@@ -134,7 +134,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(424, 332);
+            this.ClientSize = new System.Drawing.Size(428, 333);
             this.Controls.Add(this.checkBoxDirectSave);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.groupBox2);
@@ -148,14 +148,14 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.RichTextBox OutputBox;
+        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.CheckBox checkBoxDirectSave;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RichTextBox OutputBox;
+
+        #endregion
     }
 }
