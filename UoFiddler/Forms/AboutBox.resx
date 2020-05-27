@@ -128,6 +128,7 @@ Fixed exporting offset.cfg for items alternative design mode.
 Moved update checking to github releases API.
 Added UOP Packer plugin (authors: Feeh / Epila / cbnolok)
 Fixed Sounds tab description labels - indexes were off by 1.
+Fixed multi import issue with indexes higher than 4095.
 
 Version 4.8
 AsYlum added multiple selection in items tab using
