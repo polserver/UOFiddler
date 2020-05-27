@@ -118,17 +118,20 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9
-Updating project to .NET Framework 4.8 
-You can download .NET Framework at https://dotnet.microsoft.com/download/dotnet-framework
-This is maintenance release focusing on updating framework and code cleanup.
-Fixed bitmap to multimap saving (author: brndd).
+    <value>Version 4.9.1
 Instead of moving configuration files to AppData we now copy them if the file doesn't exist.
 Fixed exporting offset.cfg for items alternative design mode.
 Moved update checking to github releases API.
 Added UOP Packer plugin (authors: Feeh / Epila / cbnolok)
 Fixed Sounds tab description labels - indexes were off by 1.
 Fixed multi import issue with indexes higher than 4095.
+Avoid replacing exported multi images with different height settings by adding height value to file name if the value is different than maximum multi height.
+
+Version 4.9
+Updating project to .NET Framework 4.8 
+You can download .NET Framework at https://dotnet.microsoft.com/download/dotnet-framework
+This is maintenance release focusing on updating framework and code cleanup.
+Fixed bitmap to multimap saving (author: brndd).
 
 Version 4.8
 AsYlum added multiple selection in items tab using

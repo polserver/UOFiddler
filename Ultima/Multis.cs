@@ -521,7 +521,7 @@ namespace Ultima
                             continue;
                         }
 
-                        if ((tiles[i].Z) > maximumHeight)
+                        if (tiles[i].Z > maximumHeight)
                         {
                             continue;
                         }
@@ -538,6 +538,7 @@ namespace Ultima
                         gfx.DrawImageUnscaled(bmp, px, py, bmp.Width, bmp.Height);
                     }
 
+                    // TODO: check what this was for. It looks unused/unfinished.
                     int tx = (x - y) * 22;
                     int ty = (x + y) * 22;
                     tx -= xMin;
