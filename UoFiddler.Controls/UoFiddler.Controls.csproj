@@ -496,6 +496,9 @@
     <EmbeddedResource Update="Forms\TileDatasSearch.resx">
       <DependentUpon>TileDatasSearch.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="UserControls\CollapsibleSplitter.resx">
+      <DependentUpon>CollapsibleSplitter.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cadeado.gif" />

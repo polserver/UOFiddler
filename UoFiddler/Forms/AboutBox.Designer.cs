@@ -178,7 +178,7 @@ namespace UoFiddler.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(435, 448);
+            this.ClientSize = new System.Drawing.Size(437, 448);
             this.Controls.Add(this.checkBoxFormState);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -204,12 +204,9 @@ namespace UoFiddler.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.CheckBox checkBoxCheckOnStart;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.CheckBox checkBoxCheckOnStart;
+        private System.Windows.Forms.CheckBox checkBoxFormState;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -217,9 +214,9 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.CheckBox checkBoxFormState;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
 
-
-
+        #endregion
     }
 }

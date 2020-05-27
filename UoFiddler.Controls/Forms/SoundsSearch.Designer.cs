@@ -52,7 +52,7 @@ namespace UoFiddler.Controls.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxId.Location = new System.Drawing.Point(18, 12);
             this.textBoxId.Name = "textBoxId";
-            this.textBoxId.Size = new System.Drawing.Size(256, 20);
+            this.textBoxId.Size = new System.Drawing.Size(254, 20);
             this.textBoxId.TabIndex = 0;
             this.textBoxId.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
@@ -63,7 +63,7 @@ namespace UoFiddler.Controls.Forms
             this.button1.AutoSize = true;
             this.button1.Location = new System.Drawing.Point(101, 39);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(93, 23);
+            this.button1.Size = new System.Drawing.Size(95, 23);
             this.button1.TabIndex = 1;
             this.button1.Text = "Search ID";
             this.button1.UseVisualStyleBackColor = true;
@@ -84,7 +84,7 @@ namespace UoFiddler.Controls.Forms
             this.button2.AutoSize = true;
             this.button2.Location = new System.Drawing.Point(54, 105);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(84, 23);
+            this.button2.Size = new System.Drawing.Size(86, 23);
             this.button2.TabIndex = 3;
             this.button2.Text = "Search Name";
             this.button2.UseVisualStyleBackColor = true;
@@ -104,7 +104,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 140);
+            this.ClientSize = new System.Drawing.Size(290, 140);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.textBoxSoundName);
@@ -120,12 +120,12 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.TextBox textBoxId;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBoxSoundName;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox textBoxId;
+        private System.Windows.Forms.TextBox textBoxSoundName;
+
+        #endregion
     }
 }

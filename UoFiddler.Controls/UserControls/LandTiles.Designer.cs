@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -65,12 +65,12 @@ namespace UoFiddler.Controls.UserControls
             this.ExportAsBmp = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportAsTiff = new System.Windows.Forms.ToolStripMenuItem();
             this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.LandTilesSearchButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.listView1 = new System.Windows.Forms.ListView();
-            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStripLandTile.SuspendLayout();
             this.SuspendLayout();
@@ -106,28 +106,28 @@ namespace UoFiddler.Controls.UserControls
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportBmp);
             // 
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportTiff);
             // 
             // asJpgToolStripMenuItem1
             // 
             this.asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
-            this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem1.Text = "As Jpg";
             this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportJpg);
             // 
             // asPngToolStripMenuItem
             // 
             this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asPngToolStripMenuItem.Text = "As Png";
             this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportPng);
             // 
@@ -194,7 +194,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown_Insert);
@@ -216,7 +215,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripLandTile.Location = new System.Drawing.Point(0, 0);
             this.toolStripLandTile.Name = "toolStripLandTile";
             this.toolStripLandTile.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStripLandTile.Size = new System.Drawing.Size(619, 25);
+            this.toolStripLandTile.Size = new System.Drawing.Size(622, 25);
             this.toolStripLandTile.TabIndex = 5;
             this.toolStripLandTile.Text = "toolStrip1";
             // 
@@ -264,29 +263,36 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem,
             this.asPngToolStripMenuItem1});
             this.ExportAll.Name = "ExportAll";
-            this.ExportAll.Size = new System.Drawing.Size(180, 22);
+            this.ExportAll.Size = new System.Drawing.Size(131, 22);
             this.ExportAll.Text = "Export All..";
             // 
             // ExportAsBmp
             // 
             this.ExportAsBmp.Name = "ExportAsBmp";
-            this.ExportAsBmp.Size = new System.Drawing.Size(180, 22);
+            this.ExportAsBmp.Size = new System.Drawing.Size(115, 22);
             this.ExportAsBmp.Text = "As Bmp";
             this.ExportAsBmp.Click += new System.EventHandler(this.OnClick_SaveAllBmp);
             // 
             // ExportAsTiff
             // 
             this.ExportAsTiff.Name = "ExportAsTiff";
-            this.ExportAsTiff.Size = new System.Drawing.Size(180, 22);
+            this.ExportAsTiff.Size = new System.Drawing.Size(115, 22);
             this.ExportAsTiff.Text = "As Tiff";
             this.ExportAsTiff.Click += new System.EventHandler(this.OnClick_SaveAllTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllJpg);
+            // 
+            // asPngToolStripMenuItem1
+            // 
+            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
+            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem1.Text = "As Png";
+            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllPng);
             // 
             // LandTilesSearchButton
             // 
@@ -332,7 +338,7 @@ namespace UoFiddler.Controls.UserControls
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
             this.listView1.ShowGroups = false;
-            this.listView1.Size = new System.Drawing.Size(619, 299);
+            this.listView1.Size = new System.Drawing.Size(622, 301);
             this.listView1.TabIndex = 4;
             this.listView1.TileSize = new System.Drawing.Size(46, 46);
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -341,13 +347,6 @@ namespace UoFiddler.Controls.UserControls
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.ListView_SelectedIndexChanged);
             this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LandTiles_KeyUp);
             // 
-            // asPngToolStripMenuItem1
-            // 
-            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
-            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.asPngToolStripMenuItem1.Text = "As Png";
-            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllPng);
-            // 
             // LandTiles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -355,7 +354,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.toolStripLandTile);
             this.Name = "LandTiles";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(622, 326);
             this.Load += new System.EventHandler(this.OnLoad);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LandTiles_KeyUp);
             this.contextMenuStrip1.ResumeLayout(false);
@@ -366,38 +365,38 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem insertAtToolStripMenuItem;
-        private System.Windows.Forms.ToolStripTextBox InsertText;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem findNextFreeSlotToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem selectInTileDataTabToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem selectInRadarColorTabToolStripMenuItem;
-        private System.Windows.Forms.ToolStrip toolStripLandTile;
-        private System.Windows.Forms.ToolStripLabel namelabel;
-        private System.Windows.Forms.ToolStripLabel graphiclabel;
-        private System.Windows.Forms.ToolStripLabel FlagsLabel;
-        private System.Windows.Forms.ToolStripButton LandTilesSearchButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripButton SaveButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem ExportAll;
         private System.Windows.Forms.ToolStripMenuItem ExportAsBmp;
         private System.Windows.Forms.ToolStripMenuItem ExportAsTiff;
+        private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findNextFreeSlotToolStripMenuItem;
+        private System.Windows.Forms.ToolStripLabel FlagsLabel;
+        private System.Windows.Forms.ToolStripLabel graphiclabel;
+        private System.Windows.Forms.ToolStripMenuItem insertAtToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox InsertText;
+        private System.Windows.Forms.ToolStripButton LandTilesSearchButton;
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripLabel namelabel;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton SaveButton;
+        private System.Windows.Forms.ToolStripMenuItem selectInRadarColorTabToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectInTileDataTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStrip toolStripLandTile;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+
+        #endregion
     }
 }

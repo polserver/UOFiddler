@@ -33,8 +33,8 @@ namespace UoFiddler.Controls.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -61,7 +61,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(0, 0);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(121, 327);
+            this.treeView.Size = new System.Drawing.Size(121, 328);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
             // 
@@ -77,7 +77,7 @@ namespace UoFiddler.Controls.UserControls
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
             this.listView1.ShowGroups = false;
-            this.listView1.Size = new System.Drawing.Size(500, 305);
+            this.listView1.Size = new System.Drawing.Size(502, 306);
             this.listView1.TabIndex = 4;
             this.listView1.TileSize = new System.Drawing.Size(46, 46);
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -141,9 +141,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(121, 305);
+            this.statusStrip1.Location = new System.Drawing.Point(121, 306);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(500, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(502, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -161,7 +161,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.treeView);
             this.Name = "Fonts";
-            this.Size = new System.Drawing.Size(621, 327);
+            this.Size = new System.Drawing.Size(623, 328);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
@@ -171,20 +171,18 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.TreeView treeView;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem extractCharacterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importCharacterToolStripMenuItem;
+        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setOffsetsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem writeTextToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.ToolStripMenuItem writeTextToolStripMenuItem;
 
-
+        #endregion
     }
 }

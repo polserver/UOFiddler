@@ -42,7 +42,7 @@ namespace UoFiddler.Forms
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -54,7 +54,7 @@ namespace UoFiddler.Forms
             this.checkedListBox1.FormattingEnabled = true;
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(177, 264);
+            this.checkedListBox1.Size = new System.Drawing.Size(151, 231);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.OnSelect);
             // 
@@ -71,9 +71,8 @@ namespace UoFiddler.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(485, 264);
-            this.splitContainer1.SplitterDistance = 177;
-            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.Size = new System.Drawing.Size(418, 231);
+            this.splitContainer1.SplitterDistance = 151;
             this.splitContainer1.TabIndex = 1;
             // 
             // richTextBox1
@@ -81,15 +80,15 @@ namespace UoFiddler.Forms
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(303, 264);
+            this.richTextBox1.Size = new System.Drawing.Size(263, 231);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
             // ManagePlugins
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(485, 264);
+            this.ClientSize = new System.Drawing.Size(418, 231);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ManagePlugins";
@@ -97,15 +96,16 @@ namespace UoFiddler.Forms
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
-        #endregion
-
         private System.Windows.Forms.CheckedListBox checkedListBox1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+
+        #endregion
     }
 }

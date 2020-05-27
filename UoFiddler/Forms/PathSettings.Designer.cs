@@ -54,7 +54,7 @@ namespace UoFiddler.Forms
             this.pgPaths.Location = new System.Drawing.Point(0, 25);
             this.pgPaths.Name = "pgPaths";
             this.pgPaths.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            this.pgPaths.Size = new System.Drawing.Size(524, 276);
+            this.pgPaths.Size = new System.Drawing.Size(528, 278);
             this.pgPaths.TabIndex = 0;
             this.pgPaths.ToolbarVisible = false;
             // 
@@ -68,7 +68,7 @@ namespace UoFiddler.Forms
             this.tsPathSettingsMenu.Location = new System.Drawing.Point(0, 0);
             this.tsPathSettingsMenu.Name = "tsPathSettingsMenu";
             this.tsPathSettingsMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.tsPathSettingsMenu.Size = new System.Drawing.Size(524, 25);
+            this.tsPathSettingsMenu.Size = new System.Drawing.Size(528, 25);
             this.tsPathSettingsMenu.TabIndex = 1;
             this.tsPathSettingsMenu.Text = "toolStrip1";
             // 
@@ -92,7 +92,6 @@ namespace UoFiddler.Forms
             // 
             // tsTbRootPath
             // 
-            this.tsTbRootPath.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.tsTbRootPath.Name = "tsTbRootPath";
             this.tsTbRootPath.Size = new System.Drawing.Size(150, 25);
             this.tsTbRootPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownDir);
@@ -101,7 +100,7 @@ namespace UoFiddler.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(524, 301);
+            this.ClientSize = new System.Drawing.Size(528, 303);
             this.Controls.Add(this.pgPaths);
             this.Controls.Add(this.tsPathSettingsMenu);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -114,13 +113,12 @@ namespace UoFiddler.Forms
 
         }
 
-        #endregion
-
         private System.Windows.Forms.PropertyGrid pgPaths;
-        private System.Windows.Forms.ToolStrip tsPathSettingsMenu;
         private System.Windows.Forms.ToolStripButton tsBtnReloadPaths;
         private System.Windows.Forms.ToolStripButton tsBtnSetPathManual;
+        private System.Windows.Forms.ToolStrip tsPathSettingsMenu;
         private System.Windows.Forms.ToolStripTextBox tsTbRootPath;
 
+        #endregion
     }
 }

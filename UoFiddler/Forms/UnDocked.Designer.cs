@@ -45,7 +45,7 @@ namespace UoFiddler.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 330);
+            this.ClientSize = new System.Drawing.Size(615, 334);
             this.Name = "UnDocked";
             this.Text = "UnDocked";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);

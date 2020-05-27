@@ -1,4 +1,15 @@
-﻿namespace UoFiddler.Forms
+﻿/***************************************************************************
+ *
+ * $Author: Turley
+ *
+ * "THE BEER-WARE LICENSE"
+ * As long as you retain this notice you can do whatever you want with
+ * this stuff. If we meet some day, and you think this stuff is worth it,
+ * you can buy me a beer in return.
+ *
+ ***************************************************************************/
+
+namespace UoFiddler.Forms
 {
     partial class LoadProfile
     {
@@ -122,7 +133,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(277, 164);
+            this.ClientSize = new System.Drawing.Size(276, 166);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBoxLoad);
             this.Controls.Add(this.groupBox1);
@@ -138,15 +149,15 @@
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.ComboBox comboBoxLoad;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBoxCreate;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox comboBoxBasedOn;
+        private System.Windows.Forms.ComboBox comboBoxLoad;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBoxBasedOn;
+        private System.Windows.Forms.TextBox textBoxCreate;
+
+        #endregion
     }
 }

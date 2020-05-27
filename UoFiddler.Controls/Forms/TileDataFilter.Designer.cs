@@ -82,16 +82,20 @@ namespace UoFiddler.Controls.Forms
             this.button4 = new System.Windows.Forms.Button();
             this.tabcontrol.SuspendLayout();
             this.tabPageItems.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.tabPageLand.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).BeginInit();
             this.splitContainer7.Panel1.SuspendLayout();
             this.splitContainer7.Panel2.SuspendLayout();
             this.splitContainer7.SuspendLayout();
@@ -105,7 +109,7 @@ namespace UoFiddler.Controls.Forms
             this.tabcontrol.Location = new System.Drawing.Point(0, 0);
             this.tabcontrol.Name = "tabcontrol";
             this.tabcontrol.SelectedIndex = 0;
-            this.tabcontrol.Size = new System.Drawing.Size(346, 357);
+            this.tabcontrol.Size = new System.Drawing.Size(349, 361);
             this.tabcontrol.TabIndex = 1;
             // 
             // tabPageItems
@@ -114,7 +118,7 @@ namespace UoFiddler.Controls.Forms
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(338, 331);
+            this.tabPageItems.Size = new System.Drawing.Size(341, 335);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Text = "Items";
             this.tabPageItems.UseVisualStyleBackColor = true;
@@ -136,8 +140,8 @@ namespace UoFiddler.Controls.Forms
             // 
             this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(332, 325);
-            this.splitContainer1.SplitterDistance = 293;
+            this.splitContainer1.Size = new System.Drawing.Size(335, 329);
+            this.splitContainer1.SplitterDistance = 297;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer3
@@ -179,7 +183,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(332, 293);
+            this.splitContainer3.Size = new System.Drawing.Size(335, 297);
             this.splitContainer3.SplitterDistance = 133;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
@@ -384,7 +388,7 @@ namespace UoFiddler.Controls.Forms
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.MultiColumn = true;
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(332, 154);
+            this.checkedListBox1.Size = new System.Drawing.Size(335, 162);
             this.checkedListBox1.TabIndex = 0;
             // 
             // button2
@@ -503,7 +507,7 @@ namespace UoFiddler.Controls.Forms
             this.checkedListBox2.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox2.MultiColumn = true;
             this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(332, 259);
+            this.checkedListBox2.Size = new System.Drawing.Size(332, 264);
             this.checkedListBox2.TabIndex = 0;
             // 
             // button3
@@ -530,7 +534,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(346, 357);
+            this.ClientSize = new System.Drawing.Size(349, 361);
             this.Controls.Add(this.tabcontrol);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "TileDataFilter";
@@ -539,66 +543,70 @@ namespace UoFiddler.Controls.Forms
             this.tabPageItems.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel1.PerformLayout();
             this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.tabPageLand.ResumeLayout(false);
             this.splitContainer5.Panel1.ResumeLayout(false);
             this.splitContainer5.Panel1.PerformLayout();
             this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
             this.splitContainer7.Panel1.ResumeLayout(false);
             this.splitContainer7.Panel1.PerformLayout();
             this.splitContainer7.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).EndInit();
             this.splitContainer7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.TabControl tabcontrol;
-        private System.Windows.Forms.TabPage tabPageItems;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox textBoxUnk3;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBoxUnk2;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox textBoxUnk1;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBoxHeigth;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBoxValue;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBoxStackOff;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox textBoxHue;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBoxQuantity;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBoxQuality;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxWeight;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxName;
-        private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.TextBox textBoxAnim;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckedListBox checkedListBox1;
-        private System.Windows.Forms.TabPage tabPageLand;
-        private System.Windows.Forms.SplitContainer splitContainer5;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.TextBox textBoxNameLand;
-        private System.Windows.Forms.SplitContainer splitContainer7;
-        private System.Windows.Forms.TextBox textBoxTexID;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.CheckedListBox checkedListBox2;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.CheckedListBox checkedListBox2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.SplitContainer splitContainer7;
+        private System.Windows.Forms.TabControl tabcontrol;
+        private System.Windows.Forms.TabPage tabPageItems;
+        private System.Windows.Forms.TabPage tabPageLand;
+        private System.Windows.Forms.TextBox textBoxAnim;
+        private System.Windows.Forms.TextBox textBoxHeigth;
+        private System.Windows.Forms.TextBox textBoxHue;
+        private System.Windows.Forms.TextBox textBoxName;
+        private System.Windows.Forms.TextBox textBoxNameLand;
+        private System.Windows.Forms.TextBox textBoxQuality;
+        private System.Windows.Forms.TextBox textBoxQuantity;
+        private System.Windows.Forms.TextBox textBoxStackOff;
+        private System.Windows.Forms.TextBox textBoxTexID;
+        private System.Windows.Forms.TextBox textBoxUnk1;
+        private System.Windows.Forms.TextBox textBoxUnk2;
+        private System.Windows.Forms.TextBox textBoxUnk3;
+        private System.Windows.Forms.TextBox textBoxValue;
+        private System.Windows.Forms.TextBox textBoxWeight;
+
+        #endregion
     }
 }

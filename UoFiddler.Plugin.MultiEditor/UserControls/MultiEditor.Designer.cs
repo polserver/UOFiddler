@@ -9,8 +9,6 @@
  *
  ***************************************************************************/
 
-using UoFiddler.Controls.UserControls;
-
 namespace UoFiddler.Plugin.MultiEditor.UserControls
 {
     partial class MultiEditor
@@ -165,7 +163,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.TC_MultiEditorToolbox.Location = new System.Drawing.Point(0, 91);
             this.TC_MultiEditorToolbox.Name = "TC_MultiEditorToolbox";
             this.TC_MultiEditorToolbox.SelectedIndex = 0;
-            this.TC_MultiEditorToolbox.Size = new System.Drawing.Size(200, 181);
+            this.TC_MultiEditorToolbox.Size = new System.Drawing.Size(200, 185);
             this.TC_MultiEditorToolbox.TabIndex = 0;
             // 
             // tileTab
@@ -175,7 +173,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.tileTab.Location = new System.Drawing.Point(4, 22);
             this.tileTab.Name = "tileTab";
             this.tileTab.Padding = new System.Windows.Forms.Padding(3);
-            this.tileTab.Size = new System.Drawing.Size(192, 155);
+            this.tileTab.Size = new System.Drawing.Size(192, 159);
             this.tileTab.TabIndex = 0;
             this.tileTab.Text = "Tiles";
             this.tileTab.UseVisualStyleBackColor = true;
@@ -195,8 +193,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             this.splitContainer4.Panel2.Controls.Add(this.pictureBoxDrawTiles);
             this.splitContainer4.Panel2.Controls.Add(this.vScrollBarDrawTiles);
-            this.splitContainer4.Size = new System.Drawing.Size(186, 149);
-            this.splitContainer4.SplitterDistance = 69;
+            this.splitContainer4.Size = new System.Drawing.Size(186, 153);
+            this.splitContainer4.SplitterDistance = 70;
             this.splitContainer4.TabIndex = 0;
             // 
             // treeViewTilesXML
@@ -209,7 +207,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.treeViewTilesXML.Location = new System.Drawing.Point(0, 0);
             this.treeViewTilesXML.Name = "treeViewTilesXML";
             this.treeViewTilesXML.SelectedImageIndex = 0;
-            this.treeViewTilesXML.Size = new System.Drawing.Size(186, 69);
+            this.treeViewTilesXML.Size = new System.Drawing.Size(186, 70);
             this.treeViewTilesXML.TabIndex = 0;
             this.treeViewTilesXML.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewTilesXML_OnAfterSelect);
             // 
@@ -231,7 +229,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.pictureBoxDrawTiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxDrawTiles.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxDrawTiles.Name = "pictureBoxDrawTiles";
-            this.pictureBoxDrawTiles.Size = new System.Drawing.Size(169, 76);
+            this.pictureBoxDrawTiles.Size = new System.Drawing.Size(169, 79);
             this.pictureBoxDrawTiles.TabIndex = 3;
             this.pictureBoxDrawTiles.TabStop = false;
             this.pictureBoxDrawTiles.SizeChanged += new System.EventHandler(this.PictureBoxDrawTiles_OnResize);
@@ -245,7 +243,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.vScrollBarDrawTiles.Dock = System.Windows.Forms.DockStyle.Right;
             this.vScrollBarDrawTiles.Location = new System.Drawing.Point(169, 0);
             this.vScrollBarDrawTiles.Name = "vScrollBarDrawTiles";
-            this.vScrollBarDrawTiles.Size = new System.Drawing.Size(17, 76);
+            this.vScrollBarDrawTiles.Size = new System.Drawing.Size(17, 79);
             this.vScrollBarDrawTiles.TabIndex = 0;
             this.vScrollBarDrawTiles.Scroll += new System.Windows.Forms.ScrollEventHandler(this.VScrollBarDrawTiles_Scroll);
             // 
@@ -352,7 +350,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Save.Location = new System.Drawing.Point(4, 22);
             this.Save.Name = "Save";
             this.Save.Padding = new System.Windows.Forms.Padding(3);
-            this.Save.Size = new System.Drawing.Size(192, 155);
+            this.Save.Size = new System.Drawing.Size(192, 160);
             this.Save.TabIndex = 3;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;
@@ -453,7 +451,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(619, 324);
+            this.splitContainer1.Size = new System.Drawing.Size(623, 328);
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -483,7 +481,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.splitContainer3.Panel2.Controls.Add(this.TC_MultiEditorToolbox);
             this.splitContainer3.Panel2.Controls.Add(this.collapsibleSplitter1);
             this.splitContainer3.Panel2.Controls.Add(this.Selectedpanel);
-            this.splitContainer3.Size = new System.Drawing.Size(200, 324);
+            this.splitContainer3.Size = new System.Drawing.Size(200, 328);
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 1;
             // 
@@ -750,7 +748,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxMulti);
             this.splitContainer2.Panel2.Controls.Add(this.hScrollBar);
             this.splitContainer2.Panel2.Controls.Add(this.vScrollBar);
-            this.splitContainer2.Size = new System.Drawing.Size(415, 299);
+            this.splitContainer2.Size = new System.Drawing.Size(419, 303);
             this.splitContainer2.SplitterDistance = 30;
             this.splitContainer2.TabIndex = 2;
             // 
@@ -759,7 +757,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.MaxHeightTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MaxHeightTrackBar.Location = new System.Drawing.Point(0, 0);
             this.MaxHeightTrackBar.Name = "MaxHeightTrackBar";
-            this.MaxHeightTrackBar.Size = new System.Drawing.Size(415, 30);
+            this.MaxHeightTrackBar.Size = new System.Drawing.Size(419, 30);
             this.MaxHeightTrackBar.TabIndex = 0;
             this.toolTip1.SetToolTip(this.MaxHeightTrackBar, "Max Height Displayed");
             this.MaxHeightTrackBar.ValueChanged += new System.EventHandler(this.MaxHeightTrackBarOnValueChanged);
@@ -768,7 +766,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             this.splitter1.Location = new System.Drawing.Point(0, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 248);
+            this.splitter1.Size = new System.Drawing.Size(3, 252);
             this.splitter1.TabIndex = 3;
             this.splitter1.TabStop = false;
             // 
@@ -779,7 +777,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.pictureBoxMulti.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxMulti.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxMulti.Name = "pictureBoxMulti";
-            this.pictureBoxMulti.Size = new System.Drawing.Size(398, 248);
+            this.pictureBoxMulti.Size = new System.Drawing.Size(402, 252);
             this.pictureBoxMulti.TabIndex = 0;
             this.pictureBoxMulti.TabStop = false;
             this.pictureBoxMulti.SizeChanged += new System.EventHandler(this.PictureBoxMultiOnResize);
@@ -791,18 +789,18 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 248);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 252);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(398, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(402, 17);
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.ValueChanged += new System.EventHandler(this.ScrollBarsValueChanged);
             // 
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(398, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(402, 0);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 265);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 269);
             this.vScrollBar.TabIndex = 1;
             this.vScrollBar.ValueChanged += new System.EventHandler(this.ScrollBarsValueChanged);
             // 
@@ -817,10 +815,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.toolStripSeparator1,
             this.SelectedTileLabel,
             this.toolStripLabelCoord});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 299);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 303);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(415, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(419, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -1006,7 +1004,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Controls.Add(this.FloatingPreviewPanel);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MultiEditor";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(623, 328);
             this.Load += new System.EventHandler(this.OnLoad);
             this.TC_MultiEditorToolbox.ResumeLayout(false);
             this.tileTab.ResumeLayout(false);
@@ -1056,64 +1054,66 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.TabControl TC_MultiEditorToolbox;
-        private System.Windows.Forms.TabPage tileTab;
+        private System.Windows.Forms.Button BTN_CreateBlank;
+        private System.Windows.Forms.CheckBox BTN_Draw;
+        private System.Windows.Forms.Button BTN_Export_Txt;
+        private System.Windows.Forms.Button BTN_Export_UOA;
+        private System.Windows.Forms.Button BTN_Export_WSC;
+        private System.Windows.Forms.CheckBox BTN_Floor;
+        private System.Windows.Forms.CheckBox BTN_Pipette;
+        private System.Windows.Forms.CheckBox BTN_Remove;
+        private System.Windows.Forms.Button BTN_Resize;
+        private System.Windows.Forms.Button BTN_Save;
+        private System.Windows.Forms.CheckBox BTN_Select;
+        private System.Windows.Forms.CheckBox BTN_Trans;
+        private System.Windows.Forms.CheckBox BTN_Z;
+        private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
         private System.Windows.Forms.TabPage designTab;
-        private System.Windows.Forms.TabPage importTab;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView treeViewTilesXML;
-        private System.Windows.Forms.ImageList imageListTreeView;
-        private System.Windows.Forms.PictureBox pictureBoxMulti;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TrackBar MaxHeightTrackBar;
+        private System.Windows.Forms.ToolStripLabel DrawTileLabel;
+        private System.Windows.Forms.ContextMenuStrip DummyContextMenu;
+        private System.Windows.Forms.CheckBox DynamiccheckBox;
+        private System.Windows.Forms.Panel FloatingPreviewPanel;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.HScrollBar hScrollBar;
-        private System.Windows.Forms.VScrollBar vScrollBar;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripLabel toolStripLabelCoord;
-        private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.TreeView treeViewMultiList;
+        private System.Windows.Forms.ImageList imageListTools;
+        private System.Windows.Forms.ImageList imageListTreeView;
+        private System.Windows.Forms.TabPage importTab;
+        private System.Windows.Forms.TrackBar MaxHeightTrackBar;
+        private System.Windows.Forms.NumericUpDown numericUpDown_Floor;
+        private System.Windows.Forms.NumericUpDown numericUpDown_Selected_X;
+        private System.Windows.Forms.NumericUpDown numericUpDown_Selected_Y;
+        private System.Windows.Forms.NumericUpDown numericUpDown_Selected_Z;
         private System.Windows.Forms.NumericUpDown numericUpDown_Size_Height;
         private System.Windows.Forms.NumericUpDown numericUpDown_Size_Width;
-        private System.Windows.Forms.Button BTN_Resize;
-        private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.NumericUpDown numericUpDown_Z;
-        private System.Windows.Forms.NumericUpDown numericUpDown_Floor;
-        private System.Windows.Forms.CheckBox BTN_Floor;
-        private System.Windows.Forms.CheckBox BTN_Z;
-        private System.Windows.Forms.CheckBox BTN_Remove;
-        private System.Windows.Forms.CheckBox BTN_Draw;
-        private System.Windows.Forms.CheckBox BTN_Select;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.SplitContainer splitContainer4;
-        private System.Windows.Forms.ToolStripLabel SelectedTileLabel;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.NumericUpDown numericUpDown_Selected_Z;
-        private System.Windows.Forms.NumericUpDown numericUpDown_Selected_Y;
-        private System.Windows.Forms.NumericUpDown numericUpDown_Selected_X;
-        private CollapsibleSplitter collapsibleSplitter1;
-        private System.Windows.Forms.Panel Selectedpanel;
-        private System.Windows.Forms.ImageList imageListTools;
         private System.Windows.Forms.PictureBox pictureBoxDrawTiles;
-        private System.Windows.Forms.VScrollBar vScrollBarDrawTiles;
-        private System.Windows.Forms.Panel FloatingPreviewPanel;
-        private System.Windows.Forms.Button BTN_CreateBlank;
+        private System.Windows.Forms.PictureBox pictureBoxMulti;
+        private System.Windows.Forms.ToolStripMenuItem removeAllTransToolStripMenuItem;
         private System.Windows.Forms.TabPage Save;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox_SaveToID;
-        private System.Windows.Forms.Button BTN_Save;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button BTN_Export_WSC;
-        private System.Windows.Forms.Button BTN_Export_UOA;
+        private System.Windows.Forms.Panel Selectedpanel;
+        private System.Windows.Forms.ToolStripLabel SelectedTileLabel;
+        private System.Windows.Forms.ToolStripMenuItem showDoubleSurfaceMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showWalkablesToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.TabControl TC_MultiEditorToolbox;
         private System.Windows.Forms.TextBox textBox_Export;
-        private System.Windows.Forms.Button BTN_Export_Txt;
-        private System.Windows.Forms.CheckBox BTN_Pipette;
-        private System.Windows.Forms.ToolStripLabel DrawTileLabel;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.TextBox textBox_SaveToID;
+        private System.Windows.Forms.TabPage tileTab;
+        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem UndoItems;
+        private System.Windows.Forms.ToolStripLabel toolStripLabelCoord;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TreeView treeViewMultiList;
+        private System.Windows.Forms.TreeView treeViewTilesXML;
         private System.Windows.Forms.ToolStripMenuItem UndoItem0;
         private System.Windows.Forms.ToolStripMenuItem UndoItem1;
         private System.Windows.Forms.ToolStripMenuItem UndoItem2;
@@ -1124,12 +1124,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private System.Windows.Forms.ToolStripMenuItem UndoItem7;
         private System.Windows.Forms.ToolStripMenuItem UndoItem8;
         private System.Windows.Forms.ToolStripMenuItem UndoItem9;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.CheckBox DynamiccheckBox;
-        private System.Windows.Forms.ToolStripMenuItem showWalkablesToolStripMenuItem;
-        private System.Windows.Forms.CheckBox BTN_Trans;
-        private System.Windows.Forms.ToolStripMenuItem removeAllTransToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showDoubleSurfaceMenuItem;
-        private System.Windows.Forms.ContextMenuStrip DummyContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem UndoItems;
+        private System.Windows.Forms.VScrollBar vScrollBar;
+        private System.Windows.Forms.VScrollBar vScrollBarDrawTiles;
+
+        #endregion
     }
 }

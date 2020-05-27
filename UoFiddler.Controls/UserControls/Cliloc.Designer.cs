@@ -61,7 +61,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tileDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize) (this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -78,20 +78,19 @@ namespace UoFiddler.Controls.UserControls
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGridView1.RowHeadersWidth = 30;
-            this.dataGridView1.Size = new System.Drawing.Size(722, 349);
+            this.dataGridView1.Size = new System.Drawing.Size(619, 304);
             this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellContentDoubleClick +=
-                new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCell_dbClick);
-            this.dataGridView1.ColumnHeaderMouseClick +=
-                new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
+            this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCell_dbClick);
+            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.copyCliLocNumberToolStripMenuItem, this.copyCliLocTextToolStripMenuItem, this.toolStripSeparator3,
-                this.addEntryToolStripMenuItem, this.deleteEntryToolStripMenuItem
-            });
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyCliLocNumberToolStripMenuItem,
+            this.copyCliLocTextToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.addEntryToolStripMenuItem,
+            this.deleteEntryToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(186, 98);
             // 
@@ -130,24 +129,34 @@ namespace UoFiddler.Controls.UserControls
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.LangComboBox, this.toolStripSeparator1, this.GotoEntry, this.GotoButton, this.FindEntry,
-                this.FindButton, this.toolStripSeparator2, this.toolStripButton1, this.toolStripSeparator5,
-                this.ClilocExportButton, this.toolStripDropDownButton1
-            });
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LangComboBox,
+            this.toolStripSeparator1,
+            this.GotoEntry,
+            this.GotoButton,
+            this.FindEntry,
+            this.FindButton,
+            this.toolStripSeparator2,
+            this.toolStripButton1,
+            this.toolStripSeparator5,
+            this.ClilocExportButton,
+            this.toolStripDropDownButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(722, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // LangComboBox
             // 
-            this.LangComboBox.Items.AddRange(new object[] {"English", "German", "Custom 1", "Custom 2"});
+            this.LangComboBox.Items.AddRange(new object[] {
+            "English",
+            "German",
+            "Custom 1",
+            "Custom 2"});
             this.LangComboBox.Name = "LangComboBox";
-            this.LangComboBox.Size = new System.Drawing.Size(140, 25);
+            this.LangComboBox.Size = new System.Drawing.Size(121, 25);
             this.LangComboBox.SelectedIndexChanged += new System.EventHandler(this.OnLangChange);
             // 
             // toolStripSeparator1
@@ -159,7 +168,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.GotoEntry.MaxLength = 10;
             this.GotoEntry.Name = "GotoEntry";
-            this.GotoEntry.Size = new System.Drawing.Size(116, 25);
+            this.GotoEntry.Size = new System.Drawing.Size(100, 25);
             this.GotoEntry.Text = "Enter Number";
             this.GotoEntry.Enter += new System.EventHandler(this.GotoEntry_Enter);
             this.GotoEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GotoEntry_KeyDown);
@@ -178,7 +187,7 @@ namespace UoFiddler.Controls.UserControls
             this.FindEntry.AcceptsTab = true;
             this.FindEntry.Name = "FindEntry";
             this.FindEntry.ShortcutsEnabled = false;
-            this.FindEntry.Size = new System.Drawing.Size(116, 25);
+            this.FindEntry.Size = new System.Drawing.Size(100, 25);
             this.FindEntry.Text = "Enter Text";
             this.FindEntry.Enter += new System.EventHandler(this.FindEntry_Enter);
             this.FindEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindEntry_KeyDown);
@@ -223,8 +232,9 @@ namespace UoFiddler.Controls.UserControls
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.cSVToolStripMenuItem, this.tileDataToolStripMenuItem});
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cSVToolStripMenuItem,
+            this.tileDataToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(56, 22);
@@ -248,44 +258,45 @@ namespace UoFiddler.Controls.UserControls
             // 
             // Cliloc
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Name = "Cliloc";
-            this.Size = new System.Drawing.Size(722, 374);
+            this.Size = new System.Drawing.Size(619, 329);
             this.Load += new System.EventHandler(this.OnLoad);
-            ((System.ComponentModel.ISupportInitialize) (this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
-        #endregion
-
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripComboBox LangComboBox;
-        private System.Windows.Forms.ToolStripTextBox GotoEntry;
-        private System.Windows.Forms.ToolStripButton GotoButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripTextBox FindEntry;
-        private System.Windows.Forms.ToolStripButton FindButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem addEntryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteEntryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton ClilocExportButton;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyCliLocNumberToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyCliLocTextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cSVToolStripMenuItem;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.ToolStripMenuItem deleteEntryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton FindButton;
+        private System.Windows.Forms.ToolStripTextBox FindEntry;
+        private System.Windows.Forms.ToolStripButton GotoButton;
+        private System.Windows.Forms.ToolStripTextBox GotoEntry;
+        private System.Windows.Forms.ToolStripComboBox LangComboBox;
+        private System.Windows.Forms.ToolStripMenuItem tileDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripButton ClilocExportButton;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem cSVToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tileDataToolStripMenuItem;
+
+        #endregion
     }
 }

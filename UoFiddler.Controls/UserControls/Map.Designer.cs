@@ -126,7 +126,7 @@ namespace UoFiddler.Controls.UserControls
             this.CoordsLabel,
             this.ClientLocLabel,
             this.ZoomLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 291);
+            this.statusStrip.Location = new System.Drawing.Point(0, 294);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(619, 33);
             this.statusStrip.TabIndex = 0;
@@ -163,7 +163,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.Location = new System.Drawing.Point(0, 33);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(394, 241);
+            this.pictureBox.Size = new System.Drawing.Size(394, 244);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
@@ -240,7 +240,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // TextBoxGoto
             // 
-            this.TextBoxGoto.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxGoto.Name = "TextBoxGoto";
             this.TextBoxGoto.Size = new System.Drawing.Size(100, 23);
             this.TextBoxGoto.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownGoto);
@@ -347,7 +346,7 @@ namespace UoFiddler.Controls.UserControls
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 274);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 277);
             this.hScrollBar.Name = "hScrollBar";
             this.hScrollBar.Size = new System.Drawing.Size(394, 17);
             this.hScrollBar.TabIndex = 2;
@@ -358,7 +357,7 @@ namespace UoFiddler.Controls.UserControls
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
             this.vScrollBar.Location = new System.Drawing.Point(394, 33);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 258);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 261);
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
@@ -412,7 +411,7 @@ namespace UoFiddler.Controls.UserControls
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel1.Location = new System.Drawing.Point(419, 33);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 258);
+            this.panel1.Size = new System.Drawing.Size(200, 261);
             this.panel1.TabIndex = 5;
             // 
             // OverlayObjectTree
@@ -421,7 +420,7 @@ namespace UoFiddler.Controls.UserControls
             this.OverlayObjectTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OverlayObjectTree.Location = new System.Drawing.Point(0, 0);
             this.OverlayObjectTree.Name = "OverlayObjectTree";
-            this.OverlayObjectTree.Size = new System.Drawing.Size(200, 258);
+            this.OverlayObjectTree.Size = new System.Drawing.Size(200, 261);
             this.OverlayObjectTree.TabIndex = 5;
             this.OverlayObjectTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClickMarker);
             // 
@@ -717,7 +716,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.statusStrip);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "Map";
-            this.Size = new System.Drawing.Size(619, 324);
+            this.Size = new System.Drawing.Size(619, 327);
             this.Load += new System.EventHandler(this.OnLoad);
             this.SizeChanged += new System.EventHandler(this.OnResize);
             this.statusStrip.ResumeLayout(false);
@@ -733,75 +732,75 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.PictureBox pictureBox;
-        private System.Windows.Forms.HScrollBar hScrollBar;
-        private System.Windows.Forms.VScrollBar vScrollBar;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem feluccaToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem trammelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem malasToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ilshenarToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tokunoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem extractMapToolStripMenuItem;
-        private System.Windows.Forms.ToolStripStatusLabel CoordsLabel;
-        private System.Windows.Forms.ToolStripStatusLabel ClientLocLabel;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.ToolStripMenuItem getMapInfoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripStatusLabel ZoomLabel;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.ComponentModel.BackgroundWorker PreloadWorker;
-        private System.Windows.Forms.ToolStripMenuItem gotoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripTextBox TextBoxGoto;
-        private System.Windows.Forms.ToolStripMenuItem sendClientToPosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem clearStaticsinMemoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel ClientLocLabel;
+        private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
+        private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripStatusLabel CoordsLabel;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defragAndRemoveDuplicatesStToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defragStaticsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem extractMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem feluccaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem getMapInfoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gotoClientLocToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem gotoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gotoToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.HScrollBar hScrollBar;
+        private System.Windows.Forms.ToolStripMenuItem ilshenarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importStaticsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem insertDiffDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem insertMarkerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem malasToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem meltStaticsToolStripMenuItem;
         private System.Windows.Forms.TreeView OverlayObjectTree;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.ToolStripButton PreloadMap;
+        private System.ComponentModel.BackgroundWorker PreloadWorker;
+        private System.Windows.Forms.ToolStripProgressBar ProgressBar;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceTilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reportStaticsUnderMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rewriteMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sendClientToCenterToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sendClientToPosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showCenterCrossToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem showClientCrossToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showClientLocToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem showMarkersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showStaticsToolStripMenuItem1;
+        private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripMenuItem switchVisibleToolStripMenuItem;
-        private CollapsibleSplitter collapsibleSplitter1;
+        private System.Windows.Forms.ToolStripMenuItem terMurToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox TextBoxGoto;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripMenuItem tokunoToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem showStaticsToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem showCenterCrossToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem showMarkersToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
-        private System.Windows.Forms.ToolStripMenuItem showClientLocToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripMenuItem gotoClientLocToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem sendClientToCenterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripProgressBar ProgressBar;
-        private System.Windows.Forms.ToolStripButton PreloadMap;
-        private System.Windows.Forms.ToolStripMenuItem showClientCrossToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
-        private System.Windows.Forms.ToolStripMenuItem defragStaticsToolStripMenuItem;
-        private CollapsibleSplitter collapsibleSplitter2;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripMenuItem defragAndRemoveDuplicatesStToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem rewriteMapToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem reportStaticsUnderMapToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
-        private System.Windows.Forms.ToolStripMenuItem insertDiffDataToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importStaticsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem meltStaticsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem clearStaticsinMemoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripMenuItem replaceTilesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem terMurToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem insertMarkerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStripMenuItem trammelToolStripMenuItem;
+        private System.Windows.Forms.VScrollBar vScrollBar;
+        private System.Windows.Forms.ToolStripStatusLabel ZoomLabel;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem1;
+
+        #endregion
     }
 }

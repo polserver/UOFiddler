@@ -132,7 +132,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(243, 107);
+            this.ClientSize = new System.Drawing.Size(242, 109);
             this.Controls.Add(this.numericUpDownY2);
             this.Controls.Add(this.numericUpDownY1);
             this.Controls.Add(this.numericUpDownX2);
@@ -154,16 +154,16 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
+        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.NumericUpDown numericUpDownX1;
         private System.Windows.Forms.NumericUpDown numericUpDownX2;
         private System.Windows.Forms.NumericUpDown numericUpDownY1;
         private System.Windows.Forms.NumericUpDown numericUpDownY2;
+
+        #endregion
     }
 }

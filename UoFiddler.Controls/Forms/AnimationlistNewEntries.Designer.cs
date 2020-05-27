@@ -49,12 +49,12 @@ namespace UoFiddler.Controls.Forms
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.ComboBoxActionType = new System.Windows.Forms.ToolStripComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.facingbar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.facingbar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
             this.contextMenuStrip2.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -74,8 +74,8 @@ namespace UoFiddler.Controls.Forms
             this.splitContainer1.Panel2.Controls.Add(this.facingbar);
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(512, 253);
-            this.splitContainer1.SplitterDistance = 169;
+            this.splitContainer1.Size = new System.Drawing.Size(519, 254);
+            this.splitContainer1.SplitterDistance = 170;
             this.splitContainer1.TabIndex = 0;
             // 
             // tvAnimationList
@@ -85,16 +85,16 @@ namespace UoFiddler.Controls.Forms
             this.tvAnimationList.Location = new System.Drawing.Point(0, 0);
             this.tvAnimationList.Name = "tvAnimationList";
             this.tvAnimationList.ShowNodeToolTips = true;
-            this.tvAnimationList.Size = new System.Drawing.Size(169, 253);
+            this.tvAnimationList.Size = new System.Drawing.Size(170, 254);
             this.tvAnimationList.TabIndex = 0;
             this.tvAnimationList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnAfterSelectTreeView);
             // 
             // facingbar
             // 
-            this.facingbar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.facingbar.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.facingbar.AutoSize = false;
             this.facingbar.LargeChange = 1;
-            this.facingbar.Location = new System.Drawing.Point(235, 234);
+            this.facingbar.Location = new System.Drawing.Point(241, 235);
             this.facingbar.Maximum = 7;
             this.facingbar.Name = "facingbar";
             this.facingbar.Size = new System.Drawing.Size(104, 20);
@@ -108,15 +108,14 @@ namespace UoFiddler.Controls.Forms
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(339, 228);
+            this.pictureBox1.Size = new System.Drawing.Size(345, 229);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint_PictureBox);
             // 
             // contextMenuStrip2
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.animateToolStripMenuItem});
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.animateToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(120, 26);
             // 
@@ -132,13 +131,11 @@ namespace UoFiddler.Controls.Forms
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.ComboBoxActionType});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 228);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.toolStripButton1, this.ComboBoxActionType});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 229);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(339, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(345, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -153,12 +150,7 @@ namespace UoFiddler.Controls.Forms
             // 
             // ComboBoxActionType
             // 
-            this.ComboBoxActionType.Items.AddRange(new object[] {
-            "Monster",
-            "Sea Monster",
-            "Animal",
-            "Human",
-            "Equipment"});
+            this.ComboBoxActionType.Items.AddRange(new object[] {"Monster", "Sea Monster", "Animal", "Human", "Equipment"});
             this.ComboBoxActionType.Name = "ComboBoxActionType";
             this.ComboBoxActionType.Size = new System.Drawing.Size(121, 25);
             this.ComboBoxActionType.SelectedIndexChanged += new System.EventHandler(this.OnChangeType);
@@ -167,7 +159,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(512, 253);
+            this.ClientSize = new System.Drawing.Size(519, 254);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "AnimationListNewEntries";
@@ -176,27 +168,26 @@ namespace UoFiddler.Controls.Forms
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.facingbar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.facingbar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
             this.contextMenuStrip2.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
-        #endregion
-
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView tvAnimationList;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripComboBox ComboBoxActionType;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.TrackBar facingbar;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.TreeView tvAnimationList;
+
+        #endregion
     }
 }

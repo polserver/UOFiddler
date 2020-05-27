@@ -50,7 +50,7 @@ namespace UoFiddler.Controls.Forms
             this.button1.AutoSize = true;
             this.button1.Location = new System.Drawing.Point(101, 39);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(93, 23);
+            this.button1.Size = new System.Drawing.Size(96, 23);
             this.button1.TabIndex = 11;
             this.button1.Text = "Search ID";
             this.button1.UseVisualStyleBackColor = true;
@@ -62,7 +62,7 @@ namespace UoFiddler.Controls.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxGraphic.Location = new System.Drawing.Point(18, 12);
             this.textBoxGraphic.Name = "textBoxGraphic";
-            this.textBoxGraphic.Size = new System.Drawing.Size(256, 20);
+            this.textBoxGraphic.Size = new System.Drawing.Size(259, 20);
             this.textBoxGraphic.TabIndex = 10;
             this.textBoxGraphic.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
@@ -70,7 +70,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 73);
+            this.ClientSize = new System.Drawing.Size(295, 76);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBoxGraphic);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -81,9 +81,9 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        #endregion
-
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBoxGraphic;
+
+        #endregion
     }
 }

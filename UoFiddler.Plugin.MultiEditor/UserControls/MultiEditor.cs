@@ -419,7 +419,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         }
 
         /// <summary>
-        /// SelectedTile panel X value changed 
+        /// SelectedTile panel X value changed
         /// </summary>
         private void NumericUpDown_Selected_X_Changed(object sender, EventArgs e)
         {
@@ -432,7 +432,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         }
 
         /// <summary>
-        /// SelectedTile panel Y value changed 
+        /// SelectedTile panel Y value changed
         /// </summary>
         private void NumericUpDown_Selected_Y_Changed(object sender, EventArgs e)
         {
@@ -445,7 +445,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         }
 
         /// <summary>
-        /// SelectedTile panel Z value changed 
+        /// SelectedTile panel Z value changed
         /// </summary>
         private void NumericUpDown_Selected_Z_Changed(object sender, EventArgs e)
         {

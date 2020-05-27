@@ -47,6 +47,7 @@ namespace UoFiddler.Controls.UserControls
             _source.DataSource = Ultima.Skills.SkillEntries;
             dataGridView1.DataSource = _source;
             dataGridView1.Invalidate();
+
             if (dataGridView1.Columns.Count > 0)
             {
                 dataGridView1.Columns[0].MinimumWidth = 40;
@@ -61,11 +62,13 @@ namespace UoFiddler.Controls.UserControls
                 dataGridView1.Columns[2].ReadOnly = false;
                 dataGridView1.Columns[3].Visible = false; // extraFlag
             }
+
             if (!_loaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 _source.ListChanged += Source_ListChanged;
             }
+
             _loaded = true;
             Cursor.Current = Cursors.Default;
         }

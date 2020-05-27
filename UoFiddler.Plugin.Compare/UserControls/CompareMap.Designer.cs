@@ -66,7 +66,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tokunoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.terMurToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.markDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize) (this.pictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -74,18 +74,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(705, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(601, 0);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 332);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 285);
             this.vScrollBar.TabIndex = 1;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 332);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 285);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(722, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(618, 17);
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
@@ -96,7 +96,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(705, 332);
+            this.pictureBox.Size = new System.Drawing.Size(601, 285);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
@@ -107,8 +107,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.zoomToolStripMenuItem, this.zoomToolStripMenuItem1});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.zoomToolStripMenuItem,
+            this.zoomToolStripMenuItem1});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(115, 48);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.OnOpeningContext);
@@ -136,22 +137,24 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.toolStripTextBox1, this.toolStripButton1, this.toolStripButton2, this.CoordsLabel, this.ZoomLabel,
-                this.toolStripDropDownButton1
-            });
-            this.toolStrip1.Location = new System.Drawing.Point(0, 349);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripTextBox1,
+            this.toolStripButton1,
+            this.toolStripButton2,
+            this.CoordsLabel,
+            this.ZoomLabel,
+            this.toolStripDropDownButton1});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 302);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(722, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(618, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripTextBox1
             // 
             this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(174, 25);
+            this.toolStripTextBox1.Size = new System.Drawing.Size(150, 25);
             // 
             // toolStripButton1
             // 
@@ -188,13 +191,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.showDifferencesToolStripMenuItem, this.toolStripSeparator2, this.showMap1ToolStripMenuItem,
-                this.showMap2ToolStripMenuItem, this.toolStripSeparator1, this.feluccaToolStripMenuItem,
-                this.trammelToolStripMenuItem, this.ilshenarToolStripMenuItem, this.malasToolStripMenuItem,
-                this.tokunoToolStripMenuItem, this.terMurToolStripMenuItem, this.markDiffToolStripMenuItem
-            });
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showDifferencesToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.showMap1ToolStripMenuItem,
+            this.showMap2ToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.feluccaToolStripMenuItem,
+            this.trammelToolStripMenuItem,
+            this.ilshenarToolStripMenuItem,
+            this.malasToolStripMenuItem,
+            this.tokunoToolStripMenuItem,
+            this.terMurToolStripMenuItem,
+            this.markDiffToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(44, 22);
@@ -284,50 +293,51 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // CompareMap
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.vScrollBar);
             this.Controls.Add(this.hScrollBar);
             this.Controls.Add(this.toolStrip1);
             this.Name = "CompareMap";
-            this.Size = new System.Drawing.Size(722, 374);
+            this.Size = new System.Drawing.Size(618, 327);
             this.Load += new System.EventHandler(this.OnLoad);
-            ((System.ComponentModel.ISupportInitialize) (this.pictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
-        #endregion
-
-        private System.Windows.Forms.VScrollBar vScrollBar;
-        private System.Windows.Forms.HScrollBar hScrollBar;
-        private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem1;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripLabel CoordsLabel;
-        private System.Windows.Forms.ToolStripLabel ZoomLabel;
-        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+        private System.Windows.Forms.ToolStripMenuItem feluccaToolStripMenuItem;
+        private System.Windows.Forms.HScrollBar hScrollBar;
+        private System.Windows.Forms.ToolStripMenuItem ilshenarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem malasToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem markDiffToolStripMenuItem;
+        private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.ToolStripMenuItem showDifferencesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showMap1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showMap2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem terMurToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tokunoToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem tokunoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem malasToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ilshenarToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem feluccaToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem trammelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showDifferencesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showMap2ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showMap1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem markDiffToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem terMurToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStripMenuItem trammelToolStripMenuItem;
+        private System.Windows.Forms.VScrollBar vScrollBar;
+        private System.Windows.Forms.ToolStripLabel ZoomLabel;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem1;
+
+        #endregion
     }
 }
