@@ -81,7 +81,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    TreeNode node = null;
+                    TreeNode node;
                     if (_xmlDocument == null)
                     {
                         node = new TreeNode(string.Format("{0,5} (0x{0:X})", i));
@@ -359,7 +359,11 @@ namespace UoFiddler.Controls.UserControls
         private void ExtractMultiImage(ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}.{fileExtension}");
+            string floorSuffix = HeightChangeMulti.Value > 0
+                ? $"_Z{HeightChangeMulti.Value:000}"
+                : string.Empty;
+
+            string fileName = Path.Combine(Options.OutputPath, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}{floorSuffix}.{fileExtension}");
 
             int selectedMaxHeight = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
 
@@ -611,12 +615,14 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
+                    const int maximumMultiHeight = 127;
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.{fileExtension}");
-                    using (Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maximumHeight: 120))
+                    using (Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maximumMultiHeight))
                     {
                         bit?.Save(fileName, imageFormat);
                     }
                 }
+
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
