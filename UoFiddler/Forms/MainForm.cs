@@ -528,7 +528,7 @@ namespace UoFiddler.Forms
             if (files.Length > 0)
             {
                 DialogResult result =
-                    MessageBox.Show($"Are you sure you want to quit?\r\nThere are unsaved files:\r\n{files}",
+                    MessageBox.Show($"Are you sure you want to quit?\r\n\r\nThere are unsaved files:\r\n{files}",
                         "UnSaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)

@@ -278,46 +278,43 @@ namespace UoFiddler.Plugin.Compare.UserControls
                    true);
             }
 
-            if (_currMap != null)
+            if (_currMap != null && showDifferencesToolStripMenuItem.Checked)
             {
-                if (showDifferencesToolStripMenuItem.Checked)
+                using (Graphics mapg = Graphics.FromImage(_map))
                 {
-                    using (Graphics mapg = Graphics.FromImage(_map))
+                    int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
+                    int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
+                    if (maxx > _origMap.Width >> 3)
                     {
-                        int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
-                        int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
-                        if (maxx > _origMap.Width >> 3)
-                        {
-                            maxx = _origMap.Width >> 3;
-                        }
+                        maxx = _origMap.Width >> 3;
+                    }
 
-                        if (maxy > _origMap.Height >> 3)
-                        {
-                            maxy = _origMap.Height >> 3;
-                        }
+                    if (maxy > _origMap.Height >> 3)
+                    {
+                        maxy = _origMap.Height >> 3;
+                    }
 
-                        int gx = 0;
-                        for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
+                    int gx = 0;
+                    for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
+                    {
+                        int gy = 0;
+                        for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
                         {
-                            int gy = 0;
-                            for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
+                            for (int xb = 0; xb < 8; xb++)
                             {
-                                for (int xb = 0; xb < 8; xb++)
+                                for (int yb = 0; yb < 8; yb++)
                                 {
-                                    for (int yb = 0; yb < 8; yb++)
+                                    if (_diffs[x][y][xb][yb])
                                     {
-                                        if (_diffs[x][y][xb][yb])
-                                        {
-                                            mapg.DrawRectangle(_redPen, gx + xb, gy + yb, 1, 1);
-                                            mapg.DrawRectangle(_redPen, gx + xb, 0, 1, 2);
-                                            mapg.DrawRectangle(_redPen, 0, gy + yb, 2, 1);
-                                        }
+                                        mapg.DrawRectangle(_redPen, gx + xb, gy + yb, 1, 1);
+                                        mapg.DrawRectangle(_redPen, gx + xb, 0, 1, 2);
+                                        mapg.DrawRectangle(_redPen, 0, gy + yb, 2, 1);
                                     }
                                 }
                             }
                         }
-                        mapg.Save();
                     }
+                    mapg.Save();
                 }
             }
 
@@ -374,21 +371,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void ZoomMap(ref Bitmap bmp0)
         {
             Bitmap bmp1 = new Bitmap((int)(_map.Width * _zoom), (int)(_map.Height * _zoom));
-            Graphics graph = Graphics.FromImage(bmp1);
-            graph.InterpolationMode = InterpolationMode.NearestNeighbor;
-            graph.PixelOffsetMode = PixelOffsetMode.Half;
-            graph.DrawImage(bmp0, new Rectangle(0, 0, bmp1.Width, bmp1.Height));
-            graph.Dispose();
+            using (Graphics graph = Graphics.FromImage(bmp1))
+            {
+                graph.InterpolationMode = InterpolationMode.NearestNeighbor;
+                graph.PixelOffsetMode = PixelOffsetMode.Half;
+                graph.DrawImage(bmp0, new Rectangle(0, 0, bmp1.Width, bmp1.Height));
+            }
+
             bmp0 = bmp1;
         }
 
         private void OnResize(object sender, EventArgs e)
         {
-            if (_loaded)
+            if (!_loaded)
             {
-                ChangeScrollBar();
-                pictureBox.Invalidate();
+                return;
             }
+
+            ChangeScrollBar();
+            pictureBox.Invalidate();
         }
 
         private void ChangeScrollBar()

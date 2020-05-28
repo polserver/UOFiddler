@@ -90,6 +90,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.Add_Button);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.NumberBox);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ClilocAdd";
             this.Text = "Add CliLoc";

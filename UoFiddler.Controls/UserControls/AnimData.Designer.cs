@@ -128,6 +128,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // AddTextBox
             // 
+            this.AddTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.AddTextBox.Name = "AddTextBox";
             this.AddTextBox.Size = new System.Drawing.Size(100, 23);
             this.AddTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownAdd);
@@ -356,6 +357,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "AnimData";
             this.Size = new System.Drawing.Size(625, 329);
             this.Load += new System.EventHandler(this.OnLoad);

@@ -714,7 +714,10 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                e.Graphics.DrawRectangle(new Pen(Color.Gray), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                using (var pen = new Pen(Color.Gray))
+                {
+                    e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                }
             }
         }
 
@@ -758,6 +761,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void Frames_ListView_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
+            if (_animationList == null)
+            {
+                return;
+            }
+
             Bitmap bmp = _animationList[(int)e.Item.Tag];
             int width = bmp.Width;
             int height = bmp.Height;
@@ -774,7 +782,10 @@ namespace UoFiddler.Controls.UserControls
 
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);
             e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
-            e.Graphics.DrawRectangle(new Pen(Color.Gray), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            using (var pen = new Pen(Color.Gray))
+            {
+                e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
         }
 
         private void OnScrollFacing(object sender, EventArgs e)
@@ -936,10 +947,12 @@ namespace UoFiddler.Controls.UserControls
             Bitmap sourceBitmap = Animate ? _animationList[0] : _mainPicture;
             using (Bitmap newBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height))
             {
-                Graphics newGraph = Graphics.FromImage(newBitmap);
-                newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                newGraph.DrawImage(sourceBitmap, new Point(0, 0));
-                newGraph.Save();
+                using (Graphics newGraph = Graphics.FromImage(newBitmap))
+                {
+                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
+                    newGraph.DrawImage(sourceBitmap, new Point(0, 0));
+                    newGraph.Save();
+                }
 
                 newBitmap.Save(fileName, imageFormat);
             }
@@ -988,10 +1001,12 @@ namespace UoFiddler.Controls.UserControls
             {
                 using (Bitmap newBitmap = new Bitmap(_animationList[i].Width, _animationList[i].Height))
                 {
-                    Graphics newGraph = Graphics.FromImage(newBitmap);
-                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                    newGraph.DrawImage(_animationList[i], new Point(0, 0));
-                    newGraph.Save();
+                    using (Graphics newGraph = Graphics.FromImage(newBitmap))
+                    {
+                        newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
+                        newGraph.DrawImage(_animationList[i], new Point(0, 0));
+                        newGraph.Save();
+                    }
 
                     newBitmap.Save($"{fileName}-{i}.{fileExtension}", imageFormat);
                 }
@@ -1040,10 +1055,12 @@ namespace UoFiddler.Controls.UserControls
             Bitmap bit = _animationList[(int)listView1.SelectedItems[0].Tag];
             using (Bitmap newBitmap = new Bitmap(bit.Width, bit.Height))
             {
-                Graphics newGraph = Graphics.FromImage(newBitmap);
-                newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                newGraph.DrawImage(bit, new Point(0, 0));
-                newGraph.Save();
+                using (Graphics newGraph = Graphics.FromImage(newBitmap))
+                {
+                    newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
+                    newGraph.DrawImage(bit, new Point(0, 0));
+                    newGraph.Save();
+                }
 
                 newBitmap.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.{fileExtension}", imageFormat);
             }

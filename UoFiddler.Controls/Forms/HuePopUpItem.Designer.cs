@@ -98,6 +98,7 @@ namespace UoFiddler.Controls.Forms
             this.ClientSize = new System.Drawing.Size(521, 291);
             this.Controls.Add(this.control);
             this.Controls.Add(this.toolStrip1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "HuePopUpItem";
             this.Text = "Hue Picker";

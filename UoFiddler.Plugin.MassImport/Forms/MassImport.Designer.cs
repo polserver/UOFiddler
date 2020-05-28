@@ -139,6 +139,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             this.Controls.Add(this.button3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.DoubleBuffered = true;
             this.Name = "MassImport";
             this.Text = "MassImport";
             this.groupBox1.ResumeLayout(false);

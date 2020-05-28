@@ -127,7 +127,10 @@ Fixed Sounds tab description labels - indexes were off by 1.
 Fixed multi import issue with indexes higher than 4095.
 Avoid replacing exported multi images with different height settings by adding height value to file name if the value is different than maximum multi height.
 Updated tiledata flags to support High Seas extended format. Additional flags will only show if files are in HS format or later.
-Temporarly disabled "Settings -&gt; Reload Files" option because it wasn't updated fully after adding UOP format support. It will be re-enabled in future. For now it is better to set new path and restart UOFiddler.
+Temporarily disabled "Settings -&gt; Reload Files" option because it wasn't updated fully after adding UOP format support. It will be re-enabled in future. For now it is better to set new path and restart UOFiddler.
+Fixed loading map overlays from xml.
+Minor UI fixes and updates.
+Fixed max item id for hues. It will be taken from currently defined max id in Art.
 
 Version 4.9
 Updating project to .NET Framework 4.8 

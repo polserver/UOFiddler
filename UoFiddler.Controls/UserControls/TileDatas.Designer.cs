@@ -787,6 +787,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.tabcontrol);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.toolStrip1);
+            this.DoubleBuffered = true;
             this.Name = "TileDatas";
             this.Size = new System.Drawing.Size(621, 327);
             this.Load += new System.EventHandler(this.OnLoad);

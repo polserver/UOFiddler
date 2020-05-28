@@ -71,6 +71,7 @@ namespace UoFiddler.Forms
             this.ClientSize = new System.Drawing.Size(572, 250);
             this.Controls.Add(this.richTextBox);
             this.Controls.Add(this.OK);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ExceptionForm";
             this.Text = "Exception";

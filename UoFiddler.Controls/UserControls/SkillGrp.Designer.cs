@@ -54,7 +54,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.addToolStripMenuItem, this.removeToolStripMenuItem, this.renameToolStripMenuItem, this.toolStripMenuItem1, this.toolStripSeparator1, this.saveToolStripMenuItem});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem,
+            this.removeToolStripMenuItem,
+            this.renameToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.toolStripSeparator1,
+            this.saveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(118, 120);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.OnOpeningContext);
@@ -82,13 +88,15 @@ namespace UoFiddler.Controls.UserControls
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.SkillIDTextBox});
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SkillIDTextBox});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.toolStripMenuItem1.Text = "SkillID";
             // 
             // SkillIDTextBox
             // 
+            this.SkillIDTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.SkillIDTextBox.Name = "SkillIDTextBox";
             this.SkillIDTextBox.Size = new System.Drawing.Size(100, 23);
             this.SkillIDTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSkillID);
@@ -125,11 +133,13 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.treeView1);
+            this.DoubleBuffered = true;
             this.Name = "SkillGrp";
             this.Size = new System.Drawing.Size(621, 326);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;

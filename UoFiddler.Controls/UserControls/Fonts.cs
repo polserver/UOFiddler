@@ -26,6 +26,7 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             _refMarker = this;
             setOffsetsToolStripMenuItem.Visible = false;
         }
@@ -218,7 +219,11 @@ namespace UoFiddler.Controls.UserControls
 
                 e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, width, height));
             }
-            e.Graphics.DrawRectangle(new Pen(Color.Gray), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+
+            using (var pen = new Pen(Color.Gray))
+            {
+                e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
         }
 
         private void OnSelectChar(object sender, EventArgs e)

@@ -182,31 +182,30 @@ namespace Ultima
                                 data[0] += "-" + ReadUOAString(idxbin);
                                 data[0] += "-" + ReadUOAString(idxbin);
 
-                                int width = idxbin.ReadInt32();
-                                int height = idxbin.ReadInt32();
-                                int uwidth = idxbin.ReadInt32();
-                                int uheight = idxbin.ReadInt32();
+                                _ = idxbin.ReadInt32();
+                                _ = idxbin.ReadInt32();
+                                _ = idxbin.ReadInt32();
+                                _ = idxbin.ReadInt32();
+
                                 long filepos = idxbin.ReadInt64();
                                 int reccount = idxbin.ReadInt32();
 
                                 binbin.BaseStream.Seek(filepos, SeekOrigin.Begin);
-                                int level;
-                                int hue;
                                 for (int j = 0; j < reccount; ++j)
                                 {
                                     int x;
                                     int y;
                                     int z;
-                                    int index = x = y = z = level = hue = 0;
-                                    int compVersion = binbin.ReadInt32();
-                                    switch (compVersion)
+                                    int index = x = y = z = 0;
+
+                                    switch (binbin.ReadInt32())
                                     {
                                         case 0:
                                             index = binbin.ReadInt32();
                                             x = binbin.ReadInt32();
                                             y = binbin.ReadInt32();
                                             z = binbin.ReadInt32();
-                                            level = binbin.ReadInt32();
+                                            binbin.ReadInt32();
                                             break;
 
                                         case 1:
@@ -214,8 +213,8 @@ namespace Ultima
                                             x = binbin.ReadInt32();
                                             y = binbin.ReadInt32();
                                             z = binbin.ReadInt32();
-                                            level = binbin.ReadInt32();
-                                            hue = binbin.ReadInt32();
+                                            binbin.ReadInt32();
+                                            binbin.ReadInt32();
                                             break;
                                     }
 
@@ -458,11 +457,9 @@ namespace Ultima
             {
                 for (int y = 0; y < Height; ++y)
                 {
-                    MTile[] tiles = Tiles[x][y];
-
-                    for (int i = 0; i < tiles.Length; ++i)
+                    foreach (var mTile in Tiles[x][y])
                     {
-                        Bitmap bmp = Art.GetStatic(tiles[i].ID);
+                        Bitmap bmp = Art.GetStatic(mTile.ID);
 
                         if (bmp == null)
                         {
@@ -473,7 +470,7 @@ namespace Ultima
                         int py = (x + y) * 22;
 
                         px -= (bmp.Width / 2);
-                        py -= tiles[i].Z << 2;
+                        py -= mTile.Z << 2;
                         py -= bmp.Height;
 
                         if (px < xMin)
@@ -510,18 +507,16 @@ namespace Ultima
             {
                 for (int y = 0; y < Height; ++y)
                 {
-                    MTile[] tiles = Tiles[x][y];
-
-                    for (int i = 0; i < tiles.Length; ++i)
+                    foreach (var mTile in Tiles[x][y])
                     {
-                        Bitmap bmp = Art.GetStatic(tiles[i].ID);
+                        Bitmap bmp = Art.GetStatic(mTile.ID);
 
                         if (bmp == null)
                         {
                             continue;
                         }
 
-                        if (tiles[i].Z > maximumHeight)
+                        if (mTile.Z > maximumHeight)
                         {
                             continue;
                         }
@@ -530,7 +525,7 @@ namespace Ultima
                         int py = (x + y) * 22;
 
                         px -= (bmp.Width / 2);
-                        py -= tiles[i].Z << 2;
+                        py -= mTile.Z << 2;
                         py -= bmp.Height;
                         px -= xMin;
                         py -= yMin;
@@ -806,18 +801,19 @@ namespace Ultima
                     using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     using (var reader = new BinaryReader(fs))
                     {
-                        if (reader.ReadInt16() != 1) //Version check
+                        if (reader.ReadInt16() != 1) // Version check
                         {
                             return;
                         }
 
-                        string tmp = Multis.ReadUOAString(reader);
-                        tmp = Multis.ReadUOAString(reader); //Category
-                        tmp = Multis.ReadUOAString(reader); //Subsection
-                        int width = reader.ReadInt32();
-                        int height = reader.ReadInt32();
-                        int uwidth = reader.ReadInt32();
-                        int uheight = reader.ReadInt32();
+                        _ = Multis.ReadUOAString(reader);
+                        _ = Multis.ReadUOAString(reader); // Category
+                        _ = Multis.ReadUOAString(reader); // Subsection
+
+                        _ = reader.ReadInt32();
+                        _ = reader.ReadInt32();
+                        _ = reader.ReadInt32();
+                        _ = reader.ReadInt32();
 
                         int count = reader.ReadInt32();
                         itemCount = count;
@@ -1255,14 +1251,13 @@ namespace Ultima
             {
                 for (int y = 0; y < height; ++y)
                 {
-                    MTile[] tiles = newTiles[x][y].ToArray();
-                    for (int i = 0; i < tiles.Length; ++i)
+                    foreach (var mTile in newTiles[x][y].ToArray())
                     {
-                        SortedTiles[counter].m_ItemID = (tiles[i].ID);
+                        SortedTiles[counter].m_ItemID = (mTile.ID);
                         SortedTiles[counter].m_OffsetX = (short)(x - _center.X);
                         SortedTiles[counter].m_OffsetY = (short)(y - _center.Y);
-                        SortedTiles[counter].m_OffsetZ = (short)(tiles[i].Z);
-                        SortedTiles[counter].m_Flags = tiles[i].Flag;
+                        SortedTiles[counter].m_OffsetZ = (short)(mTile.Z);
+                        SortedTiles[counter].m_Flags = mTile.Flag;
                         SortedTiles[counter].m_Unk1 = 0;
 
                         if (SortedTiles[counter].m_OffsetX < _min.X)

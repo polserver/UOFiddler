@@ -96,6 +96,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.comboBox1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "MultiImport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

@@ -714,6 +714,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip);
+            this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "Map";
             this.Size = new System.Drawing.Size(619, 327);

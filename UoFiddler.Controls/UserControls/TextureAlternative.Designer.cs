@@ -168,6 +168,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
@@ -252,6 +253,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.vScrollBar);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.toolStrip1);
+            this.DoubleBuffered = true;
             this.Name = "TextureAlternative";
             this.Size = new System.Drawing.Size(620, 325);
             this.Load += new System.EventHandler(this.OnLoad);

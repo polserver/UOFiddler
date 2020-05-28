@@ -23,10 +23,12 @@ namespace UoFiddler.Controls.UserControls
 {
     public partial class TileDatas : UserControl
     {
+        private readonly Bitmap _emptyImage = new Bitmap(Options.ArtItemSizeWidth, Options.ArtItemSizeHeight);
+
         public TileDatas()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             InitializeComponent();
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
             _refMarker = this;
 
@@ -553,19 +555,30 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = (int)e.Node.Tag;
-            try
+
+            Bitmap bit = Art.GetStatic(index);
+            if (bit == null)
             {
-                Bitmap bit = Art.GetStatic(index);
+                pictureBoxItem.Image = _emptyImage;
+            }
+            else
+            {
                 Bitmap newBit = new Bitmap(pictureBoxItem.Size.Width, pictureBoxItem.Size.Height);
-                Graphics newGraph = Graphics.FromImage(newBit);
-                newGraph.Clear(Color.FromArgb(-1));
-                newGraph.DrawImage(bit, (pictureBoxItem.Size.Width - bit.Width) / 2, 1);
+                using (Graphics newGraph = Graphics.FromImage(newBit))
+                {
+                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.DrawImage(bit, (pictureBoxItem.Size.Width - bit.Width) / 2, 1);
+                }
+
+                Image prevImage = pictureBoxItem.Image;
+                if (prevImage != null)
+                {
+                    pictureBoxItem.Image.Dispose();
+                }
+
                 pictureBoxItem.Image = newBit;
             }
-            catch
-            {
-                pictureBoxItem.Image = new Bitmap(pictureBoxItem.Width, pictureBoxItem.Height);
-            }
+
             ItemData data = TileData.ItemTable[index];
             _changingIndex = true;
             textBoxName.Text = data.Name;
@@ -598,18 +611,27 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = (int)e.Node.Tag;
-            try
+
+            Bitmap bit = Art.GetLand(index);
+            if (bit == null)
             {
-                Bitmap bit = Art.GetLand(index);
-                Bitmap newBit = new Bitmap(pictureBoxLand.Size.Width, pictureBoxLand.Size.Height);
-                Graphics newGraph = Graphics.FromImage(newBit);
-                newGraph.Clear(Color.FromArgb(-1));
-                newGraph.DrawImage(bit, (pictureBoxLand.Size.Width - bit.Width) / 2, 1);
-                pictureBoxLand.Image = newBit;
+                pictureBoxLand.Image = _emptyImage;
             }
-            catch
+            else
             {
-                pictureBoxLand.Image = new Bitmap(pictureBoxLand.Width, pictureBoxLand.Height);
+                Bitmap newBit = new Bitmap(pictureBoxLand.Size.Width, pictureBoxLand.Size.Height);
+                using (Graphics newGraph = Graphics.FromImage(newBit))
+                {
+                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.DrawImage(bit, (pictureBoxLand.Size.Width - bit.Width) / 2, 1);
+                }
+
+                Image prevImage = pictureBoxLand.Image;
+                if (prevImage != null)
+                {
+                    pictureBoxLand.Image.Dispose();
+                }
+                pictureBoxLand.Image = newBit;
             }
 
             LandData data = TileData.LandTable[index];

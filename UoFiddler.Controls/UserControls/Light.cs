@@ -23,7 +23,6 @@ namespace UoFiddler.Controls.UserControls
         public Light()
         {
             InitializeComponent();
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
             LandTileText.Text = _landTile.ToString();
@@ -105,7 +104,6 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Bitmap bit = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-
             using (Graphics g = Graphics.FromImage(bit))
             {
                 Bitmap background = Ultima.Art.GetLand(_landTile);
@@ -132,64 +130,72 @@ namespace UoFiddler.Controls.UserControls
 
             byte[] light = Ultima.Light.GetRawLight((int)treeView1.SelectedNode.Tag, out int lightWidth, out int lightHeight);
 
-            if (light != null)
+            if (light == null)
             {
-                BitmapData bd = bit.LockBits(new Rectangle(0, 0, bit.Width, bit.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                byte* imgPtr = (byte*)bd.Scan0;
+                return bit;
+            }
 
-                int lightStartX = (bit.Width / 2) - (lightWidth / 2);
-                int lightStartY = 30 + (bit.Height / 2) - (lightHeight / 2);
+            BitmapData bd = bit.LockBits(new Rectangle(0, 0, bit.Width, bit.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            byte* imgPtr = (byte*)bd.Scan0;
 
-                int lightEndX = lightStartX + lightWidth;
-                int lightEndY = lightStartY + lightWidth;
+            int lightStartX = (bit.Width / 2) - (lightWidth / 2);
+            int lightStartY = 30 + (bit.Height / 2) - (lightHeight / 2);
 
-                for (int y = 0; y < bd.Height; ++y)
+            int lightEndX = lightStartX + lightWidth;
+            int lightEndY = lightStartY + lightWidth;
+
+            for (int y = 0; y < bd.Height; ++y)
+            {
+                for (int x = 0; x < bd.Width; ++x)
                 {
-                    for (int x = 0; x < bd.Width; ++x)
+                    byte b = *(imgPtr + 0);
+                    byte g = *(imgPtr + 1);
+                    byte r = *(imgPtr + 2);
+
+                    double lightC = 0;
+
+                    if (x >= lightStartX && x < lightEndX && y >= lightStartY && y < lightEndY)
                     {
-                        byte b = *(imgPtr + 0);
-                        byte g = *(imgPtr + 1);
-                        byte r = *(imgPtr + 2);
-
-                        double lightC = 0;
-
-                        if (x >= lightStartX && x < lightEndX && y >= lightStartY && y < lightEndY)
+                        int offset = ((y - lightStartY) * lightHeight) + (x - lightStartX);
+                        if (offset < light.Length)
                         {
-                            int offset = ((y - lightStartY) * lightHeight) + (x - lightStartX);
-                            if (offset < light.Length)
+                            lightC = light[offset];
+                            if (lightC > 31)
                             {
-                                lightC = light[offset];
-                                if (lightC > 31)
-                                {
-                                    lightC = 0;
-                                }
-                                else
-                                {
-                                    lightC *= 3 / 31D;
-                                }
+                                lightC = 0;
+                            }
+                            else
+                            {
+                                lightC *= 3 / 31D;
                             }
                         }
-                        r /= 3;
-                        g /= 3;
-                        b /= 3;
-                        r += (byte)(r * lightC);
-                        g += (byte)(g * lightC);
-                        b += (byte)(b * lightC);
-
-                        *imgPtr++ = b;
-                        *imgPtr++ = g;
-                        *imgPtr++ = r;
                     }
-                    imgPtr += bd.Stride - (bd.Width * 3);
+                    r /= 3;
+                    g /= 3;
+                    b /= 3;
+                    r += (byte)(r * lightC);
+                    g += (byte)(g * lightC);
+                    b += (byte)(b * lightC);
+
+                    *imgPtr++ = b;
+                    *imgPtr++ = g;
+                    *imgPtr++ = r;
                 }
-                bit.UnlockBits(bd);
+                imgPtr += bd.Stride - (bd.Width * 3);
             }
+            bit.UnlockBits(bd);
 
             return bit;
         }
 
         private void AfterSelect(object sender, TreeViewEventArgs e)
         {
+            var prevImage = pictureBox1.Image;
+            if (prevImage != null)
+            {
+                pictureBox1.Image.Dispose();
+            }
+
             pictureBox1.Image = GetImage();
         }
 

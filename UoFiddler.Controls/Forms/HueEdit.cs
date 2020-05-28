@@ -99,13 +99,22 @@ namespace UoFiddler.Controls.Forms
             for (int i = 0; i < _colors.Length; ++i)
             {
                 Rectangle rectangle = new Rectangle((int)Math.Round(i * size), 5, (int)Math.Round(size + 1f), pictureBox.Height - 10);
-                e.Graphics.FillRectangle(new SolidBrush(Ultima.Hues.HueToColor(_colors[i])), rectangle);
+                using (var solidBrush = new SolidBrush(Ultima.Hues.HueToColor(_colors[i])))
+                {
+                    e.Graphics.FillRectangle(solidBrush, rectangle);
+                }
+
                 if (rectangle.X > 0)
                 {
-                    e.Graphics.DrawLine(new Pen(Color.Black), rectangle.X, 5, rectangle.X, pictureBox.Height - 7);
+                    using (var pen = new Pen(Color.Black))
+                    {
+                        e.Graphics.DrawLine(pen, rectangle.X, 5, rectangle.X, pictureBox.Height - 7);
+                    }
                 }
             }
+
             e.Graphics.FillRectangle(Brushes.LightBlue, (int)Math.Round(_selected * size), pictureBox.Height - 4, (int)Math.Round(size + 1f), 4);
+
             if (SecondSelected > -1)
             {
                 e.Graphics.FillRectangle(Brushes.LightBlue, (int)Math.Round(_secondSel * size), 0, (int)Math.Round(size + 1f), 4);

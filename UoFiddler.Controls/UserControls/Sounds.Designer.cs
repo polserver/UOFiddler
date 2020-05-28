@@ -283,6 +283,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
+            this.DoubleBuffered = true;
             this.Name = "Sounds";
             this.Size = new System.Drawing.Size(621, 327);
             this.Load += new System.EventHandler(this.OnLoad);

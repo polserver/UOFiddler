@@ -363,6 +363,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(335, 252);

@@ -110,6 +110,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.textBoxSoundName);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBoxId);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.Name = "SoundsSearch";

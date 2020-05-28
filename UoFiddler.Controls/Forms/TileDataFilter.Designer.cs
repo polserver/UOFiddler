@@ -417,7 +417,7 @@ namespace UoFiddler.Controls.Forms
             this.tabPageLand.Location = new System.Drawing.Point(4, 22);
             this.tabPageLand.Name = "tabPageLand";
             this.tabPageLand.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLand.Size = new System.Drawing.Size(338, 331);
+            this.tabPageLand.Size = new System.Drawing.Size(341, 335);
             this.tabPageLand.TabIndex = 1;
             this.tabPageLand.Text = "LandTiles";
             this.tabPageLand.UseVisualStyleBackColor = true;
@@ -441,8 +441,8 @@ namespace UoFiddler.Controls.Forms
             // 
             this.splitContainer5.Panel2.Controls.Add(this.button3);
             this.splitContainer5.Panel2.Controls.Add(this.button4);
-            this.splitContainer5.Size = new System.Drawing.Size(332, 325);
-            this.splitContainer5.SplitterDistance = 293;
+            this.splitContainer5.Size = new System.Drawing.Size(335, 329);
+            this.splitContainer5.SplitterDistance = 297;
             this.splitContainer5.TabIndex = 1;
             // 
             // label23
@@ -479,7 +479,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer7.Panel2
             // 
             this.splitContainer7.Panel2.Controls.Add(this.checkedListBox2);
-            this.splitContainer7.Size = new System.Drawing.Size(332, 293);
+            this.splitContainer7.Size = new System.Drawing.Size(335, 297);
             this.splitContainer7.SplitterDistance = 27;
             this.splitContainer7.SplitterWidth = 2;
             this.splitContainer7.TabIndex = 25;
@@ -507,7 +507,7 @@ namespace UoFiddler.Controls.Forms
             this.checkedListBox2.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox2.MultiColumn = true;
             this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(332, 264);
+            this.checkedListBox2.Size = new System.Drawing.Size(335, 268);
             this.checkedListBox2.TabIndex = 0;
             // 
             // button3
@@ -536,6 +536,7 @@ namespace UoFiddler.Controls.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(349, 361);
             this.Controls.Add(this.tabcontrol);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "TileDataFilter";
             this.Text = "TileData Filter";

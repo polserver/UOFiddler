@@ -307,6 +307,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // toolStripTextBox1
             // 
+            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
             this.toolStripTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownHue);
@@ -531,6 +532,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "Dress";
             this.Size = new System.Drawing.Size(628, 329);
             this.Load += new System.EventHandler(this.OnLoad);

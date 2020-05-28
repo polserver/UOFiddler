@@ -293,6 +293,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsertText);
@@ -458,6 +459,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.toolStrip1);
+            this.DoubleBuffered = true;
             this.Name = "ItemShowAlternative";
             this.Size = new System.Drawing.Size(623, 325);
             this.Load += new System.EventHandler(this.OnLoad);

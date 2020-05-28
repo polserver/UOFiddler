@@ -202,6 +202,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "CompareCliLoc";
             this.Size = new System.Drawing.Size(622, 326);
             this.splitContainer1.Panel1.ResumeLayout(false);

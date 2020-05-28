@@ -208,6 +208,7 @@ namespace UoFiddler.Controls.Forms
             // 
             // TextBoxArt
             // 
+            this.TextBoxArt.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxArt.Name = "TextBoxArt";
             this.TextBoxArt.Size = new System.Drawing.Size(100, 23);
             this.TextBoxArt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownArt);
@@ -223,6 +224,7 @@ namespace UoFiddler.Controls.Forms
             // 
             // TextBoxAnim
             // 
+            this.TextBoxAnim.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxAnim.Name = "TextBoxAnim";
             this.TextBoxAnim.Size = new System.Drawing.Size(100, 23);
             this.TextBoxAnim.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownAnim);
@@ -238,6 +240,7 @@ namespace UoFiddler.Controls.Forms
             // 
             // TextBoxGump
             // 
+            this.TextBoxGump.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxGump.Name = "TextBoxGump";
             this.TextBoxGump.Size = new System.Drawing.Size(100, 23);
             this.TextBoxGump.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownGump);
@@ -355,6 +358,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.pictureBoxIndex);
             this.Controls.Add(this.textBoxName);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "HueEdit";
             this.Text = "HueEdit";

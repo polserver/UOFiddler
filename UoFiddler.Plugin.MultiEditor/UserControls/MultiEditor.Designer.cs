@@ -254,7 +254,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.designTab.Location = new System.Drawing.Point(4, 22);
             this.designTab.Name = "designTab";
             this.designTab.Padding = new System.Windows.Forms.Padding(3);
-            this.designTab.Size = new System.Drawing.Size(192, 160);
+            this.designTab.Size = new System.Drawing.Size(192, 164);
             this.designTab.TabIndex = 1;
             this.designTab.Text = "Design";
             this.designTab.UseVisualStyleBackColor = true;
@@ -325,7 +325,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.importTab.Controls.Add(this.treeViewMultiList);
             this.importTab.Location = new System.Drawing.Point(4, 22);
             this.importTab.Name = "importTab";
-            this.importTab.Size = new System.Drawing.Size(192, 160);
+            this.importTab.Size = new System.Drawing.Size(192, 164);
             this.importTab.TabIndex = 2;
             this.importTab.Text = "Import";
             this.importTab.UseVisualStyleBackColor = true;
@@ -338,7 +338,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.treeViewMultiList.HotTracking = true;
             this.treeViewMultiList.Location = new System.Drawing.Point(0, 0);
             this.treeViewMultiList.Name = "treeViewMultiList";
-            this.treeViewMultiList.Size = new System.Drawing.Size(192, 160);
+            this.treeViewMultiList.Size = new System.Drawing.Size(192, 164);
             this.treeViewMultiList.TabIndex = 0;
             this.treeViewMultiList.NodeMouseHover += new System.Windows.Forms.TreeNodeMouseHoverEventHandler(this.TreeViewMultiList_NodeMouseHover);
             this.treeViewMultiList.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewMultiList_NodeMouseDoubleClick);
@@ -350,7 +350,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Save.Location = new System.Drawing.Point(4, 22);
             this.Save.Name = "Save";
             this.Save.Padding = new System.Windows.Forms.Padding(3);
-            this.Save.Size = new System.Drawing.Size(192, 160);
+            this.Save.Size = new System.Drawing.Size(192, 164);
             this.Save.TabIndex = 3;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;
@@ -1003,6 +1003,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.FloatingPreviewPanel);
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "MultiEditor";
             this.Size = new System.Drawing.Size(623, 328);
             this.Load += new System.EventHandler(this.OnLoad);

@@ -217,6 +217,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeydown_InsertText);
@@ -393,6 +394,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "Gump";
             this.Size = new System.Drawing.Size(626, 326);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Gump_KeyUp);

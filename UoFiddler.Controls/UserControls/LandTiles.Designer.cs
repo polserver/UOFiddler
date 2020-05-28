@@ -194,6 +194,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown_Insert);
@@ -353,6 +354,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.toolStripLandTile);
+            this.DoubleBuffered = true;
             this.Name = "LandTiles";
             this.Size = new System.Drawing.Size(622, 326);
             this.Load += new System.EventHandler(this.OnLoad);

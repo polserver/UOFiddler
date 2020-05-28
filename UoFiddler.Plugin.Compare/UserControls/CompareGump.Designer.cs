@@ -39,10 +39,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.listBox2 = new System.Windows.Forms.ListBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip();
             this.extractAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -240,6 +239,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "CompareGump";
             this.Size = new System.Drawing.Size(622, 327);
             this.Load += new System.EventHandler(this.OnLoad);
