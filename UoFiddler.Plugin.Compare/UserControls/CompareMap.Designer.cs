@@ -153,6 +153,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // toolStripTextBox1
             // 
+            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(150, 25);
             // 
@@ -299,6 +300,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.Controls.Add(this.vScrollBar);
             this.Controls.Add(this.hScrollBar);
             this.Controls.Add(this.toolStrip1);
+            this.DoubleBuffered = true;
             this.Name = "CompareMap";
             this.Size = new System.Drawing.Size(618, 327);
             this.Load += new System.EventHandler(this.OnLoad);

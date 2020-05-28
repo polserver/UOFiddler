@@ -28,7 +28,8 @@ namespace UoFiddler.Controls.UserControls
         public Gump()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint,
+                true);
             if (!Files.CacheData)
             {
                 Preload.Visible = false;
@@ -79,6 +80,7 @@ namespace UoFiddler.Controls.UserControls
                     cache.Add(i);
                 }
             }
+
             listBox.Items.AddRange(cache.ToArray());
             listBox.EndUpdate();
             if (listBox.Items.Count > 0)
@@ -91,6 +93,7 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.GumpChangeEvent += OnGumpChangeEvent;
             }
+
             _loaded = true;
             Cursor.Current = Cursors.Default;
         }
@@ -132,6 +135,7 @@ namespace UoFiddler.Controls.UserControls
                         break;
                     }
                 }
+
                 if (!done)
                 {
                     listBox.Items.Add(index);
@@ -148,14 +152,10 @@ namespace UoFiddler.Controls.UserControls
                         break;
                     }
                 }
+
                 listBox.Invalidate();
             }
         }
-
-        private static readonly Brush _brushLightSteelBlue = Brushes.LightSteelBlue;
-        private static readonly Brush _brushLightCoral = Brushes.LightCoral;
-        private static readonly Brush _brushRed = Brushes.Red;
-        private static readonly Brush _brushGray = Brushes.Gray;
 
         private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -164,9 +164,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Brush fontBrush = _brushGray;
+            Brush fontBrush = Brushes.Gray;
 
             int i = int.Parse(listBox.Items[e.Index].ToString());
+
             if (Gumps.IsValidIndex(i))
             {
                 Bitmap bmp = Gumps.GetGump(i, out bool patched);
@@ -178,28 +179,28 @@ namespace UoFiddler.Controls.UserControls
 
                     if (listBox.SelectedIndex == e.Index)
                     {
-                        e.Graphics.FillRectangle(_brushLightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
+                        e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
                     }
                     else if (patched)
                     {
-                        e.Graphics.FillRectangle(_brushLightCoral, e.Bounds.X, e.Bounds.Y, 105, 60);
+                        e.Graphics.FillRectangle(Brushes.LightCoral, e.Bounds.X, e.Bounds.Y, 105, 60);
                     }
 
                     e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 3, width, height));
                 }
                 else
                 {
-                    fontBrush = _brushRed;
+                    fontBrush = Brushes.Red;
                 }
             }
             else
             {
                 if (listBox.SelectedIndex == e.Index)
                 {
-                    e.Graphics.FillRectangle(_brushLightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
+                    e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, 60);
                 }
 
-                fontBrush = _brushRed;
+                fontBrush = Brushes.Red;
             }
 
             e.Graphics.DrawString($"0x{i:X} ({i})", Font, fontBrush,
@@ -450,6 +451,7 @@ namespace UoFiddler.Controls.UserControls
                     listBox.Items.Add(index);
                     listBox.SelectedIndex = listBox.Items.Count - 1;
                 }
+
                 Options.ChangedUltimaClass["Gumps"] = true;
             }
         }
@@ -543,7 +545,9 @@ namespace UoFiddler.Controls.UserControls
                         bit.Save(fileName, imageFormat);
                     }
                 }
-                MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -559,6 +563,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     cache.Add(i);
                 }
+
                 listBox.Items.AddRange(cache.ToArray());
                 listBox.EndUpdate();
                 if (listBox.Items.Count > 0)

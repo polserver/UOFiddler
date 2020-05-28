@@ -593,7 +593,7 @@ namespace UoFiddler.Controls.UserControls
             ExportLandTileImage(_selected, ImageFormat.Png);
         }
 
-        private void ExportLandTileImage(int index, ImageFormat imageFormat)
+        private static void ExportLandTileImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"Landtile {index}.{fileExtension}");

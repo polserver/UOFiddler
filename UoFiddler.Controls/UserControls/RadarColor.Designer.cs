@@ -69,23 +69,23 @@ namespace UoFiddler.Controls.UserControls
             this.buttonMean = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxArt)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxColor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).BeginInit();
             this.splitContainer6.Panel1.SuspendLayout();
             this.splitContainer6.Panel2.SuspendLayout();
             this.splitContainer6.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownShortCol)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownG)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownR)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownShortCol)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownG)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownR)).BeginInit();
             this.SuspendLayout();
             // 
             // treeViewItem
@@ -101,7 +101,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.selectInItemsTabToolStripMenuItem, this.selectInTiledataTabToolStripMenuItem});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectInItemsTabToolStripMenuItem,
+            this.selectInTiledataTabToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(183, 48);
             // 
@@ -132,7 +134,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip2
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.toolStripMenuItem1, this.toolStripMenuItem2});
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem2});
             this.contextMenuStrip2.Name = "contextMenuStrip1";
             this.contextMenuStrip2.Size = new System.Drawing.Size(189, 48);
             // 
@@ -270,7 +274,11 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownShortCol
             // 
             this.numericUpDownShortCol.Location = new System.Drawing.Point(189, 10);
-            this.numericUpDownShortCol.Maximum = new decimal(new int[] {32767, 0, 0, 0});
+            this.numericUpDownShortCol.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numericUpDownShortCol.Name = "numericUpDownShortCol";
             this.numericUpDownShortCol.Size = new System.Drawing.Size(100, 20);
             this.numericUpDownShortCol.TabIndex = 14;
@@ -304,7 +312,11 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownB
             // 
             this.numericUpDownB.Location = new System.Drawing.Point(295, 36);
-            this.numericUpDownB.Maximum = new decimal(new int[] {255, 0, 0, 0});
+            this.numericUpDownB.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
             this.numericUpDownB.Name = "numericUpDownB";
             this.numericUpDownB.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownB.TabIndex = 9;
@@ -313,7 +325,11 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownG
             // 
             this.numericUpDownG.Location = new System.Drawing.Point(242, 36);
-            this.numericUpDownG.Maximum = new decimal(new int[] {255, 0, 0, 0});
+            this.numericUpDownG.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
             this.numericUpDownG.Name = "numericUpDownG";
             this.numericUpDownG.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownG.TabIndex = 8;
@@ -322,7 +338,11 @@ namespace UoFiddler.Controls.UserControls
             // numericUpDownR
             // 
             this.numericUpDownR.Location = new System.Drawing.Point(189, 36);
-            this.numericUpDownR.Maximum = new decimal(new int[] {255, 0, 0, 0});
+            this.numericUpDownR.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
             this.numericUpDownR.Name = "numericUpDownR";
             this.numericUpDownR.Size = new System.Drawing.Size(47, 20);
             this.numericUpDownR.TabIndex = 7;
@@ -363,30 +383,32 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer5);
+            this.DoubleBuffered = true;
             this.Name = "RadarColor";
             this.Size = new System.Drawing.Size(620, 325);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxArt)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxColor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColor)).EndInit();
             this.splitContainer5.Panel1.ResumeLayout(false);
             this.splitContainer5.Panel2.ResumeLayout(false);
             this.splitContainer5.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
             this.splitContainer6.Panel1.ResumeLayout(false);
             this.splitContainer6.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.splitContainer6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).EndInit();
             this.splitContainer6.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownShortCol)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownG)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDownR)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownShortCol)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownG)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownR)).EndInit();
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.Button button1;

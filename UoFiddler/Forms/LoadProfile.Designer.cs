@@ -138,6 +138,7 @@ namespace UoFiddler.Forms
             this.Controls.Add(this.comboBoxLoad);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "LoadProfile";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

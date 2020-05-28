@@ -142,6 +142,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "MapClearStatics";
             this.Text = "Clear Statics";

@@ -344,6 +344,7 @@ namespace UoFiddler.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(622, 302);
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ManageTools";
             this.Padding = new System.Windows.Forms.Padding(3);

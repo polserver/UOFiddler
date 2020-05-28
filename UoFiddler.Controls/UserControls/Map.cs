@@ -540,14 +540,15 @@ namespace UoFiddler.Controls.UserControls
 
             if (showCenterCrossToolStripMenuItem1.Checked)
             {
-                Brush brush = new SolidBrush(Color.FromArgb(180, Color.White));
-                Pen pen = new Pen(brush);
-                int x = Round(pictureBox.Width / 2);
-                int y = Round(pictureBox.Height / 2);
-                e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
-                e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
-                pen.Dispose();
-                brush.Dispose();
+                using (Brush brush = new SolidBrush(Color.FromArgb(180, Color.White)))
+                using (Pen pen = new Pen(brush))
+                {
+                    int x = Round(pictureBox.Width / 2);
+                    int y = Round(pictureBox.Height / 2);
+
+                    e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
+                    e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
+                }
             }
 
             if (showClientCrossToolStripMenuItem.Checked && Client.Running)
@@ -558,15 +559,17 @@ namespace UoFiddler.Controls.UserControls
                     _clientY < vScrollBar.Value + (e.ClipRectangle.Height / Zoom) &&
                     _clientMap == _currMapInt)
                 {
-                    Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow));
-                    Pen pen = new Pen(brush);
-                    int x = (int)((_clientX - Round(hScrollBar.Value)) * Zoom);
-                    int y = (int)((_clientY - Round(vScrollBar.Value)) * Zoom);
-                    e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
-                    e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
-                    e.Graphics.DrawEllipse(pen, x - 2, y - 2, 2 * 2, 2 * 2);
-                    pen.Dispose();
-                    brush.Dispose();
+                    using (Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow)))
+                    using (Pen pen = new Pen(brush))
+                    {
+                        int x = (int)((_clientX - Round(hScrollBar.Value)) * Zoom);
+                        int y = (int)((_clientY - Round(vScrollBar.Value)) * Zoom);
+
+                        e.Graphics.DrawLine(pen, x - 4, y, x + 4, y);
+                        e.Graphics.DrawLine(pen, x, y - 4, x, y + 4);
+
+                        e.Graphics.DrawEllipse(pen, x - 2, y - 2, 2 * 2, 2 * 2);
+                    }
                 }
             }
 
@@ -728,50 +731,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void LoadMapOverlays()
         {
-            // TODO: possible null for path variable and Path.GetDirectoryName(path) later on.
-            string fileName = Path.Combine(Path.GetDirectoryName(Options.AppDataPath), "MapOverlays.xml");
-
             OverlayObjectTree.BeginUpdate();
             try
             {
                 OverlayObjectTree.Nodes.Clear();
 
-                TreeNode node = new TreeNode(Options.MapNames[0])
-                {
-                    Tag = 0
-                };
-                OverlayObjectTree.Nodes.Add(node);
+                AddOverlayGroups();
 
-                node = new TreeNode(Options.MapNames[1])
-                {
-                    Tag = 1
-                };
-                OverlayObjectTree.Nodes.Add(node);
-
-                node = new TreeNode(Options.MapNames[2])
-                {
-                    Tag = 2
-                };
-                OverlayObjectTree.Nodes.Add(node);
-
-                node = new TreeNode(Options.MapNames[3])
-                {
-                    Tag = 3
-                };
-                OverlayObjectTree.Nodes.Add(node);
-
-                node = new TreeNode(Options.MapNames[4])
-                {
-                    Tag = 4
-                };
-                OverlayObjectTree.Nodes.Add(node);
-
-                node = new TreeNode(Options.MapNames[5])
-                {
-                    Tag = 5
-                };
-                OverlayObjectTree.Nodes.Add(node);
-
+                string fileName = Path.Combine(Options.AppDataPath, "MapOverlays.xml");
                 if (!File.Exists(fileName))
                 {
                     return;
@@ -788,7 +755,7 @@ namespace UoFiddler.Controls.UserControls
                     int c = int.Parse(xMarker.GetAttribute("color"));
                     string text = xMarker.GetAttribute("text");
                     OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
-                    node = new TreeNode(text)
+                    TreeNode node = new TreeNode(text)
                     {
                         Tag = o
                     };
@@ -799,6 +766,45 @@ namespace UoFiddler.Controls.UserControls
             {
                 OverlayObjectTree.EndUpdate();
             }
+        }
+
+        private void AddOverlayGroups()
+        {
+            TreeNode node = new TreeNode(Options.MapNames[0])
+            {
+                Tag = 0
+            };
+            OverlayObjectTree.Nodes.Add(node);
+
+            node = new TreeNode(Options.MapNames[1])
+            {
+                Tag = 1
+            };
+            OverlayObjectTree.Nodes.Add(node);
+
+            node = new TreeNode(Options.MapNames[2])
+            {
+                Tag = 2
+            };
+            OverlayObjectTree.Nodes.Add(node);
+
+            node = new TreeNode(Options.MapNames[3])
+            {
+                Tag = 3
+            };
+            OverlayObjectTree.Nodes.Add(node);
+
+            node = new TreeNode(Options.MapNames[4])
+            {
+                Tag = 4
+            };
+            OverlayObjectTree.Nodes.Add(node);
+
+            node = new TreeNode(Options.MapNames[5])
+            {
+                Tag = 5
+            };
+            OverlayObjectTree.Nodes.Add(node);
         }
 
         public static void SaveMapOverlays()
@@ -1234,11 +1240,10 @@ namespace UoFiddler.Controls.UserControls
         public int DefMap { get; protected set; }
     }
 
-    public class OverlayCursor : OverlayObject
+    public class OverlayCursor : OverlayObject, IDisposable
     {
         private readonly string _text;
         private readonly Color _col;
-        private readonly Brush _brush;
         private readonly Pen _pen;
         private static Brush _background;
 
@@ -1249,8 +1254,8 @@ namespace UoFiddler.Controls.UserControls
             _text = t;
             _col = c;
             Visible = true;
-            _brush = new SolidBrush(_col);
-            _pen = new Pen(_brush);
+            Brush brush = new SolidBrush(_col);
+            _pen = new Pen(brush);
             _background = new SolidBrush(Color.FromArgb(100, Color.White));
         }
 
@@ -1297,6 +1302,12 @@ namespace UoFiddler.Controls.UserControls
         public override string ToString()
         {
             return _text;
+        }
+
+        public void Dispose()
+        {
+            _pen?.Dispose();
+            _background?.Dispose();
         }
     }
 }

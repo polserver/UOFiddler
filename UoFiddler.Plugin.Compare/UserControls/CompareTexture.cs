@@ -349,12 +349,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     done = true;
                     break;
                 }
+
                 if (id == i)
                 {
                     done = true;
                     break;
                 }
             }
+
             if (!done)
             {
                 listBoxOrg.Items.Add(i);

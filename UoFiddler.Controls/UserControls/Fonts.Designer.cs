@@ -160,6 +160,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.treeView);
+            this.DoubleBuffered = true;
             this.Name = "Fonts";
             this.Size = new System.Drawing.Size(623, 328);
             this.Load += new System.EventHandler(this.OnLoad);

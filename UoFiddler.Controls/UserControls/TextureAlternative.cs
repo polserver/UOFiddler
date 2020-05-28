@@ -26,7 +26,6 @@ namespace UoFiddler.Controls.UserControls
         public TextureAlternative()
         {
             InitializeComponent();
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
             pictureBox.MouseWheel += OnMouseWheel;

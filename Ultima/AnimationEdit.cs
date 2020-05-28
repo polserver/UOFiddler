@@ -15,10 +15,10 @@ namespace Ultima
         private static FileIndex _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
 
         private static AnimIdx[] _animCache;
-        private static readonly AnimIdx[] _animCache2;
-        private static readonly AnimIdx[] _animCache3;
-        private static readonly AnimIdx[] _animCache4;
-        private static readonly AnimIdx[] _animCache5;
+        private static AnimIdx[] _animCache2;
+        private static AnimIdx[] _animCache3;
+        private static AnimIdx[] _animCache4;
+        private static AnimIdx[] _animCache5;
 
         static AnimationEdit()
         {
@@ -66,22 +66,22 @@ namespace Ultima
 
             if (_fileIndex2.IdxLength > 0)
             {
-                _animCache = new AnimIdx[_fileIndex2.IdxLength / 12];
+                _animCache2 = new AnimIdx[_fileIndex2.IdxLength / 12];
             }
 
             if (_fileIndex3.IdxLength > 0)
             {
-                _animCache = new AnimIdx[_fileIndex3.IdxLength / 12];
+                _animCache3 = new AnimIdx[_fileIndex3.IdxLength / 12];
             }
 
             if (_fileIndex4.IdxLength > 0)
             {
-                _animCache = new AnimIdx[_fileIndex4.IdxLength / 12];
+                _animCache4 = new AnimIdx[_fileIndex4.IdxLength / 12];
             }
 
             if (_fileIndex5.IdxLength > 0)
             {
-                _animCache = new AnimIdx[_fileIndex5.IdxLength / 12];
+                _animCache5 = new AnimIdx[_fileIndex5.IdxLength / 12];
             }
         }
 
@@ -523,6 +523,7 @@ namespace Ultima
             {
                 return;
             }
+
             Frames[index] = new FrameEdit(bit, Palette, Frames[index].Center.X, Frames[index].Center.Y);
         }
 
@@ -1023,12 +1024,9 @@ namespace Ultima
                     for (i = x; i <= bit.Width; ++i)
                     {
                         // first pixel set
-                        if (i < bit.Width)
+                        if (i < bit.Width && cur[i] != 0)
                         {
-                            if (cur[i] != 0)
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
 
@@ -1060,7 +1058,7 @@ namespace Ultima
                     raw.data = new byte[raw.run];
                     while (r < raw.run)
                     {
-                        ushort col = (cur[r + i]);
+                        ushort col = cur[r + i];
                         raw.data[r++] = GetPaletteIndex(palette, col);
                     }
                     tmp.Add(raw);

@@ -397,7 +397,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(547, 431);
+            this.tabControl1.Size = new System.Drawing.Size(547, 430);
             this.tabControl1.TabIndex = 43;
             // 
             // tabPage2
@@ -412,7 +412,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(539, 405);
+            this.tabPage2.Size = new System.Drawing.Size(539, 404);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Every file";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -432,7 +432,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statustext,
             this.toolStripStatusLabel2});
-            this.statusStrip2.Location = new System.Drawing.Point(3, 380);
+            this.statusStrip2.Location = new System.Drawing.Point(3, 379);
             this.statusStrip2.Name = "statusStrip2";
             this.statusStrip2.Size = new System.Drawing.Size(533, 22);
             this.statusStrip2.TabIndex = 11;
@@ -537,7 +537,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(534, 407);
+            this.tabPage1.Size = new System.Drawing.Size(539, 405);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "One file";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -549,7 +549,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.toolStripStatusLabel1,
             this.guilabel,
             this.versionlabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 4);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 5);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.statusStrip1.Size = new System.Drawing.Size(547, 22);
@@ -590,7 +590,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
             this.splitContainer1.Size = new System.Drawing.Size(547, 461);
-            this.splitContainer1.SplitterDistance = 431;
+            this.splitContainer1.SplitterDistance = 430;
             this.splitContainer1.TabIndex = 40;
             // 
             // UopPackerControl
@@ -600,6 +600,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             this.BackColor = System.Drawing.Color.Transparent;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "UopPackerControl";
             this.Size = new System.Drawing.Size(547, 461);
             ((System.ComponentModel.ISupportInitialize)(this.mulmaptype)).EndInit();

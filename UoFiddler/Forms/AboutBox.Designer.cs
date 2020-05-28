@@ -191,6 +191,7 @@ namespace UoFiddler.Forms
             this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBoxCheckOnStart);
             this.Controls.Add(this.richTextBox1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;

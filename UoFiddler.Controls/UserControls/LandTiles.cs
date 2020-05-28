@@ -326,13 +326,6 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        // TODO: unused brushes?
-        //private static readonly Brush _brushWhite = Brushes.White;
-        private static readonly Brush _brushLightBlue = Brushes.LightBlue;
-        //private static readonly Brush _brushLightCoral = Brushes.LightCoral;
-        private static readonly Brush _brushRed = Brushes.Red;
-        private static readonly Pen _penGray = Pens.Gray;
-
         private void DrawItem(object sender, DrawListViewItemEventArgs e)
         {
             int i = (int)listView1.Items[e.ItemIndex].Tag;
@@ -340,14 +333,14 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (e.Item.Selected)
                 {
-                    e.Graphics.FillRectangle(_brushLightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                    e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
                 }
                 else
                 {
-                    e.Graphics.DrawRectangle(_penGray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                    e.Graphics.DrawRectangle(Pens.Gray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
                 }
 
-                e.Graphics.FillRectangle(_brushRed, e.Bounds.X + 5, e.Bounds.Y + 5, e.Bounds.Width - 10, e.Bounds.Height - 10);
+                e.Graphics.FillRectangle(Brushes.Red, e.Bounds.X + 5, e.Bounds.Y + 5, e.Bounds.Width - 10, e.Bounds.Height - 10);
                 return;
             }
 

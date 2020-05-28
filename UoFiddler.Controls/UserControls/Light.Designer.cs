@@ -171,6 +171,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
@@ -227,6 +228,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LandTileText
             // 
+            this.LandTileText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.LandTileText.Name = "LandTileText";
             this.LandTileText.Size = new System.Drawing.Size(100, 23);
             this.LandTileText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LandTileKeyDown);
@@ -242,6 +244,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LightTileText
             // 
+            this.LightTileText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.LightTileText.Name = "LightTileText";
             this.LightTileText.Size = new System.Drawing.Size(100, 23);
             this.LightTileText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LightTileKeyDown);
@@ -252,6 +255,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "Light";
             this.Size = new System.Drawing.Size(619, 325);
             this.Load += new System.EventHandler(this.OnLoad);

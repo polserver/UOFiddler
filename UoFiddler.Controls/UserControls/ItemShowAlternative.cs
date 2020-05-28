@@ -392,24 +392,19 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.Invalidate();
         }
 
-        private static readonly Brush _brushLightBlue = Brushes.LightBlue;
-        private static readonly Brush _brushLightCoral = Brushes.LightCoral;
-        private static readonly Brush _brushRed = Brushes.Red;
-        private static readonly Pen _penGray = Pens.Gray;
-
         private void OnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
 
             for (int x = 0; x <= _col; ++x)
             {
-                e.Graphics.DrawLine(_penGray, new Point(x * Options.ArtItemSizeWidth, 0),
+                e.Graphics.DrawLine(Pens.Gray, new Point(x * Options.ArtItemSizeWidth, 0),
                     new Point(x * Options.ArtItemSizeWidth, _row * Options.ArtItemSizeHeight));
             }
 
             for (int y = 0; y <= _row; ++y)
             {
-                e.Graphics.DrawLine(_penGray, new Point(0, y * Options.ArtItemSizeHeight),
+                e.Graphics.DrawLine(Pens.Gray, new Point(0, y * Options.ArtItemSizeHeight),
                     new Point(_col * Options.ArtItemSizeWidth, y * Options.ArtItemSizeHeight));
             }
 
@@ -425,6 +420,7 @@ namespace UoFiddler.Controls.UserControls
 
                     Bitmap b = Art.GetStatic(index, out bool patched);
 
+                    var brushLightBlue = Brushes.LightBlue;
                     if (b != null)
                     {
                         Point loc = new Point((x * Options.ArtItemSizeWidth) + 1, (y * Options.ArtItemSizeHeight) + 1);
@@ -435,11 +431,11 @@ namespace UoFiddler.Controls.UserControls
 
                         if (index == _selected)
                         {
-                            e.Graphics.FillRectangle(_brushLightBlue, rect);
+                            e.Graphics.FillRectangle(brushLightBlue, rect);
                         }
                         else if (patched)
                         {
-                            e.Graphics.FillRectangle(_brushLightCoral, rect);
+                            e.Graphics.FillRectangle(Brushes.LightCoral, rect);
                         }
 
                         if (Options.ArtItemClip)
@@ -472,14 +468,14 @@ namespace UoFiddler.Controls.UserControls
                         e.Graphics.Clip = new Region(rect);
                         if (index == _selected)
                         {
-                            e.Graphics.FillRectangle(_brushLightBlue, rect);
+                            e.Graphics.FillRectangle(brushLightBlue, rect);
                         }
 
                         rect.X += 5;
                         rect.Y += 5;
                         rect.Width -= 10;
                         rect.Height -= 10;
-                        e.Graphics.FillRectangle(_brushRed, rect);
+                        e.Graphics.FillRectangle(Brushes.Red, rect);
                     }
                 }
             }
@@ -531,17 +527,35 @@ namespace UoFiddler.Controls.UserControls
             {
                 splitContainer2.SplitterDistance = 10;
                 Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
-                Graphics newGraph = Graphics.FromImage(newBit);
-                newGraph.Clear(Color.FromArgb(-1));
+                using (Graphics newGraph = Graphics.FromImage(newBit))
+                {
+                    newGraph.Clear(Color.FromArgb(-1));
+                }
+
+                var prevImage = DetailPictureBox.Image;
+                if (prevImage != null)
+                {
+                    DetailPictureBox.Image.Dispose();
+                }
+
                 DetailPictureBox.Image = newBit;
             }
             else
             {
                 splitContainer2.SplitterDistance = bit.Size.Height + 10;
                 Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
-                Graphics newGraph = Graphics.FromImage(newBit);
-                newGraph.Clear(Color.FromArgb(-1));
-                newGraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
+                using (Graphics newGraph = Graphics.FromImage(newBit))
+                {
+                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
+                }
+
+                var prevImage = DetailPictureBox.Image;
+                if (prevImage != null)
+                {
+                    DetailPictureBox.Image.Dispose();
+                }
+
                 DetailPictureBox.Image = newBit;
 
                 Art.Measure(bit, out xMin, out yMin, out xMax, out yMax);

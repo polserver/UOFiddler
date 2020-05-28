@@ -282,6 +282,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.Name = "CompareTexture";
             this.Size = new System.Drawing.Size(617, 374);
             this.Load += new System.EventHandler(this.OnLoad);

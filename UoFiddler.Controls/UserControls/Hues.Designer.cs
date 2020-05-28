@@ -102,6 +102,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceText
             // 
+            this.ReplaceText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceText.Name = "ReplaceText";
             this.ReplaceText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
@@ -127,6 +128,7 @@ namespace UoFiddler.Controls.UserControls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.vScrollBar);
+            this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "Hues";
             this.Padding = new System.Windows.Forms.Padding(1);

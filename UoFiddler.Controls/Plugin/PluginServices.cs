@@ -50,21 +50,11 @@ namespace UoFiddler.Controls.Plugin
                 return;
             }
 
-            foreach (string fileOn in Directory.GetFiles(path))
+            foreach (string fileOn in Directory.GetFiles(path, "*.dll"))
             {
-                FileInfo file = new FileInfo(fileOn);
-                if (!file.Extension.Equals(".dll"))
-                {
-                    Options.Logger.Debug("FindPlugins - not a plugin file. Skipping: {file}", file);
-                    continue;
-                }
-
                 try
                 {
-                    if (!file.Name.Equals("Controls.dll") && !file.Name.Equals("Ultima.dll") && !file.Name.Equals("Serilog.dll"))
-                    {
-                        AddPlugin(fileOn);
-                    }
+                    AddPlugin(fileOn);
                 }
                 catch (Exception ex)
                 {
@@ -84,10 +74,12 @@ namespace UoFiddler.Controls.Plugin
                 {
                     continue;
                 }
+
                 Options.Logger.Information("FindPlugins - disposing plugin: {pluginOn}", pluginOn.Type.ToString());
                 pluginOn.Instance.Dispose();
                 pluginOn.Instance = null;
             }
+
             AvailablePlugins.Clear();
         }
 

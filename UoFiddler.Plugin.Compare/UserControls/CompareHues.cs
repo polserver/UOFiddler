@@ -26,10 +26,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             pictureBox1.Image = _bmp1;
             pictureBox2.Image = _bmp2;
+
             pictureBox1.MouseWheel += OnMouseWheel;
             pictureBox2.MouseWheel += OnMouseWheel;
+
             _hue2Loaded = false;
         }
 
@@ -72,31 +75,36 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 for (int y = 0; y <= _row; y++)
                 {
                     int index = GetIndex(y);
-                    if (index >= 0)
+                    if (index < 0)
                     {
-                        Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
-                        if (index == _selected)
-                        {
-                            g.FillRectangle(SystemBrushes.Highlight, rect);
-                        }
-                        else if (!Compare(index))
-                        {
-                            g.FillRectangle(Brushes.Red, rect);
-                        }
-                        else
-                        {
-                            g.FillRectangle(SystemBrushes.Window, rect);
-                        }
+                        continue;
+                    }
 
-                        float size = (float)(pictureBox1.Width - 200) / 32;
-                        Hue hue = Hues.List[index];
-                        Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox1.Width, _itemHeight);
-                        g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                    Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
+                    if (index == _selected)
+                    {
+                        g.FillRectangle(SystemBrushes.Highlight, rect);
+                    }
+                    else if (!Compare(index))
+                    {
+                        g.FillRectangle(Brushes.Red, rect);
+                    }
+                    else
+                    {
+                        g.FillRectangle(SystemBrushes.Window, rect);
+                    }
 
-                        for (int i = 0; i < hue.Colors.Length; i++)
+                    float size = (float)(pictureBox1.Width - 200) / 32;
+                    Hue hue = Hues.List[index];
+                    Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox1.Width, _itemHeight);
+                    g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+
+                    for (int i = 0; i < hue.Colors.Length; i++)
+                    {
+                        Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
+                        using (var solidBrush = new SolidBrush(hue.GetColor(i)))
                         {
-                            Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
-                            g.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
+                            g.FillRectangle(solidBrush, rectangle);
                         }
                     }
                 }
@@ -114,31 +122,36 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 for (int y = 0; y <= _row; y++)
                 {
                     int index = GetIndex(y);
-                    if (index >= 0)
+                    if (index < 0)
                     {
-                        Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
-                        if (index == _selected)
-                        {
-                            g.FillRectangle(SystemBrushes.Highlight, rect);
-                        }
-                        else if (!Compare(index))
-                        {
-                            g.FillRectangle(Brushes.Red, rect);
-                        }
-                        else
-                        {
-                            g.FillRectangle(SystemBrushes.Window, rect);
-                        }
+                        continue;
+                    }
 
-                        float size = (float)(pictureBox2.Width - 200) / 32;
-                        Hue hue = SecondHue.List[index];
-                        Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox2.Width, _itemHeight);
-                        g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                    Rectangle rect = new Rectangle(0, y * _itemHeight, 200, _itemHeight);
+                    if (index == _selected)
+                    {
+                        g.FillRectangle(SystemBrushes.Highlight, rect);
+                    }
+                    else if (!Compare(index))
+                    {
+                        g.FillRectangle(Brushes.Red, rect);
+                    }
+                    else
+                    {
+                        g.FillRectangle(SystemBrushes.Window, rect);
+                    }
 
-                        for (int i = 0; i < hue.Colors.Length; i++)
+                    float size = (float)(pictureBox2.Width - 200) / 32;
+                    Hue hue = SecondHue.List[index];
+                    Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox2.Width, _itemHeight);
+                    g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+
+                    for (int i = 0; i < hue.Colors.Length; i++)
+                    {
+                        Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
+                        using (var solidBrush = new SolidBrush(hue.GetColor(i)))
                         {
-                            Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
-                            g.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
+                            g.FillRectangle(solidBrush, rectangle);
                         }
                     }
                 }
@@ -157,7 +170,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _row = pictureBox1.Height / _itemHeight;
             _bmp1 = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             _bmp2 = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+
             PaintBox1();
+
             if (_hue2Loaded)
             {
                 PaintBox2();

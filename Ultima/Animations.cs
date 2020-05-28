@@ -29,14 +29,20 @@ namespace Ultima
         public static void Initialize()
         {
             string path = Files.GetFilePath("bodyconv.def");
-
             if (path == null)
             {
                 return;
             }
 
-            List<int> list1 = new List<int>(), list2 = new List<int>(), list3 = new List<int>(), list4 = new List<int>();
-            int max1 = 0, max2 = 0, max3 = 0, max4 = 0;
+            List<int> list1 = new List<int>();
+            List<int> list2 = new List<int>();
+            List<int> list3 = new List<int>();
+            List<int> list4 = new List<int>();
+
+            int max1 = 0;
+            int max2 = 0;
+            int max3 = 0;
+            int max4 = 0;
 
             using (var ip = new StreamReader(path))
             {
@@ -44,44 +50,39 @@ namespace Ultima
 
                 while ((line = ip.ReadLine()) != null)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#") || line.StartsWith("\""))
                     {
                         continue;
                     }
 
                     try
                     {
-                        string[] split = line.Split('\t');
+                        string[] split = line.Split(new [] {'\t', ' '}, StringSplitOptions.RemoveEmptyEntries); 
 
-                        int original = System.Convert.ToInt32(split[0]);
-                        int anim2 = System.Convert.ToInt32(split[1]);
-                        int anim3;
-                        int anim4;
-                        int anim5;
-
-                        try
+                        bool hasOriginalBodyId = int.TryParse(split[0], out int original);
+                        if (!hasOriginalBodyId)
                         {
-                            anim3 = System.Convert.ToInt32(split[2]);
+                            // First item in array is not an int which means 
+                            // it's probably wrong line to parse. So we skip it.
+                            continue;
                         }
-                        catch
+
+                        if (!int.TryParse(split[1], out int anim2))
+                        {
+                            anim2 = -1;
+                        }
+
+                        if (!int.TryParse(split[2], out int anim3))
                         {
                             anim3 = -1;
                         }
 
-                        try
-                        {
-                            anim4 = System.Convert.ToInt32(split[3]);
-                        }
-                        catch
+                        if (!int.TryParse(split[3], out int anim4))
                         {
                             anim4 = -1;
                         }
 
-                        try
-                        {
-                            anim5 = System.Convert.ToInt32(split[4]);
-                        }
-                        catch
+                        if (!int.TryParse(split[4], out int anim5))
                         {
                             anim5 = -1;
                         }
@@ -138,7 +139,6 @@ namespace Ultima
                     catch
                     {
                         // TODO: ignored?
-                        // ignored
                     }
                 }
             }
@@ -315,8 +315,11 @@ namespace Ultima
             {
                 default:
                 case 1:
+                {
                     return index;
+                }
                 case 2:
+                {
                     if (Table1 != null && index >= 0)
                     {
                         for (int i = 0; i < Table1.Length; ++i)
@@ -328,7 +331,9 @@ namespace Ultima
                         }
                     }
                     break;
+                }
                 case 3:
+                {
                     if (Table2 != null && index >= 0)
                     {
                         for (int i = 0; i < Table2.Length; ++i)
@@ -340,7 +345,9 @@ namespace Ultima
                         }
                     }
                     break;
+                }
                 case 4:
+                {
                     if (Table3 != null && index >= 0)
                     {
                         for (int i = 0; i < Table3.Length; ++i)
@@ -352,7 +359,9 @@ namespace Ultima
                         }
                     }
                     break;
+                }
                 case 5:
+                {
                     if (Table4 != null && index >= 0)
                     {
                         for (int i = 0; i < Table4.Length; ++i)
@@ -364,6 +373,7 @@ namespace Ultima
                         }
                     }
                     break;
+                }
             }
             return -1;
         }
@@ -372,19 +382,10 @@ namespace Ultima
     public sealed class Animations
     {
         private static FileIndex _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
-        //public static FileIndex FileIndex{ get{ return _fileIndex; } }
-
         private static FileIndex _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
-        //public static FileIndex FileIndex2{ get{ return _fileIndex2; } }
-
         private static FileIndex _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
-        //public static FileIndex FileIndex3{ get{ return _fileIndex3; } }
-
         private static FileIndex _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
-        //public static FileIndex FileIndex4{ get{ return _fileIndex4; } }
-
         private static FileIndex _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
-        //public static FileIndex FileIndex5 { get { return _fileIndex5; } }
 
         private static byte[] _streamBuffer;
         private static MemoryStream _memoryStream;
@@ -505,7 +506,7 @@ namespace Ultima
             return frames;
         }
 
-        // TODO: unused method
+        // TODO: unused method?
         //public static Frame[] GetAnimation(int body, int action, int direction, int fileType)
         //{
         //    GetFileIndex(body, action, direction, fileType, out FileIndex fileIndex, out int index);

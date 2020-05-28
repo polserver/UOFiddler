@@ -10,7 +10,6 @@
  ***************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -33,10 +32,15 @@ namespace UoFiddler.Controls.Forms
         private bool _showOnlyValid;
         private static bool _drawEmpty;
         private static bool _drawFull;
-        private static Pen _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-        private static SolidBrush _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
-        private static readonly SolidBrush _whiteTransparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255));
         private static readonly Color _whiteConvert = Color.FromArgb(255, 255, 255, 255);
+
+        private static readonly Pen _blackUnDrawTransparent = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
+        private static readonly Pen _blackUnDrawOpaque = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+        private static Pen _blackUndraw = _blackUnDrawOpaque;
+
+        private static readonly SolidBrush _whiteUnDrawTransparent = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
+        private static readonly SolidBrush _whiteUnDrawOpaque = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+        private static SolidBrush _whiteUnDraw = _whiteUnDrawOpaque;
 
         public AnimationEdit()
         {
@@ -48,7 +52,7 @@ namespace UoFiddler.Controls.Forms
 
             _fileType = 0;
             _currentDir = 0;
-            _framePoint = new Point(pictureBox1.Width / 2, pictureBox1.Height / 2);
+            _framePoint = new Point(animationPictureBox.Width / 2, animationPictureBox.Height / 2);
             _showOnlyValid = false;
             _loaded = false;
         }
@@ -64,7 +68,7 @@ namespace UoFiddler.Controls.Forms
                 if (_fileType != 0)
                 {
                     int count = Animations.GetAnimCount(_fileType);
-                    List<TreeNode> nodes = new List<TreeNode>();
+                    TreeNode[] nodes = new TreeNode[count];
                     for (int i = 0; i < count; ++i)
                     {
                         int animLength = Animations.GetAnimLength(i, _fileType);
@@ -106,10 +110,10 @@ namespace UoFiddler.Controls.Forms
                             node.ForeColor = Color.Red;
                         }
 
-                        nodes.Add(node);
+                        nodes[i] = node;
                     }
 
-                    treeView1.Nodes.AddRange(nodes.ToArray());
+                    treeView1.Nodes.AddRange(nodes);
                 }
             }
             finally
@@ -142,7 +146,7 @@ namespace UoFiddler.Controls.Forms
             _currentAction = 0;
             _currentBody = 0;
             toolStripComboBox1.SelectedIndex = 0;
-            _framePoint = new Point(pictureBox1.Width / 2, pictureBox1.Height / 2);
+            _framePoint = new Point(animationPictureBox.Width / 2, animationPictureBox.Height / 2);
             _showOnlyValid = false;
             showOnlyValidToolStripMenuItem.Checked = false;
             OnLoad(null);
@@ -161,10 +165,8 @@ namespace UoFiddler.Controls.Forms
                 }
                 return null;
             }
-            else
-            {
-                return treeView1.Nodes[tag];
-            }
+
+            return treeView1.Nodes[tag];
         }
 
         private unsafe void SetPaletteBox()
@@ -174,23 +176,34 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
+            // TODO: why is this constant and height is taken from picturebox?
+            // TODO: looks like the value is the same as array size for pallete in AnimIdx
+            const int bitmapWidth = 256;
+            int bitmapHeight = pictureBoxPalette.Height;
+
             AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            Bitmap bmp = new Bitmap(0x100, pictureBoxPalette.Height, PixelFormat.Format16bppArgb1555);
+            Bitmap bmp = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format16bppArgb1555);
             if (edit != null)
             {
-                BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 0x100, pictureBoxPalette.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bitmapWidth, bitmapHeight), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
                 ushort* line = (ushort*)bd.Scan0;
                 int delta = bd.Stride >> 1;
                 for (int y = 0; y < bd.Height; ++y, line += delta)
                 {
                     ushort* cur = line;
-                    for (int i = 0; i < 0x100; ++i)
+                    for (int i = 0; i < bitmapWidth; ++i)
                     {
                         *cur++ = edit.Palette[i];
                     }
                 }
 
                 bmp.UnlockBits(bd);
+            }
+
+            var prevImage = pictureBoxPalette.Image;
+            if (prevImage != null)
+            {
+                pictureBoxPalette.Image.Dispose();
             }
 
             pictureBoxPalette.Image = bmp;
@@ -246,6 +259,7 @@ namespace UoFiddler.Controls.Forms
                                 Tag = i
                             };
                             listView1.Items.Add(item);
+
                             if (currentBits[i].Width > width)
                             {
                                 width = currentBits[i].Width;
@@ -257,6 +271,7 @@ namespace UoFiddler.Controls.Forms
                             }
                         }
                         listView1.TileSize = new Size(width + 5, height + 5);
+
                         trackBar2.Maximum = currentBits.Length - 1;
                         trackBar2.Value = 0;
                         trackBar2.Invalidate();
@@ -279,7 +294,7 @@ namespace UoFiddler.Controls.Forms
                 listView1.EndUpdate();
             }
 
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
             SetPaletteBox();
         }
 
@@ -307,14 +322,14 @@ namespace UoFiddler.Controls.Forms
 
         private void OnDirectionChanged(object sender, EventArgs e)
         {
-            _currentDir = trackBar1.Value;
+            _currentDir = trackBarDirection.Value;
             AfterSelectTreeView(null, null);
         }
 
         private void OnSizeChangedPictureBox(object sender, EventArgs e)
         {
-            _framePoint = new Point(pictureBox1.Width / 2, pictureBox1.Height / 2);
-            pictureBox1.Invalidate();
+            _framePoint = new Point(animationPictureBox.Width / 2, animationPictureBox.Height / 2);
+            animationPictureBox.Invalidate();
         }
         //Soulblighter Modification
 
@@ -329,8 +344,8 @@ namespace UoFiddler.Controls.Forms
             Bitmap[] currentBits = edit.GetFrames();
 
             e.Graphics.Clear(Color.LightGray);
-            e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, pictureBox1.Height));
-            e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(pictureBox1.Width, _framePoint.Y));
+            e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, animationPictureBox.Height));
+            e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(animationPictureBox.Width, _framePoint.Y));
 
             if (currentBits?.Length > 0 && currentBits[trackBar2.Value] != null)
             {
@@ -363,10 +378,15 @@ namespace UoFiddler.Controls.Forms
                 int x = _framePoint.X - edit.Frames[trackBar2.Value].Center.X;
                 int y = _framePoint.Y - edit.Frames[trackBar2.Value].Center.Y - currentBits[trackBar2.Value].Height;
 
-                e.Graphics.FillRectangle(_whiteTransparent, new Rectangle(x, y, varFw, varFh));
+                using (var whiteTransparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255)))
+                {
+                    e.Graphics.FillRectangle(whiteTransparent, new Rectangle(x, y, varFw, varFh));
+                }
+
                 e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, varW, varH));
                 e.Graphics.DrawImage(currentBits[trackBar2.Value], x, y);
-                //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(pictureBox1.Width, 335-(int)numericUpDown1.Value));
+
+                //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(animationPictureBox.Width, 335-(int)numericUpDown1.Value));
             }
 
             // Draw Reference Point Arrow
@@ -381,7 +401,7 @@ namespace UoFiddler.Controls.Forms
             };
 
             e.Graphics.FillPolygon(_whiteUnDraw, arrayPoints);
-            e.Graphics.DrawPolygon(_blackUnDraw, arrayPoints);
+            e.Graphics.DrawPolygon(_blackUndraw, arrayPoints);
         }
         //End of Soulblighter Modification
 
@@ -400,7 +420,7 @@ namespace UoFiddler.Controls.Forms
                 numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
             }
 
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
         //End of Soulblighter Modification
 
@@ -427,7 +447,7 @@ namespace UoFiddler.Controls.Forms
 
                 frame.ChangeCenter((int)numericUpDownCx.Value, frame.Center.Y);
                 Options.ChangedUltimaClass["Animations"] = true;
-                pictureBox1.Invalidate();
+                animationPictureBox.Invalidate();
             }
             catch (NullReferenceException)
             {
@@ -459,7 +479,7 @@ namespace UoFiddler.Controls.Forms
 
                 frame.ChangeCenter(frame.Center.X, (int)numericUpDownCy.Value);
                 Options.ChangedUltimaClass["Animations"] = true;
-                pictureBox1.Invalidate();
+                animationPictureBox.Invalidate();
             }
             catch (NullReferenceException)
             {
@@ -657,7 +677,7 @@ namespace UoFiddler.Controls.Forms
                 corrector++;
             }
 
-            for (int i = 0; i < frameIndex.Length; i++)
+            foreach (var index in frameIndex)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 if (edit == null)
@@ -665,7 +685,7 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                edit.RemoveFrame(frameIndex[i]);
+                edit.RemoveFrame(index);
                 listView1.Items.RemoveAt(listView1.Items.Count - 1);
                 trackBar2.Maximum = edit.Frames.Count != 0 ? edit.Frames.Count - 1 : 0;
                 listView1.Invalidate();
@@ -696,7 +716,7 @@ namespace UoFiddler.Controls.Forms
                 Bitmap bmp = new Bitmap(dialog.FileName);
                 if (dialog.FileName.Contains(".bmp"))
                 {
-                    bmp = ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                    bmp = ConvertBmpAnim(bmp, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                 }
 
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
@@ -733,7 +753,7 @@ namespace UoFiddler.Controls.Forms
                                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                                 if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") || dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") || dialog.FileName.Contains(".jpg"))
                                 {
-                                    bmp = ConvertBmpAnim(bmp, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                                    bmp = ConvertBmpAnim(bmp, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                                     //edit.GetImagePalette(bmp);
                                 }
 
@@ -758,8 +778,8 @@ namespace UoFiddler.Controls.Forms
                                         bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                                         bmp.SelectActiveFrame(dimension, index);
                                         bitBmp[index] = bmp;
-                                        bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int)numericUpDown3.Value,
-                                            (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                                        bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int)numericUpDownRed.Value,
+                                            (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                                         edit.AddFrame(bitBmp[index]);
                                         TreeNode node = GetNode(_currentBody);
                                         if (node != null)
@@ -850,7 +870,7 @@ namespace UoFiddler.Controls.Forms
             }
 
             // Refresh List
-            _currentDir = trackBar1.Value;
+            _currentDir = trackBarDirection.Value;
             AfterSelectTreeView(null, null);
         }
 
@@ -1063,8 +1083,9 @@ namespace UoFiddler.Controls.Forms
         }
 
         //My Soulblighter Modification
-        private void Button2_Click(object sender, EventArgs e)
+        private void SameCenterButton_Click(object sender, EventArgs e)
         {
+            // TODO: there is no undo for same center button
             try
             {
                 if (_fileType == 0)
@@ -1084,7 +1105,7 @@ namespace UoFiddler.Controls.Forms
                     frame[index] = edit.Frames[index];
                     frame[index].ChangeCenter((int)numericUpDownCx.Value, (int)numericUpDownCy.Value);
                     Options.ChangedUltimaClass["Animations"] = true;
-                    pictureBox1.Invalidate();
+                    animationPictureBox.Invalidate();
                 }
             }
             catch (NullReferenceException)
@@ -1134,19 +1155,19 @@ namespace UoFiddler.Controls.Forms
 
         private void ReferencePointX(object sender, EventArgs e)
         {
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         private void ReferencePointY(object sender, EventArgs e)
         {
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         private static bool _lockButton;
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_lockButton || !toolStripButton6.Enabled)
+            if (_lockButton || !ToolStripLockButton.Enabled)
             {
                 return;
             }
@@ -1154,13 +1175,13 @@ namespace UoFiddler.Controls.Forms
             numericUpDown2.Value = 418 - e.X;
             numericUpDown1.Value = 335 - e.Y;
 
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         // Change center of frame on key press
         private void TxtSendData_KeyDown(object sender, KeyEventArgs e)
         {
-            if (timer1.Enabled)
+            if (AnimationTimer.Enabled)
             {
                 return;
             }
@@ -1192,13 +1213,13 @@ namespace UoFiddler.Controls.Forms
                     break;
                 }
             }
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         // Change center of Reference Point on key press
         private void TxtSendData_KeyDown2(object sender, KeyEventArgs e)
         {
-            if (_lockButton || !toolStripButton6.Enabled)
+            if (_lockButton || !ToolStripLockButton.Enabled)
             {
                 return;
             }
@@ -1230,11 +1251,10 @@ namespace UoFiddler.Controls.Forms
                     break;
                 }
             }
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
-        // Lock Button
-        private void ToolStripButton6_Click(object sender, EventArgs e)
+        private void ToolStripLockButton_Click(object sender, EventArgs e)
         {
             _lockButton = !_lockButton;
             numericUpDown2.Enabled = !_lockButton;
@@ -1254,10 +1274,10 @@ namespace UoFiddler.Controls.Forms
                     dialog.Filter = "Gif files (*.gif;)|*.gif;";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        trackBar1.Enabled = false;
+                        trackBarDirection.Enabled = false;
                         if (dialog.FileNames.Length == 5)
                         {
-                            trackBar1.Value = 0;
+                            trackBarDirection.Value = 0;
 
                             AddFilesAllDirections(dialog);
                         }
@@ -1280,17 +1300,17 @@ namespace UoFiddler.Controls.Forms
                                 continue;
                             }
 
-                            trackBar1.Value = 0;
+                            trackBarDirection.Value = 0;
 
                             AddFilesAllDirections(dialog);
                         }
-                        trackBar1.Enabled = true;
+                        trackBarDirection.Enabled = true;
                     }
                 }
             }
 
             // Refresh List
-            _currentDir = trackBar1.Value;
+            _currentDir = trackBarDirection.Value;
             AfterSelectTreeView(null, null);
         }
 
@@ -1324,8 +1344,8 @@ namespace UoFiddler.Controls.Forms
                             bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                             bmp.SelectActiveFrame(dimension, index);
                             bitBmp[index] = bmp;
-                            bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
-                                (int) numericUpDown4.Value, (int) numericUpDown5.Value);
+                            bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
+                                (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
                             edit.AddFrame(bitBmp[index]);
                             TreeNode node = GetNode(_currentBody);
                             if (node != null)
@@ -1375,7 +1395,7 @@ namespace UoFiddler.Controls.Forms
 
                 if ((w < 4) && (w < dialog.FileNames.Length - 1))
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
         }
@@ -1383,29 +1403,27 @@ namespace UoFiddler.Controls.Forms
         private void ToolStripButton10_Click(object sender, EventArgs e)
         {
             _drawEmpty = !_drawEmpty;
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         private void ToolStripButton7_Click(object sender, EventArgs e)
         {
             _drawFull = !_drawFull;
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         private void AnimationEdit_FormClosing(object sender, FormClosingEventArgs e)
         {
+            AnimationTimer.Enabled = false;
             _drawFull = false;
             _drawEmpty = false;
             _lockButton = false;
-            timer1.Enabled = false;
-            _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-            _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
             _loaded = false;
+
             ControlEvents.FilePathChangeEvent -= OnFilePathChangeEvent;
         }
 
-        // Play Button Timer
-        private void Timer1_Tick(object sender, EventArgs e)
+        private void AnimationTimer_Tick(object sender, EventArgs e)
         {
             if (trackBar2.Value < trackBar2.Maximum)
             {
@@ -1416,35 +1434,33 @@ namespace UoFiddler.Controls.Forms
                 trackBar2.Value = 0;
             }
 
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
-        // Play Button
-        private void ToolStripButton11_Click(object sender, EventArgs e)
+        private void ToolStripButtonPlayAnimation_Click(object sender, EventArgs e)
         {
-            if (timer1.Enabled)
+            if (AnimationTimer.Enabled)
             {
-                timer1.Enabled = false;
+                AnimationTimer.Enabled = false;
+                trackBar2.Enabled = true;
+                SameCenterButton.Enabled = true;
                 numericUpDownCx.Enabled = true;
                 numericUpDownCy.Enabled = true;
-                trackBar2.Enabled = true;
-                button2.Enabled = true; // Same Center button
-                toolStripButton12.Enabled = true; // UnDraw Reference Point button
 
                 if (toolStripButton12.Checked)
                 {
-                    toolStripButton6.Enabled = false; // Lock button
-                    _blackUnDraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
-                    _whiteUnDraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
+                    ToolStripLockButton.Enabled = false;
+                    _blackUndraw = _blackUnDrawTransparent;
+                    _whiteUnDraw = _whiteUnDrawTransparent;
                 }
                 else
                 {
-                    toolStripButton6.Enabled = true;
-                    _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-                    _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+                    ToolStripLockButton.Enabled = true;
+                    _blackUndraw = _blackUnDrawOpaque;
+                    _whiteUnDraw = _whiteUnDrawOpaque;
                 }
 
-                if (toolStripButton6.Checked || toolStripButton12.Checked)
+                if (ToolStripLockButton.Checked || toolStripButton12.Checked)
                 {
                     numericUpDown2.Enabled = false;
                     numericUpDown1.Enabled = false;
@@ -1457,36 +1473,31 @@ namespace UoFiddler.Controls.Forms
             }
             else
             {
-                timer1.Enabled = true;
+                AnimationTimer.Enabled = true;
+                trackBar2.Enabled = false;
+                SameCenterButton.Enabled = false;
+
                 numericUpDownCx.Enabled = false;
                 numericUpDownCy.Enabled = false;
-                numericUpDown2.Enabled = false;
-                numericUpDown1.Enabled = false;
-                trackBar2.Enabled = false;
-                button2.Enabled = false; // Same Center button
-                toolStripButton12.Enabled = false; // UnDraw Reference Point button
-                toolStripButton6.Enabled = false; // Lock button
-                _blackUnDraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
-                _whiteUnDraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
             }
 
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
-        // Animation Speed
-        private void TrackBar3_ValueChanged(object sender, EventArgs e)
+        private void AnimationSpeedTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            timer1.Interval = 50 + (trackBar3.Value * 30);
+            AnimationTimer.Interval = 50 + (animationSpeedTrackBar.Value * 30);
         }
 
         private void ToolStripButton12_Click(object sender, EventArgs e)
         {
             if (!toolStripButton12.Checked)
             {
-                _blackUnDraw = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-                _whiteUnDraw = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
-                toolStripButton6.Enabled = true;
-                if (toolStripButton6.Checked)
+                _blackUndraw = _blackUnDrawOpaque;
+                _whiteUnDraw = _whiteUnDrawOpaque;
+
+                ToolStripLockButton.Enabled = true;
+                if (ToolStripLockButton.Checked)
                 {
                     numericUpDown2.Enabled = false;
                     numericUpDown1.Enabled = false;
@@ -1499,13 +1510,13 @@ namespace UoFiddler.Controls.Forms
             }
             else
             {
-                _blackUnDraw = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
-                _whiteUnDraw = new SolidBrush(Color.FromArgb(0, 255, 255, 255));
-                toolStripButton6.Enabled = false;
+                _blackUndraw = _blackUnDrawTransparent;
+                _whiteUnDraw = _whiteUnDrawTransparent;
+                ToolStripLockButton.Enabled = false;
                 numericUpDown2.Enabled = false;
                 numericUpDown1.Enabled = false;
             }
-            pictureBox1.Invalidate();
+            animationPictureBox.Invalidate();
         }
 
         // All Directions with Canvas
@@ -1523,11 +1534,11 @@ namespace UoFiddler.Controls.Forms
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                            trackBar1.Enabled = false;
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                            trackBarDirection.Enabled = false;
                             if (dialog.FileNames.Length == 5)
                             {
-                                trackBar1.Value = 0;
+                                trackBarDirection.Value = 0;
                                 AddSelectedFiles(dialog, customConvert);
                             }
 
@@ -1549,17 +1560,17 @@ namespace UoFiddler.Controls.Forms
                                     continue;
                                 }
 
-                                trackBar1.Value = 0;
+                                trackBarDirection.Value = 0;
                                 AddSelectedFiles(dialog, customConvert);
                             }
 
-                            trackBar1.Enabled = true;
+                            trackBarDirection.Enabled = true;
                         }
                     }
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBar1.Value;
+                _currentDir = trackBarDirection.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (OutOfMemoryException)
@@ -1592,7 +1603,7 @@ namespace UoFiddler.Controls.Forms
 
                 if ((w < 4) && (w < dialog.FileNames.Length - 1))
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
         }
@@ -1924,8 +1935,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDown3.Value,
-                    (int) numericUpDown4.Value, (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
+                    (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -1986,8 +1997,8 @@ namespace UoFiddler.Controls.Forms
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value,
-                                (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
+                                (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                             //My Soulblighter Modifications
                             for (int w = 0; w < dialog.FileNames.Length; w++)
                             {
@@ -2008,7 +2019,7 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBar1.Value;
+                _currentDir = trackBarDirection.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (OutOfMemoryException)
@@ -2037,7 +2048,7 @@ namespace UoFiddler.Controls.Forms
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     if (edit != null)
                     {
-                        bit = ConvertBmpAnim(bit, (int)numericUpDown3.Value, (int)numericUpDown4.Value, (int)numericUpDown5.Value);
+                        bit = ConvertBmpAnim(bit, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                         edit.GetImagePalette(bit);
                     }
                     SetPaletteBox();
@@ -2123,28 +2134,28 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        //Get position of all animations in array
-        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        private void CbSaveCoordinates_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            // Get position of all animations in array
+            if (cbSaveCoordinates.Checked)
             {
-                trackBar1.Enabled = false;
+                trackBarDirection.Enabled = false;
                 trackBar2.Value = 0;
-                button1.Enabled = true;
+                SetButton.Enabled = true;
                 for (int count = 0; count < 5;)
                 {
-                    if (trackBar1.Value < 4)
+                    if (trackBarDirection.Value < 4)
                     {
-                        _animCx[trackBar1.Value] = (int)numericUpDownCx.Value;
-                        _animCy[trackBar1.Value] = (int)numericUpDownCy.Value;
-                        trackBar1.Value++;
+                        _animCx[trackBarDirection.Value] = (int)numericUpDownCx.Value;
+                        _animCy[trackBarDirection.Value] = (int)numericUpDownCy.Value;
+                        trackBarDirection.Value++;
                         count++;
                     }
                     else
                     {
-                        _animCx[trackBar1.Value] = (int)numericUpDownCx.Value;
-                        _animCy[trackBar1.Value] = (int)numericUpDownCy.Value;
-                        trackBar1.Value = 0;
+                        _animCx[trackBarDirection.Value] = (int)numericUpDownCx.Value;
+                        _animCy[trackBarDirection.Value] = (int)numericUpDownCy.Value;
+                        trackBarDirection.Value = 0;
                         count++;
                     }
                 }
@@ -2153,7 +2164,7 @@ namespace UoFiddler.Controls.Forms
                 toolStripLabel10.Text = $"3: {_animCx[2]}/{_animCy[2]}";
                 toolStripLabel11.Text = $"4: {_animCx[3]}/{_animCy[3]}";
                 toolStripLabel12.Text = $"5: {_animCx[4]}/{_animCy[4]}";
-                trackBar1.Enabled = true;
+                trackBarDirection.Enabled = true;
             }
             else
             {
@@ -2162,16 +2173,15 @@ namespace UoFiddler.Controls.Forms
                 toolStripLabel10.Text = "3:    /     ";
                 toolStripLabel11.Text = "4:    /     ";
                 toolStripLabel12.Text = "5:    /     ";
-                button1.Enabled = false;
+                SetButton.Enabled = false;
             }
         }
 
-        // Set Button
-        private void Button1_Click(object sender, EventArgs e)
+        private void SetButton_Click(object sender, EventArgs e)
         {
-            trackBar1.Value = 0;
-            trackBar1.Enabled = false;
-            for (int i = 0; i <= trackBar1.Maximum; i++)
+            trackBarDirection.Value = 0;
+            trackBarDirection.Enabled = false;
+            for (int i = 0; i <= trackBarDirection.Maximum; i++)
             {
                 try
                 {
@@ -2180,11 +2190,12 @@ namespace UoFiddler.Controls.Forms
                         AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                         if (edit != null && edit.Frames.Count >= trackBar2.Value)
                         {
-                            for (int index = 0; index < edit.Frames.Count; index++)
+                            foreach (var editFrame in edit.Frames)
                             {
-                                edit.Frames[index].ChangeCenter(_animCx[i], _animCy[i]);
+                                editFrame.ChangeCenter(_animCx[i], _animCy[i]);
+                                // TODO: check if we can invalidate pictture box only after the loop
                                 Options.ChangedUltimaClass["Animations"] = true;
-                                pictureBox1.Invalidate();
+                                animationPictureBox.Invalidate();
                             }
                         }
                     }
@@ -2195,16 +2206,16 @@ namespace UoFiddler.Controls.Forms
                     // ignored
                 }
 
-                if (trackBar1.Value < trackBar1.Maximum)
+                if (trackBarDirection.Value < trackBarDirection.Maximum)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
                 else
                 {
-                    trackBar1.Value = 0;
+                    trackBarDirection.Value = 0;
                 }
             }
-            trackBar1.Enabled = true;
+            trackBarDirection.Enabled = true;
         }
 
         // Add Directions with Canvas ( CV5 style GIF )
@@ -2222,10 +2233,10 @@ namespace UoFiddler.Controls.Forms
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value,
-                                (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                            trackBar1.Enabled = false;
-                            trackBar1.Value = 0;
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
+                                (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                            trackBarDirection.Enabled = false;
+                            trackBarDirection.Value = 0;
                             Bitmap bmp = new Bitmap(dialog.FileName);
                             AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
                                 _currentDir);
@@ -2264,19 +2275,19 @@ namespace UoFiddler.Controls.Forms
                                 }
                             }
 
-                            trackBar1.Enabled = true;
+                            trackBarDirection.Enabled = true;
                         }
                     }
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBar1.Value;
+                _currentDir = trackBarDirection.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (NullReferenceException)
             {
                 // TODO: add logging or fix?
-                trackBar1.Enabled = true;
+                trackBarDirection.Enabled = true;
             }
         }
 
@@ -2286,8 +2297,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2325,7 +2336,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 8 * 5) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -2336,8 +2347,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount / 8; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2375,7 +2386,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 8) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -2386,8 +2397,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2425,7 +2436,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 8 * 6) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -2436,8 +2447,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2475,7 +2486,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 8 * 2) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -2486,8 +2497,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2907,23 +2918,23 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        private void CheckBox2_CheckedChanged(object sender, EventArgs e)
+        private void CbLockColorControls_CheckedChanged(object sender, EventArgs e)
         {
-            if (!checkBox2.Checked)
+            if (!cbLockColorControls.Checked)
             {
-                numericUpDown3.Enabled = true;
-                numericUpDown4.Enabled = true;
-                numericUpDown5.Enabled = true;
+                numericUpDownRed.Enabled = true;
+                numericUpDownGreen.Enabled = true;
+                numericUpDownBlue.Enabled = true;
             }
             else
             {
-                numericUpDown3.Enabled = false;
-                numericUpDown4.Enabled = false;
-                numericUpDown5.Enabled = false;
+                numericUpDownRed.Enabled = false;
+                numericUpDownGreen.Enabled = false;
+                numericUpDownBlue.Enabled = false;
 
-                numericUpDown3.Value = 255;
-                numericUpDown4.Value = 255;
-                numericUpDown5.Value = 255;
+                numericUpDownRed.Value = 255;
+                numericUpDownGreen.Value = 255;
+                numericUpDownBlue.Value = 255;
             }
         }
 
@@ -2942,10 +2953,10 @@ namespace UoFiddler.Controls.Forms
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDown3.Value,
-                                (int)numericUpDown4.Value, (int)numericUpDown5.Value);
-                            trackBar1.Enabled = false;
-                            trackBar1.Value = 0;
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
+                                (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                            trackBarDirection.Enabled = false;
+                            trackBarDirection.Value = 0;
                             Bitmap bmp = new Bitmap(dialog.FileName);
                             AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
                                 _currentDir);
@@ -2984,19 +2995,19 @@ namespace UoFiddler.Controls.Forms
                                 }
                             }
 
-                            trackBar1.Enabled = true;
+                            trackBarDirection.Enabled = true;
                         }
                     }
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBar1.Value;
+                _currentDir = trackBarDirection.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (NullReferenceException)
             {
                 // TODO: add logging or fix?
-                trackBar1.Enabled = true;
+                trackBarDirection.Enabled = true;
             }
         }
 
@@ -3006,8 +3017,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3045,7 +3056,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 5 * 1) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -3056,8 +3067,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3095,7 +3106,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 5 * 2) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -3106,8 +3117,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3145,7 +3156,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 5 * 3) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -3156,8 +3167,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3195,7 +3206,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (index == (frameCount / 5 * 4) - 1)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
             }
 
@@ -3206,8 +3217,8 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDown3.Value, (int) numericUpDown4.Value,
-                    (int) numericUpDown5.Value);
+                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
+                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index]);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3249,9 +3260,9 @@ namespace UoFiddler.Controls.Forms
 
         private static unsafe Bitmap ConvertBmpAnimKr(Bitmap bmp, int red, int green, int blue)
         {
-            //Extra background
+            // Extra background
             int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
-            //
+
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             ushort* line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
@@ -3274,11 +3285,14 @@ namespace UoFiddler.Controls.Forms
                     int blueTemp = (cur[x] - 32768) / 32;
                     blueTemp *= 32;
                     blueTemp = cur[x] - 32768 - blueTemp;
+
                     int greenTemp = (cur[x] - 32768) / 1024;
                     greenTemp *= 1024;
                     greenTemp = cur[x] - 32768 - greenTemp - blueTemp;
                     greenTemp /= 32;
+
                     int redTemp = (cur[x] - 32768) / 1024;
+
                     // remove green colors
                     if (greenTemp > blueTemp && greenTemp > redTemp && greenTemp > 10)
                     {
@@ -3631,224 +3645,118 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        private void Button3_Click(object sender, EventArgs e)
+        private void SetPalleteButton_Click(object sender, EventArgs e)
         {
             for (int x = 0; x < 5; x++)
             {
-                //RGB
-                if (radioButton1.Checked)
+                // RGB
+                if (rbRGB.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConverter(1);
                 }
-                //RBG
-                if (radioButton2.Checked)
+
+                // RBG
+                if (rbRBG.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConverter(2);
                 }
-                //GRB
-                if (radioButton3.Checked)
+
+                // GRB
+                if (rbGRB.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConverter(3);
                 }
-                //GBR
-                if (radioButton4.Checked)
+
+                // GBR
+                if (rbGBR.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConverter(4);
                 }
-                //BGR
-                if (radioButton5.Checked)
+
+                // BGR
+                if (rbBGR.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConverter(5);
                 }
-                //BRG
-                if (radioButton6.Checked)
+
+                // BRG
+                if (rbBRG.Checked)
                 {
                     AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     edit?.PaletteConverter(6);
                 }
+
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
                 SetPaletteBox();
-                if (trackBar1.Value != trackBar1.Maximum)
+                if (trackBarDirection.Value != trackBarDirection.Maximum)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
                 else
                 {
-                    trackBar1.Value = 0;
+                    trackBarDirection.Value = 0;
                 }
             }
         }
 
-        private void RadioButton2_CheckedChanged(object sender, EventArgs e)
+        private void ConvertAndSetPalette(int selector)
         {
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConverter(2);
+                edit?.PaletteConverter(selector);
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
                 SetPaletteBox();
-                if (trackBar1.Value != trackBar1.Maximum)
+                if (trackBarDirection.Value != trackBarDirection.Maximum)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
                 else
                 {
-                    trackBar1.Value = 0;
+                    trackBarDirection.Value = 0;
                 }
             }
+        }
+
+        // TODO: check why there is no RadioButton1_CheckedChanged event for selector 1?
+
+        private void RadioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            ConvertAndSetPalette(2);
         }
 
         private void RadioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            for (int x = 0; x < 5; x++)
-            {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConverter(3);
-                SetPaletteBox();
-                listView1.Invalidate();
-                Options.ChangedUltimaClass["Animations"] = true;
-                SetPaletteBox();
-                if (trackBar1.Value != trackBar1.Maximum)
-                {
-                    trackBar1.Value++;
-                }
-                else
-                {
-                    trackBar1.Value = 0;
-                }
-            }
+            ConvertAndSetPalette(3);
         }
 
         private void RadioButton4_CheckedChanged(object sender, EventArgs e)
         {
-            if (!radioButton4.Checked)
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    if (edit != null)
-                    {
-                        // TODO: why this is called 2 times?
-                        //edit.PaletteConversor(4);
-                        edit.PaletteConverter(4);
-                    }
-                    SetPaletteBox();
-                    listView1.Invalidate();
-                    Options.ChangedUltimaClass["Animations"] = true;
-                    SetPaletteBox();
-                    if (trackBar1.Value != trackBar1.Maximum)
-                    {
-                        trackBar1.Value++;
-                    }
-                    else
-                    {
-                        trackBar1.Value = 0;
-                    }
-                }
-            }
-            else
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(4);
-                    SetPaletteBox();
-                    listView1.Invalidate();
-                    Options.ChangedUltimaClass["Animations"] = true;
-                    SetPaletteBox();
-                    if (trackBar1.Value != trackBar1.Maximum)
-                    {
-                        trackBar1.Value++;
-                    }
-                    else
-                    {
-                        trackBar1.Value = 0;
-                    }
-                }
-            }
+            ConvertAndSetPalette(4);
         }
 
         private void RadioButton5_CheckedChanged(object sender, EventArgs e)
         {
-            for (int x = 0; x < 5; x++)
-            {
-                AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConverter(5);
-                SetPaletteBox();
-                listView1.Invalidate();
-                Options.ChangedUltimaClass["Animations"] = true;
-                SetPaletteBox();
-                if (trackBar1.Value != trackBar1.Maximum)
-                {
-                    trackBar1.Value++;
-                }
-                else
-                {
-                    trackBar1.Value = 0;
-                }
-            }
+            ConvertAndSetPalette(5);
         }
 
         private void RadioButton6_CheckedChanged(object sender, EventArgs e)
         {
-            if (!radioButton6.Checked)
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    if (edit != null)
-                    {
-                        // TODO: why this is called 2 times?
-                        //edit.PaletteConversor(6);
-                        edit.PaletteConverter(6);
-                    }
-                    SetPaletteBox();
-                    listView1.Invalidate();
-                    Options.ChangedUltimaClass["Animations"] = true;
-                    SetPaletteBox();
-                    if (trackBar1.Value != trackBar1.Maximum)
-                    {
-                        trackBar1.Value++;
-                    }
-                    else
-                    {
-                        trackBar1.Value = 0;
-                    }
-                }
-            }
-            else
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(6);
-                    SetPaletteBox();
-                    listView1.Invalidate();
-                    Options.ChangedUltimaClass["Animations"] = true;
-                    SetPaletteBox();
-                    if (trackBar1.Value != trackBar1.Maximum)
-                    {
-                        trackBar1.Value++;
-                    }
-                    else
-                    {
-                        trackBar1.Value = 0;
-                    }
-                }
-            }
+            ConvertAndSetPalette(6);
         }
 
-        private void Button4_Click(object sender, EventArgs e)
+        private void ApplyButton_Click(object sender, EventArgs e)
         {
+            // TODO: except calling reducer here the whole logic is the same as in ConvertAndSetPalette()
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = Ultima.AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
@@ -3857,13 +3765,13 @@ namespace UoFiddler.Controls.Forms
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
                 SetPaletteBox();
-                if (trackBar1.Value != trackBar1.Maximum)
+                if (trackBarDirection.Value != trackBarDirection.Maximum)
                 {
-                    trackBar1.Value++;
+                    trackBarDirection.Value++;
                 }
                 else
                 {
-                    trackBar1.Value = 0;
+                    trackBarDirection.Value = 0;
                 }
             }
         }

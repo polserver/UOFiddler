@@ -157,6 +157,7 @@ namespace UoFiddler.Controls.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(295, 269);
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ItemDetail";
             this.Text = "ItemDetail";

@@ -84,6 +84,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // IDEntry
             // 
+            this.IDEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.IDEntry.MaxLength = 10;
             this.IDEntry.Name = "IDEntry";
             this.IDEntry.Size = new System.Drawing.Size(100, 25);
@@ -114,6 +115,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // KeyWordEntry
             // 
+            this.KeyWordEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyWordEntry.Name = "KeyWordEntry";
             this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
             this.KeyWordEntry.Text = "KeyWord..";
@@ -244,6 +246,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.toolStrip2);
+            this.DoubleBuffered = true;
             this.Name = "Speech";
             this.Size = new System.Drawing.Size(622, 326);
             this.Load += new System.EventHandler(this.OnLoad);

@@ -73,6 +73,7 @@ namespace UoFiddler.Controls.Forms
             this.ClientSize = new System.Drawing.Size(294, 76);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBoxGraphic);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.Name = "GumpSearch";

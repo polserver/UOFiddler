@@ -105,6 +105,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "MapReplaceTiles";
             this.Text = "MapReplaceTiles";

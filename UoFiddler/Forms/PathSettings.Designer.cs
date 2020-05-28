@@ -92,6 +92,7 @@ namespace UoFiddler.Forms
             // 
             // tsTbRootPath
             // 
+            this.tsTbRootPath.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.tsTbRootPath.Name = "tsTbRootPath";
             this.tsTbRootPath.Size = new System.Drawing.Size(150, 25);
             this.tsTbRootPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownDir);
@@ -103,6 +104,7 @@ namespace UoFiddler.Forms
             this.ClientSize = new System.Drawing.Size(528, 303);
             this.Controls.Add(this.pgPaths);
             this.Controls.Add(this.tsPathSettingsMenu);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "PathSettings";
             this.Text = "Path Settings";

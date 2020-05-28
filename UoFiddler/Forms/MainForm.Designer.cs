@@ -41,9 +41,8 @@ namespace UoFiddler.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.TabPanel = new System.Windows.Forms.TabControl();
-            this.contextMenuStripMainForm = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStripMainForm = new System.Windows.Forms.ContextMenuStrip();
             this.unDockToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Start = new System.Windows.Forms.TabPage();
             this.Versionlabel = new System.Windows.Forms.Label();
@@ -87,7 +86,7 @@ namespace UoFiddler.Forms
             this.controlRadarCol = new UoFiddler.Controls.UserControls.RadarColor();
             this.SkillGrp = new System.Windows.Forms.TabPage();
             this.controlSkillGrp = new UoFiddler.Controls.UserControls.SkillGrp();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTip = new System.Windows.Forms.ToolTip();
             this.tsMainMenu = new System.Windows.Forms.ToolStrip();
             this.SettingsMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.AlwaysOnTopMenuitem = new System.Windows.Forms.ToolStripMenuItem();
@@ -671,34 +670,34 @@ namespace UoFiddler.Forms
             // 
             this.AlwaysOnTopMenuitem.CheckOnClick = true;
             this.AlwaysOnTopMenuitem.Name = "AlwaysOnTopMenuitem";
-            this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(180, 22);
+            this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(152, 22);
             this.AlwaysOnTopMenuitem.Text = "Always On Top";
             this.AlwaysOnTopMenuitem.Click += new System.EventHandler(this.OnClickAlwaysTop);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.OnClickOptions);
             // 
             // pathSettingsMenuItem
             // 
             this.pathSettingsMenuItem.Name = "pathSettingsMenuItem";
-            this.pathSettingsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pathSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pathSettingsMenuItem.Text = "Path Settings..";
             this.pathSettingsMenuItem.Click += new System.EventHandler(this.Click_path);
             // 
             // tsSettingsSeparator
             // 
             this.tsSettingsSeparator.Name = "tsSettingsSeparator";
-            this.tsSettingsSeparator.Size = new System.Drawing.Size(177, 6);
+            this.tsSettingsSeparator.Size = new System.Drawing.Size(149, 6);
             // 
             // restartNeededMenuItem
             // 
             this.restartNeededMenuItem.ForeColor = System.Drawing.Color.DarkRed;
             this.restartNeededMenuItem.Name = "restartNeededMenuItem";
-            this.restartNeededMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.restartNeededMenuItem.Size = new System.Drawing.Size(152, 22);
             this.restartNeededMenuItem.Text = "Reload Files";
             this.restartNeededMenuItem.Visible = false;
             this.restartNeededMenuItem.Click += new System.EventHandler(this.Restart);
@@ -1010,6 +1009,7 @@ namespace UoFiddler.Forms
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.TabPanel);
             this.Controls.Add(this.tsMainMenu);
+            this.DoubleBuffered = true;
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "MainForm";
             this.Text = "UOFiddler";

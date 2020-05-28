@@ -58,7 +58,9 @@ namespace UoFiddler.Controls.Forms
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.NumberLabel, this.SaveButton});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NumberLabel,
+            this.SaveButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -89,6 +91,7 @@ namespace UoFiddler.Controls.Forms
             this.ClientSize = new System.Drawing.Size(297, 270);
             this.Controls.Add(this.TextBox);
             this.Controls.Add(this.toolStrip1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "ClilocDetail";
             this.Text = "ClilocDetail";
@@ -96,6 +99,7 @@ namespace UoFiddler.Controls.Forms
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         private System.Windows.Forms.ToolStripLabel NumberLabel;

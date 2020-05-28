@@ -143,6 +143,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.label1);
             this.Controls.Add(this.offsety);
             this.Controls.Add(this.offsetx);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "FontOffset";
             this.Text = "Font Offset";

@@ -27,6 +27,7 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             pictureBox.MouseWheel += OnMouseWheel;
             _refMarker = this;
         }
@@ -142,7 +143,10 @@ namespace UoFiddler.Controls.UserControls
                 for (int i = 0; i < hue.Colors.Length; ++i)
                 {
                     Rectangle rectangle = new Rectangle(200 + (int)Math.Round(i * size), y * _itemHeight, (int)Math.Round(size + 1f), _itemHeight);
-                    e.Graphics.FillRectangle(new SolidBrush(hue.GetColor(i)), rectangle);
+                    using (var brush = new SolidBrush(hue.GetColor(i)))
+                    {
+                        e.Graphics.FillRectangle(brush, rectangle);
+                    }
                 }
             }
         }

@@ -67,6 +67,7 @@ namespace UoFiddler.Controls.Forms
             this.ClientSize = new System.Drawing.Size(292, 129);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "FontText";
             this.Text = "FontText";
