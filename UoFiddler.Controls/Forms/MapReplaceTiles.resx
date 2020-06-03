@@ -119,11 +119,11 @@
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-    &lt;MapReplace&gt;
-  &lt;Area StartX="10" StartY="20" EndX="350"EndY="467"&gt;
-  &lt;static from="0x1" to="0x2" /&gt;
-  &lt;landtile from="0x1" to="0x2" /&gt;
-  &lt;/Area&gt;
-  &lt;/MapReplace&gt;</value>
+&lt;MapReplace&gt;
+    &lt;Area StartX="10" StartY="20" EndX="350" EndY="467"&gt;
+        &lt;static from="0x1" to="0x2" /&gt;
+        &lt;landtile from="0x1" to="0x2" /&gt;
+    &lt;/Area&gt;
+&lt;/MapReplace&gt;</value>
   </data>
 </root>
