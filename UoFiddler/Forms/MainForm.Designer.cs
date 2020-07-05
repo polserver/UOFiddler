@@ -671,35 +671,36 @@ namespace UoFiddler.Forms
             // 
             this.AlwaysOnTopMenuitem.CheckOnClick = true;
             this.AlwaysOnTopMenuitem.Name = "AlwaysOnTopMenuitem";
-            this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(152, 22);
+            this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(180, 22);
             this.AlwaysOnTopMenuitem.Text = "Always On Top";
             this.AlwaysOnTopMenuitem.Click += new System.EventHandler(this.OnClickAlwaysTop);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.OnClickOptions);
             // 
             // pathSettingsMenuItem
             // 
             this.pathSettingsMenuItem.Name = "pathSettingsMenuItem";
-            this.pathSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pathSettingsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pathSettingsMenuItem.Text = "Path Settings..";
             this.pathSettingsMenuItem.Click += new System.EventHandler(this.Click_path);
             // 
             // tsSettingsSeparator
             // 
             this.tsSettingsSeparator.Name = "tsSettingsSeparator";
-            this.tsSettingsSeparator.Size = new System.Drawing.Size(149, 6);
+            this.tsSettingsSeparator.Size = new System.Drawing.Size(177, 6);
             // 
             // restartNeededMenuItem
             // 
             this.restartNeededMenuItem.ForeColor = System.Drawing.Color.DarkRed;
             this.restartNeededMenuItem.Name = "restartNeededMenuItem";
-            this.restartNeededMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restartNeededMenuItem.Size = new System.Drawing.Size(180, 22);
             this.restartNeededMenuItem.Text = "Reload Files";
+            this.restartNeededMenuItem.Visible = false;
             this.restartNeededMenuItem.Click += new System.EventHandler(this.Restart);
             // 
             // tsBtnAbout
