@@ -24,22 +24,30 @@ namespace UoFiddler.Controls.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
+            InitFlagCheckBoxes();
+        }
+
+        private void InitFlagCheckBoxes()
+        {
+            string[] enumNames = Enum.GetNames(typeof(TileFlag));
+            int maxLength = Art.IsUOAHS() ? enumNames.Length : (enumNames.Length / 2) + 1;
+
+            // items
             checkedListBox1.BeginUpdate();
             checkedListBox1.Items.Clear();
-            string[] enumNames = Enum.GetNames(typeof(TileFlag));
-            for (int i = 1; i < enumNames.Length; ++i)
+            for (int i = 1; i < maxLength; ++i)
             {
                 checkedListBox1.Items.Add(enumNames[i], false);
             }
             checkedListBox1.EndUpdate();
 
+            // land
             checkedListBox2.BeginUpdate();
             checkedListBox2.Items.Clear();
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Damaging), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wet), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Impassable), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wall), false);
-            checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Unknown3), false);
+            for (int i = 1; i < maxLength; ++i)
+            {
+                checkedListBox2.Items.Add(enumNames[i], false);
+            }
             checkedListBox2.EndUpdate();
         }
 
@@ -130,37 +138,20 @@ namespace UoFiddler.Controls.Forms
             }
 
             land.Name = name;
-            if (short.TryParse(textBoxTexID.Text, out short shortres))
+            if (ushort.TryParse(textBoxTexID.Text, out ushort shortres))
             {
                 land.TextureID = shortres;
             }
 
             land.Flags = TileFlag.None;
-            if (checkedListBox2.GetItemChecked(0))
+            Array enumValues = Enum.GetValues(typeof(TileFlag));
+            for (int i = 0; i < checkedListBox2.Items.Count; ++i)
             {
-                land.Flags |= TileFlag.Damaging;
+                if (checkedListBox2.GetItemChecked(i))
+                {
+                    land.Flags |= (TileFlag)enumValues.GetValue(i + 1);
+                }
             }
-
-            if (checkedListBox2.GetItemChecked(1))
-            {
-                land.Flags |= TileFlag.Wet;
-            }
-
-            if (checkedListBox2.GetItemChecked(2))
-            {
-                land.Flags |= TileFlag.Impassable;
-            }
-
-            if (checkedListBox2.GetItemChecked(3))
-            {
-                land.Flags |= TileFlag.Wall;
-            }
-
-            if (checkedListBox2.GetItemChecked(4))
-            {
-                land.Flags |= TileFlag.Unknown3;
-            }
-
             TileDatas.ApplyFilterLand(land);
         }
 

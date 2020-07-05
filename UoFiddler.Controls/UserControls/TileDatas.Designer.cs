@@ -50,8 +50,6 @@ namespace UoFiddler.Controls.UserControls
             this.selectRadarColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBoxItem = new System.Windows.Forms.PictureBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.textBoxUnk1HSA = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.textBoxName = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.textBoxUnk2 = new System.Windows.Forms.TextBox();
@@ -88,8 +86,6 @@ namespace UoFiddler.Controls.UserControls
             this.label23 = new System.Windows.Forms.Label();
             this.textBoxNameLand = new System.Windows.Forms.TextBox();
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
-            this.textBoxUnkLandHSA = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
             this.textBoxTexID = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
             this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
@@ -252,8 +248,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxUnk1HSA);
-            this.splitContainer3.Panel1.Controls.Add(this.label13);
             this.splitContainer3.Panel1.Controls.Add(this.textBoxName);
             this.splitContainer3.Panel1.Controls.Add(this.label9);
             this.splitContainer3.Panel1.Controls.Add(this.textBoxUnk2);
@@ -286,23 +280,6 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer3.SplitterDistance = 157;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
-            // 
-            // textBoxUnk1HSA
-            // 
-            this.textBoxUnk1HSA.Location = new System.Drawing.Point(161, 107);
-            this.textBoxUnk1HSA.Name = "textBoxUnk1HSA";
-            this.textBoxUnk1HSA.Size = new System.Drawing.Size(51, 20);
-            this.textBoxUnk1HSA.TabIndex = 24;
-            this.textBoxUnk1HSA.TextChanged += new System.EventHandler(this.OnTextChangedItemUnk1HSA);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(106, 110);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(33, 13);
-            this.label13.TabIndex = 25;
-            this.label13.Text = "Unk1";
             // 
             // textBoxName
             // 
@@ -526,7 +503,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPageLand.Location = new System.Drawing.Point(4, 22);
             this.tabPageLand.Name = "tabPageLand";
             this.tabPageLand.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLand.Size = new System.Drawing.Size(611, 265);
+            this.tabPageLand.Size = new System.Drawing.Size(613, 268);
             this.tabPageLand.TabIndex = 1;
             this.tabPageLand.Text = "LandTiles";
             this.tabPageLand.UseVisualStyleBackColor = true;
@@ -546,7 +523,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer5.Panel2.Controls.Add(this.label23);
             this.splitContainer5.Panel2.Controls.Add(this.textBoxNameLand);
             this.splitContainer5.Panel2.Controls.Add(this.splitContainer7);
-            this.splitContainer5.Size = new System.Drawing.Size(605, 259);
+            this.splitContainer5.Size = new System.Drawing.Size(607, 262);
             this.splitContainer5.SplitterDistance = 200;
             this.splitContainer5.TabIndex = 1;
             // 
@@ -564,7 +541,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer6.Panel2
             // 
             this.splitContainer6.Panel2.Controls.Add(this.pictureBoxLand);
-            this.splitContainer6.Size = new System.Drawing.Size(200, 259);
+            this.splitContainer6.Size = new System.Drawing.Size(200, 262);
             this.splitContainer6.SplitterDistance = 159;
             this.splitContainer6.TabIndex = 0;
             // 
@@ -607,7 +584,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxLand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxLand.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxLand.Name = "pictureBoxLand";
-            this.pictureBoxLand.Size = new System.Drawing.Size(200, 96);
+            this.pictureBoxLand.Size = new System.Drawing.Size(200, 99);
             this.pictureBoxLand.TabIndex = 0;
             this.pictureBoxLand.TabStop = false;
             // 
@@ -640,35 +617,16 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer7.Panel1
             // 
-            this.splitContainer7.Panel1.Controls.Add(this.textBoxUnkLandHSA);
-            this.splitContainer7.Panel1.Controls.Add(this.label14);
             this.splitContainer7.Panel1.Controls.Add(this.textBoxTexID);
             this.splitContainer7.Panel1.Controls.Add(this.label24);
             // 
             // splitContainer7.Panel2
             // 
             this.splitContainer7.Panel2.Controls.Add(this.checkedListBox2);
-            this.splitContainer7.Size = new System.Drawing.Size(401, 259);
+            this.splitContainer7.Size = new System.Drawing.Size(403, 262);
             this.splitContainer7.SplitterDistance = 27;
             this.splitContainer7.SplitterWidth = 2;
             this.splitContainer7.TabIndex = 25;
-            // 
-            // textBoxUnkLandHSA
-            // 
-            this.textBoxUnkLandHSA.Location = new System.Drawing.Point(334, 3);
-            this.textBoxUnkLandHSA.Name = "textBoxUnkLandHSA";
-            this.textBoxUnkLandHSA.Size = new System.Drawing.Size(58, 20);
-            this.textBoxUnkLandHSA.TabIndex = 5;
-            this.textBoxUnkLandHSA.TextChanged += new System.EventHandler(this.OnTextChangedLandUnkHSA);
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(279, 6);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(49, 13);
-            this.label14.TabIndex = 4;
-            this.label14.Text = "UnkHSA";
             // 
             // textBoxTexID
             // 
@@ -694,7 +652,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBox2.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox2.MultiColumn = true;
             this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(401, 230);
+            this.checkedListBox2.Size = new System.Drawing.Size(403, 233);
             this.checkedListBox2.TabIndex = 0;
             this.checkedListBox2.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnFlagItemCheckLandTiles);
             // 
@@ -882,8 +840,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label24;
@@ -923,10 +879,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TextBox textBoxStackOff;
         private System.Windows.Forms.TextBox textBoxTexID;
         private System.Windows.Forms.TextBox textBoxUnk1;
-        private System.Windows.Forms.TextBox textBoxUnk1HSA;
         private System.Windows.Forms.TextBox textBoxUnk2;
         private System.Windows.Forms.TextBox textBoxUnk3;
-        private System.Windows.Forms.TextBox textBoxUnkLandHSA;
         private System.Windows.Forms.TextBox textBoxValue;
         private System.Windows.Forms.TextBox textBoxWeight;
         private System.Windows.Forms.ToolStrip toolStrip1;
