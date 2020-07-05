@@ -59,7 +59,7 @@ namespace UoFiddler.Controls.UserControls
                 //checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wet), false);
                 //checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Impassable), false);
                 //checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Wall), false);
-                //checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.Unknown3), false);
+                //checkedListBox2.Items.Add(Enum.GetName(typeof(TileFlag), TileFlag.NoDiagonal), false);
             }
             finally
             {
@@ -1348,7 +1348,7 @@ namespace UoFiddler.Controls.UserControls
                     changeFlag = TileFlag.Wall;
                     break;
                 case 4:
-                    changeFlag = TileFlag.Unknown3;
+                    changeFlag = TileFlag.NoDiagonal;
                     break;
                 default:
                     changeFlag = TileFlag.None;
