@@ -150,7 +150,7 @@ namespace Ultima
             temp = Convert.ToByte(split[i++]);
             if (temp != 0)
             {
-                Flags |= TileFlag.Internal;
+                Flags |= TileFlag.ArticleThe;
             }
 
             temp = Convert.ToByte(split[i++]);
@@ -210,7 +210,7 @@ namespace Ultima
             temp = Convert.ToByte(split[i++]);
             if (temp != 0)
             {
-                Flags |= TileFlag.Unknown3;
+                Flags |= TileFlag.NoDiagonal;
             }
 
             temp = Convert.ToByte(split[i++]);
@@ -721,7 +721,7 @@ namespace Ultima
             temp = Convert.ToByte(split[i++]);
             if (temp != 0)
             {
-                Flags |= TileFlag.Internal;
+                Flags |= TileFlag.ArticleThe;
             }
 
             temp = Convert.ToByte(split[i++]);
@@ -781,7 +781,7 @@ namespace Ultima
             temp = Convert.ToByte(split[i++]);
             if (temp != 0)
             {
-                Flags |= TileFlag.Unknown3;
+                Flags |= TileFlag.NoDiagonal;
             }
 
             temp = Convert.ToByte(split[i++]);
@@ -1086,9 +1086,9 @@ namespace Ultima
         /// </summary>
         ArticleAn = 0x00008000,
         /// <summary>
-        /// Not yet documented.
+        /// Probably article The prepended to the tile name.
         /// </summary>
-        Internal = 0x00010000,
+        ArticleThe = 0x00010000,
         /// <summary>
         /// The tile becomes translucent when walked behind. Boat masts also have this flag.
         /// </summary>
@@ -1126,9 +1126,9 @@ namespace Ultima
         /// </summary>
         HoverOver = 0x02000000,
         /// <summary>
-        /// Unknown.
+        /// NoDiagonal (Unknown3).
         /// </summary>
-        Unknown3 = 0x04000000,
+        NoDiagonal = 0x04000000,
         /// <summary>
         /// Not yet documented.
         /// </summary>
