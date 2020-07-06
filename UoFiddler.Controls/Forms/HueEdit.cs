@@ -304,7 +304,7 @@ namespace UoFiddler.Controls.Forms
 
         private void OnTextChangedArt(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, 0x3FFF))
+            if (Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, Art.GetMaxItemID()))
             {
                 TextBoxArt.ForeColor = Art.IsValidStatic(index) ? Color.Black : Color.Red;
             }
@@ -321,7 +321,7 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, 0x3FFF))
+            if (!Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, Art.GetMaxItemID()))
             {
                 return;
             }
