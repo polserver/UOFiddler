@@ -135,15 +135,8 @@ namespace Ultima
                 : this(idxFile, mulFile, null, length, file, ".dat", -1, false)
         { }
 
-        public FileIndex(
-            string idxFile,
-            string mulFile,
-            string uopFile,
-            int length,
-            int file,
-            string uopEntryExtension,
-            int idxLength,
-            bool hasExtra)
+        public FileIndex(string idxFile, string mulFile, string uopFile, int length, int file, string uopEntryExtension,
+            int idxLength, bool hasExtra)
         {
             Index = new Entry3D[length];
 
@@ -200,22 +193,14 @@ namespace Ultima
                     }
                 }
 
-                if (string.IsNullOrEmpty(uopPath))
-                {
-                    uopPath = null;
-                }
-                else
+                if (!string.IsNullOrEmpty(uopPath))
                 {
                     if (string.IsNullOrEmpty(Path.GetDirectoryName(uopPath)))
                     {
                         uopPath = Path.Combine(Files.RootDir, uopPath);
                     }
 
-                    if (!File.Exists(uopPath))
-                    {
-                        uopPath = null;
-                    }
-                    else
+                    if (File.Exists(uopPath))
                     {
                         _mulPath = uopPath;
                     }
@@ -322,7 +307,9 @@ namespace Ultima
                                 var extra2 = (short)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
 
                                 Index[idx].lookup += 8;
-                                Index[idx].extra = extra1 << 16 | extra2;
+                                // changed from int b = extra1 << 16 | extra2;
+                                // int cast removes compiler warning
+                                Index[idx].extra = extra1 << 16 | (int)extra2;
 
                                 br.BaseStream.Seek(curPos, SeekOrigin.Begin);
                             }
