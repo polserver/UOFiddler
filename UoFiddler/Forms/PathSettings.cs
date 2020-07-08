@@ -36,8 +36,7 @@ namespace UoFiddler.Forms
             Files.LoadMulPath();
             Files.CheckForNewMapSize();
             pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-            pgPaths.Invalidate();
-            pgPaths.Update();
+            pgPaths.Refresh();
             tsTbRootPath.Text = Files.RootDir;
         }
 
@@ -54,7 +53,6 @@ namespace UoFiddler.Forms
 
                 Files.SetMulPath(dialog.SelectedPath);
                 pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-                pgPaths.Invalidate();
                 pgPaths.Update();
                 tsTbRootPath.Text = Files.RootDir;
                 Files.CheckForNewMapSize();
@@ -70,8 +68,7 @@ namespace UoFiddler.Forms
 
             Files.SetMulPath(tsTbRootPath.Text);
             pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
-            pgPaths.Invalidate();
-            pgPaths.Update();
+            pgPaths.Refresh();
             tsTbRootPath.Text = Files.RootDir;
             Files.CheckForNewMapSize();
         }

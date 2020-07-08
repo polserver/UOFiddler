@@ -201,26 +201,31 @@ namespace Ultima
             foreach (string file in _uoFiles)
             {
                 string filePath;
-                if (!string.IsNullOrEmpty(MulPath[file])) // file was set
+
+                // file was set
+                if (!string.IsNullOrEmpty(MulPath[file])) 
                 {
-                    if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath[file]))) // and relative
+                    // and was relative like "art.mul"
+                    if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath[file])))
                     {
                         filePath = Path.Combine(RootDir, MulPath[file]);
-                        if (File.Exists(filePath)) // exists in new Root?
+                        if (File.Exists(filePath))
                         {
                             MulPath[file] = filePath;
                             continue;
                         }
                     }
-                    else // absolute dir ignore
+                    else
                     {
+                        // absolute dir
+                        // ignore because someone might want custom path for individual file
                         continue;
                     }
                 }
 
-                filePath = Path.Combine(RootDir, file); // file was not set, or relative and non existent
-
-                MulPath[file] = File.Exists(filePath) ? file : string.Empty;
+                // file was not set, or relative and non existent
+                filePath = Path.Combine(RootDir, file);
+                MulPath[file] = File.Exists(filePath) ? filePath : string.Empty;
             }
         }
 
@@ -301,9 +306,9 @@ namespace Ultima
         private static string LoadDirectory()
         {
             string dir = null;
-            for (int i = 0; i < _knownRegKeys.Length; ++i)
+            foreach (var regKey in _knownRegKeys)
             {
-                string exePath = GetPath(Environment.Is64BitOperatingSystem ? $@"Wow6432Node\{_knownRegKeys[i]}" : _knownRegKeys[i]);
+                string exePath = GetPath(Environment.Is64BitOperatingSystem ? $@"Wow6432Node\{regKey}" : regKey);
 
                 if (exePath == null)
                 {
