@@ -532,12 +532,7 @@ namespace UoFiddler.Controls.UserControls
                     newGraph.Clear(Color.FromArgb(-1));
                 }
 
-                var prevImage = DetailPictureBox.Image;
-                if (prevImage != null)
-                {
-                    DetailPictureBox.Image.Dispose();
-                }
-
+                DetailPictureBox.Image?.Dispose();
                 DetailPictureBox.Image = newBit;
             }
             else
@@ -550,12 +545,7 @@ namespace UoFiddler.Controls.UserControls
                     newGraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
                 }
 
-                var prevImage = DetailPictureBox.Image;
-                if (prevImage != null)
-                {
-                    DetailPictureBox.Image.Dispose();
-                }
-
+                DetailPictureBox.Image?.Dispose();
                 DetailPictureBox.Image = newBit;
 
                 Art.Measure(bit, out xMin, out yMin, out xMax, out yMax);
