@@ -402,12 +402,9 @@ namespace UoFiddler.Controls.UserControls
             treeViewItem.Nodes.Clear();
             if (TileData.ItemTable != null)
             {
-                File.AppendAllText(@"F:\zz_dds_tiledata.log", "####################" + Environment.NewLine);
                 var nodes = new TreeNode[0x4000];
-                File.AppendAllText(@"F:\zz_dds_tiledata.log", "nodes cnt: " + nodes.Length +" tiledata itemtable length: " + TileData.ItemTable.Length+ Environment.NewLine);
                 for (int i = 0; i < 0x4000; ++i)
                 {
-                    File.AppendAllText(@"F:\zz_dds_tiledata.log", "node index: [" + i + "]" + Environment.NewLine);
                     nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
                     {
                         Tag = i
