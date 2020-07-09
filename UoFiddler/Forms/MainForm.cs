@@ -116,8 +116,11 @@ namespace UoFiddler.Forms
 
             Ultima.Verdata.Initialize();
 
-            if (Options.LoadedUltimaClass["TileData"])
+            if (Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"])
             {
+                // Looks like we have to reload art first to have proper tiledata loading
+                // and order here is important
+                Ultima.Art.Reload();
                 Ultima.TileData.Initialize();
             }
 
@@ -169,11 +172,6 @@ namespace UoFiddler.Forms
             if (Options.LoadedUltimaClass["Animations"])
             {
                 Ultima.Animations.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Art"])
-            {
-                Ultima.Art.Reload();
             }
 
             if (Options.LoadedUltimaClass["RadarColor"])

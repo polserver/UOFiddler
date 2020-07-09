@@ -23,8 +23,6 @@ namespace UoFiddler.Controls.UserControls
 {
     public partial class TileDatas : UserControl
     {
-        private readonly Bitmap _emptyImage = new Bitmap(Options.ArtItemSizeWidth, Options.ArtItemSizeHeight);
-
         public TileDatas()
         {
             InitializeComponent();
@@ -32,13 +30,13 @@ namespace UoFiddler.Controls.UserControls
 
             _refMarker = this;
 
-            InitItemsFlagsCheckBoxes();
-            InitLandTilesFlagsCheckBoxes();
-
             treeViewItem.BeforeSelect += TreeViewItemOnBeforeSelect;
 
             saveDirectlyOnChangesToolStripMenuItem.Checked = Options.TileDataDirectlySaveOnChange;
             saveDirectlyOnChangesToolStripMenuItem.CheckedChanged += SaveDirectlyOnChangesToolStripMenuItemOnCheckedChanged;
+
+            ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+            ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
         }
 
         private void InitLandTilesFlagsCheckBoxes()
@@ -404,9 +402,12 @@ namespace UoFiddler.Controls.UserControls
             treeViewItem.Nodes.Clear();
             if (TileData.ItemTable != null)
             {
+                File.AppendAllText(@"F:\zz_dds_tiledata.log", "####################" + Environment.NewLine);
                 var nodes = new TreeNode[0x4000];
+                File.AppendAllText(@"F:\zz_dds_tiledata.log", "nodes cnt: " + nodes.Length +" tiledata itemtable length: " + TileData.ItemTable.Length+ Environment.NewLine);
                 for (int i = 0; i < 0x4000; ++i)
                 {
+                    File.AppendAllText(@"F:\zz_dds_tiledata.log", "node index: [" + i + "]" + Environment.NewLine);
                     nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
                     {
                         Tag = i
@@ -464,11 +465,6 @@ namespace UoFiddler.Controls.UserControls
             }
             treeViewLand.EndUpdate();
 
-            if (!IsLoaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
-            }
             IsLoaded = true;
             Cursor.Current = Cursors.Default;
         }
@@ -557,11 +553,7 @@ namespace UoFiddler.Controls.UserControls
             int index = (int)e.Node.Tag;
 
             Bitmap bit = Art.GetStatic(index);
-            if (bit == null)
-            {
-                pictureBoxItem.Image = _emptyImage;
-            }
-            else
+            if (bit != null)
             {
                 Bitmap newBit = new Bitmap(pictureBoxItem.Size.Width, pictureBoxItem.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
@@ -570,13 +562,12 @@ namespace UoFiddler.Controls.UserControls
                     newGraph.DrawImage(bit, (pictureBoxItem.Size.Width - bit.Width) / 2, 1);
                 }
 
-                Image prevImage = pictureBoxItem.Image;
-                if (prevImage != null)
-                {
-                    pictureBoxItem.Image.Dispose();
-                }
-
+                pictureBoxItem.Image?.Dispose();
                 pictureBoxItem.Image = newBit;
+            }
+            else
+            {
+                pictureBoxItem.Image = null;
             }
 
             ItemData data = TileData.ItemTable[index];
@@ -613,11 +604,7 @@ namespace UoFiddler.Controls.UserControls
             int index = (int)e.Node.Tag;
 
             Bitmap bit = Art.GetLand(index);
-            if (bit == null)
-            {
-                pictureBoxLand.Image = _emptyImage;
-            }
-            else
+            if (bit != null)
             {
                 Bitmap newBit = new Bitmap(pictureBoxLand.Size.Width, pictureBoxLand.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
@@ -626,12 +613,12 @@ namespace UoFiddler.Controls.UserControls
                     newGraph.DrawImage(bit, (pictureBoxLand.Size.Width - bit.Width) / 2, 1);
                 }
 
-                Image prevImage = pictureBoxLand.Image;
-                if (prevImage != null)
-                {
-                    pictureBoxLand.Image.Dispose();
-                }
+                pictureBoxLand.Image?.Dispose();
                 pictureBoxLand.Image = newBit;
+            }
+            else
+            {
+                pictureBoxLand.Image = null;
             }
 
             LandData data = TileData.LandTable[index];

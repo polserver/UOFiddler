@@ -200,12 +200,7 @@ namespace UoFiddler.Controls.Forms
                 bmp.UnlockBits(bd);
             }
 
-            var prevImage = pictureBoxPalette.Image;
-            if (prevImage != null)
-            {
-                pictureBoxPalette.Image.Dispose();
-            }
-
+            pictureBoxPalette.Image?.Dispose();
             pictureBoxPalette.Image = bmp;
         }
 

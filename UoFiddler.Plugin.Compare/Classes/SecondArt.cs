@@ -21,14 +21,14 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static int GetMaxItemId()
         {
+            if (GetIdxLength() >= 0x13FDC)
+            {
+                return 0xFFFF;
+            }
+
             if (GetIdxLength() == 0xC000)
             {
                 return 0x7FFF;
-            }
-
-            if (GetIdxLength() == 0x13FDC)
-            {
-                return 0xFFDB;
             }
 
             return 0x3FFF;
