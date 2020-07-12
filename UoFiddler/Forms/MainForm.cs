@@ -205,11 +205,6 @@ namespace UoFiddler.Forms
             Cursor.Current = Cursors.Default;
         }
 
-        private void OnClickAbout(object sender, EventArgs e)
-        {
-            new AboutBox().Show(this);
-        }
-
         /// <summary>
         /// Reloads the Extern Tools DropDown <see cref="FiddlerOptions.ExternTools"/>
         /// </summary>
@@ -546,11 +541,6 @@ namespace UoFiddler.Forms
             FiddlerOptions.Logger.Information("MainForm - OnClosing - done.");
         }
 
-        private void OnClickHelp(object sender, EventArgs e)
-        {
-            Process.Start("http://uofiddler.polserver.com/help.html");
-        }
-
         private static bool IsOkFormStateLocation(Point loc, Size size)
         {
             if (loc.X < 0 || loc.Y < 0)
@@ -704,6 +694,19 @@ namespace UoFiddler.Forms
                 case 19: return ToggleViewRadarColor;
                 case 20: return ToggleViewSkillGrp;
                 default: return ToggleViewStart;
+            }
+        }
+
+        private void ToolStripMenuItemHelp_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://uofiddler.polserver.com/help.html");
+        }
+
+        private void ToolStripMenuItemAbout_Click(object sender, EventArgs e)
+        {
+            using (AboutBox aboutBox = new AboutBox())
+            {
+                aboutBox.ShowDialog(this);
             }
         }
     }
