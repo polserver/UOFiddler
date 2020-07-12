@@ -95,7 +95,6 @@ namespace UoFiddler.Forms
             this.pathSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSettingsSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.restartNeededMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsBtnAbout = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButtonView = new System.Windows.Forms.ToolStripDropDownButton();
             this.ToggleViewStart = new System.Windows.Forms.ToolStripMenuItem();
             this.ToggleViewMulti = new System.Windows.Forms.ToolStripMenuItem();
@@ -123,7 +122,10 @@ namespace UoFiddler.Forms
             this.toolStripDropDownButtonPlugins = new System.Windows.Forms.ToolStripDropDownButton();
             this.manageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsPluginsSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.tsBtnHelp = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButtonHelp = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItemAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.TabPanel.SuspendLayout();
             this.contextMenuStripMainForm.SuspendLayout();
             this.Start.SuspendLayout();
@@ -641,11 +643,10 @@ namespace UoFiddler.Forms
             // 
             this.tsMainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SettingsMenu,
-            this.tsBtnAbout,
             this.toolStripDropDownButtonView,
             this.ExternToolsDropDown,
             this.toolStripDropDownButtonPlugins,
-            this.tsBtnHelp});
+            this.toolStripDropDownButtonHelp});
             this.tsMainMenu.Location = new System.Drawing.Point(0, 0);
             this.tsMainMenu.Name = "tsMainMenu";
             this.tsMainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -671,46 +672,36 @@ namespace UoFiddler.Forms
             // 
             this.AlwaysOnTopMenuitem.CheckOnClick = true;
             this.AlwaysOnTopMenuitem.Name = "AlwaysOnTopMenuitem";
-            this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(180, 22);
+            this.AlwaysOnTopMenuitem.Size = new System.Drawing.Size(152, 22);
             this.AlwaysOnTopMenuitem.Text = "Always On Top";
             this.AlwaysOnTopMenuitem.Click += new System.EventHandler(this.OnClickAlwaysTop);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.OnClickOptions);
             // 
             // pathSettingsMenuItem
             // 
             this.pathSettingsMenuItem.Name = "pathSettingsMenuItem";
-            this.pathSettingsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pathSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pathSettingsMenuItem.Text = "Path Settings..";
             this.pathSettingsMenuItem.Click += new System.EventHandler(this.Click_path);
             // 
             // tsSettingsSeparator
             // 
             this.tsSettingsSeparator.Name = "tsSettingsSeparator";
-            this.tsSettingsSeparator.Size = new System.Drawing.Size(177, 6);
+            this.tsSettingsSeparator.Size = new System.Drawing.Size(149, 6);
             // 
             // restartNeededMenuItem
             // 
             this.restartNeededMenuItem.ForeColor = System.Drawing.Color.DarkRed;
             this.restartNeededMenuItem.Name = "restartNeededMenuItem";
-            this.restartNeededMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.restartNeededMenuItem.Size = new System.Drawing.Size(152, 22);
             this.restartNeededMenuItem.Text = "Reload Files";
             this.restartNeededMenuItem.Click += new System.EventHandler(this.Restart);
-            // 
-            // tsBtnAbout
-            // 
-            this.tsBtnAbout.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tsBtnAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsBtnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsBtnAbout.Name = "tsBtnAbout";
-            this.tsBtnAbout.Size = new System.Drawing.Size(50, 22);
-            this.tsBtnAbout.Text = "About..";
-            this.tsBtnAbout.Click += new System.EventHandler(this.OnClickAbout);
             // 
             // toolStripDropDownButtonView
             // 
@@ -992,15 +983,37 @@ namespace UoFiddler.Forms
             this.tsPluginsSeparator.Name = "tsPluginsSeparator";
             this.tsPluginsSeparator.Size = new System.Drawing.Size(120, 6);
             // 
-            // tsBtnHelp
+            // toolStripDropDownButtonHelp
             // 
-            this.tsBtnHelp.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tsBtnHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsBtnHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsBtnHelp.Name = "tsBtnHelp";
-            this.tsBtnHelp.Size = new System.Drawing.Size(36, 22);
-            this.tsBtnHelp.Text = "Help";
-            this.tsBtnHelp.Click += new System.EventHandler(this.OnClickHelp);
+            this.toolStripDropDownButtonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButtonHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemHelp,
+            this.toolStripSeparator1,
+            this.toolStripMenuItemAbout});
+            this.toolStripDropDownButtonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButtonHelp.Name = "toolStripDropDownButtonHelp";
+            this.toolStripDropDownButtonHelp.Size = new System.Drawing.Size(45, 22);
+            this.toolStripDropDownButtonHelp.Text = "Help";
+            this.toolStripDropDownButtonHelp.ToolTipText = "Help";
+            // 
+            // toolStripMenuItemHelp
+            // 
+            this.toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
+            this.toolStripMenuItemHelp.Size = new System.Drawing.Size(107, 22);
+            this.toolStripMenuItemHelp.Text = "Help";
+            this.toolStripMenuItemHelp.Click += new System.EventHandler(this.ToolStripMenuItemHelp_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(104, 6);
+            // 
+            // toolStripMenuItemAbout
+            // 
+            this.toolStripMenuItemAbout.Name = "toolStripMenuItemAbout";
+            this.toolStripMenuItemAbout.Size = new System.Drawing.Size(107, 22);
+            this.toolStripMenuItemAbout.Text = "About";
+            this.toolStripMenuItemAbout.Click += new System.EventHandler(this.ToolStripMenuItemAbout_Click);
             // 
             // MainForm
             // 
@@ -1091,7 +1104,6 @@ namespace UoFiddler.Forms
         private TileDatas controlTileData;
         private System.Windows.Forms.TabPage speech;
         private Speech controlspeech;
-        private System.Windows.Forms.ToolStripButton tsBtnAbout;
         private System.Windows.Forms.ToolStripDropDownButton ExternToolsDropDown;
         private System.Windows.Forms.ToolStripMenuItem manageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
@@ -1102,7 +1114,6 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.ToolStripSeparator tsPluginsSeparator;
         private System.Windows.Forms.TabPage AnimData;
         private AnimData controlAnimdata;
-        private System.Windows.Forms.ToolStripButton tsBtnHelp;
         private System.Windows.Forms.TabPage RadarCol;
         private RadarColor controlRadarCol;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonView;
@@ -1129,6 +1140,10 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TabPage SkillGrp;
         private SkillGrp controlSkillGrp;
         private System.Windows.Forms.ToolStripMenuItem ToggleViewSkillGrp;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonHelp;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelp;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAbout;
     }
 }
 
