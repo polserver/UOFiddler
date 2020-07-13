@@ -15,6 +15,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -46,6 +47,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Light"] = true;
 

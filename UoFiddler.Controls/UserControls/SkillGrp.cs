@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -43,6 +44,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["SkillGrp"] = true;
 

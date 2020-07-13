@@ -63,6 +63,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Sound"] = true;
 
