@@ -16,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -24,6 +25,8 @@ namespace UoFiddler.Controls.UserControls
         public MultiMap()
         {
             InitializeComponent();
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             multiMapToolStripMenuItem.Tag = -1;
             facet00ToolStripMenuItem.Tag = 0;
             facet01ToolStripMenuItem.Tag = 1;
@@ -43,6 +46,11 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void Reload()
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (!_loaded)
             {
                 return;
@@ -356,6 +364,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (_loaded)
             {
                 return;

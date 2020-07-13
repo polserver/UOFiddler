@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
+using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -60,6 +61,11 @@ namespace UoFiddler.Controls.UserControls
 
         protected override void OnLoad(EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (_loaded)
             {
                 return;

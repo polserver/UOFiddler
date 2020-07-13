@@ -18,6 +18,7 @@ using System.Windows.Forms.VisualStyles;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
+using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -49,6 +50,11 @@ namespace UoFiddler.Controls.UserControls
             set
             {
                 _selected = value;
+                if (FormsDesignerHelper.IsInDesignMode())
+                {
+                    return;
+                }
+
                 if (!_loaded)
                 {
                     return;
@@ -77,6 +83,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Options.LoadedUltimaClass["Hues"] = true;
             if (Parent.GetType() == typeof(HuePopUpItem) || Parent.GetType() == typeof(HuePopUp) || Parent.GetType() == typeof(HuePopUpDress))
             {
@@ -122,6 +133,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             e.Graphics.Clear(Color.White);
             for (int y = 0; y <= _row; ++y)
             {

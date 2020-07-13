@@ -179,6 +179,11 @@ namespace UoFiddler.Controls.UserControls
 
         public void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (IsLoaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))
             {
                 return;

@@ -20,6 +20,7 @@ using System.Xml;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
+using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -65,6 +66,11 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void Reload()
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (!_loaded)
             {
                 return;
@@ -77,6 +83,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
             LoadMapOverlays();
             Options.LoadedUltimaClass["Map"] = true;
@@ -226,6 +237,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnResize(object sender, EventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (!_loaded)
             {
                 return;
@@ -532,6 +548,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             _map = _currMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
                 (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
                 showStaticsToolStripMenuItem1.Checked);
