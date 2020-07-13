@@ -114,7 +114,7 @@ namespace UoFiddler.Plugin.SendItem
         {
             if (Options.DesignAlternative)
             {
-                ItemShowAlternative itemShowAltControl = Host.GetItemShowAltControl();
+                ItemShowAlternativeControl itemShowAltControl = Host.GetItemShowAltControl();
                 PictureBox itemShowAltPictureBox = Host.GetItemShowAltPictureBox();
                 if (value)
                 {
@@ -129,24 +129,24 @@ namespace UoFiddler.Plugin.SendItem
             }
             else
             {
-                ItemShow itemShowControl = Host.GetItemShowControl();
+                ItemShowControl itemShowControlControl = Host.GetItemShowControl();
                 ListView itemShowListView = Host.GetItemShowListView();
                 if (value)
                 {
-                    itemShowListView.MouseDoubleClick -= itemShowControl.ListView_DoubleClicked;
+                    itemShowListView.MouseDoubleClick -= itemShowControlControl.ListView_DoubleClicked;
                     itemShowListView.MouseDoubleClick += PlugOnDoubleClick;
                 }
                 else if (!init)
                 {
                     itemShowListView.MouseDoubleClick -= PlugOnDoubleClick;
-                    itemShowListView.MouseDoubleClick += itemShowControl.ListView_DoubleClicked;
+                    itemShowListView.MouseDoubleClick += itemShowControlControl.ListView_DoubleClicked;
                 }
             }
         }
 
         private static void ToolStripClick(object sender, EventArgs e)
         {
-            new Option().Show();
+            new SendItemOptionsForm().Show();
         }
 
         private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)

@@ -459,7 +459,7 @@ namespace Ultima
                 {
                     foreach (var mTile in Tiles[x][y])
                     {
-                        Bitmap bmp = Art.GetStatic(mTile.ID);
+                        Bitmap bmp = Art.GetStatic(mTile.Id);
 
                         if (bmp == null)
                         {
@@ -509,7 +509,7 @@ namespace Ultima
                 {
                     foreach (var mTile in Tiles[x][y])
                     {
-                        Bitmap bmp = Art.GetStatic(mTile.ID);
+                        Bitmap bmp = Art.GetStatic(mTile.Id);
 
                         if (bmp == null)
                         {
@@ -1253,7 +1253,7 @@ namespace Ultima
                 {
                     foreach (var mTile in newTiles[x][y].ToArray())
                     {
-                        SortedTiles[counter].m_ItemID = (mTile.ID);
+                        SortedTiles[counter].m_ItemID = (mTile.Id);
                         SortedTiles[counter].m_OffsetX = (short)(x - _center.X);
                         SortedTiles[counter].m_OffsetY = (short)(y - _center.Y);
                         SortedTiles[counter].m_OffsetZ = (short)(mTile.Z);

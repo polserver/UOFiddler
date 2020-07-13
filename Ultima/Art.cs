@@ -636,7 +636,7 @@ namespace Ultima
                             binidx.Write((int)binmul.BaseStream.Position); //lookup
                             var length = (int)binmul.BaseStream.Position;
                             int x = 22;
-                            int y = 0;
+                            int y = 0; // TODO: y is never used?
                             int lineWidth = 2;
                             for (int m = 0; m < 22; ++m, ++y, line += delta, lineWidth += 2)
                             {

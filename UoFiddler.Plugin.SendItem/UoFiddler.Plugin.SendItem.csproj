@@ -23,11 +23,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\Option.cs">
+    <Compile Update="Forms\SendItemOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\Option.Designer.cs">
-      <DependentUpon>Option.cs</DependentUpon>
+    <Compile Update="Forms\SendItemOptionsForm.Designer.cs">
+      <DependentUpon>SendItemOptionsForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -35,8 +35,8 @@
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Forms\Option.resx">
-      <DependentUpon>Option.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\SendItemOptionsForm.resx">
+      <DependentUpon>SendItemOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

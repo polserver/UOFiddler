@@ -45,7 +45,7 @@ namespace UoFiddler.Controls.Forms
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.HueOnlyGray = new System.Windows.Forms.ToolStripButton();
-            this.control = new UoFiddler.Controls.UserControls.Hues();
+            this.control = new UoFiddler.Controls.UserControls.HuesControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -120,7 +120,7 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        private UoFiddler.Controls.UserControls.Hues control;
+        private UoFiddler.Controls.UserControls.HuesControl control;
         private System.Windows.Forms.ToolStripButton HueOnlyGray;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;

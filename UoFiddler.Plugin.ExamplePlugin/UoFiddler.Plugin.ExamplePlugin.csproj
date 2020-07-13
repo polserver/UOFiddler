@@ -21,17 +21,17 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\Example.cs">
+    <Compile Update="Forms\ExampleForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\Example.Designer.cs">
-      <DependentUpon>Example.cs</DependentUpon>
+    <Compile Update="Forms\ExampleForm.Designer.cs">
+      <DependentUpon>ExampleForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\ExampleUserControl.cs">
+    <Compile Update="UserControls\ExampleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\ExampleUserControl.Designer.cs">
-      <DependentUpon>ExampleUserControl.cs</DependentUpon>
+    <Compile Update="UserControls\ExampleControl.Designer.cs">
+      <DependentUpon>ExampleControl.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -39,11 +39,11 @@
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Forms\Example.resx">
-      <DependentUpon>Example.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\ExampleForm.resx">
+      <DependentUpon>ExampleForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\ExampleUserControl.resx">
-      <DependentUpon>ExampleUserControl.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\ExampleControl.resx">
+      <DependentUpon>ExampleControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -65,7 +65,7 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Items"
             };
-            CompareItem compArt = new CompareItem
+            CompareItemControl compArt = new CompareItemControl
             {
                 Dock = DockStyle.Fill
             };
@@ -77,11 +77,11 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Land"
             };
-            CompareLand compLand = new CompareLand
+            CompareLandControl compLandControl = new CompareLandControl
             {
                 Dock = DockStyle.Fill
             };
-            page2.Controls.Add(compLand);
+            page2.Controls.Add(compLandControl);
             tabControl.TabPages.Add(page2);
 
             TabPage page3 = new TabPage
@@ -89,7 +89,7 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare CliLocs"
             };
-            CompareCliLoc compCli = new CompareCliLoc
+            CompareCliLocControl compCli = new CompareCliLocControl
             {
                 Dock = DockStyle.Fill
             };
@@ -101,7 +101,7 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Hues"
             };
-            CompareHues compH = new CompareHues
+            CompareHuesControl compH = new CompareHuesControl
             {
                 Dock = DockStyle.Fill
             };
@@ -113,7 +113,7 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Gumps"
             };
-            CompareGump compG = new CompareGump
+            CompareGumpControl compG = new CompareGumpControl
             {
                 Dock = DockStyle.Fill
             };
@@ -125,7 +125,7 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Map"
             };
-            CompareMap compM = new CompareMap
+            CompareMapControl compM = new CompareMapControl
             {
                 Dock = DockStyle.Fill
             };
@@ -136,11 +136,11 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Texture"
             };
-            CompareTexture compTexture = new CompareTexture
+            CompareTextureControl compTextureControl = new CompareTextureControl
             {
                 Dock = DockStyle.Fill
             };
-            page7.Controls.Add(compTexture);
+            page7.Controls.Add(compTextureControl);
             tabControl.TabPages.Add(page7);
         }
 
