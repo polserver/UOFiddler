@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Plugin.MultiEditor.UserControls;
 
 namespace UoFiddler.Plugin.MultiEditor.Classes
 {
@@ -23,7 +24,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         private const int _undoListMaxSize = 10;
 
         private bool _modified;
-        private static MultiEditor.UserControls.MultiEditor _parent;
+        private static MultiEditorControl _parent;
         private static Rectangle _drawDestRectangle;
 
         public const int GapXMod = 44;
@@ -35,7 +36,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Create a blank ComponentList
         /// </summary>
-        public MultiEditorComponentList(int width, int height, MultiEditor.UserControls.MultiEditor parent)
+        public MultiEditorComponentList(int width, int height, MultiEditorControl parent)
         {
             _parent = parent;
             Width = width;
@@ -57,7 +58,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Create a ComponentList from UltimaSDK
         /// </summary>
-        public MultiEditorComponentList(MultiComponentList list, MultiEditor.UserControls.MultiEditor parent)
+        public MultiEditorComponentList(MultiComponentList list, MultiEditorControl parent)
         {
             _parent = parent;
             Width = list.Width;
@@ -70,7 +71,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     for (int i = 0; i < list.Tiles[x][y].Length; ++i)
                     {
                         Tiles.Add(new MultiTile(
-                            list.Tiles[x][y][i].ID,
+                            list.Tiles[x][y][i].Id,
                             x,
                             y,
                             list.Tiles[x][y][i].Z,
@@ -908,13 +909,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             Invisible = flag;
             Solver = 0;
         }
-
-        // TODO: unused?
-        // public MultiTile(ushort id, int z)
-        // {
-        //     Id = id;
-        //     Z = z;
-        // }
 
         public MultiTile()
         {

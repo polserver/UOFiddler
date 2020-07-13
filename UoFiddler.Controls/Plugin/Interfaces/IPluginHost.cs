@@ -20,13 +20,13 @@ namespace UoFiddler.Controls.Plugin.Interfaces
         /// Returns the ItemShowControl
         /// </summary>
         /// <returns></returns>
-        ItemShow GetItemShowControl();
+        ItemShowControl GetItemShowControl();
 
         /// <summary>
         /// Returns the ItemShowAlternativeControl
         /// </summary>
         /// <returns></returns>
-        ItemShowAlternative GetItemShowAltControl();
+        ItemShowAlternativeControl GetItemShowAltControl();
 
         /// <summary>
         /// Gets the current selected graphic in ItemShow

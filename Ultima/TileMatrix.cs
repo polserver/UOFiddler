@@ -338,7 +338,7 @@ namespace Ultima
                         {
                             var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + (i * sizeof(StaticTile)));
                             var cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
-                            lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
+                            lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemID(cur.Id), cur.Hue, cur.Z);
                         }
 
                         var tiles = new HuedTile[8][][];
@@ -631,100 +631,87 @@ namespace Ultima
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct StaticTile
     {
-        public ushort m_ID;
-        public byte m_X;
-        public byte m_Y;
-        public sbyte m_Z;
-        public short m_Hue;
+        public ushort Id;
+        public byte X;
+        public byte Y;
+        public sbyte Z;
+        public short Hue;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct HuedTile
     {
-        internal sbyte m_Z;
-        internal ushort m_ID;
-        internal int m_Hue;
+        public ushort Id { get; set; }
 
-        public ushort ID { get { return m_ID; } set { m_ID = value; } }
-        public int Hue { get { return m_Hue; } set { m_Hue = value; } }
-        public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
+        public int Hue { get; set; }
+
+        public sbyte Z { get; set; }
 
         public HuedTile(ushort id, short hue, sbyte z)
         {
-            m_ID = id;
-            m_Hue = hue;
-            m_Z = z;
-        }
-
-        public void Set(ushort id, short hue, sbyte z)
-        {
-            m_ID = id;
-            m_Hue = hue;
-            m_Z = z;
+            Id = id;
+            Hue = hue;
+            Z = z;
         }
     }
 
     public struct MTile : IComparable
     {
-        internal ushort m_ID;
-        internal sbyte m_Z;
-        internal sbyte m_Flag;
-        internal int m_Unk1;
-        internal int m_Solver;
+        public ushort Id { get; internal set; }
+        public sbyte Z { get; set; }
 
-        public ushort ID { get { return m_ID; } }
-        public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
+        public sbyte Flag { get; set; }
 
-        public int Flag { get { return m_Flag; } set { m_Flag = (sbyte)value; } }
-        public int Unk1 { get { return m_Unk1; } set { m_Unk1 = value; } }
-        public int Solver { get { return m_Solver; } set { m_Solver = value; } }
+        public int Unk1 { get; set; }
+
+        public int Solver { get; set; }
 
         public MTile(ushort id, sbyte z)
         {
-            m_ID = Art.GetLegalItemID(id);
-            m_Z = z;
-            m_Flag = 1;
-            m_Solver = 0;
-            m_Unk1 = 0;
+            Id = Art.GetLegalItemID(id);
+            Z = z;
+            Flag = 1;
+            Solver = 0;
+            Unk1 = 0;
         }
 
         public MTile(ushort id, sbyte z, sbyte flag)
         {
-            m_ID = Art.GetLegalItemID(id);
-            m_Z = z;
-            m_Flag = flag;
-            m_Solver = 0;
-            m_Unk1 = 0;
+            Id = Art.GetLegalItemID(id);
+            Z = z;
+            Flag = flag;
+            Solver = 0;
+            Unk1 = 0;
         }
 
         public MTile(ushort id, sbyte z, sbyte flag, int unk1)
         {
-            m_ID = Art.GetLegalItemID(id);
-            m_Z = z;
-            m_Flag = flag;
-            m_Solver = 0;
-            m_Unk1 = unk1;
+            Id = Art.GetLegalItemID(id);
+            Z = z;
+            Flag = flag;
+            Solver = 0;
+            Unk1 = unk1;
         }
 
         public void Set(ushort id, sbyte z)
         {
-            m_ID = Art.GetLegalItemID(id);
-            m_Z = z;
+            Id = Art.GetLegalItemID(id);
+            Z = z;
         }
 
         public void Set(ushort id, sbyte z, sbyte flag)
         {
-            m_ID = Art.GetLegalItemID(id);
-            m_Z = z;
-            m_Flag = flag;
+            Id = Art.GetLegalItemID(id);
+            Z = z;
+            Flag = flag;
         }
 
         public void Set(ushort id, sbyte z, sbyte flag, int unk1)
         {
-            m_ID = Art.GetLegalItemID(id);
-            m_Z = z;
-            m_Flag = flag;
-            m_Unk1 = unk1;
+            Id = Art.GetLegalItemID(id);
+            Z = z;
+            Flag = flag;
+            Unk1 = unk1;
         }
 
         public int CompareTo(object x)
@@ -741,8 +728,8 @@ namespace Ultima
 
             var a = (MTile)x;
 
-            ItemData ourData = TileData.ItemTable[m_ID];
-            ItemData theirData = TileData.ItemTable[a.ID];
+            ItemData ourData = TileData.ItemTable[Id];
+            ItemData theirData = TileData.ItemTable[a.Id];
 
             int ourThreshold = 0;
             if (ourData.Height > 0)
@@ -779,7 +766,7 @@ namespace Ultima
 
             if (res == 0)
             {
-                res = m_Solver - a.Solver;
+                res = Solver - a.Solver;
             }
 
             return res;
@@ -789,34 +776,20 @@ namespace Ultima
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Tile : IComparable
     {
-        internal ushort m_ID;
-        internal sbyte m_Z;
+        public ushort Id { get; internal set; }
 
-        public ushort ID { get { return m_ID; } }
-        public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
+        public sbyte Z { get; set; }
 
         public Tile(ushort id, sbyte z)
         {
-            m_ID = id;
-            m_Z = z;
-        }
-
-        public Tile(ushort id, sbyte z, sbyte flag)
-        {
-            m_ID = id;
-            m_Z = z;
+            Id = id;
+            Z = z;
         }
 
         public void Set(ushort id, sbyte z)
         {
-            m_ID = id;
-            m_Z = z;
-        }
-
-        public void Set(ushort id, sbyte z, sbyte flag)
-        {
-            m_ID = id;
-            m_Z = z;
+            Id = id;
+            Z = z;
         }
 
         public int CompareTo(object x)
@@ -833,18 +806,18 @@ namespace Ultima
 
             var a = (Tile)x;
 
-            if (m_Z > a.m_Z)
+            if (Z > a.Z)
             {
                 return 1;
             }
 
-            if (a.m_Z > m_Z)
+            if (a.Z > Z)
             {
                 return -1;
             }
 
-            ItemData ourData = TileData.ItemTable[m_ID];
-            ItemData theirData = TileData.ItemTable[a.m_ID];
+            ItemData ourData = TileData.ItemTable[Id];
+            ItemData theirData = TileData.ItemTable[a.Id];
 
             if (ourData.Height > theirData.Height)
             {

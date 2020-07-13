@@ -19,7 +19,7 @@ namespace UoFiddler.Plugin.MultiEditor
 {
     public class MultiEditorPluginBase : PluginBase
     {
-        private UserControls.MultiEditor _multiEditor;
+        private UserControls.MultiEditorControl _multiEditorControl;
 
         public MultiEditorPluginBase()
         {
@@ -75,11 +75,11 @@ namespace UoFiddler.Plugin.MultiEditor
                 Text = "Multi Editor"
             };
 
-            _multiEditor = new UserControls.MultiEditor
+            _multiEditorControl = new UserControls.MultiEditorControl
             {
                 Dock = DockStyle.Fill
             };
-            page.Controls.Add(_multiEditor);
+            page.Controls.Add(_multiEditorControl);
             tabControl.TabPages.Add(page);
         }
 
@@ -104,7 +104,7 @@ namespace UoFiddler.Plugin.MultiEditor
                 return;
             }
 
-            _multiEditor?.SelectDrawTile((ushort)currSelected);
+            _multiEditorControl?.SelectDrawTile((ushort)currSelected);
         }
     }
 }

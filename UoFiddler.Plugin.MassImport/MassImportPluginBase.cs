@@ -59,20 +59,20 @@ namespace UoFiddler.Plugin.MassImport
             toolStrip.DropDownItems.Add(item);
         }
 
-        private Forms.MassImport _import;
+        private Forms.MassImportForm _importForm;
 
         private void ToolStripClick(object sender, EventArgs e)
         {
-            if (_import?.IsDisposed == false)
+            if (_importForm?.IsDisposed == false)
             {
                 return;
             }
 
-            _import = new Forms.MassImport
+            _importForm = new Forms.MassImportForm
             {
                 TopMost = true
             };
-            _import.Show();
+            _importForm.Show();
         }
     }
 }

@@ -18,10 +18,10 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class HuePopUpDress : Form
     {
-        private readonly Dress _refDressItem;
+        private readonly DressControl _refDressControlItem;
         private readonly int _layer;
 
-        public HuePopUpDress(Dress refDress, int hue, int l)
+        public HuePopUpDress(DressControl refDressControl, int hue, int l)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
@@ -35,7 +35,7 @@ namespace UoFiddler.Controls.Forms
                 control.Selected = hue - 1;
             }
 
-            _refDressItem = refDress;
+            _refDressControlItem = refDressControl;
             _layer = l;
         }
 
@@ -47,15 +47,15 @@ namespace UoFiddler.Controls.Forms
                 selected ^= 0x8000;
             }
 
-            _refDressItem.SetHue(_layer, selected);
-            _refDressItem.RefreshDrawing();
+            _refDressControlItem.SetHue(_layer, selected);
+            _refDressControlItem.RefreshDrawing();
             Close();
         }
 
         private void OnClick_Clear(object sender, EventArgs e)
         {
-            _refDressItem.SetHue(_layer, -1);
-            _refDressItem.RefreshDrawing();
+            _refDressControlItem.SetHue(_layer, -1);
+            _refDressControlItem.RefreshDrawing();
             Close();
         }
     }

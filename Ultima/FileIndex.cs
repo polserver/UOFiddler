@@ -216,106 +216,103 @@ namespace Ultima
              */
             if (_mulPath?.EndsWith(".uop") == true)
             {
-                using (var index = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+                var fi = new FileInfo(_mulPath);
+                string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
+
+                using (var br = new BinaryReader(Stream))
                 {
-                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    br.BaseStream.Seek(0, SeekOrigin.Begin);
 
-                    var fi = new FileInfo(_mulPath);
-                    string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
-
-                    using (var br = new BinaryReader(Stream))
+                    if (br.ReadInt32() != 0x50594D)
                     {
-                        br.BaseStream.Seek(0, SeekOrigin.Begin);
-
-                        if (br.ReadInt32() != 0x50594D)
-                        {
-                            throw new ArgumentException("Bad UOP file.");
-                        }
-
-                        br.ReadInt64(); // version + signature
-                        long nextBlock = br.ReadInt64();
-                        br.ReadInt32(); // block capacity
-                        int count = br.ReadInt32();
-
-                        if (idxLength > 0)
-                        {
-                            IdxLength = idxLength * 12;
-                        }
-
-                        var hashes = new Dictionary<ulong, int>();
-
-                        for (int i = 0; i < length; i++)
-                        {
-                            string entryName = $"build/{uopPattern}/{i:D8}{uopEntryExtension}";
-                            ulong hash = HashFileName(entryName);
-
-                            if (!hashes.ContainsKey(hash))
-                            {
-                                hashes.Add(hash, i);
-                            }
-                        }
-
-                        br.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
-
-                        do
-                        {
-                            int filesCount = br.ReadInt32();
-                            nextBlock = br.ReadInt64();
-
-                            for (int i = 0; i < filesCount; i++)
-                            {
-                                long offset = br.ReadInt64();
-                                int headerLength = br.ReadInt32();
-                                int compressedLength = br.ReadInt32();
-                                int decompressedLength = br.ReadInt32();
-                                ulong hash = br.ReadUInt64();
-                                br.ReadUInt32(); // Adler32
-                                short flag = br.ReadInt16();
-
-                                int entryLength = flag == 1 ? compressedLength : decompressedLength;
-
-                                if (offset == 0)
-                                {
-                                    continue;
-                                }
-
-                                if (!hashes.TryGetValue(hash, out int idx))
-                                {
-                                    continue;
-                                }
-
-                                if (idx < 0 || idx > Index.Length)
-                                {
-                                    throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
-                                }
-
-                                Index[idx].lookup = (int)(offset + headerLength);
-                                Index[idx].length = entryLength;
-
-                                if (!hasExtra)
-                                {
-                                    continue;
-                                }
-
-                                long curPos = br.BaseStream.Position;
-
-                                br.BaseStream.Seek(offset + headerLength, SeekOrigin.Begin);
-
-                                byte[] extra = br.ReadBytes(8);
-
-                                var extra1 = (short)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
-                                var extra2 = (short)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
-
-                                Index[idx].lookup += 8;
-                                // changed from int b = extra1 << 16 | extra2;
-                                // int cast removes compiler warning
-                                Index[idx].extra = extra1 << 16 | (int)extra2;
-
-                                br.BaseStream.Seek(curPos, SeekOrigin.Begin);
-                            }
-                        }
-                        while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+                        throw new ArgumentException("Bad UOP file.");
                     }
+
+                    br.ReadInt64(); // version + signature
+                    long nextBlock = br.ReadInt64();
+                    br.ReadInt32(); // block capacity
+                    _ = br.ReadInt32(); // TODO: check if we need value from here
+
+                    if (idxLength > 0)
+                    {
+                        IdxLength = idxLength * 12;
+                    }
+
+                    var hashes = new Dictionary<ulong, int>();
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        string entryName = $"build/{uopPattern}/{i:D8}{uopEntryExtension}";
+                        ulong hash = HashFileName(entryName);
+
+                        if (!hashes.ContainsKey(hash))
+                        {
+                            hashes.Add(hash, i);
+                        }
+                    }
+
+                    br.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
+
+                    do
+                    {
+                        int filesCount = br.ReadInt32();
+                        nextBlock = br.ReadInt64();
+
+                        for (int i = 0; i < filesCount; i++)
+                        {
+                            long offset = br.ReadInt64();
+                            int headerLength = br.ReadInt32();
+                            int compressedLength = br.ReadInt32();
+                            int decompressedLength = br.ReadInt32();
+                            ulong hash = br.ReadUInt64();
+                            br.ReadUInt32(); // Adler32
+                            short flag = br.ReadInt16();
+
+                            int entryLength = flag == 1 ? compressedLength : decompressedLength;
+
+                            if (offset == 0)
+                            {
+                                continue;
+                            }
+
+                            if (!hashes.TryGetValue(hash, out int idx))
+                            {
+                                continue;
+                            }
+
+                            if (idx < 0 || idx > Index.Length)
+                            {
+                                throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+                            }
+
+                            Index[idx].lookup = (int)(offset + headerLength);
+                            Index[idx].length = entryLength;
+
+                            if (!hasExtra)
+                            {
+                                continue;
+                            }
+
+                            long curPos = br.BaseStream.Position;
+
+                            br.BaseStream.Seek(offset + headerLength, SeekOrigin.Begin);
+
+                            byte[] extra = br.ReadBytes(8);
+
+                            var extra1 = (short)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
+                            var extra2 = (short)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
+
+                            Index[idx].lookup += 8;
+                            // changed from int b = extra1 << 16 | extra2;
+                            // int cast removes compiler warning
+                            Index[idx].extra = extra1 << 16 | (int)extra2;
+
+                            br.BaseStream.Seek(curPos, SeekOrigin.Begin);
+                        }
+                    }
+                    while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
                 }
             }
             else if ((idxPath != null) && (_mulPath != null))

@@ -24,47 +24,47 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="UserControls\CompareCliLoc.cs">
+    <Compile Update="UserControls\CompareCliLocControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareCliLoc.Designer.cs">
-      <DependentUpon>CompareCliLoc.cs</DependentUpon>
+    <Compile Update="UserControls\CompareCliLocControl.Designer.cs">
+      <DependentUpon>CompareCliLocControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareGump.cs">
+    <Compile Update="UserControls\CompareGumpControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareGump.Designer.cs">
-      <DependentUpon>CompareGump.cs</DependentUpon>
+    <Compile Update="UserControls\CompareGumpControl.Designer.cs">
+      <DependentUpon>CompareGumpControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareHues.cs">
+    <Compile Update="UserControls\CompareHuesControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareHues.Designer.cs">
-      <DependentUpon>CompareHues.cs</DependentUpon>
+    <Compile Update="UserControls\CompareHuesControl.Designer.cs">
+      <DependentUpon>CompareHuesControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareItem.cs">
+    <Compile Update="UserControls\CompareItemControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareItem.Designer.cs">
-      <DependentUpon>CompareItem.cs</DependentUpon>
+    <Compile Update="UserControls\CompareItemControl.Designer.cs">
+      <DependentUpon>CompareItemControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareLand.cs">
+    <Compile Update="UserControls\CompareLandControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareLand.Designer.cs">
-      <DependentUpon>CompareLand.cs</DependentUpon>
+    <Compile Update="UserControls\CompareLandControl.Designer.cs">
+      <DependentUpon>CompareLandControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareMap.cs">
+    <Compile Update="UserControls\CompareMapControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareMap.Designer.cs">
-      <DependentUpon>CompareMap.cs</DependentUpon>
+    <Compile Update="UserControls\CompareMapControl.Designer.cs">
+      <DependentUpon>CompareMapControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="UserControls\CompareTexture.cs">
+    <Compile Update="UserControls\CompareTextureControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\CompareTexture.designer.cs">
-      <DependentUpon>CompareTexture.cs</DependentUpon>
+    <Compile Update="UserControls\CompareTextureControl.Designer.cs">
+      <DependentUpon>CompareTextureControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -77,26 +77,26 @@
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="UserControls\CompareCliLoc.resx">
-      <DependentUpon>CompareCliLoc.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareCliLocControl.resx">
+      <DependentUpon>CompareCliLocControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareGump.resx">
-      <DependentUpon>CompareGump.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareGumpControl.resx">
+      <DependentUpon>CompareGumpControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareHues.resx">
-      <DependentUpon>CompareHues.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareHuesControl.resx">
+      <DependentUpon>CompareHuesControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareItem.resx">
-      <DependentUpon>CompareItem.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareItemControl.resx">
+      <DependentUpon>CompareItemControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareLand.resx">
-      <DependentUpon>CompareLand.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareLandControl.resx">
+      <DependentUpon>CompareLandControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareMap.resx">
-      <DependentUpon>CompareMap.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareMapControl.resx">
+      <DependentUpon>CompareMapControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareTexture.resx">
-      <DependentUpon>CompareTexture.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\CompareTextureControl.resx">
+      <DependentUpon>CompareTextureControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

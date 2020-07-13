@@ -8,19 +8,19 @@ namespace UoFiddler.Plugin.UopPacker.Classes
     {
         private struct IdxEntry
         {
-            public int m_Id;
-            public int m_Offset;
-            public int m_Size;
-            public int m_Extra;
+            public int Id;
+            public int Offset;
+            public int Size;
+            public int Extra;
         }
 
         private struct TableEntry
         {
-            public long m_Offset;
-            public int m_HeaderLength;
-            public int m_Size;
-            public ulong m_Identifier;
-            public uint m_Hash;
+            public long Offset;
+            public int HeaderLength;
+            public int Size;
+            public ulong Identifier;
+            public uint Hash;
         }
 
         //
@@ -76,10 +76,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     {
                         IdxEntry e = new IdxEntry
                         {
-                            m_Id = id++,
-                            m_Offset = position,
-                            m_Size = 0xC4000,
-                            m_Extra = 0
+                            Id = id++,
+                            Offset = position,
+                            Size = 0xC4000,
+                            Extra = 0
                         };
 
                         idxEntries.Add(e);
@@ -104,10 +104,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                         IdxEntry e = new IdxEntry
                         {
-                            m_Id = i,
-                            m_Offset = offset,
-                            m_Size = readerIdx.ReadInt32(),
-                            m_Extra = readerIdx.ReadInt32()
+                            Id = i,
+                            Offset = offset,
+                            Size = readerIdx.ReadInt32(),
+                            Extra = readerIdx.ReadInt32()
                         };
 
                         idxEntries.Add(e);
@@ -153,24 +153,24 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                     for (int j = idxStart; j < idxEnd; ++j, ++tableIdx)
                     {
-                        reader.BaseStream.Seek(idxEntries[j].m_Offset, SeekOrigin.Begin);
-                        byte[] data = reader.ReadBytes(idxEntries[j].m_Size);
+                        reader.BaseStream.Seek(idxEntries[j].Offset, SeekOrigin.Begin);
+                        byte[] data = reader.ReadBytes(idxEntries[j].Size);
 
-                        tableEntries[tableIdx].m_Offset = writer.BaseStream.Position;
-                        tableEntries[tableIdx].m_Size = data.Length;
-                        tableEntries[tableIdx].m_Identifier = HashLittle2(string.Format(hashFormat, idxEntries[j].m_Id));
-                        tableEntries[tableIdx].m_Hash = HashAdler32(data);
+                        tableEntries[tableIdx].Offset = writer.BaseStream.Position;
+                        tableEntries[tableIdx].Size = data.Length;
+                        tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat, idxEntries[j].Id));
+                        tableEntries[tableIdx].Hash = HashAdler32(data);
 
                         if (type == FileType.GumpartLegacyMul)
                         {
                             // Prepend width/height from IDX's extra
-                            int width = idxEntries[j].m_Extra >> 16 & 0xFFFF;
-                            int height = idxEntries[j].m_Extra & 0xFFFF;
+                            int width = idxEntries[j].Extra >> 16 & 0xFFFF;
+                            int height = idxEntries[j].Extra & 0xFFFF;
 
                             writer.Write(width);
                             writer.Write(height);
 
-                            tableEntries[tableIdx].m_Size += 8;
+                            tableEntries[tableIdx].Size += 8;
                         }
 
                         writer.Write(data);
@@ -195,12 +195,12 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                     for (int j = idxStart; j < idxEnd; ++j, ++tableIdx)
                     {
-                        writer.Write(tableEntries[tableIdx].m_Offset);
+                        writer.Write(tableEntries[tableIdx].Offset);
                         writer.Write(0); // header length
-                        writer.Write(tableEntries[tableIdx].m_Size); // compressed size
-                        writer.Write(tableEntries[tableIdx].m_Size); // decompressed size
-                        writer.Write(tableEntries[tableIdx].m_Identifier);
-                        writer.Write(tableEntries[tableIdx].m_Hash);
+                        writer.Write(tableEntries[tableIdx].Size); // compressed size
+                        writer.Write(tableEntries[tableIdx].Size); // decompressed size
+                        writer.Write(tableEntries[tableIdx].Identifier);
+                        writer.Write(tableEntries[tableIdx].Hash);
                         writer.Write((short)0); // compression method, none
                     }
 
@@ -264,30 +264,30 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                          * Empty entries are read too, because they do not always indicate the
                          * end of the table. (Example: 7.0.26.4+ Fel/Tram maps)
                          */
-                        offsets[i].m_Offset = reader.ReadInt64();
-                        offsets[i].m_HeaderLength = reader.ReadInt32(); // header length
-                        offsets[i].m_Size = reader.ReadInt32(); // compressed size
+                        offsets[i].Offset = reader.ReadInt64();
+                        offsets[i].HeaderLength = reader.ReadInt32(); // header length
+                        offsets[i].Size = reader.ReadInt32(); // compressed size
                         reader.ReadInt32(); // decompressed size
-                        offsets[i].m_Identifier = reader.ReadUInt64(); // filename hash (HashLittle2)
-                        offsets[i].m_Hash = reader.ReadUInt32(); // data hash (Adler32)
+                        offsets[i].Identifier = reader.ReadUInt64(); // filename hash (HashLittle2)
+                        offsets[i].Hash = reader.ReadUInt32(); // data hash (Adler32)
                         reader.ReadInt16(); // compression method (0 = none, 1 = zlib)
                     }
 
                     // Copy chunks
                     for (int i = 0; i < offsets.Length; ++i)
                     {
-                        if (offsets[i].m_Offset == 0)
+                        if (offsets[i].Offset == 0)
                         {
                             continue; // skip empty entry
                         }
 
-                        if (!chunkIds.TryGetValue(offsets[i].m_Identifier, out int chunkId))
+                        if (!chunkIds.TryGetValue(offsets[i].Identifier, out int chunkId))
                         {
                             throw new Exception("Unknown identifier encountered");
                         }
 
-                        stream.Seek(offsets[i].m_Offset + offsets[i].m_HeaderLength, SeekOrigin.Begin);
-                        byte[] chunkData = reader.ReadBytes(offsets[i].m_Size);
+                        stream.Seek(offsets[i].Offset + offsets[i].HeaderLength, SeekOrigin.Begin);
+                        byte[] chunkData = reader.ReadBytes(offsets[i].Size);
 
                         if (type == FileType.MapLegacyMul)
                         {

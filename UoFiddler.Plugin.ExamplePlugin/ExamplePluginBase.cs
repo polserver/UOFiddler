@@ -74,7 +74,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
                 Tag = tabControl.TabCount + 1, // at end used for undock/dock feature to define the order
                 Text = "PluginTest"
             };
-            page.Controls.Add(new ExampleUserControl());
+            page.Controls.Add(new ExampleControl());
             tabControl.TabPages.Add(page);
         }
 
@@ -90,7 +90,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
         private static void ItemClick(object sender, EventArgs e)
         {
-            new Example().Show();
+            new ExampleForm().Show();
         }
 
         private static void Events_DesignChangeEvent()

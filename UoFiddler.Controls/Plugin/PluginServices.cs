@@ -117,16 +117,16 @@ namespace UoFiddler.Controls.Plugin
             }
         }
 
-        public ItemShow GetItemShowControl()
+        public ItemShowControl GetItemShowControl()
         {
-            return ItemShow.RefMarker;
+            return ItemShowControl.RefMarker;
         }
 
         public int GetSelectedItemShow()
         {
-            if (ItemShow.ItemListView.SelectedItems.Count > 0)
+            if (ItemShowControl.ItemListView.SelectedItems.Count > 0)
             {
-                return (int)ItemShow.ItemListView.SelectedItems[0].Tag;
+                return (int)ItemShowControl.ItemListView.SelectedItems[0].Tag;
             }
 
             return -1;
@@ -134,22 +134,22 @@ namespace UoFiddler.Controls.Plugin
 
         public ListView GetItemShowListView()
         {
-            return ItemShow.ItemListView;
+            return ItemShowControl.ItemListView;
         }
 
-        public ItemShowAlternative GetItemShowAltControl()
+        public ItemShowAlternativeControl GetItemShowAltControl()
         {
-            return ItemShowAlternative.RefMarker;
+            return ItemShowAlternativeControl.RefMarker;
         }
 
         public PictureBox GetItemShowAltPictureBox()
         {
-            return ItemShowAlternative.ItemPictureBox;
+            return ItemShowAlternativeControl.ItemPictureBox;
         }
 
         public int GetSelectedItemShowAlternative()
         {
-            return ItemShowAlternative.RefMarker.Selected;
+            return ItemShowAlternativeControl.RefMarker.Selected;
         }
     }
 }
