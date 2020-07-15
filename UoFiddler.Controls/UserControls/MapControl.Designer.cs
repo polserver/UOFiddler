@@ -240,6 +240,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // TextBoxGoto
             // 
+            this.TextBoxGoto.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxGoto.Name = "TextBoxGoto";
             this.TextBoxGoto.Size = new System.Drawing.Size(100, 23);
             this.TextBoxGoto.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownGoto);
@@ -702,7 +703,7 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.UseAnimations = false;
             this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
-            // Map
+            // MapControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
