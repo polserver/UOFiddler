@@ -209,6 +209,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void ChangeScrollBar()
         {
+            if (PreloadWorker.IsBusy)
+            {
+                return;
+            }
+
             hScrollBar.Maximum = _currMap.Width;
             hScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Width / Zoom) - 8);
             if (Zoom >= 1)
@@ -238,6 +243,11 @@ namespace UoFiddler.Controls.UserControls
         private void OnResize(object sender, EventArgs e)
         {
             if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
+            if (PreloadWorker.IsBusy)
             {
                 return;
             }
@@ -354,6 +364,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
+            if (PreloadWorker.IsBusy)
+            {
+                return;
+            }
+
             if (e.Button == MouseButtons.Left)
             {
                 _moving = true;
@@ -370,6 +385,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
+            if (PreloadWorker.IsBusy)
+            {
+                return;
+            }
+
             _moving = false;
             Cursor = Cursors.Default;
         }
@@ -550,6 +570,12 @@ namespace UoFiddler.Controls.UserControls
         {
             if (FormsDesignerHelper.IsInDesignMode())
             {
+                return;
+            }
+
+            if (PreloadWorker.IsBusy)
+            {
+                e.Graphics.DrawString("Preloading map. Please wait...", SystemFonts.DefaultFont, Brushes.Black, 60, 60);
                 return;
             }
 
@@ -903,14 +929,8 @@ namespace UoFiddler.Controls.UserControls
         {
             ProgressBar.Visible = false;
             PreloadMap.Visible = false;
+            pictureBox.Invalidate();
         }
-
-        // TODO: unused?
-        // private void OnClickEditMarkers(object sender, EventArgs e)
-        // {
-        //     panel1.Visible = !panel1.Visible;
-        //     pictureBox.Invalidate();
-        // }
 
         private void OnDoubleClickMarker(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -1015,6 +1035,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnResizeMap(object sender, EventArgs e)
         {
+            if (PreloadWorker.IsBusy)
+            {
+                return;
+            }
+
             if (!_loaded)
             {
                 return;
