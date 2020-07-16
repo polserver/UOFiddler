@@ -64,33 +64,21 @@ namespace Ultima
             return string.Format(_fmtTxt, _args);
         }
 
-// TODO: unused?
-//        public string SplitFormat(string argString)
-//        {
-//            if (_fmtTxt == null)
-//            {
-//                _fmtTxt = _regEx.Replace(_text, "{$1}");
-//            }
-//
-//            string[] args = argString.Split('\t'); // adds an extra on to the args array
-//
-//            for (int i = 0; i < args.Length && i < 10; i++)
-//            {
-//                _args[i + 1] = args[i];
-//            }
-//
-//            return string.Format(_fmtTxt, _args);
-//            /*
-//            {
-//                StringBuilder sb = new StringBuilder();
-//                sb.Append( _fmtTxt );
-//                for(int i=0;i<args.Length;i++)
-//                {
-//                    sb.Append( "|" );
-//                    sb.Append( args[i] == null ? "-null-" : args[i] );
-//                }
-//                throw new Exception( sb.ToString() );
-//            }*/
-//        }
+        public string SplitFormat(string argString)
+        {
+            if (_fmtTxt == null)
+            {
+                _fmtTxt = _regEx.Replace(_text, "{$1}");
+            }
+
+            string[] args = argString.Split('\t'); // adds an extra on to the args array
+
+            for (int i = 0; i < args.Length && i < 10; i++)
+            {
+                _args[i + 1] = args[i];
+            }
+
+            return string.Format(_fmtTxt, _args);
+        }
     }
 }

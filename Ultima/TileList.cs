@@ -32,8 +32,6 @@ namespace Ultima
         }
     }
 
-/*
- // TODO: unused?
     public sealed class TileList
     {
         private readonly List<Tile> _tiles;
@@ -48,10 +46,6 @@ namespace Ultima
         public void Add(ushort id, sbyte z)
         {
             _tiles.Add(new Tile(id, z));
-        }
-        public void Add(ushort id, sbyte z, sbyte flag)
-        {
-            _tiles.Add(new Tile(id, z, flag));
         }
 
         public Tile[] ToArray()
@@ -72,7 +66,6 @@ namespace Ultima
             return _tiles[i];
         }
     }
-*/
 
     public sealed class MTileList
     {
@@ -89,10 +82,12 @@ namespace Ultima
         {
             _tiles.Add(new MTile(id, z));
         }
+
         public void Add(ushort id, sbyte z, sbyte flag)
         {
             _tiles.Add(new MTile(id, z, flag));
         }
+
         public void Add(ushort id, sbyte z, sbyte flag, int unk1)
         {
             _tiles.Add(new MTile(id, z, flag, unk1));

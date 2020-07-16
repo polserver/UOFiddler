@@ -13,7 +13,7 @@ namespace Ultima
         public string Language { get; }
 
         private Dictionary<int, string> _stringTable;
-        // private Dictionary<int, StringEntry> _entryTable; // TODO: unused?
+        private Dictionary<int, StringEntry> _entryTable;
         private static byte[] _buffer = new byte[1024];
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Ultima
             }
             Entries = new List<StringEntry>();
             _stringTable = new Dictionary<int, string>();
-            // _entryTable = new Dictionary<int, StringEntry>();
+            _entryTable = new Dictionary<int, StringEntry>();
 
             using (var bin = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
@@ -71,7 +71,7 @@ namespace Ultima
                     Entries.Add(se);
 
                     _stringTable[number] = text;
-                    // _entryTable[number] = se;
+                    _entryTable[number] = se;
                 }
             }
         }
@@ -109,13 +109,10 @@ namespace Ultima
             return _stringTable?.ContainsKey(number) != true ? null : _stringTable[number];
         }
 
-/*
- // TODO: unused?
         public StringEntry GetEntry(int number)
         {
             return _entryTable?.ContainsKey(number) != true ? null : _entryTable[number];
         }
-*/
 
         public class NumberComparer : IComparer<StringEntry>
         {
@@ -160,7 +157,8 @@ namespace Ultima
                     {
                         return 0;
                     }
-                    else if (_sortDescending)
+
+                    if (_sortDescending)
                     {
                         return (objA.Number < objB.Number) ? 1 : -1;
                     }
@@ -169,7 +167,8 @@ namespace Ultima
                         return (objA.Number < objB.Number) ? -1 : 1;
                     }
                 }
-                else if (_sortDescending)
+
+                if (_sortDescending)
                 {
                     return ((byte)objA.Flag < (byte)objB.Flag) ? 1 : -1;
                 }
@@ -191,14 +190,9 @@ namespace Ultima
 
             public int Compare(StringEntry objA, StringEntry objB)
             {
-                if (_sortDescending)
-                {
-                    return string.CompareOrdinal(objB.Text, objA.Text);
-                }
-                else
-                {
-                    return string.CompareOrdinal(objA.Text, objB.Text);
-                }
+                return _sortDescending
+                    ? string.CompareOrdinal(objB.Text, objA.Text)
+                    : string.CompareOrdinal(objA.Text, objB.Text);
             }
         }
     }

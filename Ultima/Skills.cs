@@ -111,8 +111,8 @@ namespace Ultima
                     if (skill == null)
                     {
                         binidx.Write(-1); // lookup
-                        binidx.Write(0); // length
-                        binidx.Write(0); // extra
+                        binidx.Write(0);  // length
+                        binidx.Write(0);  // extra
                     }
                     else
                     {

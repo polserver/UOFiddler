@@ -39,9 +39,9 @@ namespace Ultima
 
             int width = 0;
 
-            for (int i = 0; i < text.Length; ++i)
+            foreach (var character in text)
             {
-                width += GetBitmap(text[i]).Width;
+                width += GetBitmap(character).Width;
             }
 
             return width;
@@ -135,6 +135,7 @@ namespace Ultima
                                 }
                             }
                             bmp.UnlockBits(bd);
+
                             Fonts[i].Characters[k] = bmp;
                             Fonts[i].Unk[k] = unk;
                         }
@@ -199,9 +200,9 @@ namespace Ultima
             int dy = font.Height + 2;
             using (Graphics graph = Graphics.FromImage(result))
             {
-                for (int i = 0; i < text.Length; ++i)
+                foreach (var character in text)
                 {
-                    Bitmap bmp = font.GetBitmap(text[i]);
+                    Bitmap bmp = font.GetBitmap(character);
                     graph.DrawImage(bmp, dx, dy - bmp.Height);
                     dx += bmp.Width;
                 }

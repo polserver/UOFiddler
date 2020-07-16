@@ -245,17 +245,17 @@ namespace Ultima
 
             for (int i = 0; i < animLength; ++i)
             {
-                entries[i].lookup = bin.ReadInt32();
-                entries[i].length = bin.ReadInt32();
-                entries[i].extra = bin.ReadInt32();
+                entries[i].Lookup = bin.ReadInt32();
+                entries[i].Length = bin.ReadInt32();
+                entries[i].Extra = bin.ReadInt32();
             }
 
             foreach (Entry3D entry in entries)
             {
-                if ((entry.lookup > 0) && (entry.lookup < bin.BaseStream.Length) && (entry.length > 0))
+                if ((entry.Lookup > 0) && (entry.Lookup < bin.BaseStream.Length) && (entry.Length > 0))
                 {
-                    bin.BaseStream.Seek(entry.lookup, SeekOrigin.Begin);
-                    cache[index] = new AnimIdx(bin, entry.extra);
+                    bin.BaseStream.Seek(entry.Lookup, SeekOrigin.Begin);
+                    cache[index] = new AnimIdx(bin, entry.Extra);
                 }
                 ++index;
             }
@@ -266,39 +266,37 @@ namespace Ultima
             AnimIdx[] cache = GetCache(fileType);
             GetFileIndex(body, fileType, 0, 0, out FileIndex fileIndex, out int index);
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var bin = new BinaryWriter(fs))
             {
-                using (var bin = new BinaryWriter(fs))
+                bin.Write((short)6);
+                int animLength = Animations.GetAnimLength(body, fileType);
+                int currType = animLength == 22 ? 0 : animLength == 13 ? 1 : 2;
+                bin.Write((short)currType);
+                long indexPos = bin.BaseStream.Position;
+                long animPos = bin.BaseStream.Position + (12 * animLength * 5);
+                for (int i = index; i < index + (animLength * 5); i++)
                 {
-                    bin.Write((short)6);
-                    int animLength = Animations.GetAnimLength(body, fileType);
-                    int currType = animLength == 22 ? 0 : animLength == 13 ? 1 : 2;
-                    bin.Write((short)currType);
-                    long indexPos = bin.BaseStream.Position;
-                    long animPos = bin.BaseStream.Position + (12 * animLength * 5);
-                    for (int i = index; i < index + (animLength * 5); i++)
+                    AnimIdx anim;
+                    if (cache != null)
                     {
-                        AnimIdx anim;
-                        if (cache != null)
-                        {
-                            anim = cache[i] != null ? cache[i] : cache[i] = new AnimIdx(i, fileIndex);
-                        }
-                        else
-                        {
-                            anim = cache[i] = new AnimIdx(i, fileIndex);
-                        }
+                        anim = cache[i] != null ? cache[i] : cache[i] = new AnimIdx(i, fileIndex);
+                    }
+                    else
+                    {
+                        anim = cache[i] = new AnimIdx(i, fileIndex);
+                    }
 
-                        if (anim == null)
-                        {
-                            bin.BaseStream.Seek(indexPos, SeekOrigin.Begin);
-                            bin.Write(-1);
-                            bin.Write(-1);
-                            bin.Write(-1);
-                            indexPos = bin.BaseStream.Position;
-                        }
-                        else
-                        {
-                            anim.ExportToVD(bin, ref indexPos, ref animPos);
-                        }
+                    if (anim == null)
+                    {
+                        bin.BaseStream.Seek(indexPos, SeekOrigin.Begin);
+                        bin.Write(-1);
+                        bin.Write(-1);
+                        bin.Write(-1);
+                        indexPos = bin.BaseStream.Position;
+                    }
+                    else
+                    {
+                        anim.ExportToVD(bin, ref indexPos, ref animPos);
                     }
                 }
             }
@@ -609,7 +607,6 @@ namespace Ultima
                 new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
-            ushort* cur = line;
 
             int i = 0;
             while (i < 0x100)
@@ -622,7 +619,7 @@ namespace Ultima
 
             while (y < bmp.Height)
             {
-                cur = line;
+                ushort* cur = line;
                 for (int x = 0; x < bmp.Width; x++)
                 {
                     ushort c = cur[x];

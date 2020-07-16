@@ -107,7 +107,7 @@ namespace Ultima
 
             Stream stream = _fileIndex.Seek(soundId, out int length, out int _, out bool _);
 
-            if (_fileIndex.Index[soundId].lookup < 0 || length <= 0)
+            if (_fileIndex.Index[soundId].Lookup < 0 || length <= 0)
             {
                 if (!_translations.TryGetValue(soundId, out soundId))
                 {
@@ -214,7 +214,7 @@ namespace Ultima
 
             Stream stream = _fileIndex.Seek(soundId, out int length, out _, out _);
 
-            if (_fileIndex.Index[soundId].lookup < 0 || length <= 0)
+            if (_fileIndex.Index[soundId].Lookup < 0 || length <= 0)
             {
                 if (!_translations.TryGetValue(soundId, out soundId))
                 {
@@ -270,7 +270,7 @@ namespace Ultima
             else
             {
                 Stream stream = _fileIndex.Seek(soundId, out int length, out int _, out bool _);
-                if (_fileIndex.Index[soundId].lookup < 0 || length <= 0)
+                if (_fileIndex.Index[soundId].Lookup < 0 || length <= 0)
                 {
                     if (!_translations.TryGetValue(soundId, out soundId))
                     {
@@ -408,13 +408,10 @@ namespace Ultima
             }
         }
 
-/*
- // TODO: unused?
         public static bool IsRemovedSound(int soundId)
         {
             return soundId < 0 || _removed[soundId];
         }
-*/
 
         private static byte[] CheckAndFixWave(byte[] inputBuffer)
         {

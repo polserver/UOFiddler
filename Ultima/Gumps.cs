@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -14,9 +15,9 @@ namespace Ultima
         private static bool[] _removed;
         private static readonly Hashtable _patched = new Hashtable();
 
-        //private static byte[] _pixelBuffer; // TODO: unused?
+        private static byte[] _pixelBuffer;
         private static byte[] _streamBuffer;
-        //private static byte[] _colorTable; // TODO: unused?
+        private static byte[] _colorTable;
 
         static Gumps()
         {
@@ -159,8 +160,6 @@ namespace Ultima
             return buffer;
         }
 
-/*
- // TODO: unused?
         /// <summary>
         /// Returns Bitmap of index and applies Hue
         /// </summary>
@@ -329,7 +328,6 @@ namespace Ultima
                 }
             }
         }
-*/
 
         /// <summary>
         /// Returns Bitmap of index

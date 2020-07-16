@@ -273,6 +273,7 @@ namespace Ultima
 
                         MultiComponentList.MultiTileEntry centerItem = newTiles[i];
                         newTiles.RemoveAt(i); // jep so save it
+
                         for (int j = newTiles.Count-1; j >= 0; --j) // and remove all invis
                         {
                             if (newTiles[j].m_ItemID == 0x1)
@@ -381,7 +382,7 @@ namespace Ultima
                             binidx.Write(tiles.Count * 12); // length
                         }
 
-                        binidx.Write(-1); //extra
+                        binidx.Write(-1); // extra
                         for (int i = 0; i < tiles.Count; ++i)
                         {
                             binmul.Write(tiles[i].m_ItemID);
@@ -426,24 +427,12 @@ namespace Ultima
             public int m_Unk1;
         }
 
-/*
- // TODO: unused method
-        /// <summary>
-        /// Returns Bitmap of Multi
-        /// </summary>
-        /// <returns></returns>
-        public Bitmap GetImage()
-        {
-            return GetImage(300);
-        }
-*/
-
         /// <summary>
         /// Returns Bitmap of Multi to maximumHeight
         /// </summary>
         /// <param name="maximumHeight"></param>
         /// <returns></returns>
-        public Bitmap GetImage(int maximumHeight)
+        public Bitmap GetImage(int maximumHeight = 300)
         {
             if (Width == 0 || Height == 0)
             {
@@ -532,12 +521,6 @@ namespace Ultima
 
                         gfx.DrawImageUnscaled(bmp, px, py, bmp.Width, bmp.Height);
                     }
-
-                    // TODO: check what this was for. It looks unused/unfinished.
-                    //int tx = (x - y) * 22;
-                    //int ty = (x + y) * 22;
-                    //tx -= xMin;
-                    //ty -= yMin;
                 }
             }
 
@@ -600,11 +583,11 @@ namespace Ultima
             switch (Type)
             {
                 case Multis.ImportType.TXT:
+                {
                     itemCount = 0;
                     using (var ip = new StreamReader(fileName))
                     {
-                        string line;
-                        while ((line = ip.ReadLine()) != null)
+                        while (ip.ReadLine() != null)
                         {
                             itemCount++;
                         }
@@ -690,7 +673,9 @@ namespace Ultima
                         }
                     }
                     break;
+                }
                 case Multis.ImportType.UOA:
+                {
                     itemCount = 0;
 
                     using (var ip = new StreamReader(fileName))
@@ -797,7 +782,9 @@ namespace Ultima
                     }
 
                     break;
+                }
                 case Multis.ImportType.UOAB:
+                {
                     using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     using (var reader = new BinaryReader(fs))
                     {
@@ -890,8 +877,10 @@ namespace Ultima
                         }
                     }
                     break;
+                }
 
                 case Multis.ImportType.WSC:
+                {
                     itemCount = 0;
                     using (var ip = new StreamReader(fileName))
                     {
@@ -1014,6 +1003,7 @@ namespace Ultima
                         }
                     }
                     break;
+                }
             }
             ConvertList();
         }
@@ -1253,10 +1243,10 @@ namespace Ultima
                 {
                     foreach (var mTile in newTiles[x][y].ToArray())
                     {
-                        SortedTiles[counter].m_ItemID = (mTile.Id);
+                        SortedTiles[counter].m_ItemID = mTile.Id;
                         SortedTiles[counter].m_OffsetX = (short)(x - _center.X);
                         SortedTiles[counter].m_OffsetY = (short)(y - _center.Y);
-                        SortedTiles[counter].m_OffsetZ = (short)(mTile.Z);
+                        SortedTiles[counter].m_OffsetZ = mTile.Z;
                         SortedTiles[counter].m_Flags = mTile.Flag;
                         SortedTiles[counter].m_Unk1 = 0;
 

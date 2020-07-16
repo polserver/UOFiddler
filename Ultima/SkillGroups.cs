@@ -40,61 +40,60 @@ namespace Ultima
             }
 
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var bin = new BinaryReader(fs))
             {
-                using (var bin = new BinaryReader(fs))
+                int start = 4;
+                int strLen = 17;
+                int count = bin.ReadInt32();
+
+                if (count == -1)
                 {
-                    int start = 4;
-                    int strLen = 17;
-                    int count = bin.ReadInt32();
+                    _unicode = true;
+                    count = bin.ReadInt32();
+                    start *= 2;
+                    strLen *= 2;
+                }
 
-                    if (count == -1)
+                List.Add(new SkillGroup("Misc"));
+
+                for (int i = 0; i < count - 1; ++i)
+                {
+                    int strBuild;
+
+                    fs.Seek(start + (i * strLen), SeekOrigin.Begin);
+
+                    var builder2 = new StringBuilder(17);
+                    if (_unicode)
                     {
-                        _unicode = true;
-                        count = bin.ReadInt32();
-                        start *= 2;
-                        strLen *= 2;
-                    }
-
-                    List.Add(new SkillGroup("Misc"));
-                    for (int i = 0; i < count - 1; ++i)
-                    {
-                        int strBuild;
-
-                        fs.Seek(start + (i * strLen), SeekOrigin.Begin);
-
-                        var builder2 = new StringBuilder(17);
-                        if (_unicode)
+                        while ((strBuild = bin.ReadInt16()) != 0)
                         {
-                            while ((strBuild = bin.ReadInt16()) != 0)
-                            {
-                                builder2.Append((char)strBuild);
-                            }
-                        }
-                        else
-                        {
-                            while ((strBuild = bin.ReadByte()) != 0)
-                            {
-                                builder2.Append((char)strBuild);
-                            }
-                        }
-
-                        List.Add(new SkillGroup(builder2.ToString()));
-                    }
-
-                    fs.Seek((start + ((count - 1) * strLen)), SeekOrigin.Begin);
-
-                    try
-                    {
-                        while (bin.BaseStream.Length != bin.BaseStream.Position)
-                        {
-                            SkillList.Add(bin.ReadInt32());
+                            builder2.Append((char)strBuild);
                         }
                     }
-                    catch // just for safety
+                    else
                     {
-                        // TODO: ignored?
-                        // ignored
+                        while ((strBuild = bin.ReadByte()) != 0)
+                        {
+                            builder2.Append((char)strBuild);
+                        }
                     }
+
+                    List.Add(new SkillGroup(builder2.ToString()));
+                }
+
+                fs.Seek((start + ((count - 1) * strLen)), SeekOrigin.Begin);
+
+                try
+                {
+                    while (bin.BaseStream.Length != bin.BaseStream.Position)
+                    {
+                        SkillList.Add(bin.ReadInt32());
+                    }
+                }
+                catch // just for safety
+                {
+                    // TODO: ignored?
+                    // ignored
                 }
             }
         }

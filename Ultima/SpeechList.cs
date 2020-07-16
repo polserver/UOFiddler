@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Ultima
@@ -178,7 +179,8 @@ namespace Ultima
                 {
                     return 0;
                 }
-                else if (_sortDescending)
+
+                if (_sortDescending)
                 {
                     return (objA.ID < objB.ID) ? 1 : -1;
                 }
@@ -243,8 +245,6 @@ namespace Ultima
         }
     }
 
-/*
- // TODO: unused?
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SpeechMul
     {
@@ -252,5 +252,4 @@ namespace Ultima
         public short length;
         public byte[] keyword;
     }
-*/
 }
