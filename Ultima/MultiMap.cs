@@ -81,7 +81,7 @@ namespace Ultima
             bin.Write(2048); // height
 
             byte data = 0;
-            byte mask = 0x0;
+            byte mask;
 
             BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
 
@@ -237,7 +237,7 @@ namespace Ultima
                     }
                     long currpos = writer.BaseStream.Position;
                     writer.BaseStream.Seek(pos, SeekOrigin.Begin);
-                    writer.Write(colorsAtLine * 3); //byte count
+                    writer.Write(colorsAtLine * 3); // byte count
                     writer.BaseStream.Seek(currpos, SeekOrigin.Begin);
                 }
             }

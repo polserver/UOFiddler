@@ -26,7 +26,8 @@ namespace Ultima
             string path = Files.GetFilePath("hues.mul");
             int index = 0;
 
-            List = new Hue[3000];
+            const int maxHueCount = 3000;
+            List = new Hue[maxHueCount];
 
             if (path != null)
             {
@@ -83,31 +84,32 @@ namespace Ultima
             using (var binmul = new BinaryWriter(fsmul))
             {
                 int index = 0;
-                for (int i = 0; i < _header.Length; ++i)
+                foreach (var blockIdx in _header)
                 {
-                    binmul.Write(_header[i]);
+                    binmul.Write(blockIdx);
                     for (int j = 0; j < 8; ++j, ++index)
                     {
-                        for (int c = 0; c < 32; ++c)
+                        for (int colorIndex = 0; colorIndex < 32; ++colorIndex)
                         {
-                            binmul.Write((short)(List[index].Colors[c] ^ 0x8000));
+                            binmul.Write((short)(List[index].Colors[colorIndex] ^ 0x8000));
                         }
 
                         binmul.Write((short)(List[index].TableStart ^ 0x8000));
                         binmul.Write((short)(List[index].TableEnd ^ 0x8000));
-                        var b = new byte[20];
+
+                        var nameBuffer = new byte[20];
                         if (List[index].Name != null)
                         {
-                            byte[] bb = Encoding.Default.GetBytes(List[index].Name);
-                            if (bb.Length > 20)
+                            byte[] bytes = Encoding.Default.GetBytes(List[index].Name);
+                            if (bytes.Length > 20)
                             {
-                                Array.Resize(ref bb, 20);
+                                Array.Resize(ref bytes, 20);
                             }
 
-                            bb.CopyTo(b, 0);
+                            bytes.CopyTo(nameBuffer, 0);
                         }
 
-                        binmul.Write(b);
+                        binmul.Write(nameBuffer);
                     }
                 }
             }
@@ -273,19 +275,18 @@ namespace Ultima
         }
 
         private static readonly byte[] _stringBuffer = new byte[20];
-        private static byte[] _buffer = new byte[88];
 
         public Hue(int index, BinaryReader bin)
         {
             Index = index;
             Colors = new short[32];
 
-            _buffer = bin.ReadBytes(88);
+            byte[] buffer = bin.ReadBytes(88);
             unsafe
             {
-                fixed (byte* buffer = _buffer)
+                fixed (byte* bufferPtr = buffer)
                 {
-                    var buf = (ushort*)buffer;
+                    var buf = (ushort*)bufferPtr;
                     for (int i = 0; i < 32; ++i)
                     {
                         Colors[i] = (short)(*buf++ | 0x8000);
@@ -395,9 +396,9 @@ namespace Ultima
                 tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString());
                 tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString());
 
-                for (int i = 0; i < Colors.Length; ++i)
+                foreach (var colorValue in Colors)
                 {
-                    tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString());
+                    tex.WriteLine(((short)(colorValue ^ 0x8000)).ToString());
                 }
             }
         }
@@ -452,7 +453,7 @@ namespace Ultima
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct HueDataMul
+    public readonly struct HueDataMul
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
         public readonly ushort[] colors;

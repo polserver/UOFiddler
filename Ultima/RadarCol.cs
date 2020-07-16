@@ -58,21 +58,18 @@ namespace Ultima
         public static void Save(string fileName)
         {
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var bin = new BinaryWriter(fs))
             {
-                using (var bin = new BinaryWriter(fs))
+                foreach (var colorValue in Colors)
                 {
-                    for (int i = 0; i < Colors.Length; ++i)
-                    {
-                        bin.Write(Colors[i]);
-                    }
+                    bin.Write(colorValue);
                 }
             }
         }
 
         public static void ExportToCSV(string fileName)
         {
-            using (
-                var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
                 tex.WriteLine("ID;Color");
 

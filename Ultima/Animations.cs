@@ -506,49 +506,48 @@ namespace Ultima
             return frames;
         }
 
-        // TODO: unused method?
-        //public static Frame[] GetAnimation(int body, int action, int direction, int fileType)
-        //{
-        //    GetFileIndex(body, action, direction, fileType, out FileIndex fileIndex, out int index);
+        public static Frame[] GetAnimation(int body, int action, int direction, int fileType)
+        {
+            GetFileIndex(body, action, direction, fileType, out FileIndex fileIndex, out int index);
 
-        //    Stream stream = fileIndex.Seek(index, out int _, out int _, out bool _);
-        //    if (stream == null)
-        //    {
-        //        return null;
-        //    }
+            Stream stream = fileIndex.Seek(index, out int _, out int _, out bool _);
+            if (stream == null)
+            {
+                return null;
+            }
 
-        //    bool flip = direction > 4;
+            bool flip = direction > 4;
 
-        //    using (var bin = new BinaryReader(stream))
-        //    {
-        //        var palette = new ushort[0x100];
+            using (var bin = new BinaryReader(stream))
+            {
+                var palette = new ushort[0x100];
 
-        //        for (int i = 0; i < 0x100; ++i)
-        //        {
-        //            palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
-        //        }
+                for (int i = 0; i < 0x100; ++i)
+                {
+                    palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
+                }
 
-        //        var start = (int)bin.BaseStream.Position;
-        //        int frameCount = bin.ReadInt32();
+                var start = (int)bin.BaseStream.Position;
+                int frameCount = bin.ReadInt32();
 
-        //        var lookups = new int[frameCount];
+                var lookups = new int[frameCount];
 
-        //        for (int i = 0; i < frameCount; ++i)
-        //        {
-        //            lookups[i] = start + bin.ReadInt32();
-        //        }
+                for (int i = 0; i < frameCount; ++i)
+                {
+                    lookups[i] = start + bin.ReadInt32();
+                }
 
-        //        var frames = new Frame[frameCount];
+                var frames = new Frame[frameCount];
 
-        //        for (int i = 0; i < frameCount; ++i)
-        //        {
-        //            bin.BaseStream.Seek(lookups[i], SeekOrigin.Begin);
-        //            frames[i] = new Frame(palette, bin, flip);
-        //        }
+                for (int i = 0; i < frameCount; ++i)
+                {
+                    bin.BaseStream.Seek(lookups[i], SeekOrigin.Begin);
+                    frames[i] = new Frame(palette, bin, flip);
+                }
 
-        //        return frames;
-        //    }
-        //}
+                return frames;
+            }
+        }
 
         private static int[] _table;
 

@@ -198,7 +198,6 @@ namespace Ultima
                 using (BinaryWriter binidx = new BinaryWriter(memidx), binmul = new BinaryWriter(memmul))
                 {
                     var sha = new SHA256Managed();
-                    //StreamWriter Tex = new StreamWriter(new FileStream("d:/texlog.txt", FileMode.Create, FileAccess.ReadWrite));
                     for (int index = 0; index < GetIdxLength(); ++index)
                     {
                         if (_cache[index] == null)
@@ -210,7 +209,7 @@ namespace Ultima
                         if ((bmp == null) || (_removed[index]))
                         {
                             binidx.Write(-1); // lookup
-                            binidx.Write(0); // length
+                            binidx.Write(0);  // length
                             binidx.Write(-1); // extra
                         }
                         else
@@ -219,13 +218,12 @@ namespace Ultima
                             bmp.Save(ms, ImageFormat.Bmp);
                             byte[] checksum = sha.ComputeHash(ms.ToArray());
 
-                            if (compareSaveImages(checksum, out Checksums sum))
+                            if (CompareSaveImages(checksum, out Checksums sum))
                             {
-                                binidx.Write(sum.pos); //lookup
+                                binidx.Write(sum.pos); // lookup
                                 binidx.Write(sum.length);
                                 binidx.Write(0);
-                                //Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, (int)sum.pos, (int)sum.length));
-                                //Tex.WriteLine(System.String.Format("0x{0:X4} -> 0x{1:X4}", sum.index, index));
+
                                 continue;
                             }
 
@@ -235,7 +233,7 @@ namespace Ultima
                             var line = (ushort*)bd.Scan0;
                             int delta = bd.Stride >> 1;
 
-                            binidx.Write((int)binmul.BaseStream.Position); //lookup
+                            binidx.Write((int)binmul.BaseStream.Position); // lookup
                             var length = (int)binmul.BaseStream.Position;
 
                             for (int y = 0; y < bmp.Height; ++y, line += delta)
@@ -252,9 +250,7 @@ namespace Ultima
                             binidx.Write(length);
                             binidx.Write((bmp.Width == 64 ? 0 : 1));
                             bmp.UnlockBits(bd);
-                            var s = new Checksums {pos = start, length = length, checksum = checksum, index = index};
-                            //Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, start, length));
-                            _checkSums.Add(s);
+                            _checkSums.Add(new Checksums {pos = start, length = length, checksum = checksum, index = index});
                         }
                     }
 
@@ -264,13 +260,13 @@ namespace Ultima
             }
         }
 
-        private static bool compareSaveImages(byte[] newChecksum, out Checksums sum)
+        private static bool CompareSaveImages(IReadOnlyList<byte> newChecksum, out Checksums sum)
         {
             sum = new Checksums();
             for (int i = 0; i < _checkSums.Count; ++i)
             {
                 byte[] cmp = _checkSums[i].checksum;
-                if (((cmp == null) || (newChecksum == null)) || (cmp.Length != newChecksum.Length))
+                if ((cmp == null) || (newChecksum == null) || (cmp.Length != newChecksum.Count))
                 {
                     return false;
                 }

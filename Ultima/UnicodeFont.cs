@@ -27,9 +27,9 @@ namespace Ultima
             }
 
             int width = 0;
-            for (int i = 0; i < text.Length; ++i)
+            foreach (var character in text)
             {
-                int c = text[i] % 0x10000;
+                int c = character % 0x10000;
                 width += Chars[c].Width;
                 width += Chars[c].XOffset;
             }
@@ -50,9 +50,9 @@ namespace Ultima
             }
 
             int height = 0;
-            for (int i = 0; i < text.Length; ++i)
+            foreach (var character in text)
             {
-                int c = text[i] % 0x10000;
+                int c = character % 0x10000;
                 height = Math.Max(height, Chars[c].Height + Chars[c].YOffset);
             }
 
@@ -124,7 +124,6 @@ namespace Ultima
             Bytes = new byte[bmp.Height * (((bmp.Width - 1) / 8) + 1)];
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
             var line = (ushort*)bd.Scan0;
-            //int delta = bd.Stride >> 1;
             for (int y = 0; y < bmp.Height; ++y)
             {
                 ushort* cur = line;
@@ -139,6 +138,7 @@ namespace Ultima
                     Bytes[offset] |= (byte)(1 << (7 - (x % 8)));
                 }
             }
+
             bmp.UnlockBits(bd);
         }
     }
@@ -232,9 +232,9 @@ namespace Ultima
 
             using (Graphics graph = Graphics.FromImage(result))
             {
-                for (int i = 0; i < text.Length; ++i)
+                foreach (var character in text)
                 {
-                    int c = text[i] % 0x10000;
+                    int c = character % 0x10000;
                     Bitmap bmp = Fonts[fontId].Chars[c].GetImage();
                     dx += Fonts[fontId].Chars[c].XOffset;
                     graph.DrawImage(bmp, dx, dy + Fonts[fontId].Chars[c].YOffset);
@@ -256,29 +256,27 @@ namespace Ultima
             string fileName = Path.Combine(path, _files[fileType]);
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var bin = new BinaryWriter(fs))
             {
-                using (var bin = new BinaryWriter(fs))
+                fs.Seek(0x10000 * 4, SeekOrigin.Begin);
+                bin.Write(0);
+
+                // Set first data
+                for (int c = 0; c < 0x10000; ++c)
                 {
-                    fs.Seek(0x10000 * 4, SeekOrigin.Begin);
-                    bin.Write(0);
-
-                    // Set first data
-                    for (int c = 0; c < 0x10000; ++c)
+                    if (Fonts[fileType].Chars[c].Bytes == null)
                     {
-                        if (Fonts[fileType].Chars[c].Bytes == null)
-                        {
-                            continue;
-                        }
-
-                        fs.Seek(c * 4, SeekOrigin.Begin);
-                        bin.Write((int)fs.Length);
-                        fs.Seek(fs.Length, SeekOrigin.Begin);
-                        bin.Write(Fonts[fileType].Chars[c].XOffset);
-                        bin.Write(Fonts[fileType].Chars[c].YOffset);
-                        bin.Write((byte)Fonts[fileType].Chars[c].Width);
-                        bin.Write((byte)Fonts[fileType].Chars[c].Height);
-                        bin.Write(Fonts[fileType].Chars[c].Bytes);
+                        continue;
                     }
+
+                    fs.Seek(c * 4, SeekOrigin.Begin);
+                    bin.Write((int)fs.Length);
+                    fs.Seek(fs.Length, SeekOrigin.Begin);
+                    bin.Write(Fonts[fileType].Chars[c].XOffset);
+                    bin.Write(Fonts[fileType].Chars[c].YOffset);
+                    bin.Write((byte)Fonts[fileType].Chars[c].Width);
+                    bin.Write((byte)Fonts[fileType].Chars[c].Height);
+                    bin.Write(Fonts[fileType].Chars[c].Bytes);
                 }
             }
 

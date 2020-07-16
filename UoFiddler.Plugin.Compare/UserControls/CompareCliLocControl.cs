@@ -38,7 +38,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private SortOrder _sortOrder;
         private int _sortColumn;
 
-        private void OnLoad1(object sender, EventArgs e)
+        private void OnLoad(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBox1.Text))
             {
@@ -89,24 +89,23 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            for (int i = 0; i < _cliloc1.Entries.Count; i++)
+            foreach (var stringEntry in _cliloc1.Entries)
             {
                 CompareEntry entry = new CompareEntry { CompareResult = CompareEntry.CompareRes.NewIn1 };
-                StringEntry entr = _cliloc1.Entries[i];
+                StringEntry entr = stringEntry;
                 entry.Number = entr.Number;
                 entry.Text1 = entr.Text;
-                entry.Text2 = "";
+                entry.Text2 = string.Empty;
                 _compareList.Add(entry.Number, entry);
             }
 
-            for (int i = 0; i < _cliloc2.Entries.Count; i++)
+            foreach (var stringEntry in _cliloc2.Entries)
             {
-                StringEntry entr = _cliloc2.Entries[i];
-                if (_compareList.ContainsKey(entr.Number))
+                if (_compareList.ContainsKey(stringEntry.Number))
                 {
-                    CompareEntry entr1 = _compareList[entr.Number];
-                    entr1.Text2 = entr.Text;
-                    entr1.CompareResult = entr1.Text1 != entr.Text
+                    CompareEntry entr1 = _compareList[stringEntry.Number];
+                    entr1.Text2 = stringEntry.Text;
+                    entr1.CompareResult = entr1.Text1 != stringEntry.Text
                         ? CompareEntry.CompareRes.Diff
                         : CompareEntry.CompareRes.Equal;
                 }
@@ -115,9 +114,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     CompareEntry entry = new CompareEntry
                     {
                         CompareResult = CompareEntry.CompareRes.NewIn2,
-                        Number = entr.Number,
-                        Text1 = "",
-                        Text2 = entr.Text
+                        Number = stringEntry.Number,
+                        Text1 = string.Empty,
+                        Text2 = stringEntry.Text
                     };
                     _compareList.Add(entry.Number, entry);
                 }
@@ -173,7 +172,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex == 1 || e.ColumnIndex == 2) //text1 & text2
+            if (e.ColumnIndex == 1 || e.ColumnIndex == 2) // text1 & text2
             {
                 return;
             }
@@ -206,6 +205,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 CheckFileExists = true,
                 Filter = "cliloc files (cliloc.*)|cliloc.*"
             };
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 textBox1.Text = dialog.FileName;
@@ -223,6 +223,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 CheckFileExists = true,
                 Filter = "cliloc files (cliloc.*)|cliloc.*"
             };
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 textBox2.Text = dialog.FileName;
@@ -239,27 +240,31 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickFindNextDiff(object sender, EventArgs e)
         {
-            if (dataGridView1.RowCount > 0)
+            if (dataGridView1.RowCount <= 0)
             {
-                int i;
-                if (dataGridView1.SelectedRows.Count > 0)
+                return;
+            }
+
+            int i;
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                i = dataGridView1.SelectedRows[0].Index + 1;
+            }
+            else
+            {
+                i = 0;
+            }
+
+            for (; i < dataGridView1.RowCount; i++)
+            {
+                if ((CompareEntry.CompareRes)dataGridView1.Rows[i].Cells[3].Value == CompareEntry.CompareRes.Equal)
                 {
-                    i = dataGridView1.SelectedRows[0].Index + 1;
-                }
-                else
-                {
-                    i = 0;
+                    continue;
                 }
 
-                for (; i < dataGridView1.RowCount; i++)
-                {
-                    if ((CompareEntry.CompareRes)dataGridView1.Rows[i].Cells[3].Value != CompareEntry.CompareRes.Equal)
-                    {
-                        dataGridView1.Rows[i].Selected = true;
-                        dataGridView1.FirstDisplayedScrollingRowIndex = i;
-                        break;
-                    }
-                }
+                dataGridView1.Rows[i].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = i;
+                break;
             }
         }
 
@@ -332,7 +337,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 return 0;
             }
-            else if (_mDesc)
+
+            if (_mDesc)
             {
                 return objA.Number < objB.Number ? 1 : -1;
             }
@@ -368,7 +374,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                 return objA.Number < objB.Number ? -1 : 1;
             }
-            else if (_mDesc)
+
+            if (_mDesc)
             {
                 return (byte)objA.CompareResult < (byte)objB.CompareResult ? 1 : -1;
             }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using Ultima.Helpers;
 
 namespace Ultima
 {
@@ -20,8 +21,6 @@ namespace Ultima
         private FileStream _statics;
         private Entry3D[] _staticIndex;
 
-/*
- // TODO: unused?
         public Entry3D[] StaticIndex
         {
             get
@@ -34,7 +33,6 @@ namespace Ultima
                 return _staticIndex;
             }
         }
-*/
 
         public bool StaticIndexInit;
 
@@ -143,8 +141,6 @@ namespace Ultima
             Patch = new TileMatrixPatch(this, mapId, path);
         }
 
-/*
- // TODO: unused?
         public void SetStaticBlock(int x, int y, HuedTile[][][] value)
         {
             if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
@@ -159,7 +155,6 @@ namespace Ultima
 
             _staticTiles[x][y] = value;
         }
-*/
 
         public HuedTile[][][] GetStaticBlock(int x, int y, bool patch = true)
         {
@@ -193,8 +188,6 @@ namespace Ultima
             return GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
         }
 
-/*
- // TODO: unused?
         public void SetLandBlock(int x, int y, Tile[] value)
         {
             if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
@@ -209,7 +202,6 @@ namespace Ultima
 
             _landTiles[x][y] = value;
         }
-*/
 
         public Tile[] GetLandBlock(int x, int y, bool patch = true)
         {
@@ -253,7 +245,7 @@ namespace Ultima
             using (var index = new FileStream(_indexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 _statics = new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                // var count = (int)(index.Length / 12); // TODO: unused?
+
                 GCHandle gc = GCHandle.Alloc(_staticIndex, GCHandleType.Pinned);
                 var buffer = new byte[index.Length];
                 index.Read(buffer, 0, (int)index.Length);
@@ -261,9 +253,9 @@ namespace Ultima
                 gc.Free();
                 for (var i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
                 {
-                    _staticIndex[i].lookup = -1;
-                    _staticIndex[i].length = -1;
-                    _staticIndex[i].extra = -1;
+                    _staticIndex[i].Lookup = -1;
+                    _staticIndex[i].Length = -1;
+                    _staticIndex[i].Extra = -1;
                 }
 
                 StaticIndexInit = true;
@@ -275,97 +267,86 @@ namespace Ultima
 
         private unsafe HuedTile[][][] ReadStaticBlock(int x, int y)
         {
+            if (!StaticIndexInit)
+            {
+                InitStatics();
+            }
+
+            if (_statics?.CanRead != true || !_statics.CanSeek)
+            {
+                _statics = _staticsPath == null
+                    ? null
+                    : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (_statics == null)
+            {
+                return EmptyStaticBlock;
+            }
+
+            int lookup = _staticIndex[(x * BlockHeight) + y].Lookup;
+            int length = _staticIndex[(x * BlockHeight) + y].Length;
+
+            if (lookup < 0 || length <= 0)
+            {
+                return EmptyStaticBlock;
+            }
+
+            int count = length / 7;
+
+            _statics.Seek(lookup, SeekOrigin.Begin);
+
+            if (_buffer == null || _buffer.Length < length)
+            {
+                _buffer = new byte[length];
+            }
+
+            GCHandle gc = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
             try
             {
-                if (!StaticIndexInit)
+                _statics.Read(_buffer, 0, length);
+
+                if (_lists == null)
                 {
-                    InitStatics();
-                }
+                    _lists = new HuedTileList[8][];
 
-                if (_statics?.CanRead != true || !_statics.CanSeek)
-                {
-                    _statics = _staticsPath == null
-                        ? null
-                        : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                }
-
-                if (_statics == null)
-                {
-                    return EmptyStaticBlock;
-                }
-
-                int lookup = _staticIndex[(x * BlockHeight) + y].lookup;
-                int length = _staticIndex[(x * BlockHeight) + y].length;
-
-                if (lookup < 0 || length <= 0)
-                {
-                    return EmptyStaticBlock;
-                }
-                else
-                {
-                    int count = length / 7;
-
-                    _statics.Seek(lookup, SeekOrigin.Begin);
-
-                    if (_buffer == null || _buffer.Length < length)
+                    for (int i = 0; i < 8; ++i)
                     {
-                        _buffer = new byte[length];
-                    }
+                        _lists[i] = new HuedTileList[8];
 
-                    GCHandle gc = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
-                    try
-                    {
-                        _statics.Read(_buffer, 0, length);
-
-                        if (_lists == null)
+                        for (int j = 0; j < 8; ++j)
                         {
-                            _lists = new HuedTileList[8][];
-
-                            for (int i = 0; i < 8; ++i)
-                            {
-                                _lists[i] = new HuedTileList[8];
-
-                                for (int j = 0; j < 8; ++j)
-                                {
-                                    _lists[i][j] = new HuedTileList();
-                                }
-                            }
+                            _lists[i][j] = new HuedTileList();
                         }
-
-                        HuedTileList[][] lists = _lists;
-
-                        for (int i = 0; i < count; ++i)
-                        {
-                            var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + (i * sizeof(StaticTile)));
-                            var cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
-                            lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemID(cur.Id), cur.Hue, cur.Z);
-                        }
-
-                        var tiles = new HuedTile[8][][];
-
-                        for (int i = 0; i < 8; ++i)
-                        {
-                            tiles[i] = new HuedTile[8][];
-
-                            for (int j = 0; j < 8; ++j)
-                            {
-                                tiles[i][j] = lists[i][j].ToArray();
-                            }
-                        }
-
-                        return tiles;
-                    }
-                    finally
-                    {
-                        gc.Free();
                     }
                 }
+
+                HuedTileList[][] lists = _lists;
+
+                for (int i = 0; i < count; ++i)
+                {
+                    var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + (i * sizeof(StaticTile)));
+                    var cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
+                    lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemID(cur.Id), cur.Hue, cur.Z);
+                }
+
+                var tiles = new HuedTile[8][][];
+
+                for (int i = 0; i < 8; ++i)
+                {
+                    tiles[i] = new HuedTile[8][];
+
+                    for (int j = 0; j < 8; ++j)
+                    {
+                        tiles[i][j] = lists[i][j].ToArray();
+                    }
+                }
+
+                return tiles;
             }
             finally
             {
-                // TODO: check why this is commented out?
-                //if (_statics != null)
-                //    _statics.Close();
+                gc.Free();
             }
         }
 
@@ -415,7 +396,7 @@ namespace Ultima
             for (int i = 0; i < count; i++)
             {
                 string file = $"build/{pattern}/{i:D8}.dat";
-                ulong hash = FileIndex.HashFileName(file);
+                ulong hash = UopUtils.HashFileName(file);
 
                 if (!hashes.ContainsKey(hash))
                 {
@@ -533,7 +514,6 @@ namespace Ultima
             {
                 gc.Free();
             }
-            //_map.Close(); // TODO: unused? why commented out?
 
             return tiles;
         }
@@ -551,6 +531,7 @@ namespace Ultima
             }
 
             _removedStaticBlock[blockX][blockY] = true;
+
             if (_staticTiles[blockX] == null)
             {
                 _staticTiles[blockX] = new HuedTile[BlockHeight][][][];

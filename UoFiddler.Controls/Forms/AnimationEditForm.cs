@@ -176,7 +176,7 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            // TODO: why is this constant and height is taken from picturebox?
+            // TODO: why is bitmapWidth constant and height is taken from picturebox?
             // TODO: looks like the value is the same as array size for pallete in AnimIdx
             const int bitmapWidth = 256;
             int bitmapHeight = pictureBoxPalette.Height;
@@ -3701,26 +3701,6 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        private void ConvertAndSetPalette(int selector)
-        {
-            for (int x = 0; x < 5; x++)
-            {
-                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConverter(selector);
-                SetPaletteBox();
-                listView1.Invalidate();
-                Options.ChangedUltimaClass["Animations"] = true;
-                SetPaletteBox();
-                if (trackBarDirection.Value != trackBarDirection.Maximum)
-                {
-                    trackBarDirection.Value++;
-                }
-                else
-                {
-                    trackBarDirection.Value = 0;
-                }
-            }
-        }
 
         // TODO: check why there is no RadioButton1_CheckedChanged event for selector 1?
 
@@ -3751,11 +3731,37 @@ namespace UoFiddler.Controls.Forms
 
         private void ApplyButton_Click(object sender, EventArgs e)
         {
+            ConvertAndSetPalleteWithReducer();
+        }
+
+        private void ConvertAndSetPalleteWithReducer()
+        {
             // TODO: except calling reducer here the whole logic is the same as in ConvertAndSetPalette()
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteReducer((int)numericUpDown6.Value, (int)numericUpDown7.Value, (int)numericUpDown8.Value);
+                edit?.PaletteReducer((int) numericUpDown6.Value, (int) numericUpDown7.Value, (int) numericUpDown8.Value);
+                SetPaletteBox();
+                listView1.Invalidate();
+                Options.ChangedUltimaClass["Animations"] = true;
+                SetPaletteBox();
+                if (trackBarDirection.Value != trackBarDirection.Maximum)
+                {
+                    trackBarDirection.Value++;
+                }
+                else
+                {
+                    trackBarDirection.Value = 0;
+                }
+            }
+        }
+
+        private void ConvertAndSetPalette(int selector)
+        {
+            for (int x = 0; x < 5; x++)
+            {
+                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                edit?.PaletteConverter(selector);
                 SetPaletteBox();
                 listView1.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
