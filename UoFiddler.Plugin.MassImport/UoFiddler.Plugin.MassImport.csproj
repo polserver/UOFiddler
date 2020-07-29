@@ -23,11 +23,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\MassImport.cs">
+    <Compile Update="Forms\MassImportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\MassImport.Designer.cs">
-      <DependentUpon>MassImport.cs</DependentUpon>
+    <Compile Update="Forms\MassImportForm.Designer.cs">
+      <DependentUpon>MassImportForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -35,8 +35,8 @@
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Forms\MassImport.resx">
-      <DependentUpon>MassImport.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\MassImportForm.resx">
+      <DependentUpon>MassImportForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

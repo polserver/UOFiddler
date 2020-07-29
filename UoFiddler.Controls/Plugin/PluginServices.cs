@@ -50,21 +50,11 @@ namespace UoFiddler.Controls.Plugin
                 return;
             }
 
-            foreach (string fileOn in Directory.GetFiles(path))
+            foreach (string fileOn in Directory.GetFiles(path, "*.dll"))
             {
-                FileInfo file = new FileInfo(fileOn);
-                if (!file.Extension.Equals(".dll"))
-                {
-                    Options.Logger.Debug("FindPlugins - not a plugin file. Skipping: {file}", file);
-                    continue;
-                }
-
                 try
                 {
-                    if (!file.Name.Equals("Controls.dll") && !file.Name.Equals("Ultima.dll") && !file.Name.Equals("Serilog.dll"))
-                    {
-                        AddPlugin(fileOn);
-                    }
+                    AddPlugin(fileOn);
                 }
                 catch (Exception ex)
                 {
@@ -84,10 +74,12 @@ namespace UoFiddler.Controls.Plugin
                 {
                     continue;
                 }
+
                 Options.Logger.Information("FindPlugins - disposing plugin: {pluginOn}", pluginOn.Type.ToString());
                 pluginOn.Instance.Dispose();
                 pluginOn.Instance = null;
             }
+
             AvailablePlugins.Clear();
         }
 
@@ -125,16 +117,16 @@ namespace UoFiddler.Controls.Plugin
             }
         }
 
-        public ItemShow GetItemShowControl()
+        public ItemShowControl GetItemShowControl()
         {
-            return ItemShow.RefMarker;
+            return ItemShowControl.RefMarker;
         }
 
         public int GetSelectedItemShow()
         {
-            if (ItemShow.ItemListView.SelectedItems.Count > 0)
+            if (ItemShowControl.ItemListView.SelectedItems.Count > 0)
             {
-                return (int)ItemShow.ItemListView.SelectedItems[0].Tag;
+                return (int)ItemShowControl.ItemListView.SelectedItems[0].Tag;
             }
 
             return -1;
@@ -142,22 +134,22 @@ namespace UoFiddler.Controls.Plugin
 
         public ListView GetItemShowListView()
         {
-            return ItemShow.ItemListView;
+            return ItemShowControl.ItemListView;
         }
 
-        public ItemShowAlternative GetItemShowAltControl()
+        public ItemShowAlternativeControl GetItemShowAltControl()
         {
-            return ItemShowAlternative.RefMarker;
+            return ItemShowAlternativeControl.RefMarker;
         }
 
         public PictureBox GetItemShowAltPictureBox()
         {
-            return ItemShowAlternative.ItemPictureBox;
+            return ItemShowAlternativeControl.ItemPictureBox;
         }
 
         public int GetSelectedItemShowAlternative()
         {
-            return ItemShowAlternative.RefMarker.Selected;
+            return ItemShowAlternativeControl.RefMarker.Selected;
         }
     }
 }

@@ -28,15 +28,14 @@
     <None Remove="Resources\UOFiddlerIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Forms\AboutBox.cs">
+    <Compile Update="Forms\AboutBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\AboutBox.Designer.cs">
-      <DependentUpon>AboutBox.cs</DependentUpon>
+    <Compile Update="Forms\AboutBoxForm.Designer.cs">
+      <DependentUpon>AboutBoxForm.cs</DependentUpon>
     </Compile>
     <Compile Update="Forms\ExceptionForm.cs">
       <SubType>Form</SubType>
@@ -44,23 +43,23 @@
     <Compile Update="Forms\ExceptionForm.Designer.cs">
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\LoadProfile.cs">
+    <Compile Update="Forms\LoadProfileForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\LoadProfile.Designer.cs">
-      <DependentUpon>LoadProfile.cs</DependentUpon>
+    <Compile Update="Forms\LoadProfileForm.Designer.cs">
+      <DependentUpon>LoadProfileForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\ManagePlugins.cs">
+    <Compile Update="Forms\ManagePluginsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\ManagePlugins.Designer.cs">
-      <DependentUpon>ManagePlugins.cs</DependentUpon>
+    <Compile Update="Forms\ManagePluginsForm.Designer.cs">
+      <DependentUpon>ManagePluginsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\ManageTools.cs">
+    <Compile Update="Forms\ManageToolsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\ManageTools.Designer.cs">
-      <DependentUpon>ManageTools.cs</DependentUpon>
+    <Compile Update="Forms\ManageToolsForm.Designer.cs">
+      <DependentUpon>ManageToolsForm.cs</DependentUpon>
     </Compile>
     <Compile Update="Forms\OptionsForm.cs">
       <SubType>Form</SubType>
@@ -68,17 +67,17 @@
     <Compile Update="Forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\PathSettings.cs">
+    <Compile Update="Forms\PathSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\PathSettings.Designer.cs">
-      <DependentUpon>PathSettings.cs</DependentUpon>
+    <Compile Update="Forms\PathSettingsForm.Designer.cs">
+      <DependentUpon>PathSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\UnDocked.cs">
+    <Compile Update="Forms\UnDockedForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\UnDocked.Designer.cs">
-      <DependentUpon>UnDocked.cs</DependentUpon>
+    <Compile Update="Forms\UnDockedForm.Designer.cs">
+      <DependentUpon>UnDockedForm.cs</DependentUpon>
     </Compile>
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -86,31 +85,31 @@
     <Compile Update="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Update="Forms\AboutBox.resx">
-      <DependentUpon>AboutBox.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\AboutBoxForm.resx">
+      <DependentUpon>AboutBoxForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\ExceptionForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\LoadProfile.resx">
-      <DependentUpon>LoadProfile.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\LoadProfileForm.resx">
+      <DependentUpon>LoadProfileForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ManagePlugins.resx">
-      <DependentUpon>ManagePlugins.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\ManagePluginsForm.resx">
+      <DependentUpon>ManagePluginsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ManageTools.resx">
-      <DependentUpon>ManageTools.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\ManageToolsForm.resx">
+      <DependentUpon>ManageToolsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\PathSettings.resx">
-      <DependentUpon>PathSettings.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\PathSettingsForm.resx">
+      <DependentUpon>PathSettingsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
@@ -118,8 +117,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\UnDocked.resx">
-      <DependentUpon>UnDocked.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\UnDockedForm.resx">
+      <DependentUpon>UnDockedForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\MainForm.resx">
@@ -150,7 +149,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Octokit" Version="0.46.0" />
+    <PackageReference Include="Octokit" Version="0.48.0" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   </ItemGroup>

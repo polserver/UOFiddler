@@ -1,4 +1,15 @@
-﻿using System;
+﻿/***************************************************************************
+ *
+ * $Author: Turley
+ *
+ * "THE BEER-WARE LICENSE"
+ * As long as you retain this notice you can do whatever you want with
+ * this stuff. If we meet some day, and you think this stuff is worth it,
+ * you can buy me a beer in return.
+ *
+ ***************************************************************************/
+
+using System;
 
 namespace UoFiddler.Controls.Helpers
 {
@@ -16,7 +27,7 @@ namespace UoFiddler.Controls.Helpers
 
             public static void IsNullOrEmptyString(string argument, string argumentName)
             {
-                ThrowIf.Argument.IsNull(argument, argumentName);
+                IsNull(argument, argumentName);
 
                 if (string.IsNullOrWhiteSpace(argument))
                 {

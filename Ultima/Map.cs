@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -8,21 +7,17 @@ namespace Ultima
 {
     public sealed class Map
     {
-        private TileMatrix m_Tiles;
-        private readonly int m_FileIndex;
-        private readonly int m_MapID;
-        private int m_Width;
-        private readonly int m_Height;
-        private readonly string m_path;
-
-        private static bool m_UseDiff;
+        private TileMatrix _tiles;
+        private readonly int _mapId;
+        private readonly string _path;
+        private static bool _useDiff;
 
         public static bool UseDiff
         {
-            get { return m_UseDiff; }
+            get { return _useDiff; }
             set
             {
-                m_UseDiff = value;
+                _useDiff = value;
                 Reload();
             }
         }
@@ -37,25 +32,25 @@ namespace Ultima
 
         public static void StartUpSetDiff(bool value)
         {
-            m_UseDiff = value;
+            _useDiff = value;
         }
 
-        public Map(int fileIndex, int mapID, int width, int height)
+        public Map(int fileIndex, int mapId, int width, int height)
         {
-            m_FileIndex = fileIndex;
-            m_MapID = mapID;
-            m_Width = width;
-            m_Height = height;
-            m_path = null;
+            FileIndex = fileIndex;
+            _mapId = mapId;
+            Width = width;
+            Height = height;
+            _path = null;
         }
 
-        public Map(string path, int fileIndex, int mapID, int width, int height)
+        public Map(string path, int fileIndex, int mapId, int width, int height)
         {
-            m_FileIndex = fileIndex;
-            m_MapID = mapID;
-            m_Width = width;
-            m_Height = height;
-            m_path = path;
+            FileIndex = fileIndex;
+            _mapId = mapId;
+            Width = width;
+            Height = height;
+            _path = path;
         }
 
         /// <summary>
@@ -69,58 +64,54 @@ namespace Ultima
             Malas.Tiles.Dispose();
             Tokuno.Tiles.Dispose();
             TerMur.Tiles.Dispose();
+
             Felucca.Tiles.StaticIndexInit = false;
             Trammel.Tiles.StaticIndexInit = false;
             Ilshenar.Tiles.StaticIndexInit = false;
             Malas.Tiles.StaticIndexInit = false;
             Tokuno.Tiles.StaticIndexInit = false;
             TerMur.Tiles.StaticIndexInit = false;
-            Felucca.m_Cache = Trammel.m_Cache = Ilshenar.m_Cache = Malas.m_Cache = Tokuno.m_Cache = TerMur.m_Cache = null;
-            Felucca.m_Tiles = Trammel.m_Tiles = Ilshenar.m_Tiles = Malas.m_Tiles = Tokuno.m_Tiles = TerMur.m_Tiles = null;
-            Felucca.m_Cache_NoStatics = 
-                Trammel.m_Cache_NoStatics = 
-                Ilshenar.m_Cache_NoStatics = Malas.m_Cache_NoStatics = Tokuno.m_Cache_NoStatics = TerMur.m_Cache_NoStatics = null;
-            Felucca.m_Cache_NoPatch = 
-                Trammel.m_Cache_NoPatch = 
-                Ilshenar.m_Cache_NoPatch = Malas.m_Cache_NoPatch = Tokuno.m_Cache_NoPatch = TerMur.m_Cache_NoPatch = null;
-            Felucca.m_Cache_NoStatics_NoPatch = 
-                Trammel.m_Cache_NoStatics_NoPatch = 
-                Ilshenar.m_Cache_NoStatics_NoPatch = 
-                Malas.m_Cache_NoStatics_NoPatch = Tokuno.m_Cache_NoStatics_NoPatch = TerMur.m_Cache_NoStatics_NoPatch = null;
+
+            Felucca._cache = Trammel._cache = Ilshenar._cache = Malas._cache = Tokuno._cache = TerMur._cache = null;
+            Felucca._tiles = Trammel._tiles = Ilshenar._tiles = Malas._tiles = Tokuno._tiles = TerMur._tiles = null;
+            Felucca._cacheNoStatics =
+                Trammel._cacheNoStatics =
+                Ilshenar._cacheNoStatics = Malas._cacheNoStatics = Tokuno._cacheNoStatics = TerMur._cacheNoStatics = null;
+            Felucca._cacheNoPatch =
+                Trammel._cacheNoPatch =
+                Ilshenar._cacheNoPatch = Malas._cacheNoPatch = Tokuno._cacheNoPatch = TerMur._cacheNoPatch = null;
+            Felucca._cacheNoStaticsNoPatch =
+                Trammel._cacheNoStaticsNoPatch =
+                Ilshenar._cacheNoStaticsNoPatch =
+                Malas._cacheNoStaticsNoPatch = Tokuno._cacheNoStaticsNoPatch = TerMur._cacheNoStaticsNoPatch = null;
         }
 
         public void ResetCache()
         {
-            m_Cache = null;
-            m_Cache_NoPatch = null;
-            m_Cache_NoStatics = null;
-            m_Cache_NoStatics_NoPatch = null;
-            IsCached_Default = false;
-            IsCached_NoStatics = false;
-            IsCached_NoPatch = false;
-            IsCached_NoStatics_NoPatch = false;
-        }
+            _cache = null;
+            _cacheNoPatch = null;
+            _cacheNoStatics = null;
+            _cacheNoStaticsNoPatch = null;
 
-        public bool LoadedMatrix { get { return (m_Tiles != null); } }
+            _isCachedDefault = false;
+            _isCachedNoStatics = false;
+            _isCachedNoPatch = false;
+            _isCachedNoStaticsNoPatch = false;
+        }
 
         public TileMatrix Tiles
         {
             get
             {
-                if (m_Tiles == null)
-                {
-                    m_Tiles = new TileMatrix(m_FileIndex, m_MapID, m_Width, m_Height, m_path);
-                }
-
-                return m_Tiles;
+                return _tiles ?? (_tiles = new TileMatrix(FileIndex, _mapId, Width, Height, _path));
             }
         }
 
-        public int Width { get { return m_Width; } set { m_Width = value; } }
+        public int Width { get; set; }
 
-        public int Height { get { return m_Height; } }
+        public int Height { get; }
 
-        public int FileIndex { get { return m_FileIndex; } }
+        public int FileIndex { get; }
 
         /// <summary>
         /// Returns Bitmap with Statics
@@ -153,41 +144,25 @@ namespace Ultima
             return bmp;
         }
 
-        private bool IsCached_Default;
-        private bool IsCached_NoStatics;
-        private bool IsCached_NoPatch;
-        private bool IsCached_NoStatics_NoPatch;
+        private bool _isCachedDefault;
+        private bool _isCachedNoStatics;
+        private bool _isCachedNoPatch;
+        private bool _isCachedNoStaticsNoPatch;
 
-        private short[][][] m_Cache;
-        private short[][][] m_Cache_NoStatics;
-        private short[][][] m_Cache_NoPatch;
-        private short[][][] m_Cache_NoStatics_NoPatch;
-        private short[] m_Black;
+        private short[][][] _cache;
+        private short[][][] _cacheNoStatics;
+        private short[][][] _cacheNoPatch;
+        private short[][][] _cacheNoStaticsNoPatch;
+        private short[] _black;
 
         public bool IsCached(bool statics)
         {
             if (UseDiff)
             {
-                if (!statics)
-                {
-                    return IsCached_NoStatics;
-                }
-                else
-                {
-                    return IsCached_Default;
-                }
+                return !statics ? _isCachedNoStatics : _isCachedDefault;
             }
-            else
-            {
-                if (!statics)
-                {
-                    return IsCached_NoStatics_NoPatch;
-                }
-                else
-                {
-                    return IsCached_NoPatch;
-                }
-            }
+
+            return !statics ? _isCachedNoStaticsNoPatch : _isCachedNoPatch;
         }
 
         public void PreloadRenderedBlock(int x, int y, bool statics)
@@ -196,9 +171,9 @@ namespace Ultima
 
             if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
             {
-                if (m_Black == null)
+                if (_black == null)
                 {
-                    m_Black = new short[64];
+                    _black = new short[64];
                 }
 
                 return;
@@ -209,27 +184,27 @@ namespace Ultima
             {
                 if (statics)
                 {
-                    IsCached_Default = true;
+                    _isCachedDefault = true;
                 }
                 else
                 {
-                    IsCached_NoStatics = true;
+                    _isCachedNoStatics = true;
                 }
 
-                cache = (statics ? m_Cache : m_Cache_NoStatics);
+                cache = (statics ? _cache : _cacheNoStatics);
             }
             else
             {
                 if (statics)
                 {
-                    IsCached_NoPatch = true;
+                    _isCachedNoPatch = true;
                 }
                 else
                 {
-                    IsCached_NoStatics_NoPatch = true;
+                    _isCachedNoStaticsNoPatch = true;
                 }
 
-                cache = (statics ? m_Cache_NoPatch : m_Cache_NoStatics_NoPatch);
+                cache = (statics ? _cacheNoPatch : _cacheNoStaticsNoPatch);
             }
 
             if (cache == null)
@@ -238,29 +213,29 @@ namespace Ultima
                 {
                     if (statics)
                     {
-                        m_Cache = cache = new short[m_Tiles.BlockHeight][][];
+                        _cache = cache = new short[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        m_Cache_NoStatics = cache = new short[m_Tiles.BlockHeight][][];
+                        _cacheNoStatics = cache = new short[_tiles.BlockHeight][][];
                     }
                 }
                 else
                 {
                     if (statics)
                     {
-                        m_Cache_NoPatch = cache = new short[m_Tiles.BlockHeight][][];
+                        _cacheNoPatch = cache = new short[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        m_Cache_NoStatics_NoPatch = cache = new short[m_Tiles.BlockHeight][][];
+                        _cacheNoStaticsNoPatch = cache = new short[_tiles.BlockHeight][][];
                     }
                 }
             }
 
             if (cache[y] == null)
             {
-                cache[y] = new short[m_Tiles.BlockWidth][];
+                cache[y] = new short[_tiles.BlockWidth][];
             }
 
             if (cache[y][x] == null)
@@ -268,7 +243,7 @@ namespace Ultima
                 cache[y][x] = RenderBlock(x, y, statics, UseDiff);
             }
 
-            m_Tiles.CloseStreams();
+            _tiles.CloseStreams();
         }
 
         private short[] GetRenderedBlock(int x, int y, bool statics)
@@ -277,22 +252,17 @@ namespace Ultima
 
             if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
             {
-                if (m_Black == null)
-                {
-                    m_Black = new short[64];
-                }
-
-                return m_Black;
+                return _black ?? (_black = new short[64]);
             }
 
             short[][][] cache;
             if (UseDiff)
             {
-                cache = (statics ? m_Cache : m_Cache_NoStatics);
+                cache = (statics ? _cache : _cacheNoStatics);
             }
             else
             {
-                cache = (statics ? m_Cache_NoPatch : m_Cache_NoStatics_NoPatch);
+                cache = (statics ? _cacheNoPatch : _cacheNoStaticsNoPatch);
             }
 
             if (cache == null)
@@ -301,29 +271,29 @@ namespace Ultima
                 {
                     if (statics)
                     {
-                        m_Cache = cache = new short[m_Tiles.BlockHeight][][];
+                        _cache = cache = new short[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        m_Cache_NoStatics = cache = new short[m_Tiles.BlockHeight][][];
+                        _cacheNoStatics = cache = new short[_tiles.BlockHeight][][];
                     }
                 }
                 else
                 {
                     if (statics)
                     {
-                        m_Cache_NoPatch = cache = new short[m_Tiles.BlockHeight][][];
+                        _cacheNoPatch = cache = new short[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        m_Cache_NoStatics_NoPatch = cache = new short[m_Tiles.BlockHeight][][];
+                        _cacheNoStaticsNoPatch = cache = new short[_tiles.BlockHeight][][];
                     }
                 }
             }
 
             if (cache[y] == null)
             {
-                cache[y] = new short[m_Tiles.BlockWidth][];
+                cache[y] = new short[_tiles.BlockWidth][];
             }
 
             short[] data = cache[y][x];
@@ -340,129 +310,133 @@ namespace Ultima
         {
             var data = new short[64];
 
-            Tile[] tiles = m_Tiles.GetLandBlock(x, y, diff);
+            Tile[] tiles = _tiles.GetLandBlock(x, y, diff);
 
             fixed (short* pColors = RadarCol.Colors)
             {
                 fixed (int* pHeight = TileData.HeightTable)
+                fixed (Tile* ptTiles = tiles)
                 {
-                    fixed (Tile* ptTiles = tiles)
+                    Tile* pTiles = ptTiles;
+
+                    fixed (short* pData = data)
                     {
-                        Tile* pTiles = ptTiles;
+                        short* pvData = pData;
 
-                        fixed (short* pData = data)
+                        if (drawStatics)
                         {
-                            short* pvData = pData;
+                            HuedTile[][][] statics = _tiles.GetStaticBlock(x, y, diff);
 
-                            if (drawStatics)
+                            for (int k = 0; k < 8; ++k)
                             {
-                                HuedTile[][][] statics = drawStatics ? m_Tiles.GetStaticBlock(x, y, diff) : null;
-
-                                for (int k = 0, v = 0; k < 8; ++k, v += 8)
+                                for (int p = 0; p < 8; ++p)
                                 {
-                                    for (int p = 0; p < 8; ++p)
+                                    int highTop = -255;
+                                    int highZ = -255;
+                                    int highId = 0;
+                                    int highHue = 0;
+                                    int z, top;
+                                    bool highStatic = false;
+
+                                    HuedTile[] curStatics = statics[p][k];
+
+                                    if (curStatics.Length > 0)
                                     {
-                                        int highTop = -255;
-                                        int highZ = -255;
-                                        int highID = 0;
-                                        int highHue = 0;
-                                        int z, top;
-                                        bool highstatic = false;
-
-                                        HuedTile[] curStatics = statics[p][k];
-
-                                        if (curStatics.Length > 0)
+                                        fixed (HuedTile* phtStatics = curStatics)
                                         {
-                                            fixed (HuedTile* phtStatics = curStatics)
+                                            HuedTile* pStatics = phtStatics;
+                                            HuedTile* pStaticsEnd = pStatics + curStatics.Length;
+
+                                            while (pStatics < pStaticsEnd)
                                             {
-                                                HuedTile* pStatics = phtStatics;
-                                                HuedTile* pStaticsEnd = pStatics + curStatics.Length;
+                                                z = pStatics->Z;
+                                                top = z + pHeight[pStatics->Id];
 
-                                                while (pStatics < pStaticsEnd)
+                                                if (top > highTop || (z > highZ && top >= highTop))
                                                 {
-                                                    z = pStatics->m_Z;
-                                                    top = z + pHeight[pStatics->ID];
-
-                                                    if (top > highTop || (z > highZ && top >= highTop))
-                                                    {
-                                                        highTop = top;
-                                                        highZ = z;
-                                                        highID = pStatics->ID;
-                                                        highHue = pStatics->Hue;
-                                                        highstatic = true;
-                                                    }
-
-                                                    ++pStatics;
+                                                    highTop = top;
+                                                    highZ = z;
+                                                    highId = pStatics->Id;
+                                                    highHue = pStatics->Hue;
+                                                    highStatic = true;
                                                 }
+
+                                                ++pStatics;
                                             }
                                         }
-                                        StaticTile[] pending = m_Tiles.GetPendingStatics(x, y);
-                                        if (pending != null)
-                                        {
-                                            foreach (StaticTile penS in pending)
-                                            {
-                                                if (penS.m_X == p)
-                                                {
-                                                    if (penS.m_Y == k)
-                                                    {
-                                                        z = penS.m_Z;
-                                                        top = z + pHeight[penS.m_ID];
-
-                                                        if (top > highTop || (z > highZ && top >= highTop))
-                                                        {
-                                                            highTop = top;
-                                                            highZ = z;
-                                                            highID = penS.m_ID;
-                                                            highHue = penS.m_Hue;
-                                                            highstatic = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        top = pTiles->m_Z;
-
-                                        if (top > highTop)
-                                        {
-                                            highID = pTiles->m_ID;
-                                            highHue = 0;
-                                            highstatic = false;
-                                        }
-
-                                        if (highHue == 0)
-                                        {
-                                            try
-                                            {
-                                                if (highstatic)
-                                                {
-                                                    *pvData++ = pColors[highID + 0x4000];
-                                                }
-                                                else
-                                                {
-                                                    *pvData++ = pColors[highID];
-                                                }
-                                            }
-                                            catch 
-                                            { }
-                                        }
-                                        else
-                                        {
-                                            *pvData++ = Hues.GetHue(highHue - 1).Colors[(pColors[highID + 0x4000] >> 10) & 0x1F];
-                                        }
-
-                                        ++pTiles;
                                     }
+
+                                    StaticTile[] pending = _tiles.GetPendingStatics(x, y);
+                                    if (pending != null)
+                                    {
+                                        foreach (StaticTile penS in pending)
+                                        {
+                                            if (penS.X != p || penS.Y != k)
+                                            {
+                                                continue;
+                                            }
+
+                                            z = penS.Z;
+                                            top = z + pHeight[penS.Id];
+
+                                            if (top <= highTop && (z <= highZ || top < highTop))
+                                            {
+                                                continue;
+                                            }
+
+                                            highTop = top;
+                                            highZ = z;
+                                            highId = penS.Id;
+                                            highHue = penS.Hue;
+                                            highStatic = true;
+                                        }
+                                    }
+
+                                    top = pTiles->Z;
+
+                                    if (top > highTop)
+                                    {
+                                        highId = pTiles->Id;
+                                        highHue = 0;
+                                        highStatic = false;
+                                    }
+
+                                    if (highHue == 0)
+                                    {
+                                        try
+                                        {
+                                            if (highStatic)
+                                            {
+                                                *pvData++ = pColors[highId + 0x4000];
+                                            }
+                                            else
+                                            {
+                                                *pvData++ = pColors[highId];
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            // TODO: ignored?
+                                            // ignored
+                                        }
+                                    }
+                                    else
+                                    {
+                                        *pvData++ = Hues.GetHue(highHue - 1)
+                                            .Colors[(pColors[highId + 0x4000] >> 10) & 0x1F];
+                                    }
+
+                                    ++pTiles;
                                 }
                             }
-                            else
-                            {
-                                Tile* pEnd = pTiles + 64;
+                        }
+                        else
+                        {
+                            Tile* pEnd = pTiles + 64;
 
-                                while (pTiles < pEnd)
-                                {
-                                    *pvData++ = pColors[(pTiles++)->m_ID];
-                                }
+                            while (pTiles < pEnd)
+                            {
+                                *pvData++ = pColors[(pTiles++)->Id];
                             }
                         }
                     }
@@ -473,7 +447,7 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Draws in given Bitmap with Statics 
+        /// Draws in given Bitmap with Statics
         /// </summary>
         /// <param name="x">8x8 Block</param>
         /// <param name="y">8x8 Block</param>
@@ -505,7 +479,6 @@ namespace Ultima
 
             for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
             {
-
                 var pRow0 = (int*)(pStart + (0 * stride));
                 var pRow1 = (int*)(pStart + (1 * stride));
                 var pRow2 = (int*)(pStart + (2 * stride));
@@ -561,24 +534,23 @@ namespace Ultima
                         *pRow7++ = *pvData++;
                         *pRow7++ = *pvData++;
                         *pRow7++ = *pvData++;
-                        *pRow7++ = *pvData++;
+                        *pRow7++ = *pvData;
                     }
                 }
             }
 
             bmp.UnlockBits(bd);
-            m_Tiles.CloseStreams();
+            _tiles.CloseStreams();
         }
 
         public static void DefragStatics(string path, Map map, int width, int height, bool remove)
         {
             string indexPath = Files.GetFilePath("staidx{0}.mul", map.FileIndex);
-            FileStream m_Index;
-            BinaryReader m_IndexReader;
+            BinaryReader indexReader;
             if (indexPath != null)
             {
-                m_Index = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                m_IndexReader = new BinaryReader(m_Index);
+                FileStream index = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                indexReader = new BinaryReader(index);
             }
             else
             {
@@ -587,12 +559,12 @@ namespace Ultima
 
             string staticsPath = Files.GetFilePath("statics{0}.mul", map.FileIndex);
 
-            FileStream m_Statics;
-            BinaryReader m_StaticsReader;
+            FileStream staticsStream;
+            BinaryReader staticsReader;
             if (staticsPath != null)
             {
-                m_Statics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                m_StaticsReader = new BinaryReader(m_Statics);
+                staticsStream = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                staticsReader = new BinaryReader(staticsStream);
             }
             else
             {
@@ -602,15 +574,16 @@ namespace Ultima
             int blockx = width >> 3;
             int blocky = height >> 3;
 
-            string idx = Path.Combine(path, String.Format("staidx{0}.mul", map.FileIndex));
-            string mul = Path.Combine(path, String.Format("statics{0}.mul", map.FileIndex));
-            using (
-                FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-                              fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+            string idx = Path.Combine(path, $"staidx{map.FileIndex}.mul");
+            string mul = Path.Combine(path, $"statics{map.FileIndex}.mul");
+
+            using (var fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 var memidx = new MemoryStream();
                 var memmul = new MemoryStream();
-                using (BinaryWriter binidx = new BinaryWriter(memidx), binmul = new BinaryWriter(memmul))
+                using (var binidx = new BinaryWriter(memidx))
+                using (var binmul = new BinaryWriter(memmul))
                 {
                     for (int x = 0; x < blockx; ++x)
                     {
@@ -618,12 +591,13 @@ namespace Ultima
                         {
                             try
                             {
-                                m_IndexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
-                                int lookup = m_IndexReader.ReadInt32();
-                                int length = m_IndexReader.ReadInt32();
-                                int extra = m_IndexReader.ReadInt32();
+                                indexReader.BaseStream.Seek(((x * blocky) + y) * 12, SeekOrigin.Begin);
+                                int lookup = indexReader.ReadInt32();
+                                int length = indexReader.ReadInt32();
+                                int extra = indexReader.ReadInt32();
 
-                                if (((lookup < 0 || length <= 0) && (!map.Tiles.PendingStatic(x, y))) || (map.Tiles.IsStaticBlockRemoved(x, y)))
+                                if (((lookup < 0 || length <= 0) && (!map.Tiles.PendingStatic(x, y))) ||
+                                    (map.Tiles.IsStaticBlockRemoved(x, y)))
                                 {
                                     binidx.Write(-1); // lookup
                                     binidx.Write(-1); // length
@@ -633,146 +607,163 @@ namespace Ultima
                                 {
                                     if ((lookup >= 0) && (length > 0))
                                     {
-                                        m_Statics.Seek(lookup, SeekOrigin.Begin);
+                                        staticsStream.Seek(lookup, SeekOrigin.Begin);
                                     }
 
                                     var fsmullength = (int)binmul.BaseStream.Position;
                                     int count = length / 7;
-                                    if (!remove) //without duplicate remove
+                                    if (!remove) // without duplicate remove
                                     {
                                         bool firstitem = true;
                                         for (int i = 0; i < count; ++i)
                                         {
-                                            ushort graphic = m_StaticsReader.ReadUInt16();
-                                            byte sx = m_StaticsReader.ReadByte();
-                                            byte sy = m_StaticsReader.ReadByte();
-                                            sbyte sz = m_StaticsReader.ReadSByte();
-                                            short shue = m_StaticsReader.ReadInt16();
-                                            if ((graphic >= 0) && (graphic <= Art.GetMaxItemID()))
+                                            ushort graphic = staticsReader.ReadUInt16();
+                                            byte sx = staticsReader.ReadByte();
+                                            byte sy = staticsReader.ReadByte();
+                                            sbyte sz = staticsReader.ReadSByte();
+                                            short shue = staticsReader.ReadInt16();
+
+                                            if (graphic > Art.GetMaxItemID())
                                             {
-                                                if (shue < 0)
+                                                continue;
+                                            }
+
+                                            if (shue < 0)
+                                            {
+                                                shue = 0;
+                                            }
+
+                                            if (firstitem)
+                                            {
+                                                binidx.Write((int)binmul.BaseStream.Position); // lookup
+                                                firstitem = false;
+                                            }
+
+                                            binmul.Write(graphic);
+                                            binmul.Write(sx);
+                                            binmul.Write(sy);
+                                            binmul.Write(sz);
+                                            binmul.Write(shue);
+                                        }
+
+                                        StaticTile[] tileList = map.Tiles.GetPendingStatics(x, y);
+                                        if (tileList != null)
+                                        {
+                                            for (int i = 0; i < tileList.Length; ++i)
+                                            {
+                                                if (tileList[i].Id > Art.GetMaxItemID())
                                                 {
-                                                    shue = 0;
+                                                    continue;
+                                                }
+
+                                                if (tileList[i].Hue < 0)
+                                                {
+                                                    tileList[i].Hue = 0;
                                                 }
 
                                                 if (firstitem)
                                                 {
-                                                    binidx.Write((int)binmul.BaseStream.Position); //lookup
+                                                    binidx.Write((int)binmul.BaseStream.Position); // lookup
                                                     firstitem = false;
                                                 }
-                                                binmul.Write(graphic);
-                                                binmul.Write(sx);
-                                                binmul.Write(sy);
-                                                binmul.Write(sz);
-                                                binmul.Write(shue);
-                                            }
-                                        }
-                                        StaticTile[] tilelist = map.Tiles.GetPendingStatics(x, y);
-                                        if (tilelist != null)
-                                        {
-                                            for (int i = 0; i < tilelist.Length; ++i)
-                                            {
-                                                if ((tilelist[i].m_ID >= 0) && (tilelist[i].m_ID <= Art.GetMaxItemID()))
-                                                {
-                                                    if (tilelist[i].m_Hue < 0)
-                                                    {
-                                                        tilelist[i].m_Hue = 0;
-                                                    }
 
-                                                    if (firstitem)
-                                                    {
-                                                        binidx.Write((int)binmul.BaseStream.Position); //lookup
-                                                        firstitem = false;
-                                                    }
-                                                    binmul.Write(tilelist[i].m_ID);
-                                                    binmul.Write(tilelist[i].m_X);
-                                                    binmul.Write(tilelist[i].m_Y);
-                                                    binmul.Write(tilelist[i].m_Z);
-                                                    binmul.Write(tilelist[i].m_Hue);
-                                                }
+                                                binmul.Write(tileList[i].Id);
+                                                binmul.Write(tileList[i].X);
+                                                binmul.Write(tileList[i].Y);
+                                                binmul.Write(tileList[i].Z);
+                                                binmul.Write(tileList[i].Hue);
                                             }
                                         }
                                     }
-                                    else //with duplicate remove
+                                    else // with duplicate remove
                                     {
-                                        var tilelist = new StaticTile[count];
+                                        var tileList = new StaticTile[count];
                                         int j = 0;
                                         for (int i = 0; i < count; ++i)
                                         {
-                                            var tile = new StaticTile();
-                                            tile.m_ID = m_StaticsReader.ReadUInt16();
-                                            tile.m_X = m_StaticsReader.ReadByte();
-                                            tile.m_Y = m_StaticsReader.ReadByte();
-                                            tile.m_Z = m_StaticsReader.ReadSByte();
-                                            tile.m_Hue = m_StaticsReader.ReadInt16();
-
-                                            if ((tile.m_ID >= 0) && (tile.m_ID <= Art.GetMaxItemID()))
+                                            var tile = new StaticTile
                                             {
-                                                if (tile.m_Hue < 0)
+                                                Id = staticsReader.ReadUInt16(),
+                                                X = staticsReader.ReadByte(),
+                                                Y = staticsReader.ReadByte(),
+                                                Z = staticsReader.ReadSByte(),
+                                                Hue = staticsReader.ReadInt16()
+                                            };
+
+                                            if (tile.Id > Art.GetMaxItemID())
+                                            {
+                                                continue;
+                                            }
+
+                                            if (tile.Hue < 0)
+                                            {
+                                                tile.Hue = 0;
+                                            }
+
+                                            bool first = true;
+                                            for (int k = 0; k < j; ++k)
+                                            {
+                                                if ((tileList[k].Id == tile.Id) && (tileList[k].X == tile.X) && (tileList[k].Y == tile.Y) && (tileList[k].Z == tile.Z) && (tileList[k].Hue == tile.Hue))
                                                 {
-                                                    tile.m_Hue = 0;
+                                                    first = false;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!first)
+                                            {
+                                                continue;
+                                            }
+
+                                            tileList[j] = tile;
+                                            j++;
+                                        }
+
+                                        if (map.Tiles.PendingStatic(x, y))
+                                        {
+                                            StaticTile[] pending = map.Tiles.GetPendingStatics(x, y);
+                                            StaticTile[] old = tileList;
+                                            tileList = new StaticTile[old.Length + pending.Length];
+                                            old.CopyTo(tileList, 0);
+                                            for (int i = 0; i < pending.Length; ++i)
+                                            {
+                                                if (pending[i].Id > Art.GetMaxItemID())
+                                                {
+                                                    continue;
+                                                }
+
+                                                if (pending[i].Hue < 0)
+                                                {
+                                                    pending[i].Hue = 0;
                                                 }
 
                                                 bool first = true;
                                                 for (int k = 0; k < j; ++k)
                                                 {
-                                                    if ((tilelist[k].m_ID == tile.m_ID) && ((tilelist[k].m_X == tile.m_X) && (tilelist[k].m_Y == tile.m_Y)) && 
-                                                        (tilelist[k].m_Z == tile.m_Z) && (tilelist[k].m_Hue == tile.m_Hue))
+                                                    if ((tileList[k].Id == pending[i].Id) && (tileList[k].X == pending[i].X) && (tileList[k].Y == pending[i].Y) && (tileList[k].Z == pending[i].Z) && (tileList[k].Hue == pending[i].Hue))
                                                     {
                                                         first = false;
                                                         break;
                                                     }
                                                 }
+
                                                 if (first)
                                                 {
-                                                    tilelist[j] = tile;
-                                                    j++;
+                                                    tileList[j++] = pending[i];
                                                 }
                                             }
                                         }
-                                        if (map.Tiles.PendingStatic(x, y))
-                                        {
-                                            StaticTile[] pending = map.Tiles.GetPendingStatics(x, y);
-                                            StaticTile[] old = tilelist;
-                                            tilelist = new StaticTile[old.Length + pending.Length];
-                                            old.CopyTo(tilelist, 0);
-                                            for (int i = 0; i < pending.Length; ++i)
-                                            {
-                                                if ((pending[i].m_ID >= 0) && (pending[i].m_ID <= Art.GetMaxItemID()))
-                                                {
-                                                    if (pending[i].m_Hue < 0)
-                                                    {
-                                                        pending[i].m_Hue = 0;
-                                                    }
 
-                                                    bool first = true;
-                                                    for (int k = 0; k < j; ++k)
-                                                    {
-                                                        if ((tilelist[k].m_ID == pending[i].m_ID) && 
-                                                            ((tilelist[k].m_X == pending[i].m_X) && (tilelist[k].m_Y == pending[i].m_Y)) && 
-                                                            (tilelist[k].m_Z == pending[i].m_Z) && (tilelist[k].m_Hue == pending[i].m_Hue))
-                                                        {
-                                                            first = false;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (first)
-                                                    {
-                                                        tilelist[j++] = pending[i];
-                                                    }
-                                                }
-                                            }
-                                        }
                                         if (j > 0)
                                         {
-                                            binidx.Write((int)binmul.BaseStream.Position); //lookup
+                                            binidx.Write((int)binmul.BaseStream.Position); // lookup
                                             for (int i = 0; i < j; ++i)
                                             {
-                                                binmul.Write(tilelist[i].m_ID);
-                                                binmul.Write(tilelist[i].m_X);
-                                                binmul.Write(tilelist[i].m_Y);
-                                                binmul.Write(tilelist[i].m_Z);
-                                                binmul.Write(tilelist[i].m_Hue);
+                                                binmul.Write(tileList[i].Id);
+                                                binmul.Write(tileList[i].X);
+                                                binmul.Write(tileList[i].Y);
+                                                binmul.Write(tileList[i].Z);
+                                                binmul.Write(tileList[i].Hue);
                                             }
                                         }
                                     }
@@ -780,19 +771,19 @@ namespace Ultima
                                     fsmullength = (int)binmul.BaseStream.Position - fsmullength;
                                     if (fsmullength > 0)
                                     {
-                                        binidx.Write(fsmullength); //length
+                                        binidx.Write(fsmullength); // length
                                         if (extra == -1)
                                         {
                                             extra = 0;
                                         }
 
-                                        binidx.Write(extra); //extra
+                                        binidx.Write(extra); // extra
                                     }
                                     else
                                     {
-                                        binidx.Write(-1); //lookup
-                                        binidx.Write(-1); //length
-                                        binidx.Write(-1); //extra
+                                        binidx.Write(-1); // lookup
+                                        binidx.Write(-1); // length
+                                        binidx.Write(-1); // extra
                                     }
                                 }
                             }
@@ -803,32 +794,34 @@ namespace Ultima
                                 {
                                     for (; y < blocky; ++y)
                                     {
-                                        binidx.Write(-1); //lookup
-                                        binidx.Write(-1); //length
-                                        binidx.Write(-1); //extra
+                                        binidx.Write(-1); // lookup
+                                        binidx.Write(-1); // length
+                                        binidx.Write(-1); // extra
                                     }
+
                                     y = 0;
                                 }
                             }
                         }
                     }
+
                     memidx.WriteTo(fsidx);
                     memmul.WriteTo(fsmul);
                 }
             }
-            m_IndexReader.Close();
-            m_StaticsReader.Close();
+
+            indexReader.Close();
+            staticsReader.Close();
         }
 
         public static void RewriteMap(string path, int map, int width, int height)
         {
             string mapPath = Files.GetFilePath("map{0}.mul", map);
-            FileStream m_map;
-            BinaryReader m_mapReader;
+            BinaryReader mapReader;
             if (mapPath != null)
             {
-                m_map = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                m_mapReader = new BinaryReader(m_map);
+                FileStream mapStream = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                mapReader = new BinaryReader(mapStream);
             }
             else
             {
@@ -838,7 +831,7 @@ namespace Ultima
             int blockx = width >> 3;
             int blocky = height >> 3;
 
-            string mul = Path.Combine(path, String.Format("map{0}.mul", map));
+            string mul = Path.Combine(path, $"map{map}.mul");
             using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 var memmul = new MemoryStream();
@@ -850,13 +843,13 @@ namespace Ultima
                         {
                             try
                             {
-                                m_mapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
-                                int header = m_mapReader.ReadInt32();
+                                mapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
+                                int header = mapReader.ReadInt32();
                                 binmul.Write(header);
                                 for (int i = 0; i < 64; ++i)
                                 {
-                                    short tileid = m_mapReader.ReadInt16();
-                                    sbyte z = m_mapReader.ReadSByte();
+                                    short tileid = mapReader.ReadInt16();
+                                    sbyte z = mapReader.ReadSByte();
                                     if ((tileid < 0) || (tileid >= 0x4000))
                                     {
                                         tileid = 0;
@@ -876,7 +869,7 @@ namespace Ultima
                                     binmul.Write(z);
                                 }
                             }
-                            catch //fill rest
+                            catch // fill rest
                             {
                                 binmul.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
                                 for (; x < blockx; ++x)
@@ -895,33 +888,30 @@ namespace Ultima
                             }
                         }
                     }
+
                     memmul.WriteTo(fsmul);
                 }
             }
-            m_mapReader.Close();
+
+            mapReader.Close();
         }
 
         public void ReportInvisStatics(string reportfile)
         {
-            reportfile = Path.Combine(reportfile, String.Format("staticReport-{0}.csv", m_MapID));
-            using (
-                var Tex = new StreamWriter(
-                    new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            reportfile = Path.Combine(reportfile, $"staticReport-{_mapId}.csv");
+            using (var tex = new StreamWriter(new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
-                Tex.WriteLine("x;y;z;Static");
-                for (int x = 0; x < m_Width; ++x)
+                tex.WriteLine("x;y;z;Static");
+                for (int x = 0; x < Width; ++x)
                 {
-                    for (int y = 0; y < m_Height; ++y)
+                    for (int y = 0; y < Height; ++y)
                     {
                         Tile currtile = Tiles.GetLandTile(x, y);
                         foreach (HuedTile currstatic in Tiles.GetStaticTiles(x, y))
                         {
-                            if (currstatic.Z < currtile.Z)
+                            if (currstatic.Z < currtile.Z && TileData.ItemTable[currstatic.Id].Height + currstatic.Z < currtile.Z)
                             {
-                                if (TileData.ItemTable[currstatic.ID].Height + currstatic.Z < currtile.Z)
-                                {
-                                    Tex.WriteLine(String.Format("{0};{1};{2};0x{3:X}", x, y, currstatic.Z, currstatic.ID));
-                                }
+                                tex.WriteLine("{0};{1};{2};0x{3:X}", x, y, currstatic.Z, currstatic.Id);
                             }
                         }
                     }
@@ -931,27 +921,25 @@ namespace Ultima
 
         public void ReportInvalidMapIDs(string reportfile)
         {
-            reportfile = Path.Combine(reportfile, String.Format("ReportInvalidMapIDs-{0}.csv", m_MapID));
-            using (
-                var Tex = new StreamWriter(
-                    new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            reportfile = Path.Combine(reportfile, $"ReportInvalidMapIDs-{_mapId}.csv");
+            using (var tex = new StreamWriter(new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
-                Tex.WriteLine("x;y;z;Static;LandTile");
-                for (int x = 0; x < m_Width; ++x)
+                tex.WriteLine("x;y;z;Static;LandTile");
+                for (int x = 0; x < Width; ++x)
                 {
-                    for (int y = 0; y < m_Height; ++y)
+                    for (int y = 0; y < Height; ++y)
                     {
                         Tile currtile = Tiles.GetLandTile(x, y);
-                        if (!Art.IsValidLand(currtile.ID))
+                        if (!Art.IsValidLand(currtile.Id))
                         {
-                            Tex.WriteLine(String.Format("{0};{1};{2};0;0x{3:X}", x, y, currtile.Z, currtile.ID));
+                            tex.WriteLine("{0};{1};{2};0;0x{3:X}", x, y, currtile.Z, currtile.Id);
                         }
 
                         foreach (HuedTile currstatic in Tiles.GetStaticTiles(x, y))
                         {
-                            if (!Art.IsValidStatic(currstatic.ID))
+                            if (!Art.IsValidStatic(currstatic.Id))
                             {
-                                Tex.WriteLine(String.Format("{0};{1};{2};0x{3:X};0", x, y, currstatic.Z, currstatic.ID));
+                                tex.WriteLine("{0};{1};{2};0x{3:X};0", x, y, currstatic.Z, currstatic.Id);
                             }
                         }
                     }

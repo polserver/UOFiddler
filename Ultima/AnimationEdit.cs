@@ -8,79 +8,80 @@ namespace Ultima
 {
     public sealed class AnimationEdit
     {
-        private static FileIndex m_FileIndex = new FileIndex("Anim.idx", "Anim.mul", 6);
-        private static FileIndex m_FileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", -1);
-        private static FileIndex m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
-        private static FileIndex m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
-        private static FileIndex m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
+        private static FileIndex _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 6);
+        private static FileIndex _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", -1);
+        private static FileIndex _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
+        private static FileIndex _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
+        private static FileIndex _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
 
-        private static AnimIdx[] animcache;
-        private static readonly AnimIdx[] animcache2;
-        private static readonly AnimIdx[] animcache3;
-        private static readonly AnimIdx[] animcache4;
-        private static readonly AnimIdx[] animcache5;
+        private static AnimIdx[] _animCache;
+        private static AnimIdx[] _animCache2;
+        private static AnimIdx[] _animCache3;
+        private static AnimIdx[] _animCache4;
+        private static AnimIdx[] _animCache5;
 
         static AnimationEdit()
         {
-            if (m_FileIndex.IdxLength > 0)
+            if (_fileIndex.IdxLength > 0)
             {
-                animcache = new AnimIdx[m_FileIndex.IdxLength / 12];
+                _animCache = new AnimIdx[_fileIndex.IdxLength / 12];
             }
 
-            if (m_FileIndex2.IdxLength > 0)
+            if (_fileIndex2.IdxLength > 0)
             {
-                animcache2 = new AnimIdx[m_FileIndex2.IdxLength / 12];
+                _animCache2 = new AnimIdx[_fileIndex2.IdxLength / 12];
             }
 
-            if (m_FileIndex3.IdxLength > 0)
+            if (_fileIndex3.IdxLength > 0)
             {
-                animcache3 = new AnimIdx[m_FileIndex3.IdxLength / 12];
+                _animCache3 = new AnimIdx[_fileIndex3.IdxLength / 12];
             }
 
-            if (m_FileIndex4.IdxLength > 0)
+            if (_fileIndex4.IdxLength > 0)
             {
-                animcache4 = new AnimIdx[m_FileIndex4.IdxLength / 12];
+                _animCache4 = new AnimIdx[_fileIndex4.IdxLength / 12];
             }
 
-            if (m_FileIndex5.IdxLength > 0)
+            if (_fileIndex5.IdxLength > 0)
             {
-                animcache5 = new AnimIdx[m_FileIndex5.IdxLength / 12];
+                _animCache5 = new AnimIdx[_fileIndex5.IdxLength / 12];
             }
         }
+
         /// <summary>
         /// Rereads AnimX files
         /// </summary>
         public static void Reload()
         {
-            m_FileIndex = new FileIndex("Anim.idx", "Anim.mul", 6);
-            m_FileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", -1);
-            m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
-            m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
-            m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
+            _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 6);
+            _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", -1);
+            _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
+            _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
+            _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
 
-            if (m_FileIndex.IdxLength > 0)
+            if (_fileIndex.IdxLength > 0)
             {
-                animcache = new AnimIdx[m_FileIndex.IdxLength / 12];
+                _animCache = new AnimIdx[_fileIndex.IdxLength / 12];
             }
 
-            if (m_FileIndex2.IdxLength > 0)
+            if (_fileIndex2.IdxLength > 0)
             {
-                animcache = new AnimIdx[m_FileIndex2.IdxLength / 12];
+                _animCache2 = new AnimIdx[_fileIndex2.IdxLength / 12];
             }
 
-            if (m_FileIndex3.IdxLength > 0)
+            if (_fileIndex3.IdxLength > 0)
             {
-                animcache = new AnimIdx[m_FileIndex3.IdxLength / 12];
+                _animCache3 = new AnimIdx[_fileIndex3.IdxLength / 12];
             }
 
-            if (m_FileIndex4.IdxLength > 0)
+            if (_fileIndex4.IdxLength > 0)
             {
-                animcache = new AnimIdx[m_FileIndex4.IdxLength / 12];
+                _animCache4 = new AnimIdx[_fileIndex4.IdxLength / 12];
             }
 
-            if (m_FileIndex5.IdxLength > 0)
+            if (_fileIndex5.IdxLength > 0)
             {
-                animcache = new AnimIdx[m_FileIndex5.IdxLength / 12];
+                _animCache5 = new AnimIdx[_fileIndex5.IdxLength / 12];
             }
         }
 
@@ -91,7 +92,7 @@ namespace Ultima
             {
                 default:
                 case 1:
-                    fileIndex = m_FileIndex;
+                    fileIndex = _fileIndex;
                     if (body < 200)
                     {
                         index = body * 110;
@@ -107,7 +108,7 @@ namespace Ultima
 
                     break;
                 case 2:
-                    fileIndex = m_FileIndex2;
+                    fileIndex = _fileIndex2;
                     if (body < 200)
                     {
                         index = body * 110;
@@ -119,7 +120,7 @@ namespace Ultima
 
                     break;
                 case 3:
-                    fileIndex = m_FileIndex3;
+                    fileIndex = _fileIndex3;
                     if (body < 300)
                     {
                         index = body * 65;
@@ -135,7 +136,7 @@ namespace Ultima
 
                     break;
                 case 4:
-                    fileIndex = m_FileIndex4;
+                    fileIndex = _fileIndex4;
                     if (body < 200)
                     {
                         index = body * 110;
@@ -151,7 +152,7 @@ namespace Ultima
 
                     break;
                 case 5:
-                    fileIndex = m_FileIndex5;
+                    fileIndex = _fileIndex5;
                     if ((body < 200) && (body != 34)) // looks strange, though it works.
                     {
                         index = body * 110;
@@ -166,7 +167,6 @@ namespace Ultima
                     }
 
                     break;
-
             }
 
             index += action * 5;
@@ -177,239 +177,199 @@ namespace Ultima
             }
             else
             {
-                index += direction - (direction - 4) * 2;
+                index += direction - ((direction - 4) * 2);
             }
         }
 
-        private static AnimIdx[] GetCache(int filetype)
+        private static AnimIdx[] GetCache(int fileType)
         {
-            switch (filetype)
+            switch (fileType)
             {
                 case 1:
-                    return animcache;
+                    return _animCache;
                 case 2:
-                    return animcache2;
+                    return _animCache2;
                 case 3:
-                    return animcache3;
+                    return _animCache3;
                 case 4:
-                    return animcache4;
+                    return _animCache4;
                 case 5:
-                    return animcache5;
-
+                    return _animCache5;
                 default:
-                    return animcache;
+                    return _animCache;
             }
         }
 
-        public static AnimIdx GetAnimation(int filetype, int body, int action, int dir)
+        public static AnimIdx GetAnimation(int fileType, int body, int action, int dir)
         {
-            AnimIdx[] cache = GetCache(filetype);
-            FileIndex fileIndex;
-            int index;
-            GetFileIndex(body, filetype, action, dir, out fileIndex, out index);
+            AnimIdx[] cache = GetCache(fileType);
 
-            if (cache != null)
+            GetFileIndex(body, fileType, action, dir, out FileIndex fileIndex, out int index);
+
+            if (cache?[index] != null)
             {
-                if (cache[index] != null)
-                {
-                    return cache[index];
-                }
+                return cache[index];
             }
-            return cache[index] = new AnimIdx(index, fileIndex, filetype);
+
+            return cache[index] = new AnimIdx(index, fileIndex);
         }
 
-        public static bool IsActionDefinied(int filetype, int body, int action)
+        public static bool IsActionDefined(int fileType, int body, int action)
         {
-            AnimIdx[] cache = GetCache(filetype);
-            FileIndex fileIndex;
-            int index;
-            GetFileIndex(body, filetype, action, 0, out fileIndex, out index);
+            AnimIdx[] cache = GetCache(fileType);
 
-            if (cache != null)
+            GetFileIndex(body, fileType, action, 0, out FileIndex fileIndex, out int index);
+
+            if (cache?[index] != null)
             {
-                if (cache[index] != null)
-                {
-                    if ((cache[index].Frames != null) && (cache[index].Frames.Count > 0))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+                return cache[index].Frames?.Count > 0;
             }
 
-            int AnimCount = Animations.GetAnimLength(body, filetype);
-            if (AnimCount < action)
+            int animCount = Animations.GetAnimLength(body, fileType);
+            if (animCount < action)
             {
                 return false;
             }
 
-            int length, extra;
-            bool patched;
-            bool valid = fileIndex.Valid(index, out length, out extra, out patched);
-            if ((!valid) || (length < 1))
-            {
-                return false;
-            }
+            bool valid = fileIndex.Valid(index, out int length, out int _, out bool _);
 
-            return true;
+            return valid && length >= 1;
         }
 
-        public static void LoadFromVD(int filetype, int body, BinaryReader bin)
+        public static void LoadFromVD(int fileType, int body, BinaryReader bin)
         {
-            AnimIdx[] cache = GetCache(filetype);
-            FileIndex fileIndex;
-            int index;
-            GetFileIndex(body, filetype, 0, 0, out fileIndex, out index);
-            int animlength = Animations.GetAnimLength(body, filetype) * 5;
-            var entries = new Entry3D[animlength];
+            AnimIdx[] cache = GetCache(fileType);
+            GetFileIndex(body, fileType, 0, 0, out FileIndex _, out int index);
+            int animLength = Animations.GetAnimLength(body, fileType) * 5;
+            var entries = new Entry3D[animLength];
 
-            for (int i = 0; i < animlength; ++i)
+            for (int i = 0; i < animLength; ++i)
             {
-                entries[i].lookup = bin.ReadInt32();
-                entries[i].length = bin.ReadInt32();
-                entries[i].extra = bin.ReadInt32();
+                entries[i].Lookup = bin.ReadInt32();
+                entries[i].Length = bin.ReadInt32();
+                entries[i].Extra = bin.ReadInt32();
             }
+
             foreach (Entry3D entry in entries)
             {
-                if ((entry.lookup > 0) && (entry.lookup < bin.BaseStream.Length) && (entry.length > 0))
+                if ((entry.Lookup > 0) && (entry.Lookup < bin.BaseStream.Length) && (entry.Length > 0))
                 {
-                    bin.BaseStream.Seek(entry.lookup, SeekOrigin.Begin);
-                    cache[index] = new AnimIdx(bin, entry.extra);
+                    bin.BaseStream.Seek(entry.Lookup, SeekOrigin.Begin);
+                    cache[index] = new AnimIdx(bin, entry.Extra);
                 }
                 ++index;
             }
         }
 
-        public static void ExportToVD(int filetype, int body, string file)
+        public static void ExportToVD(int fileType, int body, string file)
         {
-            AnimIdx[] cache = GetCache(filetype);
-            FileIndex fileIndex;
-            int index;
-            GetFileIndex(body, filetype, 0, 0, out fileIndex, out index);
+            AnimIdx[] cache = GetCache(fileType);
+            GetFileIndex(body, fileType, 0, 0, out FileIndex fileIndex, out int index);
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var bin = new BinaryWriter(fs))
             {
-                using (var bin = new BinaryWriter(fs))
+                bin.Write((short)6);
+                int animLength = Animations.GetAnimLength(body, fileType);
+                int currType = animLength == 22 ? 0 : animLength == 13 ? 1 : 2;
+                bin.Write((short)currType);
+                long indexPos = bin.BaseStream.Position;
+                long animPos = bin.BaseStream.Position + (12 * animLength * 5);
+                for (int i = index; i < index + (animLength * 5); i++)
                 {
-                    bin.Write((short)6);
-                    int animlength = Animations.GetAnimLength(body, filetype);
-                    int currtype = animlength == 22 ? 0 : animlength == 13 ? 1 : 2;
-                    bin.Write((short)currtype);
-                    long indexpos = bin.BaseStream.Position;
-                    long animpos = bin.BaseStream.Position + 12 * animlength * 5;
-                    for (int i = index; i < index + animlength * 5; i++)
+                    AnimIdx anim;
+                    if (cache != null)
                     {
-                        AnimIdx anim;
-                        if (cache != null)
-                        {
-                            if (cache[i] != null)
-                            {
-                                anim = cache[i];
-                            }
-                            else
-                            {
-                                anim = cache[i] = new AnimIdx(i, fileIndex, filetype);
-                            }
-                        }
-                        else
-                        {
-                            anim = cache[i] = new AnimIdx(i, fileIndex, filetype);
-                        }
+                        anim = cache[i] != null ? cache[i] : cache[i] = new AnimIdx(i, fileIndex);
+                    }
+                    else
+                    {
+                        anim = cache[i] = new AnimIdx(i, fileIndex);
+                    }
 
-                        if (anim == null)
-                        {
-                            bin.BaseStream.Seek(indexpos, SeekOrigin.Begin);
-                            bin.Write(-1);
-                            bin.Write(-1);
-                            bin.Write(-1);
-                            indexpos = bin.BaseStream.Position;
-                        }
-                        else
-                        {
-                            anim.ExportToVD(bin, ref indexpos, ref animpos);
-                        }
+                    if (anim == null)
+                    {
+                        bin.BaseStream.Seek(indexPos, SeekOrigin.Begin);
+                        bin.Write(-1);
+                        bin.Write(-1);
+                        bin.Write(-1);
+                        indexPos = bin.BaseStream.Position;
+                    }
+                    else
+                    {
+                        anim.ExportToVD(bin, ref indexPos, ref animPos);
                     }
                 }
             }
         }
 
-        public static void Save(int filetype, string path)
+        public static void Save(int fileType, string path)
         {
             string filename;
             AnimIdx[] cache;
-            FileIndex fileindex;
-            switch (filetype)
+            FileIndex fileIndex;
+            switch (fileType)
             {
                 case 1:
                     filename = "anim";
-                    cache = animcache;
-                    fileindex = m_FileIndex;
+                    cache = _animCache;
+                    fileIndex = _fileIndex;
                     break;
                 case 2:
                     filename = "anim2";
-                    cache = animcache2;
-                    fileindex = m_FileIndex2;
+                    cache = _animCache2;
+                    fileIndex = _fileIndex2;
                     break;
                 case 3:
                     filename = "anim3";
-                    cache = animcache3;
-                    fileindex = m_FileIndex3;
+                    cache = _animCache3;
+                    fileIndex = _fileIndex3;
                     break;
                 case 4:
                     filename = "anim4";
-                    cache = animcache4;
-                    fileindex = m_FileIndex4;
+                    cache = _animCache4;
+                    fileIndex = _fileIndex4;
                     break;
                 case 5:
                     filename = "anim5";
-                    cache = animcache5;
-                    fileindex = m_FileIndex5;
+                    cache = _animCache5;
+                    fileIndex = _fileIndex5;
                     break;
                 default:
                     filename = "anim";
-                    cache = animcache;
-                    fileindex = m_FileIndex;
+                    cache = _animCache;
+                    fileIndex = _fileIndex;
                     break;
             }
+
             string idx = Path.Combine(path, filename + ".idx");
             string mul = Path.Combine(path, filename + ".mul");
-            using (
-                FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-                              fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-            {
-                using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
-                {
-                    for (int idxc = 0; idxc < cache.Length; ++idxc)
-                    {
-                        AnimIdx anim;
-                        if (cache != null)
-                        {
-                            if (cache[idxc] != null)
-                            {
-                                anim = cache[idxc];
-                            }
-                            else
-                            {
-                                anim = cache[idxc] = new AnimIdx(idxc, fileindex, filetype);
-                            }
-                        }
-                        else
-                        {
-                            anim = cache[idxc] = new AnimIdx(idxc, fileindex, filetype);
-                        }
 
-                        if (anim == null)
-                        {
-                            binidx.Write(-1);
-                            binidx.Write(-1);
-                            binidx.Write(-1);
-                        }
-                        else
-                        {
-                            anim.Save(binmul, binidx);
-                        }
+            using (var fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var binidx = new BinaryWriter(fsidx))
+            using (var binmul = new BinaryWriter(fsmul))
+            {
+                for (int idxc = 0; idxc < cache.Length; ++idxc)
+                {
+                    AnimIdx anim;
+                    if (cache != null)
+                    {
+                        anim = cache[idxc] != null ? cache[idxc] : cache[idxc] = new AnimIdx(idxc, fileIndex);
+                    }
+                    else
+                    {
+                        anim = cache[idxc] = new AnimIdx(idxc, fileIndex);
+                    }
+
+                    if (anim == null)
+                    {
+                        binidx.Write(-1);
+                        binidx.Write(-1);
+                        binidx.Write(-1);
+                    }
+                    else
+                    {
+                        anim.Save(binmul, binidx);
                     }
                 }
             }
@@ -418,22 +378,21 @@ namespace Ultima
 
     public sealed class AnimIdx
     {
-        public int idxextra;
+        private readonly int _idxExtra;
+
         public ushort[] Palette { get; private set; }
         public List<FrameEdit> Frames { get; private set; }
 
-        public AnimIdx(int index, FileIndex fileIndex, int filetype)
+        public AnimIdx(int index, FileIndex fileIndex)
         {
             Palette = new ushort[0x100];
-            int length, extra;
-            bool patched;
-            Stream stream = fileIndex.Seek(index, out length, out extra, out patched);
+            Stream stream = fileIndex.Seek(index, out int length, out int extra, out bool _);
             if ((stream == null) || (length < 1))
             {
                 return;
             }
 
-            idxextra = extra;
+            _idxExtra = extra;
             using (var bin = new BinaryReader(stream))
             {
                 for (int i = 0; i < 0x100; ++i)
@@ -465,7 +424,8 @@ namespace Ultima
         public AnimIdx(BinaryReader bin, int extra)
         {
             Palette = new ushort[0x100];
-            idxextra = extra;
+            _idxExtra = extra;
+
             for (int i = 0; i < 0x100; ++i)
             {
                 Palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
@@ -507,10 +467,9 @@ namespace Ultima
                 {
                     continue;
                 }
+
                 var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
-                
-                BitmapData bd = bmp.LockBits(
-                    new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
                 var line = (ushort*)bd.Scan0;
                 int delta = bd.Stride >> 1;
 
@@ -519,11 +478,12 @@ namespace Ultima
 
                 line += xBase;
                 line += yBase * delta;
+
                 for (int j = 0; j < frame.RawData.Length; ++j)
                 {
                     FrameEdit.Raw raw = frame.RawData[j];
 
-                    ushort* cur = line + (((raw.offy) * delta) + ((raw.offx) & 0x3FF));
+                    ushort* cur = line + (((raw.offsetY) * delta) + ((raw.offsetX) & 0x3FF));
                     ushort* end = cur + (raw.run);
 
                     int ii = 0;
@@ -532,9 +492,11 @@ namespace Ultima
                         *cur++ = Palette[raw.data[ii++]];
                     }
                 }
+
                 bmp.UnlockBits(bd);
                 bits[i] = bmp;
             }
+
             return bits;
         }
 
@@ -559,6 +521,7 @@ namespace Ultima
             {
                 return;
             }
+
             Frames[index] = new FrameEdit(bit, Palette, Frames[index].Center.X, Frames[index].Center.Y);
         }
 
@@ -579,12 +542,7 @@ namespace Ultima
 
         public void ClearFrames()
         {
-            if (Frames == null)
-            {
-                return;
-            }
-
-            Frames.Clear();
+            Frames?.Clear();
         }
 
         //Soulblighter Modification
@@ -592,7 +550,7 @@ namespace Ultima
         {
             using (MemoryStream imageStreamSource = new MemoryStream())
             {
-                System.Drawing.ImageConverter ic = new System.Drawing.ImageConverter();
+                ImageConverter ic = new ImageConverter();
                 byte[] btImage = (byte[])ic.ConvertTo(bit, typeof(byte[]));
                 imageStreamSource.Write(btImage, 0, btImage.Length);
                 GifBitmapDecoder decoder = new GifBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
@@ -600,33 +558,43 @@ namespace Ultima
                 int i;
                 for (i = 0; i < 0x100; i++)
                 {
-                    this.Palette[i] = 0;
+                    Palette[i] = 0;
                 }
+
                 try
                 {
                     i = 0;
-                    while (i < 0x100)//&& i < pal.Colors.Count)
+                    while (i < 0x100) //&& i < pal.Colors.Count)
                     {
+                        int red = pal.Colors[i].R / 8;
+                        int green = pal.Colors[i].G / 8;
+                        int blue = pal.Colors[i].B / 8;
 
-                        int Red = pal.Colors[i].R / 8;
-                        int Green = pal.Colors[i].G / 8;
-                        int Blue = pal.Colors[i].B / 8;
-                        int contaFinal = (((0x400 * Red) + (0x20 * Green)) + Blue) + 0x8000;
+                        int contaFinal = (0x400 * red) + (0x20 * green) + blue + 0x8000;
                         if (contaFinal == 0x8000)
+                        {
                             contaFinal = 0x8001;
+                        }
 
-                        this.Palette[i] = (ushort)contaFinal;
+                        Palette[i] = (ushort)contaFinal;
                         i++;
                     }
                 }
                 catch (System.IndexOutOfRangeException)
-                { }
+                {
+                    // TODO: ignored?
+                }
                 catch (System.ArgumentOutOfRangeException)
-                { }
+                {
+                    // TODO: ignored?
+                }
+
                 for (i = 0; i < 0x100; i++)
                 {
-                    if (this.Palette[i] < 0x8000)
-                        this.Palette[i] = 0x8000;
+                    if (Palette[i] < 0x8000)
+                    {
+                        Palette[i] = 0x8000;
+                    }
                 }
             }
         }
@@ -639,44 +607,51 @@ namespace Ultima
                 new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
-            ushort* cur = line;
+
             int i = 0;
             while (i < 0x100)
             {
                 Palette[i] = 0;
                 i++;
             }
+
             int y = 0;
+
             while (y < bmp.Height)
             {
-                cur = line;
+                ushort* cur = line;
                 for (int x = 0; x < bmp.Width; x++)
                 {
                     ushort c = cur[x];
-                    if (c != 0)
+                    if (c == 0)
                     {
-                        bool found = false;
-                        i = 0;
-                        while (i < Palette.Length)
-                        {
-                            if (Palette[i] == c)
-                            {
-                                found = true;
-                                break;
-                            }
-                            i++;
-                        }
-                        if (!found)
-                        {
-                            Palette[count++] = c;
-                        }
+                        continue;
+                    }
 
-                        if (count >= 0x100)
+                    bool found = false;
+                    i = 0;
+
+                    while (i < Palette.Length)
+                    {
+                        if (Palette[i] == c)
                         {
+                            found = true;
                             break;
                         }
+                        i++;
+                    }
+
+                    if (!found)
+                    {
+                        Palette[count++] = c;
+                    }
+
+                    if (count >= 0x100)
+                    {
+                        break;
                     }
                 }
+
                 for (i = 0; i < 0x100; i++)
                 {
                     if (Palette[i] < 0x8000)
@@ -684,6 +659,7 @@ namespace Ultima
                         Palette[i] = 0x8000;
                     }
                 }
+
                 if (count >= 0x100)
                 {
                     break;
@@ -694,47 +670,53 @@ namespace Ultima
             }
         }
 
-        public void PaletteConversor(int seletor)
+        public void PaletteConverter(int selector)
         {
             int i;
             for (i = 0; i < 0x100; i++)
             {
-                int BlueTemp = (Palette[i] - 0x8000) / 0x20;
-                BlueTemp *= 0x20;
-                BlueTemp = (Palette[i] - 0x8000) - BlueTemp;
-                int GreenTemp = (Palette[i] - 0x8000) / 0x400;
-                GreenTemp *= 0x400;
-                GreenTemp = ((Palette[i] - 0x8000) - GreenTemp) - BlueTemp;
-                GreenTemp /= 0x20;
-                int RedTemp = (Palette[i] - 0x8000) / 0x400;
+                int blueTemp = (Palette[i] - 0x8000) / 0x20;
+                blueTemp *= 0x20;
+                blueTemp = Palette[i] - 0x8000 - blueTemp;
+
+                int greenTemp = (Palette[i] - 0x8000) / 0x400;
+                greenTemp *= 0x400;
+                greenTemp = Palette[i] - 0x8000 - greenTemp - blueTemp;
+                greenTemp /= 0x20;
+
+                int redTemp = (Palette[i] - 0x8000) / 0x400;
+
                 int contaFinal = 0;
-                switch (seletor)
+                switch (selector)
                 {
                     case 1:
-                        contaFinal = (((0x400 * RedTemp) + (0x20 * GreenTemp)) + BlueTemp) + 0x8000;
+                        contaFinal = (((0x400 * redTemp) + (0x20 * greenTemp)) + blueTemp) + 0x8000;
                         break;
                     case 2:
-                        contaFinal = (((0x400 * RedTemp) + (0x20 * BlueTemp)) + GreenTemp) + 0x8000;
+                        contaFinal = (((0x400 * redTemp) + (0x20 * blueTemp)) + greenTemp) + 0x8000;
                         break;
                     case 3:
-                        contaFinal = (((0x400 * GreenTemp) + (0x20 * RedTemp)) + BlueTemp) + 0x8000;
+                        contaFinal = (((0x400 * greenTemp) + (0x20 * redTemp)) + blueTemp) + 0x8000;
                         break;
                     case 4:
-                        contaFinal = (((0x400 * GreenTemp) + (0x20 * BlueTemp)) + RedTemp) + 0x8000;
+                        contaFinal = (((0x400 * greenTemp) + (0x20 * blueTemp)) + redTemp) + 0x8000;
                         break;
                     case 5:
-                        contaFinal = (((0x400 * BlueTemp) + (0x20 * GreenTemp)) + RedTemp) + 0x8000;
+                        contaFinal = (((0x400 * blueTemp) + (0x20 * greenTemp)) + redTemp) + 0x8000;
                         break;
                     case 6:
-                        contaFinal = (((0x400 * BlueTemp) + (0x20 * RedTemp)) + GreenTemp) + 0x8000;
+                        contaFinal = (((0x400 * blueTemp) + (0x20 * redTemp)) + greenTemp) + 0x8000;
                         break;
                 }
+
                 if (contaFinal == 0x8000)
                 {
                     contaFinal = 0x8001;
                 }
+
                 Palette[i] = (ushort)contaFinal;
             }
+
             for (i = 0; i < 0x100; i++)
             {
                 if (Palette[i] < 0x8000)
@@ -744,62 +726,67 @@ namespace Ultima
             }
         }
 
-        public void PaletteReductor(int Redp, int Greenp, int Bluep)
+        public void PaletteReducer(int redP, int greenP, int blueP)
         {
             int i;
-            Redp /= 8;
-            Greenp /= 8;
-            Bluep /= 8;
+            redP /= 8;
+            greenP /= 8;
+            blueP /= 8;
             for (i = 0; i < 0x100; i++)
             {
-                int BlueTemp = (Palette[i] - 0x8000) / 0x20;
-                BlueTemp *= 0x20;
-                BlueTemp = (Palette[i] - 0x8000) - BlueTemp;
-                int GreenTemp = (Palette[i] - 0x8000) / 0x400;
-                GreenTemp *= 0x400;
-                GreenTemp = ((Palette[i] - 0x8000) - GreenTemp) - BlueTemp;
-                GreenTemp /= 0x20;
-                int RedTemp = (Palette[i] - 0x8000) / 0x400;
-                RedTemp += Redp;
-                GreenTemp += Greenp;
-                BlueTemp += Bluep;
-                if (RedTemp < 0)
+                int blueTemp = (Palette[i] - 0x8000) / 0x20;
+                blueTemp *= 0x20;
+                blueTemp = Palette[i] - 0x8000 - blueTemp;
+
+                int greenTemp = (Palette[i] - 0x8000) / 0x400;
+                greenTemp *= 0x400;
+                greenTemp = Palette[i] - 0x8000 - greenTemp - blueTemp;
+                greenTemp /= 0x20;
+
+                int redTemp = (Palette[i] - 0x8000) / 0x400;
+                redTemp += redP;
+                greenTemp += greenP;
+                blueTemp += blueP;
+
+                if (redTemp < 0)
                 {
-                    RedTemp = 0;
+                    redTemp = 0;
                 }
 
-                if (RedTemp > 0x1f)
+                if (redTemp > 0x1f)
                 {
-                    RedTemp = 0x1f;
+                    redTemp = 0x1f;
                 }
 
-                if (GreenTemp < 0)
+                if (greenTemp < 0)
                 {
-                    GreenTemp = 0;
+                    greenTemp = 0;
                 }
 
-                if (GreenTemp > 0x1f)
+                if (greenTemp > 0x1f)
                 {
-                    GreenTemp = 0x1f;
+                    greenTemp = 0x1f;
                 }
 
-                if (BlueTemp < 0)
+                if (blueTemp < 0)
                 {
-                    BlueTemp = 0;
+                    blueTemp = 0;
                 }
 
-                if (BlueTemp > 0x1f)
+                if (blueTemp > 0x1f)
                 {
-                    BlueTemp = 0x1f;
+                    blueTemp = 0x1f;
                 }
 
-                int contaFinal = (((0x400 * RedTemp) + (0x20 * GreenTemp)) + BlueTemp) + 0x8000;
+                int contaFinal = (0x400 * redTemp) + (0x20 * greenTemp) + blueTemp + 0x8000;
                 if (contaFinal == 0x8000)
                 {
                     contaFinal = 0x8001;
                 }
+
                 Palette[i] = (ushort)contaFinal;
             }
+
             for (i = 0; i < 0x100; i++)
             {
                 if (Palette[i] < 0x8000)
@@ -808,20 +795,18 @@ namespace Ultima
                 }
             }
         }
-        
-        //End of Soulblighter Modification
-
+        // End of Soulblighter Modification
 
         public unsafe void ExportPalette(string filename, int type)
         {
             switch (type)
             {
                 case 0:
-                    using (var Tex = new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite)))
+                    using (var tex = new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite)))
                     {
                         for (int i = 0; i < 0x100; ++i)
                         {
-                            Tex.WriteLine(Palette[i]);
+                            tex.WriteLine(Palette[i]);
                         }
                     }
                     break;
@@ -894,14 +879,14 @@ namespace Ultima
                 bin.Write((ushort)(Palette[i] ^ 0x8000));
             }
 
-            long startpos = bin.BaseStream.Position;
+            long startPosition = bin.BaseStream.Position;
             bin.Write(Frames.Count);
             long seek = bin.BaseStream.Position;
-            long curr = bin.BaseStream.Position + 4 * Frames.Count;
+            long curr = bin.BaseStream.Position + (4 * Frames.Count);
             foreach (FrameEdit frame in Frames)
             {
                 bin.BaseStream.Seek(seek, SeekOrigin.Begin);
-                bin.Write((int)(curr - startpos));
+                bin.Write((int)(curr - startPosition));
                 seek = bin.BaseStream.Position;
                 bin.BaseStream.Seek(curr, SeekOrigin.Begin);
                 frame.Save(bin);
@@ -910,7 +895,7 @@ namespace Ultima
 
             start = bin.BaseStream.Position - start;
             idx.Write((int)start);
-            idx.Write(idxextra);
+            idx.Write(_idxExtra);
         }
 
         public void ExportToVD(BinaryWriter bin, ref long indexpos, ref long animpos)
@@ -933,14 +918,14 @@ namespace Ultima
                 bin.Write((ushort)(Palette[i] ^ 0x8000));
             }
 
-            long startpos = (int)bin.BaseStream.Position;
+            long startPosition = (int)bin.BaseStream.Position;
             bin.Write(Frames.Count);
             long seek = (int)bin.BaseStream.Position;
-            long curr = bin.BaseStream.Position + 4 * Frames.Count;
+            long curr = bin.BaseStream.Position + (4 * Frames.Count);
             foreach (FrameEdit frame in Frames)
             {
                 bin.BaseStream.Seek(seek, SeekOrigin.Begin);
-                bin.Write((int)(curr - startpos));
+                bin.Write((int)(curr - startPosition));
                 seek = bin.BaseStream.Position;
                 bin.BaseStream.Seek(curr, SeekOrigin.Begin);
                 frame.Save(bin);
@@ -951,25 +936,28 @@ namespace Ultima
             animpos = bin.BaseStream.Position;
             bin.BaseStream.Seek(indexpos, SeekOrigin.Begin);
             bin.Write((int)length);
-            bin.Write(idxextra);
+            bin.Write(_idxExtra);
             indexpos = bin.BaseStream.Position;
         }
     }
 
     public sealed class FrameEdit
     {
-        private const int DoubleXor = (0x200 << 22) | (0x200 << 12);
+        private const int _doubleXor = (0x200 << 22) | (0x200 << 12);
+
         public struct Raw
         {
             public int run;
-            public int offx;
-            public int offy;
+            public int offsetX;
+            public int offsetY;
             public byte[] data;
         }
-        public Raw[] RawData { get; private set; }
+
+        public Raw[] RawData { get; }
         public Point Center { get; set; }
-        public int width;
-        public int height;
+
+        public readonly int width;
+        public readonly int height;
 
         public FrameEdit(BinaryReader bin)
         {
@@ -986,86 +974,93 @@ namespace Ultima
             int header;
 
             var tmp = new List<Raw>();
+
             while ((header = bin.ReadInt32()) != 0x7FFF7FFF)
             {
                 var raw = new Raw();
-                header ^= DoubleXor;
+                header ^= _doubleXor;
                 raw.run = (header & 0xFFF);
-                raw.offy = ((header >> 12) & 0x3FF);
-                raw.offx = ((header >> 22) & 0x3FF);
+                raw.offsetY = ((header >> 12) & 0x3FF);
+                raw.offsetX = ((header >> 22) & 0x3FF);
 
                 int i = 0;
                 raw.data = new byte[raw.run];
+
                 while (i < raw.run)
                 {
                     raw.data[i++] = bin.ReadByte();
                 }
+
                 tmp.Add(raw);
             }
+
             RawData = tmp.ToArray();
             Center = new Point(xCenter, yCenter);
         }
 
-        public unsafe FrameEdit(Bitmap bit, ushort[] palette, int centerx, int centery)
+        public unsafe FrameEdit(Bitmap bit, ushort[] palette, int centerX, int centerY)
         {
-            Center = new Point(centerx, centery);
+            Center = new Point(centerX, centerY);
             width = bit.Width;
             height = bit.Height;
-            BitmapData bd = bit.LockBits(
-                new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+
+            BitmapData bd = bit.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
             var tmp = new List<Raw>();
 
-            int X = 0;
-            for (int Y = 0; Y < bit.Height; ++Y, line += delta)
+            for (int y = 0; y < bit.Height; ++y, line += delta)
             {
                 ushort* cur = line;
+
                 int i = 0;
-                int j = 0;
-                X = 0;
+                int x = 0;
+
                 while (i < bit.Width)
                 {
-                    i = X;
-                    for (i = X; i <= bit.Width; ++i)
+                    for (i = x; i <= bit.Width; ++i)
                     {
-                        //first pixel set
-                        if (i < bit.Width)
+                        // first pixel set
+                        if (i < bit.Width && cur[i] != 0)
                         {
-                            if (cur[i] != 0)
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
-                    if (i < bit.Width)
-                    {
-                        for (j = (i + 1); j < bit.Width; ++j)
-                        {
-                            //next non set pixel
-                            if (cur[j] == 0)
-                            {
-                                break;
-                            }
-                        }
-                        var raw = new Raw();
-                        raw.run = j - i;
-                        raw.offx = j - raw.run - centerx;
-                        raw.offx += 512;
-                        raw.offy = Y - centery - bit.Height;
-                        raw.offy += 512;
 
-                        int r = 0;
-                        raw.data = new byte[raw.run];
-                        while (r < raw.run)
-                        {
-                            ushort col = (cur[r + i]);
-                            raw.data[r++] = GetPaletteIndex(palette, col);
-                        }
-                        tmp.Add(raw);
-                        X = j + 1;
-                        i = X;
+                    if (i >= bit.Width)
+                    {
+                        continue;
                     }
+
+                    int j;
+                    for (j = (i + 1); j < bit.Width; ++j)
+                    {
+                        // next non set pixel
+                        if (cur[j] == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    var raw = new Raw
+                    {
+                        run = j - i
+                    };
+                    raw.offsetX = j - raw.run - centerX;
+                    raw.offsetX += 512;
+                    raw.offsetY = y - centerY - bit.Height;
+                    raw.offsetY += 512;
+
+                    int r = 0;
+                    raw.data = new byte[raw.run];
+                    while (r < raw.run)
+                    {
+                        ushort col = cur[r + i];
+                        raw.data[r++] = GetPaletteIndex(palette, col);
+                    }
+                    tmp.Add(raw);
+                    x = j + 1;
+                    i = x;
                 }
             }
 
@@ -1077,11 +1072,12 @@ namespace Ultima
         {
             for (int i = 0; i < RawData.Length; i++)
             {
-                RawData[i].offx += Center.X;
-                RawData[i].offx -= x;
-                RawData[i].offy += Center.Y;
-                RawData[i].offy -= y;
+                RawData[i].offsetX += Center.X;
+                RawData[i].offsetX -= x;
+                RawData[i].offsetY += Center.Y;
+                RawData[i].offsetY -= y;
             }
+
             Center = new Point(x, y);
         }
 
@@ -1094,6 +1090,7 @@ namespace Ultima
                     return (byte)i;
                 }
             }
+
             return 0;
         }
 
@@ -1103,12 +1100,13 @@ namespace Ultima
             bin.Write((short)Center.Y);
             bin.Write((ushort)width);
             bin.Write((ushort)height);
+
             if (RawData != null)
             {
                 for (int j = 0; j < RawData.Length; j++)
                 {
-                    int newHeader = RawData[j].run | (RawData[j].offy << 12) | (RawData[j].offx << 22);
-                    newHeader ^= DoubleXor;
+                    int newHeader = RawData[j].run | (RawData[j].offsetY << 12) | (RawData[j].offsetX << 22);
+                    newHeader ^= _doubleXor;
                     bin.Write(newHeader);
                     foreach (byte b in RawData[j].data)
                     {
@@ -1116,6 +1114,7 @@ namespace Ultima
                     }
                 }
             }
+
             bin.Write(0x7FFF7FFF);
         }
     }

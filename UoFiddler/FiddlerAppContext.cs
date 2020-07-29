@@ -34,7 +34,7 @@ namespace UoFiddler
             FiddlerOptions.Startup();
 
             _logger.Information("Starting loading profile form...");
-            var profile = new LoadProfile { TopMost = true };
+            var profile = new LoadProfileForm { TopMost = true };
             var profileResult = profile.ShowDialog();
             if (profileResult == DialogResult.Cancel)
             {
@@ -56,7 +56,7 @@ namespace UoFiddler
         private void OnApplicationExit(object sender, EventArgs e)
         {
             FiddlerOptions.SaveProfile();
-            Map.SaveMapOverlays();
+            MapControl.SaveMapOverlays();
             _logger.Information("UOFiddler - Application exit.");
         }
     }

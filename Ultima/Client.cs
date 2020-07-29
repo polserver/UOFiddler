@@ -10,12 +10,10 @@ namespace Ultima
     {
         private const int WM_CHAR = 0x102;
 
-        private static ClientWindowHandle m_Handle = ClientWindowHandle.Invalid;
+        private static ClientWindowHandle _handle = ClientWindowHandle.Invalid;
 
-        private static WindowProcessStream m_ProcStream;
-        private static LocationPointer m_LocationPointer;
-
-        private static bool m_Is_Iris2;
+        private static WindowProcessStream _procStream;
+        private static LocationPointer _locationPointer;
 
         private Client()
         { }
@@ -27,19 +25,12 @@ namespace Ultima
         {
             get
             {
-                if (m_ProcStream == null || m_ProcStream.Window != Handle)
+                if (_procStream == null || _procStream.Window != Handle)
                 {
-                    if (Running)
-                    {
-                        m_ProcStream = new WindowProcessStream(Handle);
-                    }
-                    else
-                    {
-                        m_ProcStream = null;
-                    }
+                    _procStream = Running ? new WindowProcessStream(Handle) : null;
                 }
 
-                return m_ProcStream;
+                return _procStream;
             }
         }
 
@@ -103,12 +94,12 @@ namespace Ultima
 
             switch (bytes)
             {
-                case 1: 
-                        return (sbyte)buffer[0];
-                case 2: 
-                        return (short)(buffer[0] | (buffer[1] << 8));
-                case 4: 
-                        return (buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24));
+                case 1:
+                    return (sbyte)buffer[0];
+                case 2:
+                    return (short)(buffer[0] | (buffer[1] << 8));
+                case 4:
+                    return buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
             }
 
             int val = 0;
@@ -123,10 +114,11 @@ namespace Ultima
             return val;
         }
 
-        public static int Search(ProcessStream pc, byte[] mask, byte[] vals)
+        public static int Search(ProcessStream pc, byte[] mask, byte[] values)
         {
-            if (mask.Length != vals.Length)
+            if (mask.Length != values.Length)
             {
+                // TODO: maybe we need better exception here?
                 throw new Exception();
             }
 
@@ -153,7 +145,7 @@ namespace Ultima
 
                     for (int k = 0; ok && k < mask.Length; ++k)
                     {
-                        ok = ((read[j + k] & mask[k]) == vals[k]);
+                        ok = ((read[j + k] & mask[k]) == values[k]);
                     }
 
                     if (ok)
@@ -219,7 +211,7 @@ namespace Ultima
         /// <returns>The calibrated memory location -or- 0 if it could not be found.</returns>
         public static void Calibrate(int x, int y, int z)
         {
-            m_LocationPointer = null;
+            _locationPointer = null;
 
             ProcessStream pc = ProcessStream;
 
@@ -252,7 +244,7 @@ namespace Ultima
                 return;
             }
 
-            m_LocationPointer = new LocationPointer(ptr + 8, ptr + 4, ptr, 0, 4, 4, 4, 0);
+            _locationPointer = new LocationPointer(ptr + 8, ptr + 4, ptr, 0, 4, 4, 4, 0);
         }
 
         /// <summary>
@@ -270,7 +262,7 @@ namespace Ultima
         /// <returns>The calibrated memory location -or- 0 if it could not be found.</returns>
         public static void Calibrate(CalibrationInfo[] info)
         {
-            m_LocationPointer = null;
+            _locationPointer = null;
 
             ProcessStream pc = ProcessStream;
 
@@ -323,7 +315,7 @@ namespace Ultima
 
             if (ptrX != 0 || ptrY != 0 || ptrZ != 0 || ptrF != 0)
             {
-                m_LocationPointer = new LocationPointer(ptrX, ptrY, ptrZ, ptrF, sizeX, sizeY, sizeZ, sizeF);
+                _locationPointer = new LocationPointer(ptrX, ptrY, ptrZ, ptrF, sizeX, sizeY, sizeZ, sizeF);
             }
         }
 
@@ -372,8 +364,8 @@ namespace Ultima
         /// </summary>
         public static LocationPointer LocationPointer
         {
-            get { return m_LocationPointer; }
-            set { m_LocationPointer = value; }
+            get { return _locationPointer; }
+            set { _locationPointer = value; }
         }
 
         /// <summary>
@@ -384,12 +376,12 @@ namespace Ultima
         {
             get
             {
-                if (NativeMethods.IsWindow(m_Handle) == 0)
+                if (NativeMethods.IsWindow(_handle) == 0)
                 {
-                    m_Handle = FindHandle();
+                    _handle = FindHandle();
                 }
 
-                return m_Handle;
+                return _handle;
             }
         }
 
@@ -401,18 +393,14 @@ namespace Ultima
         {
             get
             {
-                return (!Handle.IsInvalid);
+                return !Handle.IsInvalid;
             }
         }
 
         /// <summary>
         /// Is Client Iris2
         /// </summary>
-        public static bool Is_Iris2
-        {
-            get { return m_Is_Iris2; }
-            set { m_Is_Iris2 = value; }
-        }
+        public static bool Is_Iris2 { get; set; }
 
         private static void SendChar(ClientWindowHandle hWnd, char c)
         {
@@ -482,7 +470,6 @@ namespace Ultima
             return SendText(String.Format(format, args));
         }
 
-
         private static ClientWindowHandle FindHandle()
         {
             ClientWindowHandle hWnd;
@@ -499,10 +486,9 @@ namespace Ultima
 
             if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("OgreGLWindow", null)) != 0)
             {
-                m_Is_Iris2 = true;
+                Is_Iris2 = true;
                 return hWnd;
             }
-
 
             return ClientWindowHandle.Invalid;
         }

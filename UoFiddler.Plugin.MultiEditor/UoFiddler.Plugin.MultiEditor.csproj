@@ -20,15 +20,14 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Design" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="UserControls\MultiEditor.cs">
+    <Compile Update="UserControls\MultiEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UserControls\MultiEditor.Designer.cs">
-      <DependentUpon>MultiEditor.cs</DependentUpon>
+    <Compile Update="UserControls\MultiEditorControl.Designer.cs">
+      <DependentUpon>MultiEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -41,8 +40,8 @@
     <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="UserControls\MultiEditor.resx">
-      <DependentUpon>MultiEditor.cs</DependentUpon>
+    <EmbeddedResource Update="UserControls\MultiEditorControl.resx">
+      <DependentUpon>MultiEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

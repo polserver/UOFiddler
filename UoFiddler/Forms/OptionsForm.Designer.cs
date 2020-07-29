@@ -71,9 +71,9 @@ namespace UoFiddler.Forms
             this.map1Nametext = new System.Windows.Forms.TextBox();
             this.map0Nametext = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.textBoxOutputPath = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.textBoxOutputPath = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeWidth)).BeginInit();
@@ -389,22 +389,6 @@ namespace UoFiddler.Forms
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Path";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 20);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(64, 13);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "Output Path";
-            // 
-            // textBoxOutputPath
-            // 
-            this.textBoxOutputPath.Location = new System.Drawing.Point(76, 17);
-            this.textBoxOutputPath.Name = "textBoxOutputPath";
-            this.textBoxOutputPath.Size = new System.Drawing.Size(244, 20);
-            this.textBoxOutputPath.TabIndex = 1;
-            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(325, 15);
@@ -415,16 +399,33 @@ namespace UoFiddler.Forms
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.OnClickBrowseOutputPath);
             // 
+            // textBoxOutputPath
+            // 
+            this.textBoxOutputPath.Location = new System.Drawing.Point(76, 17);
+            this.textBoxOutputPath.Name = "textBoxOutputPath";
+            this.textBoxOutputPath.Size = new System.Drawing.Size(244, 20);
+            this.textBoxOutputPath.TabIndex = 1;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 20);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(64, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Output Path";
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 337);
+            this.ClientSize = new System.Drawing.Size(435, 341);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -444,42 +445,41 @@ namespace UoFiddler.Forms
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.CheckBox checkBoxAltDesign;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown numericUpDownItemSizeWidth;
-        private System.Windows.Forms.CheckBox checkBoxItemClip;
-        private System.Windows.Forms.NumericUpDown numericUpDownItemSizeHeight;
-        private System.Windows.Forms.CheckBox checkBoxCacheData;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox checkBoxUseHash;
-        private System.Windows.Forms.CheckBox checkBoxNewMapSize;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox map4Nametext;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox map3Nametext;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox map2Nametext;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox map1Nametext;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox map0Nametext;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox argstext;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox cmdtext;
-        private System.Windows.Forms.CheckBox checkBoxuseDiff;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox map5Nametext;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox textBoxOutputPath;
+        private System.Windows.Forms.CheckBox checkBoxAltDesign;
+        private System.Windows.Forms.CheckBox checkBoxCacheData;
+        private System.Windows.Forms.CheckBox checkBoxItemClip;
+        private System.Windows.Forms.CheckBox checkBoxNewMapSize;
+        private System.Windows.Forms.CheckBox checkBoxuseDiff;
+        private System.Windows.Forms.CheckBox checkBoxUseHash;
+        private System.Windows.Forms.TextBox cmdtext;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox map0Nametext;
+        private System.Windows.Forms.TextBox map1Nametext;
+        private System.Windows.Forms.TextBox map2Nametext;
+        private System.Windows.Forms.TextBox map3Nametext;
+        private System.Windows.Forms.TextBox map4Nametext;
+        private System.Windows.Forms.TextBox map5Nametext;
+        private System.Windows.Forms.NumericUpDown numericUpDownItemSizeHeight;
+        private System.Windows.Forms.NumericUpDown numericUpDownItemSizeWidth;
+        private System.Windows.Forms.TextBox textBoxOutputPath;
+        private System.Windows.Forms.ToolTip toolTip1;
 
+        #endregion
     }
 }

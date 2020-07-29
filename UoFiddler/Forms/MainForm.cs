@@ -10,9 +10,9 @@
  ***************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
@@ -24,9 +24,9 @@ namespace UoFiddler.Forms
 {
     public partial class MainForm : Form
     {
-        private ItemShowAlternative _controlItemShowAlt;
-        private TextureAlternative _controlTextureAlt;
-        private LandTilesAlternative _controlLandTilesAlt;
+        private ItemShowAlternativeControl _controlItemShowAlt;
+        private TextureAlternativeControl _controlTextureAlt;
+        private LandTilesAlternativeControl _controlLandTilesAlt;
         private static MainForm _refMarker;
 
         public MainForm()
@@ -56,7 +56,7 @@ namespace UoFiddler.Forms
             Icon = Options.GetFiddlerIcon();
 
             Versionlabel.Text = $"Version {FiddlerOptions.AppVersion.Major}.{FiddlerOptions.AppVersion.Minor}.{FiddlerOptions.AppVersion.Build}";
-            Versionlabel.Left = Start.Size.Width - Versionlabel.Width - 5;
+            Versionlabel.Left = StartTab.Size.Width - Versionlabel.Width - 5;
 
             ChangeDesign();
             LoadExternToolStripMenu();
@@ -87,21 +87,21 @@ namespace UoFiddler.Forms
             }
         }
 
-        private PathSettings _pathSettings = new PathSettings();
+        private PathSettingsForm _pathSettingsForm = new PathSettingsForm();
 
         private void Click_path(object sender, EventArgs e)
         {
-            if (_pathSettings.IsDisposed)
+            if (_pathSettingsForm.IsDisposed)
             {
-                _pathSettings = new PathSettings();
+                _pathSettingsForm = new PathSettingsForm();
             }
             else
             {
-                _pathSettings.Focus();
+                _pathSettingsForm.Focus();
             }
 
-            _pathSettings.TopMost = true;
-            _pathSettings.Show();
+            _pathSettingsForm.TopMost = true;
+            _pathSettingsForm.Show();
         }
 
         private void OnClickAlwaysTop(object sender, EventArgs e)
@@ -116,8 +116,11 @@ namespace UoFiddler.Forms
 
             Ultima.Verdata.Initialize();
 
-            if (Options.LoadedUltimaClass["TileData"])
+            if (Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"])
             {
+                // Looks like we have to reload art first to have proper tiledata loading
+                // and order here is important
+                Ultima.Art.Reload();
                 Ultima.TileData.Initialize();
             }
 
@@ -171,11 +174,6 @@ namespace UoFiddler.Forms
                 Ultima.Animations.Reload();
             }
 
-            if (Options.LoadedUltimaClass["Art"])
-            {
-                Ultima.Art.Reload();
-            }
-
             if (Options.LoadedUltimaClass["RadarColor"])
             {
                 Ultima.RadarCol.Initialize();
@@ -205,11 +203,6 @@ namespace UoFiddler.Forms
             ControlEvents.FireFilePathChangeEvent();
 
             Cursor.Current = Cursors.Default;
-        }
-
-        private void OnClickAbout(object sender, EventArgs e)
-        {
-            new AboutBox().Show(this);
         }
 
         /// <summary>
@@ -292,7 +285,7 @@ namespace UoFiddler.Forms
             }
         }
 
-        private ManageTools _manageForm;
+        private ManageToolsForm _manageForm;
 
         private void OnClickToolManage(object sender, EventArgs e)
         {
@@ -301,7 +294,7 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            _manageForm = new ManageTools
+            _manageForm = new ManageToolsForm
             {
                 TopMost = true
             };
@@ -331,7 +324,7 @@ namespace UoFiddler.Forms
         {
             if (Options.DesignAlternative)
             {
-                _refMarker._controlItemShowAlt = new ItemShowAlternative
+                _refMarker._controlItemShowAlt = new ItemShowAlternativeControl
                 {
                     Dock = DockStyle.Fill,
                     Location = new Point(3, 3),
@@ -340,13 +333,13 @@ namespace UoFiddler.Forms
                     TabIndex = 0
                 };
 
-                Control parent = _refMarker.controlItemShow.Parent;
+                Control parent = _refMarker.itemShowControl.Parent;
                 parent.Controls.Clear();
                 parent.Controls.Add(_refMarker._controlItemShowAlt);
                 parent.PerformLayout();
 
-                _refMarker.controlItemShow.Dispose();
-                _refMarker._controlTextureAlt = new TextureAlternative
+                _refMarker.itemShowControl.Dispose();
+                _refMarker._controlTextureAlt = new TextureAlternativeControl
                 {
                     Dock = DockStyle.Fill,
                     Location = new Point(3, 3),
@@ -355,14 +348,14 @@ namespace UoFiddler.Forms
                     TabIndex = 0
                 };
 
-                parent = _refMarker.controlTexture.Parent;
+                parent = _refMarker.textureControl.Parent;
                 parent.Controls.Clear();
                 parent.Controls.Add(_refMarker._controlTextureAlt);
                 parent.PerformLayout();
 
-                _refMarker.controlTexture.Dispose();
+                _refMarker.textureControl.Dispose();
 
-                _refMarker._controlLandTilesAlt = new LandTilesAlternative
+                _refMarker._controlLandTilesAlt = new LandTilesAlternativeControl
                 {
                     Dock = DockStyle.Fill,
                     Location = new Point(3, 3),
@@ -371,12 +364,12 @@ namespace UoFiddler.Forms
                     TabIndex = 0
                 };
 
-                parent = _refMarker.controlLandTiles.Parent;
+                parent = _refMarker.landTilesControl.Parent;
                 parent.Controls.Clear();
                 parent.Controls.Add(_refMarker._controlLandTilesAlt);
                 parent.PerformLayout();
 
-                _refMarker.controlLandTiles.Dispose();
+                _refMarker.landTilesControl.Dispose();
             }
             else
             {
@@ -385,7 +378,7 @@ namespace UoFiddler.Forms
                     return;
                 }
 
-                _refMarker.controlItemShow = new ItemShow
+                _refMarker.itemShowControl = new ItemShowControl
                 {
                     Dock = DockStyle.Fill,
                     Location = new Point(3, 3),
@@ -396,12 +389,12 @@ namespace UoFiddler.Forms
 
                 Control parent = _refMarker._controlItemShowAlt.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(_refMarker.controlItemShow);
+                parent.Controls.Add(_refMarker.itemShowControl);
                 parent.PerformLayout();
 
                 _refMarker._controlItemShowAlt.Dispose();
 
-                _refMarker.controlTexture = new Texture
+                _refMarker.textureControl = new TextureControl
                 {
                     Dock = DockStyle.Fill,
                     Location = new Point(3, 3),
@@ -412,12 +405,12 @@ namespace UoFiddler.Forms
 
                 parent = _refMarker._controlTextureAlt.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(_refMarker.controlTexture);
+                parent.Controls.Add(_refMarker.textureControl);
                 parent.PerformLayout();
 
                 _refMarker._controlTextureAlt.Dispose();
 
-                _refMarker.controlLandTiles = new LandTiles
+                _refMarker.landTilesControl = new LandTilesControl
                 {
                     Dock = DockStyle.Fill,
                     Location = new Point(3, 3),
@@ -428,7 +421,7 @@ namespace UoFiddler.Forms
 
                 parent = _refMarker._controlLandTilesAlt.Parent;
                 parent.Controls.Clear();
-                parent.Controls.Add(_refMarker.controlLandTiles);
+                parent.Controls.Add(_refMarker.landTilesControl);
                 parent.PerformLayout();
 
                 _refMarker._controlLandTilesAlt.Dispose();
@@ -446,7 +439,7 @@ namespace UoFiddler.Forms
             }
             else
             {
-                _refMarker.controlItemShow.ChangeTileSize();
+                _refMarker.itemShowControl.ChangeTileSize();
             }
         }
 
@@ -471,7 +464,7 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            new UnDocked(TabPanel.SelectedTab).Show();
+            new UnDockedForm(TabPanel.SelectedTab).Show();
             TabPanel.TabPages.Remove(TabPanel.SelectedTab);
         }
 
@@ -502,42 +495,35 @@ namespace UoFiddler.Forms
             _refMarker.TabPanel.SelectedTab = oldTab;
         }
 
-        private ManagePlugins _pluginsForm;
+        private ManagePluginsForm _pluginsFormForm;
 
         private void OnClickManagePlugins(object sender, EventArgs e)
         {
-            if (_pluginsForm?.IsDisposed == false)
+            if (_pluginsFormForm?.IsDisposed == false)
             {
                 return;
             }
 
-            _pluginsForm = new ManagePlugins
+            _pluginsFormForm = new ManagePluginsForm
             {
                 TopMost = true
             };
-            _pluginsForm.Show();
+            _pluginsFormForm.Show();
         }
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
             FiddlerOptions.Logger.Information("MainForm - OnClosing - start.");
-            string files = "";
-
-            foreach (KeyValuePair<string, bool> key in Options.ChangedUltimaClass)
-            {
-                if (key.Value)
-                {
-                    files += $"{key.Key} ";
-                }
-            }
+            string files = Options.ChangedUltimaClass
+                                    .Where(key => key.Value)
+                                    .Aggregate(string.Empty, (current, key) => current + $"- {key.Key} \r\n");
 
             if (files.Length > 0)
             {
-                DialogResult result = MessageBox.Show($"Are you sure you want to quit?\r\n{files}",
-                    "UnSaved Changes",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
+                DialogResult result =
+                    MessageBox.Show($"Are you sure you want to quit?\r\n\r\nThere are unsaved files:\r\n{files}",
+                        "UnSaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)
                 {
                     e.Cancel = true;
@@ -553,11 +539,6 @@ namespace UoFiddler.Forms
             GlobalPlugins.Plugins.ClosePlugins();
 
             FiddlerOptions.Logger.Information("MainForm - OnClosing - done.");
-        }
-
-        private void OnClickHelp(object sender, EventArgs e)
-        {
-            Process.Start("http://uofiddler.polserver.com/help.html");
         }
 
         private static bool IsOkFormStateLocation(Point loc, Size size)
@@ -662,28 +643,28 @@ namespace UoFiddler.Forms
         {
             switch (tag)
             {
-                case 0: return Start;
-                case 1: return Multis;
-                case 2: return Animation;
-                case 3: return Items;
-                case 4: return LandTiles;
-                case 5: return Texture;
-                case 6: return Gumps;
-                case 7: return Sounds;
-                case 8: return Hue;
-                case 9: return fonts;
-                case 10: return Cliloc;
-                case 11: return map;
-                case 12: return Light;
-                case 13: return speech;
-                case 14: return Skills;
-                case 15: return AnimData;
-                case 16: return multimap;
-                case 17: return Dress;
-                case 18: return TileDatas;
-                case 19: return RadarCol;
-                case 20: return SkillGrp;
-                default: return Start;
+                case 0: return StartTab;
+                case 1: return MultisTab;
+                case 2: return AnimationTab;
+                case 3: return ItemsTab;
+                case 4: return LandTilesTab;
+                case 5: return TextureTab;
+                case 6: return GumpsTab;
+                case 7: return SoundsTab;
+                case 8: return HueTab;
+                case 9: return FontsTab;
+                case 10: return ClilocTab;
+                case 11: return MapTab;
+                case 12: return LightTab;
+                case 13: return SpeechTab;
+                case 14: return SkillsTab;
+                case 15: return AnimDataTab;
+                case 16: return MultiMapTab;
+                case 17: return DressTab;
+                case 18: return TileDataTab;
+                case 19: return RadarColTab;
+                case 20: return SkillGrpTab;
+                default: return StartTab;
             }
         }
 
@@ -713,6 +694,19 @@ namespace UoFiddler.Forms
                 case 19: return ToggleViewRadarColor;
                 case 20: return ToggleViewSkillGrp;
                 default: return ToggleViewStart;
+            }
+        }
+
+        private void ToolStripMenuItemHelp_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://uofiddler.polserver.com/help.html");
+        }
+
+        private void ToolStripMenuItemAbout_Click(object sender, EventArgs e)
+        {
+            using (AboutBoxForm aboutBoxForm = new AboutBoxForm())
+            {
+                aboutBoxForm.ShowDialog(this);
             }
         }
     }
