@@ -337,7 +337,7 @@ namespace UoFiddler.Controls.Forms
             }
 
             Bitmap[] currentBits = edit.GetFrames();
-
+            
             e.Graphics.Clear(Color.LightGray);
             e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, animationPictureBox.Height));
             e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(animationPictureBox.Width, _framePoint.Y));
@@ -775,7 +775,7 @@ namespace UoFiddler.Controls.Forms
                                         bitBmp[index] = bmp;
                                         bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int)numericUpDownRed.Value,
                                             (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                                        edit.AddFrame(bitBmp[index]);
+                                        edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                                         TreeNode node = GetNode(_currentBody);
                                         if (node != null)
                                         {
@@ -1341,7 +1341,7 @@ namespace UoFiddler.Controls.Forms
                             bitBmp[index] = bmp;
                             bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
                                 (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
-                            edit.AddFrame(bitBmp[index]);
+                            edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                             TreeNode node = GetNode(_currentBody);
                             if (node != null)
                             {
@@ -1932,7 +1932,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
                     (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -2294,7 +2294,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -2344,7 +2344,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -2394,7 +2394,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -2444,7 +2444,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -2494,7 +2494,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -3014,7 +3014,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -3064,7 +3064,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -3114,7 +3114,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -3164,7 +3164,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
@@ -3214,7 +3214,7 @@ namespace UoFiddler.Controls.Forms
                 bitBmp[index].SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
                     (int) numericUpDownBlue.Value);
-                edit.AddFrame(bitBmp[index]);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
