@@ -500,14 +500,14 @@ namespace Ultima
             return bits;
         }
 
-        public void AddFrame(Bitmap bit)
+        public void AddFrame(Bitmap bit, int centerX = 0, int centerY = 0 )
         {
             if (Frames == null)
             {
                 Frames = new List<FrameEdit>();
             }
 
-            Frames.Add(new FrameEdit(bit, Palette, 0, 0));
+            Frames.Add(new FrameEdit(bit, Palette, centerX, centerY));
         }
 
         public void ReplaceFrame(Bitmap bit, int index)
