@@ -120,6 +120,7 @@
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Version 4.9.2
 Added missing ship tiles group to multi editor plugin.
+Added currently selected profile name to main window title.
 AnimationEdit: imported frames from .gif files should now be centered on X axis.
 
 Version 4.9.1
