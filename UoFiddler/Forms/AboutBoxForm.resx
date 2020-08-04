@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.1
+    <value>Version 4.9.2
+Added missing ship tiles group to multi editor plugin.
+AnimationEdit: imported frames from .gif files should now be centered on X axis.
+
+Version 4.9.1
 Instead of moving configuration files to AppData we now copy them if the file doesn't exist.
 Fixed exporting offset.cfg for items alternative design mode.
 Moved update checking to github releases API.

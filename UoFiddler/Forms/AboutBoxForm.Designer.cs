@@ -174,7 +174,7 @@ namespace UoFiddler.Forms
             this.checkBoxFormState.UseVisualStyleBackColor = true;
             this.checkBoxFormState.CheckedChanged += new System.EventHandler(this.OnChangeFormState);
             // 
-            // AboutBox
+            // AboutBoxForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
