@@ -13,6 +13,7 @@ using System;
 using System.Windows.Forms;
 using Serilog;
 using UoFiddler.Classes;
+using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Forms;
 
@@ -49,7 +50,10 @@ namespace UoFiddler
             }
 
             _logger.Information("Starting main form...");
-            MainForm = new MainForm();
+            MainForm = new MainForm
+            {
+                Text = $"{Application.ProductName} (Profile: {Options.ProfileName.Replace("Options_", "").Replace(".xml", "")})"
+            };
             MainForm.Show();
         }
 
