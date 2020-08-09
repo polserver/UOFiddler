@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.2
+    <value>Version 4.9.3
+Added right panel to Sound tab (author: Daviex)
+Added ability to change background color for Item tab. You can choose separate color for item list and right detail preview. Just right click and choose 'Change background color'. (author: Daviex)
+
+Version 4.9.2
 Added missing ship tiles group to multi editor plugin.
 Added currently selected profile name to main window title.
 AnimationEdit: imported frames from .gif files should now be centered on X axis.
