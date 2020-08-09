@@ -692,5 +692,30 @@ namespace UoFiddler.Controls.UserControls
         {
             OnClickReplace(null, e);
         }
+
+        private void SearchByIdButton_Click(object sender, EventArgs e)
+        {
+            int id = -1;
+
+            if(!int.TryParse(SearchNameTextbox.Text, out id)) 
+            {
+                return;
+            }
+
+            if (!SearchId(id))
+            {
+                MessageBox.Show($"Can't find Sound with ID {SearchNameTextbox.Text}?");
+            }
+        }
+
+        private void SearchByNameButton_Click(object sender, EventArgs e)
+        {
+            DoSearchName(SearchNameTextbox.Text, false);
+        }
+
+        private void GoNextResultButton_Click(object sender, EventArgs e)
+        {
+            DoSearchName(SearchNameTextbox.Text, true);
+        }
     }
 }
