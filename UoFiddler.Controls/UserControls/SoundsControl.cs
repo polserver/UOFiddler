@@ -171,7 +171,7 @@ namespace UoFiddler.Controls.UserControls
 
         public static bool SearchName(string text, bool v)
         {
-            return RefMarker.DoSearchName(text, v);
+            return RefMarker.DoSearchName(text, v, false);
         }
 
         private void OnFilePathChangeEvent()
@@ -329,34 +329,64 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private bool DoSearchName(string name, bool next)
+        private bool DoSearchName(string name, bool next, bool prev)
         {
             int index = 0;
-            if (next)
+
+            if (prev)
             {
                 if (treeView.SelectedNode.Index >= 0)
                 {
-                    index = treeView.SelectedNode.Index + 1;
+                    index = treeView.SelectedNode.Index - 1;
                 }
 
-                if (index >= treeView.Nodes.Count)
+                if (index <= 0)
                 {
                     index = 0;
                 }
-            }
 
-            for (int i = index; i < treeView.Nodes.Count; ++i)
-            {
-                TreeNode node = treeView.Nodes[i];
-                if (!node.Text.ContainsCaseInsensitive(name))
+                for (int i = index; i >= 0; --i)
                 {
-                    continue;
+                    TreeNode node = treeView.Nodes[i];
+                    if (!node.Text.ContainsCaseInsensitive(name))
+                    {
+                        continue;
+                    }
+
+                    treeView.SelectedNode = node;
+                    node.EnsureVisible();
+                    return true;
+                }
+            }
+            else
+            {
+                if (next)
+                {
+                    if (treeView.SelectedNode.Index >= 0)
+                    {
+                        index = treeView.SelectedNode.Index + 1;
+                    }
+
+                    if (index >= treeView.Nodes.Count)
+                    {
+                        index = 0;
+                    }
                 }
 
-                treeView.SelectedNode = node;
-                node.EnsureVisible();
-                return true;
+                for (int i = index; i < treeView.Nodes.Count; ++i)
+                {
+                    TreeNode node = treeView.Nodes[i];
+                    if (!node.Text.ContainsCaseInsensitive(name))
+                    {
+                        continue;
+                    }
+
+                    treeView.SelectedNode = node;
+                    node.EnsureVisible();
+                    return true;
+                }
             }
+            
             return false;
         }
 
@@ -712,12 +742,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void SearchByNameButton_Click(object sender, EventArgs e)
         {
-            DoSearchName(SearchNameTextbox.Text, false);
+            DoSearchName(SearchNameTextbox.Text, false, false);
         }
 
         private void GoNextResultButton_Click(object sender, EventArgs e)
         {
-            DoSearchName(SearchNameTextbox.Text, true);
+            DoSearchName(SearchNameTextbox.Text, true, false);
+        }
+
+        private void GoPrevResultButton_Click(object sender, EventArgs e)
+        {
+            DoSearchName(SearchNameTextbox.Text, false, true);
         }
     }
 }
