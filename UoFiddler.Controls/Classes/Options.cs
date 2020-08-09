@@ -49,6 +49,12 @@ namespace UoFiddler.Controls.Classes
         public static bool DesignAlternative { get; set; }
 
         /// <summary>
+        /// Defines if the right panel into the Sounds Tab
+        /// should be toggled on
+        /// </summary>
+        public static bool RightPanelInSoundsTab { get; set; } = true;
+
+        /// <summary>
         /// Defines the cmd to Send Client to Loc
         /// </summary>
         public static string MapCmd { get; set; } = ".goforce";

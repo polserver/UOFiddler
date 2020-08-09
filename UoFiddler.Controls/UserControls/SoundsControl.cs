@@ -48,7 +48,9 @@ namespace UoFiddler.Controls.UserControls
             treeView.BeforeLabelEdit += TreeView_BeforeLabelEdit;
             treeView.AfterLabelEdit += TreeViewOnAfterLabelEdit;
 
-            splitContainer1.Panel2Collapsed = true;
+            splitContainer1.Panel2Collapsed = !Options.RightPanelInSoundsTab;
+            statusStripSounds.Visible = splitContainer1.Panel2Collapsed;
+            toolStrip1.Visible = splitContainer1.Panel2Collapsed;
         }
 
         /// <summary>
