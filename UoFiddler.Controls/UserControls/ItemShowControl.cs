@@ -607,7 +607,7 @@ namespace UoFiddler.Controls.UserControls
         }
         private void ChangeBackgroundColorToolStripMenuItemDetail_Click(object sender, EventArgs e)
         {
-            if (colorDialog.ShowDialog() == DialogResult.OK)
+            if (colorDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
