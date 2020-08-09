@@ -395,10 +395,11 @@ namespace UoFiddler.Controls.UserControls
         {
             pictureBox.Invalidate();
         }
-
+        
+        private Color _backgroundColorItem = Color.White;
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            e.Graphics.Clear(Color.White);
+            e.Graphics.Clear(_backgroundColorItem);
 
             for (int x = 0; x <= _col; ++x)
             {
@@ -485,6 +486,15 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                _backgroundColorItem = colorDialog.Color;
+                pictureBox.Refresh();
+            }
+        }
+
         private void OnResize(object sender, EventArgs e)
         {
             if (pictureBox.Height == 0 || pictureBox.Width == 0)
@@ -517,6 +527,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private Color _backgroundDetailColor = Color.White;
         private void UpdateDetail(int id)
         {
             ItemData item = TileData.ItemTable[id];
@@ -533,7 +544,7 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
                 {
-                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.Clear(_backgroundDetailColor);
                 }
 
                 DetailPictureBox.Image?.Dispose();
@@ -545,7 +556,7 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
                 {
-                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.Clear(_backgroundDetailColor);
                     newGraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
                 }
 
@@ -579,6 +590,18 @@ namespace UoFiddler.Controls.UserControls
             {
                 DetailTextBox.AppendText(
                     $"Animation FrameCount: {info.FrameCount} Interval: {info.FrameInterval}\n");
+            }
+        }
+
+        private void ChangeBackgroundColorToolStripMenuItemDetail_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                _backgroundDetailColor = colorDialog.Color;
+                if (_selected != -1)
+                {
+                    UpdateDetail(_selected);
+                }
             }
         }
 

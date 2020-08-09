@@ -47,6 +47,7 @@ namespace UoFiddler.Controls.UserControls
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.ChangeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this.selectInTileDataTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.selectInRadarColorTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,6 +67,8 @@ namespace UoFiddler.Controls.UserControls
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
       this.splitContainer2 = new System.Windows.Forms.SplitContainer();
       this.DetailPictureBox = new System.Windows.Forms.PictureBox();
+      this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.ChangeBackgroundColorToolStripMenuItemDetail = new System.Windows.Forms.ToolStripMenuItem();
       this.DetailTextBox = new System.Windows.Forms.RichTextBox();
       this.PreLoader = new System.ComponentModel.BackgroundWorker();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -78,11 +81,8 @@ namespace UoFiddler.Controls.UserControls
       this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.ChangeBackgroundColorToolStripMenuItemDetail = new System.Windows.Forms.ToolStripMenuItem();
       this.colorDialog = new System.Windows.Forms.ColorDialog();
       this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
-      this.ChangeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.statusStrip1.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -94,8 +94,8 @@ namespace UoFiddler.Controls.UserControls
       this.splitContainer2.Panel2.SuspendLayout();
       this.splitContainer2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.DetailPictureBox)).BeginInit();
-      this.toolStrip1.SuspendLayout();
       this.contextMenuStrip2.SuspendLayout();
+      this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // statusStrip1
@@ -185,6 +185,13 @@ namespace UoFiddler.Controls.UserControls
       this.findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
       this.findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
       this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.OnClickFindFree);
+      // 
+      // ChangeBackgroundColorToolStripMenuItem
+      // 
+      this.ChangeBackgroundColorToolStripMenuItem.Name = "ChangeBackgroundColorToolStripMenuItem";
+      this.ChangeBackgroundColorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+      this.ChangeBackgroundColorToolStripMenuItem.Text = "Change BackgroundColor";
+      this.ChangeBackgroundColorToolStripMenuItem.Click += new System.EventHandler(this.ChangeBackgroundColorToolStripMenuItem_Click);
       // 
       // toolStripSeparator3
       // 
@@ -345,6 +352,20 @@ namespace UoFiddler.Controls.UserControls
       this.DetailPictureBox.TabStop = false;
       this.DetailPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.DetailPictureBox_Paint);
       // 
+      // contextMenuStrip2
+      // 
+      this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ChangeBackgroundColorToolStripMenuItemDetail});
+      this.contextMenuStrip2.Name = "contextMenuStrip2";
+      this.contextMenuStrip2.Size = new System.Drawing.Size(212, 26);
+      // 
+      // ChangeBackgroundColorToolStripMenuItemDetail
+      // 
+      this.ChangeBackgroundColorToolStripMenuItemDetail.Name = "ChangeBackgroundColorToolStripMenuItemDetail";
+      this.ChangeBackgroundColorToolStripMenuItemDetail.Size = new System.Drawing.Size(211, 22);
+      this.ChangeBackgroundColorToolStripMenuItemDetail.Text = "Change BackgroundColor";
+      this.ChangeBackgroundColorToolStripMenuItemDetail.Click += new System.EventHandler(this.ChangeBackgroundColorToolStripMenuItemDetail_Click);
+      // 
       // DetailTextBox
       // 
       this.DetailTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -452,20 +473,6 @@ namespace UoFiddler.Controls.UserControls
       this.asPngToolStripMenuItem.Text = "As Png";
       this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllPng);
       // 
-      // contextMenuStrip2
-      // 
-      this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ChangeBackgroundColorToolStripMenuItemDetail});
-      this.contextMenuStrip2.Name = "contextMenuStrip2";
-      this.contextMenuStrip2.Size = new System.Drawing.Size(212, 26);
-      // 
-      // ChangeBackgroundColorToolStripMenuItemDetail
-      // 
-      this.ChangeBackgroundColorToolStripMenuItemDetail.Name = "ChangeBackgroundColorToolStripMenuItemDetail";
-      this.ChangeBackgroundColorToolStripMenuItemDetail.Size = new System.Drawing.Size(211, 22);
-      this.ChangeBackgroundColorToolStripMenuItemDetail.Text = "Change BackgroundColor";
-      this.ChangeBackgroundColorToolStripMenuItemDetail.Click += new System.EventHandler(this.ChangeBackgroundColorToolStripMenuItemDetail_Click);
-      // 
       // colorDialog
       // 
       this.colorDialog.Color = System.Drawing.Color.White;
@@ -484,13 +491,6 @@ namespace UoFiddler.Controls.UserControls
       this.collapsibleSplitter1.TabStop = false;
       this.collapsibleSplitter1.UseAnimations = false;
       this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
-      // 
-      // ChangeBackgroundColorToolStripMenuItem
-      // 
-      this.ChangeBackgroundColorToolStripMenuItem.Name = "ChangeBackgroundColorToolStripMenuItem";
-      this.ChangeBackgroundColorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-      this.ChangeBackgroundColorToolStripMenuItem.Text = "Change BackgroundColor";
-      this.ChangeBackgroundColorToolStripMenuItem.Click += new System.EventHandler(this.ChangeBackgroundColorToolStripMenuItem_Click);
       // 
       // ItemShowControl
       // 
@@ -516,9 +516,9 @@ namespace UoFiddler.Controls.UserControls
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
       this.splitContainer2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.DetailPictureBox)).EndInit();
+      this.contextMenuStrip2.ResumeLayout(false);
       this.toolStrip1.ResumeLayout(false);
       this.toolStrip1.PerformLayout();
-      this.contextMenuStrip2.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
