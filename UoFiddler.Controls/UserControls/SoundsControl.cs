@@ -476,20 +476,27 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickReplace(object sender, EventArgs e)
         {
             string file;
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            if (sender != null)
             {
-                dialog.Multiselect = false;
-                dialog.Title = "Choose wave file";
-                dialog.CheckFileExists = true;
-                dialog.Filter = "wav file (*.wav)|*.wav";
-                if (dialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog dialog = new OpenFileDialog())
                 {
-                    file = dialog.FileName;
+                    dialog.Multiselect = false;
+                    dialog.Title = "Choose wave file";
+                    dialog.CheckFileExists = true;
+                    dialog.Filter = "wav file (*.wav)|*.wav";
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        file = dialog.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                else
-                {
-                    return;
-                }
+            } 
+            else
+            {
+                file = _wavChosen;
             }
 
             int id = (int)treeView.SelectedNode.Tag;
@@ -683,7 +690,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void AddInsertReplaceButton_Click(object sender, EventArgs e)
         {
-
+            OnClickReplace(null, e);
         }
     }
 }

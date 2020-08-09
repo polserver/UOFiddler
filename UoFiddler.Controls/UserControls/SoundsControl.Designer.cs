@@ -86,10 +86,8 @@ namespace UoFiddler.Controls.UserControls
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
       this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.IdInsertTextbox = new System.Windows.Forms.TextBox();
-      this.NameInsertTextbox = new System.Windows.Forms.TextBox();
       this.WavFileInsertTextbox = new System.Windows.Forms.TextBox();
       this.WavChooseInsertButton = new System.Windows.Forms.Button();
       this.AddInsertReplaceButton = new System.Windows.Forms.Button();
@@ -594,20 +592,18 @@ namespace UoFiddler.Controls.UserControls
       this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 36F));
       this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this.tableLayoutPanel6.Controls.Add(this.label1, 0, 0);
-      this.tableLayoutPanel6.Controls.Add(this.label2, 0, 1);
-      this.tableLayoutPanel6.Controls.Add(this.label3, 0, 2);
+      this.tableLayoutPanel6.Controls.Add(this.label3, 0, 1);
       this.tableLayoutPanel6.Controls.Add(this.IdInsertTextbox, 1, 0);
-      this.tableLayoutPanel6.Controls.Add(this.NameInsertTextbox, 1, 1);
-      this.tableLayoutPanel6.Controls.Add(this.WavFileInsertTextbox, 1, 2);
-      this.tableLayoutPanel6.Controls.Add(this.WavChooseInsertButton, 2, 2);
-      this.tableLayoutPanel6.Controls.Add(this.AddInsertReplaceButton, 0, 3);
+      this.tableLayoutPanel6.Controls.Add(this.WavFileInsertTextbox, 1, 1);
+      this.tableLayoutPanel6.Controls.Add(this.WavChooseInsertButton, 2, 1);
+      this.tableLayoutPanel6.Controls.Add(this.AddInsertReplaceButton, 0, 2);
       this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 16);
       this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-      this.tableLayoutPanel6.RowCount = 4;
+      this.tableLayoutPanel6.RowCount = 3;
       this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
       this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-      this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+      this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this.tableLayoutPanel6.Size = new System.Drawing.Size(552, 342);
       this.tableLayoutPanel6.TabIndex = 0;
@@ -618,29 +614,18 @@ namespace UoFiddler.Controls.UserControls
       this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.label1.Location = new System.Drawing.Point(3, 0);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(35, 25);
+      this.label1.Size = new System.Drawing.Size(32, 25);
       this.label1.TabIndex = 0;
       this.label1.Text = "ID";
       this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.label2.Location = new System.Drawing.Point(3, 25);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(35, 25);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Name";
-      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // label3
       // 
       this.label3.AutoSize = true;
       this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.label3.Location = new System.Drawing.Point(3, 50);
+      this.label3.Location = new System.Drawing.Point(3, 25);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(35, 25);
+      this.label3.Size = new System.Drawing.Size(32, 25);
       this.label3.TabIndex = 2;
       this.label3.Text = "WAV";
       this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -649,32 +634,23 @@ namespace UoFiddler.Controls.UserControls
       // 
       this.tableLayoutPanel6.SetColumnSpan(this.IdInsertTextbox, 2);
       this.IdInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.IdInsertTextbox.Location = new System.Drawing.Point(44, 3);
+      this.IdInsertTextbox.Location = new System.Drawing.Point(41, 3);
       this.IdInsertTextbox.Name = "IdInsertTextbox";
       this.IdInsertTextbox.ReadOnly = true;
-      this.IdInsertTextbox.Size = new System.Drawing.Size(485, 20);
+      this.IdInsertTextbox.Size = new System.Drawing.Size(488, 20);
       this.IdInsertTextbox.TabIndex = 3;
-      // 
-      // NameInsertTextbox
-      // 
-      this.tableLayoutPanel6.SetColumnSpan(this.NameInsertTextbox, 2);
-      this.NameInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.NameInsertTextbox.Location = new System.Drawing.Point(44, 28);
-      this.NameInsertTextbox.Name = "NameInsertTextbox";
-      this.NameInsertTextbox.Size = new System.Drawing.Size(485, 20);
-      this.NameInsertTextbox.TabIndex = 4;
       // 
       // WavFileInsertTextbox
       // 
       this.WavFileInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.WavFileInsertTextbox.Location = new System.Drawing.Point(44, 53);
+      this.WavFileInsertTextbox.Location = new System.Drawing.Point(41, 28);
       this.WavFileInsertTextbox.Name = "WavFileInsertTextbox";
-      this.WavFileInsertTextbox.Size = new System.Drawing.Size(449, 20);
+      this.WavFileInsertTextbox.Size = new System.Drawing.Size(452, 20);
       this.WavFileInsertTextbox.TabIndex = 5;
       // 
       // WavChooseInsertButton
       // 
-      this.WavChooseInsertButton.Location = new System.Drawing.Point(499, 53);
+      this.WavChooseInsertButton.Location = new System.Drawing.Point(499, 28);
       this.WavChooseInsertButton.Name = "WavChooseInsertButton";
       this.WavChooseInsertButton.Size = new System.Drawing.Size(30, 19);
       this.WavChooseInsertButton.TabIndex = 6;
@@ -686,7 +662,7 @@ namespace UoFiddler.Controls.UserControls
       // 
       this.AddInsertReplaceButton.AutoSize = true;
       this.tableLayoutPanel6.SetColumnSpan(this.AddInsertReplaceButton, 2);
-      this.AddInsertReplaceButton.Location = new System.Drawing.Point(3, 78);
+      this.AddInsertReplaceButton.Location = new System.Drawing.Point(3, 53);
       this.AddInsertReplaceButton.Name = "AddInsertReplaceButton";
       this.AddInsertReplaceButton.Size = new System.Drawing.Size(87, 23);
       this.AddInsertReplaceButton.TabIndex = 7;
@@ -780,10 +756,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox IdInsertTextbox;
-        private System.Windows.Forms.TextBox NameInsertTextbox;
         private System.Windows.Forms.TextBox WavFileInsertTextbox;
         private System.Windows.Forms.Button WavChooseInsertButton;
         private System.Windows.Forms.Button AddInsertReplaceButton;
