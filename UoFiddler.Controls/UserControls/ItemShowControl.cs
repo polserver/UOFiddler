@@ -502,12 +502,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (colorDialog.ShowDialog() == DialogResult.OK)
+            if (colorDialog.ShowDialog() != DialogResult.OK)
             {
-                if (_backgroundColorItem != null) _backgroundColorItem.Dispose();
-                _backgroundColorItem = new SolidBrush(colorDialog.Color);
-                listView1.Refresh();
+                return;
             }
+
+            _backgroundColorItem?.Dispose();
+            _backgroundColorItem = new SolidBrush(colorDialog.Color);
+            listView1.Refresh();
         }
 
         public void ListView_DoubleClicked(object sender, MouseEventArgs e)
@@ -607,9 +609,11 @@ namespace UoFiddler.Controls.UserControls
         {
             if (colorDialog.ShowDialog() == DialogResult.OK)
             {
-                _backgroundDetailColor = colorDialog.Color;
-                DetailPictureBox.Refresh();
+                return;
             }
+
+            _backgroundDetailColor = colorDialog.Color;
+            DetailPictureBox.Refresh();
         }
 
         private void DetailSplitContainer_SizeChange(object sender, EventArgs e)

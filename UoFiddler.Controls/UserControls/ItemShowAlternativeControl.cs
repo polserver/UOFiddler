@@ -488,11 +488,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (colorDialog.ShowDialog() == DialogResult.OK)
+            if (colorDialog.ShowDialog() != DialogResult.OK)
             {
-                _backgroundColorItem = colorDialog.Color;
-                pictureBox.Refresh();
+                return;
             }
+
+            _backgroundColorItem = colorDialog.Color;
+            pictureBox.Refresh();
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -595,13 +597,15 @@ namespace UoFiddler.Controls.UserControls
 
         private void ChangeBackgroundColorToolStripMenuItemDetail_Click(object sender, EventArgs e)
         {
-            if (colorDialog.ShowDialog() == DialogResult.OK)
+            if (colorDialog.ShowDialog() != DialogResult.OK)
             {
-                _backgroundDetailColor = colorDialog.Color;
-                if (_selected != -1)
-                {
-                    UpdateDetail(_selected);
-                }
+                return;
+            }
+
+            _backgroundDetailColor = colorDialog.Color;
+            if (_selected != -1)
+            {
+                UpdateDetail(_selected);
             }
         }
 
