@@ -430,6 +430,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private SolidBrush _backgroundColorItem = new SolidBrush(Color.White);
         private void DrawItem(object sender, DrawListViewItemEventArgs e)
         {
             int i = (int)e.Item.Tag;
@@ -465,7 +466,7 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                e.Graphics.FillRectangle(Brushes.White, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                e.Graphics.FillRectangle(_backgroundColorItem, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             }
 
             if (Options.ArtItemClip)
@@ -497,6 +498,18 @@ namespace UoFiddler.Controls.UserControls
             {
                 e.Graphics.DrawRectangle(Pens.Gray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             }
+        }
+
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            _backgroundColorItem?.Dispose();
+            _backgroundColorItem = new SolidBrush(colorDialog.Color);
+            listView1.Refresh();
         }
 
         public void ListView_DoubleClicked(object sender, MouseEventArgs e)
@@ -576,9 +589,10 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private Color _backgroundDetailColor = Color.White;
         private void DetailPictureBox_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.Clear(Color.White);
+            e.Graphics.Clear(_backgroundDetailColor);
             int id = (int)DetailPictureBox.Tag;
             if (id < 0)
             {
@@ -590,6 +604,16 @@ namespace UoFiddler.Controls.UserControls
             {
                 e.Graphics.DrawImage(bit, (e.ClipRectangle.Width - bit.Width) / 2, 5);
             }
+        }
+        private void ChangeBackgroundColorToolStripMenuItemDetail_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            _backgroundDetailColor = colorDialog.Color;
+            DetailPictureBox.Refresh();
         }
 
         private void DetailSplitContainer_SizeChange(object sender, EventArgs e)
