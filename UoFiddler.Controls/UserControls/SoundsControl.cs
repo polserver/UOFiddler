@@ -29,6 +29,8 @@ namespace UoFiddler.Controls.UserControls
         private int _spTimerMax;
         private DateTime _spTimerStart;
 
+        private bool _playing;
+
         private bool _loaded;
         public static SoundsControl RefMarker { get; private set; }
 
@@ -45,6 +47,10 @@ namespace UoFiddler.Controls.UserControls
             treeView.LabelEdit = true;
             treeView.BeforeLabelEdit += TreeView_BeforeLabelEdit;
             treeView.AfterLabelEdit += TreeViewOnAfterLabelEdit;
+
+            splitContainer1.Panel2Collapsed = !Options.RightPanelInSoundsTab;
+            statusStripSounds.Visible = splitContainer1.Panel2Collapsed;
+            toolStrip1.Visible = splitContainer1.Panel2Collapsed;
         }
 
         /// <summary>
@@ -131,6 +137,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _loaded = true;
+            _playing = false;
 
             Cursor.Current = Cursors.Default;
 
@@ -146,6 +153,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     TimeSpan diff = DateTime.Now - _spTimerStart;
                     playing.Value = Math.Min(100, (int)(diff.TotalMilliseconds * 100d / _spTimerMax));
+                    SoundPlaytimeBar.Value = playing.Value;
 
                     if (diff.TotalMilliseconds < _spTimerMax)
                     {
@@ -153,14 +161,17 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     playing.Visible = false;
+                    SoundPlaytimeBar.Value = 0;
+
                     stopButton.Visible = false;
+                    StopSoundButton.Enabled = false;
                     _spTimer.Stop();
                 }));
         }
 
         public static bool SearchName(string text, bool v)
         {
-            return RefMarker.DoSearchName(text, v);
+            return RefMarker.DoSearchName(text, v, false);
         }
 
         private void OnFilePathChangeEvent()
@@ -187,16 +198,22 @@ namespace UoFiddler.Controls.UserControls
         {
             _sp.Stop();
             _spTimer.Stop();
+            _playing = false;
             playing.Visible = false;
+            SoundPlaytimeBar.Value = 0;
             stopButton.Visible = false;
+            StopSoundButton.Enabled = false;
         }
 
         private void PlaySound(int id)
         {
             _sp.Stop();
             _spTimer.Stop();
+            _playing = false;
             playing.Visible = false;
+            SoundPlaytimeBar.Value = 0;
             stopButton.Visible = false;
+            StopSoundButton.Enabled = false;
 
             if (treeView.SelectedNode == null)
             {
@@ -216,11 +233,23 @@ namespace UoFiddler.Controls.UserControls
 
                 playing.Value = 0;
                 playing.Visible = true;
+                SoundPlaytimeBar.Value = 0;
                 stopButton.Visible = true;
+                StopSoundButton.Enabled = true;
                 _spTimerStart = DateTime.Now;
                 _spTimerMax = (int)(Sounds.GetSoundLength(id) * 1000);
                 _spTimer.Interval = 50;
                 _spTimer.Start();
+
+                _playing = true;
+            }
+        }
+
+        private void BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            if (_playing)
+            {
+                StopSound();
             }
         }
 
@@ -249,6 +278,18 @@ namespace UoFiddler.Controls.UserControls
 
             replaceToolStripMenuItem.Enabled = true;
             replaceToolStripMenuItem.Text = isValidSound ? "Replace" : "Insert";
+
+            #region Just right panel things
+
+            SelectedSoundGroup.Visible = treeView.SelectedNode != null;
+
+            if (treeView.SelectedNode != null)
+            {
+                SelectedSoundGroup.Text = $"Current Sound: {treeView.SelectedNode.Text} - Duration: {seconds.Text}";
+                IdInsertTextbox.Text = $"0x{((int)treeView.SelectedNode.Tag).ToString("X")}";
+            }
+
+            #endregion
         }
 
         private void OnChangeSort(object sender, EventArgs e)
@@ -288,34 +329,64 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private bool DoSearchName(string name, bool next)
+        private bool DoSearchName(string name, bool next, bool prev)
         {
             int index = 0;
-            if (next)
+
+            if (prev)
             {
                 if (treeView.SelectedNode.Index >= 0)
                 {
-                    index = treeView.SelectedNode.Index + 1;
+                    index = treeView.SelectedNode.Index - 1;
                 }
 
-                if (index >= treeView.Nodes.Count)
+                if (index <= 0)
                 {
                     index = 0;
                 }
-            }
 
-            for (int i = index; i < treeView.Nodes.Count; ++i)
-            {
-                TreeNode node = treeView.Nodes[i];
-                if (!node.Text.ContainsCaseInsensitive(name))
+                for (int i = index; i >= 0; --i)
                 {
-                    continue;
+                    TreeNode node = treeView.Nodes[i];
+                    if (!node.Text.ContainsCaseInsensitive(name))
+                    {
+                        continue;
+                    }
+
+                    treeView.SelectedNode = node;
+                    node.EnsureVisible();
+                    return true;
+                }
+            }
+            else
+            {
+                if (next)
+                {
+                    if (treeView.SelectedNode.Index >= 0)
+                    {
+                        index = treeView.SelectedNode.Index + 1;
+                    }
+
+                    if (index >= treeView.Nodes.Count)
+                    {
+                        index = 0;
+                    }
                 }
 
-                treeView.SelectedNode = node;
-                node.EnsureVisible();
-                return true;
+                for (int i = index; i < treeView.Nodes.Count; ++i)
+                {
+                    TreeNode node = treeView.Nodes[i];
+                    if (!node.Text.ContainsCaseInsensitive(name))
+                    {
+                        continue;
+                    }
+
+                    treeView.SelectedNode = node;
+                    node.EnsureVisible();
+                    return true;
+                }
             }
+            
             return false;
         }
 
@@ -437,20 +508,27 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickReplace(object sender, EventArgs e)
         {
             string file;
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            if (sender != null)
             {
-                dialog.Multiselect = false;
-                dialog.Title = "Choose wave file";
-                dialog.CheckFileExists = true;
-                dialog.Filter = "wav file (*.wav)|*.wav";
-                if (dialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog dialog = new OpenFileDialog())
                 {
-                    file = dialog.FileName;
+                    dialog.Multiselect = false;
+                    dialog.Title = "Choose wave file";
+                    dialog.CheckFileExists = true;
+                    dialog.Filter = "wav file (*.wav)|*.wav";
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        file = dialog.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                else
-                {
-                    return;
-                }
+            } 
+            else
+            {
+                file = _wavChosen;
             }
 
             int id = (int)treeView.SelectedNode.Tag;
@@ -612,6 +690,69 @@ namespace UoFiddler.Controls.UserControls
             {
                 e.CancelEdit = true;
             }
+        }
+
+        private void ToggleRightPanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;
+            statusStripSounds.Visible = splitContainer1.Panel2Collapsed;
+            toolStrip1.Visible = splitContainer1.Panel2Collapsed;
+        }
+
+        private string _wavChosen;
+        private void WavChooseInsertButton_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = "Choose wave file";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "wav file (*.wav)|*.wav";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _wavChosen = dialog.FileName;
+                    WavFileInsertTextbox.Text = _wavChosen;
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
+        private void AddInsertReplaceButton_Click(object sender, EventArgs e)
+        {
+            OnClickReplace(null, e);
+        }
+
+        private void SearchByIdButton_Click(object sender, EventArgs e)
+        {
+            int id = -1;
+
+            if(!int.TryParse(SearchNameTextbox.Text, out id)) 
+            {
+                return;
+            }
+
+            if (!SearchId(id))
+            {
+                MessageBox.Show($"Can't find Sound with ID {SearchNameTextbox.Text}?");
+            }
+        }
+
+        private void SearchByNameButton_Click(object sender, EventArgs e)
+        {
+            DoSearchName(SearchNameTextbox.Text, false, false);
+        }
+
+        private void GoNextResultButton_Click(object sender, EventArgs e)
+        {
+            DoSearchName(SearchNameTextbox.Text, true, false);
+        }
+
+        private void GoPrevResultButton_Click(object sender, EventArgs e)
+        {
+            DoSearchName(SearchNameTextbox.Text, false, true);
         }
     }
 }

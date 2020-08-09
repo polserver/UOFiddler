@@ -147,6 +147,11 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("AlternativeDesign");
             elem.SetAttribute("active", Options.DesignAlternative.ToString());
             sr.AppendChild(elem);
+            comment = dom.CreateComment("Make the right panel into the sounds tab visible");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("RightPanelInSoundsTab");
+            elem.SetAttribute("active", Options.RightPanelInSoundsTab.ToString());
+            sr.AppendChild(elem);
             comment = dom.CreateComment("Use Hashfile to speed up load?");
             sr.AppendChild(comment);
             elem = dom.CreateElement("UseHashFile");
@@ -328,6 +333,12 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 Options.DesignAlternative = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("RightPanelInSoundsTab");
+            if (elem != null)
+            {
+                Options.RightPanelInSoundsTab = bool.Parse(elem.GetAttribute("active"));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("UseHashFile");

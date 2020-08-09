@@ -28,6 +28,7 @@ namespace UoFiddler.Forms
             checkBoxCacheData.Checked = Files.CacheData;
             checkBoxNewMapSize.Checked = Map.Felucca.Width == 7168;
             checkBoxuseDiff.Checked = Map.UseDiff;
+            checkBoxPanelSoundsDesign.Checked = Options.RightPanelInSoundsTab;
             numericUpDownItemSizeWidth.Value = Options.ArtItemSizeWidth;
             numericUpDownItemSizeHeight.Value = Options.ArtItemSizeHeight;
             checkBoxItemClip.Checked = Options.ArtItemClip;
@@ -48,6 +49,7 @@ namespace UoFiddler.Forms
             if (checkBoxAltDesign.Checked != Options.DesignAlternative)
             {
                 Options.DesignAlternative = checkBoxAltDesign.Checked;
+                Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
                 MainForm.ChangeDesign();
                 PluginEvents.FireDesignChangeEvent();
             }
