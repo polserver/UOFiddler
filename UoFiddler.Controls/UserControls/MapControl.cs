@@ -39,6 +39,8 @@ namespace UoFiddler.Controls.UserControls
             ProgressBar.Visible = false;
             _refMarker = this;
             panel1.Visible = false;
+
+            pictureBox.MouseWheel += OnMouseWheel;
         }
 
         private static MapControl _refMarker;
@@ -539,6 +541,23 @@ namespace UoFiddler.Controls.UserControls
         private void OnDropDownClosed(object sender, EventArgs e)
         {
             pictureBox.Invalidate();
+        }
+
+        private void OnMouseWheel(object sender, MouseEventArgs e)
+        {
+            //Needed to update current position of the cursor
+            OnOpenContext(sender, null);
+
+            //Scrolling goes up
+            if (e.Delta > 0)
+            {
+                OnZoomPlus(sender, null);
+            }
+            //Scrolling goes down
+            else
+            {
+                OnZoomMinus(sender, null);
+            }
         }
 
         private void OnZoomMinus(object sender, EventArgs e)
