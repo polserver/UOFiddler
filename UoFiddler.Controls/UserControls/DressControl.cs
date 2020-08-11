@@ -30,6 +30,8 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+
+            this.checkBoxGargoyle.Visible = Art.IsUOAHS();
         }
 
         private static readonly int[] _drawOrder ={
