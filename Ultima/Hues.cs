@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Ultima
 {
-    public sealed class Hues
+    public static class Hues
     {
         private static int[] _header;
 
@@ -80,22 +80,22 @@ namespace Ultima
         public static void Save(string path)
         {
             string mul = Path.Combine(path, "hues.mul");
-            using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-            using (var binmul = new BinaryWriter(fsmul))
+            using (var fsMul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var binMul = new BinaryWriter(fsMul))
             {
                 int index = 0;
                 foreach (var blockIdx in _header)
                 {
-                    binmul.Write(blockIdx);
+                    binMul.Write(blockIdx);
                     for (int j = 0; j < 8; ++j, ++index)
                     {
                         for (int colorIndex = 0; colorIndex < 32; ++colorIndex)
                         {
-                            binmul.Write((short)(List[index].Colors[colorIndex] ^ 0x8000));
+                            binMul.Write((short)(List[index].Colors[colorIndex] ^ 0x8000));
                         }
 
-                        binmul.Write((short)(List[index].TableStart ^ 0x8000));
-                        binmul.Write((short)(List[index].TableEnd ^ 0x8000));
+                        binMul.Write((short)(List[index].TableStart ^ 0x8000));
+                        binMul.Write((short)(List[index].TableEnd ^ 0x8000));
 
                         var nameBuffer = new byte[20];
                         if (List[index].Name != null)
@@ -109,7 +109,7 @@ namespace Ultima
                             bytes.CopyTo(nameBuffer, 0);
                         }
 
-                        binmul.Write(nameBuffer);
+                        binMul.Write(nameBuffer);
                     }
                 }
             }
@@ -133,29 +133,29 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Converts RGB value to Huecolor
+        /// Converts RGB value to Hue color
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="color"></param>
         /// <returns></returns>
-        public static short ColorToHue(Color c)
+        public static short ColorToHue(Color color)
         {
             const double scale = 31.0 / 255;
 
-            ushort origRed = c.R;
+            ushort origRed = color.R;
             var newRed = (ushort)(origRed * scale);
             if (newRed == 0 && origRed != 0)
             {
                 newRed = 1;
             }
 
-            ushort origGreen = c.G;
+            ushort origGreen = color.G;
             var newGreen = (ushort)(origGreen * scale);
             if (newGreen == 0 && origGreen != 0)
             {
                 newGreen = 1;
             }
 
-            ushort origBlue = c.B;
+            ushort origBlue = color.B;
             var newBlue = (ushort)(origBlue * scale);
             if (newBlue == 0 && origBlue != 0)
             {
@@ -166,7 +166,7 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Converts Huecolor to RGBColor
+        /// Converts Hue color to RGB color
         /// </summary>
         /// <param name="hue"></param>
         /// <returns></returns>
@@ -255,7 +255,7 @@ namespace Ultima
     public sealed class Hue
     {
         public int Index { get; }
-        public short[] Colors { get; set; }
+        public short[] Colors { get; }
         public string Name { get; set; }
         public short TableStart { get; set; }
         public short TableEnd { get; set; }
@@ -294,11 +294,11 @@ namespace Ultima
 
                     TableStart = (short)(*buf++ | 0x8000);
                     TableEnd = (short)(*buf++ | 0x8000);
-                    var sbuf = (byte*)buf;
+                    var stringBuffer = (byte*)buf;
                     int count;
-                    for (count = 0; count < 20 && *sbuf != 0; ++count)
+                    for (count = 0; count < 20 && *stringBuffer != 0; ++count)
                     {
-                        _stringBuffer[count] = *sbuf++;
+                        _stringBuffer[count] = *stringBuffer++;
                     }
 
                     Name = Encoding.Default.GetString(_stringBuffer, 0, count);
@@ -424,21 +424,20 @@ namespace Ultima
                             break;
                         }
 
-                        if (i == -3)
+                        switch (i)
                         {
-                            Name = line;
-                        }
-                        else if (i == -2)
-                        {
-                            TableStart = (short)(ushort.Parse(line) | 0x8000);
-                        }
-                        else if (i == -1)
-                        {
-                            TableEnd = (short)(ushort.Parse(line) | 0x8000);
-                        }
-                        else
-                        {
-                            Colors[i] = (short)(ushort.Parse(line) | 0x8000);
+                            case -3:
+                                Name = line;
+                                break;
+                            case -2:
+                                TableStart = (short)(ushort.Parse(line) | 0x8000);
+                                break;
+                            case -1:
+                                TableEnd = (short)(ushort.Parse(line) | 0x8000);
+                                break;
+                            default:
+                                Colors[i] = (short)(ushort.Parse(line) | 0x8000);
+                                break;
                         }
                         ++i;
                     }

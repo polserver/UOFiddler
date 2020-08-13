@@ -27,16 +27,16 @@ namespace UoFiddler.Controls.Forms
         private int _secondSel;
         private Bitmap _preview;
 
-        public int Selected
+        private int Selected
         {
             get => _selected;
             set
             {
                 _selected = value;
-                Color c = Hues.HueToColor(_colors[value]);
-                numericUpDownR.Value = c.R;
-                numericUpDownG.Value = c.G;
-                numericUpDownB.Value = c.B;
+                Color color = Hues.HueToColor(_colors[value]);
+                numericUpDownR.Value = color.R;
+                numericUpDownG.Value = color.G;
+                numericUpDownB.Value = color.B;
                 pictureBox.Invalidate();
                 pictureBoxIndex.Invalidate();
             }
@@ -56,25 +56,29 @@ namespace UoFiddler.Controls.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+
             _refMarker = mRefMarker;
+            Text = $"HueEdit {index}";
+
             _hue = Hues.GetHue(index);
             _colors = new short[32];
             _hue.Colors.CopyTo(_colors, 0);
             textBoxName.Text = _hue.Name;
-            Text = $"HueEdit {index}";
+
             Selected = 0;
             SecondSelected = -1;
+
             pictureBoxPreview.Image = new Bitmap(pictureBoxPreview.Width, pictureBoxPreview.Height);
         }
 
         private int GetIndex(int x)
         {
-            return x / (pictureBox.Width / _colors.Length);
+            return (int)(x * 1.0 / (pictureBox.Width * 1.0 / _colors.Length * 1.0));
         }
 
         private void OnPaintPicture(object sender, PaintEventArgs e)
         {
-            float size = pictureBox.Width / _colors.Length;
+            double size = pictureBox.Width * 1.0 / _colors.Length;
             for (int i = 0; i < _colors.Length; ++i)
             {
                 Rectangle rectangle = new Rectangle((int)Math.Round(i * size), 5, (int)Math.Round(size + 1f), pictureBox.Height - 10);
@@ -85,10 +89,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (rectangle.X > 0)
                 {
-                    using (var pen = new Pen(Color.Black))
-                    {
-                        e.Graphics.DrawLine(pen, rectangle.X, 5, rectangle.X, pictureBox.Height - 7);
-                    }
+                    e.Graphics.DrawLine(Pens.Black, rectangle.X, 5, rectangle.X, pictureBox.Height - 7);
                 }
             }
 
@@ -165,6 +166,7 @@ namespace UoFiddler.Controls.Forms
             Color startC = Hues.HueToColor(_colors[start]);
             Color endC = Hues.HueToColor(_colors[end]);
 
+            // TODO: check for possible loss of fraction
             float rDiv = (endC.R - startC.R) / (diff - 1);
             float gDiv = (endC.G - startC.G) / (diff - 1);
             float bDiv = (endC.B - startC.B) / (diff - 1);
@@ -195,47 +197,38 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            Color startc = Hues.HueToColor(_colors[start]);
-            Color endc = Hues.HueToColor(_colors[end]);
-            double rdiv = Math.Log(Math.Abs(endc.R - startc.R), Math.E) / Math.Log(diff, Math.E);
-            double gdiv = Math.Log(Math.Abs(endc.G - startc.G), Math.E) / Math.Log(diff, Math.E);
-            double bdiv = Math.Log(Math.Abs(endc.B - startc.B), Math.E) / Math.Log(diff, Math.E);
-            int rfac = 1;
-            if (endc.R - startc.R < 0)
+            Color startColor = Hues.HueToColor(_colors[start]);
+            Color endColor = Hues.HueToColor(_colors[end]);
+            double redDiv = Math.Log(Math.Abs(endColor.R - startColor.R), Math.E) / Math.Log(diff, Math.E);
+            double greenDiv = Math.Log(Math.Abs(endColor.G - startColor.G), Math.E) / Math.Log(diff, Math.E);
+            double blueDiv = Math.Log(Math.Abs(endColor.B - startColor.B), Math.E) / Math.Log(diff, Math.E);
+            int redFac = 1;
+            if (endColor.R - startColor.R < 0)
             {
-                rfac = -1;
+                redFac = -1;
             }
 
-            int gfac = 1;
-            if (endc.G - startc.G < 0)
+            int greenFac = 1;
+            if (endColor.G - startColor.G < 0)
             {
-                gfac = -1;
+                greenFac = -1;
             }
 
-            int bfac = 1;
-            if (endc.B - startc.B < 0)
+            int blueFac = 1;
+            if (endColor.B - startColor.B < 0)
             {
-                bfac = -1;
+                blueFac = -1;
             }
 
             for (int i = 1; i < diff; ++i)
             {
-                Color newc = Color.FromArgb(
-                    (int)(startc.R + (rfac * Math.Pow(i, rdiv))),
-                    (int)(startc.G + (gfac * Math.Pow(i, gdiv))),
-                    (int)(startc.B + (bfac * Math.Pow(i, bdiv))));
-                _colors[start + i] = Hues.ColorToHue(newc);
+                Color newColor = Color.FromArgb(
+                    (int)(startColor.R + (redFac * Math.Pow(i, redDiv))),
+                    (int)(startColor.G + (greenFac * Math.Pow(i, greenDiv))),
+                    (int)(startColor.B + (blueFac * Math.Pow(i, blueDiv))));
+                _colors[start + i] = Hues.ColorToHue(newColor);
             }
             pictureBox.Invalidate();
-            RefreshPreview();
-        }
-
-        private void OnChangeRGB(object sender, EventArgs e)
-        {
-            Color c = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            _colors[_selected] = Hues.ColorToHue(c);
-            pictureBox.Invalidate();
-            pictureBoxIndex.Invalidate();
             RefreshPreview();
         }
 
@@ -271,15 +264,15 @@ namespace UoFiddler.Controls.Forms
             int end = Math.Max(SecondSelected, Selected);
             for (int i = start; i <= end; ++i)
             {
-                Color c = Hues.HueToColor(_colors[i]);
-                int r = (int)(c.R + numericUpDownR_R.Value);
-                int g = (int)(c.G + numericUpDownG_R.Value);
-                int b = (int)(c.B + numericUpDownB_R.Value);
-                Color newc = Color.FromArgb(
+                Color color = Hues.HueToColor(_colors[i]);
+                int r = (int)(color.R + numericUpDownR_R.Value);
+                int g = (int)(color.G + numericUpDownG_R.Value);
+                int b = (int)(color.B + numericUpDownB_R.Value);
+                Color newColor = Color.FromArgb(
                     Math.Max(0, Math.Min(255, r)),
                     Math.Max(0, Math.Min(255, g)),
                     Math.Max(0, Math.Min(255, b)));
-                _colors[i] = Hues.ColorToHue(newc);
+                _colors[i] = Hues.ColorToHue(newColor);
             }
             Selected = _selected;
             RefreshPreview();
@@ -292,14 +285,9 @@ namespace UoFiddler.Controls.Forms
 
         private void OnTextChangedArt(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, Art.GetMaxItemID()))
-            {
-                TextBoxArt.ForeColor = Art.IsValidStatic(index) ? Color.Black : Color.Red;
-            }
-            else
-            {
-                TextBoxArt.ForeColor = Color.Red;
-            }
+            TextBoxArt.ForeColor = Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, Art.GetMaxItemID())
+                ? Art.IsValidStatic(index) ? Color.Black : Color.Red
+                : Color.Red;
         }
 
         private void OnKeyDownArt(object sender, KeyEventArgs e)
@@ -413,6 +401,17 @@ namespace UoFiddler.Controls.Forms
                 }
             }
             pictureBoxPreview.Invalidate();
+        }
+
+        private void SetColorButton_Click(object sender, EventArgs e)
+        {
+            _colors[_selected] = Hues.ColorToHue(Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value,
+                (int)numericUpDownB.Value));
+
+            pictureBox.Invalidate();
+            pictureBoxIndex.Invalidate();
+
+            RefreshPreview();
         }
     }
 }
