@@ -126,7 +126,9 @@ namespace UoFiddler.Controls.UserControls
             _loaded = false;
             _layers = new object[25];
             _female = false;
+            _human = true;
             _elve = false;
+            _gargoyle = false;
             _showPd = true;
             _animate = false;
             _facing = 1;
@@ -185,6 +187,11 @@ namespace UoFiddler.Controls.UserControls
                 _layerVisible[i] = true;
             }
             checkedListBoxWear.EndUpdate();
+
+            checkBoxHuman.Checked = true;
+            checkBoxElve.Checked = false;
+            checkBoxGargoyle.Checked = false;
+            checkBoxfemale.Checked = false;
 
             groupBoxAnimate.Visible = false;
             animateToolStripMenuItem.Visible = false;
@@ -723,13 +730,17 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeFemale(object sender, EventArgs e)
         {
             _female = !_female;
-            RefreshDrawing();
+
+            if (_loaded)
+            {
+                RefreshDrawing();
+            }
         }
 
         private void OnChangeHuman(object sender, EventArgs e)
         {
             _human = checkBoxHuman.Checked;
-            if (checkBoxHuman.Checked)
+            if (checkBoxHuman.Checked && _loaded)
             {
                 RefreshDrawing();
             }
@@ -738,7 +749,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeElve(object sender, EventArgs e)
         {
             _elve = checkBoxElve.Checked;
-            if (checkBoxElve.Checked)
+            if (checkBoxElve.Checked && _loaded)
             {
                 RefreshDrawing();
             }
@@ -747,7 +758,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeGargoyle(object sender, EventArgs e)
         {
             _gargoyle = checkBoxGargoyle.Checked;
-            if (checkBoxGargoyle.Checked)
+            if (checkBoxGargoyle.Checked && _loaded)
             {
                 RefreshDrawing();
             }
