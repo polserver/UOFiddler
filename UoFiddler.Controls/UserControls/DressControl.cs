@@ -30,6 +30,8 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+
+            this.checkBoxGargoyle.Visible = Art.IsUOAHS();
         }
 
         private static readonly int[] _drawOrder ={
@@ -92,7 +94,9 @@ namespace UoFiddler.Controls.UserControls
         private object[] _layers = new object[25];
         private readonly bool[] _layerVisible = new bool[25];
         private bool _female;
+        private bool _human = true;
         private bool _elve;
+        private bool _gargoyle;
         private bool _showPd = true;
         private bool _animate;
         private Timer _mTimer;
@@ -122,7 +126,9 @@ namespace UoFiddler.Controls.UserControls
             _loaded = false;
             _layers = new object[25];
             _female = false;
+            _human = true;
             _elve = false;
+            _gargoyle = false;
             _showPd = true;
             _animate = false;
             _facing = 1;
@@ -182,6 +188,11 @@ namespace UoFiddler.Controls.UserControls
             }
             checkedListBoxWear.EndUpdate();
 
+            checkBoxHuman.Checked = true;
+            checkBoxElve.Checked = false;
+            checkBoxGargoyle.Checked = false;
+            checkBoxfemale.Checked = false;
+
             groupBoxAnimate.Visible = false;
             animateToolStripMenuItem.Visible = false;
             FacingBar.Value = (_facing + 3) & 7;
@@ -210,7 +221,38 @@ namespace UoFiddler.Controls.UserControls
                 graphPic.Clear(Color.Black);
                 if (_layerVisible[0])
                 {
-                    Bitmap background = !_female ? !_elve ? Gumps.GetGump(0xC) : Gumps.GetGump(0xE) : !_elve ? Gumps.GetGump(0xD) : Gumps.GetGump(0xF);
+                    Bitmap background = null;
+                    if (!_female)
+                    {
+                        if (_human)
+                        {
+                            background = new Bitmap(Gumps.GetGump(0xC));
+                        }
+                        if (_elve)
+                        {
+                            background = new Bitmap(Gumps.GetGump(0xE));
+                        }
+                        if (_gargoyle)
+                        {
+                            background = new Bitmap(Gumps.GetGump(0x29A));
+                        }
+                    }
+                    else
+                    {
+                        if (_human)
+                        {
+                            background = new Bitmap(Gumps.GetGump(0xD));
+                        }
+                        if (_elve)
+                        {
+                            background = new Bitmap(Gumps.GetGump(0xF));
+                        }
+                        if (_gargoyle)
+                        {
+                            background = new Bitmap(Gumps.GetGump(0x299));
+                        }
+                    }
+
                     if (background != null)
                     {
                         if (_hues[0] > 0)
@@ -271,22 +313,20 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    using (Bitmap bmp = new Bitmap(Gumps.GetGump(gump)))
+                    Bitmap bmp = new Bitmap(Gumps.GetGump(gump));
+                    if (_hues[_drawOrder[i]] > 0)
                     {
-                        if (_hues[_drawOrder[i]] > 0)
-                        {
-                            hue = _hues[_drawOrder[i]];
-                        }
-
-                        bool onlyHueGrayPixels = (hue & 0x8000) != 0;
-                        hue = (hue & 0x3FFF) - 1;
-                        if (hue >= 0 && hue < Hues.List.Length)
-                        {
-                            Hue hueObject = Hues.List[hue];
-                            hueObject.ApplyTo(bmp, onlyHueGrayPixels);
-                        }
-                        graphPic.DrawImage(bmp, _drawPoint);
+                        hue = _hues[_drawOrder[i]];
                     }
+
+                    bool onlyHueGrayPixels = (hue & 0x8000) != 0;
+                    hue = (hue & 0x3FFF) - 1;
+                    if (hue >= 0 && hue < Hues.List.Length)
+                    {
+                        Hue hueObject = Hues.List[hue];
+                        hueObject.ApplyTo(bmp, onlyHueGrayPixels);
+                    }
+                    graphPic.DrawImage(bmp, _drawPoint);
                 }
             }
             DressPic.Invalidate();
@@ -306,7 +346,36 @@ namespace UoFiddler.Controls.UserControls
                 int back = 0;
                 if (_layerVisible[0])
                 {
-                    back = !_female ? !_elve ? 400 : 605 : !_elve ? 401 : 606;
+                    if (!_female)
+                    {
+                        if (_human)
+                        {
+                            back = 400;
+                        }
+                        if (_elve)
+                        {
+                            back = 605;
+                        }
+                        if (_gargoyle)
+                        {
+                            back = 666;
+                        }
+                    }
+                    else
+                    {
+                        if (_human)
+                        {
+                            back = 401;
+                        }
+                        if (_elve)
+                        {
+                            back = 606;
+                        }
+                        if (_gargoyle)
+                        {
+                            back = 667;
+                        }
+                    }
                 }
                 Frame[] background;
                 if (_hues[0] > 0)
@@ -420,7 +489,38 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int hue = 0;
-            int back = !_female ? !_elve ? 400 : 605 : !_elve ? 401 : 606;
+            int back = 0;
+            if (!_female)
+            {
+                if (_human)
+                {
+                    back = 400;
+                }
+                if (_elve)
+                {
+                    back = 605;
+                }
+                if (_gargoyle)
+                {
+                    back = 666;
+                }
+            }
+            else
+            {
+                if (_human)
+                {
+                    back = 401;
+                }
+                if (_elve)
+                {
+                    back = 606;
+                }
+                if (_gargoyle)
+                {
+                    back = 667;
+                }
+            }
+
             Frame[] mobile;
             if (_hues[0] > 0)
             {
@@ -630,13 +730,38 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeFemale(object sender, EventArgs e)
         {
             _female = !_female;
-            RefreshDrawing();
+
+            if (_loaded)
+            {
+                RefreshDrawing();
+            }
+        }
+
+        private void OnChangeHuman(object sender, EventArgs e)
+        {
+            _human = checkBoxHuman.Checked;
+            if (checkBoxHuman.Checked && _loaded)
+            {
+                RefreshDrawing();
+            }
         }
 
         private void OnChangeElve(object sender, EventArgs e)
         {
-            _elve = !_elve;
-            RefreshDrawing();
+            _elve = checkBoxElve.Checked;
+            if (checkBoxElve.Checked && _loaded)
+            {
+                RefreshDrawing();
+            }
+        }
+
+        private void OnChangeGargoyle(object sender, EventArgs e)
+        {
+            _gargoyle = checkBoxGargoyle.Checked;
+            if (checkBoxGargoyle.Checked && _loaded)
+            {
+                RefreshDrawing();
+            }
         }
 
         private void OnClick_Dress(object sender, EventArgs e)
@@ -1529,6 +1654,8 @@ namespace UoFiddler.Controls.UserControls
         public static Hashtable HumanFemale { get; }
         public static Hashtable ElvenMale { get; }
         public static Hashtable ElvenFemale { get; }
+        public static Hashtable GargoyleMale { get; }
+        public static Hashtable GargoyleFemale { get; }
         public static Hashtable Misc { get; }
 
         static EquipTable()
@@ -1537,6 +1664,8 @@ namespace UoFiddler.Controls.UserControls
             HumanFemale = new Hashtable();
             ElvenMale = new Hashtable();
             ElvenFemale = new Hashtable();
+            GargoyleMale = new Hashtable();
+            GargoyleFemale = new Hashtable();
             Misc = new Hashtable();
             Initialize();
         }
@@ -1596,6 +1725,12 @@ namespace UoFiddler.Controls.UserControls
                                 break;
                             case 606:
                                 ElvenFemale[animId] = entry;
+                                break;
+                            case 666:
+                                GargoyleMale[animId] = entry;
+                                break;
+                            case 667:
+                                GargoyleFemale[animId] = entry;
                                 break;
                             default:
                                 {
