@@ -30,8 +30,6 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-
-            this.checkBoxGargoyle.Visible = Art.IsUOAHS();
         }
 
         private static readonly int[] _drawOrder ={
@@ -173,8 +171,9 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Animations"] = true;
             Options.LoadedUltimaClass["Gumps"] = true;
 
-            extractAnimationToolStripMenuItem.Visible = false;
+            checkBoxGargoyle.Visible = Art.IsUOAHS();
 
+            extractAnimationToolStripMenuItem.Visible = false;
             DressPic.Image = new Bitmap(DressPic.Width, DressPic.Height);
             pictureBoxDress.Image = new Bitmap(pictureBoxDress.Width, pictureBoxDress.Height);
 
