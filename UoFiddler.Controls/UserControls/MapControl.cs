@@ -39,6 +39,8 @@ namespace UoFiddler.Controls.UserControls
             ProgressBar.Visible = false;
             _refMarker = this;
             panel1.Visible = false;
+
+            pictureBox.MouseWheel += OnMouseWheel;
         }
 
         private static MapControl _refMarker;
@@ -54,6 +56,8 @@ namespace UoFiddler.Controls.UserControls
         public static double Zoom = 1;
         private bool _moving;
         private Point _movingPoint;
+
+        private bool _renderingZoom = false;
 
         public static int HScrollBar => _refMarker.hScrollBar.Value;
         public static int VScrollBar => _refMarker.vScrollBar.Value;
@@ -541,20 +545,58 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.Invalidate();
         }
 
+        private void OnMouseWheel(object sender, MouseEventArgs e)
+        {
+            if (_renderingZoom)
+            {
+                return;
+            }
+
+            //Needed to update current position of the cursor
+            OnOpenContext(sender, null);
+
+            //Scrolling goes up
+            if (e.Delta > 0)
+            {
+                OnZoomPlus(sender, null);
+            }
+            //Scrolling goes down
+            else
+            {
+                OnZoomMinus(sender, null);
+            }
+        }
+
         private void OnZoomMinus(object sender, EventArgs e)
         {
+            if (Zoom/2 < 0.25)
+            {
+                return;
+            }
+
             Zoom /= 2;
             DoZoom();
         }
 
         private void OnZoomPlus(object sender, EventArgs e)
         {
+            if (Zoom*2 > 4)
+            {
+                return;
+            }
+
             Zoom *= 2;
             DoZoom();
         }
 
         private void DoZoom()
         {
+            if (_renderingZoom)
+            {
+                return;
+            }
+
+            _renderingZoom = true;
             ChangeScrollBar();
             ZoomLabel.Text = $"Zoom: {Zoom}";
             int x = Math.Max(0, _currPoint.X - ((int)(pictureBox.ClientSize.Width / Zoom) / 2));
@@ -564,6 +606,7 @@ namespace UoFiddler.Controls.UserControls
             hScrollBar.Value = Round(x);
             vScrollBar.Value = Round(y);
             pictureBox.Invalidate();
+            _renderingZoom = false;
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
