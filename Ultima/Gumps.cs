@@ -40,7 +40,7 @@ namespace Ultima
         {
             try
             {
-                _fileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, -12, ".tga", -1, true);
+                _fileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, 12, ".tga", -1, true);
                 _cache = new Bitmap[_fileIndex.Index.Length];
                 _removed = new bool[_fileIndex.Index.Length];
             }
