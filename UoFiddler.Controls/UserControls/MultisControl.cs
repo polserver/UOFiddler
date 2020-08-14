@@ -48,6 +48,8 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private bool _showFreeSlots;
         private readonly MultisControl _refMarker;
+        private Color _backgroundImageColor = Color.White;
+        private bool _useTransparencyForPng = true;
 
         /// <summary>
         /// ReLoads if loaded
@@ -344,42 +346,55 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Bmp);
+            ExtractMultiImage(ImageFormat.Bmp, _backgroundImageColor);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Tiff);
+            ExtractMultiImage(ImageFormat.Tiff, _backgroundImageColor);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Jpeg);
+            ExtractMultiImage(ImageFormat.Jpeg, _backgroundImageColor);
         }
 
         private void Extract_Image_ClickPng(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Png);
+            ExtractMultiImage(ImageFormat.Png, _useTransparencyForPng ? Color.Transparent : _backgroundImageColor);
         }
 
-        private void ExtractMultiImage(ImageFormat imageFormat)
+        private void ExtractMultiImage(ImageFormat imageFormat, Color backgroundColor)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string floorSuffix = HeightChangeMulti.Value > 0
                 ? $"_Z{HeightChangeMulti.Value:000}"
                 : string.Empty;
 
-            string fileName = Path.Combine(Options.OutputPath, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X}{floorSuffix}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X4}{floorSuffix}.{fileExtension}");
 
             int selectedMaxHeight = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
 
-            using (Bitmap bit = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(selectedMaxHeight))
+            using (Bitmap multiBitmap = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(selectedMaxHeight))
             {
-                bit.Save(fileName, imageFormat);
+                SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
             }
 
             MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
+        }
+
+        private static void SaveImage(Image sourceImage, string fileName, ImageFormat imageFormat, Color backgroundColor)
+        {
+            using (Bitmap newBitmap = new Bitmap(sourceImage.Width, sourceImage.Height))
+            using (Graphics newGraph = Graphics.FromImage(newBitmap))
+            {
+                newGraph.Clear(backgroundColor);
+                newGraph.DrawImage(sourceImage, new Point(0, 0));
+                newGraph.Save();
+
+                newBitmap.Save(fileName, imageFormat);
+            }
         }
 
         private void OnClickFreeSlots(object sender, EventArgs e)
@@ -582,25 +597,25 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Bmp);
+            ExportAllMultis(ImageFormat.Bmp, _backgroundImageColor);
         }
 
         private void OnClick_SaveAllTiff(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Tiff);
+            ExportAllMultis(ImageFormat.Tiff, _backgroundImageColor);
         }
 
         private void OnClick_SaveAllJpg(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Jpeg);
+            ExportAllMultis(ImageFormat.Jpeg, _backgroundImageColor);
         }
 
         private void OnClick_SaveAllPng(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Png);
+            ExportAllMultis(ImageFormat.Png, _useTransparencyForPng ? Color.Transparent : _backgroundImageColor);
         }
 
-        private void ExportAllMultis(ImageFormat imageFormat)
+        private void ExportAllMultis(ImageFormat imageFormat, Color backgroundColor)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
 
@@ -622,10 +637,10 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     const int maximumMultiHeight = 127;
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.{fileExtension}");
-                    using (Bitmap bit = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maximumMultiHeight))
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.{fileExtension}");
+                    using (Bitmap multiBitmap = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maximumMultiHeight))
                     {
-                        bit?.Save(fileName, imageFormat);
+                        SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
                     }
                 }
 
@@ -659,7 +674,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.txt");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.txt");
                     multi.ExportToTextFile(fileName);
                 }
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
@@ -692,7 +707,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.uoa");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.uoa");
                     multi.ExportToUOAFile(fileName);
                 }
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
@@ -725,12 +740,28 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X}.wsc");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.wsc");
                     multi.ExportToWscFile(fileName);
                 }
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
+        }
+
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            _backgroundImageColor = colorDialog.Color;
+            MultiPictureBox.BackColor = _backgroundImageColor;
+        }
+
+        private void UseTransparencyForPNGToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            _useTransparencyForPng = UseTransparencyForPNGToolStripMenuItem.Checked;
         }
     }
 }
