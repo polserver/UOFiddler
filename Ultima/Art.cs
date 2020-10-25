@@ -9,7 +9,7 @@ namespace Ultima
     public static class Art
     {
         private static FileIndex _fileIndex = new FileIndex(
-        "Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x10000, 4, ".tga", 0x13FDC, false);
+        "Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x14000, 4, ".tga", 0x13FDC, false);
         private static Bitmap[] _cache;
         private static bool[] _removed;
         private static readonly Dictionary<int, bool> _patched = new Dictionary<int, bool>();
@@ -87,7 +87,7 @@ namespace Ultima
         public static void Reload()
         {
             _fileIndex = new FileIndex(
-                "Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x10000, 4, ".tga", 0x13FDC, false);
+                "Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x14000, 4, ".tga", 0x13FDC, false);
             _cache = new Bitmap[0x14000];
             _removed = new bool[0x14000];
             _patched.Clear();
