@@ -90,7 +90,7 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Texture"] = true;
 
-            for (int i = 0; i < 0x1000; ++i)
+            for (int i = 0; i < Textures.GetIdxLength(); ++i)
             {
                 if (Textures.TestTexture(i))
                 {
