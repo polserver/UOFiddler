@@ -77,6 +77,8 @@ namespace UoFiddler.Plugin.SendItem
 
         public override void Initialize()
         {
+            _ = Files.RootDir;
+
             LoadXml();
             ChangeOverrideClick(OverrideClick, true);
         }

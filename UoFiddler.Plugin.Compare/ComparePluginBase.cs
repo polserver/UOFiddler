@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System.Windows.Forms;
+using Ultima;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
 using UoFiddler.Plugin.Compare.UserControls;
@@ -52,6 +53,7 @@ namespace UoFiddler.Plugin.Compare
 
         public override void Initialize()
         {
+            _ = Files.RootDir;
         }
 
         public override void Dispose()

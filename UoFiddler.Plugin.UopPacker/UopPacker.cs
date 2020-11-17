@@ -11,6 +11,7 @@
 
 using System;
 using System.Windows.Forms;
+using Ultima;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
 using UoFiddler.Plugin.UopPacker.UserControls;
@@ -53,6 +54,7 @@ namespace UoFiddler.Plugin.UopPacker
 
         public override void Initialize()
         {
+            _ = Files.RootDir;
         }
 
         public override void Dispose()
