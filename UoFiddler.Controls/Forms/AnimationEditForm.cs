@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -113,7 +114,7 @@ namespace UoFiddler.Controls.Forms
                         nodes[i] = node;
                     }
 
-                    treeView1.Nodes.AddRange(nodes);
+                    treeView1.Nodes.AddRange(nodes.Where(n => n != null).ToArray());
                 }
             }
             finally
@@ -154,19 +155,9 @@ namespace UoFiddler.Controls.Forms
 
         private TreeNode GetNode(int tag)
         {
-            if (_showOnlyValid)
-            {
-                foreach (TreeNode node in treeView1.Nodes)
-                {
-                    if ((int)node.Tag == tag)
-                    {
-                        return node;
-                    }
-                }
-                return null;
-            }
-
-            return treeView1.Nodes[tag];
+            return _showOnlyValid 
+                ? treeView1.Nodes.Cast<TreeNode>().FirstOrDefault(node => (int)node.Tag == tag) 
+                : treeView1.Nodes[tag];
         }
 
         private unsafe void SetPaletteBox()
@@ -742,9 +733,9 @@ namespace UoFiddler.Controls.Forms
                         try
                         {
                             //My Soulblighter Modifications
-                            for (int w = 0; w < dialog.FileNames.Length; w++)
+                            foreach (var fileName in dialog.FileNames)
                             {
-                                Bitmap bmp = new Bitmap(dialog.FileNames[w]); // dialog.Filename replaced by dialog.FileNames[w]
+                                Bitmap bmp = new Bitmap(fileName);
                                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                                 if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") || dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") || dialog.FileName.Contains(".jpg"))
                                 {
