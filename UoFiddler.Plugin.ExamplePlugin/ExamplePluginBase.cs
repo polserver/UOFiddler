@@ -61,6 +61,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
         public override void Initialize()
         {
             // make something useful
+            _ = Files.RootDir;
         }
 
         public override void Dispose()

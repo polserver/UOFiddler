@@ -11,6 +11,7 @@
 
 using System;
 using System.Windows.Forms;
+using Ultima;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
 
@@ -43,7 +44,10 @@ namespace UoFiddler.Plugin.MassImport
         /// </summary>
         public override IPluginHost Host { get; set; } = null;
 
-        public override void Initialize() { }
+        public override void Initialize()
+        {
+            _ = Files.RootDir;
+        }
 
         public override void Dispose() { }
 

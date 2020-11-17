@@ -11,6 +11,7 @@
 
 using System;
 using System.Windows.Forms;
+using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
@@ -59,6 +60,7 @@ namespace UoFiddler.Plugin.MultiEditor
         public override void Initialize()
         {
             // fired on fiddler startup
+            _ = Files.RootDir;
         }
 
         public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)
