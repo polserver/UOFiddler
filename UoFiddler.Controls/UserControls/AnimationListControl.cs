@@ -385,9 +385,9 @@ namespace UoFiddler.Controls.UserControls
                     if (_frames[0].Bitmap != null)
                     {
                         _mainPicture = new Bitmap(_frames[0].Bitmap);
-                        BaseGraphicLabel.Text = $"BaseGraphic: {body}";
-                        GraphicLabel.Text = $"Graphic: {_currentSelect}(0x{_currentSelect:X})";
-                        HueLabel.Text = $"Hue: {hue + 1}";
+                        BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
+                        GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
+                        HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
                     }
                     else
                     {
@@ -428,9 +428,9 @@ namespace UoFiddler.Controls.UserControls
                 return null;
             }
 
-            BaseGraphicLabel.Text = $"BaseGraphic: {body}";
-            GraphicLabel.Text = $"Graphic: {_currentSelect}(0x{_currentSelect:X})";
-            HueLabel.Text = $"Hue: {hue + 1}";
+            BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
+            GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
+            HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
             int count = _frames.Length;
             _animationList = new Bitmap[count];
 
@@ -586,7 +586,7 @@ namespace UoFiddler.Controls.UserControls
                     string name = xMob.GetAttribute("name");
                     int value = int.Parse(xMob.GetAttribute("body"));
                     int type = int.Parse(xMob.GetAttribute("type"));
-                    node = new TreeNode(name)
+                    node = new TreeNode($"{name} (0x{value:X})")
                     {
                         Tag = new[] { value, type },
                         ToolTipText = Animations.GetFileName(value)
