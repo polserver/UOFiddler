@@ -282,7 +282,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(407, 280);
+            this.tabPage2.Size = new System.Drawing.Size(410, 281);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thumbnail List";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -298,7 +298,7 @@ namespace UoFiddler.Controls.UserControls
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.OwnerDraw = true;
-            this.listView.Size = new System.Drawing.Size(401, 274);
+            this.listView.Size = new System.Drawing.Size(404, 275);
             this.listView.TabIndex = 0;
             this.listView.TileSize = new System.Drawing.Size(81, 110);
             this.listView.UseCompatibleStateImageBehavior = false;
@@ -313,7 +313,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(407, 280);
+            this.tabPage3.Size = new System.Drawing.Size(410, 281);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Frames";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -327,7 +327,7 @@ namespace UoFiddler.Controls.UserControls
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
-            this.listView1.Size = new System.Drawing.Size(401, 274);
+            this.listView1.Size = new System.Drawing.Size(404, 275);
             this.listView1.TabIndex = 0;
             this.listView1.TileSize = new System.Drawing.Size(81, 110);
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -472,26 +472,24 @@ namespace UoFiddler.Controls.UserControls
             // 
             // BaseGraphicLabel
             // 
-            this.BaseGraphicLabel.AutoSize = false;
             this.BaseGraphicLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.BaseGraphicLabel.Name = "BaseGraphicLabel";
             this.BaseGraphicLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.BaseGraphicLabel.Size = new System.Drawing.Size(100, 17);
+            this.BaseGraphicLabel.Size = new System.Drawing.Size(75, 17);
             this.BaseGraphicLabel.Text = "BaseGraphic:";
             this.BaseGraphicLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // HueLabel
             // 
-            this.HueLabel.AutoSize = false;
             this.HueLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.HueLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.HueLabel.Name = "HueLabel";
             this.HueLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.HueLabel.Size = new System.Drawing.Size(60, 17);
+            this.HueLabel.Size = new System.Drawing.Size(32, 17);
             this.HueLabel.Text = "Hue:";
             this.HueLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // AnimationList
+            // AnimationListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
