@@ -261,28 +261,28 @@ namespace UoFiddler.Controls.UserControls
             // aToolStripMenuItem
             // 
             this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aToolStripMenuItem.Text = "As Bmp";
             this.aToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllBmp);
             // 
             // asTiffToolStripMenuItem1
             // 
             this.asTiffToolStripMenuItem1.Name = "asTiffToolStripMenuItem1";
-            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.asTiffToolStripMenuItem1.Text = "As Tiff";
             this.asTiffToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllJpg);
             // 
             // asPngToolStripMenuItem1
             // 
             this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
-            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.asPngToolStripMenuItem1.Text = "As Png";
             this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllPng);
             // 
