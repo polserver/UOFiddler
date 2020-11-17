@@ -375,13 +375,18 @@ namespace UoFiddler.Controls.UserControls
 
             int selectedMaxHeight = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
 
-            using (Bitmap multiBitmap = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag).GetImage(selectedMaxHeight))
+            using (Bitmap multiBitmap = ((MultiComponentList)TreeViewMulti.SelectedNode.Tag)?.GetImage(selectedMaxHeight))
             {
-                SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
-            }
+                if (multiBitmap == null)
+                {
+                    return;
+                }
 
-            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+                SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
+
+                MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                    MessageBoxDefaultButton.Button1);
+            }
         }
 
         private static void SaveImage(Image sourceImage, string fileName, ImageFormat imageFormat, Color backgroundColor)
@@ -637,10 +642,15 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     const int maximumMultiHeight = 127;
+                    
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.{fileExtension}");
-                    using (Bitmap multiBitmap = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag).GetImage(maximumMultiHeight))
+                    
+                    using (Bitmap multiBitmap = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag)?.GetImage(maximumMultiHeight))
                     {
-                        SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
+                        if (multiBitmap != null)
+                        {
+                            SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
+                        }
                     }
                 }
 
