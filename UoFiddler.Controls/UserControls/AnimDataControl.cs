@@ -28,7 +28,7 @@ namespace UoFiddler.Controls.UserControls
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
-            splitContainer2.Panel2MinSize = 190;
+            splitContainer2.Panel2MinSize = 230;
             splitContainer2.SplitterDistance = splitContainer2.Width - splitContainer2.Panel2MinSize - splitContainer2.SplitterWidth;
         }
 
@@ -550,6 +550,14 @@ namespace UoFiddler.Controls.UserControls
             _mTimer.Dispose();
             _mTimer = null;
             _timerFrame = 0;
+        }
+
+        private void ContextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            var enabled = treeView1.SelectedNode.Parent == null;
+
+            removeToolStripMenuItem.Enabled = enabled;
+            addToolStripMenuItem.Enabled = enabled;
         }
     }
 

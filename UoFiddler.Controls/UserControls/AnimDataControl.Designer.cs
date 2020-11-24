@@ -50,20 +50,21 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button6 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.checkBoxRelative = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
-            this.textBoxAddFrame = new System.Windows.Forms.TextBox();
             this.treeViewFrames = new System.Windows.Forms.TreeView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.numericUpDownFrameDelay = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.numericUpDownStartDelay = new System.Windows.Forms.NumericUpDown();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button6 = new System.Windows.Forms.Button();
+            this.textBoxAddFrame = new System.Windows.Forms.TextBox();
+            this.checkBoxRelative = new System.Windows.Forms.CheckBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -79,6 +80,7 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrameDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -94,8 +96,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(625, 329);
-            this.splitContainer1.SplitterDistance = 206;
+            this.splitContainer1.Size = new System.Drawing.Size(723, 508);
+            this.splitContainer1.SplitterDistance = 208;
             this.splitContainer1.TabIndex = 0;
             // 
             // treeView1
@@ -105,7 +107,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(206, 329);
+            this.treeView1.Size = new System.Drawing.Size(208, 508);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterNodeSelect);
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnClickNode);
@@ -117,6 +119,7 @@ namespace UoFiddler.Controls.UserControls
             this.removeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(118, 48);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStrip1_Opening);
             // 
             // addToolStripMenuItem
             // 
@@ -155,11 +158,11 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.button6);
+            this.splitContainer2.Panel2.Controls.Add(this.groupBox3);
             this.splitContainer2.Panel2.Controls.Add(this.groupBox4);
             this.splitContainer2.Panel2.Controls.Add(this.groupBox2);
-            this.splitContainer2.Size = new System.Drawing.Size(415, 329);
-            this.splitContainer2.SplitterDistance = 229;
+            this.splitContainer2.Size = new System.Drawing.Size(511, 508);
+            this.splitContainer2.SplitterDistance = 280;
             this.splitContainer2.TabIndex = 6;
             // 
             // groupBox1
@@ -169,7 +172,7 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(229, 329);
+            this.groupBox1.Size = new System.Drawing.Size(280, 508);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Preview";
@@ -177,7 +180,7 @@ namespace UoFiddler.Controls.UserControls
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(59, 300);
+            this.button1.Location = new System.Drawing.Point(59, 479);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -190,25 +193,12 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(3, 16);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(223, 310);
+            this.pictureBox1.Size = new System.Drawing.Size(274, 489);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // button6
-            // 
-            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Location = new System.Drawing.Point(104, 303);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
-            this.button6.TabIndex = 5;
-            this.button6.Text = "Save";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.OnClickSave);
-            // 
             // groupBox4
             // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.button5);
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.button4);
@@ -216,37 +206,18 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox4.Controls.Add(this.button3);
             this.groupBox4.Controls.Add(this.textBoxAddFrame);
             this.groupBox4.Controls.Add(this.treeViewFrames);
-            this.groupBox4.Location = new System.Drawing.Point(-7, 88);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox4.Location = new System.Drawing.Point(0, 82);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(186, 195);
+            this.groupBox4.Size = new System.Drawing.Size(227, 367);
             this.groupBox4.TabIndex = 4;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Frames";
             // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(88, 153);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "Remove";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.OnClickRemove);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 153);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Add";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.OnClickAdd);
-            // 
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(156, 68);
+            this.button4.Location = new System.Drawing.Point(174, 163);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(22, 22);
             this.button4.TabIndex = 3;
@@ -254,21 +225,10 @@ namespace UoFiddler.Controls.UserControls
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.OnClickFrameDown);
             // 
-            // checkBoxRelative
-            // 
-            this.checkBoxRelative.AutoSize = true;
-            this.checkBoxRelative.Location = new System.Drawing.Point(84, 129);
-            this.checkBoxRelative.Name = "checkBoxRelative";
-            this.checkBoxRelative.Size = new System.Drawing.Size(65, 17);
-            this.checkBoxRelative.TabIndex = 1;
-            this.checkBoxRelative.Text = "Relative";
-            this.checkBoxRelative.UseVisualStyleBackColor = true;
-            this.checkBoxRelative.CheckedChanged += new System.EventHandler(this.OnCheckChange);
-            // 
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(156, 39);
+            this.button3.Location = new System.Drawing.Point(174, 134);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(22, 22);
             this.button3.TabIndex = 2;
@@ -276,34 +236,27 @@ namespace UoFiddler.Controls.UserControls
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.OnClickFrameUp);
             // 
-            // textBoxAddFrame
-            // 
-            this.textBoxAddFrame.Location = new System.Drawing.Point(6, 127);
-            this.textBoxAddFrame.Name = "textBoxAddFrame";
-            this.textBoxAddFrame.Size = new System.Drawing.Size(63, 20);
-            this.textBoxAddFrame.TabIndex = 0;
-            this.textBoxAddFrame.TextChanged += new System.EventHandler(this.OnTextChanged);
-            // 
             // treeViewFrames
             // 
+            this.treeViewFrames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewFrames.HideSelection = false;
-            this.treeViewFrames.Location = new System.Drawing.Point(6, 19);
+            this.treeViewFrames.Location = new System.Drawing.Point(12, 19);
             this.treeViewFrames.Name = "treeViewFrames";
-            this.treeViewFrames.Size = new System.Drawing.Size(149, 97);
+            this.treeViewFrames.Size = new System.Drawing.Size(156, 283);
             this.treeViewFrames.TabIndex = 1;
             this.treeViewFrames.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewFrames);
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.numericUpDownFrameDelay);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.numericUpDownStartDelay);
-            this.groupBox2.Location = new System.Drawing.Point(-7, 4);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(186, 82);
+            this.groupBox2.Size = new System.Drawing.Size(227, 82);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Data";
@@ -311,7 +264,7 @@ namespace UoFiddler.Controls.UserControls
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 46);
+            this.label2.Location = new System.Drawing.Point(9, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 3;
@@ -319,7 +272,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // numericUpDownFrameDelay
             // 
-            this.numericUpDownFrameDelay.Location = new System.Drawing.Point(86, 44);
+            this.numericUpDownFrameDelay.Location = new System.Drawing.Point(88, 49);
             this.numericUpDownFrameDelay.Maximum = new decimal(new int[] {
             255,
             0,
@@ -333,7 +286,7 @@ namespace UoFiddler.Controls.UserControls
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 20);
+            this.label1.Location = new System.Drawing.Point(9, 25);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 13);
             this.label1.TabIndex = 1;
@@ -341,7 +294,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // numericUpDownStartDelay
             // 
-            this.numericUpDownStartDelay.Location = new System.Drawing.Point(86, 18);
+            this.numericUpDownStartDelay.Location = new System.Drawing.Point(88, 23);
             this.numericUpDownStartDelay.Maximum = new decimal(new int[] {
             255,
             0,
@@ -352,14 +305,73 @@ namespace UoFiddler.Controls.UserControls
             this.numericUpDownStartDelay.TabIndex = 0;
             this.numericUpDownStartDelay.ValueChanged += new System.EventHandler(this.OnValueChangedStartDelay);
             // 
-            // AnimData
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.button6);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox3.Location = new System.Drawing.Point(0, 449);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(227, 53);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            // 
+            // button6
+            // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button6.Location = new System.Drawing.Point(146, 19);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.TabIndex = 6;
+            this.button6.Text = "Save";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // textBoxAddFrame
+            // 
+            this.textBoxAddFrame.Location = new System.Drawing.Point(12, 308);
+            this.textBoxAddFrame.Name = "textBoxAddFrame";
+            this.textBoxAddFrame.Size = new System.Drawing.Size(72, 20);
+            this.textBoxAddFrame.TabIndex = 0;
+            this.textBoxAddFrame.TextChanged += new System.EventHandler(this.OnTextChanged);
+            // 
+            // checkBoxRelative
+            // 
+            this.checkBoxRelative.AutoSize = true;
+            this.checkBoxRelative.Location = new System.Drawing.Point(93, 310);
+            this.checkBoxRelative.Name = "checkBoxRelative";
+            this.checkBoxRelative.Size = new System.Drawing.Size(65, 17);
+            this.checkBoxRelative.TabIndex = 1;
+            this.checkBoxRelative.Text = "Relative";
+            this.checkBoxRelative.UseVisualStyleBackColor = true;
+            this.checkBoxRelative.CheckedChanged += new System.EventHandler(this.OnCheckChange);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(12, 334);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Add";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.OnClickAdd);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(93, 334);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 4;
+            this.button5.Text = "Remove";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.OnClickRemove);
+            // 
+            // AnimDataControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "AnimDataControl";
-            this.Size = new System.Drawing.Size(625, 329);
+            this.Size = new System.Drawing.Size(723, 508);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -378,6 +390,7 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrameDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).EndInit();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -385,12 +398,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripTextBox AddTextBox;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.CheckBox checkBoxRelative;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -403,10 +412,15 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TextBox textBoxAddFrame;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.TreeView treeViewFrames;
 
         #endregion
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.CheckBox checkBoxRelative;
+        private System.Windows.Forms.TextBox textBoxAddFrame;
     }
 }
