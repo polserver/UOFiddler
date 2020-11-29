@@ -118,7 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.3
+    <value>Version 4.9.4
+Fixed texture saving.
+Fixed the right click over the CliLoc Goto Textbox. (author: @Daviex)
+Added zoom in/out via the mouse wheel scroll. Added min/max values for zoom level. I can't go over 4 or lower than 0.25. (author: @Daviex)
+Little fixes in hue editor. It won't darken selected cell.
+You can now choose background color for Multis tab. The color will be used as background when exporting multi images. PNG format support transparency so by default it will have transparent background on export but it can be turned off and exported with solid background color. Default background color is white.
+Fixed textures not showing in alternative design mode.
+Fixed missing tiles from art tab - the max id was without 4k landtiles offset. This only occurred in never clients when id was over 0x10000.
+Fixed wrong path setting when multiple UO clients are installed. It's workaround but will do for now.
+Fixed crash when exporting images in multis tab.
+Fixed crash when changing anim file in animation editor.
+Added hexadecimal values to animation list. Fixed status bar text formatting.
+Updated Serilog package to 2.10.0.
+Fixed Animdata crash when trying to remove frame instead of animation entry. Updated Animdata control layout.
+
+Version 4.9.3
 Added right panel to Sound tab (author: Daviex)
 Added ability to change background color for Item tab. You can choose separate color for item list and right detail preview. Just right click and choose 'Change background color'. (author: Daviex)
 
