@@ -16,7 +16,7 @@ namespace Ultima
         public static bool Modified;
 
         private static byte[] _streamBuffer;
-        private static byte[] _validBuffer;
+        private static readonly byte[] _validBuffer = new byte[4];
 
         private struct CheckSums
         {
@@ -163,7 +163,7 @@ namespace Ultima
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static unsafe bool IsValidStatic(int index)
+        public static bool IsValidStatic(int index)
         {
             index = GetLegalItemID(index);
             index += 0x4000;
@@ -185,18 +185,13 @@ namespace Ultima
                 return false;
             }
 
-            if (_validBuffer == null)
-            {
-                _validBuffer = new byte[4];
-            }
-
             stream.Seek(4, SeekOrigin.Current);
             stream.Read(_validBuffer, 0, 4);
-            fixed (byte* b = _validBuffer)
-            {
-                var dat = (short*)b;
-                return *dat++ > 0 && *dat > 0;
-            }
+
+            ref var width = ref _validBuffer[0];
+            ref var height = ref _validBuffer[2];
+
+            return width > 0 && height > 0;
         }
 
         /// <summary>
