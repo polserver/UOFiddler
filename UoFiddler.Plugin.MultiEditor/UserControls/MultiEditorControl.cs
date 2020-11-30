@@ -172,7 +172,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{textBox_Export.Text}.uoa");
+            string fileName = Path.Combine(path, $"{textBox_Export.Text}.uoa.txt");
             MultiComponentList sdkList = _compList.ConvertToSdk();
             sdkList.ExportToUOAFile(fileName);
         }
@@ -543,7 +543,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             TreeNode txtNode = new TreeNode("Txt File") { Tag = "txt" };
             fileNode.Nodes.Add(txtNode);
 
-            TreeNode uoaNode = new TreeNode("UOA File") { Tag = "uoa" };
+            TreeNode uoaNode = new TreeNode("UOA Text File") { Tag = "uoa" };
             fileNode.Nodes.Add(uoaNode);
 
             TreeNode uoabNode = new TreeNode("UOA Binary File") { Tag = "uoab" };
@@ -951,7 +951,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     type = "txt";
                     break;
                 case Multis.ImportType.UOA:
-                    type = "uoa";
+                    type = "txt";
                     break;
                 case Multis.ImportType.UOAB:
                     type = "uoab";
