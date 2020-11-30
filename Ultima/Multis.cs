@@ -574,13 +574,13 @@ namespace Ultima
             reader.Close();
         }
 
-        public MultiComponentList(string fileName, Multis.ImportType Type)
+        public MultiComponentList(string fileName, Multis.ImportType type)
         {
             _min = _max = Point.Empty;
 
             int itemCount;
 
-            switch (Type)
+            switch (type)
             {
                 case Multis.ImportType.TXT:
                 {
