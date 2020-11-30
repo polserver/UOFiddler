@@ -163,7 +163,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.TC_MultiEditorToolbox.Location = new System.Drawing.Point(0, 91);
             this.TC_MultiEditorToolbox.Name = "TC_MultiEditorToolbox";
             this.TC_MultiEditorToolbox.SelectedIndex = 0;
-            this.TC_MultiEditorToolbox.Size = new System.Drawing.Size(200, 185);
+            this.TC_MultiEditorToolbox.Size = new System.Drawing.Size(200, 228);
             this.TC_MultiEditorToolbox.TabIndex = 0;
             // 
             // tileTab
@@ -173,7 +173,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.tileTab.Location = new System.Drawing.Point(4, 22);
             this.tileTab.Name = "tileTab";
             this.tileTab.Padding = new System.Windows.Forms.Padding(3);
-            this.tileTab.Size = new System.Drawing.Size(192, 159);
+            this.tileTab.Size = new System.Drawing.Size(192, 202);
             this.tileTab.TabIndex = 0;
             this.tileTab.Text = "Tiles";
             this.tileTab.UseVisualStyleBackColor = true;
@@ -193,8 +193,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             this.splitContainer4.Panel2.Controls.Add(this.pictureBoxDrawTiles);
             this.splitContainer4.Panel2.Controls.Add(this.vScrollBarDrawTiles);
-            this.splitContainer4.Size = new System.Drawing.Size(186, 153);
-            this.splitContainer4.SplitterDistance = 70;
+            this.splitContainer4.Size = new System.Drawing.Size(186, 196);
+            this.splitContainer4.SplitterDistance = 89;
             this.splitContainer4.TabIndex = 0;
             // 
             // treeViewTilesXML
@@ -207,7 +207,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.treeViewTilesXML.Location = new System.Drawing.Point(0, 0);
             this.treeViewTilesXML.Name = "treeViewTilesXML";
             this.treeViewTilesXML.SelectedImageIndex = 0;
-            this.treeViewTilesXML.Size = new System.Drawing.Size(186, 70);
+            this.treeViewTilesXML.Size = new System.Drawing.Size(186, 89);
             this.treeViewTilesXML.TabIndex = 0;
             this.treeViewTilesXML.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewTilesXML_OnAfterSelect);
             // 
@@ -229,7 +229,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.pictureBoxDrawTiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxDrawTiles.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxDrawTiles.Name = "pictureBoxDrawTiles";
-            this.pictureBoxDrawTiles.Size = new System.Drawing.Size(169, 79);
+            this.pictureBoxDrawTiles.Size = new System.Drawing.Size(169, 103);
             this.pictureBoxDrawTiles.TabIndex = 3;
             this.pictureBoxDrawTiles.TabStop = false;
             this.pictureBoxDrawTiles.SizeChanged += new System.EventHandler(this.PictureBoxDrawTiles_OnResize);
@@ -243,7 +243,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.vScrollBarDrawTiles.Dock = System.Windows.Forms.DockStyle.Right;
             this.vScrollBarDrawTiles.Location = new System.Drawing.Point(169, 0);
             this.vScrollBarDrawTiles.Name = "vScrollBarDrawTiles";
-            this.vScrollBarDrawTiles.Size = new System.Drawing.Size(17, 79);
+            this.vScrollBarDrawTiles.Size = new System.Drawing.Size(17, 103);
             this.vScrollBarDrawTiles.TabIndex = 0;
             this.vScrollBarDrawTiles.Scroll += new System.Windows.Forms.ScrollEventHandler(this.VScrollBarDrawTiles_Scroll);
             // 
@@ -451,7 +451,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(623, 328);
+            this.splitContainer1.Size = new System.Drawing.Size(704, 371);
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -481,7 +481,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.splitContainer3.Panel2.Controls.Add(this.TC_MultiEditorToolbox);
             this.splitContainer3.Panel2.Controls.Add(this.collapsibleSplitter1);
             this.splitContainer3.Panel2.Controls.Add(this.Selectedpanel);
-            this.splitContainer3.Size = new System.Drawing.Size(200, 328);
+            this.splitContainer3.Size = new System.Drawing.Size(200, 371);
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 1;
             // 
@@ -748,7 +748,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxMulti);
             this.splitContainer2.Panel2.Controls.Add(this.hScrollBar);
             this.splitContainer2.Panel2.Controls.Add(this.vScrollBar);
-            this.splitContainer2.Size = new System.Drawing.Size(419, 303);
+            this.splitContainer2.Size = new System.Drawing.Size(500, 346);
             this.splitContainer2.SplitterDistance = 30;
             this.splitContainer2.TabIndex = 2;
             // 
@@ -757,7 +757,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.MaxHeightTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MaxHeightTrackBar.Location = new System.Drawing.Point(0, 0);
             this.MaxHeightTrackBar.Name = "MaxHeightTrackBar";
-            this.MaxHeightTrackBar.Size = new System.Drawing.Size(419, 30);
+            this.MaxHeightTrackBar.Size = new System.Drawing.Size(500, 30);
             this.MaxHeightTrackBar.TabIndex = 0;
             this.toolTip1.SetToolTip(this.MaxHeightTrackBar, "Max Height Displayed");
             this.MaxHeightTrackBar.ValueChanged += new System.EventHandler(this.MaxHeightTrackBarOnValueChanged);
@@ -766,7 +766,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             this.splitter1.Location = new System.Drawing.Point(0, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 252);
+            this.splitter1.Size = new System.Drawing.Size(3, 295);
             this.splitter1.TabIndex = 3;
             this.splitter1.TabStop = false;
             // 
@@ -777,7 +777,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.pictureBoxMulti.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxMulti.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxMulti.Name = "pictureBoxMulti";
-            this.pictureBoxMulti.Size = new System.Drawing.Size(402, 252);
+            this.pictureBoxMulti.Size = new System.Drawing.Size(483, 295);
             this.pictureBoxMulti.TabIndex = 0;
             this.pictureBoxMulti.TabStop = false;
             this.pictureBoxMulti.SizeChanged += new System.EventHandler(this.PictureBoxMultiOnResize);
@@ -789,18 +789,18 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 252);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 295);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(402, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(483, 17);
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.ValueChanged += new System.EventHandler(this.ScrollBarsValueChanged);
             // 
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(402, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(483, 0);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 269);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 312);
             this.vScrollBar.TabIndex = 1;
             this.vScrollBar.ValueChanged += new System.EventHandler(this.ScrollBarsValueChanged);
             // 
@@ -815,10 +815,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.toolStripSeparator1,
             this.SelectedTileLabel,
             this.toolStripLabelCoord});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 303);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 346);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(419, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(500, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -997,7 +997,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.FloatingPreviewPanel.Size = new System.Drawing.Size(200, 100);
             this.FloatingPreviewPanel.TabIndex = 4;
             // 
-            // MultiEditor
+            // MultiEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1005,7 +1005,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "MultiEditorControl";
-            this.Size = new System.Drawing.Size(623, 328);
+            this.Size = new System.Drawing.Size(704, 371);
             this.Load += new System.EventHandler(this.OnLoad);
             this.TC_MultiEditorToolbox.ResumeLayout(false);
             this.tileTab.ResumeLayout(false);

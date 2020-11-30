@@ -1312,35 +1312,13 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         private void PictureBoxDrawTilesMouseMove(object sender, MouseEventArgs e)
         {
-            int x = e.X / (_drawTileSizeWidth - 1);
-            int y = e.Y / (_drawTileSizeHeight - 1);
-            int index = GetIndex(x, y);
-            if (index >= 0)
-            {
-                if (index != (int)FloatingPreviewPanel.Tag)
-                {
-                    FloatingPreviewPanel.BackgroundImage = Art.GetStatic(index);
-                    FloatingPreviewPanel.Size =
-                        new Size(Art.GetStatic(index).Width + 10, Art.GetStatic(index).Height + 10);
-                }
-
-                FloatingPreviewPanel.Left = PointToClient(MousePosition).X;
-                FloatingPreviewPanel.Top = PointToClient(MousePosition).Y - FloatingPreviewPanel.Size.Height;
-                FloatingPreviewPanel.Visible = true;
-                FloatingPreviewPanel.Tag = index;
-                toolTip1.SetToolTip(pictureBoxDrawTiles, string.Format("0x{0:X} ({0})", index));
-                pictureBoxDrawTiles.Invalidate();
-            }
-            else
-            {
-                FloatingPreviewPanel.Visible = false;
-                toolTip1.SetToolTip(pictureBoxDrawTiles, string.Empty);
-            }
+            pictureBoxDrawTiles.Invalidate();
         }
 
         private void PictureBoxDrawTilesMouseLeave(object sender, EventArgs e)
         {
             FloatingPreviewPanel.Visible = false;
+            pictureBoxDrawTiles.Invalidate();
         }
 
         private void PictureBoxDrawTiles_OnPaint(object sender, PaintEventArgs e)
@@ -1389,6 +1367,40 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
                     e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
                 }
+            }
+
+            var pos = pictureBoxDrawTiles.PointToClient(MousePosition);
+            if (!pictureBoxDrawTiles.ClientRectangle.Contains(pos))
+            {
+                return;
+            }
+
+            int x1 = pos.X / (_drawTileSizeWidth - 1);
+            int y1 = pos.Y / (_drawTileSizeHeight - 1);
+            int staticIdx = GetIndex(x1, y1);
+
+            if (staticIdx >= 0)
+            {
+                if (staticIdx != (int)FloatingPreviewPanel.Tag)
+                {
+                    FloatingPreviewPanel.BackgroundImage = Art.GetStatic(staticIdx);
+                    FloatingPreviewPanel.Size =
+                        new Size(Art.GetStatic(staticIdx).Width + 10, Art.GetStatic(staticIdx).Height + 10);
+                }
+
+                var currentPos = PointToClient(MousePosition);
+                FloatingPreviewPanel.Left = currentPos.X;
+                FloatingPreviewPanel.Top = currentPos.Y - FloatingPreviewPanel.Size.Height;
+                FloatingPreviewPanel.Visible = true;
+                FloatingPreviewPanel.Tag = staticIdx;
+
+                toolTip1.SetToolTip(pictureBoxDrawTiles, string.Format("0x{0:X} ({0})", staticIdx));
+
+            }
+            else
+            {
+                FloatingPreviewPanel.Visible = false;
+                toolTip1.SetToolTip(pictureBoxDrawTiles, string.Empty);
             }
         }
 
