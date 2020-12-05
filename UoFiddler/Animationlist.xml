@@ -97,6 +97,7 @@
   <Mob name="serpents_snake_giant_silver2 (92)" body="92" type="0" />
   <Mob name="serpents_snake_giant_silver3 (93)" body="93" type="0" />
   <Mob name="slimes_slime_frost (94)" body="94" type="0" />
+  <Mob name="bird_turkey (95)" body="95" type="0" />
   <Mob name="slimes_slime_frost2 (96)" body="96" type="0" />
   <Mob name="canines_hell_hound (97)" body="97" type="2" />
   <Mob name="canines_hell_hound2 (98)" body="98" type="2" />
@@ -197,6 +198,8 @@
   <Mob name="swamp_dragon_ethereal (194)" body="194" type="2" />
   <Mob name="giant_beetle_ethereal (195)" body="195" type="2" />
   <Mob name="Denkou_Yajuu (196)" body="196" type="0" />
+  <Mob name="Dragon_Chaos (197)" body="197" type="0" />
+  <Mob name="Dragon_Order (198)" body="198" type="0" />
   <Mob name="Gouzen_Ha (199)" body="199" type="0" />
   <Mob name="equines_horse_dappled_brown (200)" body="200" type="2" />
   <Mob name="felines_housecat (201)" body="201" type="2" />
@@ -266,13 +269,15 @@
   <Mob name="Ferret (279)" body="279" type="2" />
   <Mob name="MinotaurArmored (280)" body="280" type="0" />
   <Mob name="LeatherMinotaur (281)" body="281" type="0" />
-  <Mob name="Parrot (282)" body="282" type="2" />
-  <Mob name="Crow (283)" body="283" type="2" />
+  <Mob name="Perched_Parrot (282)" body="282" type="2" />
+  <Mob name="Perched_Crow (283)" body="283" type="2" />
   <Mob name="MondainSteed01 (284)" body="284" type="2" />
   <Mob name="ReaperForm (285)" body="285" type="0" />
+  <Mob name="Bloodworm (287)" body="287" type="0" />
   <Mob name="porcines_boar (290)" body="290" type="2" />
   <Mob name="equines_horse_dappled_brown_pack (291)" body="291" type="2" />
   <Mob name="llamas_llama_pack (292)" body="292" type="2" />
+  <Mob name="vollum (293)" body="293" type="0" />
   <Mob name="crystal_elemental (300)" body="300" type="0" />
   <Mob name="treefellow (301)" body="301" type="0" />
   <Mob name="skittering_hopper (302)" body="302" type="0" />
@@ -293,15 +298,48 @@
   <Mob name="vampire_bat (317)" body="317" type="0" />
   <Mob name="demon_knight (318)" body="318" type="0" />
   <Mob name="mound_of_maggots (319)" body="319" type="0" />
+  <Mob name="gray_goblin (334)" body="334" type="0" />
   <Mob name="h_male (400)" body="400" type="3" />
   <Mob name="h_female (401)" body="401" type="3" />
+  <Mob name="ridable_boura (432)" body="432" type="2" />
+  <Mob name="death_vortex (573)" body="573" type="0" />
   <Mob name="spirits_blade_spirit (574)" body="574" type="0" />
-  <Mob name="h_male1 (605)" body="605" type="3" />
-  <Mob name="h_female1 (606)" body="606" type="3" />
-  <Mob name="h_male_gargoyle (666)" body="666" type="3" />
-  <Mob name="h_female_gargoyle (667)" body="667" type="3" />
-  <Mob name="h_male3 (744)" body="744" type="3" />
-  <Mob name="h_female3 (745)" body="745" type="3" />
+  <Mob name="elf_male (605)" body="605" type="3" />
+  <Mob name="elf_female (606)" body="606" type="3" />
+  <Mob name="garg_male (666)" body="666" type="3" />
+  <Mob name="garg_female (667)" body="667" type="3" />
+  <Mob name="timelord (689)" body="689" type="0" />
+  <Mob name="shadowlord2 (704)" body="704" type="0" />
+  <Mob name="Abyssal_Infernal (713)" body="713" type="0" />
+  <Mob name="beetle_iron (714)" body="714" type="2" />
+  <Mob name="lowland_boura (715)" body="715" type="0" />
+  <Mob name="chicken_lizard (716)" body="716" type="0" />
+  <Mob name="clockwork_scorpion (717)" body="717" type="2" />
+  <Mob name="fairy_dragon (718)" body="718" type="0" />
+  <Mob name="wolfman (719)" body="719" type="0" />
+  <Mob name="lava_worm (720)" body="720" type="0" />
+  <Mob name="Maddening_Horror (721)" body="721" type="0" />
+  <Mob name="Putrid_Undead_Gargoyle (722)" body="722" type="0" />
+  <Mob name="Green_Goblin (723)" body="723" type="0" />
+  <Mob name="Gremlin (724)" body="724" type="0" />
+  <Mob name="Homunculus (725)" body="725" type="0" />
+  <Mob name="Kepetch (726)" body="726" type="0" />
+  <Mob name="Kepetch_Ambusher (727)" body="727" type="0" />
+  <Mob name="Medusa (728)" body="728" type="0" />
+  <Mob name="Paralithode (729)" body="729" type="0" />
+  <Mob name="Raptor (730)" body="730" type="0" />
+  <Mob name="Rotworm (732)" body="732" type="0" />
+  <Mob name="Skree (733)" body="733" type="0" />
+  <Mob name="Toxic Slith (734)" body="734" type="0" />
+  <Mob name="Navrey Night-Eyes (735)" body="735" type="0" />
+  <Mob name="Wolf Spider (736)" body="736" type="0" />
+  <Mob name="Trapdoor Spider (737)" body="737" type="0" />
+  <Mob name="Fire Ant (738)" body="738" type="0" />
+  <Mob name="Leather Wolf (739)" body="739" type="0" />
+  <Mob name="Dream Wraith (740)" body="740" type="0" />
+  <Mob name="Slasher of Viels (741)" body="741" type="0" />
+  <Mob name="Charybdis (742)" body="742" type="0" />
+  <Mob name="Tentacles of Osiredon the Scalis Enforcer (743)" body="743" type="0" />
   <Mob name="four_armed_demon (746)" body="746" type="0" />
   <Mob name="wailingbanshee2 (747)" body="747" type="0" />
   <Mob name="spirits_ghost2 (748)" body="748" type="0" />
@@ -357,12 +395,25 @@
   <Mob name="black_ant_warrior (806)" body="806" type="0" />
   <Mob name="black_ant_queen (807)" body="807" type="0" />
   <Mob name="black_ant_matriarch (808)" body="808" type="0" />
+  <Mob name="Dragon (827)" body="827" type="0" />
+  <Mob name="Rising_Colossus (829)" body="829" type="0" />
+  <Mob name="Prime_Evil_Lich (830)" body="830" type="0" />
+  <Mob name="Parrot (831)" body="831" type="2" />
+  <Mob name="Phoenix (832)" body="832" type="2" />
+  <Mob name="Women_unclear (833)" body="833" type="3" />
   <Mob name="player_ghost5 (970)" body="970" type="3" />
   <Mob name="character_lord_british (990)" body="990" type="3" />
   <Mob name="character_blackthorn (991)" body="991" type="3" />
   <Mob name="character_dupre (994)" body="994" type="3" />
-  <Mob name="Multi Colored Horde Deamon (999)" body="999" type="0" />
-  <Mob name="Lion (1426)" body="1426" type="2" />
+  <Mob name="Multi_Colored_Horde_Daemon (999)" body="999" type="0" />  
+  <Mob name="Uber Turkey (1026)" body="1026" type="0" />
+  <Mob name="Oseridan The Scalis Enforcer (1068)" body="1068" type="0" />
+  <Mob name="Ancient Hellhound (1069)" body="1069" type="0" />
+  <Mob name="Werewolf (1070)" body="1070" type="0" />
+  <Mob name="unknown Demon Lord (1071)" body="1071" type="0" />
+  <Mob name="Killer Pumpkin Dark (1246)" body="1246" type="0" />
+  <Mob name="Killer Pumpkin Light (1247)" body="1247" type="0" />
+  <Mob name="Tiger (1254)" body="1254" type="0" />
   <Equip name="floppy hat (404)" body="404" type="3" />
   <Equip name="wide-brim hat (405)" body="405" type="3" />
   <Equip name="cap (406)" body="406" type="3" />
@@ -710,4 +761,3 @@
   <Equip name="leaf tonlet t r_Kil (996)" body="996" type="3" />
   <Equip name="LtF_Chest Chest (997)" body="997" type="3" />
 </Graphics>
-
