@@ -418,7 +418,11 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                ItemShowControl.SearchGraphic(index);
+                var found = ItemShowControl.SearchGraphic(index);
+                if (!found)
+                {
+                    MessageBox.Show("You need to load Items tab first.", "Information");
+                }
             }
         }
 
@@ -447,7 +451,11 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                LandTilesControl.SearchGraphic(index);
+                var found = LandTilesControl.SearchGraphic(index);
+                if (!found)
+                {
+                    MessageBox.Show("You need to load LandTiles tab first.", "Information");
+                }
             }
         }
 

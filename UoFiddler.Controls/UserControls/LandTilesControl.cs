@@ -47,7 +47,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (!_refMarker.IsLoaded)
             {
-                _refMarker.OnLoad(_refMarker, EventArgs.Empty);
+                return false;
             }
 
             const int index = 0;
