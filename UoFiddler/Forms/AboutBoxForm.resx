@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.4
+    <value>Version 4.9.5
+Fixed rare hang when selecting tiles in Items/LandTiles tab from other tabs. 
+Fixed crash when using context menu in tiledata item list.
+Fixed multi design saving for UO architect. File extension changed to .uoa.txt to indicate that it is text format and not binary one. Updated import options for UO Architect txt files.
+Reduced flickering on Tiles tab in multi editor plugin.
+
+Version 4.9.4
 Fixed texture saving.
 Fixed the right click over the CliLoc Goto Textbox. (author: @Daviex)
 Added zoom in/out via the mouse wheel scroll. Added min/max values for zoom level. I can't go over 4 or lower than 0.25. (author: @Daviex)
