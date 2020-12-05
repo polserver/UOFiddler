@@ -246,5 +246,21 @@ namespace UoFiddler.Controls.UserControls
             }
             dialog.Dispose();
         }
+
+        private void IDEntry_Enter(object sender, EventArgs e)
+        {
+            if (IDEntry.Text == "Find ID..")
+            {
+                IDEntry.Text = "";
+            }
+        }
+
+        private void KeyWordEntry_Enter(object sender, EventArgs e)
+        {
+            if (KeyWordEntry.Text == "KeyWord..")
+            {
+                KeyWordEntry.Text = "";
+            }
+        }
     }
 }

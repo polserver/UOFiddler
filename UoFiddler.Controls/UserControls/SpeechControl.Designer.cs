@@ -89,6 +89,7 @@ namespace UoFiddler.Controls.UserControls
             this.IDEntry.Name = "IDEntry";
             this.IDEntry.Size = new System.Drawing.Size(100, 25);
             this.IDEntry.Text = "Find ID..";
+            this.IDEntry.Enter += new System.EventHandler(this.IDEntry_Enter);
             // 
             // IDButton
             // 
@@ -119,6 +120,7 @@ namespace UoFiddler.Controls.UserControls
             this.KeyWordEntry.Name = "KeyWordEntry";
             this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
             this.KeyWordEntry.Text = "KeyWord..";
+            this.KeyWordEntry.Enter += new System.EventHandler(this.KeyWordEntry_Enter);
             // 
             // KeyWordButton
             // 
@@ -238,7 +240,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton3.Text = "Import from CSV";
             this.toolStripButton3.Click += new System.EventHandler(this.OnClickImport);
             // 
-            // Speech
+            // SpeechControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
