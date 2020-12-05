@@ -140,7 +140,7 @@ namespace UoFiddler.Controls.UserControls
         private Bitmap[] _animationList;
         private bool _imageInvalidated = true;
         private Timer _timer;
-        private Frame[] _frames;
+        private AnimationFrame[] _frames;
         private int _customHue;
         private int _defHue;
         private int _facing = 1;

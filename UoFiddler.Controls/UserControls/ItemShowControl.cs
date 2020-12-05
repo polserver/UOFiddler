@@ -581,7 +581,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Animdata.Data info = Animdata.GetAnimData(id);
+            Animdata.AnimdataEntry info = Animdata.GetAnimData(id);
             if (info != null)
             {
                 DetailTextBox.AppendText(

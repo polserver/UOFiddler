@@ -37,7 +37,7 @@ namespace UoFiddler.Controls.Forms
         private bool _animate;
         private Timer _mTimer;
         private int _frame;
-        private Animdata.Data _info;
+        private Animdata.AnimdataEntry _info;
 
         /// <summary>
         /// Sets Hue
