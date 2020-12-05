@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -42,7 +43,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private int _selected;
         private int _row;
         private bool _hue2Loaded;
-        private readonly Hashtable _compare = new Hashtable();
+        private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private bool _loaded;
 
         private void OnLoad(object sender, EventArgs e)
@@ -280,9 +281,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private bool Compare(int index)
         {
-            if (_compare.Contains(index))
+            if (_compare.ContainsKey(index))
             {
-                return (bool)_compare[index];
+                return _compare[index];
             }
 
             if (!_hue2Loaded)

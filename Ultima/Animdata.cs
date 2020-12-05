@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Ultima
@@ -8,7 +9,7 @@ namespace Ultima
         private static int[] _header;
         private static byte[] _unknown;
 
-        public static Hashtable AnimData { get; set; }
+        public static Dictionary<int, Data> AnimData { get; private set; }
 
         static Animdata()
         {
@@ -20,7 +21,7 @@ namespace Ultima
         /// </summary>
         public static void Initialize()
         {
-            AnimData = new Hashtable();
+            AnimData = new Dictionary<int, Data>();
 
             string path = Files.GetFilePath("animdata.mul");
             if (path == null)
@@ -84,7 +85,7 @@ namespace Ultima
         /// <returns></returns>
         public static Data GetAnimData(int id)
         {
-            return AnimData.Contains(id) ? (Data)AnimData[id] : null;
+            return AnimData.ContainsKey(id) ? AnimData[id] : null;
         }
 
         public static void Save(string path)

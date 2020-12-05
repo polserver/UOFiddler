@@ -133,9 +133,9 @@ namespace UoFiddler.Controls.Forms
             MobTypes();
 
             TreeNode node;
-            foreach (DictionaryEntry key in BodyTable._entries) //body.def
+            foreach (var key in BodyTable.Entries) //body.def
             {
-                BodyTableEntry entry = (BodyTableEntry)key.Value;
+                BodyTableEntry entry = key.Value;
                 if (AlreadyFound(entry.NewId))
                 {
                     continue;

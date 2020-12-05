@@ -12,7 +12,7 @@ namespace Ultima
         private static FileIndex _fileIndex = new FileIndex("Texidx.mul", "Texmaps.mul", 0x4000, 10);
         private static Bitmap[] _cache = new Bitmap[0x4000];
         private static bool[] _removed = new bool[0x4000];
-        private static readonly Hashtable _patched = new Hashtable();
+        private static readonly Dictionary<int, bool> _patched = new Dictionary<int, bool>();
 
         private struct Checksums
         {
@@ -56,7 +56,7 @@ namespace Ultima
         {
             _cache[index] = bmp;
             _removed[index] = false;
-            if (_patched.Contains(index))
+            if (_patched.ContainsKey(index))
             {
                 _patched.Remove(index);
             }
@@ -102,14 +102,7 @@ namespace Ultima
         /// <returns></returns>
         public static unsafe Bitmap GetTexture(int index, out bool patched)
         {
-            if (_patched.Contains(index))
-            {
-                patched = (bool)_patched[index];
-            }
-            else
-            {
-                patched = false;
-            }
+            patched = _patched.ContainsKey(index) && _patched[index];
 
             if (_removed[index])
             {

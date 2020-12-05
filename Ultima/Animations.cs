@@ -612,17 +612,14 @@ namespace Ultima
 
             for (int i = 0; i < count; ++i)
             {
-                object o = BodyTable._entries[i];
-
-                if (o == null || BodyConverter.Contains(i))
+                var bodyTableEntryExist = BodyTable.Entries.TryGetValue(i, out BodyTableEntry bodyTableEntry);
+                if (!bodyTableEntryExist || BodyConverter.Contains(i))
                 {
                     _table[i] = i;
                 }
                 else
                 {
-                    var bte = (BodyTableEntry)o;
-
-                    _table[i] = bte.OldId | (1 << 31) | ((bte.NewHue & 0xFFFF) << 15);
+                    _table[i] = bodyTableEntry.OldId | (1 << 31) | ((bodyTableEntry.NewHue & 0xFFFF) << 15);
                 }
             }
         }
@@ -980,7 +977,7 @@ namespace Ultima
 
     public sealed class BodyTable
     {
-        public static Hashtable _entries;
+        public static Dictionary<int, BodyTableEntry> Entries { get; private set; }
 
         static BodyTable()
         {
@@ -989,7 +986,7 @@ namespace Ultima
 
         public static void Initialize()
         {
-            _entries = new Hashtable();
+            Entries = new Dictionary<int, BodyTableEntry>();
 
             string filePath = Files.GetFilePath("body.def");
 
@@ -1029,7 +1026,7 @@ namespace Ultima
                         int iParam2 = Convert.ToInt32(param2.Trim());
                         int iParam3 = Convert.ToInt32(param3.Trim());
 
-                        _entries[iParam1] = new BodyTableEntry(iParam2, iParam1, iParam3);
+                        Entries[iParam1] = new BodyTableEntry(iParam2, iParam1, iParam3);
                     }
                     catch
                     {
