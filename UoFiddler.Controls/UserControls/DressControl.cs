@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -929,7 +930,7 @@ namespace UoFiddler.Controls.UserControls
                     {
                         node.ForeColor = !hasGump ? Color.Red : Color.Orange;
                     }
-                    else if (hasAnimation && !hasGump)
+                    else if (!hasGump)
                     {
                         node.ForeColor = Color.Blue;
                     }
@@ -1043,12 +1044,12 @@ namespace UoFiddler.Controls.UserControls
 
         private static void ConvertGump(ref int gumpId, ref int hue)
         {
-            if (!GumpTable.Entries.Contains(gumpId))
+            if (!GumpTable.Entries.ContainsKey(gumpId))
             {
                 return;
             }
 
-            GumpTableEntry entry = (GumpTableEntry)GumpTable.Entries[gumpId];
+            GumpTableEntry entry = GumpTable.Entries[gumpId];
             hue = entry.NewHue;
             gumpId = entry.NewId;
         }
@@ -1059,24 +1060,24 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (!_female)
                 {
-                    if (!EquipTable.HumanMale.Contains(animId))
+                    if (!EquipTable.HumanMale.ContainsKey(animId))
                     {
                         return;
                     }
 
-                    EquipTableEntry entry = (EquipTableEntry)EquipTable.HumanMale[animId];
+                    EquipTableEntry entry = EquipTable.HumanMale[animId];
                     gumpId = entry.NewId;
                     hue = entry.NewHue;
                     animId = entry.NewAnim;
                 }
                 else
                 {
-                    if (!EquipTable.HumanFemale.Contains(animId))
+                    if (!EquipTable.HumanFemale.ContainsKey(animId))
                     {
                         return;
                     }
 
-                    EquipTableEntry entry = (EquipTableEntry)EquipTable.HumanFemale[animId];
+                    EquipTableEntry entry = EquipTable.HumanFemale[animId];
                     gumpId = entry.NewId;
                     hue = entry.NewHue;
                     animId = entry.NewAnim;
@@ -1086,24 +1087,24 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (!_female)
                 {
-                    if (!EquipTable.ElvenMale.Contains(animId))
+                    if (!EquipTable.ElvenMale.ContainsKey(animId))
                     {
                         return;
                     }
 
-                    EquipTableEntry entry = (EquipTableEntry)EquipTable.ElvenMale[animId];
+                    EquipTableEntry entry = EquipTable.ElvenMale[animId];
                     gumpId = entry.NewId;
                     hue = entry.NewHue;
                     animId = entry.NewAnim;
                 }
                 else
                 {
-                    if (!EquipTable.ElvenFemale.Contains(animId))
+                    if (!EquipTable.ElvenFemale.ContainsKey(animId))
                     {
                         return;
                     }
 
-                    EquipTableEntry entry = (EquipTableEntry)EquipTable.ElvenFemale[animId];
+                    EquipTableEntry entry = EquipTable.ElvenFemale[animId];
                     gumpId = entry.NewId;
                     hue = entry.NewHue;
                     animId = entry.NewAnim;
@@ -1241,7 +1242,8 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickBuildAnimationList(object sender, EventArgs e)
         {
-            AnimEntry[] animEntries = new AnimEntry[1000];
+            const int maximumAnimationValue = 2048;
+            AnimEntry[] animEntries = new AnimEntry[maximumAnimationValue + 1];
             for (int i = 0; i < animEntries.Length; ++i)
             {
                 animEntries[i] = new AnimEntry
@@ -1251,77 +1253,80 @@ namespace UoFiddler.Controls.UserControls
                     FirstGumpFemale = i + 60000
                 };
 
-                if (EquipTable.HumanMale.Contains(i))
+                if (EquipTable.HumanMale.ContainsKey(i))
                 {
-                    animEntries[i].EquipTable[400] = (EquipTableEntry)EquipTable.HumanMale[i];
+                    animEntries[i].EquipTable[400] = EquipTable.HumanMale[i];
                 }
 
-                if (EquipTable.HumanFemale.Contains(i))
+                if (EquipTable.HumanFemale.ContainsKey(i))
                 {
-                    animEntries[i].EquipTable[401] = (EquipTableEntry)EquipTable.HumanFemale[i];
+                    animEntries[i].EquipTable[401] = EquipTable.HumanFemale[i];
                 }
 
-                if (EquipTable.ElvenMale.Contains(i))
+                if (EquipTable.ElvenMale.ContainsKey(i))
                 {
-                    animEntries[i].EquipTable[605] = (EquipTableEntry)EquipTable.ElvenMale[i];
+                    animEntries[i].EquipTable[605] = EquipTable.ElvenMale[i];
                 }
 
-                if (EquipTable.ElvenFemale.Contains(i))
+                if (EquipTable.ElvenFemale.ContainsKey(i))
                 {
-                    animEntries[i].EquipTable[606] = (EquipTableEntry)EquipTable.ElvenFemale[i];
+                    animEntries[i].EquipTable[606] = EquipTable.ElvenFemale[i];
                 }
 
-                IDictionaryEnumerator itr;
-                if (EquipTable.Misc.Contains(i))
+                if (EquipTable.Misc.ContainsKey(i))
                 {
-                    itr = ((Hashtable)EquipTable.Misc[i]).GetEnumerator();
-                    while (itr.MoveNext())
+                    foreach (var valuePair in EquipTable.Misc[i])
                     {
-                        animEntries[i].EquipTable[itr.Key] = (EquipTableEntry)itr.Value;
+                        animEntries[i].EquipTable[valuePair.Key] = valuePair.Value;
                     }
                 }
 
-                itr = animEntries[i].EquipTable.GetEnumerator();
                 if (animEntries[i].EquipTable.Count == 0)
                 {
-                    if (GumpTable.Entries.Contains(animEntries[i].FirstGump))
+                    if (GumpTable.Entries.ContainsKey(animEntries[i].FirstGump))
                     {
-                        animEntries[i].GumpDef[0] = (GumpTableEntry)GumpTable.Entries[animEntries[i].FirstGump];
+                        animEntries[i].GumpDef[0] = GumpTable.Entries[animEntries[i].FirstGump];
                     }
                 }
                 else
                 {
-                    while (itr.MoveNext())
+                    foreach (var kv in animEntries[i].EquipTable)
                     {
-                        int newGump = ((EquipTableEntry)itr.Value).NewId;
-                        if (GumpTable.Entries.Contains(newGump))
+                        if (GumpTable.Entries.ContainsKey(kv.Value.NewId))
                         {
-                            animEntries[i].GumpDef[itr.Key] = (GumpTableEntry)GumpTable.Entries[newGump];
+                            animEntries[i].GumpDef[kv.Key] = GumpTable.Entries[kv.Value.NewId];
                         }
                     }
                 }
 
-                itr.Reset();
-
                 if (animEntries[i].EquipTable.Count == 0)
                 {
                     int tmp = i;
-                    animEntries[i].TranslateAnim[0] = new TranslateAnimEntry();
-                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyDef = BodyTable.Entries.ContainsKey(tmp);
+                    animEntries[i].TranslateAnim[0] = new TranslateAnimEntry
+                    {
+                        BodyDef = BodyTable.Entries.ContainsKey(tmp)
+                    };
+
                     Animations.Translate(ref tmp);
-                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).FileIndex = BodyConverter.Convert(ref tmp);
-                    ((TranslateAnimEntry)animEntries[i].TranslateAnim[0]).BodyAndConf = tmp;
+
+                    animEntries[i].TranslateAnim[0].FileIndex = BodyConverter.Convert(ref tmp);
+                    animEntries[i].TranslateAnim[0].BodyAndConf = tmp;
                 }
                 else
                 {
-                    while (itr.MoveNext())
+                    foreach (var kv in animEntries[i].EquipTable)
                     {
-                        int tmp = ((EquipTableEntry)itr.Value).NewAnim;
-                        animEntries[i].TranslateAnim[itr.Key] = new TranslateAnimEntry();
-                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyDef = BodyTable.Entries.ContainsKey(tmp);
+                        int tmp = kv.Value.NewAnim;
+
+                        animEntries[i].TranslateAnim[kv.Key] = new TranslateAnimEntry
+                        {
+                            BodyDef = BodyTable.Entries.ContainsKey(tmp)
+                        };
+
                         Animations.Translate(ref tmp);
-                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).FileIndex = BodyConverter.Convert(ref tmp);
-                        ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyAndConf = tmp;
+
+                        animEntries[i].TranslateAnim[kv.Key].FileIndex = BodyConverter.Convert(ref tmp);
+                        animEntries[i].TranslateAnim[kv.Key].BodyAndConf = tmp;
                     }
                 }
             }
@@ -1392,26 +1397,27 @@ namespace UoFiddler.Controls.UserControls
                         tex.Write("<td></td>");
                     }
 
-                    IDictionaryEnumerator itr = animEntries[i].EquipTable.GetEnumerator();
                     tex.Write("<td>");
-                    while (itr.MoveNext())
+                    foreach (var valuePair in animEntries[i].EquipTable)
                     {
-                        if ((int)itr.Key != 0)
+                        if (valuePair.Key != 0)
                         {
-                            tex.Write(itr.Key + ":");
+                            tex.Write(valuePair.Key + ":");
                         }
 
                         openFont = false;
-                        if (animEntries[i].TranslateAnim.ContainsKey(itr.Key))
+
+                        if (animEntries[i].TranslateAnim.ContainsKey(valuePair.Key))
                         {
-                            if (!Animations.IsAnimDefined(((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).BodyAndConf, 0, 0,
-                                ((TranslateAnimEntry)animEntries[i].TranslateAnim[itr.Key]).FileIndex))
+                            if (!Animations.IsAnimDefined(animEntries[i].TranslateAnim[valuePair.Key].BodyAndConf, 0, 0, animEntries[i].TranslateAnim[valuePair.Key].FileIndex))
                             {
                                 tex.Write("<font color=#FF0000>");
                                 openFont = true;
                             }
                         }
-                        tex.Write(((EquipTableEntry)itr.Value).NewAnim);
+
+                        tex.Write(valuePair.Value.NewAnim);
+
                         if (openFont)
                         {
                             tex.Write("</font>");
@@ -1424,59 +1430,61 @@ namespace UoFiddler.Controls.UserControls
                             tex.Write("<font color=#FF0000>");
                             openFont = true;
                         }
-                        tex.Write(((EquipTableEntry)itr.Value).NewId);
+                        tex.Write(valuePair.Value.NewId);
                         if (openFont)
                         {
                             tex.Write("</font>");
                         }
 
                         tex.Write(",");
-                        tex.Write(((EquipTableEntry)itr.Value).NewHue);
+                        tex.Write(valuePair.Value.NewHue);
                         tex.Write("<br/>");
                     }
                     tex.Write("</td>");
-                    itr = animEntries[i].GumpDef.GetEnumerator();
+
                     tex.Write("<td>");
-                    while (itr.MoveNext())
+                    foreach (var valuePair in animEntries[i].GumpDef)
                     {
-                        if ((int)itr.Key != 0)
+                        if (valuePair.Key != 0)
                         {
-                            tex.Write(itr.Key + ":");
+                            tex.Write(valuePair.Key + ":");
                         }
 
                         openFont = false;
-                        if (!Gumps.IsValidIndex(((GumpTableEntry)itr.Value).NewId))
+                        if (!Gumps.IsValidIndex(valuePair.Value.NewId))
                         {
                             tex.Write("<font color=#FF0000>");
                             openFont = true;
                         }
-                        tex.Write(((GumpTableEntry)itr.Value).NewId);
+
+                        tex.Write(valuePair.Value.NewId);
+
                         if (openFont)
                         {
                             tex.Write("</font>");
                         }
 
-                        tex.Write("," + ((GumpTableEntry)itr.Value).NewHue + "<br/>");
+                        tex.Write("," + valuePair.Value.NewHue + "<br/>");
                     }
                     tex.Write("</td>");
-                    itr = animEntries[i].TranslateAnim.GetEnumerator();
+
                     tex.Write("<td>");
-                    while (itr.MoveNext())
+                    foreach (var valuePair in animEntries[i].TranslateAnim)
                     {
-                        if (((TranslateAnimEntry)itr.Value).FileIndex == 1 && !((TranslateAnimEntry)itr.Value).BodyDef)
+                        if (valuePair.Value.FileIndex == 1 && !valuePair.Value.BodyDef)
                         {
                             continue;
                         }
 
-                        if ((int)itr.Key != 0)
+                        if (valuePair.Key != 0)
                         {
-                            tex.Write(itr.Key + ":");
+                            tex.Write(valuePair.Key + ":");
                         }
 
-                        tex.Write(((TranslateAnimEntry)itr.Value).FileIndex
-                            + "," + ((TranslateAnimEntry)itr.Value).BodyAndConf + "<br/>");
+                        tex.Write($"{valuePair.Value.FileIndex},{valuePair.Value.BodyAndConf}<br/>");
                     }
                     tex.Write("</td>");
+
                     tex.Write("<td>");
                     if (i >= 400)
                     {
@@ -1533,15 +1541,15 @@ namespace UoFiddler.Controls.UserControls
         public int Animation { get; set; }
         public int FirstGump { get; set; } //+50000
         public int FirstGumpFemale { get; set; }//+60000
-        public Hashtable EquipTable { get; set; } //equipconv.def with model
-        public Hashtable GumpDef { get; set; } //gump.def if gump invalid (only for paperdoll)
-        public Hashtable TranslateAnim { get; set; }//body.def or bodyconv.def
+        public Dictionary<int, EquipTableEntry> EquipTable { get; set; } //equipconv.def with model
+        public Dictionary<int, GumpTableEntry> GumpDef { get; set; } //gump.def if gump invalid (only for paperdoll)
+        public Dictionary<int, TranslateAnimEntry> TranslateAnim { get; set; }//body.def or bodyconv.def
 
         public AnimEntry()
         {
-            EquipTable = new Hashtable();
-            GumpDef = new Hashtable();
-            TranslateAnim = new Hashtable();
+            EquipTable = new Dictionary<int, EquipTableEntry>();
+            GumpDef = new Dictionary<int, GumpTableEntry>();
+            TranslateAnim = new Dictionary<int, TranslateAnimEntry>();
         }
     }
 
@@ -1551,7 +1559,7 @@ namespace UoFiddler.Controls.UserControls
         {
             TreeNode tx = x as TreeNode;
             TreeNode ty = y as TreeNode;
-            return string.CompareOrdinal(tx.Text, ty.Text);
+            return string.CompareOrdinal(tx?.Text, ty?.Text);
         }
     }
 
@@ -1581,12 +1589,12 @@ namespace UoFiddler.Controls.UserControls
 
     public static class GumpTable
     {
-        public static Hashtable Entries { get; }
+        public static Dictionary<int, GumpTableEntry> Entries { get; }
 
         // Seems only used if Gump is invalid
         static GumpTable()
         {
-            Entries = new Hashtable();
+            Entries = new Dictionary<int, GumpTableEntry>();
             Initialize();
         }
 
@@ -1649,23 +1657,23 @@ namespace UoFiddler.Controls.UserControls
 
     public static class EquipTable
     {
-        public static Hashtable HumanMale { get; }
-        public static Hashtable HumanFemale { get; }
-        public static Hashtable ElvenMale { get; }
-        public static Hashtable ElvenFemale { get; }
-        public static Hashtable GargoyleMale { get; }
-        public static Hashtable GargoyleFemale { get; }
-        public static Hashtable Misc { get; }
+        public static Dictionary<int, EquipTableEntry> HumanMale { get; }
+        public static Dictionary<int, EquipTableEntry> HumanFemale { get; }
+        public static Dictionary<int, EquipTableEntry> ElvenMale { get; }
+        public static Dictionary<int, EquipTableEntry> ElvenFemale { get; }
+        public static Dictionary<int, EquipTableEntry> GargoyleMale { get; }
+        public static Dictionary<int, EquipTableEntry> GargoyleFemale { get; }
+        public static Dictionary<int, Dictionary<int, EquipTableEntry>> Misc { get; }
 
         static EquipTable()
         {
-            HumanMale = new Hashtable();
-            HumanFemale = new Hashtable();
-            ElvenMale = new Hashtable();
-            ElvenFemale = new Hashtable();
-            GargoyleMale = new Hashtable();
-            GargoyleFemale = new Hashtable();
-            Misc = new Hashtable();
+            HumanMale = new Dictionary<int, EquipTableEntry>();
+            HumanFemale = new Dictionary<int, EquipTableEntry>();
+            ElvenMale = new Dictionary<int, EquipTableEntry>();
+            ElvenFemale = new Dictionary<int, EquipTableEntry>();
+            GargoyleMale = new Dictionary<int, EquipTableEntry>();
+            GargoyleFemale = new Dictionary<int, EquipTableEntry>();
+            Misc = new Dictionary<int, Dictionary<int, EquipTableEntry>>();
             Initialize();
         }
 
@@ -1732,13 +1740,13 @@ namespace UoFiddler.Controls.UserControls
                                 GargoyleFemale[animId] = entry;
                                 break;
                             default:
+                                if (!Misc.ContainsKey(animId))
                                 {
-                                    if (!Misc.Contains(animId))
-                                    {
-                                        Misc[animId] = new Hashtable();
-                                    } ((Hashtable)Misc[animId])[bodyType] = entry;
-                                    break;
+                                    Misc[animId] = new Dictionary<int, EquipTableEntry>();
                                 }
+
+                                Misc[animId][bodyType] = entry;
+                                break;
                         }
                     }
                     catch
