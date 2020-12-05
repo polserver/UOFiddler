@@ -1014,7 +1014,6 @@ namespace Ultima
     /// <seealso cref="LandData" />
     /// </summary>
     [Flags]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Readability", "RCS1154:Sort enum members.", Justification = "<Pending>")]
     public enum TileFlag : ulong
     {
         /// <summary>

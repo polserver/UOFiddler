@@ -33,7 +33,7 @@ namespace UoFiddler.Controls.UserControls
         }
 
         private static bool _loaded;
-        private Animdata.Data _selData;
+        private Animdata.AnimdataEntry _selAnimdataEntry;
         private int _currAnim;
         private int _curFrame;
         private Timer _mTimer;
@@ -51,15 +51,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                _selData = (Animdata.Data)Animdata.AnimData[value];
+                _selAnimdataEntry = (Animdata.AnimdataEntry)Animdata.AnimData[value];
                 if (_currAnim != value)
                 {
                     treeViewFrames.BeginUpdate();
                     treeViewFrames.Nodes.Clear();
-                    for (int i = 0; i < _selData.FrameCount; ++i)
+                    for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
                     {
                         TreeNode node = new TreeNode();
-                        int frame = value + _selData.FrameData[i];
+                        int frame = value + _selAnimdataEntry.FrameData[i];
                         node.Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
                         treeViewFrames.Nodes.Add(node);
                     }
@@ -72,13 +72,13 @@ namespace UoFiddler.Controls.UserControls
                     int graphic = value;
                     if (_curFrame > -1)
                     {
-                        graphic += _selData.FrameData[_curFrame];
+                        graphic += _selAnimdataEntry.FrameData[_curFrame];
                     }
 
                     pictureBox1.Image = Art.GetStatic(graphic);
                 }
-                numericUpDownFrameDelay.Value = _selData.FrameInterval;
-                numericUpDownStartDelay.Value = _selData.FrameStart;
+                numericUpDownFrameDelay.Value = _selAnimdataEntry.FrameInterval;
+                numericUpDownStartDelay.Value = _selAnimdataEntry.FrameStart;
             }
         }
 
@@ -111,7 +111,7 @@ namespace UoFiddler.Controls.UserControls
 
             foreach (int id in Animdata.AnimData.Keys)
             {
-                Animdata.Data data = (Animdata.Data)Animdata.AnimData[id];
+                Animdata.AnimdataEntry animdataEntry = (Animdata.AnimdataEntry)Animdata.AnimData[id];
                 TreeNode node = new TreeNode
                 {
                     Tag = id,
@@ -127,9 +127,9 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 treeView1.Nodes.Add(node);
-                for (int i = 0; i < data.FrameCount; ++i)
+                for (int i = 0; i < animdataEntry.FrameCount; ++i)
                 {
-                    int frame = id + data.FrameData[i];
+                    int frame = id + animdataEntry.FrameData[i];
                     if (Art.IsValidStatic(frame))
                     {
                         TreeNode subNode = new TreeNode
@@ -204,7 +204,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 _mTimer = new Timer
                 {
-                    Interval = (100 * _selData.FrameInterval) + 1
+                    Interval = (100 * _selAnimdataEntry.FrameInterval) + 1
                 };
                 _mTimer.Tick += Timer_Tick;
                 _timerFrame = 0;
@@ -215,36 +215,36 @@ namespace UoFiddler.Controls.UserControls
         private void Timer_Tick(object sender, EventArgs e)
         {
             ++_timerFrame;
-            if (_timerFrame >= _selData.FrameCount)
+            if (_timerFrame >= _selAnimdataEntry.FrameCount)
             {
                 _timerFrame = 0;
             }
 
-            pictureBox1.Image = Art.GetStatic(CurrAnim + _selData.FrameData[_timerFrame]);
+            pictureBox1.Image = Art.GetStatic(CurrAnim + _selAnimdataEntry.FrameData[_timerFrame]);
         }
 
         private void OnValueChangedStartDelay(object sender, EventArgs e)
         {
-            if (_selData == null)
+            if (_selAnimdataEntry == null)
             {
                 return;
             }
 
-            _selData.FrameStart = (byte)numericUpDownStartDelay.Value;
+            _selAnimdataEntry.FrameStart = (byte)numericUpDownStartDelay.Value;
             Options.ChangedUltimaClass["Animdata"] = true;
         }
 
         private void OnValueChangedFrameDelay(object sender, EventArgs e)
         {
-            if (_selData == null)
+            if (_selAnimdataEntry == null)
             {
                 return;
             }
 
-            _selData.FrameInterval = (byte)numericUpDownFrameDelay.Value;
+            _selAnimdataEntry.FrameInterval = (byte)numericUpDownFrameDelay.Value;
             if (_mTimer != null)
             {
-                _mTimer.Interval = (100 * _selData.FrameInterval) + 1;
+                _mTimer.Interval = (100 * _selAnimdataEntry.FrameInterval) + 1;
             }
 
             Options.ChangedUltimaClass["Animdata"] = true;
@@ -252,7 +252,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickFrameDown(object sender, EventArgs e)
         {
-            if (_selData == null)
+            if (_selAnimdataEntry == null)
             {
                 return;
             }
@@ -268,21 +268,21 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = treeViewFrames.SelectedNode.Index;
-            if (index >= _selData.FrameCount - 1)
+            if (index >= _selAnimdataEntry.FrameCount - 1)
             {
                 return;
             }
 
-            sbyte temp = _selData.FrameData[index];
-            _selData.FrameData[index] = _selData.FrameData[index + 1];
-            _selData.FrameData[index + 1] = temp;
+            sbyte temp = _selAnimdataEntry.FrameData[index];
+            _selAnimdataEntry.FrameData[index] = _selAnimdataEntry.FrameData[index + 1];
+            _selAnimdataEntry.FrameData[index + 1] = temp;
 
             TreeNode listNode = treeView1.SelectedNode.Parent ?? treeView1.SelectedNode;
-            int frame = CurrAnim + _selData.FrameData[index];
+            int frame = CurrAnim + _selAnimdataEntry.FrameData[index];
             treeViewFrames.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
 
-            frame = CurrAnim + _selData.FrameData[index + 1];
+            frame = CurrAnim + _selAnimdataEntry.FrameData[index + 1];
             treeViewFrames.Nodes[index + 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index + 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
 
@@ -292,7 +292,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickFrameUp(object sender, EventArgs e)
         {
-            if (_selData == null)
+            if (_selAnimdataEntry == null)
             {
                 return;
             }
@@ -313,16 +313,16 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            sbyte temp = _selData.FrameData[index];
-            _selData.FrameData[index] = _selData.FrameData[index - 1];
-            _selData.FrameData[index - 1] = temp;
+            sbyte temp = _selAnimdataEntry.FrameData[index];
+            _selAnimdataEntry.FrameData[index] = _selAnimdataEntry.FrameData[index - 1];
+            _selAnimdataEntry.FrameData[index - 1] = temp;
 
             TreeNode listNode = treeView1.SelectedNode.Parent ?? treeView1.SelectedNode;
-            int frame = CurrAnim + _selData.FrameData[index];
+            int frame = CurrAnim + _selAnimdataEntry.FrameData[index];
             treeViewFrames.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
 
-            frame = CurrAnim + _selData.FrameData[index - 1];
+            frame = CurrAnim + _selAnimdataEntry.FrameData[index - 1];
             treeViewFrames.Nodes[index - 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index - 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             treeViewFrames.SelectedNode = treeViewFrames.Nodes[index - 1];
@@ -360,7 +360,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickAdd(object sender, EventArgs e)
         {
-            if (_selData == null)
+            if (_selAnimdataEntry == null)
             {
                 return;
             }
@@ -381,8 +381,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _selData.FrameData[_selData.FrameCount] = (sbyte)(index - CurrAnim);
-            _selData.FrameCount++;
+            _selAnimdataEntry.FrameData[_selAnimdataEntry.FrameCount] = (sbyte)(index - CurrAnim);
+            _selAnimdataEntry.FrameCount++;
 
             TreeNode node = new TreeNode
             {
@@ -392,7 +392,7 @@ namespace UoFiddler.Controls.UserControls
 
             TreeNode subNode = new TreeNode
             {
-                Tag = _selData.FrameCount - 1,
+                Tag = _selAnimdataEntry.FrameCount - 1,
                 Text = $"0x{index:X4} {TileData.ItemTable[index].Name}"
             };
 
@@ -410,30 +410,30 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            if (_selData != null)
+            if (_selAnimdataEntry != null)
             {
                 if (treeViewFrames.SelectedNode != null)
                 {
                     int index = treeViewFrames.SelectedNode.Index;
                     int i;
-                    for (i = index; i < _selData.FrameCount - 1; ++i)
+                    for (i = index; i < _selAnimdataEntry.FrameCount - 1; ++i)
                     {
-                        _selData.FrameData[i] = _selData.FrameData[i + 1];
+                        _selAnimdataEntry.FrameData[i] = _selAnimdataEntry.FrameData[i + 1];
                     }
-                    for (; i < _selData.FrameData.Length; ++i)
+                    for (; i < _selAnimdataEntry.FrameData.Length; ++i)
                     {
-                        _selData.FrameData[i] = 0;
+                        _selAnimdataEntry.FrameData[i] = 0;
                     }
 
-                    _selData.FrameCount--;
+                    _selAnimdataEntry.FrameCount--;
                     treeView1.BeginUpdate();
                     treeViewFrames.BeginUpdate();
                     treeViewFrames.Nodes.Clear();
                     TreeNode node = treeView1.SelectedNode.Parent ?? treeView1.SelectedNode;
                     node.Nodes.Clear();
-                    for (i = 0; i < _selData.FrameCount; ++i)
+                    for (i = 0; i < _selAnimdataEntry.FrameCount; ++i)
                     {
-                        int frame = CurrAnim + _selData.FrameData[i];
+                        int frame = CurrAnim + _selAnimdataEntry.FrameData[i];
                         if (Art.IsValidStatic(frame))
                         {
                             TreeNode subNode = new TreeNode
@@ -517,7 +517,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Animdata.AnimData[index] = new Animdata.Data(new sbyte[64], 0, 1, 0, 0);
+            Animdata.AnimData[index] = new Animdata.AnimdataEntry(new sbyte[64], 0, 1, 0, 0);
             TreeNode node = new TreeNode
             {
                 Tag = index,

@@ -338,7 +338,7 @@ namespace UoFiddler.Controls.Forms
 
             contextMenuStrip1.Close();
             int hueRef = 0;
-            Frame[] frames = Animations.GetAnimation(index, 0, 1, ref hueRef, false, true);
+            AnimationFrame[] frames = Animations.GetAnimation(index, 0, 1, ref hueRef, false, true);
             if (frames == null)
             {
                 return;

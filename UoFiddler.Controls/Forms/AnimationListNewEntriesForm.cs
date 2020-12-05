@@ -28,7 +28,7 @@ namespace UoFiddler.Controls.Forms
         private bool _animate;
         private Timer _timer;
         private int _frameIndex;
-        private Frame[] _animation;
+        private AnimationFrame[] _animation;
 
         public AnimationListNewEntriesForm(AnimationListControl form)
         {
@@ -411,7 +411,7 @@ namespace UoFiddler.Controls.Forms
                 int body = _currentSelect;
                 Animations.Translate(ref body);
                 int hue = 0;
-                Frame[] frames = Animations.GetAnimation(_currentSelect, CurrentSelectAction, _facing, ref hue, false, false);
+                AnimationFrame[] frames = Animations.GetAnimation(_currentSelect, CurrentSelectAction, _facing, ref hue, false, false);
                 if (frames?[0].Bitmap == null)
                 {
                     return;

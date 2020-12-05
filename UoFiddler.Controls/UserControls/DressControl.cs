@@ -376,7 +376,7 @@ namespace UoFiddler.Controls.UserControls
                         }
                     }
                 }
-                Frame[] background;
+                AnimationFrame[] background;
                 if (_hues[0] > 0)
                 {
                     hue = _hues[0];
@@ -411,7 +411,7 @@ namespace UoFiddler.Controls.UserControls
                         if (Animations.IsActionDefined(_mount, mountAction, _facing))
                         {
                             hue = 0;
-                            Frame[] mountFrame = Animations.GetAnimation(_mount, mountAction, _facing, ref hue, false, false);
+                            AnimationFrame[] mountFrame = Animations.GetAnimation(_mount, mountAction, _facing, ref hue, false, false);
                             if (mountFrame.Length > 0 && mountFrame[0].Bitmap != null)
                             {
                                 draw.X = _drawPointAni.X - mountFrame[0].Center.X;
@@ -454,7 +454,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    Frame[] frames;
+                    AnimationFrame[] frames;
                     if (_hues[animOrder[i]] > 0)
                     {
                         hue = _hues[animOrder[i]];
@@ -520,7 +520,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            Frame[] mobile;
+            AnimationFrame[] mobile;
             if (_hues[0] > 0)
             {
                 hue = _hues[0];
@@ -570,7 +570,7 @@ namespace UoFiddler.Controls.UserControls
                             if (Animations.IsActionDefined(_mount, mountAction, _facing))
                             {
                                 hue = 0;
-                                Frame[] mountFrame = Animations.GetAnimation(_mount, mountAction, _facing, ref hue, false, false);
+                                AnimationFrame[] mountFrame = Animations.GetAnimation(_mount, mountAction, _facing, ref hue, false, false);
                                 if (mountFrame.Length > i && mountFrame[i].Bitmap != null)
                                 {
                                     draw.X = _drawPointAni.X - mountFrame[i].Center.X;
@@ -599,7 +599,7 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        Frame[] frames;
+                        AnimationFrame[] frames;
                         if (_hues[animOrder[j]] > 0)
                         {
                             hue = _hues[animOrder[j]];
@@ -710,11 +710,11 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxDress.Invalidate();
             TextBox.Clear();
             TextBox.AppendText(
-                $"Objtype: 0x{(int)e.Node.Tag:X4}  Layer: 0x{TileData.ItemTable[(int)e.Node.Tag].Quality:X2}\n");
-            TextBox.AppendText($"GumpID: 0x{gump:X4} (0x{gumpOrig:X4}) Hue: {hue + 1}\n");
+                $"Objtype: 0x{(int)e.Node.Tag:X4}\nLayer: 0x{TileData.ItemTable[(int)e.Node.Tag].Quality:X2}\n");
+            TextBox.AppendText($"GumpID: 0x{gump:X4} (0x{gumpOrig:X4})\nHue: {hue + 1}\n");
             TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[(int)e.Node.Tag].Animation:X4})\n");
             TextBox.AppendText(
-                $"ValidGump: {Gumps.IsValidIndex(gump)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}\n");
+                $"ValidGump: {Gumps.IsValidIndex(gump)}\nValidAnim: {Animations.IsActionDefined(ani, 0, 0)}\n");
             TextBox.AppendText(
                 $"ValidLayer: {Array.IndexOf(_drawOrder, TileData.ItemTable[(int)e.Node.Tag].Quality) != -1}");
         }

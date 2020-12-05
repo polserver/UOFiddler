@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,7 +8,7 @@ namespace Ultima
         private static int[] _header;
         private static byte[] _unknown;
 
-        public static Dictionary<int, Data> AnimData { get; private set; }
+        public static Dictionary<int, AnimdataEntry> AnimData { get; private set; }
 
         static Animdata()
         {
@@ -21,7 +20,7 @@ namespace Ultima
         /// </summary>
         public static void Initialize()
         {
-            AnimData = new Dictionary<int, Data>();
+            AnimData = new Dictionary<int, AnimdataEntry>();
 
             string path = Files.GetFilePath("animdata.mul");
             if (path == null)
@@ -62,7 +61,7 @@ namespace Ultima
                                     byte fstart = *data++;
                                     if (fcount > 0)
                                     {
-                                        AnimData[id] = new Data(fdata, unk, fcount, finter, fstart);
+                                        AnimData[id] = new AnimdataEntry(fdata, unk, fcount, finter, fstart);
                                     }
                                 }
                             }
@@ -79,11 +78,11 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Gets Animation <see cref="Data"/>
+        /// Gets Animation <see cref="AnimdataEntry"/>
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Data GetAnimData(int id)
+        public static AnimdataEntry GetAnimData(int id)
         {
             return AnimData.ContainsKey(id) ? AnimData[id] : null;
         }
@@ -101,12 +100,12 @@ namespace Ultima
                     bin.Write(_header[h++]);
                     for (int i = 0; i < 8; ++i, ++id)
                     {
-                        Data data = GetAnimData(id);
+                        AnimdataEntry animdataEntry = GetAnimData(id);
                         for (int j = 0; j < 64; ++j)
                         {
-                            if (data != null)
+                            if (animdataEntry != null)
                             {
-                                bin.Write(data.FrameData[j]);
+                                bin.Write(animdataEntry.FrameData[j]);
                             }
                             else
                             {
@@ -114,12 +113,12 @@ namespace Ultima
                             }
                         }
 
-                        if (data != null)
+                        if (animdataEntry != null)
                         {
-                            bin.Write(data.Unknown);
-                            bin.Write(data.FrameCount);
-                            bin.Write(data.FrameInterval);
-                            bin.Write(data.FrameStart);
+                            bin.Write(animdataEntry.Unknown);
+                            bin.Write(animdataEntry.FrameCount);
+                            bin.Write(animdataEntry.FrameInterval);
+                            bin.Write(animdataEntry.FrameStart);
                         }
                         else
                         {
@@ -138,7 +137,7 @@ namespace Ultima
             }
         }
 
-        public class Data
+        public class AnimdataEntry
         {
             public sbyte[] FrameData { get; set; }
             public byte Unknown { get; }
@@ -146,7 +145,7 @@ namespace Ultima
             public byte FrameInterval { get; set; }
             public byte FrameStart { get; set; }
 
-            public Data(sbyte[] frame, byte unk, byte fcount, byte finter, byte fstart)
+            public AnimdataEntry(sbyte[] frame, byte unk, byte fcount, byte finter, byte fstart)
             {
                 FrameData = frame;
                 Unknown = unk;
