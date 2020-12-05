@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -13,7 +14,7 @@ namespace Ultima
 
         private static Bitmap[] _cache;
         private static bool[] _removed;
-        private static readonly Hashtable _patched = new Hashtable();
+        private static readonly Dictionary<int, bool> _patched = new Dictionary<int, bool>();
 
         private static byte[] _pixelBuffer;
         private static byte[] _streamBuffer;
@@ -71,7 +72,7 @@ namespace Ultima
         {
             _cache[index] = bmp;
             _removed[index] = false;
-            if (_patched.Contains(index))
+            if (_patched.ContainsKey(index))
             {
                 _patched.Remove(index);
             }
@@ -347,14 +348,7 @@ namespace Ultima
         /// <returns></returns>
         public static unsafe Bitmap GetGump(int index, out bool patched)
         {
-            if (_patched.Contains(index))
-            {
-                patched = (bool)_patched[index];
-            }
-            else
-            {
-                patched = false;
-            }
+            patched = _patched.ContainsKey(index) && _patched[index];
 
             if (index > _cache.Length - 1)
             {
