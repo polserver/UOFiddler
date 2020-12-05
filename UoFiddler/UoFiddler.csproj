@@ -8,9 +8,10 @@
     <AssemblyTitle>UoFiddler</AssemblyTitle>
     <Product>UoFiddler</Product>
     <Copyright>Copyright © 2020</Copyright>
-    <AssemblyVersion>4.9.4</AssemblyVersion>
-    <FileVersion>4.9.4</FileVersion>
+    <AssemblyVersion>4.9.5</AssemblyVersion>
+    <FileVersion>4.9.5</FileVersion>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Version>4.9.5</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>portable</DebugType>
