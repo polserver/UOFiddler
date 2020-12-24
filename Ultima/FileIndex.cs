@@ -17,7 +17,6 @@ namespace Ultima
         public FileIndex(string idxFile, string mulFile, int length, int file) : this(idxFile, mulFile, null, length,
             file, ".dat", -1, false)
         {
-
         }
 
         public FileIndex(string idxFile, string mulFile, string uopFile, int length, int file, string uopEntryExtension,

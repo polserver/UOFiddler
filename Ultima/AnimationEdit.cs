@@ -90,8 +90,8 @@ namespace Ultima
         {
             switch (fileType)
             {
-                default:
                 case 1:
+                default:
                     fileIndex = _fileIndex;
                     if (body < 200)
                     {
@@ -797,7 +797,7 @@ namespace Ultima
         }
         // End of Soulblighter Modification
 
-        public unsafe void ExportPalette(string filename, int type)
+        public void ExportPalette(string filename, int type)
         {
             switch (type)
             {
@@ -811,49 +811,37 @@ namespace Ultima
                     }
                     break;
                 case 1:
-                    {
-                        var bmp = new Bitmap(0x100, 20, PixelFormat.Format16bppArgb1555);
-                        BitmapData bd = bmp.LockBits(
-                            new Rectangle(0, 0, 0x100, 20), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                        var line = (ushort*)bd.Scan0;
-                        int delta = bd.Stride >> 1;
-                        for (int y = 0; y < bd.Height; ++y, line += delta)
-                        {
-                            ushort* cur = line;
-                            for (int i = 0; i < 0x100; ++i)
-                            {
-                                *cur++ = Palette[i];
-                            }
-                        }
-                        bmp.UnlockBits(bd);
-                        var b = new Bitmap(bmp);
-                        b.Save(filename, ImageFormat.Bmp);
-                        b.Dispose();
-                        bmp.Dispose();
-                        break;
-                    }
+                    SavePaletteImage(filename, ImageFormat.Bmp);
+                    break;
                 case 2:
+                    SavePaletteImage(filename, ImageFormat.Tiff);
+                    break;
+            }
+        }
+
+        private unsafe void SavePaletteImage(string filename, ImageFormat imageFormat)
+        {
+            using (var bmp = new Bitmap(0x100, 20, PixelFormat.Format16bppArgb1555))
+            {
+                BitmapData bd = bmp.LockBits(
+                    new Rectangle(0, 0, 0x100, 20), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                var line = (ushort*) bd.Scan0;
+                int delta = bd.Stride >> 1;
+
+                for (int y = 0; y < bd.Height; ++y, line += delta)
+                {
+                    ushort* cur = line;
+                    for (int i = 0; i < 0x100; ++i)
                     {
-                        var bmp = new Bitmap(0x100, 20, PixelFormat.Format16bppArgb1555);
-                        BitmapData bd = bmp.LockBits(
-                            new Rectangle(0, 0, 0x100, 20), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                        var line = (ushort*)bd.Scan0;
-                        int delta = bd.Stride >> 1;
-                        for (int y = 0; y < bd.Height; ++y, line += delta)
-                        {
-                            ushort* cur = line;
-                            for (int i = 0; i < 0x100; ++i)
-                            {
-                                *cur++ = Palette[i];
-                            }
-                        }
-                        bmp.UnlockBits(bd);
-                        var b = new Bitmap(bmp);
-                        b.Save(filename, ImageFormat.Tiff);
-                        b.Dispose();
-                        bmp.Dispose();
-                        break;
+                        *cur++ = Palette[i];
                     }
+                }
+
+                bmp.UnlockBits(bd);
+                using (var b = new Bitmap(bmp))
+                {
+                    b.Save(filename, imageFormat);
+                }
             }
         }
 
@@ -1081,9 +1069,9 @@ namespace Ultima
             Center = new Point(x, y);
         }
 
-        private static byte GetPaletteIndex(ushort[] palette, ushort col)
+        private static byte GetPaletteIndex(IReadOnlyList<ushort> palette, ushort col)
         {
-            for (int i = 0; i < palette.Length; i++)
+            for (int i = 0; i < palette.Count; i++)
             {
                 if (palette[i] == col)
                 {

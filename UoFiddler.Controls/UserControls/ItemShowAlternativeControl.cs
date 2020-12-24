@@ -395,7 +395,7 @@ namespace UoFiddler.Controls.UserControls
         {
             pictureBox.Invalidate();
         }
-        
+
         private Color _backgroundColorItem = Color.White;
         private void OnPaint(object sender, PaintEventArgs e)
         {

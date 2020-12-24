@@ -298,8 +298,8 @@ namespace Ultima
         {
             switch (fileType)
             {
-                default:
                 case 1:
+                default:
                     return 400 + ((int)(_fileIndex.IdxLength - (35000 * 12)) / (12 * 175));
                 case 2:
                     return 200 + ((int)(_fileIndex2.IdxLength - (22000 * 12)) / (12 * 65));
@@ -323,8 +323,8 @@ namespace Ultima
             int length;
             switch (fileType)
             {
-                default:
                 case 1:
+                default:
                     if (body < 200)
                     {
                         length = 22; // high
@@ -398,8 +398,8 @@ namespace Ultima
         {
             switch (fileType)
             {
-                default:
                 case 1:
+                default:
                     fileIndex = _fileIndex;
                     if (body < 200)
                     {

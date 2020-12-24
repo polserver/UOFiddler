@@ -54,7 +54,7 @@ namespace Ultima
 
                     try
                     {
-                        string[] split = line.Split(new [] {'\t', ' '}, StringSplitOptions.RemoveEmptyEntries); 
+                        string[] split = line.Split(new [] {'\t', ' '}, StringSplitOptions.RemoveEmptyEntries);
 
                         bool hasOriginalBodyId = int.TryParse(split[0], out int original);
                         if (!hasOriginalBodyId)
@@ -310,8 +310,8 @@ namespace Ultima
         {
             switch (fileType)
             {
-                default:
                 case 1:
+                default:
                 {
                     return index;
                 }

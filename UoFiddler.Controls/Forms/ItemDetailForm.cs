@@ -25,8 +25,9 @@ namespace UoFiddler.Controls.Forms
         public ItemDetailForm(int i)
         {
             InitializeComponent();
-            Icon = Options.GetFiddlerIcon();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
+            Icon = Options.GetFiddlerIcon();
             _index = i;
             Data.AddBasicContextMenu();
         }
@@ -210,6 +211,7 @@ namespace UoFiddler.Controls.Forms
                 _mTimer.Dispose();
                 _mTimer = null;
             }
+
             if (_showForm?.IsDisposed == false)
             {
                 _showForm.Close();
@@ -218,48 +220,44 @@ namespace UoFiddler.Controls.Forms
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            if (!Art.IsValidStatic(_index))
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Item 0x{_index:X}.bmp");
-            Bitmap bit = new Bitmap(Art.GetStatic(_index).Width, Art.GetStatic(_index).Height);
-            Graphics newgraph = Graphics.FromImage(bit);
-            newgraph.Clear(Color.Transparent);
-            Bitmap huebit = new Bitmap(Art.GetStatic(_index));
-            if (_defHue > 0)
-            {
-                Hue hue = Hues.List[_defHue];
-                hue.ApplyTo(huebit, _partialHue);
-            }
-            newgraph.DrawImage(huebit, 0, 0);
-            bit.Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            SaveImage(ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
+        {
+            SaveImage(ImageFormat.Tiff);
+        }
+
+        private void SaveImage(ImageFormat imageFormat)
         {
             if (!Art.IsValidStatic(_index))
             {
                 return;
             }
 
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Item 0x{_index:X}.tiff");
-            Bitmap bit = new Bitmap(Art.GetStatic(_index).Width, Art.GetStatic(_index).Height);
-            Graphics newgraph = Graphics.FromImage(bit);
-            newgraph.Clear(Color.Transparent);
-            Bitmap huebit = new Bitmap(Art.GetStatic(_index));
-            if (_defHue > 0)
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            string fileName = Path.Combine(Options.OutputPath, $"Item 0x{_index:X}.{fileExtension}");
+
+            using (Bitmap bit = new Bitmap(Art.GetStatic(_index).Width, Art.GetStatic(_index).Height))
             {
-                Hue hue = Hues.List[_defHue];
-                hue.ApplyTo(huebit, _partialHue);
+                using (Graphics newGraphic = Graphics.FromImage(bit))
+                {
+                    newGraphic.Clear(Color.Transparent);
+                    using (Bitmap huedBitmap = new Bitmap(Art.GetStatic(_index)))
+                    {
+                        if (_defHue > 0)
+                        {
+                            Hue hue = Hues.List[_defHue];
+                            hue.ApplyTo(huedBitmap, _partialHue);
+                        }
+
+                        newGraphic.DrawImage(huedBitmap, 0, 0);
+                    }
+                }
+
+                bit.Save(fileName, imageFormat);
             }
-            newgraph.DrawImage(huebit, 0, 0);
-            bit.Save(fileName, ImageFormat.Tiff);
+
             MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
