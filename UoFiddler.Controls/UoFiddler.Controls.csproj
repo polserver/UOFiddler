@@ -1,521 +1,520 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>Controls</AssemblyName>
-    <TargetFramework>net48</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyTitle>Controls</AssemblyTitle>
-    <Product>Controls</Product>
-    <Copyright>Copyright © 2020</Copyright>
-    <AssemblyVersion>4.4.0</AssemblyVersion>
-    <FileVersion>4.4.0</FileVersion>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Design" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Forms\AnimationEditForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\AnimationEditForm.Designer.cs">
-      <DependentUpon>AnimationEditForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\AnimationListNewEntriesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\AnimationListNewEntriesForm.Designer.cs">
-      <DependentUpon>AnimationListNewEntriesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\AnimDataControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\AnimDataControl.Designer.cs">
-      <DependentUpon>AnimDataControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ClilocAddForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ClilocAddForm.Designer.cs">
-      <DependentUpon>ClilocAddForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CollapsibleSplitter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CollapsibleSplitter.Designer.cs">
-      <DependentUpon>CollapsibleSplitter.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\GumpSearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\GumpSearchForm.Designer.cs">
-      <DependentUpon>GumpSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\SoundsSearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\SoundsSearchForm.Designer.cs">
-      <DependentUpon>SoundsSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ProgressBarDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ProgressBarDialog.Designer.cs">
-      <DependentUpon>ProgressBarDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\SkillGroupControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\SkillGroupControl.Designer.cs">
-      <DependentUpon>SkillGroupControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapClearStaticsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapClearStaticsForm.Designer.cs">
-      <DependentUpon>MapClearStaticsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\FontOffsetForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\FontOffsetForm.Designer.cs">
-      <DependentUpon>FontOffsetForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\FontsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\FontsControl.Designer.cs">
-      <DependentUpon>FontsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\ClilocControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\ClilocControl.Designer.cs">
-      <DependentUpon>ClilocControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ClilocDetailForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ClilocDetailForm.Designer.cs">
-      <DependentUpon>ClilocDetailForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\DressControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\DressControl.Designer.cs">
-      <DependentUpon>DressControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\FontTextForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\FontTextForm.Designer.cs">
-      <DependentUpon>FontTextForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\HueEditForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\HueEditForm.Designer.cs">
-      <DependentUpon>HueEditForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\HuePopUpItemForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\HuePopUpItemForm.Designer.cs">
-      <DependentUpon>HuePopUpItemForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\GumpControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\GumpControl.Designer.cs">
-      <DependentUpon>GumpControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\HuePopUpForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\HuePopUpForm.Designer.cs">
-      <DependentUpon>HuePopUpForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\HuesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\HuesControl.Designer.cs">
-      <DependentUpon>HuesControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ItemDetailForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ItemDetailForm.Designer.cs">
-      <DependentUpon>ItemDetailForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ItemSearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ItemSearchForm.Designer.cs">
-      <DependentUpon>ItemSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\ItemShowControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\ItemShowControl.Designer.cs">
-      <DependentUpon>ItemShowControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\ItemShowAlternativeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\ItemShowAlternativeControl.Designer.cs">
-      <DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\HuePopUpDress.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\HuePopUpDress.Designer.cs">
-      <DependentUpon>HuePopUpDress.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapDiffInsertForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapDiffInsertForm.Designer.cs">
-      <DependentUpon>MapDiffInsertForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\LandTilesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\LandTilesControl.Designer.cs">
-      <DependentUpon>LandTilesControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\LandTilesAlternativeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\LandTilesAlternativeControl.Designer.cs">
-      <DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\LandTileSearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\LandTileSearchForm.Designer.cs">
-      <DependentUpon>LandTileSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\LightControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\LightControl.Designer.cs">
-      <DependentUpon>LightControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\MapControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\MapControl.Designer.cs">
-      <DependentUpon>MapControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapMeltStaticsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapMeltStaticsForm.Designer.cs">
-      <DependentUpon>MapMeltStaticsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapReplaceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapReplaceForm.Designer.cs">
-      <DependentUpon>MapReplaceForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapDetailsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapDetailsForm.Designer.cs">
-      <DependentUpon>MapDetailsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\AnimationListControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\AnimationListControl.Designer.cs">
-      <DependentUpon>AnimationListControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapMarkerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapMarkerForm.Designer.cs">
-      <DependentUpon>MapMarkerForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MapReplaceTilesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MapReplaceTilesForm.Designer.cs">
-      <DependentUpon>MapReplaceTilesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MultiImportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MultiImportForm.Designer.cs">
-      <DependentUpon>MultiImportForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\MultiMapControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\MultiMapControl.Designer.cs">
-      <DependentUpon>MultiMapControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\MultisControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\MultisControl.Designer.cs">
-      <DependentUpon>MultisControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\RadarColorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\RadarColorControl.Designer.cs">
-      <DependentUpon>RadarColorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\SkillsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\SkillsControl.Designer.cs">
-      <DependentUpon>SkillsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\SoundsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\SoundsControl.Designer.cs">
-      <DependentUpon>SoundsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\SpeechControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\SpeechControl.Designer.cs">
-      <DependentUpon>SpeechControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\TextureControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\TextureControl.Designer.cs">
-      <DependentUpon>TextureControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\TextureAlternativeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\TextureAlternativeControl.Designer.cs">
-      <DependentUpon>TextureAlternativeControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\TextureSearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\TextureSearchForm.Designer.cs">
-      <DependentUpon>TextureSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\TileDataFilterForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\TileDataFilterForm.Designer.cs">
-      <DependentUpon>TileDataFilterForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\TileDataControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\TileDataControl.Designer.cs">
-      <DependentUpon>TileDataControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\TileDatasSearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\TileDatasSearchForm.Designer.cs">
-      <DependentUpon>TileDatasSearchForm.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ultima\Ultima.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Forms\AnimationEditForm.resx">
-      <DependentUpon>AnimationEditForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\AnimationListNewEntriesForm.resx">
-      <DependentUpon>AnimationListNewEntriesForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\AnimDataControl.resx">
-      <DependentUpon>AnimDataControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ClilocAddForm.resx">
-      <DependentUpon>ClilocAddForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\GumpSearchForm.resx">
-      <DependentUpon>GumpSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\SoundsSearchForm.resx">
-      <DependentUpon>SoundsSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ProgressBarDialog.resx">
-      <DependentUpon>ProgressBarDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\SkillGroupControl.resx">
-      <DependentUpon>SkillGroupControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapClearStaticsForm.resx">
-      <DependentUpon>MapClearStaticsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\FontOffsetForm.resx">
-      <DependentUpon>FontOffsetForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\FontsControl.resx">
-      <DependentUpon>FontsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\ClilocControl.resx">
-      <DependentUpon>ClilocControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ClilocDetailForm.resx">
-      <DependentUpon>ClilocDetailForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\DressControl.resx">
-      <DependentUpon>DressControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\FontTextForm.resx">
-      <DependentUpon>FontTextForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\HueEditForm.resx">
-      <DependentUpon>HueEditForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\HuePopUpItemForm.resx">
-      <DependentUpon>HuePopUpItemForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\GumpControl.resx">
-      <DependentUpon>GumpControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\HuePopUpForm.resx">
-      <DependentUpon>HuePopUpForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\HuesControl.resx">
-      <DependentUpon>HuesControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ItemDetailForm.resx">
-      <DependentUpon>ItemDetailForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ItemSearchForm.resx">
-      <DependentUpon>ItemSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\ItemShowControl.resx">
-      <DependentUpon>ItemShowControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\ItemShowAlternativeControl.resx">
-      <DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\HuePopUpDress.resx">
-      <DependentUpon>HuePopUpDress.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapDiffInsertForm.resx">
-      <DependentUpon>MapDiffInsertForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\LandTilesControl.resx">
-      <DependentUpon>LandTilesControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\LandTilesAlternativeControl.resx">
-      <DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\LandTileSearchForm.resx">
-      <DependentUpon>LandTileSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\LightControl.resx">
-      <DependentUpon>LightControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\MapControl.resx">
-      <DependentUpon>MapControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapMeltStaticsForm.resx">
-      <DependentUpon>MapMeltStaticsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapReplaceForm.resx">
-      <DependentUpon>MapReplaceForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapDetailsForm.resx">
-      <DependentUpon>MapDetailsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\AnimationListControl.resx">
-      <DependentUpon>AnimationListControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapMarkerForm.resx">
-      <DependentUpon>MapMarkerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MapReplaceTilesForm.resx">
-      <DependentUpon>MapReplaceTilesForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MultiImportForm.resx">
-      <DependentUpon>MultiImportForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\MultiMapControl.resx">
-      <DependentUpon>MultiMapControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\MultisControl.resx">
-      <DependentUpon>MultisControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\RadarColorControl.resx">
-      <DependentUpon>RadarColorControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\SkillsControl.resx">
-      <DependentUpon>SkillsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\SoundsControl.resx">
-      <DependentUpon>SoundsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\SpeechControl.resx">
-      <DependentUpon>SpeechControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\TextureControl.resx">
-      <DependentUpon>TextureControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\TextureAlternativeControl.resx">
-      <DependentUpon>TextureAlternativeControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\TextureSearchForm.resx">
-      <DependentUpon>TextureSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\TileDataFilterForm.resx">
-      <DependentUpon>TileDataFilterForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\TileDataControl.resx">
-      <DependentUpon>TileDataControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\TileDatasSearchForm.resx">
-      <DependentUpon>TileDatasSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CollapsibleSplitter.resx">
-      <DependentUpon>CollapsibleSplitter.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cadeado.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\mouse.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\QuadradoCheio.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\QuadradoVazio.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\staticPlayButton.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.10.0" />
-  </ItemGroup>
+	<PropertyGroup>
+		<AssemblyName>Controls</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>Controls</AssemblyTitle>
+		<Product>Controls</Product>
+		<Copyright>Copyright © 2020</Copyright>
+		<AssemblyVersion>4.4.0</AssemblyVersion>
+		<FileVersion>4.4.0</FileVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+		<UseVSHostingProcess>false</UseVSHostingProcess>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Design" />
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Forms\AnimationEditForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\AnimationEditForm.Designer.cs">
+			<DependentUpon>AnimationEditForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\AnimationListNewEntriesForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\AnimationListNewEntriesForm.Designer.cs">
+			<DependentUpon>AnimationListNewEntriesForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\AnimDataControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\AnimDataControl.Designer.cs">
+			<DependentUpon>AnimDataControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ClilocAddForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ClilocAddForm.Designer.cs">
+			<DependentUpon>ClilocAddForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CollapsibleSplitter.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CollapsibleSplitter.Designer.cs">
+			<DependentUpon>CollapsibleSplitter.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\GumpSearchForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\GumpSearchForm.Designer.cs">
+			<DependentUpon>GumpSearchForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\SoundsSearchForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\SoundsSearchForm.Designer.cs">
+			<DependentUpon>SoundsSearchForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ProgressBarDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ProgressBarDialog.Designer.cs">
+			<DependentUpon>ProgressBarDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\SkillGroupControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\SkillGroupControl.Designer.cs">
+			<DependentUpon>SkillGroupControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapClearStaticsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapClearStaticsForm.Designer.cs">
+			<DependentUpon>MapClearStaticsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\FontOffsetForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\FontOffsetForm.Designer.cs">
+			<DependentUpon>FontOffsetForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\FontsControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\FontsControl.Designer.cs">
+			<DependentUpon>FontsControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\ClilocControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\ClilocControl.Designer.cs">
+			<DependentUpon>ClilocControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ClilocDetailForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ClilocDetailForm.Designer.cs">
+			<DependentUpon>ClilocDetailForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\DressControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\DressControl.Designer.cs">
+			<DependentUpon>DressControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\FontTextForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\FontTextForm.Designer.cs">
+			<DependentUpon>FontTextForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\HueEditForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\HueEditForm.Designer.cs">
+			<DependentUpon>HueEditForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\HuePopUpItemForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\HuePopUpItemForm.Designer.cs">
+			<DependentUpon>HuePopUpItemForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\GumpControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\GumpControl.Designer.cs">
+			<DependentUpon>GumpControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\HuePopUpForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\HuePopUpForm.Designer.cs">
+			<DependentUpon>HuePopUpForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\HuesControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\HuesControl.Designer.cs">
+			<DependentUpon>HuesControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ItemDetailForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ItemDetailForm.Designer.cs">
+			<DependentUpon>ItemDetailForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ItemSearchForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ItemSearchForm.Designer.cs">
+			<DependentUpon>ItemSearchForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\ItemShowControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\ItemShowControl.Designer.cs">
+			<DependentUpon>ItemShowControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\ItemShowAlternativeControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\ItemShowAlternativeControl.Designer.cs">
+			<DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\HuePopUpDress.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\HuePopUpDress.Designer.cs">
+			<DependentUpon>HuePopUpDress.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapDiffInsertForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapDiffInsertForm.Designer.cs">
+			<DependentUpon>MapDiffInsertForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\LandTilesControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\LandTilesControl.Designer.cs">
+			<DependentUpon>LandTilesControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\LandTilesAlternativeControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\LandTilesAlternativeControl.Designer.cs">
+			<DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\LandTileSearchForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\LandTileSearchForm.Designer.cs">
+			<DependentUpon>LandTileSearchForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\LightControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\LightControl.Designer.cs">
+			<DependentUpon>LightControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\MapControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\MapControl.Designer.cs">
+			<DependentUpon>MapControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapMeltStaticsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapMeltStaticsForm.Designer.cs">
+			<DependentUpon>MapMeltStaticsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapReplaceForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapReplaceForm.Designer.cs">
+			<DependentUpon>MapReplaceForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapDetailsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapDetailsForm.Designer.cs">
+			<DependentUpon>MapDetailsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\AnimationListControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\AnimationListControl.Designer.cs">
+			<DependentUpon>AnimationListControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapMarkerForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapMarkerForm.Designer.cs">
+			<DependentUpon>MapMarkerForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MapReplaceTilesForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MapReplaceTilesForm.Designer.cs">
+			<DependentUpon>MapReplaceTilesForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MultiImportForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MultiImportForm.Designer.cs">
+			<DependentUpon>MultiImportForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\MultiMapControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\MultiMapControl.Designer.cs">
+			<DependentUpon>MultiMapControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\MultisControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\MultisControl.Designer.cs">
+			<DependentUpon>MultisControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\RadarColorControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\RadarColorControl.Designer.cs">
+			<DependentUpon>RadarColorControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\SkillsControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\SkillsControl.Designer.cs">
+			<DependentUpon>SkillsControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\SoundsControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\SoundsControl.Designer.cs">
+			<DependentUpon>SoundsControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\SpeechControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\SpeechControl.Designer.cs">
+			<DependentUpon>SpeechControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\TextureControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\TextureControl.Designer.cs">
+			<DependentUpon>TextureControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\TextureAlternativeControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\TextureAlternativeControl.Designer.cs">
+			<DependentUpon>TextureAlternativeControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\TextureSearchForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\TextureSearchForm.Designer.cs">
+			<DependentUpon>TextureSearchForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\TileDataFilterForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\TileDataFilterForm.Designer.cs">
+			<DependentUpon>TileDataFilterForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\TileDataControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\TileDataControl.Designer.cs">
+			<DependentUpon>TileDataControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\TileDatasSearchForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\TileDatasSearchForm.Designer.cs">
+			<DependentUpon>TileDatasSearchForm.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Forms\AnimationEditForm.resx">
+			<DependentUpon>AnimationEditForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\AnimationListNewEntriesForm.resx">
+			<DependentUpon>AnimationListNewEntriesForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\AnimDataControl.resx">
+			<DependentUpon>AnimDataControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ClilocAddForm.resx">
+			<DependentUpon>ClilocAddForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\GumpSearchForm.resx">
+			<DependentUpon>GumpSearchForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\SoundsSearchForm.resx">
+			<DependentUpon>SoundsSearchForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ProgressBarDialog.resx">
+			<DependentUpon>ProgressBarDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\SkillGroupControl.resx">
+			<DependentUpon>SkillGroupControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapClearStaticsForm.resx">
+			<DependentUpon>MapClearStaticsForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\FontOffsetForm.resx">
+			<DependentUpon>FontOffsetForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\FontsControl.resx">
+			<DependentUpon>FontsControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\ClilocControl.resx">
+			<DependentUpon>ClilocControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ClilocDetailForm.resx">
+			<DependentUpon>ClilocDetailForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\DressControl.resx">
+			<DependentUpon>DressControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\FontTextForm.resx">
+			<DependentUpon>FontTextForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\HueEditForm.resx">
+			<DependentUpon>HueEditForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\HuePopUpItemForm.resx">
+			<DependentUpon>HuePopUpItemForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\GumpControl.resx">
+			<DependentUpon>GumpControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\HuePopUpForm.resx">
+			<DependentUpon>HuePopUpForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\HuesControl.resx">
+			<DependentUpon>HuesControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ItemDetailForm.resx">
+			<DependentUpon>ItemDetailForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ItemSearchForm.resx">
+			<DependentUpon>ItemSearchForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\ItemShowControl.resx">
+			<DependentUpon>ItemShowControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\ItemShowAlternativeControl.resx">
+			<DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\HuePopUpDress.resx">
+			<DependentUpon>HuePopUpDress.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapDiffInsertForm.resx">
+			<DependentUpon>MapDiffInsertForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\LandTilesControl.resx">
+			<DependentUpon>LandTilesControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\LandTilesAlternativeControl.resx">
+			<DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\LandTileSearchForm.resx">
+			<DependentUpon>LandTileSearchForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\LightControl.resx">
+			<DependentUpon>LightControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\MapControl.resx">
+			<DependentUpon>MapControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapMeltStaticsForm.resx">
+			<DependentUpon>MapMeltStaticsForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapReplaceForm.resx">
+			<DependentUpon>MapReplaceForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapDetailsForm.resx">
+			<DependentUpon>MapDetailsForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\AnimationListControl.resx">
+			<DependentUpon>AnimationListControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapMarkerForm.resx">
+			<DependentUpon>MapMarkerForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MapReplaceTilesForm.resx">
+			<DependentUpon>MapReplaceTilesForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MultiImportForm.resx">
+			<DependentUpon>MultiImportForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\MultiMapControl.resx">
+			<DependentUpon>MultiMapControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\MultisControl.resx">
+			<DependentUpon>MultisControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\RadarColorControl.resx">
+			<DependentUpon>RadarColorControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\SkillsControl.resx">
+			<DependentUpon>SkillsControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\SoundsControl.resx">
+			<DependentUpon>SoundsControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\SpeechControl.resx">
+			<DependentUpon>SpeechControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\TextureControl.resx">
+			<DependentUpon>TextureControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\TextureAlternativeControl.resx">
+			<DependentUpon>TextureAlternativeControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\TextureSearchForm.resx">
+			<DependentUpon>TextureSearchForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\TileDataFilterForm.resx">
+			<DependentUpon>TileDataFilterForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\TileDataControl.resx">
+			<DependentUpon>TileDataControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\TileDatasSearchForm.resx">
+			<DependentUpon>TileDatasSearchForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CollapsibleSplitter.resx">
+			<DependentUpon>CollapsibleSplitter.cs</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\cadeado.gif" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\mouse.bmp" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\QuadradoCheio.jpg" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\QuadradoVazio.gif" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\staticPlayButton.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.10.0" />
+	</ItemGroup>
 </Project>

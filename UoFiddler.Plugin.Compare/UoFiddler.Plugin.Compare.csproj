@@ -1,106 +1,105 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>ComparePlugin</AssemblyName>
-    <TargetFramework>net48</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyTitle>ComparePlugin</AssemblyTitle>
-    <Product>ComparePlugin</Product>
-    <Copyright>Copyright © 2020</Copyright>
-    <AssemblyVersion>1.7.0.0</AssemblyVersion>
-    <FileVersion>1.7.0.0</FileVersion>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="UserControls\CompareCliLocControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareCliLocControl.Designer.cs">
-      <DependentUpon>CompareCliLocControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CompareGumpControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareGumpControl.Designer.cs">
-      <DependentUpon>CompareGumpControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CompareHuesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareHuesControl.Designer.cs">
-      <DependentUpon>CompareHuesControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CompareItemControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareItemControl.Designer.cs">
-      <DependentUpon>CompareItemControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CompareLandControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareLandControl.Designer.cs">
-      <DependentUpon>CompareLandControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CompareMapControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareMapControl.Designer.cs">
-      <DependentUpon>CompareMapControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControls\CompareTextureControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControls\CompareTextureControl.Designer.cs">
-      <DependentUpon>CompareTextureControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ultima\Ultima.csproj" />
-    <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="UserControls\CompareCliLocControl.resx">
-      <DependentUpon>CompareCliLocControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareGumpControl.resx">
-      <DependentUpon>CompareGumpControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareHuesControl.resx">
-      <DependentUpon>CompareHuesControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareItemControl.resx">
-      <DependentUpon>CompareItemControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareLandControl.resx">
-      <DependentUpon>CompareLandControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareMapControl.resx">
-      <DependentUpon>CompareMapControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UserControls\CompareTextureControl.resx">
-      <DependentUpon>CompareTextureControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<PropertyGroup>
+		<AssemblyName>ComparePlugin</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>ComparePlugin</AssemblyTitle>
+		<Product>ComparePlugin</Product>
+		<Copyright>Copyright © 2020</Copyright>
+		<AssemblyVersion>1.7.0.0</AssemblyVersion>
+		<FileVersion>1.7.0.0</FileVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="UserControls\CompareCliLocControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareCliLocControl.Designer.cs">
+			<DependentUpon>CompareCliLocControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CompareGumpControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareGumpControl.Designer.cs">
+			<DependentUpon>CompareGumpControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CompareHuesControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareHuesControl.Designer.cs">
+			<DependentUpon>CompareHuesControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CompareItemControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareItemControl.Designer.cs">
+			<DependentUpon>CompareItemControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CompareLandControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareLandControl.Designer.cs">
+			<DependentUpon>CompareLandControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CompareMapControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareMapControl.Designer.cs">
+			<DependentUpon>CompareMapControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControls\CompareTextureControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareTextureControl.Designer.cs">
+			<DependentUpon>CompareTextureControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj" />
+		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="UserControls\CompareCliLocControl.resx">
+			<DependentUpon>CompareCliLocControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareGumpControl.resx">
+			<DependentUpon>CompareGumpControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareHuesControl.resx">
+			<DependentUpon>CompareHuesControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareItemControl.resx">
+			<DependentUpon>CompareItemControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareLandControl.resx">
+			<DependentUpon>CompareLandControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareMapControl.resx">
+			<DependentUpon>CompareMapControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareTextureControl.resx">
+			<DependentUpon>CompareTextureControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>
