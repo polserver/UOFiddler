@@ -39,12 +39,12 @@ namespace UoFiddler.Controls.Classes
         public static int ArtItemSizeHeight { get; set; } = 48;
 
         /// <summary>
-        /// Defines if Element should be clipped or shrinked in ItemShow
+        /// Defines if Element should be clipped or shrunken in ItemShow
         /// </summary>
         public static bool ArtItemClip { get; set; } = true;
 
         /// <summary>
-        /// Defines if alternative Controls should be used 
+        /// Defines if alternative Controls should be used
         /// </summary>
         public static bool DesignAlternative { get; set; }
 

@@ -1395,7 +1395,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 FloatingPreviewPanel.Tag = staticIdx;
 
                 toolTip1.SetToolTip(pictureBoxDrawTiles, string.Format("0x{0:X} ({0})", staticIdx));
-
             }
             else
             {

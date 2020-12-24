@@ -203,7 +203,7 @@ namespace Ultima
                 string filePath;
 
                 // file was set
-                if (!string.IsNullOrEmpty(MulPath[file])) 
+                if (!string.IsNullOrEmpty(MulPath[file]))
                 {
                     // and was relative like "art.mul"
                     if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath[file])))

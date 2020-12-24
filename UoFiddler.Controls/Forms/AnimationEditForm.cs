@@ -155,8 +155,8 @@ namespace UoFiddler.Controls.Forms
 
         private TreeNode GetNode(int tag)
         {
-            return _showOnlyValid 
-                ? treeView1.Nodes.Cast<TreeNode>().FirstOrDefault(node => (int)node.Tag == tag) 
+            return _showOnlyValid
+                ? treeView1.Nodes.Cast<TreeNode>().FirstOrDefault(node => (int)node.Tag == tag)
                 : treeView1.Nodes[tag];
         }
 
@@ -328,7 +328,7 @@ namespace UoFiddler.Controls.Forms
             }
 
             Bitmap[] currentBits = edit.GetFrames();
-            
+
             e.Graphics.Clear(Color.LightGray);
             e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, animationPictureBox.Height));
             e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(animationPictureBox.Width, _framePoint.Y));
@@ -3691,7 +3691,6 @@ namespace UoFiddler.Controls.Forms
                 }
             }
         }
-
 
         // TODO: check why there is no RadioButton1_CheckedChanged event for selector 1?
 

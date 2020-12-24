@@ -69,7 +69,7 @@ namespace Ultima
 
         public static void Seek(int lookup)
         {
-            if (Stream == null || !Stream.CanRead || !Stream.CanSeek)
+            if (Stream?.CanRead != true || !Stream.CanSeek)
             {
                 if (_path != null)
                 {

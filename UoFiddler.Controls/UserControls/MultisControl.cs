@@ -642,9 +642,8 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     const int maximumMultiHeight = 127;
-                    
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.{fileExtension}");
-                    
+
                     using (Bitmap multiBitmap = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag)?.GetImage(maximumMultiHeight))
                     {
                         if (multiBitmap != null)

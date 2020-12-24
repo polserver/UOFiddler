@@ -386,7 +386,7 @@ namespace UoFiddler.Controls.UserControls
                     return true;
                 }
             }
-            
+
             return false;
         }
 
@@ -525,7 +525,7 @@ namespace UoFiddler.Controls.UserControls
                         return;
                     }
                 }
-            } 
+            }
             else
             {
                 file = _wavChosen;
@@ -727,9 +727,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void SearchByIdButton_Click(object sender, EventArgs e)
         {
-            int id = -1;
-
-            if(!int.TryParse(SearchNameTextbox.Text, out id)) 
+            if(!int.TryParse(SearchNameTextbox.Text, out int id))
             {
                 return;
             }
