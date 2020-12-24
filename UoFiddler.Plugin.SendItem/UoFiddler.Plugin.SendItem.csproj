@@ -1,42 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>SendItem</AssemblyName>
-    <TargetFramework>net48</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyTitle>SendItem</AssemblyTitle>
-    <Product>SendItem</Product>
-    <Copyright>Copyright © 2020</Copyright>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Forms\SendItemOptionsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\SendItemOptionsForm.Designer.cs">
-      <DependentUpon>SendItemOptionsForm.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ultima\Ultima.csproj" />
-    <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Forms\SendItemOptionsForm.resx">
-      <DependentUpon>SendItemOptionsForm.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+	<PropertyGroup>
+		<AssemblyName>SendItem</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>SendItem</AssemblyTitle>
+		<Product>SendItem</Product>
+		<Copyright>Copyright © 2020</Copyright>
+		<AssemblyVersion>1.0.1.0</AssemblyVersion>
+		<FileVersion>1.0.1.0</FileVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Forms\SendItemOptionsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\SendItemOptionsForm.Designer.cs">
+			<DependentUpon>SendItemOptionsForm.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj" />
+		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Forms\SendItemOptionsForm.resx">
+			<DependentUpon>SendItemOptionsForm.cs</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>

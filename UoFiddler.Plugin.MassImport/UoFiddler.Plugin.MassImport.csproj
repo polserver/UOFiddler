@@ -1,42 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>MassImport</AssemblyName>
-    <TargetFramework>net48</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyTitle>MassImportPlugin</AssemblyTitle>
-    <Product>MassImportPlugin</Product>
-    <Copyright>Copyright © 2020</Copyright>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Forms\MassImportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MassImportForm.Designer.cs">
-      <DependentUpon>MassImportForm.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ultima\Ultima.csproj" />
-    <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Forms\MassImportForm.resx">
-      <DependentUpon>MassImportForm.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+	<PropertyGroup>
+		<AssemblyName>MassImport</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>MassImportPlugin</AssemblyTitle>
+		<Product>MassImportPlugin</Product>
+		<Copyright>Copyright © 2020</Copyright>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
+		<FileVersion>1.1.0.0</FileVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Forms\MassImportForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MassImportForm.Designer.cs">
+			<DependentUpon>MassImportForm.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj" />
+		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Forms\MassImportForm.resx">
+			<DependentUpon>MassImportForm.cs</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>

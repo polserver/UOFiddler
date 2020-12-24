@@ -1,157 +1,156 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <ApplicationIcon>Resources\UOFiddlerIcon.ico</ApplicationIcon>
-    <StartupObject>UoFiddler.Program</StartupObject>
-    <TargetFramework>net48</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyTitle>UoFiddler</AssemblyTitle>
-    <Product>UoFiddler</Product>
-    <Copyright>Copyright © 2020</Copyright>
-    <AssemblyVersion>4.9.5</AssemblyVersion>
-    <FileVersion>4.9.5</FileVersion>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Version>4.9.5</Version>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Resources\UOFiddler.jpg" />
-    <None Remove="Resources\UOFiddlerIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Forms\AboutBoxForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\AboutBoxForm.Designer.cs">
-      <DependentUpon>AboutBoxForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ExceptionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ExceptionForm.Designer.cs">
-      <DependentUpon>ExceptionForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\LoadProfileForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\LoadProfileForm.Designer.cs">
-      <DependentUpon>LoadProfileForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ManagePluginsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ManagePluginsForm.Designer.cs">
-      <DependentUpon>ManagePluginsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\ManageToolsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\ManageToolsForm.Designer.cs">
-      <DependentUpon>ManageToolsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\OptionsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\OptionsForm.Designer.cs">
-      <DependentUpon>OptionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\PathSettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\PathSettingsForm.Designer.cs">
-      <DependentUpon>PathSettingsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\UnDockedForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\UnDockedForm.Designer.cs">
-      <DependentUpon>UnDockedForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Forms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Update="Forms\AboutBoxForm.resx">
-      <DependentUpon>AboutBoxForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ExceptionForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ExceptionForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\LoadProfileForm.resx">
-      <DependentUpon>LoadProfileForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ManagePluginsForm.resx">
-      <DependentUpon>ManagePluginsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\ManageToolsForm.resx">
-      <DependentUpon>ManageToolsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\OptionsForm.resx">
-      <DependentUpon>OptionsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\PathSettingsForm.resx">
-      <DependentUpon>PathSettingsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\UnDockedForm.resx">
-      <DependentUpon>UnDockedForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\MainForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ultima\Ultima.csproj" />
-    <ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Multilist.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="Resources\UOFiddler.jpg" />
-    <EmbeddedResource Include="Resources\UOFiddlerIcon.ico" />
-    <None Include="Options_default.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Animationlist.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Octokit" Version="0.48.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<ApplicationIcon>Resources\UOFiddlerIcon.ico</ApplicationIcon>
+		<StartupObject>UoFiddler.Program</StartupObject>
+		<TargetFramework>net48</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>UoFiddler</AssemblyTitle>
+		<Product>UoFiddler</Product>
+		<Copyright>Copyright © 2020</Copyright>
+		<AssemblyVersion>4.9.5</AssemblyVersion>
+		<FileVersion>4.9.5</FileVersion>
+		<Version>4.9.5</Version>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+		<UseVSHostingProcess>false</UseVSHostingProcess>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Resources\UOFiddler.jpg" />
+		<None Remove="Resources\UOFiddlerIcon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Forms\AboutBoxForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\AboutBoxForm.Designer.cs">
+			<DependentUpon>AboutBoxForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ExceptionForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ExceptionForm.Designer.cs">
+			<DependentUpon>ExceptionForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\LoadProfileForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\LoadProfileForm.Designer.cs">
+			<DependentUpon>LoadProfileForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ManagePluginsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ManagePluginsForm.Designer.cs">
+			<DependentUpon>ManagePluginsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\ManageToolsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ManageToolsForm.Designer.cs">
+			<DependentUpon>ManageToolsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\OptionsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\OptionsForm.Designer.cs">
+			<DependentUpon>OptionsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\PathSettingsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\PathSettingsForm.Designer.cs">
+			<DependentUpon>PathSettingsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\UnDockedForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\UnDockedForm.Designer.cs">
+			<DependentUpon>UnDockedForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Forms\MainForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\MainForm.Designer.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<EmbeddedResource Update="Forms\AboutBoxForm.resx">
+			<DependentUpon>AboutBoxForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ExceptionForm.resx">
+			<SubType>Designer</SubType>
+			<DependentUpon>ExceptionForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\LoadProfileForm.resx">
+			<DependentUpon>LoadProfileForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ManagePluginsForm.resx">
+			<DependentUpon>ManagePluginsForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\ManageToolsForm.resx">
+			<DependentUpon>ManageToolsForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\OptionsForm.resx">
+			<DependentUpon>OptionsForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\PathSettingsForm.resx">
+			<DependentUpon>PathSettingsForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\UnDockedForm.resx">
+			<DependentUpon>UnDockedForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Forms\MainForm.resx">
+			<SubType>Designer</SubType>
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj" />
+		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Multilist.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<EmbeddedResource Include="Resources\UOFiddler.jpg" />
+		<EmbeddedResource Include="Resources\UOFiddlerIcon.ico" />
+		<None Include="Options_default.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="Animationlist.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Octokit" Version="0.48.0" />
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+	</ItemGroup>
 </Project>
