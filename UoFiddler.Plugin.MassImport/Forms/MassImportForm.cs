@@ -30,7 +30,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
         private void DefaultXMLOnClick(object sender, EventArgs e)
         {
-            string fileName = Path.Combine(Options.OutputPath, "plugins/MassImport.xml");
+            string fileName = Path.Combine(Options.OutputPath, "MassImport.xml");
 
             XmlDocument dom = new XmlDocument();
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -39,7 +39,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             XmlComment comment = dom.CreateComment(
                 Environment.NewLine + "MassImport Control XML" + Environment.NewLine +
                 "Supported Nodes: item/landtile/texture/gump/tiledataitem/tiledataland/hue" + Environment.NewLine +
-                "file=relativ or absolute" + Environment.NewLine +
+                "file=relative or absolute" + Environment.NewLine +
                 "remove=bool" + Environment.NewLine +
                 "Examples:" + Environment.NewLine +
                 "<item index='195' file='test.bmp' remove='False' /> -> Adds/Replace ItemArt from text.bmp to 195" +
