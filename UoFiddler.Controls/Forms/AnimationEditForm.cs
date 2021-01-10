@@ -758,48 +758,7 @@ namespace UoFiddler.Controls.Forms
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     progressBar1.Maximum = frameCount;
-                                    // Return an Image at a certain index
-                                    for (int index = 0; index < frameCount; index++)
-                                    {
-                                        bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                                        bmp.SelectActiveFrame(dimension, index);
-                                        bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int)numericUpDownRed.Value,
-                                            (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                                        edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                                        TreeNode node = GetNode(_currentBody);
-                                        if (node != null)
-                                        {
-                                            node.ForeColor = Color.Black;
-                                            node.Nodes[_currentAction].ForeColor = Color.Black;
-                                        }
-
-                                        int i = edit.Frames.Count - 1;
-                                        var item = new ListViewItem(i.ToString(), 0)
-                                        {
-                                            Tag = i
-                                        };
-                                        listView1.Items.Add(item);
-                                        int width = listView1.TileSize.Width - 5;
-                                        if (bmp.Width > listView1.TileSize.Width)
-                                        {
-                                            width = bmp.Width;
-                                        }
-
-                                        int height = listView1.TileSize.Height - 5;
-                                        if (bmp.Height > listView1.TileSize.Height)
-                                        {
-                                            height = bmp.Height;
-                                        }
-
-                                        listView1.TileSize = new Size(width + 5, height + 5);
-                                        trackBar2.Maximum = i;
-                                        Options.ChangedUltimaClass["Animations"] = true;
-                                        if (progressBar1.Value < progressBar1.Maximum)
-                                        {
-                                            progressBar1.Value++;
-                                            progressBar1.Invalidate();
-                                        }
-                                    }
+                                    AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
                                     progressBar1.Value = 0;
                                     progressBar1.Invalidate();
                                     SetPaletteBox();
@@ -857,6 +816,52 @@ namespace UoFiddler.Controls.Forms
             // Refresh List
             _currentDir = trackBarDirection.Value;
             AfterSelectTreeView(null, null);
+        }
+
+        private void AddImageAtCertainIndex(int frameCount, Bitmap[] bitBmp, Bitmap bmp, FrameDimension dimension, AnimIdx edit)
+        {
+            // Return an Image at a certain index
+            for (int index = 0; index < frameCount; index++)
+            {
+                bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
+                bmp.SelectActiveFrame(dimension, index);
+                bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
+                    (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
+                edit.AddFrame(bitBmp[index], bitBmp[index].Width / 2);
+                TreeNode node = GetNode(_currentBody);
+                if (node != null)
+                {
+                    node.ForeColor = Color.Black;
+                    node.Nodes[_currentAction].ForeColor = Color.Black;
+                }
+
+                int i = edit.Frames.Count - 1;
+                var item = new ListViewItem(i.ToString(), 0)
+                {
+                    Tag = i
+                };
+                listView1.Items.Add(item);
+                int width = listView1.TileSize.Width - 5;
+                if (bmp.Width > listView1.TileSize.Width)
+                {
+                    width = bmp.Width;
+                }
+
+                int height = listView1.TileSize.Height - 5;
+                if (bmp.Height > listView1.TileSize.Height)
+                {
+                    height = bmp.Height;
+                }
+
+                listView1.TileSize = new Size(width + 5, height + 5);
+                trackBar2.Maximum = i;
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (progressBar1.Value < progressBar1.Maximum)
+                {
+                    progressBar1.Value++;
+                    progressBar1.Invalidate();
+                }
+            }
         }
 
         private void OnClickExtractPalette(object sender, EventArgs e)
@@ -1323,50 +1328,7 @@ namespace UoFiddler.Controls.Forms
                         bmp.SelectActiveFrame(dimension, 0);
                         edit.GetGifPalette(bmp);
                         Bitmap[] bitBmp = new Bitmap[frameCount];
-                        // Return an Image at a certain index
-                        for (int index = 0; index < frameCount; index++)
-                        {
-                            bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-                            bmp.SelectActiveFrame(dimension, index);
-                            bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
-                                (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
-                            edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                            TreeNode node = GetNode(_currentBody);
-                            if (node != null)
-                            {
-                                node.ForeColor = Color.Black;
-                                node.Nodes[_currentAction].ForeColor = Color.Black;
-                            }
-
-                            int i = edit.Frames.Count - 1;
-                            var item = new ListViewItem(i.ToString(), 0)
-                            {
-                                Tag = i
-                            };
-                            listView1.Items.Add(item);
-
-                            int width = listView1.TileSize.Width - 5;
-                            if (bmp.Width > listView1.TileSize.Width)
-                            {
-                                width = bmp.Width;
-                            }
-
-                            int height = listView1.TileSize.Height - 5;
-                            if (bmp.Height > listView1.TileSize.Height)
-                            {
-                                height = bmp.Height;
-                            }
-
-                            listView1.TileSize = new Size(width + 5, height + 5);
-                            trackBar2.Maximum = i;
-                            Options.ChangedUltimaClass["Animations"] = true;
-                            if (progressBar1.Value < progressBar1.Maximum)
-                            {
-                                progressBar1.Value++;
-                                progressBar1.Invalidate();
-                            }
-                        }
-
+                        AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
                         progressBar1.Value = 0;
                         progressBar1.Invalidate();
                         SetPaletteBox();
