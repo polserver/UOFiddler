@@ -166,10 +166,9 @@ namespace UoFiddler.Controls.Forms
             Color startC = Hues.HueToColor(_colors[start]);
             Color endC = Hues.HueToColor(_colors[end]);
 
-            // TODO: check for possible loss of fraction
-            float rDiv = (endC.R - startC.R) / (diff - 1);
-            float gDiv = (endC.G - startC.G) / (diff - 1);
-            float bDiv = (endC.B - startC.B) / (diff - 1);
+            float rDiv = (float)(endC.R - startC.R) / (diff - 1);
+            float gDiv = (float)(endC.G - startC.G) / (diff - 1);
+            float bDiv = (float)(endC.B - startC.B) / (diff - 1);
 
             for (int i = 1; i < diff; ++i)
             {
