@@ -22,6 +22,11 @@ namespace Ultima
 
         static AnimationEdit()
         {
+            SetAnimCache();
+        }
+
+        private static void SetAnimCache()
+        {
             if (_fileIndex.IdxLength > 0)
             {
                 _animCache = new AnimIdx[_fileIndex.IdxLength / 12];
@@ -59,30 +64,7 @@ namespace Ultima
             _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
             _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
 
-            if (_fileIndex.IdxLength > 0)
-            {
-                _animCache = new AnimIdx[_fileIndex.IdxLength / 12];
-            }
-
-            if (_fileIndex2.IdxLength > 0)
-            {
-                _animCache2 = new AnimIdx[_fileIndex2.IdxLength / 12];
-            }
-
-            if (_fileIndex3.IdxLength > 0)
-            {
-                _animCache3 = new AnimIdx[_fileIndex3.IdxLength / 12];
-            }
-
-            if (_fileIndex4.IdxLength > 0)
-            {
-                _animCache4 = new AnimIdx[_fileIndex4.IdxLength / 12];
-            }
-
-            if (_fileIndex5.IdxLength > 0)
-            {
-                _animCache5 = new AnimIdx[_fileIndex5.IdxLength / 12];
-            }
+            SetAnimCache();
         }
 
         private static void GetFileIndex(

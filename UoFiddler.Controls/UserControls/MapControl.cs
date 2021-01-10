@@ -44,20 +44,20 @@ namespace UoFiddler.Controls.UserControls
         }
 
         private static MapControl _refMarker;
+        public static double Zoom = 1;
+
         private Bitmap _map;
         private Map _currMap;
-        private int _currMapInt;
+        private int _currMapId;
         private bool _syncWithClient;
         private int _clientX;
         private int _clientY;
         private int _clientZ;
         private int _clientMap;
         private Point _currPoint;
-        public static double Zoom = 1;
         private bool _moving;
         private Point _movingPoint;
-
-        private bool _renderingZoom = false;
+        private bool _renderingZoom;
 
         public static int HScrollBar => _refMarker.hScrollBar.Value;
         public static int VScrollBar => _refMarker.vScrollBar.Value;
@@ -292,7 +292,7 @@ namespace UoFiddler.Controls.UserControls
             ResetCheckedMap();
             feluccaToolStripMenuItem.Checked = true;
             _currMap = Map.Felucca;
-            _currMapInt = 0;
+            _currMapId = 0;
             ChangeMap();
         }
 
@@ -306,7 +306,7 @@ namespace UoFiddler.Controls.UserControls
             ResetCheckedMap();
             trammelToolStripMenuItem.Checked = true;
             _currMap = Map.Trammel;
-            _currMapInt = 1;
+            _currMapId = 1;
             ChangeMap();
         }
 
@@ -320,7 +320,7 @@ namespace UoFiddler.Controls.UserControls
             ResetCheckedMap();
             ilshenarToolStripMenuItem.Checked = true;
             _currMap = Map.Ilshenar;
-            _currMapInt = 2;
+            _currMapId = 2;
             ChangeMap();
         }
 
@@ -334,7 +334,7 @@ namespace UoFiddler.Controls.UserControls
             ResetCheckedMap();
             malasToolStripMenuItem.Checked = true;
             _currMap = Map.Malas;
-            _currMapInt = 3;
+            _currMapId = 3;
             ChangeMap();
         }
 
@@ -348,7 +348,7 @@ namespace UoFiddler.Controls.UserControls
             ResetCheckedMap();
             tokunoToolStripMenuItem.Checked = true;
             _currMap = Map.Tokuno;
-            _currMapInt = 4;
+            _currMapId = 4;
             ChangeMap();
         }
 
@@ -362,7 +362,7 @@ namespace UoFiddler.Controls.UserControls
             ResetCheckedMap();
             terMurToolStripMenuItem.Checked = true;
             _currMap = Map.TerMur;
-            _currMapInt = 5;
+            _currMapId = 5;
             ChangeMap();
         }
 
@@ -444,37 +444,11 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (_currMapInt != mapClient)
+            if (_currMapId != mapClient)
             {
                 ResetCheckedMap();
-                switch (mapClient)
-                {
-                    case 0:
-                        feluccaToolStripMenuItem.Checked = true;
-                        _currMap = Map.Felucca;
-                        break;
-                    case 1:
-                        trammelToolStripMenuItem.Checked = true;
-                        _currMap = Map.Trammel;
-                        break;
-                    case 2:
-                        ilshenarToolStripMenuItem.Checked = true;
-                        _currMap = Map.Ilshenar;
-                        break;
-                    case 3:
-                        malasToolStripMenuItem.Checked = true;
-                        _currMap = Map.Malas;
-                        break;
-                    case 4:
-                        tokunoToolStripMenuItem.Checked = true;
-                        _currMap = Map.Tokuno;
-                        break;
-                    case 5:
-                        terMurToolStripMenuItem.Checked = true;
-                        _currMap = Map.TerMur;
-                        break;
-                }
-                _currMapInt = mapClient;
+                SwitchMap(mapClient);
+                _currMapId = mapClient;
             }
             _clientX = x;
             _clientY = y;
@@ -485,6 +459,37 @@ namespace UoFiddler.Controls.UserControls
             vScrollBar.Value = (int)Math.Max(0, y - (pictureBox.Bottom / Zoom / 2));
             pictureBox.Invalidate();
             ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{Options.MapNames[mapClient]}";
+        }
+
+        private void SwitchMap(int mapId)
+        {
+            switch (mapId)
+            {
+                case 0:
+                    feluccaToolStripMenuItem.Checked = true;
+                    _currMap = Map.Felucca;
+                    break;
+                case 1:
+                    trammelToolStripMenuItem.Checked = true;
+                    _currMap = Map.Trammel;
+                    break;
+                case 2:
+                    ilshenarToolStripMenuItem.Checked = true;
+                    _currMap = Map.Ilshenar;
+                    break;
+                case 3:
+                    malasToolStripMenuItem.Checked = true;
+                    _currMap = Map.Malas;
+                    break;
+                case 4:
+                    tokunoToolStripMenuItem.Checked = true;
+                    _currMap = Map.Tokuno;
+                    break;
+                case 5:
+                    terMurToolStripMenuItem.Checked = true;
+                    _currMap = Map.TerMur;
+                    break;
+            }
         }
 
         private void SyncClientTimer(object sender, EventArgs e)
@@ -569,7 +574,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnZoomMinus(object sender, EventArgs e)
         {
-            if (Zoom/2 < 0.25)
+            if (Zoom / 2 < 0.25)
             {
                 return;
             }
@@ -580,7 +585,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnZoomPlus(object sender, EventArgs e)
         {
-            if (Zoom*2 > 4)
+            if (Zoom * 2 > 4)
             {
                 return;
             }
@@ -647,7 +652,7 @@ namespace UoFiddler.Controls.UserControls
                     _clientX < hScrollBar.Value + (e.ClipRectangle.Width / Zoom) &&
                     _clientY > vScrollBar.Value &&
                     _clientY < vScrollBar.Value + (e.ClipRectangle.Height / Zoom) &&
-                    _clientMap == _currMapInt)
+                    _clientMap == _currMapId)
                 {
                     using (Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow)))
                     using (Pen pen = new Pen(brush))
@@ -668,10 +673,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
+            foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapId].Nodes)
             {
                 OverlayObject o = (OverlayObject)obj.Tag;
-                if (o.IsVisible(e.ClipRectangle, _currMapInt))
+                if (o.IsVisible(e.ClipRectangle, _currMapId))
                 {
                     o.Draw(e.Graphics);
                 }
@@ -733,7 +738,7 @@ namespace UoFiddler.Controls.UserControls
         {
             string format = "{0} " + Options.MapArgs;
             int z = _currMap.Tiles.GetLandTile(x, y).Z;
-            Client.SendText(string.Format(format, Options.MapCmd, x, y, z, _currMapInt, Options.MapNames[_currMapInt]));
+            Client.SendText(string.Format(format, Options.MapCmd, x, y, z, _currMapId, Options.MapNames[_currMapId]));
         }
 
         private void ExtractMapBmp(object sender, EventArgs e)
@@ -761,7 +766,7 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
 
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"{Options.MapNames[_currMapInt]}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"{Options.MapNames[_currMapId]}.{fileExtension}");
 
             try
             {
@@ -770,7 +775,7 @@ namespace UoFiddler.Controls.UserControls
                 if (showMarkersToolStripMenuItem.Checked)
                 {
                     Graphics g = Graphics.FromImage(extract);
-                    foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapInt].Nodes)
+                    foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapId].Nodes)
                     {
                         OverlayObject o = (OverlayObject)obj.Tag;
                         if (o.Visible)
@@ -800,7 +805,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _mapMarkerForm = new MapMarkerForm(_currPoint.X, _currPoint.Y, _currMapInt)
+            _mapMarkerForm = new MapMarkerForm(_currPoint.X, _currPoint.Y, _currMapId)
             {
                 TopMost = true
             };
@@ -808,14 +813,14 @@ namespace UoFiddler.Controls.UserControls
             _mapMarkerForm.Show();
         }
 
-        public static void AddOverlay(int x, int y, int map, Color c, string text)
+        public static void AddOverlay(int x, int y, int mapId, Color color, string text)
         {
-            OverlayCursor o = new OverlayCursor(new Point(x, y), map, text, c);
+            OverlayCursor o = new OverlayCursor(new Point(x, y), mapId, text, color);
             TreeNode node = new TreeNode(text)
             {
                 Tag = o
             };
-            _refMarker.OverlayObjectTree.Nodes[map].Nodes.Add(node);
+            _refMarker.OverlayObjectTree.Nodes[mapId].Nodes.Add(node);
             _refMarker.pictureBox.Invalidate();
         }
 
@@ -837,18 +842,21 @@ namespace UoFiddler.Controls.UserControls
                 XmlDocument dom = new XmlDocument();
                 dom.Load(fileName);
                 XmlElement xOptions = dom["Overlays"];
-                foreach (XmlElement xMarker in xOptions.SelectNodes("Marker"))
+                var markers = xOptions?.SelectNodes("Marker");
+                if (markers == null)
                 {
-                    int x = int.Parse(xMarker.GetAttribute("x"));
-                    int y = int.Parse(xMarker.GetAttribute("y"));
-                    int m = int.Parse(xMarker.GetAttribute("map"));
-                    int c = int.Parse(xMarker.GetAttribute("color"));
-                    string text = xMarker.GetAttribute("text");
+                    return;
+                }
+
+                foreach (XmlElement element in markers)
+                {
+                    int x = int.Parse(element.GetAttribute("x"));
+                    int y = int.Parse(element.GetAttribute("y"));
+                    int m = int.Parse(element.GetAttribute("map"));
+                    int c = int.Parse(element.GetAttribute("color"));
+                    string text = element.GetAttribute("text");
                     OverlayCursor o = new OverlayCursor(new Point(x, y), m, text, Color.FromArgb(c));
-                    TreeNode node = new TreeNode(text)
-                    {
-                        Tag = o
-                    };
+                    TreeNode node = new TreeNode(text) {Tag = o};
                     OverlayObjectTree.Nodes[m].Nodes.Add(node);
                 }
             }
@@ -988,37 +996,11 @@ namespace UoFiddler.Controls.UserControls
             }
 
             OverlayObject o = (OverlayObject)OverlayObjectTree.SelectedNode.Tag;
-            if (_currMapInt != o.DefMap)
+            if (_currMapId != o.DefMap)
             {
                 ResetCheckedMap();
-                switch (o.DefMap)
-                {
-                    case 0:
-                        feluccaToolStripMenuItem.Checked = true;
-                        _currMap = Map.Felucca;
-                        break;
-                    case 1:
-                        trammelToolStripMenuItem.Checked = true;
-                        _currMap = Map.Trammel;
-                        break;
-                    case 2:
-                        ilshenarToolStripMenuItem.Checked = true;
-                        _currMap = Map.Ilshenar;
-                        break;
-                    case 3:
-                        malasToolStripMenuItem.Checked = true;
-                        _currMap = Map.Malas;
-                        break;
-                    case 4:
-                        tokunoToolStripMenuItem.Checked = true;
-                        _currMap = Map.Tokuno;
-                        break;
-                    case 5:
-                        terMurToolStripMenuItem.Checked = true;
-                        _currMap = Map.TerMur;
-                        break;
-                }
-                _currMapInt = o.DefMap;
+                SwitchMap(o.DefMap);
+                _currMapId = o.DefMap;
             }
             SetScrollBarValues();
             hScrollBar.Value = (int)Math.Max(0, o.Loc.X - (pictureBox.Right / Zoom / 2));
@@ -1096,7 +1078,7 @@ namespace UoFiddler.Controls.UserControls
         {
             Cursor.Current = Cursors.WaitCursor;
             Map.RewriteMap(Options.OutputPath,
-                _currMapInt, _currMap.Width, _currMap.Height);
+                _currMapId, _currMap.Width, _currMap.Height);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Map saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);

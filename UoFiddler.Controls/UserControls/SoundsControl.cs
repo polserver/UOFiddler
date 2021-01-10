@@ -708,14 +708,11 @@ namespace UoFiddler.Controls.UserControls
                 dialog.Title = "Choose wave file";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "wav file (*.wav)|*.wav";
+
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _wavChosen = dialog.FileName;
                     WavFileInsertTextbox.Text = _wavChosen;
-                }
-                else
-                {
-                    return;
                 }
             }
         }
@@ -727,7 +724,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void SearchByIdButton_Click(object sender, EventArgs e)
         {
-            if(!int.TryParse(SearchNameTextbox.Text, out int id))
+            if (!int.TryParse(SearchNameTextbox.Text, out int id))
             {
                 return;
             }

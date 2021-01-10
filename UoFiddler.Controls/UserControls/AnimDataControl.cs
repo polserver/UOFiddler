@@ -111,12 +111,13 @@ namespace UoFiddler.Controls.UserControls
 
             foreach (int id in Animdata.AnimData.Keys)
             {
-                Animdata.AnimdataEntry animdataEntry = (Animdata.AnimdataEntry)Animdata.AnimData[id];
+                Animdata.AnimdataEntry animdataEntry = Animdata.AnimData[id];
                 TreeNode node = new TreeNode
                 {
                     Tag = id,
                     Text = $"0x{id:X4} {TileData.ItemTable[id].Name}"
                 };
+
                 if (!Art.IsValidStatic(id))
                 {
                     node.ForeColor = Color.Red;
@@ -144,7 +145,9 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
             }
+
             treeView1.EndUpdate();
+
             if (treeView1.Nodes.Count > 0)
             {
                 treeView1.SelectedNode = treeView1.Nodes[0];
