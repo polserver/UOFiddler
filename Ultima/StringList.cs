@@ -123,19 +123,19 @@ namespace Ultima
                 _sortDescending = sortDescending;
             }
 
-            public int Compare(StringEntry objA, StringEntry objB)
+            public int Compare(StringEntry x, StringEntry y)
             {
-                if (objA.Number == objB.Number)
+                if (x.Number == y.Number)
                 {
                     return 0;
                 }
                 else if (_sortDescending)
                 {
-                    return (objA.Number < objB.Number) ? 1 : -1;
+                    return (x.Number < y.Number) ? 1 : -1;
                 }
                 else
                 {
-                    return (objA.Number < objB.Number) ? -1 : 1;
+                    return (x.Number < y.Number) ? -1 : 1;
                 }
             }
         }
@@ -149,32 +149,32 @@ namespace Ultima
                 _sortDescending = sortDescending;
             }
 
-            public int Compare(StringEntry objA, StringEntry objB)
+            public int Compare(StringEntry x, StringEntry y)
             {
-                if ((byte)objA.Flag == (byte)objB.Flag)
+                if ((byte)x.Flag == (byte)y.Flag)
                 {
-                    if (objA.Number == objB.Number)
+                    if (x.Number == y.Number)
                     {
                         return 0;
                     }
 
                     if (_sortDescending)
                     {
-                        return (objA.Number < objB.Number) ? 1 : -1;
+                        return (x.Number < y.Number) ? 1 : -1;
                     }
                     else
                     {
-                        return (objA.Number < objB.Number) ? -1 : 1;
+                        return (x.Number < y.Number) ? -1 : 1;
                     }
                 }
 
                 if (_sortDescending)
                 {
-                    return ((byte)objA.Flag < (byte)objB.Flag) ? 1 : -1;
+                    return ((byte)x.Flag < (byte)y.Flag) ? 1 : -1;
                 }
                 else
                 {
-                    return ((byte)objA.Flag < (byte)objB.Flag) ? -1 : 1;
+                    return ((byte)x.Flag < (byte)y.Flag) ? -1 : 1;
                 }
             }
         }
@@ -188,11 +188,11 @@ namespace Ultima
                 _sortDescending = sortDescending;
             }
 
-            public int Compare(StringEntry objA, StringEntry objB)
+            public int Compare(StringEntry x, StringEntry y)
             {
                 return _sortDescending
-                    ? string.CompareOrdinal(objB.Text, objA.Text)
-                    : string.CompareOrdinal(objA.Text, objB.Text);
+                    ? string.CompareOrdinal(y.Text, x.Text)
+                    : string.CompareOrdinal(x.Text, y.Text);
             }
         }
     }

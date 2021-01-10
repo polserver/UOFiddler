@@ -76,7 +76,7 @@ namespace UoFiddler.Controls.Plugin
                 }
 
                 Options.Logger.Information("FindPlugins - disposing plugin: {pluginOn}", pluginOn.Type.ToString());
-                pluginOn.Instance.Dispose();
+                pluginOn.Instance.Unload();
                 pluginOn.Instance = null;
             }
 

@@ -1651,7 +1651,7 @@ namespace UoFiddler.Controls.Forms
                             if (yf != 0)
                             {
                                 regressT++;
-                                yf -= 1;
+                                yf--;
                                 xf = -1;
                                 frameIdx = 0;
                             }
@@ -1720,7 +1720,7 @@ namespace UoFiddler.Controls.Forms
                             if (yf != bitBmp[0].Height - 1)
                             {
                                 regressB++;
-                                yf += 1;
+                                yf++;
                                 xf = -1;
                                 frameIdx = 0;
                             }
@@ -1789,7 +1789,7 @@ namespace UoFiddler.Controls.Forms
                             if (xf != 0)
                             {
                                 regressL++;
-                                xf -= 1;
+                                xf--;
                                 yf = -1;
                                 frameIdx = 0;
                             }
@@ -1858,7 +1858,7 @@ namespace UoFiddler.Controls.Forms
                             if (xf != bitBmp[0].Width - 1)
                             {
                                 regressR++;
-                                xf += 1;
+                                xf++;
                                 yf = -1;
                                 frameIdx = 0;
                             }
@@ -2634,7 +2634,7 @@ namespace UoFiddler.Controls.Forms
                             if (yf != 0)
                             {
                                 regressT++;
-                                yf -= 1;
+                                yf--;
                                 xf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -2703,7 +2703,7 @@ namespace UoFiddler.Controls.Forms
                             if (yf != bitBmp[initialFrameIndex].Height - 1)
                             {
                                 regressB++;
-                                yf += 1;
+                                yf++;
                                 xf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -2772,7 +2772,7 @@ namespace UoFiddler.Controls.Forms
                             if (xf != 0)
                             {
                                 regressL++;
-                                xf -= 1;
+                                xf--;
                                 yf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -2843,7 +2843,7 @@ namespace UoFiddler.Controls.Forms
                             if (xf != bitBmp[initialFrameIndex].Width - 1)
                             {
                                 regressR++;
-                                xf += 1;
+                                xf++;
                                 yf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -3361,7 +3361,7 @@ namespace UoFiddler.Controls.Forms
                             if (yf != 0)
                             {
                                 regressT++;
-                                yf -= 1;
+                                yf--;
                                 xf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -3430,7 +3430,7 @@ namespace UoFiddler.Controls.Forms
                             if (yf != bitBmp[initialFrameIndex].Height - 1)
                             {
                                 regressB++;
-                                yf += 1;
+                                yf++;
                                 xf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -3499,7 +3499,7 @@ namespace UoFiddler.Controls.Forms
                             if (xf != 0)
                             {
                                 regressL++;
-                                xf -= 1;
+                                xf--;
                                 yf = -1;
                                 frameIdx = initialFrameIndex;
                             }
@@ -3570,7 +3570,7 @@ namespace UoFiddler.Controls.Forms
                             if (xf != bitBmp[initialFrameIndex].Width - 1)
                             {
                                 regressR++;
-                                xf += 1;
+                                xf++;
                                 yf = -1;
                                 frameIdx = initialFrameIndex;
                             }

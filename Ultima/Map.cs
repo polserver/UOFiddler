@@ -58,12 +58,12 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
-            Felucca.Tiles.Dispose();
-            Trammel.Tiles.Dispose();
-            Ilshenar.Tiles.Dispose();
-            Malas.Tiles.Dispose();
-            Tokuno.Tiles.Dispose();
-            TerMur.Tiles.Dispose();
+            Felucca.Tiles.CloseStreams();
+            Trammel.Tiles.CloseStreams();
+            Ilshenar.Tiles.CloseStreams();
+            Malas.Tiles.CloseStreams();
+            Tokuno.Tiles.CloseStreams();
+            TerMur.Tiles.CloseStreams();
 
             Felucca.Tiles.StaticIndexInit = false;
             Trammel.Tiles.StaticIndexInit = false;
@@ -315,128 +315,130 @@ namespace Ultima
             fixed (short* pColors = RadarCol.Colors)
             {
                 fixed (int* pHeight = TileData.HeightTable)
-                fixed (Tile* ptTiles = tiles)
                 {
-                    Tile* pTiles = ptTiles;
-
-                    fixed (short* pData = data)
+                    fixed (Tile* ptTiles = tiles)
                     {
-                        short* pvData = pData;
+                        Tile* pTiles = ptTiles;
 
-                        if (drawStatics)
+                        fixed (short* pData = data)
                         {
-                            HuedTile[][][] statics = _tiles.GetStaticBlock(x, y, diff);
+                            short* pvData = pData;
 
-                            for (int k = 0; k < 8; ++k)
+                            if (drawStatics)
                             {
-                                for (int p = 0; p < 8; ++p)
+                                HuedTile[][][] statics = _tiles.GetStaticBlock(x, y, diff);
+
+                                for (int k = 0; k < 8; ++k)
                                 {
-                                    int highTop = -255;
-                                    int highZ = -255;
-                                    int highId = 0;
-                                    int highHue = 0;
-                                    int z, top;
-                                    bool highStatic = false;
-
-                                    HuedTile[] curStatics = statics[p][k];
-
-                                    if (curStatics.Length > 0)
+                                    for (int p = 0; p < 8; ++p)
                                     {
-                                        fixed (HuedTile* phtStatics = curStatics)
+                                        int highTop = -255;
+                                        int highZ = -255;
+                                        int highId = 0;
+                                        int highHue = 0;
+                                        int z, top;
+                                        bool highStatic = false;
+
+                                        HuedTile[] curStatics = statics[p][k];
+
+                                        if (curStatics.Length > 0)
                                         {
-                                            HuedTile* pStatics = phtStatics;
-                                            HuedTile* pStaticsEnd = pStatics + curStatics.Length;
-
-                                            while (pStatics < pStaticsEnd)
+                                            fixed (HuedTile* phtStatics = curStatics)
                                             {
-                                                z = pStatics->Z;
-                                                top = z + pHeight[pStatics->Id];
+                                                HuedTile* pStatics = phtStatics;
+                                                HuedTile* pStaticsEnd = pStatics + curStatics.Length;
 
-                                                if (top > highTop || (z > highZ && top >= highTop))
+                                                while (pStatics < pStaticsEnd)
                                                 {
-                                                    highTop = top;
-                                                    highZ = z;
-                                                    highId = pStatics->Id;
-                                                    highHue = pStatics->Hue;
-                                                    highStatic = true;
+                                                    z = pStatics->Z;
+                                                    top = z + pHeight[pStatics->Id];
+
+                                                    if (top > highTop || (z > highZ && top >= highTop))
+                                                    {
+                                                        highTop = top;
+                                                        highZ = z;
+                                                        highId = pStatics->Id;
+                                                        highHue = pStatics->Hue;
+                                                        highStatic = true;
+                                                    }
+
+                                                    ++pStatics;
+                                                }
+                                            }
+                                        }
+
+                                        StaticTile[] pending = _tiles.GetPendingStatics(x, y);
+                                        if (pending != null)
+                                        {
+                                            foreach (StaticTile penS in pending)
+                                            {
+                                                if (penS.X != p || penS.Y != k)
+                                                {
+                                                    continue;
                                                 }
 
-                                                ++pStatics;
+                                                z = penS.Z;
+                                                top = z + pHeight[penS.Id];
+
+                                                if (top <= highTop && (z <= highZ || top < highTop))
+                                                {
+                                                    continue;
+                                                }
+
+                                                highTop = top;
+                                                highZ = z;
+                                                highId = penS.Id;
+                                                highHue = penS.Hue;
+                                                highStatic = true;
                                             }
                                         }
-                                    }
 
-                                    StaticTile[] pending = _tiles.GetPendingStatics(x, y);
-                                    if (pending != null)
-                                    {
-                                        foreach (StaticTile penS in pending)
+                                        top = pTiles->Z;
+
+                                        if (top > highTop)
                                         {
-                                            if (penS.X != p || penS.Y != k)
-                                            {
-                                                continue;
-                                            }
-
-                                            z = penS.Z;
-                                            top = z + pHeight[penS.Id];
-
-                                            if (top <= highTop && (z <= highZ || top < highTop))
-                                            {
-                                                continue;
-                                            }
-
-                                            highTop = top;
-                                            highZ = z;
-                                            highId = penS.Id;
-                                            highHue = penS.Hue;
-                                            highStatic = true;
+                                            highId = pTiles->Id;
+                                            highHue = 0;
+                                            highStatic = false;
                                         }
-                                    }
 
-                                    top = pTiles->Z;
-
-                                    if (top > highTop)
-                                    {
-                                        highId = pTiles->Id;
-                                        highHue = 0;
-                                        highStatic = false;
-                                    }
-
-                                    if (highHue == 0)
-                                    {
-                                        try
+                                        if (highHue == 0)
                                         {
-                                            if (highStatic)
+                                            try
                                             {
-                                                *pvData++ = pColors[highId + 0x4000];
+                                                if (highStatic)
+                                                {
+                                                    *pvData++ = pColors[highId + 0x4000];
+                                                }
+                                                else
+                                                {
+                                                    *pvData++ = pColors[highId];
+                                                }
                                             }
-                                            else
+                                            catch
                                             {
-                                                *pvData++ = pColors[highId];
+                                                // TODO: ignored?
+                                                // ignored
                                             }
                                         }
-                                        catch
+                                        else
                                         {
-                                            // TODO: ignored?
-                                            // ignored
+                                            *pvData++ = Hues.GetHue(highHue - 1)
+                                                .Colors[(pColors[highId + 0x4000] >> 10) & 0x1F];
                                         }
-                                    }
-                                    else
-                                    {
-                                        *pvData++ = Hues.GetHue(highHue - 1)
-                                            .Colors[(pColors[highId + 0x4000] >> 10) & 0x1F];
-                                    }
 
-                                    ++pTiles;
+                                        ++pTiles;
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            Tile* pEnd = pTiles + 64;
-
-                            while (pTiles < pEnd)
+                            else
                             {
-                                *pvData++ = pColors[(pTiles++)->Id];
+                                Tile* pEnd = pTiles + 64;
+
+                                while (pTiles < pEnd)
+                                {
+                                    *pvData++ = pColors[(pTiles++)->Id];
+                                }
                             }
                         }
                     }

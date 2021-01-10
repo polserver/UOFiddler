@@ -173,20 +173,20 @@ namespace Ultima
                 _sortDescending = sortDescending;
             }
 
-            public int Compare(SpeechEntry objA, SpeechEntry objB)
+            public int Compare(SpeechEntry x, SpeechEntry y)
             {
-                if (objA.ID == objB.ID)
+                if (x.ID == y.ID)
                 {
                     return 0;
                 }
 
                 if (_sortDescending)
                 {
-                    return (objA.ID < objB.ID) ? 1 : -1;
+                    return (x.ID < y.ID) ? 1 : -1;
                 }
                 else
                 {
-                    return (objA.ID < objB.ID) ? -1 : 1;
+                    return (x.ID < y.ID) ? -1 : 1;
                 }
             }
         }
@@ -200,30 +200,30 @@ namespace Ultima
                 _sortDescending = sortDescending;
             }
 
-            public int Compare(SpeechEntry objA, SpeechEntry objB)
+            public int Compare(SpeechEntry x, SpeechEntry y)
             {
                 if (_sortDescending)
                 {
-                    return string.CompareOrdinal(objB.KeyWord, objA.KeyWord);
+                    return string.CompareOrdinal(y.KeyWord, x.KeyWord);
                 }
                 else
                 {
-                    return string.CompareOrdinal(objA.KeyWord, objB.KeyWord);
+                    return string.CompareOrdinal(x.KeyWord, y.KeyWord);
                 }
             }
         }
 
         private class OrderComparer : IComparer<SpeechEntry>
         {
-            public int Compare(SpeechEntry objA, SpeechEntry objB)
+            public int Compare(SpeechEntry x, SpeechEntry y)
             {
-                if (objA.Order == objB.Order)
+                if (x.Order == y.Order)
                 {
                     return 0;
                 }
                 else
                 {
-                    return (objA.Order < objB.Order) ? -1 : 1;
+                    return (x.Order < y.Order) ? -1 : 1;
                 }
             }
         }

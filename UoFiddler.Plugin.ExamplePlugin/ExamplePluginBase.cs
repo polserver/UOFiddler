@@ -64,7 +64,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
             _ = Files.RootDir;
         }
 
-        public override void Dispose()
+        public override void Unload()
         {
         }
 

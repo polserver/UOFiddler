@@ -88,7 +88,7 @@ namespace UoFiddler.Plugin.SendItem
             ItemShowContextClicked(this, EventArgs.Empty);
         }
 
-        public override void Dispose()
+        public override void Unload()
         {
             SaveXml();
         }
