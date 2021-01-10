@@ -141,20 +141,21 @@ namespace Ultima
             Patch = new TileMatrixPatch(this, mapId, path);
         }
 
-        public void SetStaticBlock(int x, int y, HuedTile[][][] value)
-        {
-            if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
-            {
-                return;
-            }
+        // TODO: unused?
+        //public void SetStaticBlock(int x, int y, HuedTile[][][] value)
+        //{
+        //    if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+        //    {
+        //        return;
+        //    }
 
-            if (_staticTiles[x] == null)
-            {
-                _staticTiles[x] = new HuedTile[BlockHeight][][][];
-            }
+        //    if (_staticTiles[x] == null)
+        //    {
+        //        _staticTiles[x] = new HuedTile[BlockHeight][][][];
+        //    }
 
-            _staticTiles[x][y] = value;
-        }
+        //    _staticTiles[x][y] = value;
+        //}
 
         public HuedTile[][][] GetStaticBlock(int x, int y, bool patch = true)
         {
@@ -598,14 +599,6 @@ namespace Ultima
             }
 
             return _staticTilesToAdd[blockY][blockX].ToArray();
-        }
-
-        public void Dispose()
-        {
-            // TODO: add proper dispose pattern?
-            _map?.Close();
-            _uopReader?.Close();
-            _statics?.Close();
         }
     }
 

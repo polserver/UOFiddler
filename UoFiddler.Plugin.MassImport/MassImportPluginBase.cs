@@ -49,7 +49,7 @@ namespace UoFiddler.Plugin.MassImport
             _ = Files.RootDir;
         }
 
-        public override void Dispose() { }
+        public override void Unload() { }
 
         public override void ModifyTabPages(TabControl tabControl) { }
 

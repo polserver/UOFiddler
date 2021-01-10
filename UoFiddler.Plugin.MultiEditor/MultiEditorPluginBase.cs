@@ -52,7 +52,7 @@ namespace UoFiddler.Plugin.MultiEditor
         /// </summary>
         public override string Version { get; } = "1.7.0";
 
-        public override void Dispose()
+        public override void Unload()
         {
             // fired in Fiddler OnClosing
         }

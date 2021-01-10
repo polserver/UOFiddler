@@ -24,7 +24,7 @@ namespace UoFiddler.Controls.Plugin
         public abstract string Version { get; }
 
         public abstract void Initialize();
-        public abstract void Dispose();
+        public abstract void Unload();
 
         /// <summary>
         /// On Startup called to modify the Plugin ToolStripDropDownButton

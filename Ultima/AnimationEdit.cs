@@ -309,6 +309,7 @@ namespace Ultima
             FileIndex fileIndex;
             switch (fileType)
             {
+                default:
                 case 1:
                     filename = "anim";
                     cache = _animCache;
@@ -333,11 +334,6 @@ namespace Ultima
                     filename = "anim5";
                     cache = _animCache5;
                     fileIndex = _fileIndex5;
-                    break;
-                default:
-                    filename = "anim";
-                    cache = _animCache;
-                    fileIndex = _fileIndex;
                     break;
             }
 

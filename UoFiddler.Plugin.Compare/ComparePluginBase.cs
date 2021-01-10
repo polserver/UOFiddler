@@ -56,7 +56,7 @@ namespace UoFiddler.Plugin.Compare
             _ = Files.RootDir;
         }
 
-        public override void Dispose()
+        public override void Unload()
         {
         }
 

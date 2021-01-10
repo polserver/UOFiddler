@@ -57,7 +57,7 @@ namespace UoFiddler.Plugin.UopPacker
             _ = Files.RootDir;
         }
 
-        public override void Dispose()
+        public override void Unload()
         {
         }
 
