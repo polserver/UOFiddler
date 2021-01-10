@@ -306,16 +306,18 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                // TODO: should the be if dialog.FileName exists first?
-                Bitmap image = new Bitmap(dialog.FileName);
-                if (image != null)
+                try
                 {
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    Bitmap image = new Bitmap(dialog.FileName);
+
                     if (image.Height != 2048 || image.Width != 2560)
                     {
                         MessageBox.Show("Invalid image height or width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                         return;
                     }
-                    Cursor.Current = Cursors.WaitCursor;
+
                     string path = Options.OutputPath;
                     string fileName = Path.Combine(path, "MultiMap.rle");
                     using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -323,20 +325,27 @@ namespace UoFiddler.Controls.UserControls
                         BinaryWriter bin = new BinaryWriter(fs, Encoding.Unicode);
                         Ultima.MultiMap.SaveMultiMap(image, bin);
                     }
+
                     Cursor.Current = Cursors.Default;
-                    MessageBox.Show($"MultiMap saved to {fileName}", "Convert", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                    MessageBox.Show($"MultiMap saved to {fileName}", "Convert",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                 }
-                else
+                catch (FileNotFoundException)
                 {
-                    // TODO: unreachable code?
-                    MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
+                }
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
                 }
             }
         }
 
         private void OnClickGenerateFacetFromImage(object sender, EventArgs e)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using (var dialog = new OpenFileDialog())
             {
                 dialog.Title = "Select Image to convert";
                 if (dialog.ShowDialog() != DialogResult.OK)
@@ -344,20 +353,28 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap image = new Bitmap(dialog.FileName);
-                if (image != null)
+                try
                 {
                     Cursor.Current = Cursors.WaitCursor;
+
+                    Bitmap image = new Bitmap(dialog.FileName);
                     string path = Options.OutputPath;
                     string fileName = Path.Combine(path, "facet.mul");
                     Ultima.MultiMap.SaveFacetImage(fileName, image);
+
                     Cursor.Current = Cursors.Default;
-                    MessageBox.Show($"Facet saved to {fileName}", "Convert", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                    MessageBox.Show($"Facet saved to {fileName}", "Convert", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                 }
-                else
+                catch (FileNotFoundException)
                 {
-                    // TODO: unreachable code?
-                    MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
+                }
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
                 }
             }
         }
