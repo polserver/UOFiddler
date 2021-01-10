@@ -208,46 +208,44 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 pictureBox.Invalidate();
             }
 
-            if (_zoom >= 2 && markDiffToolStripMenuItem.Checked && string.IsNullOrEmpty(diff))
+            if (!(_zoom >= 2) || !markDiffToolStripMenuItem.Checked || !string.IsNullOrEmpty(diff))
             {
-                Map drawMap = showMap1ToolStripMenuItem.Checked
-                    ? _origMap
-                    : _currMap;
-
-                if (drawMap.Tiles.Patch.LandBlocksCount > 0)
-                {
-                    if (drawMap.Tiles.Patch.IsLandBlockPatched(xDelta >> 3, yDelta >> 3))
-                    {
-                        Tile patchTile = drawMap.Tiles.Patch.GetLandTile(xDelta, yDelta);
-                        Tile origTile = drawMap.Tiles.GetLandTile(xDelta, yDelta, false);
-                        diff = $"Tile:\n\r0x{origTile.Id:X} {origTile.Z} -> 0x{patchTile.Id:X} {patchTile.Z}\n\r";
-                    }
-                }
-                if (drawMap.Tiles.Patch.StaticBlocksCount > 0)
-                {
-                    if (drawMap.Tiles.Patch.IsStaticBlockPatched(xDelta >> 3, yDelta >> 3))
-                    {
-                        HuedTile[] patchStatics = drawMap.Tiles.Patch.GetStaticTiles(xDelta, yDelta);
-                        HuedTile[] origStatics = drawMap.Tiles.GetStaticTiles(xDelta, yDelta, false);
-
-                        diff += "Statics:\n\rorig:\n\r";
-
-                        foreach (HuedTile tile in origStatics)
-                        {
-                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
-                        }
-
-                        diff += "patch:\n\r";
-
-                        foreach (HuedTile tile in patchStatics)
-                        {
-                            diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
-                        }
-                    }
-                }
-                toolTip1.SetToolTip(pictureBox, diff);
-                pictureBox.Invalidate();
+                return;
             }
+
+            Map drawMap = showMap1ToolStripMenuItem.Checked
+                ? _origMap
+                : _currMap;
+
+            if (drawMap?.Tiles.Patch.LandBlocksCount > 0 && drawMap.Tiles.Patch.IsLandBlockPatched(xDelta >> 3, yDelta >> 3))
+            {
+                Tile patchTile = drawMap.Tiles.Patch.GetLandTile(xDelta, yDelta);
+                Tile origTile = drawMap.Tiles.GetLandTile(xDelta, yDelta, false);
+                diff = $"Tile:\n\r0x{origTile.Id:X} {origTile.Z} -> 0x{patchTile.Id:X} {patchTile.Z}\n\r";
+            }
+
+            if (drawMap?.Tiles.Patch.StaticBlocksCount > 0 && drawMap.Tiles.Patch.IsStaticBlockPatched(xDelta >> 3, yDelta >> 3))
+            {
+                HuedTile[] patchStatics = drawMap.Tiles.Patch.GetStaticTiles(xDelta, yDelta);
+                HuedTile[] origStatics = drawMap.Tiles.GetStaticTiles(xDelta, yDelta, false);
+
+                diff += "Statics:\n\rorig:\n\r";
+
+                foreach (HuedTile tile in origStatics)
+                {
+                    diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
+                }
+
+                diff += "patch:\n\r";
+
+                foreach (HuedTile tile in patchStatics)
+                {
+                    diff += $"0x{tile.Id:X} {tile.Z} {tile.Hue}\n\r";
+                }
+            }
+
+            toolTip1.SetToolTip(pictureBox, diff);
+            pictureBox.Invalidate();
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)
@@ -255,8 +253,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _moving = false;
             Cursor = Cursors.Default;
         }
-
-        private static readonly Pen _redPen = Pens.Red;
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
@@ -306,9 +302,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                                 {
                                     if (_diffs[x][y][xb][yb])
                                     {
-                                        mapg.DrawRectangle(_redPen, gx + xb, gy + yb, 1, 1);
-                                        mapg.DrawRectangle(_redPen, gx + xb, 0, 1, 2);
-                                        mapg.DrawRectangle(_redPen, 0, gy + yb, 2, 1);
+                                        mapg.DrawRectangle(Pens.Red, gx + xb, gy + yb, 1, 1);
+                                        mapg.DrawRectangle(Pens.Red, gx + xb, 0, 1, 2);
+                                        mapg.DrawRectangle(Pens.Red, 0, gy + yb, 2, 1);
                                     }
                                 }
                             }
@@ -324,47 +320,53 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     ? _origMap
                     : _currMap;
 
-                int count = drawMap.Tiles.Patch.LandBlocksCount + drawMap.Tiles.Patch.StaticBlocksCount;
-                if (count > 0)
+                if (drawMap != null)
                 {
-                    using (Graphics mapg = Graphics.FromImage(_map))
+                    int count = drawMap.Tiles.Patch.LandBlocksCount + drawMap.Tiles.Patch.StaticBlocksCount;
+                    if (count > 0)
                     {
-                        int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
-                        int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
-                        if (maxx > drawMap.Width >> 3)
+                        using (Graphics mapg = Graphics.FromImage(_map))
                         {
-                            maxx = drawMap.Width >> 3;
-                        }
-
-                        if (maxy > drawMap.Height >> 3)
-                        {
-                            maxy = drawMap.Height >> 3;
-                        }
-
-                        int gx = 0;
-                        for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
-                        {
-                            int gy = 0;
-                            for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
+                            int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
+                            int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
+                            if (maxx > drawMap.Width >> 3)
                             {
-                                if (drawMap.Tiles.Patch.IsLandBlockPatched(x, y))
+                                maxx = drawMap.Width >> 3;
+                            }
+
+                            if (maxy > drawMap.Height >> 3)
+                            {
+                                maxy = drawMap.Height >> 3;
+                            }
+
+                            int gx = 0;
+                            for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
+                            {
+                                int gy = 0;
+                                for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
                                 {
-                                    mapg.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
-                                    mapg.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
-                                    mapg.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
-                                }
-                                if (drawMap.Tiles.Patch.IsStaticBlockPatched(x, y))
-                                {
-                                    mapg.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
-                                    mapg.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
-                                    mapg.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
+                                    if (drawMap.Tiles.Patch.IsLandBlockPatched(x, y))
+                                    {
+                                        mapg.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
+                                        mapg.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
+                                        mapg.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
+                                    }
+
+                                    if (drawMap.Tiles.Patch.IsStaticBlockPatched(x, y))
+                                    {
+                                        mapg.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
+                                        mapg.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
+                                        mapg.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
             ZoomMap(ref _map);
+
             e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
         }
 
