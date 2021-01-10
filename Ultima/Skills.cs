@@ -92,7 +92,7 @@ namespace Ultima
                 //;
             }
 
-            return Encoding.Default.GetString(_stringBuffer, 0, count);
+            return Encoding.ASCII.GetString(_stringBuffer, 0, count);
         }
 
         public static void Save(string path)
@@ -120,7 +120,7 @@ namespace Ultima
                         var length = (int)fsmul.Position;
                         binmul.Write(skill.IsAction);
 
-                        byte[] nameBytes = Encoding.Default.GetBytes(skill.Name);
+                        byte[] nameBytes = Encoding.ASCII.GetBytes(skill.Name);
                         binmul.Write(nameBytes);
                         binmul.Write((byte)0); // null terminated
 

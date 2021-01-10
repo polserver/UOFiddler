@@ -763,7 +763,6 @@ namespace UoFiddler.Controls.Forms
                                     {
                                         bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                                         bmp.SelectActiveFrame(dimension, index);
-                                        bitBmp[index] = bmp;
                                         bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int)numericUpDownRed.Value,
                                             (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                                         edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
@@ -1329,7 +1328,6 @@ namespace UoFiddler.Controls.Forms
                         {
                             bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                             bmp.SelectActiveFrame(dimension, index);
-                            bitBmp[index] = bmp;
                             bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
                                 (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
                             edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);

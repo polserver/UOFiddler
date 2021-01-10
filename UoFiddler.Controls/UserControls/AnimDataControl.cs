@@ -51,7 +51,7 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                _selAnimdataEntry = (Animdata.AnimdataEntry)Animdata.AnimData[value];
+                _selAnimdataEntry = Animdata.AnimData[value];
                 if (_currAnim != value)
                 {
                     treeViewFrames.BeginUpdate();
