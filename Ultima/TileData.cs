@@ -1303,7 +1303,7 @@ namespace Ultima
                 _stringBuffer[count] = *buffer++;
             }
 
-            return Encoding.Default.GetString(_stringBuffer, 0, count);
+            return Encoding.ASCII.GetString(_stringBuffer, 0, count);
         }
 
         private static int[] _landHeader;
@@ -1432,7 +1432,7 @@ namespace Ultima
                     var b = new byte[20];
                     if (LandTable[i].Name != null)
                     {
-                        byte[] bb = Encoding.Default.GetBytes(LandTable[i].Name);
+                        byte[] bb = Encoding.ASCII.GetBytes(LandTable[i].Name);
                         if (bb.Length > 20)
                         {
                             Array.Resize(ref bb, 20);
@@ -1477,7 +1477,7 @@ namespace Ultima
                     var b = new byte[20];
                     if (ItemTable[i].Name != null)
                     {
-                        byte[] bb = Encoding.Default.GetBytes(ItemTable[i].Name);
+                        byte[] bb = Encoding.ASCII.GetBytes(ItemTable[i].Name);
                         if (bb.Length > 20)
                         {
                             Array.Resize(ref bb, 20);

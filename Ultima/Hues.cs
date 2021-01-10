@@ -100,7 +100,7 @@ namespace Ultima
                         var nameBuffer = new byte[20];
                         if (List[index].Name != null)
                         {
-                            byte[] bytes = Encoding.Default.GetBytes(List[index].Name);
+                            byte[] bytes = Encoding.ASCII.GetBytes(List[index].Name);
                             if (bytes.Length > 20)
                             {
                                 Array.Resize(ref bytes, 20);
@@ -301,7 +301,7 @@ namespace Ultima
                         _stringBuffer[count] = *stringBuffer++;
                     }
 
-                    Name = Encoding.Default.GetString(_stringBuffer, 0, count);
+                    Name = Encoding.ASCII.GetString(_stringBuffer, 0, count);
                     Name = Name.Replace("\n", " ");
                 }
             }

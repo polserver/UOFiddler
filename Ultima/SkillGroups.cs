@@ -135,7 +135,7 @@ namespace Ultima
                         }
                         else
                         {
-                            byte[] bb = Encoding.Default.GetBytes(group.Name);
+                            byte[] bb = Encoding.ASCII.GetBytes(group.Name);
                             if (bb.Length > 17)
                             {
                                 Array.Resize(ref bb, 17);

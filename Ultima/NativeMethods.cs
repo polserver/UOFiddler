@@ -71,7 +71,7 @@ namespace Ultima
                 _stringBuffer[count] = *buffer++;
             }
 
-            return Encoding.Default.GetString(_stringBuffer, 0, count);
+            return Encoding.ASCII.GetString(_stringBuffer, 0, count);
         }
 
         public static string ReadNameString(byte[] buffer, int len)
@@ -83,7 +83,7 @@ namespace Ultima
                 //;
             }
 
-            return Encoding.Default.GetString(buffer, 0, count);
+            return Encoding.ASCII.GetString(buffer, 0, count);
         }
     }
 }

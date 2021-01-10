@@ -361,7 +361,7 @@ namespace Ultima
                         var b = new byte[32];
                         if (sound.Name != null)
                         {
-                            byte[] bb = Encoding.Default.GetBytes(sound.Name);
+                            byte[] bb = Encoding.ASCII.GetBytes(sound.Name);
                             if (bb.Length > 32)
                             {
                                 Array.Resize(ref bb, 32);
