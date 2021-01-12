@@ -18,16 +18,18 @@ namespace UoFiddler.Controls.Forms
         public ProgressBarDialog()
         {
             InitializeComponent();
+
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
         public ProgressBarDialog(int max, string desc, bool useFileSaveEvent = true)
         {
             InitializeComponent();
             Text = desc;
-            progressBar1.Maximum = max;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = 1;
+            progressBar.Maximum = max;
+            progressBar.Minimum = 0;
+            progressBar.Value = 0;
+            progressBar.Step = 1;
             if (useFileSaveEvent)
             {
                 Ultima.Files.FileSaveEvent += OnChangeEvent;
@@ -42,7 +44,7 @@ namespace UoFiddler.Controls.Forms
 
         private void OnChangeEvent()
         {
-            progressBar1.PerformStep();
+            progressBar.PerformStep();
         }
     }
 }
