@@ -123,7 +123,12 @@ namespace UoFiddler.Forms
             // 
             this.numericUpDownItemSizeHeight.Location = new System.Drawing.Point(118, 19);
             this.numericUpDownItemSizeHeight.Maximum = new decimal(new int[] {
-            1000,
+            512,
+            0,
+            0,
+            0});
+            this.numericUpDownItemSizeHeight.Minimum = new decimal(new int[] {
+            48,
             0,
             0,
             0});
@@ -131,6 +136,11 @@ namespace UoFiddler.Forms
             this.numericUpDownItemSizeHeight.Size = new System.Drawing.Size(50, 20);
             this.numericUpDownItemSizeHeight.TabIndex = 3;
             this.toolTip1.SetToolTip(this.numericUpDownItemSizeHeight, "Height");
+            this.numericUpDownItemSizeHeight.Value = new decimal(new int[] {
+            96,
+            0,
+            0,
+            0});
             // 
             // checkBoxItemClip
             // 
@@ -156,10 +166,25 @@ namespace UoFiddler.Forms
             // numericUpDownItemSizeWidth
             // 
             this.numericUpDownItemSizeWidth.Location = new System.Drawing.Point(62, 19);
+            this.numericUpDownItemSizeWidth.Maximum = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.numericUpDownItemSizeWidth.Minimum = new decimal(new int[] {
+            48,
+            0,
+            0,
+            0});
             this.numericUpDownItemSizeWidth.Name = "numericUpDownItemSizeWidth";
             this.numericUpDownItemSizeWidth.Size = new System.Drawing.Size(50, 20);
             this.numericUpDownItemSizeWidth.TabIndex = 0;
             this.toolTip1.SetToolTip(this.numericUpDownItemSizeWidth, "Width");
+            this.numericUpDownItemSizeWidth.Value = new decimal(new int[] {
+            96,
+            0,
+            0,
+            0});
             // 
             // checkBoxCacheData
             // 
