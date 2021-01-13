@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
@@ -23,6 +24,7 @@ using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
+    // TODO: add "Show free slots" support
     public partial class LandTilesAlternativeControl : UserControl
     {
         public LandTilesAlternativeControl()
@@ -30,29 +32,24 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            pictureBox.MouseWheel += OnMouseWheel;
+
             _refMarker = this;
         }
-
-        private List<int> _tileList = new List<int>();
-        private int _col;
-        private int _row;
-        private int _selected = -1;
 
         public bool IsLoaded { get; private set; }
 
         private static LandTilesAlternativeControl _refMarker;
+        private int _selectedGraphicId = -1;
+        private readonly List<int> _tileList = new List<int>();
 
-        public int Selected
+        public int SelectedGraphicId
         {
-            get => _selected;
+            get => _selectedGraphicId;
             set
             {
-                _selected = value;
-                namelabel.Text = $"Name: {TileData.LandTable[value].Name}";
-                graphiclabel.Text = string.Format("ID: 0x{0:X4} ({0})", value);
-                FlagsLabel.Text = $"Flags: {TileData.LandTable[value].Flags}";
-                pictureBox.Invalidate();
+                _selectedGraphicId = value < 0 ? 0 : value;
+                UpdateToolStripLabels(_selectedGraphicId);
+                LandTilesTileView.FocusIndex = _tileList.IndexOf(_selectedGraphicId);
             }
         }
 
@@ -68,18 +65,15 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(_refMarker, EventArgs.Empty);
             }
 
-            for (int i = 0; i < _refMarker._tileList.Count; ++i)
+            if (_refMarker._tileList.All(t => t != graphic))
             {
-                if (_refMarker._tileList[i] != graphic)
-                {
-                    continue;
-                }
-
-                _refMarker.vScrollBar.Value = (i / _refMarker._col) + 1;
-                _refMarker.Selected = graphic;
-                return true;
+                return false;
             }
-            return false;
+
+            _refMarker.SelectedGraphicId = graphic;
+
+            return true;
+
         }
 
         /// <summary>
@@ -93,9 +87,9 @@ namespace UoFiddler.Controls.UserControls
             int index = 0;
             if (next)
             {
-                if (_refMarker._selected >= 0)
+                if (_refMarker._selectedGraphicId >= 0)
                 {
-                    index = _refMarker._tileList.IndexOf(_refMarker._selected) + 1;
+                    index = _refMarker._tileList.IndexOf(_refMarker._selectedGraphicId) + 1;
                 }
 
                 if (index >= _refMarker._tileList.Count)
@@ -112,10 +106,10 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                _refMarker.vScrollBar.Value = (i / _refMarker._col) + 1;
-                _refMarker.Selected = _refMarker._tileList[i];
+                _refMarker.SelectedGraphicId = _refMarker._tileList[i];
                 return true;
             }
+
             return false;
         }
 
@@ -129,15 +123,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _tileList = new List<int>();
-            _selected = -1;
-            OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
-        }
+            _selectedGraphicId = -1;
+            _tileList.Clear();
 
-        private int GetIndex(int x, int y)
-        {
-            int value = Math.Max(0, (_col * (vScrollBar.Value - 1)) + x + (y * _col));
-            return _tileList.Count > value ? _tileList[value] : -1;
+            OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -158,14 +147,17 @@ namespace UoFiddler.Controls.UserControls
                     _tileList.Add(i);
                 }
             }
-            vScrollBar.Maximum = (_tileList.Count / _col) + 1;
-            pictureBox.Invalidate();
+
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
+
             if (!IsLoaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.LandTileChangeEvent += OnLandTileChangeEvent;
                 ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
             }
+
             IsLoaded = true;
             Cursor.Current = Cursors.Default;
         }
@@ -176,6 +168,13 @@ namespace UoFiddler.Controls.UserControls
             {
                 Reload();
             }
+        }
+
+        private void UpdateToolStripLabels(int graphic)
+        {
+            NameLabel.Text = $"Name: {TileData.LandTable[graphic].Name}";
+            GraphicLabel.Text = string.Format("ID: 0x{0:X4} ({0})", graphic);
+            FlagsLabel.Text = $"Flags: {TileData.LandTable[graphic].Flags}";
         }
 
         private void OnTileDataChangeEvent(object sender, int id)
@@ -195,18 +194,17 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (id > 0x3FFF)
+            if (id < 0 || id > 0x3FFF)
             {
                 return;
             }
 
-            if (_selected != id)
+            if (_selectedGraphicId != id)
             {
                 return;
             }
 
-            namelabel.Text = $"Name: {TileData.LandTable[id].Name}";
-            FlagsLabel.Text = $"Flags: {TileData.LandTable[id].Flags}";
+            UpdateToolStripLabels(id);
         }
 
         private void OnLandTileChangeEvent(object sender, int index)
@@ -246,143 +244,19 @@ namespace UoFiddler.Controls.UserControls
                     done = true;
                     break;
                 }
+
                 if (!done)
                 {
                     _tileList.Add(index);
                 }
-
-                vScrollBar.Maximum = (_tileList.Count / _col) + 1;
             }
             else
             {
                 _tileList.Remove(index);
-                vScrollBar.Maximum = (_tileList.Count / _col) + 1;
-            }
-        }
-
-        private void OnScroll(object sender, ScrollEventArgs e)
-        {
-            pictureBox.Invalidate();
-        }
-
-        private void OnMouseWheel(object sender, MouseEventArgs e)
-        {
-            if (e.Delta < 0)
-            {
-                if (vScrollBar.Value >= vScrollBar.Maximum)
-                {
-                    return;
-                }
-
-                vScrollBar.Value++;
-                pictureBox.Invalidate();
-            }
-            else
-            {
-                if (vScrollBar.Value <= 1)
-                {
-                    return;
-                }
-
-                vScrollBar.Value--;
-                pictureBox.Invalidate();
-            }
-        }
-
-        private void OnPaint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.Clear(Color.White);
-
-            for (int x = 0; x <= _col; ++x)
-            {
-                e.Graphics.DrawLine(Pens.Gray, new Point(x * 49, 0),
-                    new Point(x * 49, _row * 49));
             }
 
-            for (int y = 0; y <= _row; ++y)
-            {
-                e.Graphics.DrawLine(Pens.Gray, new Point(0, y * 49),
-                    new Point(_col * 49, y * 49));
-            }
-
-            for (int y = 0; y < _row; ++y)
-            {
-                for (int x = 0; x < _col; ++x)
-                {
-                    int index = GetIndex(x, y);
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    Bitmap b = Art.GetLand(index, out bool patched);
-                    if (b == null)
-                    {
-                        continue;
-                    }
-
-                    Point loc = new Point((x * 49) + 1, (y * 49) + 1);
-                    Size size = new Size(49 - 1, 49 - 1);
-                    Rectangle rect = new Rectangle(loc, size);
-
-                    e.Graphics.Clip = new Region(rect);
-                    if (index == _selected)
-                    {
-                        e.Graphics.FillRectangle(Brushes.LightBlue, rect);
-                    }
-                    else if (patched)
-                    {
-                        e.Graphics.FillRectangle(Brushes.LightCoral, rect);
-                    }
-
-                    int width = b.Width;
-                    int height = b.Height;
-                    if (width > size.Width)
-                    {
-                        width = size.Width;
-                        height = size.Height * b.Height / b.Width;
-                    }
-                    if (height > size.Height)
-                    {
-                        height = size.Height;
-                        width = size.Width * b.Width / b.Height;
-                    }
-                    e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
-                }
-            }
-        }
-
-        private void OnResize(object sender, EventArgs e)
-        {
-            if (pictureBox.Width == 0 || pictureBox.Height == 0)
-            {
-                return;
-            }
-
-            _col = pictureBox.Width / 49;
-            _row = (pictureBox.Height / 49) + 1;
-            vScrollBar.Maximum = (_tileList.Count / _col) + 1;
-            vScrollBar.Minimum = 1;
-            vScrollBar.SmallChange = 1;
-            vScrollBar.LargeChange = _row;
-            pictureBox.Invalidate();
-        }
-
-        private void OnMouseClick(object sender, MouseEventArgs e)
-        {
-            pictureBox.Focus();
-            int x = e.X / (49 - 1);
-            int y = e.Y / (49 - 1);
-            int index = GetIndex(x, y);
-            if (index < 0)
-            {
-                return;
-            }
-
-            if (_selected != index)
-            {
-                Selected = index;
-            }
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
         }
 
         private LandTileSearchForm _showForm;
@@ -403,17 +277,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickFindFree(object sender, EventArgs e)
         {
-            int id = _selected;
+            int id = _selectedGraphicId;
             ++id;
-            for (int i = _tileList.IndexOf(_selected) + 1; i < _tileList.Count; ++i, ++id)
+            for (int i = _tileList.IndexOf(_selectedGraphicId) + 1; i < _tileList.Count; ++i, ++id)
             {
                 if (id >= _tileList[i])
                 {
                     continue;
                 }
 
-                vScrollBar.Value = (i / _refMarker._col) + 1;
-                Selected = _tileList[i];
+                SelectedGraphicId = _tileList[i];
                 break;
             }
         }
@@ -421,24 +294,25 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickRemove(object sender, EventArgs e)
         {
             DialogResult result =
-                        MessageBox.Show($"Are you sure to remove {_selected}", "Save",
+                        MessageBox.Show($"Are you sure to remove {_selectedGraphicId}", "Save",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
             if (result != DialogResult.Yes)
             {
                 return;
             }
 
-            Art.RemoveLand(_selected);
-            ControlEvents.FireLandTileChangeEvent(this, _selected);
-            _tileList.Remove(_selected);
-            --_selected;
-            pictureBox.Invalidate();
+            Art.RemoveLand(_selectedGraphicId);
+            ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
+            _tileList.Remove(_selectedGraphicId);
+            SelectedGraphicId = --_selectedGraphicId;
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
             Options.ChangedUltimaClass["Art"] = true;
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
@@ -460,9 +334,9 @@ namespace UoFiddler.Controls.UserControls
                     bmp = Utils.ConvertBmp(bmp);
                 }
 
-                Art.ReplaceLand(_selected, bmp);
-                ControlEvents.FireLandTileChangeEvent(this, _selected);
-                pictureBox.Invalidate();
+                Art.ReplaceLand(_selectedGraphicId, bmp);
+                ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
+                LandTilesTileView.Invalidate();
                 Options.ChangedUltimaClass["Art"] = true;
             }
         }
@@ -486,7 +360,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
+            const int graphicIdMin = 0;
+            const int graphicIdMax = 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, graphicIdMin, graphicIdMax))
             {
                 return;
             }
@@ -496,7 +373,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
+            LandTilesContextMenuStrip.Close();
+
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
@@ -509,13 +387,16 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Bitmap bmp = new Bitmap(dialog.FileName);
+                // TODO: check this if... looks weird. We don't convert other file types?
                 if (dialog.FileName.Contains(".bmp"))
                 {
                     bmp = Utils.ConvertBmp(bmp);
                 }
 
                 Art.ReplaceLand(index, bmp);
+
                 ControlEvents.FireLandTileChangeEvent(this, index);
+
                 bool done = false;
                 for (int i = 0; i < _tileList.Count; ++i)
                 {
@@ -525,16 +406,19 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     _tileList.Insert(i, index);
-                    vScrollBar.Value = (i / _refMarker._col) + 1;
                     done = true;
                     break;
                 }
+
                 if (!done)
                 {
                     _tileList.Add(index);
-                    vScrollBar.Value = (_tileList.Count / _refMarker._col) + 1;
                 }
-                Selected = index;
+
+                LandTilesTileView.VirtualListSize = _tileList.Count;
+                LandTilesTileView.Invalidate();
+                SelectedGraphicId = index;
+
                 Options.ChangedUltimaClass["Art"] = true;
             }
         }
@@ -561,48 +445,48 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            ExportLandTileImage(_selected, ImageFormat.Bmp);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Bmp);
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            ExportLandTileImage(_selected, ImageFormat.Tiff);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Tiff);
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            ExportLandTileImage(_selected, ImageFormat.Jpeg);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Jpeg);
         }
 
         private void OnClickExportPng(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            ExportLandTileImage(_selected, ImageFormat.Png);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Png);
         }
 
         private static void ExportLandTileImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"Landtile {index}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile 0x{index:X4}.{fileExtension}");
 
             using (Bitmap bit = new Bitmap(Art.GetLand(index)))
             {
@@ -615,17 +499,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (_selected >= 0)
+            if (_selectedGraphicId >= 0)
             {
-                TileDataControl.Select(_selected, true);
+                TileDataControl.Select(_selectedGraphicId, true);
             }
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            if (_selected >= 0)
+            if (_selectedGraphicId >= 0)
             {
-                RadarColorControl.Select(_selected, true);
+                RadarColorControl.Select(_selectedGraphicId, true);
             }
         }
 
@@ -662,15 +546,14 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _tileList.Count; ++i)
+                foreach (var index in _tileList)
                 {
-                    int index = _tileList[i];
-                    if (!Art.IsValidStatic(index))
+                    if (!Art.IsValidLand(index))
                     {
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.{fileExtension}");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile 0x{index:X4}.{fileExtension}");
                     using (Bitmap bit = new Bitmap(Art.GetLand(index)))
                     {
                         bit.Save(fileName, imageFormat);
@@ -680,6 +563,49 @@ namespace UoFiddler.Controls.UserControls
                 MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
+        }
+
+        private void LandTilesTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
+        {
+            Point itemPoint = new Point(e.Bounds.X + LandTilesTileView.TilePadding.Left, e.Bounds.Y + LandTilesTileView.TilePadding.Top);
+            const int fixedTileSize = 44;
+            Size itemSize = new Size(fixedTileSize, fixedTileSize);
+            Rectangle itemRec = new Rectangle(itemPoint, itemSize);
+
+            Bitmap bitmap = Art.GetLand(_tileList[e.Index], out bool patched);
+            if (patched)
+            {
+                // different background for verdata patched tiles
+                e.Graphics.FillRectangle(Brushes.LightCoral, itemRec);
+            }
+
+            if (bitmap == null)
+            {
+                // TODO: partial empty slots support - drawing the tile
+                itemPoint.Offset(2, 2);
+                e.Graphics.FillRectangle(Brushes.Red, new Rectangle(itemPoint, itemSize - new Size(4, 4)));
+            }
+            else
+            {
+                e.Graphics.DrawImage(bitmap, itemRec);
+            }
+        }
+
+        private void LandTilesTileView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (!e.IsSelected)
+            {
+                return;
+            }
+
+            if (_tileList.Count == 0)
+            {
+                return;
+            }
+
+            SelectedGraphicId = e.ItemIndex < 0 || e.ItemIndex > _tileList.Count
+                ? _tileList[0]
+                : _tileList[e.ItemIndex];
         }
     }
 }

@@ -174,44 +174,41 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
         private void ExportToItemDescClicked(object sender, EventArgs e)
         {
+            var selectedArtIds = new List<int>();
+
             if (Options.DesignAlternative)
             {
-                ExportSingleItem(Host.GetSelectedItemShowAlternative());
-            }
-            else
-            {
-                ExportAllSelectedItems(Host.GetItemShowListView());
-            }
-        }
+                var itemShowAltControl = Host.GetItemShowAltControl();
+                var itemShowAltTileView = Host.GetItemShowAltTileView();
 
-        private static void ExportAllSelectedItems(ListView itemShowListView)
-        {
-            ListView.SelectedListViewItemCollection selectedItems = itemShowListView.SelectedItems;
-            if (selectedItems.Count <= 0)
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, _itemDescFileName);
-
-            using (StreamWriter streamWriter = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
-            {
-                foreach (ListViewItem item in selectedItems)
+                foreach (var item in itemShowAltTileView.SelectedIndices)
                 {
-                    int itemId = (int)item.Tag;
-
-                    if (Art.IsValidStatic(itemId))
+                    var graphic = itemShowAltControl.ItemList[item];
+                    if (Art.IsValidStatic(graphic))
                     {
-                        streamWriter.WriteLine(GetItemDescEntry(itemId));
+                        selectedArtIds.Add(graphic);
                     }
                 }
             }
+            else
+            {
+                var itemShowListView = Host.GetItemShowListView();
+                foreach (ListViewItem item in itemShowListView.SelectedItems)
+                {
+                    int graphic = (int)item.Tag;
+                    if (Art.IsValidStatic(graphic))
+                    {
+                        selectedArtIds.Add(graphic);
+                    }
+                }
+            }
+
+            ExportAllItems(selectedArtIds);
         }
 
-        private static void ExportSingleItem(int itemId)
+        private static void ExportAllItems(ICollection<int> items)
         {
-            if (itemId <= -1 || !Art.IsValidStatic(itemId))
+            if (items.Count == 0)
             {
                 return;
             }
@@ -221,7 +218,10 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
             using (StreamWriter streamWriter = new StreamWriter(new FileStream(fileName, FileMode.Append, FileAccess.Write), Encoding.GetEncoding(1252)))
             {
-                streamWriter.WriteLine(GetItemDescEntry(itemId));
+                foreach (var item in items)
+                {
+                    streamWriter.WriteLine(GetItemDescEntry(item));
+                }
             }
         }
 

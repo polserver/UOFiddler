@@ -11,6 +11,7 @@
 
 using System.Windows.Forms;
 using UoFiddler.Controls.UserControls;
+using UoFiddler.Controls.UserControls.TileView;
 
 namespace UoFiddler.Controls.Plugin.Interfaces
 {
@@ -29,6 +30,12 @@ namespace UoFiddler.Controls.Plugin.Interfaces
         ItemShowAlternativeControl GetItemShowAltControl();
 
         /// <summary>
+        /// Gets the TileView of ItemShowAlternative
+        /// </summary>
+        /// <returns></returns>
+        TileViewControl GetItemShowAltTileView();
+
+        /// <summary>
         /// Gets the current selected graphic in ItemShow
         /// </summary>
         /// <returns>Graphic or -1 if none selected</returns>
@@ -45,11 +52,5 @@ namespace UoFiddler.Controls.Plugin.Interfaces
         /// </summary>
         /// <returns></returns>
         ListView GetItemShowListView();
-
-        /// <summary>
-        /// Gets the PictureBox of ItemShowAlt
-        /// </summary>
-        /// <returns></returns>
-        PictureBox GetItemShowAltPictureBox();
     }
 }

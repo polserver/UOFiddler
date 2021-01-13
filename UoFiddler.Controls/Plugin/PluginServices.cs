@@ -17,6 +17,7 @@ using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin.Interfaces;
 using UoFiddler.Controls.Plugin.Types;
 using UoFiddler.Controls.UserControls;
+using UoFiddler.Controls.UserControls.TileView;
 
 namespace UoFiddler.Controls.Plugin
 {
@@ -137,19 +138,19 @@ namespace UoFiddler.Controls.Plugin
             return ItemShowControl.ItemListView;
         }
 
+        public TileViewControl GetItemShowAltTileView()
+        {
+            return ItemShowAlternativeControl.TileView;
+        }
+
         public ItemShowAlternativeControl GetItemShowAltControl()
         {
             return ItemShowAlternativeControl.RefMarker;
         }
 
-        public PictureBox GetItemShowAltPictureBox()
-        {
-            return ItemShowAlternativeControl.ItemPictureBox;
-        }
-
         public int GetSelectedItemShowAlternative()
         {
-            return ItemShowAlternativeControl.RefMarker.Selected;
+            return ItemShowAlternativeControl.RefMarker.SelectedGraphicId;
         }
     }
 }
