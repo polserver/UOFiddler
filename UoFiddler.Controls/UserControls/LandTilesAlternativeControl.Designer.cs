@@ -9,6 +9,9 @@
  *
  ***************************************************************************/
 
+using System;
+using UoFiddler.Controls.UserControls.TileView;
+
 namespace UoFiddler.Controls.UserControls
 {
     partial class LandTilesAlternativeControl
@@ -40,9 +43,7 @@ namespace UoFiddler.Controls.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.vScrollBar = new System.Windows.Forms.VScrollBar();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.LandTilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,11 +58,11 @@ namespace UoFiddler.Controls.UserControls
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InsertText = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.namelabel = new System.Windows.Forms.ToolStripLabel();
-            this.graphiclabel = new System.Windows.Forms.ToolStripLabel();
+            this.LandTilesToolStrip = new System.Windows.Forms.ToolStrip();
+            this.NameLabel = new System.Windows.Forms.ToolStripLabel();
+            this.GraphicLabel = new System.Windows.Forms.ToolStripLabel();
             this.FlagsLabel = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.MiscToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportAllAsBmp = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportAllAsTiff = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,38 +72,14 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.LandTilesTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            this.LandTilesContextMenuStrip.SuspendLayout();
+            this.LandTilesToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // vScrollBar
+            // LandTilesContextMenuStrip
             // 
-            this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(602, 25);
-            this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 300);
-            this.vScrollBar.TabIndex = 7;
-            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(0, 25);
-            this.pictureBox.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.pictureBox.Size = new System.Drawing.Size(602, 300);
-            this.pictureBox.TabIndex = 3;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LandTilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportImageToolStripMenuItem,
             this.toolStripSeparator3,
             this.selectInTileDataTabToolStripMenuItem,
@@ -112,8 +89,8 @@ namespace UoFiddler.Controls.UserControls
             this.removeToolStripMenuItem,
             this.replaceToolStripMenuItem,
             this.insertAtToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(201, 170);
+            this.LandTilesContextMenuStrip.Name = "contextMenuStrip1";
+            this.LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 170);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -209,46 +186,44 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
             // 
-            // toolStrip1
+            // LandTilesToolStrip
             // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.namelabel,
-            this.graphiclabel,
+            this.LandTilesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.LandTilesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NameLabel,
+            this.GraphicLabel,
             this.FlagsLabel,
-            this.toolStripDropDownButton1,
+            this.MiscToolStripDropDownButton,
             this.SearchButton,
             this.toolStripSeparator5,
             this.SaveButton,
             this.toolStripSeparator4});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(619, 25);
-            this.toolStrip1.TabIndex = 5;
-            this.toolStrip1.Text = "toolStrip1";
+            this.LandTilesToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.LandTilesToolStrip.Name = "LandTilesToolStrip";
+            this.LandTilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.LandTilesToolStrip.Size = new System.Drawing.Size(610, 25);
+            this.LandTilesToolStrip.TabIndex = 5;
             // 
-            // namelabel
+            // NameLabel
             // 
-            this.namelabel.AutoSize = false;
-            this.namelabel.Name = "namelabel";
-            this.namelabel.Size = new System.Drawing.Size(140, 22);
-            this.namelabel.Text = "Name:";
-            this.namelabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.NameLabel.AutoSize = false;
+            this.NameLabel.Name = "NameLabel";
+            this.NameLabel.Size = new System.Drawing.Size(140, 22);
+            this.NameLabel.Text = "Name:";
+            this.NameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // graphiclabel
+            // GraphicLabel
             // 
-            this.graphiclabel.AutoSize = false;
-            this.graphiclabel.Name = "graphiclabel";
-            this.graphiclabel.Size = new System.Drawing.Size(120, 22);
-            this.graphiclabel.Text = "Graphic:";
-            this.graphiclabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.GraphicLabel.AutoSize = false;
+            this.GraphicLabel.Name = "GraphicLabel";
+            this.GraphicLabel.Size = new System.Drawing.Size(120, 22);
+            this.GraphicLabel.Text = "Graphic:";
+            this.GraphicLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // FlagsLabel
             // 
@@ -257,17 +232,17 @@ namespace UoFiddler.Controls.UserControls
             this.FlagsLabel.Text = "Flags:";
             this.FlagsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // toolStripDropDownButton1
+            // MiscToolStripDropDownButton
             // 
-            this.toolStripDropDownButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MiscToolStripDropDownButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.MiscToolStripDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.MiscToolStripDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportAllToolStripMenuItem});
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Margin = new System.Windows.Forms.Padding(0, 1, 20, 2);
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
-            this.toolStripDropDownButton1.Text = "Misc";
+            this.MiscToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.MiscToolStripDropDownButton.Margin = new System.Windows.Forms.Padding(0, 1, 20, 2);
+            this.MiscToolStripDropDownButton.Name = "MiscToolStripDropDownButton";
+            this.MiscToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
+            this.MiscToolStripDropDownButton.Text = "Misc";
             // 
             // exportAllToolStripMenuItem
             // 
@@ -340,21 +315,43 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
-            // LandTilesAlternative
+            // LandTilesTileView
+            // 
+            this.LandTilesTileView.AutoScroll = true;
+            this.LandTilesTileView.AutoScrollMinSize = new System.Drawing.Size(0, 50);
+            this.LandTilesTileView.BackColor = System.Drawing.SystemColors.Window;
+            this.LandTilesTileView.ContextMenuStrip = this.LandTilesContextMenuStrip;
+            this.LandTilesTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LandTilesTileView.FocusIndex = -1;
+            this.LandTilesTileView.Location = new System.Drawing.Point(0, 25);
+            this.LandTilesTileView.MultiSelect = false;
+            this.LandTilesTileView.Name = "LandTilesTileView";
+            this.LandTilesTileView.Size = new System.Drawing.Size(610, 321);
+            this.LandTilesTileView.TabIndex = 8;
+            this.LandTilesTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            this.LandTilesTileView.TileBorderColor = System.Drawing.Color.Gray;
+            this.LandTilesTileView.TileBorderWidth = 1F;
+            this.LandTilesTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            this.LandTilesTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            this.LandTilesTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            this.LandTilesTileView.TileSize = new System.Drawing.Size(44, 44);
+            this.LandTilesTileView.VirtualListSize = 1;
+            this.LandTilesTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.LandTilesTileView_ItemSelectionChanged);
+            this.LandTilesTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.LandTilesTileView_DrawItem);
+            // 
+            // LandTilesAlternativeControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.pictureBox);
-            this.Controls.Add(this.vScrollBar);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.LandTilesTileView);
+            this.Controls.Add(this.LandTilesToolStrip);
             this.DoubleBuffered = true;
             this.Name = "LandTilesAlternativeControl";
-            this.Size = new System.Drawing.Size(619, 325);
+            this.Size = new System.Drawing.Size(610, 346);
             this.Load += new System.EventHandler(this.OnLoad);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.LandTilesContextMenuStrip.ResumeLayout(false);
+            this.LandTilesToolStrip.ResumeLayout(false);
+            this.LandTilesToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -366,32 +363,32 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip LandTilesContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem ExportAllAsBmp;
         private System.Windows.Forms.ToolStripMenuItem ExportAllAsTiff;
         private System.Windows.Forms.ToolStripMenuItem exportAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findNextFreeSlotToolStripMenuItem;
         private System.Windows.Forms.ToolStripLabel FlagsLabel;
-        private System.Windows.Forms.ToolStripLabel graphiclabel;
+        private System.Windows.Forms.ToolStripLabel GraphicLabel;
         private System.Windows.Forms.ToolStripMenuItem insertAtToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox InsertText;
-        private System.Windows.Forms.ToolStripLabel namelabel;
-        private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.ToolStripLabel NameLabel;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton SaveButton;
         private System.Windows.Forms.ToolStripButton SearchButton;
         private System.Windows.Forms.ToolStripMenuItem selectInRadarColorTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInTileDataTabToolStripMenuItem;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStrip LandTilesToolStrip;
+        private System.Windows.Forms.ToolStripDropDownButton MiscToolStripDropDownButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.VScrollBar vScrollBar;
 
         #endregion
+
+        private TileView.TileViewControl LandTilesTileView;
     }
 }

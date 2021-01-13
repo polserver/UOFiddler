@@ -18,6 +18,7 @@ using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
 using UoFiddler.Controls.UserControls;
+using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.SendItem.Forms;
 using Events = UoFiddler.Controls.Plugin.PluginEvents;
 
@@ -117,16 +118,16 @@ namespace UoFiddler.Plugin.SendItem
             if (Options.DesignAlternative)
             {
                 ItemShowAlternativeControl itemShowAltControl = Host.GetItemShowAltControl();
-                PictureBox itemShowAltPictureBox = Host.GetItemShowAltPictureBox();
+                TileViewControl itemShowTileView = Host.GetItemShowAltTileView();
                 if (value)
                 {
-                    itemShowAltPictureBox.MouseDoubleClick -= itemShowAltControl.OnMouseDoubleClick;
-                    itemShowAltPictureBox.MouseDoubleClick += PlugOnDoubleClick;
+                    itemShowTileView.MouseDoubleClick -= itemShowAltControl.ItemsTileView_MouseDoubleClick;
+                    itemShowTileView.MouseDoubleClick += PlugOnDoubleClick;
                 }
                 else if (!init)
                 {
-                    itemShowAltPictureBox.MouseDoubleClick -= PlugOnDoubleClick;
-                    itemShowAltPictureBox.MouseDoubleClick += itemShowAltControl.OnMouseDoubleClick;
+                    itemShowTileView.MouseDoubleClick -= PlugOnDoubleClick;
+                    itemShowTileView.MouseDoubleClick += itemShowAltControl.ItemsTileView_MouseDoubleClick;
                 }
             }
             else
