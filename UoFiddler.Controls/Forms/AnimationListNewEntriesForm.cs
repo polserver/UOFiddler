@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -132,7 +133,6 @@ namespace UoFiddler.Controls.Forms
 
             MobTypes();
 
-            TreeNode node;
             foreach (var key in BodyTable.Entries) //body.def
             {
                 BodyTableEntry entry = key.Value;
@@ -146,7 +146,7 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                node = new TreeNode(entry.NewId.ToString())
+                TreeNode node = new TreeNode(entry.NewId.ToString())
                 {
                     Tag = entry.NewId,
                     ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewId)}"
@@ -158,125 +158,56 @@ namespace UoFiddler.Controls.Forms
 
             if (BodyConverter.Table1 != null)
             {
-                foreach (int entry in BodyConverter.Table1)  // bodyconv.def
-                {
-                    if (entry == -1)
-                    {
-                        continue;
-                    }
-
-                    if (AlreadyFound(entry))
-                    {
-                        continue;
-                    }
-
-                    if (_form.IsAlreadyDefined(entry))
-                    {
-                        continue;
-                    }
-
-                    node = new TreeNode(entry.ToString())
-                    {
-                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
-                        Tag = entry
-                    };
-                    node.Tag = new[] { entry, 0 };
-                    tvAnimationList.Nodes.Add(node);
-                    SetActionType(node, entry, 0);
-                }
+                ProcessBodyConverterTable(BodyConverter.Table1);
             }
 
             if (BodyConverter.Table2 != null)
             {
-                foreach (int entry in BodyConverter.Table2)
-                {
-                    if (entry == -1)
-                    {
-                        continue;
-                    }
-
-                    if (AlreadyFound(entry))
-                    {
-                        continue;
-                    }
-
-                    if (_form.IsAlreadyDefined(entry))
-                    {
-                        continue;
-                    }
-
-                    node = new TreeNode(entry.ToString())
-                    {
-                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
-                        Tag = entry
-                    };
-                    node.Tag = new[] { entry, 0 };
-                    tvAnimationList.Nodes.Add(node);
-                    SetActionType(node, entry, 0);
-                }
+                ProcessBodyConverterTable(BodyConverter.Table2);
             }
 
             if (BodyConverter.Table3 != null)
             {
-                foreach (int entry in BodyConverter.Table3)
-                {
-                    if (entry == -1)
-                    {
-                        continue;
-                    }
-
-                    if (AlreadyFound(entry))
-                    {
-                        continue;
-                    }
-
-                    if (_form.IsAlreadyDefined(entry))
-                    {
-                        continue;
-                    }
-
-                    node = new TreeNode(entry.ToString())
-                    {
-                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
-                        Tag = entry
-                    };
-                    node.Tag = new[] { entry, 0 };
-                    tvAnimationList.Nodes.Add(node);
-                    SetActionType(node, entry, 0);
-                }
+                ProcessBodyConverterTable(BodyConverter.Table3);
             }
 
             if (BodyConverter.Table4 != null)
             {
-                foreach (int entry in BodyConverter.Table4)
-                {
-                    if (entry == -1)
-                    {
-                        continue;
-                    }
-
-                    if (AlreadyFound(entry))
-                    {
-                        continue;
-                    }
-
-                    if (_form.IsAlreadyDefined(entry))
-                    {
-                        continue;
-                    }
-
-                    node = new TreeNode(entry.ToString())
-                    {
-                        ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
-                        Tag = entry
-                    };
-                    node.Tag = new[] { entry, 0 };
-                    tvAnimationList.Nodes.Add(node);
-                    SetActionType(node, entry, 0);
-                }
+                ProcessBodyConverterTable(BodyConverter.Table4);
             }
 
             tvAnimationList.EndUpdate();
+        }
+
+        private void ProcessBodyConverterTable(IEnumerable<int> table)
+        {
+            // bodyconv.def
+            foreach (int entry in table)
+            {
+                if (entry == -1)
+                {
+                    continue;
+                }
+
+                if (AlreadyFound(entry))
+                {
+                    continue;
+                }
+
+                if (_form.IsAlreadyDefined(entry))
+                {
+                    continue;
+                }
+
+                TreeNode node = new TreeNode(entry.ToString())
+                {
+                    ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
+                    Tag = entry
+                };
+                node.Tag = new[] { entry, 0 };
+                tvAnimationList.Nodes.Add(node);
+                SetActionType(node, entry, 0);
+            }
         }
 
         private bool AlreadyFound(int graphic)
@@ -315,27 +246,34 @@ namespace UoFiddler.Controls.Forms
                     try
                     {
                         string[] split = line.Split('\t');
-                        if (int.TryParse(split[0], out int graphic))
+                        if (int.TryParse(split[0], out int graphic) && !AlreadyFound(graphic) && !_form.IsAlreadyDefined(graphic))
                         {
-                            if (!AlreadyFound(graphic) && !_form.IsAlreadyDefined(graphic))
+                            TreeNode node = new TreeNode(graphic.ToString())
                             {
-                                TreeNode node = new TreeNode(graphic.ToString())
-                                {
-                                    ToolTipText = $"Found in mobtype.txt {Animations.GetFileName(graphic)}"
-                                };
-                                int type = 0;
-                                switch (split[1])
-                                {
-                                    case "MONSTER": type = 0; break;
-                                    case "SEA_MONSTER": type = 1; break;
-                                    case "ANIMAL": type = 2; break;
-                                    case "HUMAN": type = 3; break;
-                                    case "EQUIPMENT": type = 3; break;
-                                }
-                                node.Tag = new[] { graphic, type };
-                                tvAnimationList.Nodes.Add(node);
-                                SetActionType(node, graphic, type);
+                                ToolTipText = $"Found in mobtype.txt {Animations.GetFileName(graphic)}"
+                            };
+
+                            int type = 0;
+                            switch (split[1])
+                            {
+                                case "MONSTER":
+                                    type = 0;
+                                    break;
+                                case "SEA_MONSTER":
+                                    type = 1;
+                                    break;
+                                case "ANIMAL":
+                                    type = 2;
+                                    break;
+                                case "HUMAN":
+                                case "EQUIPMENT":
+                                    type = 3;
+                                    break;
                             }
+
+                            node.Tag = new[] { graphic, type };
+                            tvAnimationList.Nodes.Add(node);
+                            SetActionType(node, graphic, type);
                         }
                     }
                     catch
@@ -349,7 +287,7 @@ namespace UoFiddler.Controls.Forms
         private void SetActionType(TreeNode parent, int graphic, int type)
         {
             parent.Nodes.Clear();
-            if (type == 4) // Equipment == human
+            if (type == 4) // Equipment == Human
             {
                 type = 3;
             }
@@ -422,6 +360,7 @@ namespace UoFiddler.Controls.Forms
                     X = (pictureBox1.Width - frames[0].Bitmap.Width) / 2,
                     Y = (pictureBox1.Height - frames[0].Bitmap.Height) / 2
                 };
+
                 e.Graphics.DrawImage(frames[0].Bitmap, loc);
             }
         }
@@ -442,7 +381,10 @@ namespace UoFiddler.Controls.Forms
             if (node.Parent != null)
             {
                 node = node.Parent;
-            } ((int[])node.Tag)[1] = ComboBoxActionType.SelectedIndex;
+            }
+
+            ((int[])node.Tag)[1] = ComboBoxActionType.SelectedIndex;
+
             SetActionType(node, ((int[])node.Tag)[0], ComboBoxActionType.SelectedIndex);
         }
 
@@ -492,14 +434,13 @@ namespace UoFiddler.Controls.Forms
             {
                 return 0;
             }
-            else if (ix[0] < iy[0])
+
+            if (ix[0] < iy[0])
             {
                 return -1;
             }
-            else
-            {
-                return 1;
-            }
+
+            return 1;
         }
     }
 }
