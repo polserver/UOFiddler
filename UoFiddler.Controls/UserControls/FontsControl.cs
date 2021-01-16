@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -34,6 +35,7 @@ namespace UoFiddler.Controls.UserControls
 
         private bool _loaded;
         private static FontsControl _refMarker;
+        private List<int> _fonts = new List<int>();
 
         /// <summary>
         /// Reload when loaded (file changed)
@@ -56,13 +58,14 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _refMarker.listView1.Invalidate();
-            if (_refMarker.listView1.SelectedItems.Count <= 0)
+            _refMarker.FontsTileView.Invalidate();
+
+            if (_refMarker.FontsTileView.SelectedIndices.Count == 0)
             {
                 return;
             }
 
-            int i = int.Parse(_refMarker.listView1.SelectedItems[0].Text);
+            int i = _refMarker.FontsTileView.SelectedIndices[0];
             _refMarker.toolStripStatusLabel1.Text =
                 string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}",
                     (char)i, i,
@@ -129,6 +132,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
+
             if (!_loaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
@@ -152,132 +156,77 @@ namespace UoFiddler.Controls.UserControls
 
             int font = (int)treeView.SelectedNode.Tag;
 
-            listView1.BeginUpdate();
             try
             {
-                listView1.Clear();
-
                 if ((int)treeView.SelectedNode.Parent.Tag == 1)
                 {
                     setOffsetsToolStripMenuItem.Visible = true;
-                    ListViewItem[] cache = new ListViewItem[0x10000];
-                    for (int i = 0; i < 0x10000; ++i)
-                    {
-                        cache[i] = new ListViewItem(i.ToString(), 0)
-                        {
-                            Tag = i
-                        };
-                    }
-                    listView1.Items.AddRange(cache);
+
+                    FontsTileView.VirtualListSize = 0x10000;
                 }
                 else
                 {
                     setOffsetsToolStripMenuItem.Visible = false;
-                    if (ASCIIText.Fonts[font] != null)
+
+                    if (ASCIIText.Fonts[font] == null)
                     {
-                        ListViewItem[] cache = new ListViewItem[ASCIIText.Fonts[font].Characters.Length];
-                        for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
-                        {
-                            cache[i] = new ListViewItem((i + 32).ToString(), 0)
-                            {
-                                Tag = ASCIIText.Fonts[font].Characters[i]
-                            };
-                        }
-                        listView1.Items.AddRange(cache);
+                        return;
+                    }
+
+                    var length = ASCIIText.Fonts[font].Characters.Length;
+                    FontsTileView.VirtualListSize = length;
+
+                    _fonts = new List<int>(length);
+                    for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
+                    {
+                        _fonts.Add(i);
                     }
                 }
-                listView1.TileSize = new Size(30, 30);
             }
             finally
             {
-                listView1.EndUpdate();
-            }
-        }
-
-        private void DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            int i = int.Parse(e.Item.Text);
-            char c = (char)i;
-            var bmp = (int)treeView.SelectedNode.Parent.Tag == 1
-                ? UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].GetImage()
-                : (Bitmap)e.Item.Tag;
-
-            if (listView1.SelectedItems.Contains(e.Item))
-            {
-                e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-
-            e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
-            if (bmp != null)
-            {
-                int width = bmp.Width;
-                int height = bmp.Height;
-
-                if (width > e.Bounds.Width)
-                {
-                    width = e.Bounds.Width - 2;
-                }
-
-                if (height > e.Bounds.Height)
-                {
-                    height = e.Bounds.Height - 2;
-                }
-
-                e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, width, height));
-            }
-
-            using (var pen = new Pen(Color.Gray))
-            {
-                e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-        }
-
-        private void OnSelectChar(object sender, EventArgs e)
-        {
-            if (listView1.SelectedItems.Count == 0)
-            {
-                toolStripStatusLabel1.Text = " : ()";
-            }
-            else
-            {
-                int i = int.Parse(listView1.SelectedItems[0].Text);
-                toolStripStatusLabel1.Text = (int)treeView.SelectedNode.Parent.Tag == 1
-                    ? string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset)
-                    : string.Format("'{0}' : {1} (0x{1:X})", (char)i, i);
+                FontsTileView.Invalidate();
             }
         }
 
         private void OnClickExport(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count <= 0)
+            if (FontsTileView.SelectedIndices.Count == 0)
             {
                 return;
             }
 
             string path = Options.OutputPath;
             string fileType = (int)treeView.SelectedNode.Parent.Tag == 1 ? "Unicode" : "ASCII";
-            string fileName = Path.Combine(path,
-                $"{fileType} {(int)treeView.SelectedNode.Tag} 0x{int.Parse(listView1.SelectedItems[0].Text):X}.tiff");
+            string fileName = (int)treeView.SelectedNode.Parent.Tag == 1
+                ? Path.Combine(path, $"{fileType} {(int)treeView.SelectedNode.Tag} 0x{FontsTileView.SelectedIndices[0]:X}.tiff")
+                : Path.Combine(path, $"{fileType} {(int)treeView.SelectedNode.Tag} 0x{_fonts[FontsTileView.SelectedIndices[0]] + AsciiFontOffset:X}.tiff");
 
             if ((int)treeView.SelectedNode.Parent.Tag == 1)
             {
-                Bitmap bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[(int)listView1.SelectedItems[0].Tag].GetImage(true)
+                Bitmap bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[FontsTileView.SelectedIndices[0]].GetImage(true)
                              ?? new Bitmap(10, 10);
 
                 bmp.Save(fileName, ImageFormat.Tiff);
             }
             else
             {
-                ((Bitmap)listView1.SelectedItems[0].Tag).Save(fileName, ImageFormat.Tiff);
+                var font = (int)treeView.SelectedNode.Tag;
+                Bitmap bmp = ASCIIText.Fonts[font].Characters[_fonts[FontsTileView.SelectedIndices[0]]]
+                             ?? new Bitmap(10, 10);
+
+                bmp.Save(fileName, ImageFormat.Tiff);
             }
 
             MessageBox.Show($"Character saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
+        private static int AsciiFontOffset => 32;
+
         private void OnClickImport(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count <= 0)
+            if (FontsTileView.SelectedIndices.Count == 0)
             {
                 return;
             }
@@ -299,20 +248,21 @@ namespace UoFiddler.Controls.UserControls
                     MessageBox.Show("Image Height or Width exceeds 255", "Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                     return;
                 }
+
                 int font = (int)treeView.SelectedNode.Tag;
-                int character = int.Parse(listView1.SelectedItems[0].Text) - 32;
+
                 if ((int)treeView.SelectedNode.Parent.Tag == 1)
                 {
-                    UnicodeFonts.Fonts[font].Chars[(int)listView1.SelectedItems[0].Tag].SetBuffer(import);
+                    UnicodeFonts.Fonts[font].Chars[FontsTileView.SelectedIndices[0]].SetBuffer(import);
                     Options.ChangedUltimaClass["UnicodeFont"] = true;
                 }
                 else
                 {
-                    ASCIIText.Fonts[font].ReplaceCharacter(character, import);
-                    listView1.SelectedItems[0].Tag = import;
+                    ASCIIText.Fonts[font].ReplaceCharacter(FontsTileView.SelectedIndices[0], import);
                     Options.ChangedUltimaClass["ASCIIFont"] = true;
                 }
-                listView1.Invalidate();
+
+                FontsTileView.Invalidate();
             }
         }
 
@@ -340,13 +290,18 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSetOffsets(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count <= 0)
+            if(treeView.SelectedNode == null)
+            {
+                return;
+            }
+
+            if (FontsTileView.SelectedIndices.Count == 0)
             {
                 return;
             }
 
             int font = (int)treeView.SelectedNode.Tag;
-            int cha = (int)listView1.SelectedItems[0].Tag;
+            int cha = FontsTileView.SelectedIndices[0];
             if (_form?.IsDisposed == false)
             {
                 return;
@@ -363,7 +318,97 @@ namespace UoFiddler.Controls.UserControls
         {
             int type = (int)treeView.SelectedNode.Parent.Tag;
             int font = (int)treeView.SelectedNode.Tag;
+
             new FontTextForm(type, font).Show();
+        }
+
+        private void FontsTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
+        {
+            if (treeView.Nodes.Count == 0)
+            {
+                return;
+            }
+
+            if (treeView.SelectedNode == null)
+            {
+                return;
+            }
+
+            int i;
+            char c;
+
+            if ((int)treeView.SelectedNode.Parent.Tag == 1)
+            {
+                // Unicode fonts
+                i = e.Index;
+                c = (char)i;
+
+                // draw what should be in tile
+                e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
+
+                // draw using font from uo if character exists
+                var bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].GetImage();
+                if (bmp == null)
+                {
+                    return;
+                }
+
+                int width = bmp.Width;
+                int height = bmp.Height;
+
+                if (width > e.Bounds.Width)
+                {
+                    width = e.Bounds.Width - 2;
+                }
+
+                if (height > e.Bounds.Height)
+                {
+                    height = e.Bounds.Height - 2;
+                }
+
+                e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, width, height));
+
+                bmp.Dispose();
+            }
+            else
+            {
+                // ASCII Fonts
+                i = e.Index;
+                c = (char)(i + AsciiFontOffset);
+
+                // draw what should be in tile
+                e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
+
+                // draw using font from uo if character exists
+                var font = (int)treeView.SelectedNode.Tag;
+                e.Graphics.DrawImage(ASCIIText.Fonts[font].Characters[_fonts[i]], new Point(e.Bounds.X + 2, e.Bounds.Y + 2));
+            }
+        }
+
+        private void FontsTileView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (!e.IsSelected)
+            {
+                return;
+            }
+
+            if (treeView.Nodes.Count == 0)
+            {
+                return;
+            }
+
+            if (FontsTileView.SelectedIndices.Count == 0)
+            {
+                toolStripStatusLabel1.Text = "<no selection>";
+            }
+            else
+            {
+                int i = FontsTileView.SelectedIndices[0];
+
+                toolStripStatusLabel1.Text = (int)treeView.SelectedNode.Parent.Tag == 1
+                    ? string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset)
+                    : string.Format("'{0}' : {1} (0x{1:X})", (char)(_fonts[i] + AsciiFontOffset), _fonts[i] + AsciiFontOffset);
+            }
         }
     }
 }
