@@ -54,6 +54,12 @@ namespace UoFiddler.Controls.UserControls
             this.InsertText = new System.Windows.Forms.ToolStripTextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.GraphicLabel = new System.Windows.Forms.ToolStripLabel();
+            this.MiscToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this.exportAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportAllAsBmp = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportAllAsTiff = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportAllAsJpeg = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportAllAsPng = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.SearchButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -162,6 +168,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.GraphicLabel,
+            this.MiscToolStripDropDownButton,
             this.toolStripSeparator3,
             this.SearchButton,
             this.toolStripSeparator4,
@@ -180,6 +187,57 @@ namespace UoFiddler.Controls.UserControls
             this.GraphicLabel.Size = new System.Drawing.Size(51, 22);
             this.GraphicLabel.Text = "Graphic:";
             this.GraphicLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // MiscToolStripDropDownButton
+            // 
+            this.MiscToolStripDropDownButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.MiscToolStripDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.MiscToolStripDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportAllToolStripMenuItem});
+            this.MiscToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.MiscToolStripDropDownButton.Margin = new System.Windows.Forms.Padding(0, 1, 20, 2);
+            this.MiscToolStripDropDownButton.Name = "MiscToolStripDropDownButton";
+            this.MiscToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
+            this.MiscToolStripDropDownButton.Text = "Misc";
+            // 
+            // exportAllToolStripMenuItem
+            // 
+            this.exportAllToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ExportAllAsBmp,
+            this.ExportAllAsTiff,
+            this.ExportAllAsJpeg,
+            this.ExportAllAsPng});
+            this.exportAllToolStripMenuItem.Name = "exportAllToolStripMenuItem";
+            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportAllToolStripMenuItem.Text = "Export All..";
+            // 
+            // ExportAllAsBmp
+            // 
+            this.ExportAllAsBmp.Name = "ExportAllAsBmp";
+            this.ExportAllAsBmp.Size = new System.Drawing.Size(180, 22);
+            this.ExportAllAsBmp.Text = "As Bmp";
+            this.ExportAllAsBmp.Click += new System.EventHandler(this.ExportAllAsBmp_Click);
+            // 
+            // ExportAllAsTiff
+            // 
+            this.ExportAllAsTiff.Name = "ExportAllAsTiff";
+            this.ExportAllAsTiff.Size = new System.Drawing.Size(180, 22);
+            this.ExportAllAsTiff.Text = "As Tiff";
+            this.ExportAllAsTiff.Click += new System.EventHandler(this.ExportAllAsTiff_Click);
+            // 
+            // ExportAllAsJpeg
+            // 
+            this.ExportAllAsJpeg.Name = "ExportAllAsJpeg";
+            this.ExportAllAsJpeg.Size = new System.Drawing.Size(180, 22);
+            this.ExportAllAsJpeg.Text = "As Jpg";
+            this.ExportAllAsJpeg.Click += new System.EventHandler(this.ExportAllAsJpeg_Click);
+            // 
+            // ExportAllAsPng
+            // 
+            this.ExportAllAsPng.Name = "ExportAllAsPng";
+            this.ExportAllAsPng.Size = new System.Drawing.Size(180, 22);
+            this.ExportAllAsPng.Text = "As Png";
+            this.ExportAllAsPng.Click += new System.EventHandler(this.ExportAllAsPng_Click);
             // 
             // toolStripSeparator3
             // 
@@ -284,5 +342,11 @@ namespace UoFiddler.Controls.UserControls
         #endregion
 
         private TileView.TileViewControl TextureTileView;
+        private System.Windows.Forms.ToolStripDropDownButton MiscToolStripDropDownButton;
+        private System.Windows.Forms.ToolStripMenuItem exportAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExportAllAsBmp;
+        private System.Windows.Forms.ToolStripMenuItem ExportAllAsTiff;
+        private System.Windows.Forms.ToolStripMenuItem ExportAllAsJpeg;
+        private System.Windows.Forms.ToolStripMenuItem ExportAllAsPng;
     }
 }

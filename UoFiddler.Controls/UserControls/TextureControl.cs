@@ -467,7 +467,7 @@ namespace UoFiddler.Controls.UserControls
         private void ExportTextureImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"Texture {index}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Texture 0x{index:X4}.{fileExtension}");
 
             using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
             {
@@ -488,6 +488,59 @@ namespace UoFiddler.Controls.UserControls
             OnClickSearch(sender, e);
             e.SuppressKeyPress = true;
             e.Handled = true;
+        }
+
+        private void ExportAllAsBmp_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Bmp);
+        }
+
+        private void ExportAllAsTiff_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Tiff);
+        }
+
+        private void ExportAllAsJpeg_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Jpeg);
+        }
+
+        private void ExportAllAsPng_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Png);
+        }
+
+        private void ExportAllTextures(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select directory";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < listView1.Items.Count; ++i)
+                {
+                    int index = (int)listView1.Items[i].Tag;
+                    if (index < 0)
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Texture 0x{index:X4}.{fileExtension}");
+                    using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
+                    {
+                        bit.Save(fileName, imageFormat);
+                    }
+                }
+
+                MessageBox.Show($"All textures saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
         }
     }
 }
