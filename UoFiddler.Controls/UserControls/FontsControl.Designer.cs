@@ -40,7 +40,6 @@ namespace UoFiddler.Controls.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.treeView = new System.Windows.Forms.TreeView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.writeTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -48,22 +47,24 @@ namespace UoFiddler.Controls.UserControls
             this.extractCharacterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCharacterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.treeView = new System.Windows.Forms.TreeView();
+            this.LoadUnicodeFontsCheckBox = new System.Windows.Forms.CheckBox();
+            this.FontsTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.FontsTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // treeView
-            // 
-            this.treeView.Dock = System.Windows.Forms.DockStyle.Left;
-            this.treeView.HideSelection = false;
-            this.treeView.Location = new System.Drawing.Point(0, 0);
-            this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(121, 328);
-            this.treeView.TabIndex = 0;
-            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
             // 
             // contextMenuStrip1
             // 
@@ -117,21 +118,64 @@ namespace UoFiddler.Controls.UserControls
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnClickSave);
             // 
-            // statusStrip1
+            // splitContainer1
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(121, 306);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(502, 22);
-            this.statusStrip1.TabIndex = 5;
-            this.statusStrip1.Text = "statusStrip1";
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.IsSplitterFixed = true;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // toolStripStatusLabel1
+            // splitContainer1.Panel1
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(24, 17);
-            this.toolStripStatusLabel1.Text = " : ()";
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.FontsTileView);
+            this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
+            this.splitContainer1.Size = new System.Drawing.Size(623, 328);
+            this.splitContainer1.SplitterDistance = 150;
+            this.splitContainer1.TabIndex = 1;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.treeView);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.LoadUnicodeFontsCheckBox);
+            this.splitContainer2.Size = new System.Drawing.Size(150, 328);
+            this.splitContainer2.SplitterDistance = 280;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // treeView
+            // 
+            this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView.HideSelection = false;
+            this.treeView.Location = new System.Drawing.Point(0, 0);
+            this.treeView.Name = "treeView";
+            this.treeView.Size = new System.Drawing.Size(150, 280);
+            this.treeView.TabIndex = 2;
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
+            // 
+            // LoadUnicodeFontsCheckBox
+            // 
+            this.LoadUnicodeFontsCheckBox.AutoSize = true;
+            this.LoadUnicodeFontsCheckBox.Location = new System.Drawing.Point(15, 14);
+            this.LoadUnicodeFontsCheckBox.Name = "LoadUnicodeFontsCheckBox";
+            this.LoadUnicodeFontsCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.LoadUnicodeFontsCheckBox.TabIndex = 0;
+            this.LoadUnicodeFontsCheckBox.Text = "Load Unicode Fonts";
+            this.LoadUnicodeFontsCheckBox.UseVisualStyleBackColor = true;
+            this.LoadUnicodeFontsCheckBox.CheckedChanged += new System.EventHandler(this.LoadUnicodeFontsCheckBox_CheckedChanged);
             // 
             // FontsTileView
             // 
@@ -141,11 +185,11 @@ namespace UoFiddler.Controls.UserControls
             this.FontsTileView.ContextMenuStrip = this.contextMenuStrip1;
             this.FontsTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FontsTileView.FocusIndex = -1;
-            this.FontsTileView.Location = new System.Drawing.Point(121, 0);
+            this.FontsTileView.Location = new System.Drawing.Point(0, 0);
             this.FontsTileView.MultiSelect = false;
             this.FontsTileView.Name = "FontsTileView";
-            this.FontsTileView.Size = new System.Drawing.Size(502, 306);
-            this.FontsTileView.TabIndex = 6;
+            this.FontsTileView.Size = new System.Drawing.Size(469, 306);
+            this.FontsTileView.TabIndex = 8;
             this.FontsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.FontsTileView.TileBorderColor = System.Drawing.Color.Gray;
             this.FontsTileView.TileBorderWidth = 1F;
@@ -157,22 +201,46 @@ namespace UoFiddler.Controls.UserControls
             this.FontsTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.FontsTileView_ItemSelectionChanged);
             this.FontsTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.FontsTileView_DrawItem);
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 306);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(469, 22);
+            this.statusStrip1.TabIndex = 7;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(87, 17);
+            this.toolStripStatusLabel1.Text = "<no selection>";
+            // 
             // FontsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.FontsTileView);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.treeView);
+            this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "FontsControl";
             this.Size = new System.Drawing.Size(623, 328);
             this.Load += new System.EventHandler(this.OnLoad);
+            this.Resize += new System.EventHandler(this.FontsControl_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -181,14 +249,17 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem importCharacterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setOffsetsToolStripMenuItem;
-        private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.TreeView treeView;
         private System.Windows.Forms.ToolStripMenuItem writeTextToolStripMenuItem;
 
         #endregion
 
+        private System.Windows.Forms.SplitContainer splitContainer1;
         private TileView.TileViewControl FontsTileView;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.CheckBox LoadUnicodeFontsCheckBox;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
