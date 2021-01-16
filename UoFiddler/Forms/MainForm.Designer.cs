@@ -297,7 +297,7 @@ namespace UoFiddler.Forms
             this.LandTilesTab.Size = new System.Drawing.Size(776, 510);
             this.LandTilesTab.TabIndex = 3;
             this.LandTilesTab.Tag = 4;
-            this.LandTilesTab.Text = "LandTiles";
+            this.LandTilesTab.Text = "Land Tiles";
             this.LandTilesTab.UseVisualStyleBackColor = true;
             // 
             // landTilesControl
@@ -318,7 +318,7 @@ namespace UoFiddler.Forms
             this.TextureTab.Size = new System.Drawing.Size(776, 510);
             this.TextureTab.TabIndex = 11;
             this.TextureTab.Tag = 5;
-            this.TextureTab.Text = "Texture";
+            this.TextureTab.Text = "Textures";
             this.TextureTab.UseVisualStyleBackColor = true;
             // 
             // textureControl

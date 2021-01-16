@@ -73,6 +73,7 @@ namespace UoFiddler.Controls.UserControls
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.LandTilesTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.LandTilesContextMenuStrip.SuspendLayout();
             this.LandTilesToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -186,6 +187,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
@@ -199,8 +201,9 @@ namespace UoFiddler.Controls.UserControls
             this.GraphicLabel,
             this.FlagsLabel,
             this.MiscToolStripDropDownButton,
-            this.SearchButton,
             this.toolStripSeparator5,
+            this.SearchButton,
+            this.toolStripSeparator1,
             this.SaveButton,
             this.toolStripSeparator4});
             this.LandTilesToolStrip.Location = new System.Drawing.Point(0, 0);
@@ -252,7 +255,7 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem,
             this.asPngToolStripMenuItem1});
             this.exportAllToolStripMenuItem.Name = "exportAllToolStripMenuItem";
-            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportAllToolStripMenuItem.Text = "Export All..";
             // 
             // ExportAllAsBmp
@@ -339,6 +342,12 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.LandTilesTileView_ItemSelectionChanged);
             this.LandTilesTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.LandTilesTileView_DrawItem);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // LandTilesAlternativeControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -390,5 +399,6 @@ namespace UoFiddler.Controls.UserControls
         #endregion
 
         private TileView.TileViewControl LandTilesTileView;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

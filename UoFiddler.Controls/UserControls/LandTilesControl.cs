@@ -768,14 +768,14 @@ namespace UoFiddler.Controls.UserControls
         private static void ExportLandTileImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"Landtile {index}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile 0x{index:X4}.{fileExtension}");
 
             using (Bitmap bit = new Bitmap(Art.GetLand(index)))
             {
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            MessageBox.Show($"Land tile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -834,6 +834,8 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
+                Cursor.Current = Cursors.WaitCursor;
+
                 for (int i = 0; i < listView1.Items.Count; ++i)
                 {
                     int index = (int)listView1.Items[i].Tag;
@@ -842,14 +844,16 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {index}.{fileExtension}");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile 0x{index:X4}.{fileExtension}");
                     using (Bitmap bit = new Bitmap(Art.GetLand(index)))
                     {
                         bit.Save(fileName, imageFormat);
                     }
                 }
 
-                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                Cursor.Current = Cursors.Default;
+
+                MessageBox.Show($"All land tiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
