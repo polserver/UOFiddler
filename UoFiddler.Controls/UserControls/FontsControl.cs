@@ -31,6 +31,8 @@ namespace UoFiddler.Controls.UserControls
 
             _refMarker = this;
             setOffsetsToolStripMenuItem.Visible = false;
+
+            splitContainer2.SplitterDistance = splitContainer2.Height - 40;
         }
 
         private bool _loaded;
@@ -104,24 +106,27 @@ namespace UoFiddler.Controls.UserControls
                     treeView.Nodes[0].Nodes.Add(node);
                 }
 
-                node = new TreeNode("Unicode")
+                if (LoadUnicodeFontsCheckBox.Checked)
                 {
-                    Tag = 1
-                };
-                treeView.Nodes.Add(node);
-
-                for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
-                {
-                    if (UnicodeFonts.Fonts[i] == null)
+                    node = new TreeNode("Unicode")
                     {
-                        continue;
-                    }
-
-                    node = new TreeNode(i.ToString())
-                    {
-                        Tag = i
+                        Tag = 1
                     };
-                    treeView.Nodes[1].Nodes.Add(node);
+                    treeView.Nodes.Add(node);
+
+                    for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
+                    {
+                        if (UnicodeFonts.Fonts[i] == null)
+                        {
+                            continue;
+                        }
+
+                        node = new TreeNode(i.ToString())
+                        {
+                            Tag = i
+                        };
+                        treeView.Nodes[1].Nodes.Add(node);
+                    }
                 }
 
                 treeView.ExpandAll();
@@ -185,6 +190,7 @@ namespace UoFiddler.Controls.UserControls
             }
             finally
             {
+                UpdateStatusStrip();
                 FontsTileView.Invalidate();
             }
         }
@@ -397,18 +403,46 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            UpdateStatusStrip();
+        }
+
+        private void UpdateStatusStrip()
+        {
             if (FontsTileView.SelectedIndices.Count == 0)
             {
-                toolStripStatusLabel1.Text = "<no selection>";
+                toolStripStatusLabel1.Text = string.Empty;
+                return;
             }
-            else
-            {
-                int i = FontsTileView.SelectedIndices[0];
 
-                toolStripStatusLabel1.Text = (int)treeView.SelectedNode.Parent.Tag == 1
-                    ? string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset, UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset)
-                    : string.Format("'{0}' : {1} (0x{1:X})", (char)(_fonts[i] + AsciiFontOffset), _fonts[i] + AsciiFontOffset);
+            int i = FontsTileView.SelectedIndices[0];
+
+            toolStripStatusLabel1.Text = (int)treeView.SelectedNode.Parent.Tag == 1
+                ? string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i,
+                    UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset,
+                    UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset)
+                : string.Format("'{0}' : {1} (0x{1:X})", (char)(_fonts[i] + AsciiFontOffset), _fonts[i] + AsciiFontOffset);
+        }
+
+        private void LoadUnicodeFontsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            string message = LoadUnicodeFontsCheckBox.Checked
+                ? "Would you like to load all fonts including Unicode?"
+                : "Load only ASCII fonts?";
+
+            DialogResult result =
+                MessageBox.Show(message, "Fonts reload",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
+            {
+                return;
             }
+
+            Reload();
+        }
+
+        private void FontsControl_Resize(object sender, EventArgs e)
+        {
+            splitContainer2.SplitterDistance = splitContainer2.Height - 40;
         }
     }
 }
