@@ -40,7 +40,6 @@ namespace UoFiddler.Controls.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,7 +52,6 @@ namespace UoFiddler.Controls.UserControls
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InsertText = new System.Windows.Forms.ToolStripTextBox();
-            this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.GraphicLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -61,25 +59,10 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            this.TextureTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(0, 25);
-            this.pictureBox.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.pictureBox.Size = new System.Drawing.Size(620, 300);
-            this.pictureBox.TabIndex = 3;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             // 
             // contextMenuStrip1
             // 
@@ -174,15 +157,6 @@ namespace UoFiddler.Controls.UserControls
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
             // 
-            // vScrollBar
-            // 
-            this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(603, 25);
-            this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 300);
-            this.vScrollBar.TabIndex = 4;
-            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
-            // 
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
@@ -246,18 +220,39 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // TextureAlternative
+            // TextureTileView
+            // 
+            this.TextureTileView.AutoScroll = true;
+            this.TextureTileView.AutoScrollMinSize = new System.Drawing.Size(0, 134);
+            this.TextureTileView.ContextMenuStrip = this.contextMenuStrip1;
+            this.TextureTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextureTileView.FocusIndex = -1;
+            this.TextureTileView.Location = new System.Drawing.Point(0, 25);
+            this.TextureTileView.MultiSelect = false;
+            this.TextureTileView.Name = "TextureTileView";
+            this.TextureTileView.Size = new System.Drawing.Size(620, 300);
+            this.TextureTileView.TabIndex = 5;
+            this.TextureTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            this.TextureTileView.TileBorderColor = System.Drawing.Color.Gray;
+            this.TextureTileView.TileBorderWidth = 1F;
+            this.TextureTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            this.TextureTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            this.TextureTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            this.TextureTileView.TileSize = new System.Drawing.Size(128, 128);
+            this.TextureTileView.VirtualListSize = 1;
+            this.TextureTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.TextureTileView_ItemSelectionChanged);
+            this.TextureTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.TextureTileView_DrawItem);
+            // 
+            // TextureAlternativeControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.vScrollBar);
-            this.Controls.Add(this.pictureBox);
+            this.Controls.Add(this.TextureTileView);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Name = "TextureAlternativeControl";
             this.Size = new System.Drawing.Size(620, 325);
             this.Load += new System.EventHandler(this.OnLoad);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -276,7 +271,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripLabel GraphicLabel;
         private System.Windows.Forms.ToolStripMenuItem insertAtToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox InsertText;
-        private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton SaveButton;
@@ -286,8 +280,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.VScrollBar vScrollBar;
 
         #endregion
+
+        private TileView.TileViewControl TextureTileView;
     }
 }

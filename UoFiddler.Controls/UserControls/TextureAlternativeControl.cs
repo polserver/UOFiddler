@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -22,6 +23,7 @@ using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
+    // TODO: add "Show free slots" support
     public partial class TextureAlternativeControl : UserControl
     {
         public TextureAlternativeControl()
@@ -29,17 +31,24 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
-            pictureBox.MouseWheel += OnMouseWheel;
             _refMarker = this;
         }
 
         private static TextureAlternativeControl _refMarker;
         private List<int> _textureList = new List<int>();
-        private int _col;
-        private int _row;
-        private int _selected = -1;
-
         private bool _loaded;
+
+        private int _selectedTextureId = -1;
+        public int SelectedTextureId
+        {
+            get => _selectedTextureId;
+            set
+            {
+                _selectedTextureId = value < 0 ? 0 : value;
+                UpdateLabels(_selectedTextureId);
+                TextureTileView.FocusIndex = _textureList.IndexOf(_selectedTextureId);
+            }
+        }
 
         private void Reload()
         {
@@ -49,35 +58,20 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _textureList = new List<int>();
-            _selected = -1;
+            _selectedTextureId = -1;
             OnLoad(this, EventArgs.Empty);
         }
 
         public static bool SearchGraphic(int graphic)
         {
-            for (int i = 0; i < _refMarker._textureList.Count; ++i)
+            if (_refMarker._textureList.All(id => id != graphic))
             {
-                if (_refMarker._textureList[i] != graphic)
-                {
-                    continue;
-                }
-
-                _refMarker._selected = graphic;
-                _refMarker.vScrollBar.Value = (i / _refMarker._col) + 1;
-                _refMarker.GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}]", graphic, Textures.GetTexture(graphic));
-                _refMarker.pictureBox.Invalidate();
-                return true;
+                return false;
             }
-            return false;
-        }
 
-        public int GetIndex(int x, int y)
-        {
-            int value = Math.Max(0, (_col * (vScrollBar.Value - 1)) + x + (y * _col));
+            _refMarker.SelectedTextureId = graphic;
 
-            return _textureList.Count > value
-                ? _textureList[value]
-                : -1;
+            return true;
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -98,8 +92,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            vScrollBar.Maximum = (_textureList.Count / _col) + 1;
-            pictureBox.Invalidate();
+            TextureTileView.VirtualListSize = _textureList.Count;
 
             if (!_loaded)
             {
@@ -152,14 +145,14 @@ namespace UoFiddler.Controls.UserControls
                 {
                     _textureList.Add(index);
                 }
-
-                vScrollBar.Maximum = (_textureList.Count / _col) + 1;
             }
             else
             {
                 _textureList.Remove(index);
-                vScrollBar.Maximum = (_textureList.Count / _col) + 1;
             }
+
+            TextureTileView.VirtualListSize = _textureList.Count;
+            TextureTileView.Invalidate();
         }
 
         private void OnFilePathChangeEvent()
@@ -168,130 +161,6 @@ namespace UoFiddler.Controls.UserControls
             {
                 Reload();
             }
-        }
-
-        private void OnScroll(object sender, ScrollEventArgs e)
-        {
-            pictureBox.Invalidate();
-        }
-
-        private void OnMouseWheel(object sender, MouseEventArgs e)
-        {
-            if (e.Delta < 0)
-            {
-                if (vScrollBar.Value >= vScrollBar.Maximum)
-                {
-                    return;
-                }
-
-                vScrollBar.Value++;
-                pictureBox.Invalidate();
-            }
-            else
-            {
-                if (vScrollBar.Value <= 1)
-                {
-                    return;
-                }
-
-                vScrollBar.Value--;
-                pictureBox.Invalidate();
-            }
-        }
-
-        private void OnPaint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.Clear(Color.White);
-
-            for (int x = 0; x <= _col; ++x)
-            {
-                e.Graphics.DrawLine(Pens.Gray, new Point(x * 64, 0), new Point(x * 64, _row * 64));
-            }
-
-            for (int y = 0; y <= _row; ++y)
-            {
-                e.Graphics.DrawLine(Pens.Gray, new Point(0, y * 64), new Point(_col * 64, y * 64));
-            }
-
-            for (int y = 0; y < _row; ++y)
-            {
-                for (int x = 0; x < _col; ++x)
-                {
-                    int index = GetIndex(x, y);
-                    if (index < 0)
-                    {
-                        continue;
-                    }
-
-                    Bitmap b = Textures.GetTexture(index, out bool patched);
-                    if (b == null)
-                    {
-                        continue;
-                    }
-
-                    Point loc = new Point((x * 64) + 1, (y * 64) + 1);
-                    Size size = new Size(64 - 1, 64 - 1);
-                    Rectangle rect = new Rectangle(loc, size);
-
-                    e.Graphics.Clip = new Region(rect);
-
-                    int width = b.Width;
-                    int height = b.Height;
-                    if (width > size.Width)
-                    {
-                        width = size.Width;
-                        height = size.Height * b.Height / b.Width;
-                    }
-                    if (height > size.Height)
-                    {
-                        height = size.Height;
-                        width = size.Width * b.Width / b.Height;
-                    }
-
-                    e.Graphics.DrawImage(b, new Rectangle(loc, new Size(width, height)));
-
-                    if (index == _selected)
-                    {
-                        e.Graphics.DrawRectangle(Pens.LightBlue, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
-                    }
-                    else if (patched)
-                    {
-                        e.Graphics.DrawRectangle(Pens.LightCoral, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
-                    }
-                }
-            }
-        }
-
-        private void OnResize(object sender, EventArgs e)
-        {
-            if (pictureBox.Width == 0 || pictureBox.Height == 0)
-            {
-                return;
-            }
-
-            _col = pictureBox.Width / 64;
-            _row = (pictureBox.Height / 64) + 1;
-            vScrollBar.Maximum = (_textureList.Count / _col) + 1;
-            vScrollBar.Minimum = 1;
-            vScrollBar.SmallChange = 1;
-            vScrollBar.LargeChange = _row;
-            pictureBox.Invalidate();
-        }
-
-        private void OnMouseClick(object sender, MouseEventArgs e)
-        {
-            pictureBox.Focus();
-            int x = e.X / (64 - 1);
-            int y = e.Y / (64 - 1);
-            int index = GetIndex(x, y);
-            if (index < 0 || _selected == index)
-            {
-                return;
-            }
-
-            _selected = index;
-            GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}]", _selected, Textures.GetTexture(_selected).Width);
-            pictureBox.Invalidate();
         }
 
         private TextureSearchForm _showForm;
@@ -313,10 +182,10 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickFindNext(object sender, EventArgs e)
         {
             int id, i;
-            if (_selected > -1)
+            if (_selectedTextureId > -1)
             {
-                id = _selected + 1;
-                i = _textureList.IndexOf(_selected) + 1;
+                id = _selectedTextureId + 1;
+                i = _textureList.IndexOf(_selectedTextureId) + 1;
             }
             else
             {
@@ -331,39 +200,39 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                _selected = _textureList[i];
-                vScrollBar.Value = (i / _refMarker._col) + 1;
-                GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}", _selected, Textures.GetTexture(_selected));
-                pictureBox.Invalidate();
+                SelectedTextureId = _textureList[i];
+                TextureTileView.Invalidate();
+
                 break;
             }
         }
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedTextureId < 0)
             {
                 return;
             }
 
-            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selected:X}", "Save",
+            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selectedTextureId:X}", "Save",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
             }
 
-            Textures.Remove(_selected);
-            ControlEvents.FireTextureChangeEvent(this, _selected);
-            _textureList.Remove(_selected);
-            --_selected;
-            pictureBox.Invalidate();
+            Textures.Remove(_selectedTextureId);
+            ControlEvents.FireTextureChangeEvent(this, _selectedTextureId);
+            _textureList.Remove(_selectedTextureId);
+            SelectedTextureId = --_selectedTextureId;
+            TextureTileView.VirtualListSize = _textureList.Count;
+            TextureTileView.Invalidate();
             Options.ChangedUltimaClass["Texture"] = true;
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (_selected < 0)
+            if (_selectedTextureId < 0)
             {
                 return;
             }
@@ -385,9 +254,9 @@ namespace UoFiddler.Controls.UserControls
                     bmp = Utils.ConvertBmp(bmp);
                 }
 
-                Textures.Replace(_selected, bmp);
-                ControlEvents.FireTextureChangeEvent(this, _selected);
-                pictureBox.Invalidate();
+                Textures.Replace(_selectedTextureId, bmp);
+                ControlEvents.FireTextureChangeEvent(this, _selectedTextureId);
+                TextureTileView.Invalidate();
                 Options.ChangedUltimaClass["Texture"] = true;
             }
         }
@@ -422,6 +291,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             contextMenuStrip1.Close();
+
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
@@ -452,18 +322,20 @@ namespace UoFiddler.Controls.UserControls
                         }
 
                         _textureList.Insert(i, index);
-                        vScrollBar.Value = (i / _refMarker._col) + 1;
+
                         done = true;
                         break;
                     }
+
                     if (!done)
                     {
                         _textureList.Add(index);
-                        vScrollBar.Value = (_textureList.Count / _refMarker._col) + 1;
                     }
-                    _selected = index;
-                    GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}]", _selected, Textures.GetTexture(_selected));
-                    pictureBox.Invalidate();
+
+                    TextureTileView.VirtualListSize = _textureList.Count;
+                    TextureTileView.Invalidate();
+                    SelectedTextureId = index;
+
                     Options.ChangedUltimaClass["Texture"] = true;
                 }
                 else
@@ -486,28 +358,28 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            ExportTextureImage(_selected, ImageFormat.Bmp);
+            ExportTextureImage(_selectedTextureId, ImageFormat.Bmp);
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
         {
-            ExportTextureImage(_selected, ImageFormat.Tiff);
+            ExportTextureImage(_selectedTextureId, ImageFormat.Tiff);
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            ExportTextureImage(_selected, ImageFormat.Jpeg);
+            ExportTextureImage(_selectedTextureId, ImageFormat.Jpeg);
         }
 
         private void OnClickExportPng(object sender, EventArgs e)
         {
-            ExportTextureImage(_selected, ImageFormat.Png);
+            ExportTextureImage(_selectedTextureId, ImageFormat.Png);
         }
 
         private static void ExportTextureImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"Texture {index}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Texture 0x{index:X4}.{fileExtension}");
 
             using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
             {
@@ -516,6 +388,64 @@ namespace UoFiddler.Controls.UserControls
 
             MessageBox.Show($"Texture saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
+        }
+
+        private void TextureTileView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (!e.IsSelected)
+            {
+                return;
+            }
+
+            if (_textureList.Count == 0)
+            {
+                return;
+            }
+
+            SelectedTextureId = e.ItemIndex < 0 || e.ItemIndex > _textureList.Count
+                ? _textureList[0]
+                : _textureList[e.ItemIndex];
+        }
+
+        private void UpdateLabels(int graphic)
+        {
+            var width = Textures.TestTexture(graphic) ? Textures.GetTexture(graphic).Width : 0;
+
+            GraphicLabel.Text = string.Format("Graphic: 0x{0:X4} ({0}) [{1}x{1}]", graphic, width);
+        }
+
+        private void TextureTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
+        {
+            Point itemPoint = new Point(e.Bounds.X + TextureTileView.TilePadding.Left, e.Bounds.Y + TextureTileView.TilePadding.Top);
+
+            const int defaultTileWidth = 128;
+            Size defaultTileSize = new Size(defaultTileWidth, defaultTileWidth);
+            Rectangle tileRectangle = new Rectangle(itemPoint, defaultTileSize);
+
+            Bitmap bitmap = Textures.GetTexture(_textureList[e.Index], out bool patched);
+            if (patched)
+            {
+                // different background for verdata patched tiles
+                e.Graphics.FillRectangle(Brushes.LightCoral, tileRectangle);
+            }
+
+            if (bitmap == null)
+            {
+                // TODO: partial empty slots support - drawing the tile
+                itemPoint.Offset(2, 2);
+                e.Graphics.FillRectangle(Brushes.Red, new Rectangle(itemPoint, defaultTileSize - new Size(4, 4)));
+            }
+            else
+            {
+                // center 64x64 instead of drawing int top left corner
+                if (bitmap.Width < defaultTileWidth)
+                {
+                    itemPoint.Offset(bitmap.Width / 2, bitmap.Height / 2);
+                }
+
+                Rectangle textureRectangle = new Rectangle(itemPoint, new Size(bitmap.Width, bitmap.Height));
+                e.Graphics.DrawImage(bitmap, textureRectangle);
+            }
         }
     }
 }
