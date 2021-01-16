@@ -73,7 +73,6 @@ namespace UoFiddler.Controls.UserControls
             _refMarker.SelectedGraphicId = graphic;
 
             return true;
-
         }
 
         /// <summary>
@@ -546,6 +545,8 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
+                Cursor.Current = Cursors.WaitCursor;
+
                 foreach (var index in _tileList)
                 {
                     if (!Art.IsValidLand(index))
@@ -560,7 +561,9 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                MessageBox.Show($"All LandTiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                Cursor.Current = Cursors.Default;
+
+                MessageBox.Show($"All land tiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
