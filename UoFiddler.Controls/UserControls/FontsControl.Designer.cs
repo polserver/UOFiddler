@@ -41,7 +41,6 @@ namespace UoFiddler.Controls.UserControls
         {
             this.components = new System.ComponentModel.Container();
             this.treeView = new System.Windows.Forms.TreeView();
-            this.listView1 = new System.Windows.Forms.ListView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.writeTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -51,6 +50,7 @@ namespace UoFiddler.Controls.UserControls
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.FontsTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -64,26 +64,6 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.Size = new System.Drawing.Size(121, 328);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
-            // 
-            // listView1
-            // 
-            this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(121, 0);
-            this.listView1.Margin = new System.Windows.Forms.Padding(2);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.OwnerDraw = true;
-            this.listView1.ShowGroups = false;
-            this.listView1.Size = new System.Drawing.Size(502, 306);
-            this.listView1.TabIndex = 4;
-            this.listView1.TileSize = new System.Drawing.Size(46, 46);
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Tile;
-            this.listView1.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.DrawItem);
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.OnSelectChar);
             // 
             // contextMenuStrip1
             // 
@@ -153,11 +133,35 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(24, 17);
             this.toolStripStatusLabel1.Text = " : ()";
             // 
-            // Fonts
+            // FontsTileView
+            // 
+            this.FontsTileView.AutoScroll = true;
+            this.FontsTileView.AutoScrollMinSize = new System.Drawing.Size(0, 34);
+            this.FontsTileView.BackColor = System.Drawing.Color.White;
+            this.FontsTileView.ContextMenuStrip = this.contextMenuStrip1;
+            this.FontsTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FontsTileView.FocusIndex = -1;
+            this.FontsTileView.Location = new System.Drawing.Point(121, 0);
+            this.FontsTileView.MultiSelect = false;
+            this.FontsTileView.Name = "FontsTileView";
+            this.FontsTileView.Size = new System.Drawing.Size(502, 306);
+            this.FontsTileView.TabIndex = 6;
+            this.FontsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            this.FontsTileView.TileBorderColor = System.Drawing.Color.Gray;
+            this.FontsTileView.TileBorderWidth = 1F;
+            this.FontsTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            this.FontsTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            this.FontsTileView.TilePadding = new System.Windows.Forms.Padding(0);
+            this.FontsTileView.TileSize = new System.Drawing.Size(30, 30);
+            this.FontsTileView.VirtualListSize = 1;
+            this.FontsTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.FontsTileView_ItemSelectionChanged);
+            this.FontsTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.FontsTileView_DrawItem);
+            // 
+            // FontsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.FontsTileView);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.treeView);
             this.DoubleBuffered = true;
@@ -175,7 +179,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem extractCharacterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importCharacterToolStripMenuItem;
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setOffsetsToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -185,5 +188,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem writeTextToolStripMenuItem;
 
         #endregion
+
+        private TileView.TileViewControl FontsTileView;
     }
 }
