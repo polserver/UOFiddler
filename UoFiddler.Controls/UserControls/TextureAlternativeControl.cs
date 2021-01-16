@@ -447,5 +447,57 @@ namespace UoFiddler.Controls.UserControls
                 e.Graphics.DrawImage(bitmap, textureRectangle);
             }
         }
+
+        private void ExportAllAsBmp_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Bmp);
+        }
+
+        private void ExportAllAsTiff_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Tiff);
+        }
+
+        private void ExportAllAsJpeg_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Jpeg);
+        }
+
+        private void ExportAllAsPng_Click(object sender, EventArgs e)
+        {
+            ExportAllTextures(ImageFormat.Png);
+        }
+
+        private void ExportAllTextures(ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select directory";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                foreach (var index in _textureList)
+                {
+                    if (!Textures.TestTexture(index))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Texture 0x{index:X4}.{fileExtension}");
+                    using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
+                    {
+                        bit.Save(fileName, imageFormat);
+                    }
+                }
+
+                MessageBox.Show($"All textures saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
+        }
     }
 }
