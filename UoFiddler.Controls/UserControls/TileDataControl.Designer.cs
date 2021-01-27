@@ -505,7 +505,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPageLand.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageLand.Size = new System.Drawing.Size(613, 268);
             this.tabPageLand.TabIndex = 1;
-            this.tabPageLand.Text = "LandTiles";
+            this.tabPageLand.Text = "Land Tiles";
             this.tabPageLand.UseVisualStyleBackColor = true;
             // 
             // splitContainer5
@@ -569,7 +569,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.selectInLandtilesToolStripMenuItem.Name = "selectInLandtilesToolStripMenuItem";
             this.selectInLandtilesToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.selectInLandtilesToolStripMenuItem.Text = "Select In Landtiles tab";
+            this.selectInLandtilesToolStripMenuItem.Text = "Select In Land Tiles tab";
             this.selectInLandtilesToolStripMenuItem.Click += new System.EventHandler(this.OnClickSelectInLandTiles);
             // 
             // selToolStripMenuItem
@@ -780,7 +780,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitter1.UseAnimations = false;
             this.splitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
-            // TileDatas
+            // TileDataControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
