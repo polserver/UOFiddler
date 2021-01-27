@@ -95,7 +95,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(3, 3);
             this.treeViewItem.Name = "treeViewItem";
-            this.treeViewItem.Size = new System.Drawing.Size(191, 162);
+            this.treeViewItem.Size = new System.Drawing.Size(193, 164);
             this.treeViewItem.TabIndex = 0;
             this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
             // 
@@ -145,7 +145,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuItem1.Text = "Select in Landtiles tab";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.OnClickSelectLandtilesTab);
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.OnClickSelectLandTilesTab);
             // 
             // toolStripMenuItem2
             // 
@@ -159,7 +159,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxArt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxArt.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxArt.Name = "pictureBoxArt";
-            this.pictureBoxArt.Size = new System.Drawing.Size(205, 127);
+            this.pictureBoxArt.Size = new System.Drawing.Size(207, 130);
             this.pictureBoxArt.TabIndex = 0;
             this.pictureBoxArt.TabStop = false;
             // 
@@ -196,8 +196,8 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer5.Panel2.Controls.Add(this.button1);
             this.splitContainer5.Panel2.Controls.Add(this.buttonMean);
             this.splitContainer5.Panel2.Controls.Add(this.pictureBoxColor);
-            this.splitContainer5.Size = new System.Drawing.Size(620, 325);
-            this.splitContainer5.SplitterDistance = 205;
+            this.splitContainer5.Size = new System.Drawing.Size(628, 330);
+            this.splitContainer5.SplitterDistance = 207;
             this.splitContainer5.TabIndex = 1;
             // 
             // splitContainer6
@@ -214,8 +214,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer6.Panel2
             // 
             this.splitContainer6.Panel2.Controls.Add(this.pictureBoxArt);
-            this.splitContainer6.Size = new System.Drawing.Size(205, 325);
-            this.splitContainer6.SplitterDistance = 194;
+            this.splitContainer6.Size = new System.Drawing.Size(207, 330);
+            this.splitContainer6.SplitterDistance = 196;
             this.splitContainer6.TabIndex = 0;
             // 
             // tabControl2
@@ -226,7 +226,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(205, 194);
+            this.tabControl2.Size = new System.Drawing.Size(207, 196);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage3
@@ -235,7 +235,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(197, 168);
+            this.tabPage3.Size = new System.Drawing.Size(199, 170);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Items";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -248,7 +248,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(197, 168);
             this.tabPage4.TabIndex = 1;
-            this.tabPage4.Text = "Landtiles";
+            this.tabPage4.Text = "Land Tiles";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // button5
@@ -307,7 +307,7 @@ namespace UoFiddler.Controls.UserControls
             this.button3.TabIndex = 11;
             this.button3.Text = "Average Color from-to";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.OnClickmeanColorFromTo);
+            this.button3.Click += new System.EventHandler(this.OnClickMeanColorFromTo);
             // 
             // numericUpDownB
             // 
@@ -378,14 +378,14 @@ namespace UoFiddler.Controls.UserControls
             this.buttonMean.UseVisualStyleBackColor = true;
             this.buttonMean.Click += new System.EventHandler(this.OnClickMeanColor);
             // 
-            // RadarColor
+            // RadarColorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer5);
             this.DoubleBuffered = true;
             this.Name = "RadarColorControl";
-            this.Size = new System.Drawing.Size(620, 325);
+            this.Size = new System.Drawing.Size(628, 330);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
