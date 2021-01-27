@@ -32,31 +32,32 @@ namespace UoFiddler.Controls.UserControls
         }
 
         private int _selectedIndex = -1;
-        private short _currCol = -1;
+        private short _currentColor = -1;
         private static RadarColorControl _refMarker;
         private bool _updating;
+
         public bool IsLoaded { get; private set; }
 
         [Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public short CurrColor
+        public short CurrentColor
         {
-            get => _currCol;
+            get => _currentColor;
             set
             {
-                if (_currCol == value)
+                if (_currentColor == value)
                 {
                     return;
                 }
 
-                _currCol = value;
+                _currentColor = value;
                 _updating = true;
-                numericUpDownShortCol.Value = _currCol;
-                Color col = Hues.HueToColor(_currCol);
-                pictureBoxColor.BackColor = col;
-                numericUpDownR.Value = col.R;
-                numericUpDownG.Value = col.G;
-                numericUpDownB.Value = col.B;
+                numericUpDownShortCol.Value = _currentColor;
+                Color color = Hues.HueToColor(_currentColor);
+                pictureBoxColor.BackColor = color;
+                numericUpDownR.Value = color.R;
+                numericUpDownG.Value = color.G;
+                numericUpDownB.Value = color.B;
                 _updating = false;
             }
         }
@@ -134,8 +135,8 @@ namespace UoFiddler.Controls.UserControls
                 treeViewItem.Nodes.Clear();
                 if (TileData.ItemTable != null)
                 {
-                    TreeNode[] nodes = new TreeNode[Art.GetMaxItemID() + 1];
-                    for (int i = 0; i < Art.GetMaxItemID() + 1; ++i)
+                    TreeNode[] nodes = new TreeNode[Art.GetMaxItemID()];
+                    for (int i = 0; i < Art.GetMaxItemID(); ++i)
                     {
                         nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
                         {
@@ -189,39 +190,49 @@ namespace UoFiddler.Controls.UserControls
         private void AfterSelectTreeViewItem(object sender, TreeViewEventArgs e)
         {
             _selectedIndex = (int)e.Node.Tag;
-            try
+
+            if (Art.IsValidStatic(_selectedIndex))
             {
                 Bitmap bitmap = Art.GetStatic(_selectedIndex);
                 Bitmap newBitmap = new Bitmap(pictureBoxArt.Size.Width, pictureBoxArt.Size.Height);
-                Graphics newGraphic = Graphics.FromImage(newBitmap);
-                newGraphic.Clear(Color.FromArgb(-1));
-                newGraphic.DrawImage(bitmap, (pictureBoxArt.Size.Width - bitmap.Width) / 2, 1);
+                using (Graphics newGraphic = Graphics.FromImage(newBitmap))
+                {
+                    newGraphic.Clear(Color.FromArgb(-1));
+                    newGraphic.DrawImage(bitmap, (pictureBoxArt.Size.Width - bitmap.Width) / 2, 1);
+                }
+
                 pictureBoxArt.Image = newBitmap;
             }
-            catch
+            else
             {
                 pictureBoxArt.Image = new Bitmap(pictureBoxArt.Width, pictureBoxArt.Height);
             }
-            CurrColor = RadarCol.GetItemColor(_selectedIndex);
+
+            CurrentColor = RadarCol.GetItemColor(_selectedIndex);
         }
 
         private void AfterSelectTreeViewLand(object sender, TreeViewEventArgs e)
         {
             _selectedIndex = (int)e.Node.Tag;
-            try
+
+            if (Art.IsValidLand(_selectedIndex))
             {
                 Bitmap bitmap = Art.GetLand(_selectedIndex);
                 Bitmap newBitmap = new Bitmap(pictureBoxArt.Size.Width, pictureBoxArt.Size.Height);
-                Graphics newGraphic = Graphics.FromImage(newBitmap);
-                newGraphic.Clear(Color.FromArgb(-1));
-                newGraphic.DrawImage(bitmap, (pictureBoxArt.Size.Width - bitmap.Width) / 2, 1);
+                using (Graphics newGraphic = Graphics.FromImage(newBitmap))
+                {
+                    newGraphic.Clear(Color.FromArgb(-1));
+                    newGraphic.DrawImage(bitmap, (pictureBoxArt.Size.Width - bitmap.Width) / 2, 1);
+                }
+
                 pictureBoxArt.Image = newBitmap;
             }
-            catch
+            else
             {
                 pictureBoxArt.Image = new Bitmap(pictureBoxArt.Width, pictureBoxArt.Height);
             }
-            CurrColor = RadarCol.GetLandColor(_selectedIndex);
+
+            CurrentColor = RadarCol.GetLandColor(_selectedIndex);
         }
 
         private void OnClickMeanColor(object sender, EventArgs e)
@@ -238,9 +249,11 @@ namespace UoFiddler.Controls.UserControls
                 ushort* line = (ushort*)bd.Scan0;
                 int delta = bd.Stride >> 1;
                 ushort* cur = line;
-                int meanr = 0;
-                int meang = 0;
-                int meanb = 0;
+
+                int meanR = 0;
+                int meanG = 0;
+                int meanB = 0;
+
                 int count = 0;
                 for (int y = 0; y < image.Height; ++y, line += delta)
                 {
@@ -252,18 +265,23 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        meanr += Hues.HueToColorR((short)cur[x]);
-                        meang += Hues.HueToColorG((short)cur[x]);
-                        meanb += Hues.HueToColorB((short)cur[x]);
+                        meanR += Hues.HueToColorR((short)cur[x]);
+                        meanG += Hues.HueToColorG((short)cur[x]);
+                        meanB += Hues.HueToColorB((short)cur[x]);
                         ++count;
                     }
                 }
                 image.UnlockBits(bd);
-                meanr /= count;
-                meang /= count;
-                meanb /= count;
-                Color col = Color.FromArgb(meanr, meang, meanb);
-                CurrColor = Hues.ColorToHue(col);
+
+                if (count > 0)
+                {
+                    meanR /= count;
+                    meanG /= count;
+                    meanB /= count;
+                }
+
+                Color col = Color.FromArgb(meanR, meanG, meanB);
+                CurrentColor = Hues.ColorToHue(col);
             }
         }
 
@@ -286,11 +304,11 @@ namespace UoFiddler.Controls.UserControls
 
             if (tabControl2.SelectedIndex == 0)
             {
-                RadarCol.SetItemColor(_selectedIndex, CurrColor);
+                RadarCol.SetItemColor(_selectedIndex, CurrentColor);
             }
             else
             {
-                RadarCol.SetLandColor(_selectedIndex, CurrColor);
+                RadarCol.SetLandColor(_selectedIndex, CurrentColor);
             }
 
             Options.ChangedUltimaClass["RadarCol"] = true;
@@ -304,7 +322,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            CurrColor = Hues.ColorToHue(col);
+            CurrentColor = Hues.ColorToHue(col);
         }
 
         private void OnChangeG(object sender, EventArgs e)
@@ -315,7 +333,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            CurrColor = Hues.ColorToHue(col);
+            CurrentColor = Hues.ColorToHue(col);
         }
 
         private void OnChangeB(object sender, EventArgs e)
@@ -326,18 +344,18 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            CurrColor = Hues.ColorToHue(col);
+            CurrentColor = Hues.ColorToHue(col);
         }
 
         private void OnNumericShortColChanged(object sender, EventArgs e)
         {
             if (!_updating)
             {
-                CurrColor = (short)numericUpDownShortCol.Value;
+                CurrentColor = (short)numericUpDownShortCol.Value;
             }
         }
 
-        private void OnClickmeanColorFromTo(object sender, EventArgs e)
+        private void OnClickMeanColorFromTo(object sender, EventArgs e)
         {
             if (!Utils.ConvertStringToInt(textBoxMeanFrom.Text, out int from, 0, 0x4000) ||
                 !Utils.ConvertStringToInt(textBoxMeanTo.Text, out int to, 0, 0x4000))
@@ -370,9 +388,11 @@ namespace UoFiddler.Controls.UserControls
                     ushort* line = (ushort*)bd.Scan0;
                     int delta = bd.Stride >> 1;
                     ushort* cur = line;
+
                     int meanr = 0;
                     int meang = 0;
                     int meanb = 0;
+
                     int count = 0;
                     for (int y = 0; y < image.Height; ++y, line += delta)
                     {
@@ -389,19 +409,23 @@ namespace UoFiddler.Controls.UserControls
                         }
                     }
                     image.UnlockBits(bd);
+
                     meanr /= count;
                     meang /= count;
                     meanb /= count;
+
                     gmeanr += meanr;
                     gmeang += meang;
                     gmeanb += meanb;
                 }
             }
+
             gmeanr /= to - from;
             gmeang /= to - from;
             gmeanb /= to - from;
+
             Color col = Color.FromArgb(gmeanr, gmeang, gmeanb);
-            CurrColor = Hues.ColorToHue(col);
+            CurrentColor = Hues.ColorToHue(col);
         }
 
         private void OnClickSelectItemsTab(object sender, EventArgs e)
@@ -437,7 +461,7 @@ namespace UoFiddler.Controls.UserControls
             TileDataControl.Select(index, false);
         }
 
-        private void OnClickSelectLandtilesTab(object sender, EventArgs e)
+        private void OnClickSelectLandTilesTab(object sender, EventArgs e)
         {
             if (treeViewLand.SelectedNode == null)
             {
@@ -479,6 +503,7 @@ namespace UoFiddler.Controls.UserControls
                 CheckFileExists = true,
                 Filter = "csv files (*.csv)|*.csv"
             };
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 Options.ChangedUltimaClass["RadarCol"] = true;
