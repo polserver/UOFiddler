@@ -118,7 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.5
+    <value>Version 4.9.6
+Added new tile view control to Items, Land Tiles, Textures and Fonts. Rendering should be now smooth and fast. To use new control Alternative design mode in settings needs to be checked (thanks goes to control author Anton a.k.a 0xE1 https://github.com/0xE1/Managed-TileView and deccer for finding it).
+Added Export all... option to Textures tab.
+Changed how fonts are loaded. It should be faster now. By default when you enter Fonts tab it will load ASCII fonts only. Unicode ones are loaded after selecting checkbox.
+Fixed AnimData Save button.
+Fixed default text on Speech tab.
+
+Version 4.9.5
 Fixed rare hang when selecting tiles in Items/LandTiles tab from other tabs. 
 Fixed crash when using context menu in tiledata item list.
 Fixed multi design saving for UO architect. File extension changed to .uoa.txt to indicate that it is text format and not binary one. Updated import options for UO Architect txt files.
