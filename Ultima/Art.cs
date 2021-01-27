@@ -37,16 +37,19 @@ namespace Ultima
 
         public static int GetMaxItemID()
         {
+            // High Seas
             if (GetIdxLength() >= 0x13FDC)
             {
-                return 0xFFFF;
+                return 0xFFDC;
             }
 
+            // Stygian Abyss
             if (GetIdxLength() == 0xC000)
             {
                 return 0x7FFF;
             }
 
+            // ML and older
             return 0x3FFF;
         }
 
