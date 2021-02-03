@@ -8,6 +8,7 @@
 		<Copyright>Copyright © 2020</Copyright>
 		<AssemblyVersion>1.5.0.0</AssemblyVersion>
 		<FileVersion>1.5.0.0</FileVersion>
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>portable</DebugType>
@@ -51,5 +52,8 @@
 		<Content Include="multieditor.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />
 	</ItemGroup>
 </Project>
