@@ -994,5 +994,63 @@ namespace UoFiddler.Controls.UserControls
                 UpdateToolStripLabels(_selectedGraphicIdId);
             }
         }
+
+        private const int _maleGumpOffset = 50_000;
+        private const int _femaleGumpOffset = 60_000;
+
+        private static void SelectInGumpsTab(int graphicId, bool female = false)
+        {
+            int gumpOffset = female ? _femaleGumpOffset : _maleGumpOffset;
+            var itemData = TileData.ItemTable[graphicId];
+
+            GumpControl.Select(itemData.Animation + gumpOffset);
+        }
+
+        private void SelectInGumpsTabMaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SelectedGraphicId <= 0)
+            {
+                return;
+            }
+
+            SelectInGumpsTab(SelectedGraphicId);
+        }
+
+        private void SelectInGumpsTabFemaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SelectedGraphicId <= 0)
+            {
+                return;
+            }
+
+            SelectInGumpsTab(SelectedGraphicId, true);
+        }
+
+        private void TileViewContextMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+            if (SelectedGraphicId <= 0)
+            {
+                selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
+                selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                var itemData = TileData.ItemTable[SelectedGraphicId];
+
+                if (itemData.Animation > 0)
+                {
+                    selectInGumpsTabMaleToolStripMenuItem.Enabled =
+                        GumpControl.HasGumpId(itemData.Animation + _maleGumpOffset);
+
+                    selectInGumpsTabFemaleToolStripMenuItem.Enabled =
+                        GumpControl.HasGumpId(itemData.Animation + _femaleGumpOffset);
+                }
+                else
+                {
+                    selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
+                    selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
+                }
+            }
+        }
     }
 }
