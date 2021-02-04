@@ -56,6 +56,8 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.selectInTileDataTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectInRadarColorTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectInGumpsTabMaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectInGumpsTabFemaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -204,6 +206,8 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator3,
             this.selectInTileDataTabToolStripMenuItem,
             this.selectInRadarColorTabToolStripMenuItem,
+            this.selectInGumpsTabMaleToolStripMenuItem,
+            this.selectInGumpsTabFemaleToolStripMenuItem,
             this.toolStripSeparator2,
             this.extractToolStripMenuItem,
             this.replaceToolStripMenuItem,
@@ -212,7 +216,8 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator1,
             this.saveToolStripMenuItem});
             this.TileViewContextMenuStrip.Name = "contextMenuStrip1";
-            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 242);
+            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 308);
+            this.TileViewContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.TileViewContextMenuStrip_Opening);
             // 
             // showFreeSlotsToolStripMenuItem
             // 
@@ -254,6 +259,22 @@ namespace UoFiddler.Controls.UserControls
             this.selectInRadarColorTabToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.selectInRadarColorTabToolStripMenuItem.Text = "Select in RadarColor tab";
             this.selectInRadarColorTabToolStripMenuItem.Click += new System.EventHandler(this.OnClickSelectRadarCol);
+            // 
+            // selectInGumpsTabMaleToolStripMenuItem
+            // 
+            this.selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
+            this.selectInGumpsTabMaleToolStripMenuItem.Name = "selectInGumpsTabMaleToolStripMenuItem";
+            this.selectInGumpsTabMaleToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.selectInGumpsTabMaleToolStripMenuItem.Text = "Select in Gumps (M)";
+            this.selectInGumpsTabMaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabMaleToolStripMenuItem_Click);
+            // 
+            // selectInGumpsTabFemaleToolStripMenuItem
+            // 
+            this.selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
+            this.selectInGumpsTabFemaleToolStripMenuItem.Name = "selectInGumpsTabFemaleToolStripMenuItem";
+            this.selectInGumpsTabFemaleToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.selectInGumpsTabFemaleToolStripMenuItem.Text = "Select in Gumps (F)";
+            this.selectInGumpsTabFemaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabFemaleToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -557,5 +578,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem ChangeBackgroundColorToolStripMenuItem;
         private TileView.TileViewControl ItemsTileView;
         private RichTextBox DetailTextBox;
+        private ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
+        private ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;
     }
 }

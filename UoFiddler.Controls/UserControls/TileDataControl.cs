@@ -1573,5 +1573,66 @@ namespace UoFiddler.Controls.UserControls
             e.SuppressKeyPress = true;
             e.Handled = true;
         }
+
+        private const int _maleGumpOffset = 50_000;
+        private const int _femaleGumpOffset = 60_000;
+
+        private static void SelectInGumpsTab(int tiledataIndex, bool female = false)
+        {
+            int gumpOffset = female ? _femaleGumpOffset : _maleGumpOffset;
+            var animation = TileData.ItemTable[tiledataIndex].Animation;
+
+            GumpControl.Select(animation + gumpOffset);
+        }
+
+        private void SelectInGumpsTabMaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedItemTag = treeViewItem.SelectedNode?.Tag;
+            if (selectedItemTag is null || (int)selectedItemTag <= 0)
+            {
+                return;
+            }
+
+            SelectInGumpsTab((int)selectedItemTag);
+        }
+
+        private void SelectInGumpsTabFemaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedItemTag = treeViewItem.SelectedNode?.Tag;
+            if (selectedItemTag is null || (int)selectedItemTag <= 0)
+            {
+                return;
+            }
+
+            SelectInGumpsTab((int)selectedItemTag, true);
+        }
+
+        private void ItemsContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var selectedItemTag = treeViewItem.SelectedNode?.Tag;
+            if (selectedItemTag is null || (int)selectedItemTag <= 0)
+            {
+                selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
+                selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                var itemData = TileData.ItemTable[(int)selectedItemTag];
+
+                if (itemData.Animation > 0)
+                {
+                    selectInGumpsTabMaleToolStripMenuItem.Enabled =
+                        GumpControl.HasGumpId(itemData.Animation + _maleGumpOffset);
+
+                    selectInGumpsTabFemaleToolStripMenuItem.Enabled =
+                        GumpControl.HasGumpId(itemData.Animation + _femaleGumpOffset);
+                }
+                else
+                {
+                    selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
+                    selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
+                }
+            }
+        }
     }
 }

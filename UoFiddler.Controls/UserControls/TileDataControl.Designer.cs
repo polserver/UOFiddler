@@ -45,7 +45,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.treeViewItem = new System.Windows.Forms.TreeView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ItemsContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.selectInItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectRadarColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBoxItem = new System.Windows.Forms.PictureBox();
@@ -79,7 +79,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.splitContainer6 = new System.Windows.Forms.SplitContainer();
             this.treeViewLand = new System.Windows.Forms.TreeView();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.LandTilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.selectInLandtilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBoxLand = new System.Windows.Forms.PictureBox();
@@ -89,7 +89,7 @@ namespace UoFiddler.Controls.UserControls
             this.textBoxTexID = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
             this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.MainToolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.memorySaveWarningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDirectlyOnChangesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -102,6 +102,9 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.splitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.selectInGumpsTabMaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectInGumpsTabFemaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabcontrol.SuspendLayout();
             this.tabPageItems.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -112,7 +115,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
+            this.ItemsContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
@@ -127,13 +130,13 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer6.Panel1.SuspendLayout();
             this.splitContainer6.Panel2.SuspendLayout();
             this.splitContainer6.SuspendLayout();
-            this.contextMenuStrip2.SuspendLayout();
+            this.LandTilesContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLand)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).BeginInit();
             this.splitContainer7.Panel1.SuspendLayout();
             this.splitContainer7.Panel2.SuspendLayout();
             this.splitContainer7.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.MainToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabcontrol
@@ -195,7 +198,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // treeViewItem
             // 
-            this.treeViewItem.ContextMenuStrip = this.contextMenuStrip1;
+            this.treeViewItem.ContextMenuStrip = this.ItemsContextMenuStrip;
             this.treeViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(0, 0);
@@ -206,13 +209,17 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
             this.treeViewItem.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TileData_KeyUp);
             // 
-            // contextMenuStrip1
+            // ItemsContextMenuStrip
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ItemsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectInItemsToolStripMenuItem,
-            this.selectRadarColorToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(201, 48);
+            this.selectRadarColorToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.selectInGumpsTabMaleToolStripMenuItem,
+            this.selectInGumpsTabFemaleToolStripMenuItem});
+            this.ItemsContextMenuStrip.Name = "contextMenuStrip1";
+            this.ItemsContextMenuStrip.Size = new System.Drawing.Size(201, 120);
+            this.ItemsContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ItemsContextMenuStrip_Opening);
             // 
             // selectInItemsToolStripMenuItem
             // 
@@ -547,7 +554,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // treeViewLand
             // 
-            this.treeViewLand.ContextMenuStrip = this.contextMenuStrip2;
+            this.treeViewLand.ContextMenuStrip = this.LandTilesContextMenuStrip;
             this.treeViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewLand.HideSelection = false;
             this.treeViewLand.Location = new System.Drawing.Point(0, 0);
@@ -557,13 +564,13 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewLand.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewLand);
             this.treeViewLand.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TileData_KeyUp);
             // 
-            // contextMenuStrip2
+            // LandTilesContextMenuStrip
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LandTilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectInLandtilesToolStripMenuItem,
             this.selToolStripMenuItem});
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(201, 48);
+            this.LandTilesContextMenuStrip.Name = "contextMenuStrip2";
+            this.LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 48);
             // 
             // selectInLandtilesToolStripMenuItem
             // 
@@ -656,10 +663,10 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBox2.TabIndex = 0;
             this.checkedListBox2.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnFlagItemCheckLandTiles);
             // 
-            // toolStrip1
+            // MainToolStrip
             // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.MainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton1,
             this.toolStripButton2,
             this.toolStripSeparator1,
@@ -668,12 +675,12 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator2,
             this.toolStripButton4,
             this.toolStripButton3});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(621, 25);
-            this.toolStrip1.TabIndex = 1;
-            this.toolStrip1.Text = "toolStrip1";
+            this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.MainToolStrip.Name = "MainToolStrip";
+            this.MainToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.MainToolStrip.Size = new System.Drawing.Size(621, 25);
+            this.MainToolStrip.TabIndex = 1;
+            this.MainToolStrip.Text = "toolStrip1";
             // 
             // toolStripDropDownButton1
             // 
@@ -770,7 +777,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitter1.AnimationDelay = 20;
             this.splitter1.AnimationStep = 20;
             this.splitter1.BorderStyle3D = System.Windows.Forms.Border3DStyle.Flat;
-            this.splitter1.ControlToHide = this.toolStrip1;
+            this.splitter1.ControlToHide = this.MainToolStrip;
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.splitter1.ExpandParentForm = false;
             this.splitter1.Location = new System.Drawing.Point(0, 25);
@@ -780,13 +787,32 @@ namespace UoFiddler.Controls.UserControls
             this.splitter1.UseAnimations = false;
             this.splitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
+            // 
+            // selectInGumpsTabMaleToolStripMenuItem
+            // 
+            this.selectInGumpsTabMaleToolStripMenuItem.Name = "selectInGumpsTabMaleToolStripMenuItem";
+            this.selectInGumpsTabMaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.selectInGumpsTabMaleToolStripMenuItem.Text = "Select in Gumps (M)";
+            this.selectInGumpsTabMaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabMaleToolStripMenuItem_Click);
+            // 
+            // selectInGumpsTabFemaleToolStripMenuItem
+            // 
+            this.selectInGumpsTabFemaleToolStripMenuItem.Name = "selectInGumpsTabFemaleToolStripMenuItem";
+            this.selectInGumpsTabFemaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.selectInGumpsTabFemaleToolStripMenuItem.Text = "Select in Gumps (F)";
+            this.selectInGumpsTabFemaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabFemaleToolStripMenuItem_Click);
+            // 
             // TileDataControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tabcontrol);
             this.Controls.Add(this.splitter1);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.MainToolStrip);
             this.DoubleBuffered = true;
             this.Name = "TileDataControl";
             this.Size = new System.Drawing.Size(621, 327);
@@ -802,7 +828,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.ItemsContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).EndInit();
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel1.PerformLayout();
@@ -819,15 +845,15 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer6.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).EndInit();
             this.splitContainer6.ResumeLayout(false);
-            this.contextMenuStrip2.ResumeLayout(false);
+            this.LandTilesContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLand)).EndInit();
             this.splitContainer7.Panel1.ResumeLayout(false);
             this.splitContainer7.Panel1.PerformLayout();
             this.splitContainer7.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).EndInit();
             this.splitContainer7.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.MainToolStrip.ResumeLayout(false);
+            this.MainToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -835,8 +861,8 @@ namespace UoFiddler.Controls.UserControls
 
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.CheckedListBox checkedListBox2;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ContextMenuStrip ItemsContextMenuStrip;
+        private System.Windows.Forms.ContextMenuStrip LandTilesContextMenuStrip;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
@@ -884,7 +910,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TextBox textBoxUnk3;
         private System.Windows.Forms.TextBox textBoxValue;
         private System.Windows.Forms.TextBox textBoxWeight;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip MainToolStrip;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
@@ -897,5 +923,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TreeView treeViewLand;
 
         #endregion
+
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;
     }
 }

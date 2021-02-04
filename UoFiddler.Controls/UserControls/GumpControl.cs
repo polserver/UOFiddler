@@ -627,8 +627,13 @@ namespace UoFiddler.Controls.UserControls
             Search(gumpId);
         }
 
-        private static bool HasGumpId(int gumpId)
+        public static bool HasGumpId(int gumpId)
         {
+            if (!_refMarker._loaded)
+            {
+                _refMarker.OnLoad(EventArgs.Empty);
+            }
+
             return _refMarker.listBox.Items.Cast<object>().Any(id => (int)id == gumpId);
         }
 
