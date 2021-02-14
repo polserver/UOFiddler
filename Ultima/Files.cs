@@ -474,7 +474,7 @@ namespace Ultima
         /// </summary>
         public static void CheckForNewMapSize()
         {
-            if (GetFilePath("map1.mul") != null)
+            if (GetFilePath("map1.mul") != null || GetFilePath("map1legacymul.uop") != null)
             {
                 Map.Trammel = Map.Trammel.Width == 7168
                     ? new Map(1, 1, 7168, 4096)
