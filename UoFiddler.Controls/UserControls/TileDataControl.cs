@@ -1634,5 +1634,22 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
         }
+
+        private void textBoxTexID_DoubleClick(object sender, EventArgs e)
+        {
+            int index = (int)treeViewLand.SelectedNode.Tag;
+            textBoxTexID.Text = $"{index}";
+        }
+
+        private void setTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < TileData.LandTable.Length; ++i)
+            {
+                if (Textures.TestTexture(i))
+                {
+                    TileData.LandTable[i].TextureID = (ushort)i;
+                }
+            }
+        }
     }
 }

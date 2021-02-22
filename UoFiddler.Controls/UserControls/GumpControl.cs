@@ -697,5 +697,104 @@ namespace UoFiddler.Controls.UserControls
             e.SuppressKeyPress = true;
             e.Handled = true;
         }
+
+        private void InsertStartingFromTb_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            if (!Utils.ConvertStringToInt(InsertStartingFromTb.Text, out int index, 0, Gumps.GetCount()))
+            {
+                return;
+            }
+
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+
+
+                if (CheckForIndexes(index, dialog.FileNames.Length))
+                {
+                    for(int i = 0; i < dialog.FileNames.Length; i++)
+                    {
+                        var currentIdx = index + i;
+                        AddSingleGump(dialog.FileNames[i], currentIdx);
+                    }
+                }
+
+                
+
+                
+            }
+
+            Options.ChangedUltimaClass["Gumps"] = true;
+        }
+
+        private bool CheckForIndexes(int baseIndex, int count)
+        {
+            for (int i = baseIndex; i < baseIndex + count; i++)
+            {
+                if (Gumps.IsValidIndex(i))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void AddSingleGump(string fileName, int index)
+        {
+            Bitmap bmp = new Bitmap(fileName);
+            if (fileName.Contains(".bmp"))
+            {
+                bmp = Utils.ConvertBmp(bmp);
+            }
+            Gumps.ReplaceGump(index, bmp);
+            ControlEvents.FireGumpChangeEvent(this, index);
+            bool done = false;
+            for (int i = 0; i < listBox.Items.Count; ++i)
+            {
+                int j = int.Parse(listBox.Items[i].ToString());
+                if (j > index)
+                {
+                    listBox.Items.Insert(i, index);
+                    listBox.SelectedIndex = i;
+                    done = true;
+                    break;
+                }
+
+                if (!_showFreeSlots)
+                {
+                    continue;
+                }
+
+                if (j != i)
+                {
+                    continue;
+                }
+
+                listBox.SelectedIndex = i;
+                done = true;
+                break;
+            }
+
+            if (!done)
+            {
+                listBox.Items.Add(index);
+                listBox.SelectedIndex = listBox.Items.Count - 1;
+            }
+        }
     }
 }

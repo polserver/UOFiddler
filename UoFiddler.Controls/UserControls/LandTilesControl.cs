@@ -869,5 +869,117 @@ namespace UoFiddler.Controls.UserControls
             e.SuppressKeyPress = true;
             e.Handled = true;
         }
+
+        private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter || !Utils.ConvertStringToInt(StartingFromTb.Text, out int index, 0, 0x3FFF))
+            {
+                return;
+            }
+
+            if (Art.IsValidLand(index))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = $"Choose image file to insert at 0x{index:X} +";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                
+                if (CheckForIndexes(index, dialog.FileNames.Length)) //Ho tutti gli indici necessari disponibili in linea
+                {
+                    for(int i = 0; i < dialog.FileNames.Length; i++)
+                    {
+                        var currentIdx = index + i;
+                        AddSingleLandTile(dialog.FileNames[i], currentIdx);
+                    }
+                }
+
+
+
+                listView1.View = View.Details; // that works fascinating
+                listView1.View = View.Tile;
+
+                if (listView1.SelectedItems.Count == 1)
+                {
+                    listView1.SelectedItems[0].Selected = false;
+                }
+
+                //item.Selected = true;
+                //item.Focused = true;
+                //item.EnsureVisible();
+            }
+        }
+
+        private bool CheckForIndexes(int baseIndex, int count)
+        {
+
+            for(int i = baseIndex; i < baseIndex + count; i++)
+            {
+                if (Art.IsValidLand(i))
+                {
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
+        private void AddSingleLandTile(string fileName, int index)
+        {
+            Bitmap bmp = new Bitmap(fileName);
+            if (bmp.Height != 44 || bmp.Width != 44)
+            {
+                MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                return;
+            }
+            if (fileName.Contains(".bmp"))
+            {
+                bmp = Utils.ConvertBmp(bmp);
+            }
+
+            Art.ReplaceLand(index, bmp);
+            ControlEvents.FireLandTileChangeEvent(this, index);
+            Options.ChangedUltimaClass["Art"] = true;
+            ListViewItem item = new ListViewItem(index.ToString(), 0)
+            {
+                Tag = index
+            };
+
+            if (_showFreeSlots)
+            {
+                listView1.Items[index] = item;
+                listView1.Invalidate();
+            }
+            else
+            {
+                bool done = false;
+                foreach (ListViewItem i in listView1.Items)
+                {
+                    if ((int)i.Tag <= index)
+                    {
+                        continue;
+                    }
+
+                    listView1.Items.Insert(i.Index, item);
+                    done = true;
+                    break;
+                }
+
+                if (!done)
+                {
+                    listView1.Items.Add(item);
+                }
+            }
+        }
     }
 }

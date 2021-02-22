@@ -48,6 +48,9 @@ namespace UoFiddler.Controls.UserControls
             this.ItemsContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.selectInItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectRadarColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.selectInGumpsTabMaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectInGumpsTabFemaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBoxItem = new System.Windows.Forms.PictureBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.textBoxName = new System.Windows.Forms.TextBox();
@@ -102,9 +105,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.splitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.selectInGumpsTabMaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectInGumpsTabFemaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabcontrol.SuspendLayout();
             this.tabPageItems.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -156,7 +157,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(613, 268);
+            this.tabPageItems.Size = new System.Drawing.Size(613, 273);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Text = "Items";
             this.tabPageItems.UseVisualStyleBackColor = true;
@@ -174,7 +175,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(607, 262);
+            this.splitContainer1.Size = new System.Drawing.Size(607, 267);
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -192,8 +193,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxItem);
-            this.splitContainer2.Size = new System.Drawing.Size(200, 262);
-            this.splitContainer2.SplitterDistance = 162;
+            this.splitContainer2.Size = new System.Drawing.Size(200, 267);
+            this.splitContainer2.SplitterDistance = 165;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeViewItem
@@ -203,7 +204,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(0, 0);
             this.treeViewItem.Name = "treeViewItem";
-            this.treeViewItem.Size = new System.Drawing.Size(200, 162);
+            this.treeViewItem.Size = new System.Drawing.Size(200, 165);
             this.treeViewItem.TabIndex = 0;
             this.treeViewItem.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.OnItemDataNodeExpanded);
             this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
@@ -218,7 +219,7 @@ namespace UoFiddler.Controls.UserControls
             this.selectInGumpsTabMaleToolStripMenuItem,
             this.selectInGumpsTabFemaleToolStripMenuItem});
             this.ItemsContextMenuStrip.Name = "contextMenuStrip1";
-            this.ItemsContextMenuStrip.Size = new System.Drawing.Size(201, 120);
+            this.ItemsContextMenuStrip.Size = new System.Drawing.Size(201, 98);
             this.ItemsContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ItemsContextMenuStrip_Opening);
             // 
             // selectInItemsToolStripMenuItem
@@ -235,12 +236,31 @@ namespace UoFiddler.Controls.UserControls
             this.selectRadarColorToolStripMenuItem.Text = "Select In RadarColor tab";
             this.selectRadarColorToolStripMenuItem.Click += new System.EventHandler(this.OnClickSelectRadarItem);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
+            // 
+            // selectInGumpsTabMaleToolStripMenuItem
+            // 
+            this.selectInGumpsTabMaleToolStripMenuItem.Name = "selectInGumpsTabMaleToolStripMenuItem";
+            this.selectInGumpsTabMaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.selectInGumpsTabMaleToolStripMenuItem.Text = "Select in Gumps (M)";
+            this.selectInGumpsTabMaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabMaleToolStripMenuItem_Click);
+            // 
+            // selectInGumpsTabFemaleToolStripMenuItem
+            // 
+            this.selectInGumpsTabFemaleToolStripMenuItem.Name = "selectInGumpsTabFemaleToolStripMenuItem";
+            this.selectInGumpsTabFemaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.selectInGumpsTabFemaleToolStripMenuItem.Text = "Select in Gumps (F)";
+            this.selectInGumpsTabFemaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabFemaleToolStripMenuItem_Click);
+            // 
             // pictureBoxItem
             // 
             this.pictureBoxItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxItem.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxItem.Name = "pictureBoxItem";
-            this.pictureBoxItem.Size = new System.Drawing.Size(200, 96);
+            this.pictureBoxItem.Size = new System.Drawing.Size(200, 98);
             this.pictureBoxItem.TabIndex = 0;
             this.pictureBoxItem.TabStop = false;
             // 
@@ -283,7 +303,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(403, 262);
+            this.splitContainer3.Size = new System.Drawing.Size(403, 267);
             this.splitContainer3.SplitterDistance = 157;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
@@ -500,7 +520,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.MultiColumn = true;
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(403, 103);
+            this.checkedListBox1.Size = new System.Drawing.Size(403, 108);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnFlagItemCheckItems);
             // 
@@ -642,6 +662,7 @@ namespace UoFiddler.Controls.UserControls
             this.textBoxTexID.Size = new System.Drawing.Size(58, 20);
             this.textBoxTexID.TabIndex = 2;
             this.textBoxTexID.TextChanged += new System.EventHandler(this.OnTextChangedLandTexID);
+            this.textBoxTexID.DoubleClick += new System.EventHandler(this.textBoxTexID_DoubleClick);
             // 
             // label24
             // 
@@ -688,7 +709,8 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.memorySaveWarningToolStripMenuItem,
             this.saveDirectlyOnChangesToolStripMenuItem,
-            this.setFilterToolStripMenuItem});
+            this.setFilterToolStripMenuItem,
+            this.setTexturesToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
@@ -787,24 +809,12 @@ namespace UoFiddler.Controls.UserControls
             this.splitter1.UseAnimations = false;
             this.splitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
-            // toolStripSeparator3
+            // setTexturesToolStripMenuItem
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
-            // 
-            // selectInGumpsTabMaleToolStripMenuItem
-            // 
-            this.selectInGumpsTabMaleToolStripMenuItem.Name = "selectInGumpsTabMaleToolStripMenuItem";
-            this.selectInGumpsTabMaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.selectInGumpsTabMaleToolStripMenuItem.Text = "Select in Gumps (M)";
-            this.selectInGumpsTabMaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabMaleToolStripMenuItem_Click);
-            // 
-            // selectInGumpsTabFemaleToolStripMenuItem
-            // 
-            this.selectInGumpsTabFemaleToolStripMenuItem.Name = "selectInGumpsTabFemaleToolStripMenuItem";
-            this.selectInGumpsTabFemaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.selectInGumpsTabFemaleToolStripMenuItem.Text = "Select in Gumps (F)";
-            this.selectInGumpsTabFemaleToolStripMenuItem.Click += new System.EventHandler(this.SelectInGumpsTabFemaleToolStripMenuItem_Click);
+            this.setTexturesToolStripMenuItem.Name = "setTexturesToolStripMenuItem";
+            this.setTexturesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.setTexturesToolStripMenuItem.Text = "Set Textures";
+            this.setTexturesToolStripMenuItem.Click += new System.EventHandler(this.setTexturesToolStripMenuItem_Click);
             // 
             // TileDataControl
             // 
@@ -927,5 +937,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setTexturesToolStripMenuItem;
     }
 }

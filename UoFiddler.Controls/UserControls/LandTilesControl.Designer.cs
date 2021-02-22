@@ -71,6 +71,8 @@ namespace UoFiddler.Controls.UserControls
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.listView1 = new System.Windows.Forms.ListView();
+            this.insertStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.StartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStripLandTile.SuspendLayout();
             this.SuspendLayout();
@@ -88,9 +90,10 @@ namespace UoFiddler.Controls.UserControls
             this.findNextFreeSlotToolStripMenuItem,
             this.removeToolStripMenuItem,
             this.replaceToolStripMenuItem,
-            this.insertAtToolStripMenuItem});
+            this.insertAtToolStripMenuItem,
+            this.insertStartingFromToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(201, 192);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(201, 236);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -194,7 +197,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown_Insert);
@@ -348,7 +350,21 @@ namespace UoFiddler.Controls.UserControls
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.ListView_SelectedIndexChanged);
             this.listView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LandTiles_KeyUp);
             // 
-            // LandTiles
+            // insertStartingFromToolStripMenuItem
+            // 
+            this.insertStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.StartingFromTb});
+            this.insertStartingFromToolStripMenuItem.Name = "insertStartingFromToolStripMenuItem";
+            this.insertStartingFromToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.insertStartingFromToolStripMenuItem.Text = "Insert Starting From";
+            // 
+            // StartingFromTb
+            // 
+            this.StartingFromTb.Name = "StartingFromTb";
+            this.StartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.StartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1_KeyDown);
+            // 
+            // LandTilesControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -400,5 +416,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 
         #endregion
+
+        private System.Windows.Forms.ToolStripMenuItem insertStartingFromToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox StartingFromTb;
     }
 }
