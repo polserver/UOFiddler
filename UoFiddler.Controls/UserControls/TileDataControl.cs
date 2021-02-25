@@ -1,9 +1,9 @@
 /***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -1350,18 +1350,23 @@ namespace UoFiddler.Controls.UserControls
                 case 0:
                     changeFlag = TileFlag.Damaging;
                     break;
+
                 case 1:
                     changeFlag = TileFlag.Wet;
                     break;
+
                 case 2:
                     changeFlag = TileFlag.Impassable;
                     break;
+
                 case 3:
                     changeFlag = TileFlag.Wall;
                     break;
+
                 case 4:
                     changeFlag = TileFlag.NoDiagonal;
                     break;
+
                 default:
                     changeFlag = TileFlag.None;
                     break;
@@ -1481,11 +1486,11 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-               var found = LandTilesControl.SearchGraphic(index);
-               if (!found)
-               {
-                   MessageBox.Show("You need to load LandTiles tab first.", "Information");
-               }
+                var found = LandTilesControl.SearchGraphic(index);
+                if (!found)
+                {
+                    MessageBox.Show("You need to load LandTiles tab first.", "Information");
+                }
             }
         }
 
@@ -1635,13 +1640,25 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void textBoxTexID_DoubleClick(object sender, EventArgs e)
+        /// <summary>
+        /// DoubleClick event handler on the TextBoxTexID. Sets the TexID to the Tag value of the node 
+        /// i.e. 0x256 (598) lava -> 598.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBoxTexID_DoubleClick(object sender, EventArgs e)
         {
             int index = (int)treeViewLand.SelectedNode.Tag;
             textBoxTexID.Text = $"{index}";
         }
 
-        private void setTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Click event handler on the "Set Texture" menu item. Sets all the landtiles TextureID to their index.
+        /// This is written under the assumption that LandTileID == TextureID for every LandTile. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SetTextureMenuItem_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < TileData.LandTable.Length; ++i)
             {

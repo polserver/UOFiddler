@@ -97,6 +97,7 @@ namespace UoFiddler.Controls.UserControls
             this.memorySaveWarningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDirectlyOnChangesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -105,7 +106,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.splitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
-            this.setTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabcontrol.SuspendLayout();
             this.tabPageItems.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -157,7 +157,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(613, 273);
+            this.tabPageItems.Size = new System.Drawing.Size(613, 268);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Text = "Items";
             this.tabPageItems.UseVisualStyleBackColor = true;
@@ -175,7 +175,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(607, 267);
+            this.splitContainer1.Size = new System.Drawing.Size(607, 262);
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -193,8 +193,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxItem);
-            this.splitContainer2.Size = new System.Drawing.Size(200, 267);
-            this.splitContainer2.SplitterDistance = 165;
+            this.splitContainer2.Size = new System.Drawing.Size(200, 262);
+            this.splitContainer2.SplitterDistance = 161;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeViewItem
@@ -204,7 +204,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(0, 0);
             this.treeViewItem.Name = "treeViewItem";
-            this.treeViewItem.Size = new System.Drawing.Size(200, 165);
+            this.treeViewItem.Size = new System.Drawing.Size(200, 161);
             this.treeViewItem.TabIndex = 0;
             this.treeViewItem.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.OnItemDataNodeExpanded);
             this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
@@ -260,7 +260,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxItem.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxItem.Name = "pictureBoxItem";
-            this.pictureBoxItem.Size = new System.Drawing.Size(200, 98);
+            this.pictureBoxItem.Size = new System.Drawing.Size(200, 97);
             this.pictureBoxItem.TabIndex = 0;
             this.pictureBoxItem.TabStop = false;
             // 
@@ -303,7 +303,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(403, 267);
+            this.splitContainer3.Size = new System.Drawing.Size(403, 262);
             this.splitContainer3.SplitterDistance = 157;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
@@ -520,7 +520,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.MultiColumn = true;
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(403, 108);
+            this.checkedListBox1.Size = new System.Drawing.Size(403, 103);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnFlagItemCheckItems);
             // 
@@ -662,7 +662,7 @@ namespace UoFiddler.Controls.UserControls
             this.textBoxTexID.Size = new System.Drawing.Size(58, 20);
             this.textBoxTexID.TabIndex = 2;
             this.textBoxTexID.TextChanged += new System.EventHandler(this.OnTextChangedLandTexID);
-            this.textBoxTexID.DoubleClick += new System.EventHandler(this.textBoxTexID_DoubleClick);
+            this.textBoxTexID.DoubleClick += new System.EventHandler(this.TextBoxTexID_DoubleClick);
             // 
             // label24
             // 
@@ -739,6 +739,13 @@ namespace UoFiddler.Controls.UserControls
             this.setFilterToolStripMenuItem.Text = "Set Filter";
             this.setFilterToolStripMenuItem.Click += new System.EventHandler(this.OnClickSetFilter);
             // 
+            // setTexturesToolStripMenuItem
+            // 
+            this.setTexturesToolStripMenuItem.Name = "setTexturesToolStripMenuItem";
+            this.setTexturesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.setTexturesToolStripMenuItem.Text = "Set Textures";
+            this.setTexturesToolStripMenuItem.Click += new System.EventHandler(this.SetTextureMenuItem_Click);
+            // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -808,13 +815,6 @@ namespace UoFiddler.Controls.UserControls
             this.splitter1.TabStop = false;
             this.splitter1.UseAnimations = false;
             this.splitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
-            // 
-            // setTexturesToolStripMenuItem
-            // 
-            this.setTexturesToolStripMenuItem.Name = "setTexturesToolStripMenuItem";
-            this.setTexturesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.setTexturesToolStripMenuItem.Text = "Set Textures";
-            this.setTexturesToolStripMenuItem.Click += new System.EventHandler(this.setTexturesToolStripMenuItem_Click);
             // 
             // TileDataControl
             // 

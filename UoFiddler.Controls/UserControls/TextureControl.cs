@@ -559,11 +559,6 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            //if (Textures.TestTexture(index))
-            //{
-            //    return;
-            //}
-
             contextMenuStrip1.Close();
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -586,7 +581,6 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-
                 listView1.View = View.Details; // that works fascinating
                 listView1.View = View.Tile;
 
@@ -595,10 +589,15 @@ namespace UoFiddler.Controls.UserControls
                     listView1.SelectedItems[0].Selected = false;
                 }
                 Options.ChangedUltimaClass["Texture"] = true;
-                
             }
         }
 
+        /// <summary>
+        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// </summary>
+        /// <param name="baseIndex">Starting Index</param>
+        /// <param name="count">Number of the indexes to check.</param>
+        /// <returns></returns>
         private bool CheckForIndexes(int baseIndex, int count)
         {
             for (int i = baseIndex; i < baseIndex + count; i++)
@@ -611,6 +610,11 @@ namespace UoFiddler.Controls.UserControls
             return true;
         }
 
+        /// <summary>
+        /// Adds a single Texture.
+        /// </summary>
+        /// <param name="fileName">Filename of the image to add.</param>
+        /// <param name="index">Index where the texture will be added.</param>
         private void AddSingleTexture(string fileName, int index)
         {
             Bitmap bmp = new Bitmap(fileName);

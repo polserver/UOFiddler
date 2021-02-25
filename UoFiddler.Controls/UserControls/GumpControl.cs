@@ -1,9 +1,9 @@
 /***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -659,7 +659,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new GumpSearchForm {TopMost = true};
+            _showForm = new GumpSearchForm { TopMost = true };
             _showForm.Show();
         }
 
@@ -710,7 +710,6 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-
             contextMenuStrip1.Close();
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -723,25 +722,25 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-
-
                 if (CheckForIndexes(index, dialog.FileNames.Length))
                 {
-                    for(int i = 0; i < dialog.FileNames.Length; i++)
+                    for (int i = 0; i < dialog.FileNames.Length; i++)
                     {
                         var currentIdx = index + i;
                         AddSingleGump(dialog.FileNames[i], currentIdx);
                     }
                 }
-
-                
-
-                
             }
 
             Options.ChangedUltimaClass["Gumps"] = true;
         }
 
+        /// <summary>
+        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// </summary>
+        /// <param name="baseIndex">Starting Index</param>
+        /// <param name="count">Number of the indexes to check.</param>
+        /// <returns></returns>
         private bool CheckForIndexes(int baseIndex, int count)
         {
             for (int i = baseIndex; i < baseIndex + count; i++)
@@ -754,6 +753,11 @@ namespace UoFiddler.Controls.UserControls
             return true;
         }
 
+        /// <summary>
+        /// Adds a single Gump.
+        /// </summary>
+        /// <param name="fileName">Filename of the gump to add</param>
+        /// <param name="index">Index where the gump shall be added.</param>
         private void AddSingleGump(string fileName, int index)
         {
             Bitmap bmp = new Bitmap(fileName);

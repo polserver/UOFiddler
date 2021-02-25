@@ -1,9 +1,9 @@
 /***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -870,7 +870,7 @@ namespace UoFiddler.Controls.UserControls
             e.Handled = true;
         }
 
-        private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
+        private void InsertStartingFromTb_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter || !Utils.ConvertStringToInt(StartingFromTb.Text, out int index, 0, 0x3FFF))
             {
@@ -894,17 +894,14 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                
                 if (CheckForIndexes(index, dialog.FileNames.Length)) //Ho tutti gli indici necessari disponibili in linea
                 {
-                    for(int i = 0; i < dialog.FileNames.Length; i++)
+                    for (int i = 0; i < dialog.FileNames.Length; i++)
                     {
                         var currentIdx = index + i;
                         AddSingleLandTile(dialog.FileNames[i], currentIdx);
                     }
                 }
-
-
 
                 listView1.View = View.Details; // that works fascinating
                 listView1.View = View.Tile;
@@ -913,27 +910,32 @@ namespace UoFiddler.Controls.UserControls
                 {
                     listView1.SelectedItems[0].Selected = false;
                 }
-
-                //item.Selected = true;
-                //item.Focused = true;
-                //item.EnsureVisible();
             }
         }
 
+        /// <summary>
+        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// </summary>
+        /// <param name="baseIndex">Starting Index</param>
+        /// <param name="count">Number of the indexes to check.</param>
+        /// <returns></returns>
         private bool CheckForIndexes(int baseIndex, int count)
         {
-
-            for(int i = baseIndex; i < baseIndex + count; i++)
+            for (int i = baseIndex; i < baseIndex + count; i++)
             {
                 if (Art.IsValidLand(i))
                 {
                     return false;
                 }
-
             }
             return true;
         }
 
+        /// <summary>
+        /// Adds a single LandTile at the determined index.
+        /// </summary>
+        /// <param name="fileName">The image filename</param>
+        /// <param name="index">The index where the gump should be added</param>
         private void AddSingleLandTile(string fileName, int index)
         {
             Bitmap bmp = new Bitmap(fileName);

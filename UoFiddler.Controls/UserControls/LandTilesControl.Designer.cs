@@ -362,7 +362,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.StartingFromTb.Name = "StartingFromTb";
             this.StartingFromTb.Size = new System.Drawing.Size(100, 23);
-            this.StartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1_KeyDown);
+            this.StartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFromTb_KeyDown);
             // 
             // LandTilesControl
             // 
