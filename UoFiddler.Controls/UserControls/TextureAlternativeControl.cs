@@ -264,7 +264,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedInsert(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0xFFF))
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
             {
                 InsertText.ForeColor = Textures.TestTexture(index) ? Color.Red : Color.Black;
             }
@@ -281,7 +281,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0xFFF))
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
             {
                 return;
             }
