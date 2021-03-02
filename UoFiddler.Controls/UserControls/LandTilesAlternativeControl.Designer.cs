@@ -68,12 +68,14 @@ namespace UoFiddler.Controls.UserControls
             this.ExportAllAsTiff = new System.Windows.Forms.ToolStripMenuItem();
             this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.SearchButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.SearchButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.LandTilesTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.insertStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InsertStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             this.LandTilesContextMenuStrip.SuspendLayout();
             this.LandTilesToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -89,9 +91,10 @@ namespace UoFiddler.Controls.UserControls
             this.findNextFreeSlotToolStripMenuItem,
             this.removeToolStripMenuItem,
             this.replaceToolStripMenuItem,
-            this.insertAtToolStripMenuItem});
+            this.insertAtToolStripMenuItem,
+            this.insertStartingFromToolStripMenuItem});
             this.LandTilesContextMenuStrip.Name = "contextMenuStrip1";
-            this.LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 170);
+            this.LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 214);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -255,7 +258,7 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem,
             this.asPngToolStripMenuItem1});
             this.exportAllToolStripMenuItem.Name = "exportAllToolStripMenuItem";
-            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportAllToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.exportAllToolStripMenuItem.Text = "Export All..";
             // 
             // ExportAllAsBmp
@@ -286,6 +289,12 @@ namespace UoFiddler.Controls.UserControls
             this.asPngToolStripMenuItem1.Text = "As Png";
             this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllPng);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            // 
             // SearchButton
             // 
             this.SearchButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -296,11 +305,11 @@ namespace UoFiddler.Controls.UserControls
             this.SearchButton.Text = "Search";
             this.SearchButton.Click += new System.EventHandler(this.OnClickSearch);
             // 
-            // toolStripSeparator5
+            // toolStripSeparator1
             // 
-            this.toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // SaveButton
             // 
@@ -342,11 +351,20 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.LandTilesTileView_ItemSelectionChanged);
             this.LandTilesTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.LandTilesTileView_DrawItem);
             // 
-            // toolStripSeparator1
+            // insertStartingFromToolStripMenuItem
             // 
-            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.insertStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InsertStartingFromTb});
+            this.insertStartingFromToolStripMenuItem.Name = "insertStartingFromToolStripMenuItem";
+            this.insertStartingFromToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.insertStartingFromToolStripMenuItem.Text = "Insert Starting From";
+            // 
+            // InsertStartingFromTb
+            // 
+            this.InsertStartingFromTb.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.InsertStartingFromTb.Name = "InsertStartingFromTb";
+            this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFromTb_KeyDown);
             // 
             // LandTilesAlternativeControl
             // 
@@ -400,5 +418,7 @@ namespace UoFiddler.Controls.UserControls
 
         private TileView.TileViewControl LandTilesTileView;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem insertStartingFromToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox InsertStartingFromTb;
     }
 }

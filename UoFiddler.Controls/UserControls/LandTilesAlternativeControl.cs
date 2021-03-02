@@ -610,5 +610,105 @@ namespace UoFiddler.Controls.UserControls
                 ? _tileList[0]
                 : _tileList[e.ItemIndex];
         }
+
+        private void InsertStartingFromTb_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            const int graphicIdMin = 0;
+            const int graphicIdMax = 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(InsertStartingFromTb.Text, out int index, graphicIdMin, graphicIdMax))
+            {
+                return;
+            }
+
+            LandTilesContextMenuStrip.Close();
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = $"Choose image file to insert from 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                if (CheckForIndexes(index, dialog.FileNames.Length)) //
+                {
+                    for (int i = 0; i < dialog.FileNames.Length; i++)
+                    {
+                        var currentIdx = index + i;
+                        AddSingleLandTile(dialog.FileNames[i], currentIdx);
+                    }
+                }
+
+
+                
+
+                LandTilesTileView.VirtualListSize = _tileList.Count;
+                LandTilesTileView.Invalidate();
+                SelectedGraphicId = index;
+
+                Options.ChangedUltimaClass["Art"] = true;
+            }
+
+
+        }
+        /// <summary>
+        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// </summary>
+        /// <param name="baseIndex">Starting Index</param>
+        /// <param name="count">Number of the indexes to check.</param>
+        /// <returns></returns>
+        private bool CheckForIndexes(int baseIndex, int count)
+        {
+            for (int i = baseIndex; i < baseIndex + count; i++)
+            {
+                if (Art.IsValidLand(i))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void AddSingleLandTile(string fileName, int index)
+        {
+            Bitmap bmp = new Bitmap(fileName);
+            // TODO: check this if... looks weird. We don't convert other file types? 
+            // Should we convert from png/tiff to bmp?
+            if (fileName.Contains(".bmp"))
+            {
+                bmp = Utils.ConvertBmp(bmp);
+            }
+
+            Art.ReplaceLand(index, bmp);
+
+            ControlEvents.FireLandTileChangeEvent(this, index);
+
+            bool done = false;
+            for (int i = 0; i < _tileList.Count; ++i)
+            {
+                if (index >= _tileList[i])
+                {
+                    continue;
+                }
+
+                _tileList.Insert(i, index);
+                done = true;
+                break;
+            }
+
+            if (!done)
+            {
+                _tileList.Add(index);
+            }
+        }
     }
 }
