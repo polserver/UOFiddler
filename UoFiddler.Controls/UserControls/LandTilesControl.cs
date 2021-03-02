@@ -877,11 +877,6 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (Art.IsValidLand(index))
-            {
-                return;
-            }
-
             contextMenuStrip1.Close();
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -923,7 +918,7 @@ namespace UoFiddler.Controls.UserControls
         {
             for (int i = baseIndex; i < baseIndex + count; i++)
             {
-                if (Art.IsValidLand(i))
+                if (i >= 0x4000 || Art.IsValidLand(i))
                 {
                     return false;
                 }

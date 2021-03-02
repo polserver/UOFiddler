@@ -745,7 +745,7 @@ namespace UoFiddler.Controls.UserControls
         {
             for (int i = baseIndex; i < baseIndex + count; i++)
             {
-                if (Gumps.IsValidIndex(i))
+                if (i >= Gumps.GetCount() || Gumps.IsValidIndex(i))
                 {
                     return false;
                 }

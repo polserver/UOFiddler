@@ -602,7 +602,7 @@ namespace UoFiddler.Controls.UserControls
         {
             for (int i = baseIndex; i < baseIndex + count; i++)
             {
-                if (Textures.TestTexture(i))
+                if (i >= Textures.GetIdxLength() || Textures.TestTexture(i))
                 {
                     return false;
                 }
