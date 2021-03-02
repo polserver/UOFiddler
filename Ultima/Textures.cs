@@ -68,6 +68,8 @@ namespace Ultima
         /// <returns></returns>
         public static bool TestTexture(int index)
         {
+            index &= 0x3FFF;
+
             if (_removed[index])
             {
                 return false;

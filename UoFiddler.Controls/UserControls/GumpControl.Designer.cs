@@ -74,6 +74,8 @@ namespace UoFiddler.Controls.UserControls
             this.Preload = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.PreLoader = new System.ComponentModel.BackgroundWorker();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.InsertStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -130,10 +132,11 @@ namespace UoFiddler.Controls.UserControls
             this.replaceGumpToolStripMenuItem,
             this.removeToolStripMenuItem,
             this.insertToolStripMenuItem,
+            this.toolStripMenuItem1,
             this.toolStripSeparator1,
             this.saveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 170);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 214);
             // 
             // extractImageToolStripMenuItem
             // 
@@ -389,7 +392,22 @@ namespace UoFiddler.Controls.UserControls
             this.PreLoader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.PreLoaderProgressChanged);
             this.PreLoader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoaderCompleted);
             // 
-            // Gump
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InsertStartingFromTb});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem1.Text = "Insert Starting From";
+            // 
+            // InsertStartingFromTb
+            // 
+            this.InsertStartingFromTb.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.InsertStartingFromTb.Name = "InsertStartingFromTb";
+            this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFromTb_KeyDown);
+            // 
+            // GumpControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -449,5 +467,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 
         #endregion
+
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripTextBox InsertStartingFromTb;
     }
 }

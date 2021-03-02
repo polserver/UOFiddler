@@ -1,9 +1,9 @@
 /***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -544,6 +544,110 @@ namespace UoFiddler.Controls.UserControls
 
                 MessageBox.Show($"All textures saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
+        }
+
+        private void StartingPosTb_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            if (!Utils.ConvertStringToInt(StartingPosTb.Text, out int index, 0, Textures.GetIdxLength()))
+            {
+                return;
+            }
+
+            contextMenuStrip1.Close();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var fileCount = dialog.FileNames.Length;
+
+                if (CheckForIndexes(index, fileCount))
+                {
+                    for (int i = 0; i < fileCount; i++)
+                    {
+                        AddSingleTexture(dialog.FileNames[i], index + i);
+                    }
+                }
+
+                listView1.View = View.Details; // that works fascinating
+                listView1.View = View.Tile;
+
+                if (listView1.SelectedItems.Count == 1)
+                {
+                    listView1.SelectedItems[0].Selected = false;
+                }
+                Options.ChangedUltimaClass["Texture"] = true;
+            }
+        }
+
+        /// <summary>
+        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// </summary>
+        /// <param name="baseIndex">Starting Index</param>
+        /// <param name="count">Number of the indexes to check.</param>
+        /// <returns></returns>
+        private bool CheckForIndexes(int baseIndex, int count)
+        {
+            for (int i = baseIndex; i < baseIndex + count; i++)
+            {
+                if (i >= Textures.GetIdxLength() || Textures.TestTexture(i))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Adds a single Texture.
+        /// </summary>
+        /// <param name="fileName">Filename of the image to add.</param>
+        /// <param name="index">Index where the texture will be added.</param>
+        private void AddSingleTexture(string fileName, int index)
+        {
+            Bitmap bmp = new Bitmap(fileName);
+            if ((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128))
+            {
+                Textures.Replace(index, bmp);
+                ControlEvents.FireTextureChangeEvent(this, index);
+                ListViewItem item = new ListViewItem(index.ToString(), 0)
+                {
+                    Tag = index
+                };
+                bool done = false;
+                foreach (ListViewItem i in listView1.Items)
+                {
+                    if ((int)i.Tag <= index)
+                    {
+                        continue;
+                    }
+
+                    listView1.Items.Insert(i.Index, item);
+                    done = true;
+                    break;
+                }
+                if (!done)
+                {
+                    listView1.Items.Add(item);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
+                return;
             }
         }
     }
