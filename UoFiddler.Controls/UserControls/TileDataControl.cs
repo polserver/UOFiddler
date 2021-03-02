@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
@@ -1291,28 +1292,30 @@ namespace UoFiddler.Controls.UserControls
             int index = (int)treeViewItem.SelectedNode.Tag;
             ItemData item = TileData.ItemTable[index];
             Array enumValues = Enum.GetValues(typeof(TileFlag));
-            TileFlag changeflag = (TileFlag)enumValues.GetValue(e.Index + 1);
-            if ((item.Flags & changeflag) != 0) //better doublecheck
+
+            TileFlag changeFlag = (TileFlag)enumValues.GetValue(e.Index + 1);
+
+            if ((item.Flags & changeFlag) != 0) // better double check
             {
                 if (e.NewValue != CheckState.Unchecked)
                 {
                     return;
                 }
 
-                item.Flags ^= changeflag;
+                item.Flags ^= changeFlag;
                 TileData.ItemTable[index] = item;
                 treeViewItem.SelectedNode.ForeColor = Color.Red;
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
             }
-            else if ((item.Flags & changeflag) == 0)
+            else if ((item.Flags & changeFlag) == 0)
             {
                 if (e.NewValue != CheckState.Checked)
                 {
                     return;
                 }
 
-                item.Flags |= changeflag;
+                item.Flags |= changeFlag;
                 TileData.ItemTable[index] = item;
                 treeViewItem.SelectedNode.ForeColor = Color.Red;
                 Options.ChangedUltimaClass["TileData"] = true;
@@ -1641,32 +1644,68 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
-        /// DoubleClick event handler on the TextBoxTexID. Sets the TexID to the Tag value of the node 
+        /// DoubleClick event handler on the TextBoxTexID. Sets the TexID to the Tag value of the node
         /// i.e. 0x256 (598) lava -> 598.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void TextBoxTexID_DoubleClick(object sender, EventArgs e)
         {
+            if (!setTextureOnDoubleClickToolStripMenuItem.Checked)
+            {
+                return;
+            }
+
             int index = (int)treeViewLand.SelectedNode.Tag;
+            if (!int.TryParse(textBoxTexID.Text, out int texIdValue) || texIdValue == index)
+            {
+                return;
+            }
+
             textBoxTexID.Text = $"{index}";
         }
 
         /// <summary>
-        /// Click event handler on the "Set Texture" menu item. Sets all the landtiles TextureID to their index.
-        /// This is written under the assumption that LandTileID == TextureID for every LandTile. 
+        /// Click event handler on the "Set Textures" menu item. Sets all the land tiles TextureID to their index.
+        /// This is written under the assumption that LandTileID == TextureID for every LandTile.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void SetTextureMenuItem_Click(object sender, EventArgs e)
         {
+            DialogResult result = MessageBox.Show(
+                "Do you want to set TexID for all land tiles?\n\n" +
+                "This operation assumes that land tile index value is equal to texture index value.\n\n" +
+                "It will only consider land tiles where TexID is 0.\n\nContinue?",
+                "Set textures",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            var updated = 0;
             for (int i = 0; i < TileData.LandTable.Length; ++i)
             {
-                if (Textures.TestTexture(i))
+                if (!Textures.TestTexture(i) || TileData.LandTable[i].TextureID != 0)
                 {
-                    TileData.LandTable[i].TextureID = (ushort)i;
+                    continue;
                 }
+
+                TileData.LandTable[i].TextureID = (ushort)i;
+
+                var node = treeViewLand.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag.Equals(i));
+                if (node != null)
+                {
+                    node.ForeColor = Color.Red;
+                }
+
+                updated++;
+
+                Options.ChangedUltimaClass["TileData"] = true;
             }
+
+            MessageBox.Show(updated > 0 ? $"Updated {updated} land tile(s)." : "Nothing was updated.", "Set textures");
         }
     }
 }

@@ -105,6 +105,8 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.setTextureOnDoubleClickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.splitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.tabcontrol.SuspendLayout();
             this.tabPageItems.SuspendLayout();
@@ -710,6 +712,8 @@ namespace UoFiddler.Controls.UserControls
             this.memorySaveWarningToolStripMenuItem,
             this.saveDirectlyOnChangesToolStripMenuItem,
             this.setFilterToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.setTextureOnDoubleClickToolStripMenuItem,
             this.setTexturesToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -722,27 +726,27 @@ namespace UoFiddler.Controls.UserControls
             this.memorySaveWarningToolStripMenuItem.CheckOnClick = true;
             this.memorySaveWarningToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.memorySaveWarningToolStripMenuItem.Name = "memorySaveWarningToolStripMenuItem";
-            this.memorySaveWarningToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.memorySaveWarningToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.memorySaveWarningToolStripMenuItem.Text = "Memory save warning";
             // 
             // saveDirectlyOnChangesToolStripMenuItem
             // 
             this.saveDirectlyOnChangesToolStripMenuItem.CheckOnClick = true;
             this.saveDirectlyOnChangesToolStripMenuItem.Name = "saveDirectlyOnChangesToolStripMenuItem";
-            this.saveDirectlyOnChangesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.saveDirectlyOnChangesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.saveDirectlyOnChangesToolStripMenuItem.Text = "Save directly on changes";
             // 
             // setFilterToolStripMenuItem
             // 
             this.setFilterToolStripMenuItem.Name = "setFilterToolStripMenuItem";
-            this.setFilterToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.setFilterToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.setFilterToolStripMenuItem.Text = "Set Filter";
             this.setFilterToolStripMenuItem.Click += new System.EventHandler(this.OnClickSetFilter);
             // 
             // setTexturesToolStripMenuItem
             // 
             this.setTexturesToolStripMenuItem.Name = "setTexturesToolStripMenuItem";
-            this.setTexturesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.setTexturesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.setTexturesToolStripMenuItem.Text = "Set Textures";
             this.setTexturesToolStripMenuItem.Click += new System.EventHandler(this.SetTextureMenuItem_Click);
             // 
@@ -800,6 +804,18 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton3.Size = new System.Drawing.Size(79, 22);
             this.toolStripButton3.Text = "Save Tiledata";
             this.toolStripButton3.Click += new System.EventHandler(this.OnClickSaveTiledata);
+            // 
+            // setTextureOnDoubleClickToolStripMenuItem
+            // 
+            this.setTextureOnDoubleClickToolStripMenuItem.CheckOnClick = true;
+            this.setTextureOnDoubleClickToolStripMenuItem.Name = "setTextureOnDoubleClickToolStripMenuItem";
+            this.setTextureOnDoubleClickToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.setTextureOnDoubleClickToolStripMenuItem.Text = "Set TexID on double click";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(202, 6);
             // 
             // splitter1
             // 
@@ -938,5 +954,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setTexturesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem setTextureOnDoubleClickToolStripMenuItem;
     }
 }
