@@ -142,7 +142,7 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("UseMapDiff");
             elem.SetAttribute("active", Map.UseDiff.ToString());
             sr.AppendChild(elem);
-            comment = dom.CreateComment("Make the right panel into the sounds tab visible");
+            comment = dom.CreateComment("Make the right panel in sounds tab visible");
             sr.AppendChild(comment);
             elem = dom.CreateElement("RightPanelInSoundsTab");
             elem.SetAttribute("active", Options.RightPanelInSoundsTab.ToString());

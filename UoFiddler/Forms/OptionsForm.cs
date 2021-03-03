@@ -43,6 +43,8 @@ namespace UoFiddler.Forms
 
         private void OnClickApply(object sender, System.EventArgs e)
         {
+            Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
+
             Files.CacheData = checkBoxCacheData.Checked;
 
             if (checkBoxNewMapSize.Checked != (Map.Felucca.Width == 7168))

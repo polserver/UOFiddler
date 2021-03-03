@@ -10,7 +10,7 @@
   <NewMapSize active="False" />
   <!--UseMapDiff should mapdiff files be used-->
   <UseMapDiff active="True" />
-  <!--Make the right panel into the sounds tab visible-->
+  <!--Make the right panel in sounds tab visible-->
   <RightPanelInSoundsTab active="True" />
   <!--Should an Update Check be done on startup?-->
   <UpdateCheck active="False" />
