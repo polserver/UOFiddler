@@ -231,6 +231,7 @@
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
             this.addToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.addToolStripMenuItem.Text = "Replace";
+            this.addToolStripMenuItem.Visible = false;
             // 
             // removeToolStripMenuItem
             // 
@@ -251,7 +252,7 @@
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asBmpToolStripMenuItem.Tag = ".bmp";
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
@@ -259,7 +260,7 @@
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asTiffToolStripMenuItem.Tag = ".tiff";
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
@@ -275,7 +276,7 @@
             // fromvdToolStripMenuItem
             // 
             this.fromvdToolStripMenuItem.Name = "fromvdToolStripMenuItem";
-            this.fromvdToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.fromvdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fromvdToolStripMenuItem.Text = "From .vd";
             this.fromvdToolStripMenuItem.Click += new System.EventHandler(this.OnClickImportFromVD);
             // 
@@ -290,7 +291,7 @@
             // tovdToolStripMenuItem
             // 
             this.tovdToolStripMenuItem.Name = "tovdToolStripMenuItem";
-            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tovdToolStripMenuItem.Text = "To .vd";
             this.tovdToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportToVD);
             // 
@@ -869,7 +870,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(718, 433);
+            this.tabPage2.Size = new System.Drawing.Size(721, 433);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Preview/Edit";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -927,7 +928,7 @@
             this.toolStrip4.Location = new System.Drawing.Point(3, 3);
             this.toolStrip4.Name = "toolStrip4";
             this.toolStrip4.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip4.Size = new System.Drawing.Size(712, 25);
+            this.toolStrip4.Size = new System.Drawing.Size(715, 25);
             this.toolStrip4.TabIndex = 12;
             this.toolStrip4.Text = "X";
             // 
@@ -1119,7 +1120,7 @@
             this.toolStrip3.Location = new System.Drawing.Point(3, 380);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip3.Size = new System.Drawing.Size(712, 25);
+            this.toolStrip3.Size = new System.Drawing.Size(715, 25);
             this.toolStrip3.TabIndex = 10;
             this.toolStrip3.Text = "X";
             // 
@@ -1249,7 +1250,7 @@
             this.animationPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.animationPictureBox.Location = new System.Drawing.Point(3, 3);
             this.animationPictureBox.Name = "animationPictureBox";
-            this.animationPictureBox.Size = new System.Drawing.Size(712, 402);
+            this.animationPictureBox.Size = new System.Drawing.Size(715, 402);
             this.animationPictureBox.TabIndex = 0;
             this.animationPictureBox.TabStop = false;
             this.animationPictureBox.SizeChanged += new System.EventHandler(this.OnSizeChangedPictureBox);
@@ -1276,7 +1277,7 @@
             this.toolStrip2.Location = new System.Drawing.Point(3, 405);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(712, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(715, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "X";
             // 
