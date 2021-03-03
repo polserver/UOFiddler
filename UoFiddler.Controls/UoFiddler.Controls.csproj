@@ -22,6 +22,7 @@
 		<UseVSHostingProcess>false</UseVSHostingProcess>
 	</PropertyGroup>
 	<ItemGroup>
+		<Reference Include="PresentationCore" />
 		<Reference Include="System.Design" />
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>

@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Windows.Media.Imaging;
 
 namespace Ultima
 {
@@ -22,10 +21,10 @@ namespace Ultima
 
         static AnimationEdit()
         {
-            SetAnimCache();
+            InitializeCache();
         }
 
-        private static void SetAnimCache()
+        private static void InitializeCache()
         {
             if (_fileIndex.IdxLength > 0)
             {
@@ -64,7 +63,7 @@ namespace Ultima
             _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
             _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
 
-            SetAnimCache();
+            InitializeCache();
         }
 
         private static void GetFileIndex(
@@ -522,258 +521,6 @@ namespace Ultima
         {
             Frames?.Clear();
         }
-
-        //Soulblighter Modification
-        public void GetGifPalette(Bitmap bit)
-        {
-            using (MemoryStream imageStreamSource = new MemoryStream())
-            {
-                ImageConverter ic = new ImageConverter();
-                byte[] btImage = (byte[])ic.ConvertTo(bit, typeof(byte[]));
-                imageStreamSource.Write(btImage, 0, btImage.Length);
-                GifBitmapDecoder decoder = new GifBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-                BitmapPalette pal = decoder.Palette;
-                int i;
-                for (i = 0; i < 0x100; i++)
-                {
-                    Palette[i] = 0;
-                }
-
-                try
-                {
-                    i = 0;
-                    while (i < 0x100) //&& i < pal.Colors.Count)
-                    {
-                        int red = pal.Colors[i].R / 8;
-                        int green = pal.Colors[i].G / 8;
-                        int blue = pal.Colors[i].B / 8;
-
-                        int contaFinal = (0x400 * red) + (0x20 * green) + blue + 0x8000;
-                        if (contaFinal == 0x8000)
-                        {
-                            contaFinal = 0x8001;
-                        }
-
-                        Palette[i] = (ushort)contaFinal;
-                        i++;
-                    }
-                }
-                catch (System.IndexOutOfRangeException)
-                {
-                    // TODO: ignored?
-                }
-                catch (System.ArgumentOutOfRangeException)
-                {
-                    // TODO: ignored?
-                }
-
-                for (i = 0; i < 0x100; i++)
-                {
-                    if (Palette[i] < 0x8000)
-                    {
-                        Palette[i] = 0x8000;
-                    }
-                }
-            }
-        }
-
-        public unsafe void GetImagePalette(Bitmap bit)
-        {
-            int count = 0;
-            var bmp = new Bitmap(bit);
-            BitmapData bd = bmp.LockBits(
-                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            var line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
-            int i = 0;
-            while (i < 0x100)
-            {
-                Palette[i] = 0;
-                i++;
-            }
-
-            int y = 0;
-
-            while (y < bmp.Height)
-            {
-                ushort* cur = line;
-                for (int x = 0; x < bmp.Width; x++)
-                {
-                    ushort c = cur[x];
-                    if (c == 0)
-                    {
-                        continue;
-                    }
-
-                    bool found = false;
-                    i = 0;
-
-                    while (i < Palette.Length)
-                    {
-                        if (Palette[i] == c)
-                        {
-                            found = true;
-                            break;
-                        }
-                        i++;
-                    }
-
-                    if (!found)
-                    {
-                        Palette[count++] = c;
-                    }
-
-                    if (count >= 0x100)
-                    {
-                        break;
-                    }
-                }
-
-                for (i = 0; i < 0x100; i++)
-                {
-                    if (Palette[i] < 0x8000)
-                    {
-                        Palette[i] = 0x8000;
-                    }
-                }
-
-                if (count >= 0x100)
-                {
-                    break;
-                }
-
-                y++;
-                line += delta;
-            }
-        }
-
-        public void PaletteConverter(int selector)
-        {
-            int i;
-            for (i = 0; i < 0x100; i++)
-            {
-                int blueTemp = (Palette[i] - 0x8000) / 0x20;
-                blueTemp *= 0x20;
-                blueTemp = Palette[i] - 0x8000 - blueTemp;
-
-                int greenTemp = (Palette[i] - 0x8000) / 0x400;
-                greenTemp *= 0x400;
-                greenTemp = Palette[i] - 0x8000 - greenTemp - blueTemp;
-                greenTemp /= 0x20;
-
-                int redTemp = (Palette[i] - 0x8000) / 0x400;
-
-                int contaFinal = 0;
-                switch (selector)
-                {
-                    case 1:
-                        contaFinal = (((0x400 * redTemp) + (0x20 * greenTemp)) + blueTemp) + 0x8000;
-                        break;
-                    case 2:
-                        contaFinal = (((0x400 * redTemp) + (0x20 * blueTemp)) + greenTemp) + 0x8000;
-                        break;
-                    case 3:
-                        contaFinal = (((0x400 * greenTemp) + (0x20 * redTemp)) + blueTemp) + 0x8000;
-                        break;
-                    case 4:
-                        contaFinal = (((0x400 * greenTemp) + (0x20 * blueTemp)) + redTemp) + 0x8000;
-                        break;
-                    case 5:
-                        contaFinal = (((0x400 * blueTemp) + (0x20 * greenTemp)) + redTemp) + 0x8000;
-                        break;
-                    case 6:
-                        contaFinal = (((0x400 * blueTemp) + (0x20 * redTemp)) + greenTemp) + 0x8000;
-                        break;
-                }
-
-                if (contaFinal == 0x8000)
-                {
-                    contaFinal = 0x8001;
-                }
-
-                Palette[i] = (ushort)contaFinal;
-            }
-
-            for (i = 0; i < 0x100; i++)
-            {
-                if (Palette[i] < 0x8000)
-                {
-                    Palette[i] = 0x8000;
-                }
-            }
-        }
-
-        public void PaletteReducer(int redP, int greenP, int blueP)
-        {
-            int i;
-            redP /= 8;
-            greenP /= 8;
-            blueP /= 8;
-            for (i = 0; i < 0x100; i++)
-            {
-                int blueTemp = (Palette[i] - 0x8000) / 0x20;
-                blueTemp *= 0x20;
-                blueTemp = Palette[i] - 0x8000 - blueTemp;
-
-                int greenTemp = (Palette[i] - 0x8000) / 0x400;
-                greenTemp *= 0x400;
-                greenTemp = Palette[i] - 0x8000 - greenTemp - blueTemp;
-                greenTemp /= 0x20;
-
-                int redTemp = (Palette[i] - 0x8000) / 0x400;
-                redTemp += redP;
-                greenTemp += greenP;
-                blueTemp += blueP;
-
-                if (redTemp < 0)
-                {
-                    redTemp = 0;
-                }
-
-                if (redTemp > 0x1f)
-                {
-                    redTemp = 0x1f;
-                }
-
-                if (greenTemp < 0)
-                {
-                    greenTemp = 0;
-                }
-
-                if (greenTemp > 0x1f)
-                {
-                    greenTemp = 0x1f;
-                }
-
-                if (blueTemp < 0)
-                {
-                    blueTemp = 0;
-                }
-
-                if (blueTemp > 0x1f)
-                {
-                    blueTemp = 0x1f;
-                }
-
-                int contaFinal = (0x400 * redTemp) + (0x20 * greenTemp) + blueTemp + 0x8000;
-                if (contaFinal == 0x8000)
-                {
-                    contaFinal = 0x8001;
-                }
-
-                Palette[i] = (ushort)contaFinal;
-            }
-
-            for (i = 0; i < 0x100; i++)
-            {
-                if (Palette[i] < 0x8000)
-                {
-                    Palette[i] = 0x8000;
-                }
-            }
-        }
-        // End of Soulblighter Modification
 
         public void ExportPalette(string filename, int type)
         {

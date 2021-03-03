@@ -18,7 +18,4 @@
 		<DebugType>none</DebugType>
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="PresentationCore" />
-	</ItemGroup>
 </Project>

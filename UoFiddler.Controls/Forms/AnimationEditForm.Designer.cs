@@ -474,7 +474,7 @@
             this.SetPalleteButton.TabIndex = 17;
             this.SetPalleteButton.Text = "Set";
             this.SetPalleteButton.UseVisualStyleBackColor = true;
-            this.SetPalleteButton.Click += new System.EventHandler(this.SetPalleteButton_Click);
+            this.SetPalleteButton.Click += new System.EventHandler(this.SetPaletteButton_Click);
             // 
             // rbBRG
             // 

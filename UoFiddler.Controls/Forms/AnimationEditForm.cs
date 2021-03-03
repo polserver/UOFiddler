@@ -15,6 +15,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using Ultima;
 using UoFiddler.Controls.Classes;
 
@@ -839,7 +840,7 @@ namespace UoFiddler.Controls.Forms
                                     int frameCount = bmp.GetFrameCount(dimension);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
                                     bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
+                                    UpdateGifPalette(bmp, edit);
                                     ProgressBar.Maximum = frameCount;
                                     AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
                                     ProgressBar.Value = 0;
@@ -1219,7 +1220,7 @@ namespace UoFiddler.Controls.Forms
                 // Number of frames
                 //int frameCount = bit.GetFrameCount(dimension); // TODO: unused variable?
                 bit.SelectActiveFrame(dimension, 0);
-                edit.GetGifPalette(bit);
+                UpdateGifPalette(bit, edit);
                 SetPaletteBox();
                 FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -1409,7 +1410,7 @@ namespace UoFiddler.Controls.Forms
                         int frameCount = bmp.GetFrameCount(dimension);
                         ProgressBar.Maximum = frameCount;
                         bmp.SelectActiveFrame(dimension, 0);
-                        edit.GetGifPalette(bmp);
+                        UpdateGifPalette(bmp, edit);
                         Bitmap[] bitBmp = new Bitmap[frameCount];
                         AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
                         ProgressBar.Value = 0;
@@ -1651,7 +1652,7 @@ namespace UoFiddler.Controls.Forms
             int frameCount = bmp.GetFrameCount(dimension);
             ProgressBar.Maximum = frameCount;
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
 
             // Return an Image at a certain index
             Bitmap[] bitBmp = new Bitmap[frameCount];
@@ -2078,7 +2079,7 @@ namespace UoFiddler.Controls.Forms
                     if (edit != null)
                     {
                         bit = ConvertBmpAnim(bit, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                        edit.GetImagePalette(bit);
+                        UpdateImagePalette(bit, edit);
                     }
                     SetPaletteBox();
                     FramesListView.Invalidate();
@@ -2281,7 +2282,7 @@ namespace UoFiddler.Controls.Forms
                                     int frameCount = bmp.GetFrameCount(dimension);
                                     ProgressBar.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
+                                    UpdateGifPalette(bmp, edit);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
                                     // Return an Image at a certain index
                                     for (int index = 0; index < frameCount; index++)
@@ -2374,7 +2375,7 @@ namespace UoFiddler.Controls.Forms
             // position 1
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = 0; index < frameCount / 8; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -2424,7 +2425,7 @@ namespace UoFiddler.Controls.Forms
             // position 2
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -2474,7 +2475,7 @@ namespace UoFiddler.Controls.Forms
             // position 3
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -2524,7 +2525,7 @@ namespace UoFiddler.Controls.Forms
             // position 4
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -3001,7 +3002,7 @@ namespace UoFiddler.Controls.Forms
                                     int frameCount = bmp.GetFrameCount(dimension);
                                     ProgressBar.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
-                                    edit.GetGifPalette(bmp);
+                                    UpdateGifPalette(bmp, edit);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
                                     // Return an Image at a certain index
                                     for (int index = 0; index < frameCount; index++)
@@ -3094,7 +3095,7 @@ namespace UoFiddler.Controls.Forms
             // position 1
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -3144,7 +3145,7 @@ namespace UoFiddler.Controls.Forms
             // position 2
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -3194,7 +3195,7 @@ namespace UoFiddler.Controls.Forms
             // position 3
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -3244,7 +3245,7 @@ namespace UoFiddler.Controls.Forms
             // position 4
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             bmp.SelectActiveFrame(dimension, 0);
-            edit.GetGifPalette(bmp);
+            UpdateGifPalette(bmp, edit);
             for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
             {
                 bitBmp[index].SelectActiveFrame(dimension, index);
@@ -3676,7 +3677,7 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        private void SetPalleteButton_Click(object sender, EventArgs e)
+        private void SetPaletteButton_Click(object sender, EventArgs e)
         {
             for (int x = 0; x < 5; x++)
             {
@@ -3684,42 +3685,42 @@ namespace UoFiddler.Controls.Forms
                 if (rbRGB.Checked)
                 {
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(1);
+                    PaletteConverter(1, edit);
                 }
 
                 // RBG
                 if (rbRBG.Checked)
                 {
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(2);
+                    PaletteConverter(2, edit);
                 }
 
                 // GRB
                 if (rbGRB.Checked)
                 {
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(3);
+                    PaletteConverter(3, edit);
                 }
 
                 // GBR
                 if (rbGBR.Checked)
                 {
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(4);
+                    PaletteConverter(4, edit);
                 }
 
                 // BGR
                 if (rbBGR.Checked)
                 {
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(5);
+                    PaletteConverter(5, edit);
                 }
 
                 // BRG
                 if (rbBRG.Checked)
                 {
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    edit?.PaletteConverter(6);
+                    PaletteConverter(6, edit);
                 }
 
                 SetPaletteBox();
@@ -3766,16 +3767,16 @@ namespace UoFiddler.Controls.Forms
 
         private void ApplyButton_Click(object sender, EventArgs e)
         {
-            ConvertAndSetPalleteWithReducer();
+            ConvertAndSetPaletteWithReducer();
         }
 
-        private void ConvertAndSetPalleteWithReducer()
+        private void ConvertAndSetPaletteWithReducer()
         {
             // TODO: except calling reducer here the whole logic is the same as in ConvertAndSetPalette()
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteReducer((int) numericUpDown6.Value, (int) numericUpDown7.Value, (int) numericUpDown8.Value);
+                PaletteReducer((int) numericUpDown6.Value, (int) numericUpDown7.Value, (int) numericUpDown8.Value, edit);
                 SetPaletteBox();
                 FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -3796,7 +3797,7 @@ namespace UoFiddler.Controls.Forms
             for (int x = 0; x < 5; x++)
             {
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                edit?.PaletteConverter(selector);
+                PaletteConverter(selector, edit);
                 SetPaletteBox();
                 FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -3808,6 +3809,256 @@ namespace UoFiddler.Controls.Forms
                 else
                 {
                     DirectionTrackBar.Value = 0;
+                }
+            }
+        }
+
+        public void UpdateGifPalette(Bitmap bit, AnimIdx animIdx)
+        {
+            using (MemoryStream imageStreamSource = new MemoryStream())
+            {
+                ImageConverter ic = new ImageConverter();
+                byte[] btImage = (byte[])ic.ConvertTo(bit, typeof(byte[]));
+                imageStreamSource.Write(btImage, 0, btImage.Length);
+                GifBitmapDecoder decoder = new GifBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                BitmapPalette pal = decoder.Palette;
+                int i;
+                for (i = 0; i < 0x100; i++)
+                {
+                    animIdx.Palette[i] = 0;
+                }
+
+                try
+                {
+                    i = 0;
+                    while (i < 0x100) //&& i < pal.Colors.Count)
+                    {
+                        int red = pal.Colors[i].R / 8;
+                        int green = pal.Colors[i].G / 8;
+                        int blue = pal.Colors[i].B / 8;
+
+                        int contaFinal = (0x400 * red) + (0x20 * green) + blue + 0x8000;
+                        if (contaFinal == 0x8000)
+                        {
+                            contaFinal = 0x8001;
+                        }
+
+                        animIdx.Palette[i] = (ushort)contaFinal;
+                        i++;
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    // TODO: ignored?
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // TODO: ignored?
+                }
+
+                for (i = 0; i < 0x100; i++)
+                {
+                    if (animIdx.Palette[i] < 0x8000)
+                    {
+                        animIdx.Palette[i] = 0x8000;
+                    }
+                }
+            }
+        }
+
+        public unsafe void UpdateImagePalette(Bitmap bit, AnimIdx animIdx)
+        {
+            int count = 0;
+            var bmp = new Bitmap(bit);
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            var line = (ushort*)bd.Scan0;
+            int delta = bd.Stride >> 1;
+
+            int i = 0;
+            while (i < 0x100)
+            {
+                animIdx.Palette[i] = 0;
+                i++;
+            }
+
+            int y = 0;
+
+            while (y < bmp.Height)
+            {
+                ushort* cur = line;
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    ushort c = cur[x];
+                    if (c == 0)
+                    {
+                        continue;
+                    }
+
+                    bool found = false;
+                    i = 0;
+
+                    while (i < animIdx.Palette.Length)
+                    {
+                        if (animIdx.Palette[i] == c)
+                        {
+                            found = true;
+                            break;
+                        }
+                        i++;
+                    }
+
+                    if (!found)
+                    {
+                        animIdx.Palette[count++] = c;
+                    }
+
+                    if (count >= 0x100)
+                    {
+                        break;
+                    }
+                }
+
+                for (i = 0; i < 0x100; i++)
+                {
+                    if (animIdx.Palette[i] < 0x8000)
+                    {
+                        animIdx.Palette[i] = 0x8000;
+                    }
+                }
+
+                if (count >= 0x100)
+                {
+                    break;
+                }
+
+                y++;
+                line += delta;
+            }
+        }
+
+        public void PaletteConverter(int selector, AnimIdx animIdx)
+        {
+            int i;
+            for (i = 0; i < 0x100; i++)
+            {
+                int blueTemp = (animIdx.Palette[i] - 0x8000) / 0x20;
+                blueTemp *= 0x20;
+                blueTemp = animIdx.Palette[i] - 0x8000 - blueTemp;
+
+                int greenTemp = (animIdx.Palette[i] - 0x8000) / 0x400;
+                greenTemp *= 0x400;
+                greenTemp = animIdx.Palette[i] - 0x8000 - greenTemp - blueTemp;
+                greenTemp /= 0x20;
+
+                int redTemp = (animIdx.Palette[i] - 0x8000) / 0x400;
+
+                int contaFinal = 0;
+                switch (selector)
+                {
+                    case 1:
+                        contaFinal = (((0x400 * redTemp) + (0x20 * greenTemp)) + blueTemp) + 0x8000;
+                        break;
+                    case 2:
+                        contaFinal = (((0x400 * redTemp) + (0x20 * blueTemp)) + greenTemp) + 0x8000;
+                        break;
+                    case 3:
+                        contaFinal = (((0x400 * greenTemp) + (0x20 * redTemp)) + blueTemp) + 0x8000;
+                        break;
+                    case 4:
+                        contaFinal = (((0x400 * greenTemp) + (0x20 * blueTemp)) + redTemp) + 0x8000;
+                        break;
+                    case 5:
+                        contaFinal = (((0x400 * blueTemp) + (0x20 * greenTemp)) + redTemp) + 0x8000;
+                        break;
+                    case 6:
+                        contaFinal = (((0x400 * blueTemp) + (0x20 * redTemp)) + greenTemp) + 0x8000;
+                        break;
+                }
+
+                if (contaFinal == 0x8000)
+                {
+                    contaFinal = 0x8001;
+                }
+
+                animIdx.Palette[i] = (ushort)contaFinal;
+            }
+
+            for (i = 0; i < 0x100; i++)
+            {
+                if (animIdx.Palette[i] < 0x8000)
+                {
+                    animIdx.Palette[i] = 0x8000;
+                }
+            }
+        }
+
+        public void PaletteReducer(int redP, int greenP, int blueP, AnimIdx animIdx)
+        {
+            int i;
+            redP /= 8;
+            greenP /= 8;
+            blueP /= 8;
+            for (i = 0; i < 0x100; i++)
+            {
+                int blueTemp = (animIdx.Palette[i] - 0x8000) / 0x20;
+                blueTemp *= 0x20;
+                blueTemp = animIdx.Palette[i] - 0x8000 - blueTemp;
+
+                int greenTemp = (animIdx.Palette[i] - 0x8000) / 0x400;
+                greenTemp *= 0x400;
+                greenTemp = animIdx.Palette[i] - 0x8000 - greenTemp - blueTemp;
+                greenTemp /= 0x20;
+
+                int redTemp = (animIdx.Palette[i] - 0x8000) / 0x400;
+                redTemp += redP;
+                greenTemp += greenP;
+                blueTemp += blueP;
+
+                if (redTemp < 0)
+                {
+                    redTemp = 0;
+                }
+
+                if (redTemp > 0x1f)
+                {
+                    redTemp = 0x1f;
+                }
+
+                if (greenTemp < 0)
+                {
+                    greenTemp = 0;
+                }
+
+                if (greenTemp > 0x1f)
+                {
+                    greenTemp = 0x1f;
+                }
+
+                if (blueTemp < 0)
+                {
+                    blueTemp = 0;
+                }
+
+                if (blueTemp > 0x1f)
+                {
+                    blueTemp = 0x1f;
+                }
+
+                int contaFinal = (0x400 * redTemp) + (0x20 * greenTemp) + blueTemp + 0x8000;
+                if (contaFinal == 0x8000)
+                {
+                    contaFinal = 0x8001;
+                }
+
+                animIdx.Palette[i] = (ushort)contaFinal;
+            }
+
+            for (i = 0; i < 0x100; i++)
+            {
+                if (animIdx.Palette[i] < 0x8000)
+                {
+                    animIdx.Palette[i] = 0x8000;
                 }
             }
         }
