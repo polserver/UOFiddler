@@ -52,20 +52,20 @@ namespace UoFiddler.Plugin.ExamplePlugin.UserControls
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.OnClickSayHello);
             // 
-            // ExampleUserControl
+            // ExampleControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.button1);
             this.DoubleBuffered = true;
             this.Name = "ExampleControl";
-            this.Size = new System.Drawing.Size(487, 305);
+            this.Size = new System.Drawing.Size(490, 307);
             this.ResumeLayout(false);
 
         }
 
-        private System.Windows.Forms.Button button1;
-
         #endregion
+
+        private System.Windows.Forms.Button button1;
     }
 }

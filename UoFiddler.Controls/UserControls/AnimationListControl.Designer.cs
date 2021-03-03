@@ -518,6 +518,8 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem animationEditToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBMpToolStripMenuItem;
@@ -559,7 +561,5 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TreeView TreeViewMobs;
         private System.Windows.Forms.ToolStripMenuItem tryToFindNewGraphicsToolStripMenuItem;
-
-        #endregion
     }
 }

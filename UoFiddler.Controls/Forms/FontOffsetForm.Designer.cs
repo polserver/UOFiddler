@@ -131,11 +131,11 @@ namespace UoFiddler.Controls.Forms
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.OnClickCancel);
             // 
-            // FontOffset
+            // FontOffsetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(195, 123);
+            this.ClientSize = new System.Drawing.Size(197, 125);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.CharLabel);
@@ -154,6 +154,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label CharLabel;
@@ -161,7 +163,5 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown offsetx;
         private System.Windows.Forms.NumericUpDown offsety;
-
-        #endregion
     }
 }

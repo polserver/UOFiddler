@@ -96,7 +96,7 @@ namespace UoFiddler.Controls.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox.Location = new System.Drawing.Point(12, 38);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(555, 38);
+            this.pictureBox.Size = new System.Drawing.Size(552, 38);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.toolTip1.SetToolTip(this.pictureBox, "Select Second per Right Mouse");
@@ -209,7 +209,6 @@ namespace UoFiddler.Controls.Forms
             // 
             // TextBoxArt
             // 
-            this.TextBoxArt.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxArt.Name = "TextBoxArt";
             this.TextBoxArt.Size = new System.Drawing.Size(100, 23);
             this.TextBoxArt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownArt);
@@ -225,7 +224,6 @@ namespace UoFiddler.Controls.Forms
             // 
             // TextBoxAnim
             // 
-            this.TextBoxAnim.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxAnim.Name = "TextBoxAnim";
             this.TextBoxAnim.Size = new System.Drawing.Size(100, 23);
             this.TextBoxAnim.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownAnim);
@@ -241,7 +239,6 @@ namespace UoFiddler.Controls.Forms
             // 
             // TextBoxGump
             // 
-            this.TextBoxGump.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.TextBoxGump.Name = "TextBoxGump";
             this.TextBoxGump.Size = new System.Drawing.Size(100, 23);
             this.TextBoxGump.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownGump);
@@ -379,7 +376,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(579, 408);
+            this.ClientSize = new System.Drawing.Size(576, 408);
             this.Controls.Add(this.SetColorButton);
             this.Controls.Add(this.BLabel);
             this.Controls.Add(this.GLabel);
@@ -421,6 +418,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ToolStripMenuItem animationToolStripMenuItem;
         private System.Windows.Forms.Button ColorPickerButton;
         private System.Windows.Forms.Button InverseButton;
@@ -447,9 +446,6 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.ToolStripTextBox TextBoxGump;
         private System.Windows.Forms.TextBox textBoxName;
         private System.Windows.Forms.ToolTip toolTip1;
-
-        #endregion
-
         private System.Windows.Forms.Label RLabel;
         private System.Windows.Forms.Label GLabel;
         private System.Windows.Forms.Label BLabel;

@@ -597,6 +597,8 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
+        #endregion
+
         private System.Windows.Forms.TrackBar ActionBar;
         private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
@@ -640,7 +642,5 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TreeView treeViewItems;
         private System.Windows.Forms.ToolStripMenuItem unDressAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unDressToolStripMenuItem;
-
-        #endregion
     }
 }

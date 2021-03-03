@@ -79,8 +79,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel2.Controls.Add(this.button1);
             this.splitContainer1.Panel2.Controls.Add(this.textBox2);
             this.splitContainer1.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(622, 326);
-            this.splitContainer1.SplitterDistance = 266;
+            this.splitContainer1.Size = new System.Drawing.Size(625, 327);
+            this.splitContainer1.SplitterDistance = 267;
             this.splitContainer1.TabIndex = 0;
             // 
             // dataGridView1
@@ -97,7 +97,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(622, 266);
+            this.dataGridView1.Size = new System.Drawing.Size(625, 267);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.CellFormatting);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
@@ -134,7 +134,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.AutoSize = true;
             this.button4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button4.Location = new System.Drawing.Point(548, 31);
+            this.button4.Location = new System.Drawing.Point(551, 31);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(23, 23);
             this.button4.TabIndex = 5;
@@ -160,7 +160,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.AutoSize = true;
             this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Location = new System.Drawing.Point(577, 31);
+            this.button2.Location = new System.Drawing.Point(580, 31);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(41, 23);
             this.button2.TabIndex = 3;
@@ -184,7 +184,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // textBox2
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(339, 33);
+            this.textBox2.Location = new System.Drawing.Point(342, 33);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(203, 20);
             this.textBox2.TabIndex = 1;
@@ -197,14 +197,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.textBox1.Size = new System.Drawing.Size(192, 20);
             this.textBox1.TabIndex = 0;
             // 
-            // CompareCliLoc
+            // CompareCliLocControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "CompareCliLocControl";
-            this.Size = new System.Drawing.Size(622, 326);
+            this.Size = new System.Drawing.Size(625, 327);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
@@ -214,6 +214,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.ResumeLayout(false);
 
         }
+
+        #endregion
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
@@ -225,7 +227,5 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
-
-        #endregion
     }
 }

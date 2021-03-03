@@ -244,6 +244,8 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem extractCharacterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importCharacterToolStripMenuItem;
@@ -251,9 +253,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem setOffsetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem writeTextToolStripMenuItem;
-
-        #endregion
-
         private System.Windows.Forms.SplitContainer splitContainer1;
         private TileView.TileViewControl FontsTileView;
         private System.Windows.Forms.SplitContainer splitContainer2;

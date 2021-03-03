@@ -49,7 +49,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.NumberBox.Location = new System.Drawing.Point(39, 12);
             this.NumberBox.Name = "NumberBox";
-            this.NumberBox.Size = new System.Drawing.Size(100, 20);
+            this.NumberBox.Size = new System.Drawing.Size(132, 20);
             this.NumberBox.TabIndex = 0;
             // 
             // label1
@@ -81,11 +81,11 @@ namespace UoFiddler.Controls.Forms
             this.Cancel_Button.UseVisualStyleBackColor = true;
             this.Cancel_Button.Click += new System.EventHandler(this.OnClickCancel);
             // 
-            // ClilocAdd
+            // ClilocAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(181, 73);
+            this.ClientSize = new System.Drawing.Size(184, 74);
             this.Controls.Add(this.Cancel_Button);
             this.Controls.Add(this.Add_Button);
             this.Controls.Add(this.label1);
@@ -99,11 +99,11 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.Button Add_Button;
         private System.Windows.Forms.Button Cancel_Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox NumberBox;
-
-        #endregion
     }
 }

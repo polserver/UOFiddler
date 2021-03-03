@@ -109,7 +109,7 @@ namespace UoFiddler.Controls.Forms
             this.tabcontrol.Location = new System.Drawing.Point(0, 0);
             this.tabcontrol.Name = "tabcontrol";
             this.tabcontrol.SelectedIndex = 0;
-            this.tabcontrol.Size = new System.Drawing.Size(349, 361);
+            this.tabcontrol.Size = new System.Drawing.Size(352, 363);
             this.tabcontrol.TabIndex = 1;
             // 
             // tabPageItems
@@ -118,7 +118,7 @@ namespace UoFiddler.Controls.Forms
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(341, 335);
+            this.tabPageItems.Size = new System.Drawing.Size(344, 337);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Text = "Items";
             this.tabPageItems.UseVisualStyleBackColor = true;
@@ -140,8 +140,8 @@ namespace UoFiddler.Controls.Forms
             // 
             this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(335, 329);
-            this.splitContainer1.SplitterDistance = 297;
+            this.splitContainer1.Size = new System.Drawing.Size(338, 331);
+            this.splitContainer1.SplitterDistance = 299;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer3
@@ -183,7 +183,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(335, 297);
+            this.splitContainer3.Size = new System.Drawing.Size(338, 299);
             this.splitContainer3.SplitterDistance = 133;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
@@ -388,7 +388,7 @@ namespace UoFiddler.Controls.Forms
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.MultiColumn = true;
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(335, 162);
+            this.checkedListBox1.Size = new System.Drawing.Size(338, 164);
             this.checkedListBox1.TabIndex = 0;
             // 
             // button2
@@ -530,11 +530,11 @@ namespace UoFiddler.Controls.Forms
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.OnClickApplyFilterLand);
             // 
-            // TileDataFilter
+            // TileDataFilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 361);
+            this.ClientSize = new System.Drawing.Size(352, 363);
             this.Controls.Add(this.tabcontrol);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -565,6 +565,8 @@ namespace UoFiddler.Controls.Forms
             this.ResumeLayout(false);
 
         }
+
+        #endregion
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
@@ -607,7 +609,5 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.TextBox textBoxUnk3;
         private System.Windows.Forms.TextBox textBoxValue;
         private System.Windows.Forms.TextBox textBoxWeight;
-
-        #endregion
     }
 }
