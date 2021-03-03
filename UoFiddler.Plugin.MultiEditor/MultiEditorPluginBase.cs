@@ -12,7 +12,6 @@
 using System;
 using System.Windows.Forms;
 using Ultima;
-using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
 
@@ -24,7 +23,7 @@ namespace UoFiddler.Plugin.MultiEditor
 
         public MultiEditorPluginBase()
         {
-            PluginEvents.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
+            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace UoFiddler.Plugin.MultiEditor
             tabControl.TabPages.Add(page);
         }
 
-        private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
+        private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
         {
             ToolStripMenuItem item = new ToolStripMenuItem
             {
@@ -97,10 +96,7 @@ namespace UoFiddler.Plugin.MultiEditor
 
         private void ItemShowContextClicked(object sender, EventArgs e)
         {
-            int currSelected = Options.DesignAlternative
-                ? Host.GetSelectedItemShowAlternative()
-                : Host.GetSelectedItemShow();
-
+            int currSelected = Host.GetSelectedIdFromItemsControl();
             if (currSelected <= -1)
             {
                 return;

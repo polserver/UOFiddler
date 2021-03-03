@@ -1461,17 +1461,10 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = (int)treeViewItem.SelectedNode.Tag;
-            if (Options.DesignAlternative)
+            var found = ItemsControl.SearchGraphic(index);
+            if (!found)
             {
-                ItemShowAlternativeControl.SearchGraphic(index);
-            }
-            else
-            {
-                var found = ItemShowControl.SearchGraphic(index);
-                if (!found)
-                {
-                    MessageBox.Show("You need to load Items tab first.", "Information");
-                }
+                MessageBox.Show("You need to load Items tab first.", "Information");
             }
         }
 
@@ -1483,17 +1476,10 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = (int)treeViewLand.SelectedNode.Tag;
-            if (Options.DesignAlternative)
+            var found = LandTilesControl.SearchGraphic(index);
+            if (!found)
             {
-                LandTilesAlternativeControl.SearchGraphic(index);
-            }
-            else
-            {
-                var found = LandTilesControl.SearchGraphic(index);
-                if (!found)
-                {
-                    MessageBox.Show("You need to load LandTiles tab first.", "Information");
-                }
+                MessageBox.Show("You need to load LandTiles tab first.", "Information");
             }
         }
 

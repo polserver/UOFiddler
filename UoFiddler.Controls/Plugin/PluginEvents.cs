@@ -16,34 +16,19 @@ namespace UoFiddler.Controls.Plugin
     public static class PluginEvents
     {
         /// <summary>
-        /// Fired when Design is changed
-        /// </summary>
-        public delegate void DesignChangeHandler();
-
-        /// <summary>
-        /// Fired when Design is changed
-        /// </summary>
-        public static event DesignChangeHandler DesignChangeEvent;
-
-        public static void FireDesignChangeEvent()
-        {
-            DesignChangeEvent?.Invoke();
-        }
-
-        /// <summary>
-        /// OnLoad called in ItemShow or ItemShowAlternative to modify Contextmenu
+        /// OnLoad called in ItemsControl to modify Contextmenu
         /// </summary>
         /// <param name="contextmenu"></param>
-        public delegate void ModifyItemShowContextMenuHandler(ContextMenuStrip contextmenu);
+        public delegate void ModifyItemsControlContextMenuHandler(ContextMenuStrip contextmenu);
 
         /// <summary>
-        /// OnLoad called in ItemShow or ItemShowAlternative to modify Contextmenu
+        /// OnLoad called in ItemsControl to modify Contextmenu
         /// </summary>
-        public static event ModifyItemShowContextMenuHandler ModifyItemShowContextMenuEvent;
+        public static event ModifyItemsControlContextMenuHandler ModifyItemsControlContextMenuEvent;
 
         public static void FireModifyItemShowContextMenuEvent(ContextMenuStrip contextmenu)
         {
-            ModifyItemShowContextMenuEvent?.Invoke(contextmenu);
+            ModifyItemsControlContextMenuEvent?.Invoke(contextmenu);
         }
     }
 }

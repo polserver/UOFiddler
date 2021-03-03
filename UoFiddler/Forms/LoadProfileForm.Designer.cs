@@ -129,11 +129,11 @@ namespace UoFiddler.Forms
             this.comboBoxBasedOn.Size = new System.Drawing.Size(121, 21);
             this.comboBoxBasedOn.TabIndex = 4;
             // 
-            // LoadProfile
+            // LoadProfileForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(276, 166);
+            this.ClientSize = new System.Drawing.Size(277, 166);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBoxLoad);
             this.Controls.Add(this.groupBox1);
@@ -150,6 +150,8 @@ namespace UoFiddler.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ComboBox comboBoxBasedOn;
@@ -158,7 +160,5 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxCreate;
-
-        #endregion
     }
 }

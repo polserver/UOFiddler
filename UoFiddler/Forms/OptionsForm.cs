@@ -13,7 +13,6 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.Plugin;
 
 namespace UoFiddler.Forms
 {
@@ -24,7 +23,6 @@ namespace UoFiddler.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
-            checkBoxAltDesign.Checked = Options.DesignAlternative;
             checkBoxCacheData.Checked = Files.CacheData;
             checkBoxNewMapSize.Checked = Map.Felucca.Width == 7168;
             checkBoxuseDiff.Checked = Map.UseDiff;
@@ -32,7 +30,6 @@ namespace UoFiddler.Forms
             numericUpDownItemSizeWidth.Value = Options.ArtItemSizeWidth;
             numericUpDownItemSizeHeight.Value = Options.ArtItemSizeHeight;
             checkBoxItemClip.Checked = Options.ArtItemClip;
-            checkBoxUseHash.Checked = Files.UseHashFile;
             map0Nametext.Text = Options.MapNames[0];
             map1Nametext.Text = Options.MapNames[1];
             map2Nametext.Text = Options.MapNames[2];
@@ -46,13 +43,7 @@ namespace UoFiddler.Forms
 
         private void OnClickApply(object sender, System.EventArgs e)
         {
-            if (checkBoxAltDesign.Checked != Options.DesignAlternative)
-            {
-                Options.DesignAlternative = checkBoxAltDesign.Checked;
-                Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
-                MainForm.ChangeDesign();
-                PluginEvents.FireDesignChangeEvent();
-            }
+            Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
 
             Files.CacheData = checkBoxCacheData.Checked;
 
@@ -90,8 +81,6 @@ namespace UoFiddler.Forms
                 Options.ArtItemClip = checkBoxItemClip.Checked;
                 MainForm.ReloadItemTab();
             }
-
-            Files.UseHashFile = checkBoxUseHash.Checked;
 
             if (map0Nametext.Text != Options.MapNames[0]
                 || map1Nametext.Text != Options.MapNames[1]

@@ -49,15 +49,15 @@ namespace UoFiddler.Controls.Forms
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ReadOnly = true;
-            this.richTextBox.Size = new System.Drawing.Size(292, 266);
+            this.richTextBox.Size = new System.Drawing.Size(297, 267);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             // 
-            // MapDetails
+            // MapDetailsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 266);
+            this.ClientSize = new System.Drawing.Size(297, 267);
             this.Controls.Add(this.richTextBox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -67,8 +67,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
-        private System.Windows.Forms.RichTextBox richTextBox;
-
         #endregion
+
+        private System.Windows.Forms.RichTextBox richTextBox;
     }
 }

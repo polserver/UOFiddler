@@ -10,12 +10,8 @@
   <NewMapSize active="False" />
   <!--UseMapDiff should mapdiff files be used-->
   <UseMapDiff active="True" />
-  <!--Alternative layout in item/landtile/texture tab?-->
-  <AlternativeDesign active="False" />
-  <!--Make the right panel into the sounds tab visible-->
+  <!--Make the right panel in sounds tab visible-->
   <RightPanelInSoundsTab active="True" />
-  <!--Use Hashfile to speed up load?-->
-  <UseHashFile active="True" />
   <!--Should an Update Check be done on startup?-->
   <UpdateCheck active="False" />
   <!--Defines the cmd to send Client to loc-->

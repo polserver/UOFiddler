@@ -74,18 +74,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(601, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(606, 0);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 285);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 288);
             this.vScrollBar.TabIndex = 1;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 285);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 288);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(618, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(623, 17);
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
@@ -96,7 +96,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(601, 285);
+            this.pictureBox.Size = new System.Drawing.Size(606, 288);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
@@ -144,16 +144,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.CoordsLabel,
             this.ZoomLabel,
             this.toolStripDropDownButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 302);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 305);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(618, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(623, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripTextBox1
             // 
-            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(150, 25);
             // 
@@ -292,7 +291,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.markDiffToolStripMenuItem.Text = "Mark Diff";
             this.markDiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickMarkDiff);
             // 
-            // CompareMap
+            // CompareMapControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -302,7 +301,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Name = "CompareMapControl";
-            this.Size = new System.Drawing.Size(618, 327);
+            this.Size = new System.Drawing.Size(623, 330);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -312,6 +311,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.PerformLayout();
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripLabel CoordsLabel;
@@ -339,7 +340,5 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.ToolStripLabel ZoomLabel;
         private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem1;
-
-        #endregion
     }
 }

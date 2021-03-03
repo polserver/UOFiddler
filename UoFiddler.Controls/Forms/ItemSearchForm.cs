@@ -31,10 +31,7 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            bool res = Options.DesignAlternative
-                ? ItemShowAlternativeControl.SearchGraphic(graphic)
-                : ItemShowControl.SearchGraphic(graphic);
-
+            bool res = ItemsControl.SearchGraphic(graphic);
             if (res)
             {
                 return;
@@ -51,10 +48,8 @@ namespace UoFiddler.Controls.Forms
         private void Search_ItemName(object sender, EventArgs e)
         {
             _lastSearchedName = textBoxItemName.Text;
-            bool res = Options.DesignAlternative
-                ? ItemShowAlternativeControl.SearchName(textBoxItemName.Text, false)
-                : ItemShowControl.SearchName(textBoxItemName.Text, false);
 
+            bool res = ItemsControl.SearchName(textBoxItemName.Text, false);
             if (res)
             {
                 return;
@@ -70,10 +65,7 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = Options.DesignAlternative
-                ? ItemShowAlternativeControl.SearchName(textBoxItemName.Text, true)
-                : ItemShowControl.SearchName(textBoxItemName.Text, true);
-
+            bool res = ItemsControl.SearchName(textBoxItemName.Text, true);
             if (res)
             {
                 return;

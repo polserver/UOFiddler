@@ -60,11 +60,11 @@ namespace UoFiddler.Controls.Forms
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
-            // FontText
+            // FontTextForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 129);
+            this.ClientSize = new System.Drawing.Size(295, 132);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox1);
             this.DoubleBuffered = true;
@@ -77,9 +77,9 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TextBox textBox1;
-
-        #endregion
     }
 }

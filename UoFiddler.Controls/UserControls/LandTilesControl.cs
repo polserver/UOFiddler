@@ -1,9 +1,9 @@
 /***************************************************************************
  *
  * $Author: Turley
- *
+ * 
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with
+ * As long as you retain this notice you can do whatever you want with 
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
@@ -23,6 +24,7 @@ using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
+    // TODO: add "Show free slots" support
     public partial class LandTilesControl : UserControl
     {
         public LandTilesControl()
@@ -30,13 +32,26 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             _refMarker = this;
         }
 
-        private static LandTilesControl _refMarker;
+        public bool IsLoaded { get; private set; }
 
-        private bool IsLoaded { get; set; }
-        private bool _showFreeSlots;
+        private static LandTilesControl _refMarker;
+        private int _selectedGraphicId = -1;
+        private readonly List<int> _tileList = new List<int>();
+
+        public int SelectedGraphicId
+        {
+            get => _selectedGraphicId;
+            set
+            {
+                _selectedGraphicId = value < 0 ? 0 : value;
+                UpdateToolStripLabels(_selectedGraphicId);
+                LandTilesTileView.FocusIndex = _tileList.IndexOf(_selectedGraphicId);
+            }
+        }
 
         /// <summary>
         /// Searches Objtype and Select
@@ -47,77 +62,53 @@ namespace UoFiddler.Controls.UserControls
         {
             if (!_refMarker.IsLoaded)
             {
+                _refMarker.OnLoad(_refMarker, EventArgs.Empty);
+            }
+
+            if (_refMarker._tileList.All(t => t != graphic))
+            {
                 return false;
             }
 
-            const int index = 0;
-            for (int i = index; i < _refMarker.listView1.Items.Count; ++i)
-            {
-                ListViewItem item = _refMarker.listView1.Items[i];
-                if ((int)item.Tag != graphic && ((int)item.Tag != -1 || i != graphic))
-                {
-                    continue;
-                }
+            _refMarker.SelectedGraphicId = graphic;
 
-                if (_refMarker.listView1.SelectedItems.Count == 1)
-                {
-                    _refMarker.listView1.SelectedItems[0].Selected = false;
-                }
-
-                item.Selected = true;
-                item.Focused = true;
-                item.EnsureVisible();
-                return true;
-            }
-            return false;
+            return true;
         }
 
         /// <summary>
         /// Searches for name and selects
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="next">starting from current selected</param>
+        /// <param name="next">private bool Loaded = false;</param>
         /// <returns></returns>
         public static bool SearchName(string name, bool next)
         {
             int index = 0;
             if (next)
             {
-                if (_refMarker.listView1.SelectedIndices.Count == 1)
+                if (_refMarker._selectedGraphicId >= 0)
                 {
-                    index = _refMarker.listView1.SelectedIndices[0] + 1;
+                    index = _refMarker._tileList.IndexOf(_refMarker._selectedGraphicId) + 1;
                 }
 
-                if (index >= _refMarker.listView1.Items.Count)
+                if (index >= _refMarker._tileList.Count)
                 {
                     index = 0;
                 }
             }
 
             Regex regex = new Regex(name, RegexOptions.IgnoreCase);
-            for (int i = index; i < _refMarker.listView1.Items.Count; ++i)
+            for (int i = index; i < _refMarker._tileList.Count; ++i)
             {
-                ListViewItem item = _refMarker.listView1.Items[i];
-                if ((int)item.Tag == -1)
+                if (!regex.IsMatch(TileData.LandTable[_refMarker._tileList[i]].Name))
                 {
                     continue;
                 }
 
-                if (!regex.IsMatch(TileData.LandTable[(int)item.Tag].Name))
-                {
-                    continue;
-                }
-
-                if (_refMarker.listView1.SelectedItems.Count == 1)
-                {
-                    _refMarker.listView1.SelectedItems[0].Selected = false;
-                }
-
-                item.Selected = true;
-                item.Focused = true;
-                item.EnsureVisible();
+                _refMarker.SelectedGraphicId = _refMarker._tileList[i];
                 return true;
             }
+
             return false;
         }
 
@@ -126,10 +117,15 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void Reload()
         {
-            if (IsLoaded)
+            if (!IsLoaded)
             {
-                OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
+                return;
             }
+
+            _selectedGraphicId = -1;
+            _tileList.Clear();
+
+            OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -139,40 +135,20 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (IsLoaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))
-            {
-                return;
-            }
-
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["TileData"] = true;
             Options.LoadedUltimaClass["Art"] = true;
 
-            listView1.BeginUpdate();
-            try
+            for (int i = 0; i < 0x4000; ++i)
             {
-                listView1.Clear();
-                var itemCache = new List<ListViewItem>();
-                for (int i = 0; i < 0x4000; ++i)
+                if (Art.IsValidLand(i))
                 {
-                    if (!Art.IsValidLand(i))
-                    {
-                        continue;
-                    }
-
-                    ListViewItem item = new ListViewItem(i.ToString(), 0)
-                    {
-                        Tag = i
-                    };
-                    itemCache.Add(item);
+                    _tileList.Add(i);
                 }
-                listView1.Items.AddRange(itemCache.ToArray());
-                listView1.TileSize = new Size(49, 49);
             }
-            finally
-            {
-                listView1.EndUpdate();
-            }
+
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
 
             if (!IsLoaded)
             {
@@ -180,25 +156,25 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.LandTileChangeEvent += OnLandTileChangeEvent;
                 ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
             }
+
             IsLoaded = true;
             Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()
         {
-            if (!Options.DesignAlternative)
-            {
-                Reload();
-            }
+            Reload();
+        }
+
+        private void UpdateToolStripLabels(int graphic)
+        {
+            NameLabel.Text = $"Name: {TileData.LandTable[graphic].Name}";
+            GraphicLabel.Text = string.Format("ID: 0x{0:X4} ({0})", graphic);
+            FlagsLabel.Text = $"Flags: {TileData.LandTable[graphic].Flags}";
         }
 
         private void OnTileDataChangeEvent(object sender, int id)
         {
-            if (Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!IsLoaded)
             {
                 return;
@@ -209,32 +185,21 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (id > 0x3FFF)
+            if (id < 0 || id > 0x3FFF)
             {
                 return;
             }
 
-            if (listView1.SelectedItems.Count != 1)
+            if (_selectedGraphicId != id)
             {
                 return;
             }
 
-            if ((int)listView1.SelectedItems[0].Tag != id)
-            {
-                return;
-            }
-
-            namelabel.Text = $"Name: {TileData.LandTable[id].Name}";
-            FlagsLabel.Text = $"Flags: {TileData.LandTable[id].Flags}";
+            UpdateToolStripLabels(id);
         }
 
         private void OnLandTileChangeEvent(object sender, int index)
         {
-            if (Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!IsLoaded)
             {
                 return;
@@ -247,154 +212,37 @@ namespace UoFiddler.Controls.UserControls
 
             if (Art.IsValidLand(index))
             {
-                ListViewItem item = new ListViewItem(index.ToString(), 0)
+                bool done = false;
+                for (int i = 0; i < _tileList.Count; ++i)
                 {
-                    Tag = index
-                };
-
-                if (_showFreeSlots)
-                {
-                    listView1.Items[index] = item;
-                    listView1.Invalidate();
-                }
-                else
-                {
-                    bool done = false;
-                    foreach (ListViewItem i in listView1.Items)
+                    if (index < _tileList[i])
                     {
-                        if ((int)i.Tag > index)
-                        {
-                            listView1.Items.Insert(i.Index, item);
-                            done = true;
-                            break;
-                        }
-
-                        if ((int)i.Tag != index)
-                        {
-                            continue;
-                        }
-
+                        _tileList.Insert(i, index);
                         done = true;
                         break;
                     }
 
-                    if (!done)
+                    if (index != _tileList[i])
                     {
-                        listView1.Items.Add(item);
+                        continue;
                     }
+
+                    done = true;
+                    break;
                 }
-                listView1.View = View.Details; // that works fascinating
-                listView1.View = View.Tile;
+
+                if (!done)
+                {
+                    _tileList.Add(index);
+                }
             }
             else
             {
-                if (!_showFreeSlots)
-                {
-                    foreach (ListViewItem i in listView1.Items)
-                    {
-                        if ((int)i.Tag != index)
-                        {
-                            continue;
-                        }
-
-                        listView1.Items.RemoveAt(i.Index);
-                        break;
-                    }
-                }
-                else
-                {
-                    listView1.Items[index].Tag = -1;
-                }
-
-                listView1.Invalidate();
-            }
-        }
-
-        private void ListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listView1.SelectedItems.Count != 1)
-            {
-                return;
+                _tileList.Remove(index);
             }
 
-            int i = (int)listView1.SelectedItems[0].Tag;
-            if (i == -1)
-            {
-                namelabel.Text = "Name: FREE";
-                graphiclabel.Text = string.Format("Graphic: 0x{0:X4} ({0})", listView1.SelectedIndices[0]);
-                selectInTileDataTabToolStripMenuItem.Enabled = false;
-            }
-            else
-            {
-                namelabel.Text = $"Name: {TileData.LandTable[i].Name}";
-                graphiclabel.Text = string.Format("ID: 0x{0:X4} ({0})", i);
-                FlagsLabel.Text = $"Flags: {TileData.LandTable[i].Flags}";
-            }
-        }
-
-        private void DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            int i = (int)listView1.Items[e.ItemIndex].Tag;
-            if (i == -1)
-            {
-                if (e.Item.Selected)
-                {
-                    e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-                }
-                else
-                {
-                    e.Graphics.DrawRectangle(Pens.Gray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-                }
-
-                e.Graphics.FillRectangle(Brushes.Red, e.Bounds.X + 5, e.Bounds.Y + 5, e.Bounds.Width - 10, e.Bounds.Height - 10);
-                return;
-            }
-
-            Bitmap bmp = Art.GetLand(i, out bool patched);
-            if (bmp == null)
-            {
-                return;
-            }
-
-            if (listView1.SelectedItems.Contains(e.Item))
-            {
-                e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-            else if (patched)
-            {
-                e.Graphics.FillRectangle(Brushes.LightCoral, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-            else
-            {
-                e.Graphics.FillRectangle(Brushes.White, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-
-            // TODO: unused variable? Why is it here?
-            // int width = bmp.Width;
-            // int height = bmp.Height;
-            //
-            // if (width > e.Bounds.Width)
-            // {
-            //     width = e.Bounds.Width - 2;
-            // }
-            //
-            // if (height > e.Bounds.Height)
-            // {
-            //     height = e.Bounds.Height - 2;
-            // }
-
-            e.Graphics.DrawImage(bmp, e.Bounds.X + 1, e.Bounds.Y + 1,
-                new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1),
-                GraphicsUnit.Pixel);
-
-            if (listView1.SelectedItems.Contains(e.Item))
-            {
-                e.DrawFocusRectangle();
-            }
-            else
-            {
-                e.Graphics.DrawRectangle(Pens.Gray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
         }
 
         private LandTileSearchForm _showForm;
@@ -413,9 +261,44 @@ namespace UoFiddler.Controls.UserControls
             _showForm.Show();
         }
 
+        private void OnClickFindFree(object sender, EventArgs e)
+        {
+            int id = _selectedGraphicId;
+            ++id;
+            for (int i = _tileList.IndexOf(_selectedGraphicId) + 1; i < _tileList.Count; ++i, ++id)
+            {
+                if (id >= _tileList[i])
+                {
+                    continue;
+                }
+
+                SelectedGraphicId = _tileList[i];
+                break;
+            }
+        }
+
+        private void OnClickRemove(object sender, EventArgs e)
+        {
+            DialogResult result =
+                        MessageBox.Show($"Are you sure to remove {_selectedGraphicId}", "Save",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            Art.RemoveLand(_selectedGraphicId);
+            ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
+            _tileList.Remove(_selectedGraphicId);
+            SelectedGraphicId = --_selectedGraphicId;
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
+            Options.ChangedUltimaClass["Art"] = true;
+        }
+
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count != 1)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
@@ -426,54 +309,25 @@ namespace UoFiddler.Controls.UserControls
                 dialog.Title = "Choose image file to replace";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
-
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
 
                 Bitmap bmp = new Bitmap(dialog.FileName);
-                if (bmp.Height != 44 || bmp.Width != 44)
-                {
-                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
                 if (dialog.FileName.Contains(".bmp"))
                 {
                     bmp = Utils.ConvertBmp(bmp);
                 }
 
-                int id = (int)listView1.SelectedItems[0].Tag;
-                if (id == -1)
-                {
-                    listView1.SelectedItems[0].Tag = id = listView1.SelectedItems[0].Index;
-                }
-
-                Art.ReplaceLand(id, bmp);
-                ControlEvents.FireLandTileChangeEvent(this, id);
-                listView1.Invalidate();
+                Art.ReplaceLand(_selectedGraphicId, bmp);
+                ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
+                LandTilesTileView.Invalidate();
                 Options.ChangedUltimaClass["Art"] = true;
             }
         }
 
-        private void OnClickSave(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-            if (result != DialogResult.Yes)
-            {
-                return;
-            }
-
-            Cursor.Current = Cursors.WaitCursor;
-            Art.Save(Options.OutputPath);
-            Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            Options.ChangedUltimaClass["Art"] = false;
-        }
-
-        private void OnTextChanged_Insert(object sender, EventArgs e)
+        private void OnTextChangedInsert(object sender, EventArgs e)
         {
             if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
             {
@@ -485,9 +339,17 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void OnKeyDown_Insert(object sender, KeyEventArgs e)
+        private void OnKeyDownInsert(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter || !Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            const int graphicIdMin = 0;
+            const int graphicIdMax = 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, graphicIdMin, graphicIdMax))
             {
                 return;
             }
@@ -497,7 +359,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
+            LandTilesContextMenuStrip.Close();
+
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
@@ -510,259 +373,100 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Bitmap bmp = new Bitmap(dialog.FileName);
-                if (bmp.Height != 44 || bmp.Width != 44)
-                {
-                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
+                // TODO: check this if... looks weird. We don't convert other file types?
                 if (dialog.FileName.Contains(".bmp"))
                 {
                     bmp = Utils.ConvertBmp(bmp);
                 }
 
                 Art.ReplaceLand(index, bmp);
+
                 ControlEvents.FireLandTileChangeEvent(this, index);
+
+                bool done = false;
+                for (int i = 0; i < _tileList.Count; ++i)
+                {
+                    if (index >= _tileList[i])
+                    {
+                        continue;
+                    }
+
+                    _tileList.Insert(i, index);
+                    done = true;
+                    break;
+                }
+
+                if (!done)
+                {
+                    _tileList.Add(index);
+                }
+
+                LandTilesTileView.VirtualListSize = _tileList.Count;
+                LandTilesTileView.Invalidate();
+                SelectedGraphicId = index;
+
                 Options.ChangedUltimaClass["Art"] = true;
-                ListViewItem item = new ListViewItem(index.ToString(), 0)
-                {
-                    Tag = index
-                };
-
-                if (_showFreeSlots)
-                {
-                    listView1.Items[index] = item;
-                    listView1.Invalidate();
-                }
-                else
-                {
-                    bool done = false;
-                    foreach (ListViewItem i in listView1.Items)
-                    {
-                        if ((int)i.Tag <= index)
-                        {
-                            continue;
-                        }
-
-                        listView1.Items.Insert(i.Index, item);
-                        done = true;
-                        break;
-                    }
-
-                    if (!done)
-                    {
-                        listView1.Items.Add(item);
-                    }
-                }
-
-                listView1.View = View.Details; // that works fascinating
-                listView1.View = View.Tile;
-
-                if (listView1.SelectedItems.Count == 1)
-                {
-                    listView1.SelectedItems[0].Selected = false;
-                }
-
-                item.Selected = true;
-                item.Focused = true;
-                item.EnsureVisible();
             }
         }
 
-        private void OnClickRemove(object sender, EventArgs e)
+        private void OnClickSave(object sender, EventArgs e)
         {
-            int i = (int)listView1.SelectedItems[0].Tag;
             DialogResult result =
-                        MessageBox.Show($"Are you sure to remove {i}", "Save",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                        MessageBox.Show("Are you sure? Will take a while", "Save",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
             }
 
-            Art.RemoveLand(i);
-            ControlEvents.FireLandTileChangeEvent(this, i);
-            i = listView1.SelectedItems[0].Index;
-            if (!_showFreeSlots)
-            {
-                listView1.SelectedItems[0].Selected = false;
-                listView1.Items.RemoveAt(i);
-            }
-            else
-            {
-                listView1.Items[i].Tag = -1;
-            }
-
-            listView1.Invalidate();
-            Options.ChangedUltimaClass["Art"] = true;
-        }
-
-        private void OnClickFindFree(object sender, EventArgs e)
-        {
-            if (_showFreeSlots)
-            {
-                int i = listView1.SelectedItems.Count > 0 ? listView1.SelectedItems[0].Index + 1 : 0;
-                for (; i < listView1.Items.Count; ++i)
-                {
-                    if ((int)listView1.Items[i].Tag != -1)
-                    {
-                        continue;
-                    }
-
-                    ListViewItem item = listView1.Items[i];
-                    if (listView1.SelectedItems.Count == 1)
-                    {
-                        listView1.SelectedItems[0].Selected = false;
-                    }
-
-                    item.Selected = true;
-                    item.Focused = true;
-                    item.EnsureVisible();
-                    break;
-                }
-            }
-            else
-            {
-                int id, i;
-                if (listView1.SelectedItems.Count > 0)
-                {
-                    id = (int)listView1.SelectedItems[0].Tag + 1;
-                    i = listView1.SelectedItems[0].Index + 1;
-                }
-                else
-                {
-                    id = 0;
-                    i = 0;
-                }
-                for (; i < listView1.Items.Count; ++i, ++id)
-                {
-                    if (id >= (int)listView1.Items[i].Tag)
-                    {
-                        continue;
-                    }
-
-                    ListViewItem item = listView1.Items[i];
-                    if (listView1.SelectedItems.Count == 1)
-                    {
-                        listView1.SelectedItems[0].Selected = false;
-                    }
-
-                    item.Selected = true;
-                    item.Focused = true;
-                    item.EnsureVisible();
-                    break;
-                }
-            }
-        }
-
-        private void OnClickShowFreeSlots(object sender, EventArgs e)
-        {
-            SuspendLayout();
-            listView1.View = View.Details; // that works fascinating
-
-            listView1.BeginUpdate();
-            try
-            {
-                _showFreeSlots = !_showFreeSlots;
-                if (_showFreeSlots)
-                {
-                    for (int j = 0; j < 0x4000; ++j)
-                    {
-                        ListViewItem item;
-                        if (listView1.Items.Count > j)
-                        {
-                            if ((int)listView1.Items[j].Tag == j) continue;
-                            item = new ListViewItem(j.ToString(), 0)
-                            {
-                                Tag = -1
-                            };
-                            listView1.Items.Insert(j, item);
-                        }
-                        else
-                        {
-                            item = new ListViewItem(j.ToString(), 0)
-                            {
-                                Tag = -1
-                            };
-                            listView1.Items.Insert(j, item);
-                        }
-                    }
-                }
-                else
-                {
-                    Reload();
-                }
-            }
-            finally
-            {
-                listView1.EndUpdate();
-            }
-
-            ResumeLayout(false);
-            listView1.View = View.Tile;
+            Cursor.Current = Cursors.WaitCursor;
+            Art.Save(Options.OutputPath);
+            Cursor.Current = Cursors.Default;
+            MessageBox.Show(
+                $"Saved to {Options.OutputPath}",
+                "Save",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            Options.ChangedUltimaClass["Art"] = false;
         }
 
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count != 1)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            int i = (int)listView1.SelectedItems[0].Tag;
-            if (i == -1)
-            {
-                return;
-            }
-
-            ExportLandTileImage(i, ImageFormat.Bmp);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Bmp);
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count != 1)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            int i = (int)listView1.SelectedItems[0].Tag;
-            if (i == -1)
-            {
-                return;
-            }
-
-            ExportLandTileImage(i, ImageFormat.Tiff);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Tiff);
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count != 1)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            int i = (int)listView1.SelectedItems[0].Tag;
-            if (i == -1)
-            {
-                return;
-            }
-
-            ExportLandTileImage(i, ImageFormat.Jpeg);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Jpeg);
         }
 
         private void OnClickExportPng(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count != 1)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
 
-            int i = (int)listView1.SelectedItems[0].Tag;
-            if (i == -1)
-            {
-                return;
-            }
-
-            ExportLandTileImage(i, ImageFormat.Png);
+            ExportLandTileImage(_selectedGraphicId, ImageFormat.Png);
         }
 
         private static void ExportLandTileImage(int index, ImageFormat imageFormat)
@@ -775,30 +479,24 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show($"Land tile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            int id = (int)listView1.SelectedItems[0].Tag;
-            if (id == -1)
+            if (_selectedGraphicId >= 0)
             {
-                id = listView1.SelectedItems[0].Index;
+                TileDataControl.Select(_selectedGraphicId, true);
             }
-
-            TileDataControl.Select(id, true);
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            int id = (int)listView1.SelectedItems[0].Tag;
-            if (id == -1)
+            if (_selectedGraphicId >= 0)
             {
-                id = listView1.SelectedItems[0].Index;
+                RadarColorControl.Select(_selectedGraphicId, true);
             }
-
-            RadarColorControl.Select(id, true);
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
@@ -836,10 +534,9 @@ namespace UoFiddler.Controls.UserControls
 
                 Cursor.Current = Cursors.WaitCursor;
 
-                for (int i = 0; i < listView1.Items.Count; ++i)
+                foreach (var index in _tileList)
                 {
-                    int index = (int)listView1.Items[i].Tag;
-                    if (index < 0)
+                    if (!Art.IsValidLand(index))
                     {
                         continue;
                     }
@@ -858,30 +555,75 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void LandTiles_KeyUp(object sender, KeyEventArgs e)
+        private void LandTilesTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
         {
-            if (e.KeyCode != Keys.F || !e.Control)
+            if (FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
 
-            OnClickSearch(sender, e);
-            e.SuppressKeyPress = true;
-            e.Handled = true;
+            Point itemPoint = new Point(e.Bounds.X + LandTilesTileView.TilePadding.Left, e.Bounds.Y + LandTilesTileView.TilePadding.Top);
+            const int fixedTileSize = 44;
+            Size itemSize = new Size(fixedTileSize, fixedTileSize);
+            Rectangle itemRec = new Rectangle(itemPoint, itemSize);
+
+            Bitmap bitmap = Art.GetLand(_tileList[e.Index], out bool patched);
+            if (patched)
+            {
+                // different background for verdata patched tiles
+                e.Graphics.FillRectangle(Brushes.LightCoral, itemRec);
+            }
+
+            if (bitmap == null)
+            {
+                // TODO: partial empty slots support - drawing the tile
+                itemPoint.Offset(2, 2);
+                e.Graphics.FillRectangle(Brushes.Red, new Rectangle(itemPoint, itemSize - new Size(4, 4)));
+            }
+            else
+            {
+                e.Graphics.DrawImage(bitmap, itemRec);
+            }
+        }
+
+        private void LandTilesTileView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (!e.IsSelected)
+            {
+                return;
+            }
+
+            if (_tileList.Count == 0)
+            {
+                return;
+            }
+
+            SelectedGraphicId = e.ItemIndex < 0 || e.ItemIndex > _tileList.Count
+                ? _tileList[0]
+                : _tileList[e.ItemIndex];
         }
 
         private void InsertStartingFromTb_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter || !Utils.ConvertStringToInt(StartingFromTb.Text, out int index, 0, 0x3FFF))
+            if (e.KeyCode != Keys.Enter)
             {
                 return;
             }
 
-            contextMenuStrip1.Close();
+            const int graphicIdMin = 0;
+            const int graphicIdMax = 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(InsertStartingFromTb.Text, out int index, graphicIdMin, graphicIdMax))
+            {
+                return;
+            }
+
+            LandTilesContextMenuStrip.Close();
+
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.Title = $"Choose image file to insert at 0x{index:X} +";
+                dialog.Title = $"Choose image file to insert from 0x{index:X}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
                 if (dialog.ShowDialog() != DialogResult.OK)
@@ -889,7 +631,7 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                if (CheckForIndexes(index, dialog.FileNames.Length)) //Ho tutti gli indici necessari disponibili in linea
+                if (CheckForIndexes(index, dialog.FileNames.Length)) //
                 {
                     for (int i = 0; i < dialog.FileNames.Length; i++)
                     {
@@ -898,16 +640,18 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                listView1.View = View.Details; // that works fascinating
-                listView1.View = View.Tile;
 
-                if (listView1.SelectedItems.Count == 1)
-                {
-                    listView1.SelectedItems[0].Selected = false;
-                }
+                
+
+                LandTilesTileView.VirtualListSize = _tileList.Count;
+                LandTilesTileView.Invalidate();
+                SelectedGraphicId = index;
+
+                Options.ChangedUltimaClass["Art"] = true;
             }
-        }
 
+
+        }
         /// <summary>
         /// Check if all the indexes from baseIndex to baseIndex + count are valid
         /// </summary>
@@ -926,56 +670,36 @@ namespace UoFiddler.Controls.UserControls
             return true;
         }
 
-        /// <summary>
-        /// Adds a single LandTile at the determined index.
-        /// </summary>
-        /// <param name="fileName">The image filename</param>
-        /// <param name="index">The index where the gump should be added</param>
         private void AddSingleLandTile(string fileName, int index)
         {
             Bitmap bmp = new Bitmap(fileName);
-            if (bmp.Height != 44 || bmp.Width != 44)
-            {
-                MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
+            // TODO: check this if... looks weird. We don't convert other file types? 
+            // Should we convert from png/tiff to bmp?
             if (fileName.Contains(".bmp"))
             {
                 bmp = Utils.ConvertBmp(bmp);
             }
 
             Art.ReplaceLand(index, bmp);
+
             ControlEvents.FireLandTileChangeEvent(this, index);
-            Options.ChangedUltimaClass["Art"] = true;
-            ListViewItem item = new ListViewItem(index.ToString(), 0)
-            {
-                Tag = index
-            };
 
-            if (_showFreeSlots)
+            bool done = false;
+            for (int i = 0; i < _tileList.Count; ++i)
             {
-                listView1.Items[index] = item;
-                listView1.Invalidate();
+                if (index >= _tileList[i])
+                {
+                    continue;
+                }
+
+                _tileList.Insert(i, index);
+                done = true;
+                break;
             }
-            else
+
+            if (!done)
             {
-                bool done = false;
-                foreach (ListViewItem i in listView1.Items)
-                {
-                    if ((int)i.Tag <= index)
-                    {
-                        continue;
-                    }
-
-                    listView1.Items.Insert(i.Index, item);
-                    done = true;
-                    break;
-                }
-
-                if (!done)
-                {
-                    listView1.Items.Add(item);
-                }
+                _tileList.Add(index);
             }
         }
     }

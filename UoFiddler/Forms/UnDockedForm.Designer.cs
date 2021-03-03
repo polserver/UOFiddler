@@ -41,11 +41,11 @@ namespace UoFiddler.Forms
         {
             this.SuspendLayout();
             // 
-            // UnDocked
+            // UnDockedForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(615, 334);
+            this.ClientSize = new System.Drawing.Size(618, 334);
             this.DoubleBuffered = true;
             this.Name = "UnDockedForm";
             this.Text = "UnDocked";
@@ -55,7 +55,6 @@ namespace UoFiddler.Forms
         }
 
         #endregion
-
 
     }
 }

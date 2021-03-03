@@ -29,8 +29,7 @@ namespace UoFiddler.Plugin.SendItem
         public SendItemPluginBase()
         {
             _refMarker = this;
-            Events.DesignChangeEvent += Events_DesignChangeEvent;
-            Events.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
+            Events.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         private static SendItemPluginBase _refMarker;
@@ -98,11 +97,6 @@ namespace UoFiddler.Plugin.SendItem
         {
         }
 
-        private void Events_DesignChangeEvent()
-        {
-            ChangeOverrideClick(OverrideClick, true);
-        }
-
         public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)
         {
             ToolStripMenuItem item = new ToolStripMenuItem
@@ -115,35 +109,17 @@ namespace UoFiddler.Plugin.SendItem
 
         private void ChangeOverrideClick(bool value, bool init)
         {
-            if (Options.DesignAlternative)
+            ItemsControl itemsControl = Host.GetItemsControl();
+            TileViewControl itemsControlTileView = Host.GetItemsControlTileView();
+            if (value)
             {
-                ItemShowAlternativeControl itemShowAltControl = Host.GetItemShowAltControl();
-                TileViewControl itemShowTileView = Host.GetItemShowAltTileView();
-                if (value)
-                {
-                    itemShowTileView.MouseDoubleClick -= itemShowAltControl.ItemsTileView_MouseDoubleClick;
-                    itemShowTileView.MouseDoubleClick += PlugOnDoubleClick;
-                }
-                else if (!init)
-                {
-                    itemShowTileView.MouseDoubleClick -= PlugOnDoubleClick;
-                    itemShowTileView.MouseDoubleClick += itemShowAltControl.ItemsTileView_MouseDoubleClick;
-                }
+                itemsControlTileView.MouseDoubleClick -= itemsControl.ItemsTileView_MouseDoubleClick;
+                itemsControlTileView.MouseDoubleClick += PlugOnDoubleClick;
             }
-            else
+            else if (!init)
             {
-                ItemShowControl itemShowControlControl = Host.GetItemShowControl();
-                ListView itemShowListView = Host.GetItemShowListView();
-                if (value)
-                {
-                    itemShowListView.MouseDoubleClick -= itemShowControlControl.ListView_DoubleClicked;
-                    itemShowListView.MouseDoubleClick += PlugOnDoubleClick;
-                }
-                else if (!init)
-                {
-                    itemShowListView.MouseDoubleClick -= PlugOnDoubleClick;
-                    itemShowListView.MouseDoubleClick += itemShowControlControl.ListView_DoubleClicked;
-                }
+                itemsControlTileView.MouseDoubleClick -= PlugOnDoubleClick;
+                itemsControlTileView.MouseDoubleClick += itemsControl.ItemsTileView_MouseDoubleClick;
             }
         }
 
@@ -152,7 +128,7 @@ namespace UoFiddler.Plugin.SendItem
             new SendItemOptionsForm().Show();
         }
 
-        private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
+        private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
         {
             ToolStripMenuItem item = new ToolStripMenuItem { Text = "Send Item to Client" };
             item.Click += ItemShowContextClicked;
@@ -161,10 +137,7 @@ namespace UoFiddler.Plugin.SendItem
 
         private void ItemShowContextClicked(object sender, EventArgs e)
         {
-            int currSelected = Options.DesignAlternative
-                ? Host.GetSelectedItemShowAlternative()
-                : Host.GetSelectedItemShow();
-
+            int currSelected = Host.GetSelectedIdFromItemsControl();
             if (currSelected <= -1)
             {
                 return;

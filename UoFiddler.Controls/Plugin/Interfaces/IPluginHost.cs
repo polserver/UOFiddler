@@ -9,7 +9,6 @@
  *
  ***************************************************************************/
 
-using System.Windows.Forms;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Controls.UserControls.TileView;
 
@@ -18,39 +17,21 @@ namespace UoFiddler.Controls.Plugin.Interfaces
     public interface IPluginHost
     {
         /// <summary>
-        /// Returns the ItemShowControl
+        /// Returns the ItemsControl
         /// </summary>
         /// <returns></returns>
-        ItemShowControl GetItemShowControl();
+        ItemsControl GetItemsControl();
 
         /// <summary>
-        /// Returns the ItemShowAlternativeControl
+        /// Gets the TileView of ItemsControl
         /// </summary>
         /// <returns></returns>
-        ItemShowAlternativeControl GetItemShowAltControl();
+        TileViewControl GetItemsControlTileView();
 
         /// <summary>
-        /// Gets the TileView of ItemShowAlternative
+        /// Gets the current selected graphic id in ItemsControl
         /// </summary>
-        /// <returns></returns>
-        TileViewControl GetItemShowAltTileView();
-
-        /// <summary>
-        /// Gets the current selected graphic in ItemShow
-        /// </summary>
-        /// <returns>Graphic or -1 if none selected</returns>
-        int GetSelectedItemShow();
-
-        /// <summary>
-        /// Gets the current selected graphic in ItemShowAlternative
-        /// </summary>
-        /// <returns>Graphic or -1 if none selected</returns>
-        int GetSelectedItemShowAlternative();
-
-        /// <summary>
-        /// Gets the ListView of ItemShow
-        /// </summary>
-        /// <returns></returns>
-        ListView GetItemShowListView();
+        /// <returns>Graphic id or -1 if none selected</returns>
+        int GetSelectedIdFromItemsControl();
     }
 }

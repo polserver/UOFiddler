@@ -29,8 +29,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
         public ExamplePluginBase()
         {
-            PluginEvents.DesignChangeEvent += Events_DesignChangeEvent;
-            PluginEvents.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
+            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         /// <summary>
@@ -94,12 +93,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
             new ExampleForm().Show();
         }
 
-        private static void Events_DesignChangeEvent()
-        {
-            // do something useful here
-        }
-
-        private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
+        private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
         {
             strip.Items.Add(new ToolStripSeparator());
 
@@ -123,17 +117,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
         private void ExportToOffsetClicked(object sender, EventArgs e)
         {
             List<int> itemIds = new List<int>();
-            if (Options.DesignAlternative)
-            {
-                itemIds.AddRange(Host.GetItemShowAltControl().ItemList);
-            }
-            else
-            {
-                foreach (ListViewItem item in Host.GetItemShowListView().Items)
-                {
-                    itemIds.Add((int)item.Tag);
-                }
-            }
+            itemIds.AddRange(Host.GetItemsControl().ItemList);
 
             string fileName = Path.Combine(Options.OutputPath, "offset.cfg");
 
@@ -175,31 +159,15 @@ namespace UoFiddler.Plugin.ExamplePlugin
         private void ExportToItemDescClicked(object sender, EventArgs e)
         {
             var selectedArtIds = new List<int>();
+            var itemsControl = Host.GetItemsControl();
+            var itemsControlTileView = Host.GetItemsControlTileView();
 
-            if (Options.DesignAlternative)
+            foreach (var item in itemsControlTileView.SelectedIndices)
             {
-                var itemShowAltControl = Host.GetItemShowAltControl();
-                var itemShowAltTileView = Host.GetItemShowAltTileView();
-
-                foreach (var item in itemShowAltTileView.SelectedIndices)
+                var graphic = itemsControl.ItemList[item];
+                if (Art.IsValidStatic(graphic))
                 {
-                    var graphic = itemShowAltControl.ItemList[item];
-                    if (Art.IsValidStatic(graphic))
-                    {
-                        selectedArtIds.Add(graphic);
-                    }
-                }
-            }
-            else
-            {
-                var itemShowListView = Host.GetItemShowListView();
-                foreach (ListViewItem item in itemShowListView.SelectedItems)
-                {
-                    int graphic = (int)item.Tag;
-                    if (Art.IsValidStatic(graphic))
-                    {
-                        selectedArtIds.Add(graphic);
-                    }
+                    selectedArtIds.Add(graphic);
                 }
             }
 

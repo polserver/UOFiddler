@@ -83,8 +83,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(619, 325);
-            this.splitContainer1.SplitterDistance = 205;
+            this.splitContainer1.Size = new System.Drawing.Size(624, 326);
+            this.splitContainer1.SplitterDistance = 206;
             this.splitContainer1.TabIndex = 0;
             // 
             // treeView1
@@ -94,7 +94,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(205, 325);
+            this.treeView1.Size = new System.Drawing.Size(206, 326);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect);
             // 
@@ -171,7 +171,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
@@ -196,7 +195,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(410, 325);
+            this.pictureBox1.Size = new System.Drawing.Size(414, 326);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -228,7 +227,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LandTileText
             // 
-            this.LandTileText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.LandTileText.Name = "LandTileText";
             this.LandTileText.Size = new System.Drawing.Size(100, 23);
             this.LandTileText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LandTileKeyDown);
@@ -244,20 +242,19 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LightTileText
             // 
-            this.LightTileText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.LightTileText.Name = "LightTileText";
             this.LightTileText.Size = new System.Drawing.Size(100, 23);
             this.LightTileText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LightTileKeyDown);
             this.LightTileText.TextChanged += new System.EventHandler(this.LightTileTextChanged);
             // 
-            // Light
+            // LightControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "LightControl";
-            this.Size = new System.Drawing.Size(619, 325);
+            this.Size = new System.Drawing.Size(624, 326);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -269,6 +266,8 @@ namespace UoFiddler.Controls.UserControls
             this.ResumeLayout(false);
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
@@ -291,7 +290,5 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView treeView1;
-
-        #endregion
     }
 }

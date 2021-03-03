@@ -18,15 +18,11 @@ using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Types;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Forms
 {
     public partial class MainForm : Form
     {
-        private ItemShowAlternativeControl _controlItemShowAlt;
-        private TextureAlternativeControl _controlTextureAlt;
-        private LandTilesAlternativeControl _controlLandTilesAlt;
         private static MainForm _refMarker;
 
         public MainForm()
@@ -58,7 +54,6 @@ namespace UoFiddler.Forms
             Versionlabel.Text = $"Version {FiddlerOptions.AppVersion.Major}.{FiddlerOptions.AppVersion.Minor}.{FiddlerOptions.AppVersion.Build}";
             Versionlabel.Left = StartTab.Size.Width - Versionlabel.Width - 5;
 
-            ChangeDesign();
             LoadExternToolStripMenu();
             GlobalPlugins.Plugins.FindPlugins($@"{Application.StartupPath}\plugins");
 
@@ -318,129 +313,11 @@ namespace UoFiddler.Forms
         }
 
         /// <summary>
-        /// switches Alternative Design aka Hack'n'Slay attack damn...
-        /// </summary>
-        public static void ChangeDesign()
-        {
-            if (Options.DesignAlternative)
-            {
-                _refMarker._controlItemShowAlt = new ItemShowAlternativeControl
-                {
-                    Dock = DockStyle.Fill,
-                    Location = new Point(3, 3),
-                    Name = "controlItemShow",
-                    Size = new Size(613, 318),
-                    TabIndex = 0
-                };
-
-                Control parent = _refMarker.itemShowControl.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(_refMarker._controlItemShowAlt);
-                parent.PerformLayout();
-
-                _refMarker.itemShowControl.Dispose();
-                _refMarker._controlTextureAlt = new TextureAlternativeControl
-                {
-                    Dock = DockStyle.Fill,
-                    Location = new Point(3, 3),
-                    Name = "controlTexture",
-                    Size = new Size(613, 318),
-                    TabIndex = 0
-                };
-
-                parent = _refMarker.textureControl.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(_refMarker._controlTextureAlt);
-                parent.PerformLayout();
-
-                _refMarker.textureControl.Dispose();
-
-                _refMarker._controlLandTilesAlt = new LandTilesAlternativeControl
-                {
-                    Dock = DockStyle.Fill,
-                    Location = new Point(3, 3),
-                    Name = "controlLandTiles",
-                    Size = new Size(613, 318),
-                    TabIndex = 0
-                };
-
-                parent = _refMarker.landTilesControl.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(_refMarker._controlLandTilesAlt);
-                parent.PerformLayout();
-
-                _refMarker.landTilesControl.Dispose();
-            }
-            else
-            {
-                if (_refMarker._controlItemShowAlt == null)
-                {
-                    return;
-                }
-
-                _refMarker.itemShowControl = new ItemShowControl
-                {
-                    Dock = DockStyle.Fill,
-                    Location = new Point(3, 3),
-                    Name = "controlItemShow",
-                    Size = new Size(613, 318),
-                    TabIndex = 0
-                };
-
-                Control parent = _refMarker._controlItemShowAlt.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(_refMarker.itemShowControl);
-                parent.PerformLayout();
-
-                _refMarker._controlItemShowAlt.Dispose();
-
-                _refMarker.textureControl = new TextureControl
-                {
-                    Dock = DockStyle.Fill,
-                    Location = new Point(3, 3),
-                    Name = "controlTexture",
-                    Size = new Size(613, 318),
-                    TabIndex = 0
-                };
-
-                parent = _refMarker._controlTextureAlt.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(_refMarker.textureControl);
-                parent.PerformLayout();
-
-                _refMarker._controlTextureAlt.Dispose();
-
-                _refMarker.landTilesControl = new LandTilesControl
-                {
-                    Dock = DockStyle.Fill,
-                    Location = new Point(3, 3),
-                    Name = "controlLandTiles",
-                    Size = new Size(613, 318),
-                    TabIndex = 0
-                };
-
-                parent = _refMarker._controlLandTilesAlt.Parent;
-                parent.Controls.Clear();
-                parent.Controls.Add(_refMarker.landTilesControl);
-                parent.PerformLayout();
-
-                _refMarker._controlLandTilesAlt.Dispose();
-            }
-        }
-
-        /// <summary>
         /// Reloads Item tab
         /// </summary>
         public static void ReloadItemTab()
         {
-            if (Options.DesignAlternative)
-            {
-                _refMarker._controlItemShowAlt.ChangeTileSize();
-            }
-            else
-            {
-                _refMarker.itemShowControl.ChangeTileSize();
-            }
+            _refMarker.itemShowControl.ChangeTileSize();
         }
 
         /// <summary>

@@ -78,7 +78,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.Data);
-            this.splitContainer1.Size = new System.Drawing.Size(295, 269);
+            this.splitContainer1.Size = new System.Drawing.Size(298, 269);
             this.splitContainer1.SplitterDistance = 61;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
@@ -89,7 +89,7 @@ namespace UoFiddler.Controls.Forms
             this.Graphic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Graphic.Location = new System.Drawing.Point(0, 0);
             this.Graphic.Name = "Graphic";
-            this.Graphic.Size = new System.Drawing.Size(295, 61);
+            this.Graphic.Size = new System.Drawing.Size(298, 61);
             this.Graphic.TabIndex = 0;
             this.Graphic.TabStop = false;
             this.Graphic.SizeChanged += new System.EventHandler(this.OnSizeChange);
@@ -147,15 +147,15 @@ namespace UoFiddler.Controls.Forms
             this.Data.Location = new System.Drawing.Point(0, 0);
             this.Data.Name = "Data";
             this.Data.ReadOnly = true;
-            this.Data.Size = new System.Drawing.Size(295, 207);
+            this.Data.Size = new System.Drawing.Size(298, 207);
             this.Data.TabIndex = 0;
             this.Data.Text = "";
             // 
-            // ItemDetail
+            // ItemDetailForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(295, 269);
+            this.ClientSize = new System.Drawing.Size(298, 269);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -173,6 +173,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
@@ -182,7 +184,5 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.PictureBox Graphic;
         private System.Windows.Forms.ToolStripMenuItem setHueToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
-
-        #endregion
     }
 }

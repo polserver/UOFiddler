@@ -69,7 +69,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 25);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(531, 309);
+            this.pictureBox.Size = new System.Drawing.Size(535, 310);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
@@ -81,18 +81,18 @@ namespace UoFiddler.Controls.UserControls
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 317);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 318);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(514, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(518, 17);
             this.hScrollBar.TabIndex = 1;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(514, 25);
+            this.vScrollBar.Location = new System.Drawing.Point(518, 25);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 309);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 310);
             this.vScrollBar.TabIndex = 2;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
@@ -104,7 +104,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripDropDownButton3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(531, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(535, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -247,7 +247,7 @@ namespace UoFiddler.Controls.UserControls
             this.asPngToolStripMenuItem1.Text = "As Png..";
             this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExportPng);
             // 
-            // MultiMap
+            // MultiMapControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -257,7 +257,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Name = "MultiMapControl";
-            this.Size = new System.Drawing.Size(531, 334);
+            this.Size = new System.Drawing.Size(535, 335);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.toolStrip1.ResumeLayout(false);
@@ -266,6 +266,8 @@ namespace UoFiddler.Controls.UserControls
             this.PerformLayout();
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
@@ -287,7 +289,5 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
         private System.Windows.Forms.VScrollBar vScrollBar;
-
-        #endregion
     }
 }

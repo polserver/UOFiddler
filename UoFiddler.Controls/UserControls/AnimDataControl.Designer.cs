@@ -96,8 +96,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(723, 508);
-            this.splitContainer1.SplitterDistance = 208;
+            this.splitContainer1.Size = new System.Drawing.Size(727, 509);
+            this.splitContainer1.SplitterDistance = 209;
             this.splitContainer1.TabIndex = 0;
             // 
             // treeView1
@@ -107,7 +107,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(208, 508);
+            this.treeView1.Size = new System.Drawing.Size(209, 509);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterNodeSelect);
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnClickNode);
@@ -160,8 +160,8 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer2.Panel2.Controls.Add(this.groupBox3);
             this.splitContainer2.Panel2.Controls.Add(this.groupBox4);
             this.splitContainer2.Panel2.Controls.Add(this.groupBox2);
-            this.splitContainer2.Size = new System.Drawing.Size(511, 508);
-            this.splitContainer2.SplitterDistance = 280;
+            this.splitContainer2.Size = new System.Drawing.Size(514, 509);
+            this.splitContainer2.SplitterDistance = 283;
             this.splitContainer2.TabIndex = 6;
             // 
             // groupBox1
@@ -171,7 +171,7 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(280, 508);
+            this.groupBox1.Size = new System.Drawing.Size(283, 509);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Preview";
@@ -179,7 +179,7 @@ namespace UoFiddler.Controls.UserControls
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(59, 479);
+            this.button1.Location = new System.Drawing.Point(59, 480);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -192,7 +192,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(3, 16);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(274, 489);
+            this.pictureBox1.Size = new System.Drawing.Size(277, 490);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -371,7 +371,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "AnimDataControl";
-            this.Size = new System.Drawing.Size(723, 508);
+            this.Size = new System.Drawing.Size(727, 509);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -395,6 +395,8 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ToolStripTextBox AddTextBox;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.Button button1;
@@ -414,8 +416,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.TreeView treeViewFrames;
-
-        #endregion
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button5;

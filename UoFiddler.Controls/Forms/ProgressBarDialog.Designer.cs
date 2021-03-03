@@ -31,18 +31,21 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
-            // progressBar1
+            // progressBar
             // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(12, 12);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(260, 23);
+            this.progressBar.Size = new System.Drawing.Size(265, 21);
             this.progressBar.TabIndex = 0;
             // 
-            // ProgressBar
+            // ProgressBarDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(286, 50);
+            this.ClientSize = new System.Drawing.Size(288, 44);
             this.Controls.Add(this.progressBar);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -53,8 +56,8 @@
 
         }
 
-        private System.Windows.Forms.ProgressBar progressBar;
-
         #endregion
+
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }

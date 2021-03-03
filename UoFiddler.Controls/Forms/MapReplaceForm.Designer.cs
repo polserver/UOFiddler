@@ -215,7 +215,7 @@ namespace UoFiddler.Controls.Forms
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.progressBar1.Location = new System.Drawing.Point(0, 307);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(333, 23);
+            this.progressBar1.Size = new System.Drawing.Size(332, 23);
             this.progressBar1.TabIndex = 13;
             // 
             // label5
@@ -347,11 +347,11 @@ namespace UoFiddler.Controls.Forms
             this.label8.TabIndex = 24;
             this.label8.Text = "Map ID";
             // 
-            // MapReplace
+            // MapReplaceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(333, 330);
+            this.ClientSize = new System.Drawing.Size(332, 330);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.comboBoxMapID);
             this.Controls.Add(this.groupBox4);
@@ -388,6 +388,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBoxMap;
@@ -414,7 +416,5 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.CheckBox RemoveDupl;
         private System.Windows.Forms.TextBox textBox1;
-
-        #endregion
     }
 }

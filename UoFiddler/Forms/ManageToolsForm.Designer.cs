@@ -87,7 +87,7 @@ namespace UoFiddler.Forms
             this.listBoxTools.FormattingEnabled = true;
             this.listBoxTools.Location = new System.Drawing.Point(6, 19);
             this.listBoxTools.Name = "listBoxTools";
-            this.listBoxTools.Size = new System.Drawing.Size(371, 95);
+            this.listBoxTools.Size = new System.Drawing.Size(373, 95);
             this.listBoxTools.TabIndex = 10;
             this.listBoxTools.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ToolDrawItem);
             this.listBoxTools.SelectedIndexChanged += new System.EventHandler(this.OnToolIndexChanged);
@@ -101,7 +101,7 @@ namespace UoFiddler.Forms
             this.listBoxArgs.FormattingEnabled = true;
             this.listBoxArgs.Location = new System.Drawing.Point(6, 20);
             this.listBoxArgs.Name = "listBoxArgs";
-            this.listBoxArgs.Size = new System.Drawing.Size(371, 95);
+            this.listBoxArgs.Size = new System.Drawing.Size(373, 95);
             this.listBoxArgs.TabIndex = 1;
             this.listBoxArgs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ArgDrawItem);
             this.listBoxArgs.SelectedIndexChanged += new System.EventHandler(this.OnArgIndexChanged);
@@ -118,7 +118,7 @@ namespace UoFiddler.Forms
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(142, 71);
+            this.button2.Location = new System.Drawing.Point(144, 71);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -129,7 +129,7 @@ namespace UoFiddler.Forms
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(302, 120);
+            this.button3.Location = new System.Drawing.Point(304, 120);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 6;
@@ -140,7 +140,7 @@ namespace UoFiddler.Forms
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(302, 121);
+            this.button4.Location = new System.Drawing.Point(304, 121);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 8;
@@ -162,8 +162,8 @@ namespace UoFiddler.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(616, 296);
-            this.splitContainer1.SplitterDistance = 385;
+            this.splitContainer1.Size = new System.Drawing.Size(620, 296);
+            this.splitContainer1.SplitterDistance = 387;
             this.splitContainer1.TabIndex = 9;
             // 
             // splitContainer3
@@ -180,7 +180,7 @@ namespace UoFiddler.Forms
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.groupBox4);
-            this.splitContainer3.Size = new System.Drawing.Size(385, 296);
+            this.splitContainer3.Size = new System.Drawing.Size(387, 296);
             this.splitContainer3.SplitterDistance = 147;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 9;
@@ -192,7 +192,7 @@ namespace UoFiddler.Forms
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(0, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(385, 147);
+            this.groupBox3.Size = new System.Drawing.Size(387, 147);
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Tool list";
@@ -204,7 +204,7 @@ namespace UoFiddler.Forms
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(0, 0);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(385, 147);
+            this.groupBox4.Size = new System.Drawing.Size(387, 147);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Argument list";
@@ -223,7 +223,7 @@ namespace UoFiddler.Forms
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.groupBox2);
-            this.splitContainer2.Size = new System.Drawing.Size(227, 296);
+            this.splitContainer2.Size = new System.Drawing.Size(229, 296);
             this.splitContainer2.SplitterDistance = 147;
             this.splitContainer2.TabIndex = 12;
             // 
@@ -238,7 +238,7 @@ namespace UoFiddler.Forms
             this.groupBox1.Controls.Add(this.textBoxToolName);
             this.groupBox1.Location = new System.Drawing.Point(3, 19);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(223, 100);
+            this.groupBox1.Size = new System.Drawing.Size(225, 100);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Tool";
@@ -246,7 +246,7 @@ namespace UoFiddler.Forms
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Location = new System.Drawing.Point(61, 71);
+            this.button5.Location = new System.Drawing.Point(63, 71);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 6;
@@ -260,13 +260,13 @@ namespace UoFiddler.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxToolFile.Location = new System.Drawing.Point(6, 45);
             this.textBoxToolFile.Name = "textBoxToolFile";
-            this.textBoxToolFile.Size = new System.Drawing.Size(179, 20);
+            this.textBoxToolFile.Size = new System.Drawing.Size(181, 20);
             this.textBoxToolFile.TabIndex = 2;
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(191, 43);
+            this.button1.Location = new System.Drawing.Point(193, 43);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(26, 23);
             this.button1.TabIndex = 3;
@@ -280,7 +280,7 @@ namespace UoFiddler.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxToolName.Location = new System.Drawing.Point(6, 19);
             this.textBoxToolName.Name = "textBoxToolName";
-            this.textBoxToolName.Size = new System.Drawing.Size(211, 20);
+            this.textBoxToolName.Size = new System.Drawing.Size(213, 20);
             this.textBoxToolName.TabIndex = 0;
             // 
             // groupBox2
@@ -293,7 +293,7 @@ namespace UoFiddler.Forms
             this.groupBox2.Controls.Add(this.button6);
             this.groupBox2.Location = new System.Drawing.Point(3, 18);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(223, 100);
+            this.groupBox2.Size = new System.Drawing.Size(225, 100);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Argument";
@@ -301,7 +301,7 @@ namespace UoFiddler.Forms
             // button7
             // 
             this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(61, 71);
+            this.button7.Location = new System.Drawing.Point(63, 71);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(75, 23);
             this.button7.TabIndex = 7;
@@ -315,7 +315,7 @@ namespace UoFiddler.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxArgName.Location = new System.Drawing.Point(6, 19);
             this.textBoxArgName.Name = "textBoxArgName";
-            this.textBoxArgName.Size = new System.Drawing.Size(211, 20);
+            this.textBoxArgName.Size = new System.Drawing.Size(213, 20);
             this.textBoxArgName.TabIndex = 6;
             // 
             // textBoxArgParam
@@ -324,13 +324,13 @@ namespace UoFiddler.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxArgParam.Location = new System.Drawing.Point(6, 45);
             this.textBoxArgParam.Name = "textBoxArgParam";
-            this.textBoxArgParam.Size = new System.Drawing.Size(211, 20);
+            this.textBoxArgParam.Size = new System.Drawing.Size(213, 20);
             this.textBoxArgParam.TabIndex = 8;
             // 
             // button6
             // 
             this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Location = new System.Drawing.Point(142, 71);
+            this.button6.Location = new System.Drawing.Point(144, 71);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 9;
@@ -338,11 +338,11 @@ namespace UoFiddler.Forms
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.OnAddArg);
             // 
-            // ManageTools
+            // ManageToolsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 302);
+            this.ClientSize = new System.Drawing.Size(626, 302);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -374,6 +374,8 @@ namespace UoFiddler.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
@@ -395,7 +397,5 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TextBox textBoxArgParam;
         private System.Windows.Forms.TextBox textBoxToolFile;
         private System.Windows.Forms.TextBox textBoxToolName;
-
-        #endregion
     }
 }

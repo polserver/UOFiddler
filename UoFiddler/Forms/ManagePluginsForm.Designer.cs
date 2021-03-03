@@ -54,7 +54,7 @@ namespace UoFiddler.Forms
             this.checkedListBox1.FormattingEnabled = true;
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(151, 231);
+            this.checkedListBox1.Size = new System.Drawing.Size(152, 231);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.OnSelect);
             // 
@@ -71,8 +71,8 @@ namespace UoFiddler.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(418, 231);
-            this.splitContainer1.SplitterDistance = 151;
+            this.splitContainer1.Size = new System.Drawing.Size(421, 231);
+            this.splitContainer1.SplitterDistance = 152;
             this.splitContainer1.TabIndex = 1;
             // 
             // richTextBox1
@@ -80,15 +80,15 @@ namespace UoFiddler.Forms
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(263, 231);
+            this.richTextBox1.Size = new System.Drawing.Size(265, 231);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
-            // ManagePlugins
+            // ManagePluginsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(418, 231);
+            this.ClientSize = new System.Drawing.Size(421, 231);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -103,10 +103,10 @@ namespace UoFiddler.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-
-        #endregion
     }
 }

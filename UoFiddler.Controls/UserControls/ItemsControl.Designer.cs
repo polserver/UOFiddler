@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace UoFiddler.Controls.UserControls
 {
-    partial class ItemShowAlternativeControl
+    partial class ItemsControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -115,8 +115,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.DetailTextBox);
-            this.splitContainer2.Size = new System.Drawing.Size(161, 284);
-            this.splitContainer2.SplitterDistance = 163;
+            this.splitContainer2.Size = new System.Drawing.Size(164, 286);
+            this.splitContainer2.SplitterDistance = 164;
             this.splitContainer2.TabIndex = 0;
             // 
             // DetailPictureBox
@@ -125,7 +125,7 @@ namespace UoFiddler.Controls.UserControls
             this.DetailPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DetailPictureBox.Location = new System.Drawing.Point(0, 0);
             this.DetailPictureBox.Name = "DetailPictureBox";
-            this.DetailPictureBox.Size = new System.Drawing.Size(161, 163);
+            this.DetailPictureBox.Size = new System.Drawing.Size(164, 164);
             this.DetailPictureBox.TabIndex = 0;
             this.DetailPictureBox.TabStop = false;
             // 
@@ -148,7 +148,7 @@ namespace UoFiddler.Controls.UserControls
             this.DetailTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DetailTextBox.Location = new System.Drawing.Point(0, 0);
             this.DetailTextBox.Name = "DetailTextBox";
-            this.DetailTextBox.Size = new System.Drawing.Size(161, 117);
+            this.DetailTextBox.Size = new System.Drawing.Size(164, 118);
             this.DetailTextBox.TabIndex = 0;
             this.DetailTextBox.Text = "";
             // 
@@ -165,8 +165,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(636, 284);
-            this.splitContainer1.SplitterDistance = 471;
+            this.splitContainer1.Size = new System.Drawing.Size(643, 286);
+            this.splitContainer1.SplitterDistance = 475;
             this.splitContainer1.TabIndex = 6;
             // 
             // ItemsTileView
@@ -180,7 +180,7 @@ namespace UoFiddler.Controls.UserControls
             this.ItemsTileView.Location = new System.Drawing.Point(0, 0);
             this.ItemsTileView.MultiSelect = true;
             this.ItemsTileView.Name = "ItemsTileView";
-            this.ItemsTileView.Size = new System.Drawing.Size(471, 284);
+            this.ItemsTileView.Size = new System.Drawing.Size(475, 286);
             this.ItemsTileView.TabIndex = 0;
             this.ItemsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.ItemsTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -216,7 +216,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator1,
             this.saveToolStripMenuItem});
             this.TileViewContextMenuStrip.Name = "contextMenuStrip1";
-            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 308);
+            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 286);
             this.TileViewContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.TileViewContextMenuStrip_Opening);
             // 
             // showFreeSlotsToolStripMenuItem
@@ -367,9 +367,9 @@ namespace UoFiddler.Controls.UserControls
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NameLabel,
             this.GraphicLabel});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 317);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 319);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(636, 22);
+            this.StatusStrip.Size = new System.Drawing.Size(643, 22);
             this.StatusStrip.TabIndex = 5;
             this.StatusStrip.Text = "statusStrip1";
             // 
@@ -409,7 +409,7 @@ namespace UoFiddler.Controls.UserControls
             this.ToolStrip.Location = new System.Drawing.Point(0, 0);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ToolStrip.Size = new System.Drawing.Size(636, 25);
+            this.ToolStrip.Size = new System.Drawing.Size(643, 25);
             this.ToolStrip.TabIndex = 7;
             // 
             // SearchToolStripButton
@@ -501,7 +501,7 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.UseAnimations = false;
             this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
-            // ItemShowAlternativeControl
+            // ItemsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -510,8 +510,8 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.ToolStrip);
             this.DoubleBuffered = true;
-            this.Name = "ItemShowAlternativeControl";
-            this.Size = new System.Drawing.Size(636, 339);
+            this.Name = "ItemsControl";
+            this.Size = new System.Drawing.Size(643, 341);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -532,6 +532,8 @@ namespace UoFiddler.Controls.UserControls
             this.PerformLayout();
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
@@ -569,9 +571,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-
-        #endregion
-
         private System.Windows.Forms.ContextMenuStrip DetailPictureBoxContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorToolStripMenuItemDetail;
         private System.Windows.Forms.ColorDialog colorDialog;

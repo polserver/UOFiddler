@@ -97,6 +97,8 @@ namespace UoFiddler.Controls.UserControls
             this.memorySaveWarningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDirectlyOnChangesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.setTextureOnDoubleClickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -105,8 +107,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.setTextureOnDoubleClickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.splitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.tabcontrol.SuspendLayout();
             this.tabPageItems.SuspendLayout();
@@ -150,7 +150,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabcontrol.Location = new System.Drawing.Point(0, 33);
             this.tabcontrol.Name = "tabcontrol";
             this.tabcontrol.SelectedIndex = 0;
-            this.tabcontrol.Size = new System.Drawing.Size(621, 294);
+            this.tabcontrol.Size = new System.Drawing.Size(625, 296);
             this.tabcontrol.TabIndex = 0;
             // 
             // tabPageItems
@@ -159,7 +159,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(613, 268);
+            this.tabPageItems.Size = new System.Drawing.Size(617, 270);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Text = "Items";
             this.tabPageItems.UseVisualStyleBackColor = true;
@@ -177,8 +177,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(607, 262);
-            this.splitContainer1.SplitterDistance = 200;
+            this.splitContainer1.Size = new System.Drawing.Size(611, 264);
+            this.splitContainer1.SplitterDistance = 201;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -195,8 +195,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxItem);
-            this.splitContainer2.Size = new System.Drawing.Size(200, 262);
-            this.splitContainer2.SplitterDistance = 161;
+            this.splitContainer2.Size = new System.Drawing.Size(201, 264);
+            this.splitContainer2.SplitterDistance = 162;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeViewItem
@@ -206,7 +206,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(0, 0);
             this.treeViewItem.Name = "treeViewItem";
-            this.treeViewItem.Size = new System.Drawing.Size(200, 161);
+            this.treeViewItem.Size = new System.Drawing.Size(201, 162);
             this.treeViewItem.TabIndex = 0;
             this.treeViewItem.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.OnItemDataNodeExpanded);
             this.treeViewItem.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeViewItem);
@@ -262,7 +262,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxItem.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxItem.Name = "pictureBoxItem";
-            this.pictureBoxItem.Size = new System.Drawing.Size(200, 97);
+            this.pictureBoxItem.Size = new System.Drawing.Size(201, 98);
             this.pictureBoxItem.TabIndex = 0;
             this.pictureBoxItem.TabStop = false;
             // 
@@ -305,7 +305,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(403, 262);
+            this.splitContainer3.Size = new System.Drawing.Size(406, 264);
             this.splitContainer3.SplitterDistance = 157;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 25;
@@ -522,7 +522,7 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
             this.checkedListBox1.MultiColumn = true;
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(403, 103);
+            this.checkedListBox1.Size = new System.Drawing.Size(406, 105);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnFlagItemCheckItems);
             // 
@@ -701,7 +701,7 @@ namespace UoFiddler.Controls.UserControls
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
             this.MainToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.MainToolStrip.Size = new System.Drawing.Size(621, 25);
+            this.MainToolStrip.Size = new System.Drawing.Size(625, 25);
             this.MainToolStrip.TabIndex = 1;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -742,6 +742,18 @@ namespace UoFiddler.Controls.UserControls
             this.setFilterToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.setFilterToolStripMenuItem.Text = "Set Filter";
             this.setFilterToolStripMenuItem.Click += new System.EventHandler(this.OnClickSetFilter);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(202, 6);
+            // 
+            // setTextureOnDoubleClickToolStripMenuItem
+            // 
+            this.setTextureOnDoubleClickToolStripMenuItem.CheckOnClick = true;
+            this.setTextureOnDoubleClickToolStripMenuItem.Name = "setTextureOnDoubleClickToolStripMenuItem";
+            this.setTextureOnDoubleClickToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.setTextureOnDoubleClickToolStripMenuItem.Text = "Set TexID on double click";
             // 
             // setTexturesToolStripMenuItem
             // 
@@ -805,18 +817,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton3.Text = "Save Tiledata";
             this.toolStripButton3.Click += new System.EventHandler(this.OnClickSaveTiledata);
             // 
-            // setTextureOnDoubleClickToolStripMenuItem
-            // 
-            this.setTextureOnDoubleClickToolStripMenuItem.CheckOnClick = true;
-            this.setTextureOnDoubleClickToolStripMenuItem.Name = "setTextureOnDoubleClickToolStripMenuItem";
-            this.setTextureOnDoubleClickToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.setTextureOnDoubleClickToolStripMenuItem.Text = "Set TexID on double click";
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(202, 6);
-            // 
             // splitter1
             // 
             this.splitter1.AnimationDelay = 20;
@@ -841,7 +841,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.MainToolStrip);
             this.DoubleBuffered = true;
             this.Name = "TileDataControl";
-            this.Size = new System.Drawing.Size(621, 327);
+            this.Size = new System.Drawing.Size(625, 329);
             this.Load += new System.EventHandler(this.OnLoad);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TileData_KeyUp);
             this.tabcontrol.ResumeLayout(false);
@@ -884,6 +884,8 @@ namespace UoFiddler.Controls.UserControls
             this.PerformLayout();
 
         }
+
+        #endregion
 
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.CheckedListBox checkedListBox2;
@@ -947,9 +949,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView treeViewItem;
         private System.Windows.Forms.TreeView treeViewLand;
-
-        #endregion
-
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;

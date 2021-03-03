@@ -40,9 +40,7 @@ namespace UoFiddler.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.checkBoxAltDesign = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxUseHash = new System.Windows.Forms.CheckBox();
             this.numericUpDownItemSizeHeight = new System.Windows.Forms.NumericUpDown();
             this.checkBoxItemClip = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -83,20 +81,8 @@ namespace UoFiddler.Forms
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
-            // checkBoxAltDesign
-            // 
-            this.checkBoxAltDesign.AutoSize = true;
-            this.checkBoxAltDesign.Location = new System.Drawing.Point(6, 19);
-            this.checkBoxAltDesign.Name = "checkBoxAltDesign";
-            this.checkBoxAltDesign.Size = new System.Drawing.Size(112, 17);
-            this.checkBoxAltDesign.TabIndex = 0;
-            this.checkBoxAltDesign.Text = "Alternative Design";
-            this.toolTip1.SetToolTip(this.checkBoxAltDesign, "Alternative layout in item/landtile/texture tab?");
-            this.checkBoxAltDesign.UseVisualStyleBackColor = true;
-            // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.checkBoxUseHash);
             this.groupBox1.Controls.Add(this.numericUpDownItemSizeHeight);
             this.groupBox1.Controls.Add(this.checkBoxItemClip);
             this.groupBox1.Controls.Add(this.label1);
@@ -107,17 +93,6 @@ namespace UoFiddler.Forms
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Item Tab";
-            // 
-            // checkBoxUseHash
-            // 
-            this.checkBoxUseHash.AutoSize = true;
-            this.checkBoxUseHash.Location = new System.Drawing.Point(9, 71);
-            this.checkBoxUseHash.Name = "checkBoxUseHash";
-            this.checkBoxUseHash.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxUseHash.TabIndex = 4;
-            this.checkBoxUseHash.Text = "Use Hashfile";
-            this.toolTip1.SetToolTip(this.checkBoxUseHash, "Use Hashfile to speed up load?");
-            this.checkBoxUseHash.UseVisualStyleBackColor = true;
             // 
             // numericUpDownItemSizeHeight
             // 
@@ -189,7 +164,7 @@ namespace UoFiddler.Forms
             // checkBoxCacheData
             // 
             this.checkBoxCacheData.AutoSize = true;
-            this.checkBoxCacheData.Location = new System.Drawing.Point(6, 42);
+            this.checkBoxCacheData.Location = new System.Drawing.Point(6, 20);
             this.checkBoxCacheData.Name = "checkBoxCacheData";
             this.checkBoxCacheData.Size = new System.Drawing.Size(83, 17);
             this.checkBoxCacheData.TabIndex = 2;
@@ -202,7 +177,6 @@ namespace UoFiddler.Forms
             this.groupBox2.Controls.Add(this.checkBoxPanelSoundsDesign);
             this.groupBox2.Controls.Add(this.checkBoxuseDiff);
             this.groupBox2.Controls.Add(this.checkBoxNewMapSize);
-            this.groupBox2.Controls.Add(this.checkBoxAltDesign);
             this.groupBox2.Controls.Add(this.checkBoxCacheData);
             this.groupBox2.Location = new System.Drawing.Point(14, 5);
             this.groupBox2.Name = "groupBox2";
@@ -214,7 +188,7 @@ namespace UoFiddler.Forms
             // checkBoxPanelSoundsDesign
             // 
             this.checkBoxPanelSoundsDesign.AutoSize = true;
-            this.checkBoxPanelSoundsDesign.Location = new System.Drawing.Point(6, 111);
+            this.checkBoxPanelSoundsDesign.Location = new System.Drawing.Point(6, 89);
             this.checkBoxPanelSoundsDesign.Name = "checkBoxPanelSoundsDesign";
             this.checkBoxPanelSoundsDesign.Size = new System.Drawing.Size(146, 17);
             this.checkBoxPanelSoundsDesign.TabIndex = 5;
@@ -225,7 +199,7 @@ namespace UoFiddler.Forms
             // checkBoxuseDiff
             // 
             this.checkBoxuseDiff.AutoSize = true;
-            this.checkBoxuseDiff.Location = new System.Drawing.Point(6, 88);
+            this.checkBoxuseDiff.Location = new System.Drawing.Point(6, 66);
             this.checkBoxuseDiff.Name = "checkBoxuseDiff";
             this.checkBoxuseDiff.Size = new System.Drawing.Size(110, 17);
             this.checkBoxuseDiff.TabIndex = 4;
@@ -236,7 +210,7 @@ namespace UoFiddler.Forms
             // checkBoxNewMapSize
             // 
             this.checkBoxNewMapSize.AutoSize = true;
-            this.checkBoxNewMapSize.Location = new System.Drawing.Point(6, 65);
+            this.checkBoxNewMapSize.Location = new System.Drawing.Point(6, 43);
             this.checkBoxNewMapSize.Name = "checkBoxNewMapSize";
             this.checkBoxNewMapSize.Size = new System.Drawing.Size(95, 17);
             this.checkBoxNewMapSize.TabIndex = 3;
@@ -457,7 +431,7 @@ namespace UoFiddler.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(435, 341);
+            this.ClientSize = new System.Drawing.Size(434, 340);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button1);
@@ -483,15 +457,15 @@ namespace UoFiddler.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.TextBox argstext;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox checkBoxAltDesign;
         private System.Windows.Forms.CheckBox checkBoxCacheData;
         private System.Windows.Forms.CheckBox checkBoxItemClip;
         private System.Windows.Forms.CheckBox checkBoxNewMapSize;
         private System.Windows.Forms.CheckBox checkBoxuseDiff;
-        private System.Windows.Forms.CheckBox checkBoxUseHash;
         private System.Windows.Forms.TextBox cmdtext;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -517,9 +491,6 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.NumericUpDown numericUpDownItemSizeWidth;
         private System.Windows.Forms.TextBox textBoxOutputPath;
         private System.Windows.Forms.ToolTip toolTip1;
-
-        #endregion
-
         private System.Windows.Forms.CheckBox checkBoxPanelSoundsDesign;
     }
 }

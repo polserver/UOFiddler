@@ -124,7 +124,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tabControl3);
-            this.splitContainer2.Size = new System.Drawing.Size(638, 374);
+            this.splitContainer2.Size = new System.Drawing.Size(641, 375);
             this.splitContainer2.SplitterDistance = 210;
             this.splitContainer2.TabIndex = 1;
             // 
@@ -137,7 +137,7 @@ namespace UoFiddler.Controls.UserControls
             this.TreeViewMulti.Margin = new System.Windows.Forms.Padding(0);
             this.TreeViewMulti.Name = "TreeViewMulti";
             this.TreeViewMulti.ShowNodeToolTips = true;
-            this.TreeViewMulti.Size = new System.Drawing.Size(210, 341);
+            this.TreeViewMulti.Size = new System.Drawing.Size(210, 342);
             this.TreeViewMulti.TabIndex = 0;
             this.TreeViewMulti.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect_Multi);
             // 
@@ -261,28 +261,28 @@ namespace UoFiddler.Controls.UserControls
             // aToolStripMenuItem
             // 
             this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.aToolStripMenuItem.Text = "As Bmp";
             this.aToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllBmp);
             // 
             // asTiffToolStripMenuItem1
             // 
             this.asTiffToolStripMenuItem1.Name = "asTiffToolStripMenuItem1";
-            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem1.Text = "As Tiff";
             this.asTiffToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllTiff);
             // 
             // asJpgToolStripMenuItem
             // 
             this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asJpgToolStripMenuItem.Text = "As Jpg";
             this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllJpg);
             // 
             // asPngToolStripMenuItem1
             // 
             this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
-            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
             this.asPngToolStripMenuItem1.Text = "As Png";
             this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllPng);
             // 
@@ -362,7 +362,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl3.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl3.Name = "tabControl3";
             this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(424, 374);
+            this.tabControl3.Size = new System.Drawing.Size(427, 375);
             this.tabControl3.TabIndex = 1;
             // 
             // tabPage5
@@ -371,7 +371,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(416, 348);
+            this.tabPage5.Size = new System.Drawing.Size(419, 349);
             this.tabPage5.TabIndex = 0;
             this.tabPage5.Text = "Graphic";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -391,7 +391,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer3.Size = new System.Drawing.Size(410, 342);
+            this.splitContainer3.Size = new System.Drawing.Size(413, 343);
             this.splitContainer3.SplitterDistance = 36;
             this.splitContainer3.SplitterWidth = 1;
             this.splitContainer3.TabIndex = 0;
@@ -404,7 +404,7 @@ namespace UoFiddler.Controls.UserControls
             this.HeightChangeMulti.MaximumSize = new System.Drawing.Size(0, 33);
             this.HeightChangeMulti.MinimumSize = new System.Drawing.Size(0, 33);
             this.HeightChangeMulti.Name = "HeightChangeMulti";
-            this.HeightChangeMulti.Size = new System.Drawing.Size(410, 33);
+            this.HeightChangeMulti.Size = new System.Drawing.Size(413, 33);
             this.HeightChangeMulti.TabIndex = 0;
             this.HeightChangeMulti.ValueChanged += new System.EventHandler(this.OnValue_HeightChangeMulti);
             // 
@@ -424,7 +424,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer4.Panel2.Controls.Add(this.statusMulti);
             this.splitContainer4.Panel2MinSize = 22;
-            this.splitContainer4.Size = new System.Drawing.Size(410, 305);
+            this.splitContainer4.Size = new System.Drawing.Size(413, 306);
             this.splitContainer4.SplitterDistance = 271;
             this.splitContainer4.SplitterWidth = 1;
             this.splitContainer4.TabIndex = 1;
@@ -437,7 +437,7 @@ namespace UoFiddler.Controls.UserControls
             this.MultiPictureBox.Location = new System.Drawing.Point(0, 0);
             this.MultiPictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.MultiPictureBox.Name = "MultiPictureBox";
-            this.MultiPictureBox.Size = new System.Drawing.Size(410, 271);
+            this.MultiPictureBox.Size = new System.Drawing.Size(413, 271);
             this.MultiPictureBox.TabIndex = 0;
             this.MultiPictureBox.TabStop = false;
             this.MultiPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint_MultiPic);
@@ -492,9 +492,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.statusMulti.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusMultiText});
-            this.statusMulti.Location = new System.Drawing.Point(0, 11);
+            this.statusMulti.Location = new System.Drawing.Point(0, 12);
             this.statusMulti.Name = "statusMulti";
-            this.statusMulti.Size = new System.Drawing.Size(410, 22);
+            this.statusMulti.Size = new System.Drawing.Size(413, 22);
             this.statusMulti.TabIndex = 0;
             this.statusMulti.Text = "statusStrip2";
             // 
@@ -536,7 +536,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.splitContainer2);
             this.DoubleBuffered = true;
             this.Name = "MultisControl";
-            this.Size = new System.Drawing.Size(638, 374);
+            this.Size = new System.Drawing.Size(641, 375);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();

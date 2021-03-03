@@ -39,6 +39,7 @@ namespace UoFiddler.Plugin.SendItem.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.SendOnClick = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -46,7 +47,7 @@ namespace UoFiddler.Plugin.SendItem.Forms
             this.label7 = new System.Windows.Forms.Label();
             this.cmdtext = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.toolTip1 = new System.Windows.Forms.ToolTip();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -119,11 +120,11 @@ namespace UoFiddler.Plugin.SendItem.Forms
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.OnClickSave);
             // 
-            // Option
+            // SendItemOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(230, 156);
+            this.ClientSize = new System.Drawing.Size(230, 157);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
@@ -135,6 +136,8 @@ namespace UoFiddler.Plugin.SendItem.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.TextBox argstext;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox cmdtext;
@@ -143,7 +146,5 @@ namespace UoFiddler.Plugin.SendItem.Forms
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox SendOnClick;
         private System.Windows.Forms.ToolTip toolTip1;
-
-        #endregion
     }
 }

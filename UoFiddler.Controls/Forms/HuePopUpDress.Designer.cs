@@ -59,7 +59,7 @@ namespace UoFiddler.Controls.Forms
             this.toolStrip1.Location = new System.Drawing.Point(0, 266);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(524, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(520, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -99,14 +99,14 @@ namespace UoFiddler.Controls.Forms
             this.control.Location = new System.Drawing.Point(0, 0);
             this.control.Name = "control";
             this.control.Padding = new System.Windows.Forms.Padding(1);
-            this.control.Size = new System.Drawing.Size(524, 266);
+            this.control.Size = new System.Drawing.Size(520, 266);
             this.control.TabIndex = 1;
             // 
             // HuePopUpDress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(524, 291);
+            this.ClientSize = new System.Drawing.Size(520, 291);
             this.Controls.Add(this.control);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
@@ -120,12 +120,12 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private UoFiddler.Controls.UserControls.HuesControl control;
         private System.Windows.Forms.ToolStripButton HueOnlyGray;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
-
-        #endregion
     }
 }

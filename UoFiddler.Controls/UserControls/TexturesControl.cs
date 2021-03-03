@@ -24,9 +24,9 @@ using UoFiddler.Controls.Helpers;
 namespace UoFiddler.Controls.UserControls
 {
     // TODO: add "Show free slots" support
-    public partial class TextureAlternativeControl : UserControl
+    public partial class TexturesControl : UserControl
     {
-        public TextureAlternativeControl()
+        public TexturesControl()
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
@@ -34,7 +34,7 @@ namespace UoFiddler.Controls.UserControls
             _refMarker = this;
         }
 
-        private static TextureAlternativeControl _refMarker;
+        private static TexturesControl _refMarker;
         private List<int> _textureList = new List<int>();
         private bool _loaded;
 
@@ -106,11 +106,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextureChangeEvent(object sender, int index)
         {
-            if (!Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!_loaded)
             {
                 return;
@@ -158,10 +153,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnFilePathChangeEvent()
         {
-            if (Options.DesignAlternative)
-            {
-                Reload();
-            }
+            Reload();
         }
 
         private TextureSearchForm _showForm;
@@ -417,6 +409,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void TextureTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Point itemPoint = new Point(e.Bounds.X + TextureTileView.TilePadding.Left, e.Bounds.Y + TextureTileView.TilePadding.Top);
 
             const int defaultTileWidth = 128;

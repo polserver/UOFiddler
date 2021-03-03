@@ -11,7 +11,7 @@
 
 namespace UoFiddler.Controls.UserControls
 {
-    partial class TextureAlternativeControl
+    partial class TexturesControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -52,6 +52,8 @@ namespace UoFiddler.Controls.UserControls
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InsertText = new System.Windows.Forms.ToolStripTextBox();
+            this.insertStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InsertStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.GraphicLabel = new System.Windows.Forms.ToolStripLabel();
             this.MiscToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
@@ -66,8 +68,6 @@ namespace UoFiddler.Controls.UserControls
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.TextureTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            this.insertStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.InsertStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -83,7 +83,7 @@ namespace UoFiddler.Controls.UserControls
             this.insertAtToolStripMenuItem,
             this.insertStartingFromToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 164);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 142);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -160,11 +160,24 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
+            // 
+            // insertStartingFromToolStripMenuItem
+            // 
+            this.insertStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InsertStartingFromTb});
+            this.insertStartingFromToolStripMenuItem.Name = "insertStartingFromToolStripMenuItem";
+            this.insertStartingFromToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.insertStartingFromToolStripMenuItem.Text = "Insert Starting From..";
+            // 
+            // InsertStartingFromTb
+            // 
+            this.InsertStartingFromTb.Name = "InsertStartingFromTb";
+            this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFrom_OnInsert);
             // 
             // toolStrip1
             // 
@@ -180,7 +193,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(620, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(625, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -291,7 +304,7 @@ namespace UoFiddler.Controls.UserControls
             this.TextureTileView.Location = new System.Drawing.Point(0, 25);
             this.TextureTileView.MultiSelect = false;
             this.TextureTileView.Name = "TextureTileView";
-            this.TextureTileView.Size = new System.Drawing.Size(620, 300);
+            this.TextureTileView.Size = new System.Drawing.Size(625, 303);
             this.TextureTileView.TabIndex = 5;
             this.TextureTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.TextureTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -304,30 +317,15 @@ namespace UoFiddler.Controls.UserControls
             this.TextureTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.TextureTileView_ItemSelectionChanged);
             this.TextureTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.TextureTileView_DrawItem);
             // 
-            // insertStartingFromToolStripMenuItem
-            // 
-            this.insertStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.InsertStartingFromTb});
-            this.insertStartingFromToolStripMenuItem.Name = "insertStartingFromToolStripMenuItem";
-            this.insertStartingFromToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.insertStartingFromToolStripMenuItem.Text = "Insert Starting From..";
-            // 
-            // InsertStartingFromTb
-            // 
-            this.InsertStartingFromTb.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.InsertStartingFromTb.Name = "InsertStartingFromTb";
-            this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
-            this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFrom_OnInsert);
-            // 
-            // TextureAlternativeControl
+            // TexturesControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.TextureTileView);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
-            this.Name = "TextureAlternativeControl";
-            this.Size = new System.Drawing.Size(620, 325);
+            this.Name = "TexturesControl";
+            this.Size = new System.Drawing.Size(625, 328);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
@@ -336,6 +334,8 @@ namespace UoFiddler.Controls.UserControls
             this.PerformLayout();
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
@@ -356,9 +356,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-
-        #endregion
-
         private TileView.TileViewControl TextureTileView;
         private System.Windows.Forms.ToolStripDropDownButton MiscToolStripDropDownButton;
         private System.Windows.Forms.ToolStripMenuItem exportAllToolStripMenuItem;

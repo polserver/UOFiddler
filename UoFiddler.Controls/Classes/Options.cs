@@ -44,11 +44,6 @@ namespace UoFiddler.Controls.Classes
         public static bool ArtItemClip { get; set; } = true;
 
         /// <summary>
-        /// Defines if alternative Controls should be used
-        /// </summary>
-        public static bool DesignAlternative { get; set; }
-
-        /// <summary>
         /// Defines if the right panel into the Sounds Tab
         /// should be toggled on
         /// </summary>

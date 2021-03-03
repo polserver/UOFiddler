@@ -22,11 +22,6 @@ namespace Ultima
         public static bool CacheData { get; set; } = true;
 
         /// <summary>
-        /// Should a Hash file be used to speed up loading
-        /// </summary>
-        public static bool UseHashFile { get; set; }
-
-        /// <summary>
         /// Contains the path infos
         /// </summary>
         public static Dictionary<string, string> MulPath { get; set; }

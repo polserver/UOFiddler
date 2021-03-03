@@ -41,11 +41,11 @@ namespace UoFiddler.Plugin.ExamplePlugin.Forms
         {
             this.SuspendLayout();
             // 
-            // Example
+            // ExampleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(323, 250);
+            this.ClientSize = new System.Drawing.Size(327, 250);
             this.DoubleBuffered = true;
             this.Name = "ExampleForm";
             this.Text = "Example";

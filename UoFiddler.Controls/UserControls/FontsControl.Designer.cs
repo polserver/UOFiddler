@@ -134,7 +134,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.FontsTileView);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(623, 328);
+            this.splitContainer1.Size = new System.Drawing.Size(627, 330);
             this.splitContainer1.SplitterDistance = 150;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -152,8 +152,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.LoadUnicodeFontsCheckBox);
-            this.splitContainer2.Size = new System.Drawing.Size(150, 328);
-            this.splitContainer2.SplitterDistance = 280;
+            this.splitContainer2.Size = new System.Drawing.Size(150, 330);
+            this.splitContainer2.SplitterDistance = 281;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeView
@@ -162,7 +162,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(0, 0);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(150, 280);
+            this.treeView.Size = new System.Drawing.Size(150, 281);
             this.treeView.TabIndex = 2;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
             // 
@@ -188,7 +188,7 @@ namespace UoFiddler.Controls.UserControls
             this.FontsTileView.Location = new System.Drawing.Point(0, 0);
             this.FontsTileView.MultiSelect = false;
             this.FontsTileView.Name = "FontsTileView";
-            this.FontsTileView.Size = new System.Drawing.Size(469, 306);
+            this.FontsTileView.Size = new System.Drawing.Size(473, 308);
             this.FontsTileView.TabIndex = 8;
             this.FontsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.FontsTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -205,9 +205,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 306);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 308);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(469, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(473, 22);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -224,7 +224,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "FontsControl";
-            this.Size = new System.Drawing.Size(623, 328);
+            this.Size = new System.Drawing.Size(627, 330);
             this.Load += new System.EventHandler(this.OnLoad);
             this.Resize += new System.EventHandler(this.FontsControl_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
@@ -244,6 +244,8 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem extractCharacterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importCharacterToolStripMenuItem;
@@ -251,9 +253,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem setOffsetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem writeTextToolStripMenuItem;
-
-        #endregion
-
         private System.Windows.Forms.SplitContainer splitContainer1;
         private TileView.TileViewControl FontsTileView;
         private System.Windows.Forms.SplitContainer splitContainer2;

@@ -28,7 +28,7 @@ namespace UoFiddler.Controls.Forms
         {
             if (Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, 0x3FFF))
             {
-                bool res = Options.DesignAlternative ? LandTilesAlternativeControl.SearchGraphic(graphic) : LandTilesControl.SearchGraphic(graphic);
+                bool res = LandTilesControl.SearchGraphic(graphic);
                 if (!res)
                 {
                     DialogResult result = MessageBox.Show(
@@ -48,9 +48,8 @@ namespace UoFiddler.Controls.Forms
         private void SearchName(object sender, EventArgs e)
         {
             _lastSearchedName = textBoxItemName.Text;
-            bool res = Options.DesignAlternative
-                ? LandTilesAlternativeControl.SearchName(textBoxItemName.Text, false)
-                : LandTilesControl.SearchName(textBoxItemName.Text, false);
+
+            bool res = LandTilesControl.SearchName(textBoxItemName.Text, false);
             if (res)
             {
                 return;
@@ -70,9 +69,7 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = Options.DesignAlternative
-                ? LandTilesAlternativeControl.SearchName(textBoxItemName.Text, true)
-                : LandTilesControl.SearchName(textBoxItemName.Text, true);
+            bool res = LandTilesControl.SearchName(textBoxItemName.Text, true);
             if (res)
             {
                 return;

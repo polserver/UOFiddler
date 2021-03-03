@@ -27,9 +27,9 @@ using UoFiddler.Controls.UserControls.TileView;
 
 namespace UoFiddler.Controls.UserControls
 {
-    public partial class ItemShowAlternativeControl : UserControl
+    public partial class ItemsControl : UserControl
     {
-        public ItemShowAlternativeControl()
+        public ItemsControl()
         {
             InitializeComponent();
 
@@ -58,7 +58,7 @@ namespace UoFiddler.Controls.UserControls
         }
 
         public IReadOnlyList<int> ItemList { get => _itemList.AsReadOnly(); }
-        public static ItemShowAlternativeControl RefMarker { get; private set; }
+        public static ItemsControl RefMarker { get; private set; }
         public static TileViewControl TileView => RefMarker.ItemsTileView;
         public bool IsLoaded { get; private set; }
 
@@ -211,19 +211,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnFilePathChangeEvent()
         {
-            if (Options.DesignAlternative)
-            {
-                Reload();
-            }
+            Reload();
         }
 
         private void OnTileDataChangeEvent(object sender, int id)
         {
-            if (!Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!IsLoaded)
             {
                 return;
@@ -252,11 +244,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnItemChangeEvent(object sender, int index)
         {
-            if (!Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!IsLoaded)
             {
                 return;
@@ -325,6 +312,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateDetail(int graphic)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             if (_scrolling)
             {
                 return;
@@ -863,6 +855,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void ItemsTileView_DrawItem(object sender, TileViewControl.DrawTileListItemEventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Point itemPoint = new Point(e.Bounds.X + ItemsTileView.TilePadding.Left, e.Bounds.Y + ItemsTileView.TilePadding.Top);
 
             Rectangle rect = new Rectangle(itemPoint, ItemsTileView.TileSize);

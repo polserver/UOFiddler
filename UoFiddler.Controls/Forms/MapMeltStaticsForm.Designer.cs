@@ -128,11 +128,11 @@ namespace UoFiddler.Controls.Forms
             this.numericUpDownY2.Size = new System.Drawing.Size(59, 20);
             this.numericUpDownY2.TabIndex = 14;
             // 
-            // MapMeltStatics
+            // MapMeltStaticsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(242, 109);
+            this.ClientSize = new System.Drawing.Size(243, 110);
             this.Controls.Add(this.numericUpDownY2);
             this.Controls.Add(this.numericUpDownY1);
             this.Controls.Add(this.numericUpDownX2);
@@ -155,6 +155,8 @@ namespace UoFiddler.Controls.Forms
 
         }
 
+        #endregion
+
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -164,7 +166,5 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.NumericUpDown numericUpDownX2;
         private System.Windows.Forms.NumericUpDown numericUpDownY1;
         private System.Windows.Forms.NumericUpDown numericUpDownY2;
-
-        #endregion
     }
 }
