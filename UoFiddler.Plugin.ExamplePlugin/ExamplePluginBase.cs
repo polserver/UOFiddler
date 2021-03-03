@@ -29,7 +29,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
         public ExamplePluginBase()
         {
-            PluginEvents.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
+            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
             new ExampleForm().Show();
         }
 
-        private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
+        private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
         {
             strip.Items.Add(new ToolStripSeparator());
 
@@ -117,7 +117,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
         private void ExportToOffsetClicked(object sender, EventArgs e)
         {
             List<int> itemIds = new List<int>();
-            itemIds.AddRange(Host.GetItemShowAltControl().ItemList);
+            itemIds.AddRange(Host.GetItemsControl().ItemList);
 
             string fileName = Path.Combine(Options.OutputPath, "offset.cfg");
 
@@ -159,12 +159,12 @@ namespace UoFiddler.Plugin.ExamplePlugin
         private void ExportToItemDescClicked(object sender, EventArgs e)
         {
             var selectedArtIds = new List<int>();
-            var itemShowAltControl = Host.GetItemShowAltControl();
-            var itemShowAltTileView = Host.GetItemShowAltTileView();
+            var itemsControl = Host.GetItemsControl();
+            var itemsControlTileView = Host.GetItemsControlTileView();
 
-            foreach (var item in itemShowAltTileView.SelectedIndices)
+            foreach (var item in itemsControlTileView.SelectedIndices)
             {
-                var graphic = itemShowAltControl.ItemList[item];
+                var graphic = itemsControl.ItemList[item];
                 if (Art.IsValidStatic(graphic))
                 {
                     selectedArtIds.Add(graphic);

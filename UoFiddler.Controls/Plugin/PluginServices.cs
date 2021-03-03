@@ -12,7 +12,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin.Interfaces;
 using UoFiddler.Controls.Plugin.Types;
@@ -118,19 +117,19 @@ namespace UoFiddler.Controls.Plugin
             }
         }
 
-        public TileViewControl GetItemShowAltTileView()
+        public TileViewControl GetItemsControlTileView()
         {
-            return ItemShowAlternativeControl.TileView;
+            return ItemsControl.TileView;
         }
 
-        public ItemShowAlternativeControl GetItemShowAltControl()
+        public ItemsControl GetItemsControl()
         {
-            return ItemShowAlternativeControl.RefMarker;
+            return ItemsControl.RefMarker;
         }
 
-        public int GetSelectedItemShowAlternative()
+        public int GetSelectedIdFromItemsControl()
         {
-            return ItemShowAlternativeControl.RefMarker.SelectedGraphicId;
+            return ItemsControl.RefMarker.SelectedGraphicId;
         }
     }
 }

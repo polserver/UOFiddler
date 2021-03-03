@@ -55,9 +55,9 @@ namespace UoFiddler.Controls.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(610, 1);
+            this.vScrollBar.Location = new System.Drawing.Point(615, 1);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 330);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 332);
             this.vScrollBar.TabIndex = 0;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
             // 
@@ -67,7 +67,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(1, 1);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(609, 330);
+            this.pictureBox.Size = new System.Drawing.Size(614, 332);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
@@ -102,7 +102,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceText
             // 
-            this.ReplaceText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceText.Name = "ReplaceText";
             this.ReplaceText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
@@ -122,7 +121,7 @@ namespace UoFiddler.Controls.UserControls
             this.importToolStripMenuItem.Text = "Import..";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.OnImport);
             // 
-            // Hues
+            // HuesControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -132,7 +131,7 @@ namespace UoFiddler.Controls.UserControls
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "HuesControl";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(628, 332);
+            this.Size = new System.Drawing.Size(633, 334);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);

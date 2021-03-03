@@ -9,7 +9,6 @@
  *
  ***************************************************************************/
 
-using System.Windows.Forms;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Controls.UserControls.TileView;
 
@@ -18,21 +17,21 @@ namespace UoFiddler.Controls.Plugin.Interfaces
     public interface IPluginHost
     {
         /// <summary>
-        /// Returns the ItemShowAlternativeControl
+        /// Returns the ItemsControl
         /// </summary>
         /// <returns></returns>
-        ItemShowAlternativeControl GetItemShowAltControl();
+        ItemsControl GetItemsControl();
 
         /// <summary>
-        /// Gets the TileView of ItemShowAlternative
+        /// Gets the TileView of ItemsControl
         /// </summary>
         /// <returns></returns>
-        TileViewControl GetItemShowAltTileView();
+        TileViewControl GetItemsControlTileView();
 
         /// <summary>
-        /// Gets the current selected graphic in ItemShowAlternative
+        /// Gets the current selected graphic id in ItemsControl
         /// </summary>
-        /// <returns>Graphic or -1 if none selected</returns>
-        int GetSelectedItemShowAlternative();
+        /// <returns>Graphic id or -1 if none selected</returns>
+        int GetSelectedIdFromItemsControl();
     }
 }

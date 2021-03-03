@@ -112,8 +112,8 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer1.Panel2.Controls.Add(this.FacingBar);
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(625, 329);
-            this.splitContainer1.SplitterDistance = 203;
+            this.splitContainer1.Size = new System.Drawing.Size(629, 333);
+            this.splitContainer1.SplitterDistance = 204;
             this.splitContainer1.TabIndex = 1;
             // 
             // TreeViewMobs
@@ -125,7 +125,7 @@ namespace UoFiddler.Controls.UserControls
             this.TreeViewMobs.Location = new System.Drawing.Point(0, 0);
             this.TreeViewMobs.Name = "TreeViewMobs";
             this.TreeViewMobs.ShowNodeToolTips = true;
-            this.TreeViewMobs.Size = new System.Drawing.Size(203, 329);
+            this.TreeViewMobs.Size = new System.Drawing.Size(204, 333);
             this.TreeViewMobs.TabIndex = 0;
             this.TreeViewMobs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewMobs_AfterSelect);
             // 
@@ -148,7 +148,7 @@ namespace UoFiddler.Controls.UserControls
             this.FacingBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.FacingBar.AutoSize = false;
             this.FacingBar.LargeChange = 1;
-            this.FacingBar.Location = new System.Drawing.Point(330, 309);
+            this.FacingBar.Location = new System.Drawing.Point(333, 313);
             this.FacingBar.Maximum = 7;
             this.FacingBar.Name = "FacingBar";
             this.FacingBar.Size = new System.Drawing.Size(88, 20);
@@ -164,7 +164,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(418, 307);
+            this.tabControl1.Size = new System.Drawing.Size(421, 311);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -173,7 +173,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(410, 281);
+            this.tabPage1.Size = new System.Drawing.Size(413, 285);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Animation";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -185,7 +185,7 @@ namespace UoFiddler.Controls.UserControls
             this.MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainPictureBox.Location = new System.Drawing.Point(3, 3);
             this.MainPictureBox.Name = "MainPictureBox";
-            this.MainPictureBox.Size = new System.Drawing.Size(404, 275);
+            this.MainPictureBox.Size = new System.Drawing.Size(407, 279);
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint_MainPicture);
@@ -387,10 +387,10 @@ namespace UoFiddler.Controls.UserControls
             this.GraphicLabel,
             this.BaseGraphicLabel,
             this.HueLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 307);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 311);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.statusStrip1.Size = new System.Drawing.Size(418, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(421, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
@@ -496,7 +496,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "AnimationListControl";
-            this.Size = new System.Drawing.Size(625, 329);
+            this.Size = new System.Drawing.Size(629, 333);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

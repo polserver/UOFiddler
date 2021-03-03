@@ -31,7 +31,7 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            bool res = ItemShowAlternativeControl.SearchGraphic(graphic);
+            bool res = ItemsControl.SearchGraphic(graphic);
             if (res)
             {
                 return;
@@ -49,7 +49,7 @@ namespace UoFiddler.Controls.Forms
         {
             _lastSearchedName = textBoxItemName.Text;
 
-            bool res = ItemShowAlternativeControl.SearchName(textBoxItemName.Text, false);
+            bool res = ItemsControl.SearchName(textBoxItemName.Text, false);
             if (res)
             {
                 return;
@@ -65,7 +65,7 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = ItemShowAlternativeControl.SearchName(textBoxItemName.Text, true);
+            bool res = ItemsControl.SearchName(textBoxItemName.Text, true);
             if (res)
             {
                 return;

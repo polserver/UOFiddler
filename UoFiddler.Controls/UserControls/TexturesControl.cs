@@ -24,9 +24,9 @@ using UoFiddler.Controls.Helpers;
 namespace UoFiddler.Controls.UserControls
 {
     // TODO: add "Show free slots" support
-    public partial class TextureAlternativeControl : UserControl
+    public partial class TexturesControl : UserControl
     {
-        public TextureAlternativeControl()
+        public TexturesControl()
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
@@ -34,7 +34,7 @@ namespace UoFiddler.Controls.UserControls
             _refMarker = this;
         }
 
-        private static TextureAlternativeControl _refMarker;
+        private static TexturesControl _refMarker;
         private List<int> _textureList = new List<int>();
         private bool _loaded;
 

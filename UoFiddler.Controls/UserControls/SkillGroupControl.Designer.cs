@@ -96,7 +96,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // SkillIDTextBox
             // 
-            this.SkillIDTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.SkillIDTextBox.Name = "SkillIDTextBox";
             this.SkillIDTextBox.Size = new System.Drawing.Size(100, 23);
             this.SkillIDTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSkillID);
@@ -121,26 +120,28 @@ namespace UoFiddler.Controls.UserControls
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(621, 326);
+            this.treeView1.Size = new System.Drawing.Size(626, 331);
             this.treeView1.TabIndex = 1;
             this.treeView1.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.AfterLabelEdit);
             this.treeView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnItemDrag);
             this.treeView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
             this.treeView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
             // 
-            // SkillGrp
+            // SkillGroupControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.treeView1);
             this.DoubleBuffered = true;
             this.Name = "SkillGroupControl";
-            this.Size = new System.Drawing.Size(621, 326);
+            this.Size = new System.Drawing.Size(626, 331);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
@@ -151,7 +152,5 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TreeView treeView1;
-
-        #endregion
     }
 }

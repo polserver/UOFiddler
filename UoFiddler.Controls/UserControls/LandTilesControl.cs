@@ -25,9 +25,9 @@ using UoFiddler.Controls.Helpers;
 namespace UoFiddler.Controls.UserControls
 {
     // TODO: add "Show free slots" support
-    public partial class LandTilesAlternativeControl : UserControl
+    public partial class LandTilesControl : UserControl
     {
-        public LandTilesAlternativeControl()
+        public LandTilesControl()
         {
             InitializeComponent();
 
@@ -38,7 +38,7 @@ namespace UoFiddler.Controls.UserControls
 
         public bool IsLoaded { get; private set; }
 
-        private static LandTilesAlternativeControl _refMarker;
+        private static LandTilesControl _refMarker;
         private int _selectedGraphicId = -1;
         private readonly List<int> _tileList = new List<int>();
 

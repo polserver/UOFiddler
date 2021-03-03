@@ -55,6 +55,8 @@ namespace UoFiddler.Controls.UserControls
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InsertText = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.InsertStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
@@ -74,8 +76,6 @@ namespace UoFiddler.Controls.UserControls
             this.Preload = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.PreLoader = new System.ComponentModel.BackgroundWorker();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.InsertStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -101,8 +101,8 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(626, 326);
-            this.splitContainer1.SplitterDistance = 206;
+            this.splitContainer1.Size = new System.Drawing.Size(632, 331);
+            this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 0;
             // 
             // listBox
@@ -115,7 +115,7 @@ namespace UoFiddler.Controls.UserControls
             this.listBox.ItemHeight = 60;
             this.listBox.Location = new System.Drawing.Point(0, 25);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(206, 301);
+            this.listBox.Size = new System.Drawing.Size(207, 306);
             this.listBox.TabIndex = 0;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.listBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.ListBox_MeasureItem);
@@ -136,7 +136,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator1,
             this.saveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 214);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 192);
             // 
             // extractImageToolStripMenuItem
             // 
@@ -220,11 +220,24 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeydown_InsertText);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChanged_InsertAt);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InsertStartingFromTb});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(189, 22);
+            this.toolStripMenuItem1.Text = "Insert Starting From";
+            // 
+            // InsertStartingFromTb
+            // 
+            this.InsertStartingFromTb.Name = "InsertStartingFromTb";
+            this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFromTb_KeyDown);
             // 
             // toolStripSeparator1
             // 
@@ -247,7 +260,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(206, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(207, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -325,7 +338,7 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(416, 304);
+            this.pictureBox.Size = new System.Drawing.Size(421, 309);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             // 
@@ -340,10 +353,10 @@ namespace UoFiddler.Controls.UserControls
             this.ProgressBar,
             this.Preload,
             this.toolStripSeparator3});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 304);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 309);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(416, 22);
+            this.toolStrip1.Size = new System.Drawing.Size(421, 22);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -392,21 +405,6 @@ namespace UoFiddler.Controls.UserControls
             this.PreLoader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.PreLoaderProgressChanged);
             this.PreLoader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.PreLoaderCompleted);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.InsertStartingFromTb});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(189, 22);
-            this.toolStripMenuItem1.Text = "Insert Starting From";
-            // 
-            // InsertStartingFromTb
-            // 
-            this.InsertStartingFromTb.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.InsertStartingFromTb.Name = "InsertStartingFromTb";
-            this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
-            this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFromTb_KeyDown);
-            // 
             // GumpControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -414,7 +412,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "GumpControl";
-            this.Size = new System.Drawing.Size(626, 326);
+            this.Size = new System.Drawing.Size(632, 331);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Gump_KeyUp);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();

@@ -164,11 +164,11 @@
 		<Compile Update="Forms\ItemSearchForm.Designer.cs">
 			<DependentUpon>ItemSearchForm.cs</DependentUpon>
 		</Compile>
-		<Compile Update="UserControls\ItemShowAlternativeControl.cs">
+		<Compile Update="UserControls\ItemsControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
-		<Compile Update="UserControls\ItemShowAlternativeControl.Designer.cs">
-			<DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
+		<Compile Update="UserControls\ItemsControl.Designer.cs">
+			<DependentUpon>ItemsControl.cs</DependentUpon>
 		</Compile>
 		<Compile Update="Forms\HuePopUpDress.cs">
 			<SubType>Form</SubType>
@@ -182,11 +182,11 @@
 		<Compile Update="Forms\MapDiffInsertForm.Designer.cs">
 			<DependentUpon>MapDiffInsertForm.cs</DependentUpon>
 		</Compile>
-		<Compile Update="UserControls\LandTilesAlternativeControl.cs">
+		<Compile Update="UserControls\LandTilesControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
-		<Compile Update="UserControls\LandTilesAlternativeControl.Designer.cs">
-			<DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
+		<Compile Update="UserControls\LandTilesControl.Designer.cs">
+			<DependentUpon>LandTilesControl.cs</DependentUpon>
 		</Compile>
 		<Compile Update="Forms\LandTileSearchForm.cs">
 			<SubType>Form</SubType>
@@ -289,11 +289,11 @@
 		<Compile Update="UserControls\SpeechControl.Designer.cs">
 			<DependentUpon>SpeechControl.cs</DependentUpon>
 		</Compile>
-		<Compile Update="UserControls\TextureAlternativeControl.cs">
+		<Compile Update="UserControls\TexturesControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
-		<Compile Update="UserControls\TextureAlternativeControl.Designer.cs">
-			<DependentUpon>TextureAlternativeControl.cs</DependentUpon>
+		<Compile Update="UserControls\TexturesControl.Designer.cs">
+			<DependentUpon>TexturesControl.cs</DependentUpon>
 		</Compile>
 		<Compile Update="Forms\TextureSearchForm.cs">
 			<SubType>Form</SubType>
@@ -390,8 +390,8 @@
 		<EmbeddedResource Update="Forms\ItemSearchForm.resx">
 			<DependentUpon>ItemSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\ItemShowAlternativeControl.resx">
-			<DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
+		<EmbeddedResource Update="UserControls\ItemsControl.resx">
+			<DependentUpon>ItemsControl.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\HuePopUpDress.resx">
 			<DependentUpon>HuePopUpDress.cs</DependentUpon>
@@ -399,8 +399,8 @@
 		<EmbeddedResource Update="Forms\MapDiffInsertForm.resx">
 			<DependentUpon>MapDiffInsertForm.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\LandTilesAlternativeControl.resx">
-			<DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
+		<EmbeddedResource Update="UserControls\LandTilesControl.resx">
+			<DependentUpon>LandTilesControl.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\LandTileSearchForm.resx">
 			<DependentUpon>LandTileSearchForm.cs</DependentUpon>
@@ -454,8 +454,8 @@
 		<EmbeddedResource Update="UserControls\SpeechControl.resx">
 			<DependentUpon>SpeechControl.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\TextureAlternativeControl.resx">
-			<DependentUpon>TextureAlternativeControl.cs</DependentUpon>
+		<EmbeddedResource Update="UserControls\TexturesControl.resx">
+			<DependentUpon>TexturesControl.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\TextureSearchForm.resx">
 			<DependentUpon>TextureSearchForm.cs</DependentUpon>

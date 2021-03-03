@@ -436,7 +436,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = (int)treeViewItem.SelectedNode.Tag;
-            var found = ItemShowAlternativeControl.SearchGraphic(index);
+            var found = ItemsControl.SearchGraphic(index);
             if (!found)
             {
                 MessageBox.Show("You need to load Items tab first.", "Information");
@@ -462,7 +462,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int index = (int)treeViewLand.SelectedNode.Tag;
-            var found = LandTilesAlternativeControl.SearchGraphic(index);
+            var found = LandTilesControl.SearchGraphic(index);
             if (!found)
             {
                 MessageBox.Show("You need to load LandTiles tab first.", "Information");

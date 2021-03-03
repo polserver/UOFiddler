@@ -27,9 +27,9 @@ using UoFiddler.Controls.UserControls.TileView;
 
 namespace UoFiddler.Controls.UserControls
 {
-    public partial class ItemShowAlternativeControl : UserControl
+    public partial class ItemsControl : UserControl
     {
-        public ItemShowAlternativeControl()
+        public ItemsControl()
         {
             InitializeComponent();
 
@@ -58,7 +58,7 @@ namespace UoFiddler.Controls.UserControls
         }
 
         public IReadOnlyList<int> ItemList { get => _itemList.AsReadOnly(); }
-        public static ItemShowAlternativeControl RefMarker { get; private set; }
+        public static ItemsControl RefMarker { get; private set; }
         public static TileViewControl TileView => RefMarker.ItemsTileView;
         public bool IsLoaded { get; private set; }
 

@@ -29,7 +29,7 @@ namespace UoFiddler.Plugin.SendItem
         public SendItemPluginBase()
         {
             _refMarker = this;
-            Events.ModifyItemShowContextMenuEvent += Events_ModifyItemShowContextMenuEvent;
+            Events.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         private static SendItemPluginBase _refMarker;
@@ -109,17 +109,17 @@ namespace UoFiddler.Plugin.SendItem
 
         private void ChangeOverrideClick(bool value, bool init)
         {
-            ItemShowAlternativeControl itemShowAltControl = Host.GetItemShowAltControl();
-            TileViewControl itemShowTileView = Host.GetItemShowAltTileView();
+            ItemsControl itemsControl = Host.GetItemsControl();
+            TileViewControl itemsControlTileView = Host.GetItemsControlTileView();
             if (value)
             {
-                itemShowTileView.MouseDoubleClick -= itemShowAltControl.ItemsTileView_MouseDoubleClick;
-                itemShowTileView.MouseDoubleClick += PlugOnDoubleClick;
+                itemsControlTileView.MouseDoubleClick -= itemsControl.ItemsTileView_MouseDoubleClick;
+                itemsControlTileView.MouseDoubleClick += PlugOnDoubleClick;
             }
             else if (!init)
             {
-                itemShowTileView.MouseDoubleClick -= PlugOnDoubleClick;
-                itemShowTileView.MouseDoubleClick += itemShowAltControl.ItemsTileView_MouseDoubleClick;
+                itemsControlTileView.MouseDoubleClick -= PlugOnDoubleClick;
+                itemsControlTileView.MouseDoubleClick += itemsControl.ItemsTileView_MouseDoubleClick;
             }
         }
 
@@ -128,7 +128,7 @@ namespace UoFiddler.Plugin.SendItem
             new SendItemOptionsForm().Show();
         }
 
-        private void Events_ModifyItemShowContextMenuEvent(ContextMenuStrip strip)
+        private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
         {
             ToolStripMenuItem item = new ToolStripMenuItem { Text = "Send Item to Client" };
             item.Click += ItemShowContextClicked;
@@ -137,7 +137,7 @@ namespace UoFiddler.Plugin.SendItem
 
         private void ItemShowContextClicked(object sender, EventArgs e)
         {
-            int currSelected = Host.GetSelectedItemShowAlternative();
+            int currSelected = Host.GetSelectedIdFromItemsControl();
             if (currSelected <= -1)
             {
                 return;

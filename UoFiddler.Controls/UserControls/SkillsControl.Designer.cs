@@ -63,7 +63,7 @@ namespace UoFiddler.Controls.UserControls
             this.dataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(622, 326);
+            this.dataGridView1.Size = new System.Drawing.Size(626, 328);
             this.dataGridView1.TabIndex = 0;
             // 
             // contextMenuStrip1
@@ -102,14 +102,14 @@ namespace UoFiddler.Controls.UserControls
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnClickSave);
             // 
-            // Skills
+            // SkillsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.dataGridView1);
             this.DoubleBuffered = true;
             this.Name = "SkillsControl";
-            this.Size = new System.Drawing.Size(622, 326);
+            this.Size = new System.Drawing.Size(626, 328);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -117,13 +117,13 @@ namespace UoFiddler.Controls.UserControls
 
         }
 
+        #endregion
+
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-
-        #endregion
     }
 }

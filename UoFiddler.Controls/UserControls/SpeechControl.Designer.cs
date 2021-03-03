@@ -78,13 +78,12 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 33);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(622, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(628, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // IDEntry
             // 
-            this.IDEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.IDEntry.MaxLength = 10;
             this.IDEntry.Name = "IDEntry";
             this.IDEntry.Size = new System.Drawing.Size(100, 25);
@@ -116,7 +115,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // KeyWordEntry
             // 
-            this.KeyWordEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyWordEntry.Name = "KeyWordEntry";
             this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
             this.KeyWordEntry.Text = "KeyWord..";
@@ -150,7 +148,7 @@ namespace UoFiddler.Controls.UserControls
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(622, 268);
+            this.dataGridView1.Size = new System.Drawing.Size(628, 269);
             this.dataGridView1.TabIndex = 4;
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellValueChanged);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClick);
@@ -202,7 +200,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(622, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(628, 25);
             this.toolStrip2.TabIndex = 6;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -250,7 +248,7 @@ namespace UoFiddler.Controls.UserControls
             this.Controls.Add(this.toolStrip2);
             this.DoubleBuffered = true;
             this.Name = "SpeechControl";
-            this.Size = new System.Drawing.Size(622, 326);
+            this.Size = new System.Drawing.Size(628, 327);
             this.Load += new System.EventHandler(this.OnLoad);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -262,6 +260,8 @@ namespace UoFiddler.Controls.UserControls
             this.PerformLayout();
 
         }
+
+        #endregion
 
         private System.Windows.Forms.ToolStripMenuItem addEntryToolStripMenuItem;
         private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
@@ -281,7 +281,5 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-
-        #endregion
     }
 }

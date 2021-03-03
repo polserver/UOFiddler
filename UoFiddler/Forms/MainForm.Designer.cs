@@ -52,11 +52,11 @@ namespace UoFiddler.Forms
             this.AnimationTab = new System.Windows.Forms.TabPage();
             this.animationsControl = new UoFiddler.Controls.UserControls.AnimationListControl();
             this.ItemsTab = new System.Windows.Forms.TabPage();
-            this.itemShowControl = new UoFiddler.Controls.UserControls.ItemShowAlternativeControl();
+            this.itemShowControl = new UoFiddler.Controls.UserControls.ItemsControl();
             this.LandTilesTab = new System.Windows.Forms.TabPage();
-            this.landTilesControl = new UoFiddler.Controls.UserControls.LandTilesAlternativeControl();
+            this.landTilesControl = new UoFiddler.Controls.UserControls.LandTilesControl();
             this.TextureTab = new System.Windows.Forms.TabPage();
-            this.textureControl = new UoFiddler.Controls.UserControls.TextureAlternativeControl();
+            this.textureControl = new UoFiddler.Controls.UserControls.TexturesControl();
             this.GumpsTab = new System.Windows.Forms.TabPage();
             this.gumpsControl = new UoFiddler.Controls.UserControls.GumpControl();
             this.SoundsTab = new System.Windows.Forms.TabPage();
@@ -285,6 +285,7 @@ namespace UoFiddler.Forms
             this.itemShowControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.itemShowControl.Location = new System.Drawing.Point(3, 3);
             this.itemShowControl.Name = "itemShowControl";
+            this.itemShowControl.SelectedGraphicId = -1;
             this.itemShowControl.Size = new System.Drawing.Size(770, 504);
             this.itemShowControl.TabIndex = 0;
             // 
@@ -306,6 +307,7 @@ namespace UoFiddler.Forms
             this.landTilesControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.landTilesControl.Location = new System.Drawing.Point(3, 3);
             this.landTilesControl.Name = "landTilesControl";
+            this.landTilesControl.SelectedGraphicId = -1;
             this.landTilesControl.Size = new System.Drawing.Size(770, 504);
             this.landTilesControl.TabIndex = 0;
             // 
@@ -327,6 +329,7 @@ namespace UoFiddler.Forms
             this.textureControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textureControl.Location = new System.Drawing.Point(3, 3);
             this.textureControl.Name = "textureControl";
+            this.textureControl.SelectedTextureId = -1;
             this.textureControl.Size = new System.Drawing.Size(770, 504);
             this.textureControl.TabIndex = 0;
             // 
@@ -1064,10 +1067,10 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TabPage AnimationTab;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.TabPage ItemsTab;
-        private ItemShowAlternativeControl itemShowControl;
+        private ItemsControl itemShowControl;
         private AnimationListControl animationsControl;
         private System.Windows.Forms.TabPage LandTilesTab;
-        private LandTilesAlternativeControl landTilesControl;
+        private LandTilesControl landTilesControl;
         private System.Windows.Forms.TabPage GumpsTab;
         private GumpControl gumpsControl;
         private System.Windows.Forms.TabPage SoundsTab;
@@ -1085,7 +1088,7 @@ namespace UoFiddler.Forms
         private MapControl mapControl;
         private System.Windows.Forms.TabPage StartTab;
         private System.Windows.Forms.TabPage TextureTab;
-        private TextureAlternativeControl textureControl;
+        private TexturesControl textureControl;
         private System.Windows.Forms.TabPage LightTab;
         private LightControl lightControl;
         private System.Windows.Forms.Label Versionlabel;

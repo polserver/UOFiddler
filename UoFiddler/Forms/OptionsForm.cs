@@ -13,7 +13,6 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.Plugin;
 
 namespace UoFiddler.Forms
 {
