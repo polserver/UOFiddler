@@ -97,10 +97,7 @@ namespace UoFiddler.Plugin.MultiEditor
 
         private void ItemShowContextClicked(object sender, EventArgs e)
         {
-            int currSelected = Options.DesignAlternative
-                ? Host.GetSelectedItemShowAlternative()
-                : Host.GetSelectedItemShow();
-
+            int currSelected = Host.GetSelectedItemShowAlternative();
             if (currSelected <= -1)
             {
                 return;

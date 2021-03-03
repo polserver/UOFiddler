@@ -52,11 +52,11 @@ namespace UoFiddler.Forms
             this.AnimationTab = new System.Windows.Forms.TabPage();
             this.animationsControl = new UoFiddler.Controls.UserControls.AnimationListControl();
             this.ItemsTab = new System.Windows.Forms.TabPage();
-            this.itemShowControl = new UoFiddler.Controls.UserControls.ItemShowControl();
+            this.itemShowControl = new UoFiddler.Controls.UserControls.ItemShowAlternativeControl();
             this.LandTilesTab = new System.Windows.Forms.TabPage();
-            this.landTilesControl = new UoFiddler.Controls.UserControls.LandTilesControl();
+            this.landTilesControl = new UoFiddler.Controls.UserControls.LandTilesAlternativeControl();
             this.TextureTab = new System.Windows.Forms.TabPage();
-            this.textureControl = new UoFiddler.Controls.UserControls.TextureControl();
+            this.textureControl = new UoFiddler.Controls.UserControls.TextureAlternativeControl();
             this.GumpsTab = new System.Windows.Forms.TabPage();
             this.gumpsControl = new UoFiddler.Controls.UserControls.GumpControl();
             this.SoundsTab = new System.Windows.Forms.TabPage();
@@ -1064,10 +1064,10 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TabPage AnimationTab;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.TabPage ItemsTab;
-        private ItemShowControl itemShowControl;
+        private ItemShowAlternativeControl itemShowControl;
         private AnimationListControl animationsControl;
         private System.Windows.Forms.TabPage LandTilesTab;
-        private LandTilesControl landTilesControl;
+        private LandTilesAlternativeControl landTilesControl;
         private System.Windows.Forms.TabPage GumpsTab;
         private GumpControl gumpsControl;
         private System.Windows.Forms.TabPage SoundsTab;
@@ -1085,7 +1085,7 @@ namespace UoFiddler.Forms
         private MapControl mapControl;
         private System.Windows.Forms.TabPage StartTab;
         private System.Windows.Forms.TabPage TextureTab;
-        private TextureControl textureControl;
+        private TextureAlternativeControl textureControl;
         private System.Windows.Forms.TabPage LightTab;
         private LightControl lightControl;
         private System.Windows.Forms.Label Versionlabel;

@@ -18,12 +18,6 @@ namespace UoFiddler.Controls.Plugin.Interfaces
     public interface IPluginHost
     {
         /// <summary>
-        /// Returns the ItemShowControl
-        /// </summary>
-        /// <returns></returns>
-        ItemShowControl GetItemShowControl();
-
-        /// <summary>
         /// Returns the ItemShowAlternativeControl
         /// </summary>
         /// <returns></returns>
@@ -36,21 +30,9 @@ namespace UoFiddler.Controls.Plugin.Interfaces
         TileViewControl GetItemShowAltTileView();
 
         /// <summary>
-        /// Gets the current selected graphic in ItemShow
-        /// </summary>
-        /// <returns>Graphic or -1 if none selected</returns>
-        int GetSelectedItemShow();
-
-        /// <summary>
         /// Gets the current selected graphic in ItemShowAlternative
         /// </summary>
         /// <returns>Graphic or -1 if none selected</returns>
         int GetSelectedItemShowAlternative();
-
-        /// <summary>
-        /// Gets the ListView of ItemShow
-        /// </summary>
-        /// <returns></returns>
-        ListView GetItemShowListView();
     }
 }

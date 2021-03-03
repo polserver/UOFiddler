@@ -164,12 +164,6 @@
 		<Compile Update="Forms\ItemSearchForm.Designer.cs">
 			<DependentUpon>ItemSearchForm.cs</DependentUpon>
 		</Compile>
-		<Compile Update="UserControls\ItemShowControl.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="UserControls\ItemShowControl.Designer.cs">
-			<DependentUpon>ItemShowControl.cs</DependentUpon>
-		</Compile>
 		<Compile Update="UserControls\ItemShowAlternativeControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -187,12 +181,6 @@
 		</Compile>
 		<Compile Update="Forms\MapDiffInsertForm.Designer.cs">
 			<DependentUpon>MapDiffInsertForm.cs</DependentUpon>
-		</Compile>
-		<Compile Update="UserControls\LandTilesControl.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="UserControls\LandTilesControl.Designer.cs">
-			<DependentUpon>LandTilesControl.cs</DependentUpon>
 		</Compile>
 		<Compile Update="UserControls\LandTilesAlternativeControl.cs">
 			<SubType>UserControl</SubType>
@@ -301,12 +289,6 @@
 		<Compile Update="UserControls\SpeechControl.Designer.cs">
 			<DependentUpon>SpeechControl.cs</DependentUpon>
 		</Compile>
-		<Compile Update="UserControls\TextureControl.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="UserControls\TextureControl.Designer.cs">
-			<DependentUpon>TextureControl.cs</DependentUpon>
-		</Compile>
 		<Compile Update="UserControls\TextureAlternativeControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -408,9 +390,6 @@
 		<EmbeddedResource Update="Forms\ItemSearchForm.resx">
 			<DependentUpon>ItemSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\ItemShowControl.resx">
-			<DependentUpon>ItemShowControl.cs</DependentUpon>
-		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\ItemShowAlternativeControl.resx">
 			<DependentUpon>ItemShowAlternativeControl.cs</DependentUpon>
 		</EmbeddedResource>
@@ -419,9 +398,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\MapDiffInsertForm.resx">
 			<DependentUpon>MapDiffInsertForm.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\LandTilesControl.resx">
-			<DependentUpon>LandTilesControl.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\LandTilesAlternativeControl.resx">
 			<DependentUpon>LandTilesAlternativeControl.cs</DependentUpon>
@@ -477,9 +453,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\SpeechControl.resx">
 			<DependentUpon>SpeechControl.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\TextureControl.resx">
-			<DependentUpon>TextureControl.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\TextureAlternativeControl.resx">
 			<DependentUpon>TextureAlternativeControl.cs</DependentUpon>

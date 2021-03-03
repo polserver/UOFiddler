@@ -142,20 +142,10 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("UseMapDiff");
             elem.SetAttribute("active", Map.UseDiff.ToString());
             sr.AppendChild(elem);
-            comment = dom.CreateComment("Alternative layout in item/landtile/texture tab?");
-            sr.AppendChild(comment);
-            elem = dom.CreateElement("AlternativeDesign");
-            elem.SetAttribute("active", Options.DesignAlternative.ToString());
-            sr.AppendChild(elem);
             comment = dom.CreateComment("Make the right panel into the sounds tab visible");
             sr.AppendChild(comment);
             elem = dom.CreateElement("RightPanelInSoundsTab");
             elem.SetAttribute("active", Options.RightPanelInSoundsTab.ToString());
-            sr.AppendChild(elem);
-            comment = dom.CreateComment("Use Hashfile to speed up load?");
-            sr.AppendChild(comment);
-            elem = dom.CreateElement("UseHashFile");
-            elem.SetAttribute("active", Files.UseHashFile.ToString());
             sr.AppendChild(elem);
             comment = dom.CreateComment("Should an Update Check be done on startup?");
             sr.AppendChild(comment);
@@ -329,22 +319,10 @@ namespace UoFiddler.Classes
                 Map.StartUpSetDiff(bool.Parse(elem.GetAttribute("active")));
             }
 
-            elem = (XmlElement)xOptions.SelectSingleNode("AlternativeDesign");
-            if (elem != null)
-            {
-                Options.DesignAlternative = bool.Parse(elem.GetAttribute("active"));
-            }
-
             elem = (XmlElement)xOptions.SelectSingleNode("RightPanelInSoundsTab");
             if (elem != null)
             {
                 Options.RightPanelInSoundsTab = bool.Parse(elem.GetAttribute("active"));
-            }
-
-            elem = (XmlElement)xOptions.SelectSingleNode("UseHashFile");
-            if (elem != null)
-            {
-                Files.UseHashFile = bool.Parse(elem.GetAttribute("active"));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("UpdateCheck");

@@ -163,10 +163,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnFilePathChangeEvent()
         {
-            if (Options.DesignAlternative)
-            {
-                Reload();
-            }
+            Reload();
         }
 
         private void UpdateToolStripLabels(int graphic)
@@ -178,11 +175,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTileDataChangeEvent(object sender, int id)
         {
-            if (!Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!IsLoaded)
             {
                 return;
@@ -208,11 +200,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLandTileChangeEvent(object sender, int index)
         {
-            if (!Options.DesignAlternative)
-            {
-                return;
-            }
-
             if (!IsLoaded)
             {
                 return;
@@ -570,6 +557,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void LandTilesTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
             Point itemPoint = new Point(e.Bounds.X + LandTilesTileView.TilePadding.Left, e.Bounds.Y + LandTilesTileView.TilePadding.Top);
             const int fixedTileSize = 44;
             Size itemSize = new Size(fixedTileSize, fixedTileSize);

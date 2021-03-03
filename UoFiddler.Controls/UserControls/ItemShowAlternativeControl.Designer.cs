@@ -48,7 +48,6 @@ namespace UoFiddler.Controls.UserControls
             this.changeBackgroundColorToolStripMenuItemDetail = new System.Windows.Forms.ToolStripMenuItem();
             this.DetailTextBox = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.ItemsTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.TileViewContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,6 +84,7 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
+            this.ItemsTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -169,34 +169,6 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer1.SplitterDistance = 471;
             this.splitContainer1.TabIndex = 6;
             // 
-            // ItemsTileView
-            // 
-            this.ItemsTileView.AutoScroll = true;
-            this.ItemsTileView.AutoScrollMinSize = new System.Drawing.Size(0, 102);
-            this.ItemsTileView.BackColor = System.Drawing.SystemColors.Window;
-            this.ItemsTileView.ContextMenuStrip = this.TileViewContextMenuStrip;
-            this.ItemsTileView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ItemsTileView.FocusIndex = -1;
-            this.ItemsTileView.Location = new System.Drawing.Point(0, 0);
-            this.ItemsTileView.MultiSelect = true;
-            this.ItemsTileView.Name = "ItemsTileView";
-            this.ItemsTileView.Size = new System.Drawing.Size(471, 284);
-            this.ItemsTileView.TabIndex = 0;
-            this.ItemsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            this.ItemsTileView.TileBorderColor = System.Drawing.Color.Gray;
-            this.ItemsTileView.TileBorderWidth = 1F;
-            this.ItemsTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
-            this.ItemsTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
-            this.ItemsTileView.TilePadding = new System.Windows.Forms.Padding(1);
-            this.ItemsTileView.TileSize = new System.Drawing.Size(96, 96);
-            this.ItemsTileView.VirtualListSize = 1;
-            this.ItemsTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.ItemsTileView_ItemSelectionChanged);
-            this.ItemsTileView.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.ItemsTileView_FocusSelectionChanged);
-            this.ItemsTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.ItemsTileView_DrawItem);
-            this.ItemsTileView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ItemsTileView_KeyDown);
-            this.ItemsTileView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ItemsTileView_KeyUp);
-            this.ItemsTileView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ItemsTileView_MouseDoubleClick);
-            // 
             // TileViewContextMenuStrip
             // 
             this.TileViewContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -216,7 +188,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator1,
             this.saveToolStripMenuItem});
             this.TileViewContextMenuStrip.Name = "contextMenuStrip1";
-            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 308);
+            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 286);
             this.TileViewContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.TileViewContextMenuStrip_Opening);
             // 
             // showFreeSlotsToolStripMenuItem
@@ -485,6 +457,34 @@ namespace UoFiddler.Controls.UserControls
             this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asPngToolStripMenuItem.Text = "As Png";
             this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllPng);
+            // 
+            // ItemsTileView
+            // 
+            this.ItemsTileView.AutoScroll = true;
+            this.ItemsTileView.AutoScrollMinSize = new System.Drawing.Size(0, 102);
+            this.ItemsTileView.BackColor = System.Drawing.SystemColors.Window;
+            this.ItemsTileView.ContextMenuStrip = this.TileViewContextMenuStrip;
+            this.ItemsTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ItemsTileView.FocusIndex = -1;
+            this.ItemsTileView.Location = new System.Drawing.Point(0, 0);
+            this.ItemsTileView.MultiSelect = true;
+            this.ItemsTileView.Name = "ItemsTileView";
+            this.ItemsTileView.Size = new System.Drawing.Size(471, 284);
+            this.ItemsTileView.TabIndex = 0;
+            this.ItemsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            this.ItemsTileView.TileBorderColor = System.Drawing.Color.Gray;
+            this.ItemsTileView.TileBorderWidth = 1F;
+            this.ItemsTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            this.ItemsTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            this.ItemsTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            this.ItemsTileView.TileSize = new System.Drawing.Size(96, 96);
+            this.ItemsTileView.VirtualListSize = 1;
+            this.ItemsTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.ItemsTileView_ItemSelectionChanged);
+            this.ItemsTileView.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.ItemsTileView_FocusSelectionChanged);
+            this.ItemsTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.ItemsTileView_DrawItem);
+            this.ItemsTileView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ItemsTileView_KeyDown);
+            this.ItemsTileView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ItemsTileView_KeyUp);
+            this.ItemsTileView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ItemsTileView_MouseDoubleClick);
             // 
             // collapsibleSplitter1
             // 

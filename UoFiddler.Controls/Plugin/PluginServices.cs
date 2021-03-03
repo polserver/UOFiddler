@@ -118,26 +118,6 @@ namespace UoFiddler.Controls.Plugin
             }
         }
 
-        public ItemShowControl GetItemShowControl()
-        {
-            return ItemShowControl.RefMarker;
-        }
-
-        public int GetSelectedItemShow()
-        {
-            if (ItemShowControl.ItemListView.SelectedItems.Count > 0)
-            {
-                return (int)ItemShowControl.ItemListView.SelectedItems[0].Tag;
-            }
-
-            return -1;
-        }
-
-        public ListView GetItemShowListView()
-        {
-            return ItemShowControl.ItemListView;
-        }
-
         public TileViewControl GetItemShowAltTileView()
         {
             return ItemShowAlternativeControl.TileView;

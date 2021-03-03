@@ -43,7 +43,7 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            bool res = Options.DesignAlternative ? TextureAlternativeControl.SearchGraphic(graphic) : TextureControl.SearchGraphic(graphic);
+            bool res = TextureAlternativeControl.SearchGraphic(graphic);
             if (res)
             {
                 return;
