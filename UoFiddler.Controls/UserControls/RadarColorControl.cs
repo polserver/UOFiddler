@@ -485,74 +485,78 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickMeanColorAll(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show(
-                "Do you want to calculate and set new radar color values for all items/ land tiles entries where current color is black or missing?", 
+                "Do you want to calculate and set new radar color values for all items and land tiles entries where current color is black or missing?",
                 "Average All",
                 MessageBoxButtons.YesNo
                 );
 
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes)
             {
-                if (TileData.ItemTable != null)
-                {
-                    int itemsLength = Art.GetMaxItemID();
-                    progressBar1.Maximum = itemsLength;
-
-                    for (int i = 0; i < itemsLength; ++i)
-                    {
-                        progressBar1.Value++;
-                        if (!Art.IsValidStatic(i))
-                        {
-                            continue;
-                        }
-
-                        if (RadarCol.GetItemColor(i) != 0)
-                        {
-                            continue;
-                        }
-
-                        Bitmap image = Art.GetStatic(i);
-                        if (image == null)
-                        {
-                            continue;
-                        }
-
-                        short currentColor = Hues.ColorToHue(AverageColorFrom(image));
-                        RadarCol.SetItemColor(i, currentColor);
-                        Options.ChangedUltimaClass["RadarCol"] = true;
-                    }
-                }
-
-                if (TileData.LandTable != null)
-                {
-                    int landLength = TileData.LandTable.Length;
-                    progressBar2.Maximum = landLength;
-                    for (int i = 0; i < landLength; ++i)
-                    {
-                        progressBar2.Value++;
-                        if (!Art.IsValidLand(i))
-                        {
-                            continue;
-                        }
-
-                        if (RadarCol.GetLandColor(i) != 0)
-                        {
-                            continue;
-                        }
-
-                        Bitmap image = Art.GetLand(i);
-                        if (image == null)
-                        {
-                            continue;
-                        }
-                        short currentColor = Hues.ColorToHue(AverageColorFrom(image));
-                        RadarCol.SetLandColor(i, currentColor);
-                        Options.ChangedUltimaClass["RadarCol"] = true;
-                    }
-                }
-                MessageBox.Show("Done!", "Average All");
-                progressBar1.Value = 0;
-                progressBar2.Value = 0;
+                return;
             }
+
+            if (TileData.ItemTable != null)
+            {
+                int itemsLength = Art.GetMaxItemID();
+                progressBar1.Maximum = itemsLength;
+
+                for (int i = 0; i < itemsLength; ++i)
+                {
+                    progressBar1.Value++;
+                    if (!Art.IsValidStatic(i))
+                    {
+                        continue;
+                    }
+
+                    if (RadarCol.GetItemColor(i) != 0)
+                    {
+                        continue;
+                    }
+
+                    Bitmap image = Art.GetStatic(i);
+                    if (image == null)
+                    {
+                        continue;
+                    }
+
+                    short currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                    RadarCol.SetItemColor(i, currentColor);
+                    Options.ChangedUltimaClass["RadarCol"] = true;
+                }
+            }
+
+            if (TileData.LandTable != null)
+            {
+                int landLength = TileData.LandTable.Length;
+                progressBar2.Maximum = landLength;
+                for (int i = 0; i < landLength; ++i)
+                {
+                    progressBar2.Value++;
+                    if (!Art.IsValidLand(i))
+                    {
+                        continue;
+                    }
+
+                    if (RadarCol.GetLandColor(i) != 0)
+                    {
+                        continue;
+                    }
+
+                    Bitmap image = Art.GetLand(i);
+                    if (image == null)
+                    {
+                        continue;
+                    }
+                    short currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                    RadarCol.SetLandColor(i, currentColor);
+                    Options.ChangedUltimaClass["RadarCol"] = true;
+                }
+            }
+
+            MessageBox.Show("Done!", "Average All");
+
+            progressBar1.Value = 0;
+            progressBar2.Value = 0;
         }
 
         private unsafe Color AverageColorFrom(Bitmap image)
