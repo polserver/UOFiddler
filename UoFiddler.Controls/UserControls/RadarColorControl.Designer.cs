@@ -55,6 +55,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.numericUpDownShortCol = new System.Windows.Forms.NumericUpDown();
@@ -67,7 +68,10 @@ namespace UoFiddler.Controls.UserControls
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.buttonMean = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar2 = new System.Windows.Forms.ProgressBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArt)).BeginInit();
@@ -95,7 +99,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewItem.HideSelection = false;
             this.treeViewItem.Location = new System.Drawing.Point(4, 4);
-            this.treeViewItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeViewItem.Margin = new System.Windows.Forms.Padding(4);
             this.treeViewItem.Name = "treeViewItem";
             this.treeViewItem.Size = new System.Drawing.Size(261, 205);
             this.treeViewItem.TabIndex = 0;
@@ -130,7 +134,7 @@ namespace UoFiddler.Controls.UserControls
             this.treeViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewLand.HideSelection = false;
             this.treeViewLand.Location = new System.Drawing.Point(4, 4);
-            this.treeViewLand.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeViewLand.Margin = new System.Windows.Forms.Padding(4);
             this.treeViewLand.Name = "treeViewLand";
             this.treeViewLand.Size = new System.Drawing.Size(261, 205);
             this.treeViewLand.TabIndex = 0;
@@ -163,7 +167,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.pictureBoxArt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxArt.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxArt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBoxArt.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBoxArt.Name = "pictureBoxArt";
             this.pictureBoxArt.Size = new System.Drawing.Size(277, 163);
             this.pictureBoxArt.TabIndex = 0;
@@ -172,7 +176,7 @@ namespace UoFiddler.Controls.UserControls
             // pictureBoxColor
             // 
             this.pictureBoxColor.Location = new System.Drawing.Point(4, 4);
-            this.pictureBoxColor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBoxColor.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBoxColor.Name = "pictureBoxColor";
             this.pictureBoxColor.Size = new System.Drawing.Size(184, 124);
             this.pictureBoxColor.TabIndex = 0;
@@ -182,7 +186,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer5.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer5.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer5.Name = "splitContainer5";
             // 
             // splitContainer5.Panel1
@@ -191,6 +195,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer5.Panel2
             // 
+            this.splitContainer5.Panel2.Controls.Add(this.label2);
+            this.splitContainer5.Panel2.Controls.Add(this.label1);
+            this.splitContainer5.Panel2.Controls.Add(this.progressBar2);
+            this.splitContainer5.Panel2.Controls.Add(this.progressBar1);
             this.splitContainer5.Panel2.Controls.Add(this.button6);
             this.splitContainer5.Panel2.Controls.Add(this.button5);
             this.splitContainer5.Panel2.Controls.Add(this.button4);
@@ -214,7 +222,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer6.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer6.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer6.Name = "splitContainer6";
             this.splitContainer6.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -236,7 +244,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
-            this.tabControl2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl2.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(277, 242);
@@ -246,9 +254,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.tabPage3.Controls.Add(this.treeViewItem);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage3.Size = new System.Drawing.Size(269, 213);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Items";
@@ -258,152 +266,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.tabPage4.Controls.Add(this.treeViewLand);
             this.tabPage4.Location = new System.Drawing.Point(4, 25);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage4.Size = new System.Drawing.Size(269, 213);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "Land Tiles";
             this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(111, 247);
-            this.button5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(100, 28);
-            this.button5.TabIndex = 16;
-            this.button5.Text = "Import..";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.OnClickImport);
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(3, 247);
-            this.button4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(100, 28);
-            this.button4.TabIndex = 15;
-            this.button4.Text = "Export..";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.OnClickExport);
-            // 
-            // numericUpDownShortCol
-            // 
-            this.numericUpDownShortCol.Location = new System.Drawing.Point(252, 12);
-            this.numericUpDownShortCol.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.numericUpDownShortCol.Maximum = new decimal(new int[] {
-            32767,
-            0,
-            0,
-            0});
-            this.numericUpDownShortCol.Name = "numericUpDownShortCol";
-            this.numericUpDownShortCol.Size = new System.Drawing.Size(133, 22);
-            this.numericUpDownShortCol.TabIndex = 14;
-            this.numericUpDownShortCol.ValueChanged += new System.EventHandler(this.OnNumericShortColChanged);
-            // 
-            // textBoxMeanFrom
-            // 
-            this.textBoxMeanFrom.Location = new System.Drawing.Point(252, 140);
-            this.textBoxMeanFrom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.textBoxMeanFrom.Name = "textBoxMeanFrom";
-            this.textBoxMeanFrom.Size = new System.Drawing.Size(68, 22);
-            this.textBoxMeanFrom.TabIndex = 13;
-            // 
-            // textBoxMeanTo
-            // 
-            this.textBoxMeanTo.Location = new System.Drawing.Point(341, 140);
-            this.textBoxMeanTo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.textBoxMeanTo.Name = "textBoxMeanTo";
-            this.textBoxMeanTo.Size = new System.Drawing.Size(68, 22);
-            this.textBoxMeanTo.TabIndex = 12;
-            // 
-            // button3
-            // 
-            this.button3.AutoSize = true;
-            this.button3.Location = new System.Drawing.Point(252, 169);
-            this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(209, 33);
-            this.button3.TabIndex = 11;
-            this.button3.Text = "Average Color from-to";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.OnClickMeanColorFromTo);
-            // 
-            // numericUpDownB
-            // 
-            this.numericUpDownB.Location = new System.Drawing.Point(393, 44);
-            this.numericUpDownB.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.numericUpDownB.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numericUpDownB.Name = "numericUpDownB";
-            this.numericUpDownB.Size = new System.Drawing.Size(63, 22);
-            this.numericUpDownB.TabIndex = 9;
-            this.numericUpDownB.ValueChanged += new System.EventHandler(this.OnChangeB);
-            // 
-            // numericUpDownG
-            // 
-            this.numericUpDownG.Location = new System.Drawing.Point(323, 44);
-            this.numericUpDownG.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.numericUpDownG.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numericUpDownG.Name = "numericUpDownG";
-            this.numericUpDownG.Size = new System.Drawing.Size(63, 22);
-            this.numericUpDownG.TabIndex = 8;
-            this.numericUpDownG.ValueChanged += new System.EventHandler(this.OnChangeG);
-            // 
-            // numericUpDownR
-            // 
-            this.numericUpDownR.Location = new System.Drawing.Point(252, 44);
-            this.numericUpDownR.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.numericUpDownR.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numericUpDownR.Name = "numericUpDownR";
-            this.numericUpDownR.Size = new System.Drawing.Size(63, 22);
-            this.numericUpDownR.TabIndex = 7;
-            this.numericUpDownR.ValueChanged += new System.EventHandler(this.OnChangeR);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(111, 210);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 28);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Save File";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.OnClickSaveFile);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(3, 210);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 28);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Save Color";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickSaveColor);
-            // 
-            // buttonMean
-            // 
-            this.buttonMean.Location = new System.Drawing.Point(5, 137);
-            this.buttonMean.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.buttonMean.Name = "buttonMean";
-            this.buttonMean.Size = new System.Drawing.Size(100, 28);
-            this.buttonMean.TabIndex = 1;
-            this.buttonMean.Text = "Average Color";
-            this.buttonMean.UseVisualStyleBackColor = true;
-            this.buttonMean.Click += new System.EventHandler(this.OnClickMeanColor);
             // 
             // button6
             // 
@@ -417,13 +286,184 @@ namespace UoFiddler.Controls.UserControls
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.OnClickMeanColorAll);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(111, 247);
+            this.button5.Margin = new System.Windows.Forms.Padding(4);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(100, 28);
+            this.button5.TabIndex = 16;
+            this.button5.Text = "Import..";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.OnClickImport);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(3, 247);
+            this.button4.Margin = new System.Windows.Forms.Padding(4);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(100, 28);
+            this.button4.TabIndex = 15;
+            this.button4.Text = "Export..";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.OnClickExport);
+            // 
+            // numericUpDownShortCol
+            // 
+            this.numericUpDownShortCol.Location = new System.Drawing.Point(252, 12);
+            this.numericUpDownShortCol.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownShortCol.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
+            this.numericUpDownShortCol.Name = "numericUpDownShortCol";
+            this.numericUpDownShortCol.Size = new System.Drawing.Size(133, 22);
+            this.numericUpDownShortCol.TabIndex = 14;
+            this.numericUpDownShortCol.ValueChanged += new System.EventHandler(this.OnNumericShortColChanged);
+            // 
+            // textBoxMeanFrom
+            // 
+            this.textBoxMeanFrom.Location = new System.Drawing.Point(252, 140);
+            this.textBoxMeanFrom.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxMeanFrom.Name = "textBoxMeanFrom";
+            this.textBoxMeanFrom.Size = new System.Drawing.Size(68, 22);
+            this.textBoxMeanFrom.TabIndex = 13;
+            // 
+            // textBoxMeanTo
+            // 
+            this.textBoxMeanTo.Location = new System.Drawing.Point(341, 140);
+            this.textBoxMeanTo.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxMeanTo.Name = "textBoxMeanTo";
+            this.textBoxMeanTo.Size = new System.Drawing.Size(68, 22);
+            this.textBoxMeanTo.TabIndex = 12;
+            // 
+            // button3
+            // 
+            this.button3.AutoSize = true;
+            this.button3.Location = new System.Drawing.Point(252, 169);
+            this.button3.Margin = new System.Windows.Forms.Padding(4);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(209, 33);
+            this.button3.TabIndex = 11;
+            this.button3.Text = "Average Color from-to";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.OnClickMeanColorFromTo);
+            // 
+            // numericUpDownB
+            // 
+            this.numericUpDownB.Location = new System.Drawing.Point(393, 44);
+            this.numericUpDownB.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownB.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numericUpDownB.Name = "numericUpDownB";
+            this.numericUpDownB.Size = new System.Drawing.Size(63, 22);
+            this.numericUpDownB.TabIndex = 9;
+            this.numericUpDownB.ValueChanged += new System.EventHandler(this.OnChangeB);
+            // 
+            // numericUpDownG
+            // 
+            this.numericUpDownG.Location = new System.Drawing.Point(323, 44);
+            this.numericUpDownG.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownG.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numericUpDownG.Name = "numericUpDownG";
+            this.numericUpDownG.Size = new System.Drawing.Size(63, 22);
+            this.numericUpDownG.TabIndex = 8;
+            this.numericUpDownG.ValueChanged += new System.EventHandler(this.OnChangeG);
+            // 
+            // numericUpDownR
+            // 
+            this.numericUpDownR.Location = new System.Drawing.Point(252, 44);
+            this.numericUpDownR.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownR.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numericUpDownR.Name = "numericUpDownR";
+            this.numericUpDownR.Size = new System.Drawing.Size(63, 22);
+            this.numericUpDownR.TabIndex = 7;
+            this.numericUpDownR.ValueChanged += new System.EventHandler(this.OnChangeR);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(111, 210);
+            this.button2.Margin = new System.Windows.Forms.Padding(4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(100, 28);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Save File";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.OnClickSaveFile);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(3, 210);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(100, 28);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Save Color";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.OnClickSaveColor);
+            // 
+            // buttonMean
+            // 
+            this.buttonMean.Location = new System.Drawing.Point(5, 137);
+            this.buttonMean.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonMean.Name = "buttonMean";
+            this.buttonMean.Size = new System.Drawing.Size(100, 28);
+            this.buttonMean.TabIndex = 1;
+            this.buttonMean.Text = "Average Color";
+            this.buttonMean.UseVisualStyleBackColor = true;
+            this.buttonMean.Click += new System.EventHandler(this.OnClickMeanColor);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(353, 282);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(134, 23);
+            this.progressBar1.TabIndex = 18;
+            // 
+            // progressBar2
+            // 
+            this.progressBar2.Location = new System.Drawing.Point(353, 311);
+            this.progressBar2.Name = "progressBar2";
+            this.progressBar2.Size = new System.Drawing.Size(134, 23);
+            this.progressBar2.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(291, 288);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(45, 17);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Items:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(258, 317);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(78, 17);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "Land Tiles:";
+            // 
             // RadarColorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer5);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "RadarColorControl";
             this.Size = new System.Drawing.Size(844, 410);
             this.Load += new System.EventHandler(this.OnLoad);
@@ -481,5 +521,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TreeView treeViewItem;
         private System.Windows.Forms.TreeView treeViewLand;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ProgressBar progressBar2;
     }
 }
