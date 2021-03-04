@@ -243,46 +243,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            unsafe
-            {
-                BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-                ushort* line = (ushort*)bd.Scan0;
-                int delta = bd.Stride >> 1;
-                ushort* cur = line;
-
-                int meanR = 0;
-                int meanG = 0;
-                int meanB = 0;
-
-                int count = 0;
-                for (int y = 0; y < image.Height; ++y, line += delta)
-                {
-                    cur = line;
-                    for (int x = 0; x < image.Width; ++x)
-                    {
-                        if (cur[x] == 0)
-                        {
-                            continue;
-                        }
-
-                        meanR += Hues.HueToColorR((short)cur[x]);
-                        meanG += Hues.HueToColorG((short)cur[x]);
-                        meanB += Hues.HueToColorB((short)cur[x]);
-                        ++count;
-                    }
-                }
-                image.UnlockBits(bd);
-
-                if (count > 0)
-                {
-                    meanR /= count;
-                    meanG /= count;
-                    meanB /= count;
-                }
-
-                Color col = Color.FromArgb(meanR, meanG, meanB);
-                CurrentColor = Hues.ColorToHue(col);
-            }
+            CurrentColor = Hues.ColorToHue(AverageColorFrom(image));
         }
 
         private void OnClickSaveFile(object sender, EventArgs e)
@@ -519,6 +480,119 @@ namespace UoFiddler.Controls.UserControls
             RadarCol.ExportToCSV(fileName);
             MessageBox.Show($"RadarColor saved to {fileName}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
+
+        private void OnClickMeanColorAll(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Do you want to calculate and set new radar color values for all items/ land tiles entries where current color is black or missing?", 
+                "Average All",
+                MessageBoxButtons.YesNo
+                );
+
+            if (result == DialogResult.Yes)
+            {
+                if (TileData.ItemTable != null)
+                {
+                    int itemsLength = Art.GetMaxItemID();
+                    progressBar1.Maximum = itemsLength;
+
+                    for (int i = 0; i < itemsLength; ++i)
+                    {
+                        progressBar1.Value++;
+                        if (!Art.IsValidStatic(i))
+                        {
+                            continue;
+                        }
+
+                        if (RadarCol.GetItemColor(i) != 0)
+                        {
+                            continue;
+                        }
+
+                        Bitmap image = Art.GetStatic(i);
+                        if (image == null)
+                        {
+                            continue;
+                        }
+
+                        short currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                        RadarCol.SetItemColor(i, currentColor);
+                        Options.ChangedUltimaClass["RadarCol"] = true;
+                    }
+                }
+
+                if (TileData.LandTable != null)
+                {
+                    int landLength = TileData.LandTable.Length;
+                    progressBar2.Maximum = landLength;
+                    for (int i = 0; i < landLength; ++i)
+                    {
+                        progressBar2.Value++;
+                        if (!Art.IsValidLand(i))
+                        {
+                            continue;
+                        }
+
+                        if (RadarCol.GetLandColor(i) != 0)
+                        {
+                            continue;
+                        }
+
+                        Bitmap image = Art.GetLand(i);
+                        if (image == null)
+                        {
+                            continue;
+                        }
+                        short currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                        RadarCol.SetLandColor(i, currentColor);
+                        Options.ChangedUltimaClass["RadarCol"] = true;
+                    }
+                }
+                MessageBox.Show("Done!", "Average All");
+                progressBar1.Value = 0;
+                progressBar2.Value = 0;
+            }
+        }
+
+        private unsafe Color AverageColorFrom(Bitmap image)
+        {
+            BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            ushort* line = (ushort*)bd.Scan0;
+            int delta = bd.Stride >> 1;
+            ushort* cur = line;
+
+            int meanR = 0;
+            int meanG = 0;
+            int meanB = 0;
+
+            int count = 0;
+            for (int y = 0; y < image.Height; ++y, line += delta)
+            {
+                cur = line;
+                for (int x = 0; x < image.Width; ++x)
+                {
+                    if (cur[x] == 0)
+                    {
+                        continue;
+                    }
+
+                    meanR += Hues.HueToColorR((short)cur[x]);
+                    meanG += Hues.HueToColorG((short)cur[x]);
+                    meanB += Hues.HueToColorB((short)cur[x]);
+                    ++count;
+                }
+            }
+            image.UnlockBits(bd);
+
+            if (count > 0)
+            {
+                meanR /= count;
+                meanG /= count;
+                meanB /= count;
+            }
+
+            return Color.FromArgb(meanR, meanG, meanB);
         }
     }
 }
