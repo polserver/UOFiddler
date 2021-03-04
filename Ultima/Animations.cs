@@ -6,6 +6,8 @@ namespace Ultima
 {
     public sealed class Animations
     {
+        public const int _maxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
+
         private static FileIndex _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
         private static FileIndex _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
         private static FileIndex _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
@@ -231,11 +233,12 @@ namespace Ultima
 
         private static void LoadTable()
         {
-            int count = 400 + ((_fileIndex.Index.Length - 35000) / 175);
+            // TODO: check why it was fixed at max 1697. Probably old code for anim.mul?
+            //int count = 400 + ((_fileIndex.Index.Length - 35000) / 175);
 
-            _table = new int[count];
+            _table = new int[_maxAnimationValue + 1];
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < _table.Length; ++i)
             {
                 var bodyTableEntryExist = BodyTable.Entries.TryGetValue(i, out BodyTableEntry bodyTableEntry);
                 if (!bodyTableEntryExist || BodyConverter.Contains(i))

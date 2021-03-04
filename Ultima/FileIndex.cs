@@ -9,10 +9,11 @@ namespace Ultima
     public sealed class FileIndex
     {
         public Entry3D[] Index { get; }
-        public Stream Stream { get; private set; }
+
         public long IdxLength { get; }
 
         private readonly string _mulPath;
+        private Stream _stream;
 
         public FileIndex(string idxFile, string mulFile, int length, int file) : this(idxFile, mulFile, null, length,
             file, ".dat", -1, false)
@@ -101,12 +102,12 @@ namespace Ultima
              */
             if (_mulPath?.EndsWith(".uop") == true)
             {
-                Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                _stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 var fi = new FileInfo(_mulPath);
                 string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
 
-                using (var br = new BinaryReader(Stream))
+                using (var br = new BinaryReader(_stream))
                 {
                     br.BaseStream.Seek(0, SeekOrigin.Begin);
 
@@ -204,7 +205,7 @@ namespace Ultima
             {
                 using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    _stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     var count = (int)(index.Length / 12);
                     IdxLength = index.Length;
                     GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
@@ -222,7 +223,7 @@ namespace Ultima
             }
             else
             {
-                Stream = null;
+                _stream = null;
                 return;
             }
 
@@ -298,7 +299,7 @@ namespace Ultima
             {
                 using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    _stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     var count = (int)(index.Length / 12);
                     IdxLength = index.Length;
                     Index = new Entry3D[count];
@@ -311,7 +312,7 @@ namespace Ultima
             }
             else
             {
-                Stream = null;
+                _stream = null;
                 Index = new Entry3D[1];
                 return;
             }
@@ -321,8 +322,7 @@ namespace Ultima
                 return;
             }
 
-            Entry5D[] verdataPatches = Verdata.Patches;
-            foreach (var patch in verdataPatches)
+            foreach (var patch in Verdata.Patches)
             {
                 if (patch.File != file || patch.Index < 0 || patch.Index >= Index.Length)
                 {
@@ -370,19 +370,19 @@ namespace Ultima
                 return null;
             }
 
-            if ((Stream?.CanRead != true) || (!Stream.CanSeek))
+            if ((_stream?.CanRead != true) || (!_stream.CanSeek))
             {
-                Stream = _mulPath == null ? null : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                _stream = _mulPath == null ? null : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
-            if (Stream == null)
+            if (_stream == null)
             {
                 length = extra = 0;
                 patched = false;
                 return null;
             }
 
-            if (Stream.Length < e.Lookup)
+            if (_stream.Length < e.Lookup)
             {
                 length = extra = 0;
                 patched = false;
@@ -391,8 +391,8 @@ namespace Ultima
 
             patched = false;
 
-            Stream.Seek(e.Lookup, SeekOrigin.Begin);
-            return Stream;
+            _stream.Seek(e.Lookup, SeekOrigin.Begin);
+            return _stream;
         }
 
         public bool Valid(int index, out int length, out int extra, out bool patched)
@@ -436,12 +436,12 @@ namespace Ultima
                 return false;
             }
 
-            if ((Stream?.CanRead != true) || (!Stream.CanSeek))
+            if ((_stream?.CanRead != true) || (!_stream.CanSeek))
             {
-                Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                _stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
-            if (Stream.Length < e.Lookup)
+            if (_stream.Length < e.Lookup)
             {
                 length = extra = 0;
                 patched = false;
