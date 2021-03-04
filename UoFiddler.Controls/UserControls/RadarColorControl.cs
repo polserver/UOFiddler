@@ -520,5 +520,121 @@ namespace UoFiddler.Controls.UserControls
             MessageBox.Show($"RadarColor saved to {fileName}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
+
+        private void OnClickMeanColorAll(object sender, EventArgs e)
+        {
+            if (TileData.ItemTable != null)
+            {
+                for (int i = 0; i < Art.GetMaxItemID(); ++i)
+                {
+                    if (Art.IsValidStatic(i))
+                    {
+                        Bitmap image = Art.GetStatic(i);
+
+                        if (image != null && RadarCol.GetItemColor(i) == 0)
+                        {
+                            unsafe
+                            {
+                                BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                                ushort* line = (ushort*)bd.Scan0;
+                                int delta = bd.Stride >> 1;
+                                ushort* cur = line;
+
+                                int meanR = 0;
+                                int meanG = 0;
+                                int meanB = 0;
+
+                                int count = 0;
+                                for (int y = 0; y < image.Height; ++y, line += delta)
+                                {
+                                    cur = line;
+                                    for (int x = 0; x < image.Width; ++x)
+                                    {
+                                        if (cur[x] == 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        meanR += Hues.HueToColorR((short)cur[x]);
+                                        meanG += Hues.HueToColorG((short)cur[x]);
+                                        meanB += Hues.HueToColorB((short)cur[x]);
+                                        ++count;
+                                    }
+                                }
+                                image.UnlockBits(bd);
+
+                                if (count > 0)
+                                {
+                                    meanR /= count;
+                                    meanG /= count;
+                                    meanB /= count;
+                                }
+
+                                Color col = Color.FromArgb(meanR, meanG, meanB);
+                                short currentColor = Hues.ColorToHue(col);
+                                RadarCol.SetItemColor(i, currentColor);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (TileData.LandTable != null)
+            {
+                for (int i = 0; i < TileData.LandTable.Length; ++i)
+                {
+                    if (Art.IsValidLand(i))
+                    {
+                        Bitmap image = Art.GetLand(i);
+
+                        if (image != null && RadarCol.GetLandColor(i) == 0)
+                        {
+                            unsafe
+                            {
+                                BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                                ushort* line = (ushort*)bd.Scan0;
+                                int delta = bd.Stride >> 1;
+                                ushort* cur = line;
+
+                                int meanR = 0;
+                                int meanG = 0;
+                                int meanB = 0;
+
+                                int count = 0;
+                                for (int y = 0; y < image.Height; ++y, line += delta)
+                                {
+                                    cur = line;
+                                    for (int x = 0; x < image.Width; ++x)
+                                    {
+                                        if (cur[x] == 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        meanR += Hues.HueToColorR((short)cur[x]);
+                                        meanG += Hues.HueToColorG((short)cur[x]);
+                                        meanB += Hues.HueToColorB((short)cur[x]);
+                                        ++count;
+                                    }
+                                }
+                                image.UnlockBits(bd);
+
+                                if (count > 0)
+                                {
+                                    meanR /= count;
+                                    meanG /= count;
+                                    meanB /= count;
+                                }
+
+                                Color col = Color.FromArgb(meanR, meanG, meanB);
+                                short currentColor = Hues.ColorToHue(col);
+                                RadarCol.SetItemColor(i, currentColor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
