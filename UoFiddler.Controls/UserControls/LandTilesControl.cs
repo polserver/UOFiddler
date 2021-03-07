@@ -168,6 +168,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateToolStripLabels(int graphic)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             NameLabel.Text = $"Name: {TileData.LandTable[graphic].Name}";
             GraphicLabel.Text = string.Format("ID: 0x{0:X4} ({0})", graphic);
             FlagsLabel.Text = $"Flags: {TileData.LandTable[graphic].Flags}";

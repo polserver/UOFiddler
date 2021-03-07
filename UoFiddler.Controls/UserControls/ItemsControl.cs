@@ -317,6 +317,11 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             if (_scrolling)
             {
                 return;
@@ -615,6 +620,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateToolStripLabels(int graphic)
         {
+            if (FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             if (_scrolling)
             {
                 return;
