@@ -141,6 +141,15 @@ namespace Ultima
 
                     br.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
 
+                    // There are no invalid entries in .uop so we have to initialize all entries
+                    // as invalid and then fill the valid ones
+                    for(var i = 0; i < Index.Length; i++)
+                    {
+                        Index[i].Lookup = -1;
+                        Index[i].Length = -1;
+                        Index[i].Extra = -1;
+                    }
+                    
                     do
                     {
                         int filesCount = br.ReadInt32();

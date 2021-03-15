@@ -76,23 +76,7 @@ namespace UoFiddler.Controls.UserControls
             _showFreeSlots = false;
             showFreeSlotsToolStripMenuItem.Checked = false;
 
-            listBox.BeginUpdate();
-            listBox.Items.Clear();
-            List<object> cache = new List<object>();
-            for (int i = 0; i < Gumps.GetCount(); ++i)
-            {
-                if (Gumps.IsValidIndex(i))
-                {
-                    cache.Add(i);
-                }
-            }
-
-            listBox.Items.AddRange(cache.ToArray());
-            listBox.EndUpdate();
-            if (listBox.Items.Count > 0)
-            {
-                listBox.SelectedIndex = 0;
-            }
+            PopulateListBox(true);
 
             if (!_loaded)
             {
@@ -102,6 +86,36 @@ namespace UoFiddler.Controls.UserControls
 
             _loaded = true;
             Cursor.Current = Cursors.Default;
+        }
+
+        private void PopulateListBox(bool showOnlyValid)
+        {
+            listBox.BeginUpdate();
+            listBox.Items.Clear();
+
+            List<object> cache = new List<object>();
+            for (int i = 0; i < Gumps.GetCount(); ++i)
+            {
+                if (showOnlyValid)
+                {
+                    if (Gumps.IsValidIndex(i))
+                    {
+                        cache.Add(i);
+                    }
+                }
+                else
+                {
+                    cache.Add(i);
+                }
+            }
+
+            listBox.Items.AddRange(cache.ToArray());
+            listBox.EndUpdate();
+
+            if (listBox.Items.Count > 0)
+            {
+                listBox.SelectedIndex = 0;
+            }
         }
 
         private void OnFilePathChangeEvent()
@@ -560,27 +574,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickShowFreeSlots(object sender, EventArgs e)
         {
             _showFreeSlots = !_showFreeSlots;
-            if (_showFreeSlots)
-            {
-                listBox.BeginUpdate();
-                listBox.Items.Clear();
-                List<object> cache = new List<object>();
-                for (int i = 0; i < Gumps.GetCount(); ++i)
-                {
-                    cache.Add(i);
-                }
-
-                listBox.Items.AddRange(cache.ToArray());
-                listBox.EndUpdate();
-                if (listBox.Items.Count > 0)
-                {
-                    listBox.SelectedIndex = 0;
-                }
-            }
-            else
-            {
-                OnLoad(null);
-            }
+            PopulateListBox(!_showFreeSlots);
         }
 
         private void OnClickPreLoad(object sender, EventArgs e)
