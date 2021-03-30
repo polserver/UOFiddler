@@ -9,7 +9,9 @@
  *
  ***************************************************************************/
 
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -23,6 +25,33 @@ namespace UoFiddler.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
+            // FocusColorComboBox
+            TileFocusColorComboBox.MaxDropDownItems = 14;
+            TileFocusColorComboBox.IntegralHeight = false;
+            TileFocusColorComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+            TileFocusColorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            TileFocusColorComboBox.DrawItem += TileFocusColorComboBoxDrawItem;
+
+            TileFocusColorComboBox.DataSource = typeof(Color).GetProperties()
+                .Where(x => x.PropertyType == typeof(Color))
+                .Select(x => x.GetValue(null)).ToList();
+
+            TileFocusColorComboBox.SelectedItem = Options.TileFocusColor;
+
+            // SelectedColorComboBox
+            TileSelectionColorComboBox.MaxDropDownItems = 14;
+            TileSelectionColorComboBox.IntegralHeight = false;
+            TileSelectionColorComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+            TileSelectionColorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            TileSelectionColorComboBox.DrawItem += TileSelectionColorComboBoxDrawItem;
+
+            TileSelectionColorComboBox.DataSource = typeof(Color).GetProperties()
+                .Where(x => x.PropertyType == typeof(Color))
+                .Select(x => x.GetValue(null)).ToList();
+
+            TileSelectionColorComboBox.SelectedItem = Options.TileSelectionColor;
+
+            // other controls
             checkBoxCacheData.Checked = Files.CacheData;
             checkBoxNewMapSize.Checked = Map.Felucca.Width == 7168;
             checkBoxuseDiff.Checked = Map.UseDiff;
@@ -59,7 +88,7 @@ namespace UoFiddler.Forms
                     Map.Felucca.Width = 6144;
                     Map.Trammel.Width = 6144;
                 }
-                MainForm.ChangeMapSize();
+                MainForm.UpdateMapTab();
             }
 
             if (checkBoxuseDiff.Checked != Map.UseDiff)
@@ -73,13 +102,27 @@ namespace UoFiddler.Forms
             {
                 Options.ArtItemSizeWidth = (int)numericUpDownItemSizeWidth.Value;
                 Options.ArtItemSizeHeight = (int)numericUpDownItemSizeHeight.Value;
-                MainForm.ReloadItemTab();
+                MainForm.UpdateItemsTab();
             }
 
             if (checkBoxItemClip.Checked != Options.ArtItemClip)
             {
                 Options.ArtItemClip = checkBoxItemClip.Checked;
-                MainForm.ReloadItemTab();
+                MainForm.UpdateItemsTab();
+            }
+
+            if ((Color)TileFocusColorComboBox.SelectedItem != Options.TileFocusColor)
+            {
+                Options.TileFocusColor = (Color)TileFocusColorComboBox.SelectedItem;
+
+                UpdateAllTileViews();
+            }
+
+            if ((Color)TileSelectionColorComboBox.SelectedItem != Options.TileSelectionColor)
+            {
+                Options.TileSelectionColor = (Color)TileSelectionColorComboBox.SelectedItem;
+
+                UpdateAllTileViews();
             }
 
             if (map0Nametext.Text != Options.MapNames[0]
@@ -107,6 +150,14 @@ namespace UoFiddler.Forms
             }
         }
 
+        private static void UpdateAllTileViews()
+        {
+            MainForm.UpdateItemsTab();
+            MainForm.UpdateLandTilesTab();
+            MainForm.UpdateTexturesTab();
+            MainForm.UpdateFontsTab();
+        }
+
         private void OnClickBrowseOutputPath(object sender, System.EventArgs e)
         {
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
@@ -119,6 +170,71 @@ namespace UoFiddler.Forms
                     textBoxOutputPath.Text = dialog.SelectedPath;
                 }
             }
+        }
+
+        private void TileFocusColorComboBoxDrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+
+            if (e.Index < 0)
+            {
+                return;
+            }
+
+            var itemText = TileFocusColorComboBox.GetItemText(TileFocusColorComboBox.Items[e.Index]);
+            var color = (Color)TileFocusColorComboBox.Items[e.Index];
+
+            var rectangle = new Rectangle(e.Bounds.Left + 1, e.Bounds.Top + 1, 2 * (e.Bounds.Height - 2), e.Bounds.Height - 2);
+            var textRectangle = Rectangle.FromLTRB(rectangle.Right + 2, e.Bounds.Top, e.Bounds.Right, e.Bounds.Bottom);
+
+            using (var b = new SolidBrush(color))
+            {
+                e.Graphics.FillRectangle(b, rectangle);
+            }
+
+            e.Graphics.DrawRectangle(Pens.Black, rectangle);
+
+            TextRenderer.DrawText(e.Graphics, itemText, TileFocusColorComboBox.Font, textRectangle, TileFocusColorComboBox.ForeColor,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+        }
+
+        private void TileSelectionColorComboBoxDrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+
+            if (e.Index < 0)
+            {
+                return;
+            }
+
+            var itemText = TileSelectionColorComboBox.GetItemText(TileSelectionColorComboBox.Items[e.Index]);
+            var color = (Color)TileSelectionColorComboBox.Items[e.Index];
+
+            var rectangle = new Rectangle(e.Bounds.Left + 1, e.Bounds.Top + 1, 2 * (e.Bounds.Height - 2), e.Bounds.Height - 2);
+            var textRectangle = Rectangle.FromLTRB(rectangle.Right + 2, e.Bounds.Top, e.Bounds.Right, e.Bounds.Bottom);
+
+            using (var b = new SolidBrush(color))
+            {
+                e.Graphics.FillRectangle(b, rectangle);
+            }
+
+            e.Graphics.DrawRectangle(Pens.Black, rectangle);
+
+            TextRenderer.DrawText(e.Graphics, itemText, TileSelectionColorComboBox.Font, textRectangle, TileSelectionColorComboBox.ForeColor,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+        }
+
+        private void DefaultColorsButton_Click(object sender, System.EventArgs e)
+        {
+            string title = "Export all items to offset.cfg?";
+            string message = "Reset focus and selection colors to default?";
+            if (MessageBox.Show(message, title, MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
+
+            TileFocusColorComboBox.SelectedItem = Color.DarkRed;
+            TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;
         }
     }
 }

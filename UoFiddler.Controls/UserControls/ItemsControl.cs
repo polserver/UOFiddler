@@ -65,13 +65,20 @@ namespace UoFiddler.Controls.UserControls
         /// <summary>
         /// Updates if TileSize is changed
         /// </summary>
-        public void ChangeTileSize()
+        public void UpdateTileView()
         {
             var newSize = new Size(Options.ArtItemSizeWidth, Options.ArtItemSizeHeight);
-            if (ItemsTileView.TileSize == newSize)
+
+            var sameTileSize = ItemsTileView.TileSize == newSize;
+            var sameFocusColor = ItemsTileView.TileFocusColor == Options.TileFocusColor;
+            var sameSelectionColor = ItemsTileView.TileHighlightColor == Options.TileSelectionColor;
+            if (sameTileSize && sameFocusColor && sameSelectionColor)
             {
                 return;
             }
+
+            ItemsTileView.TileFocusColor = Options.TileFocusColor;
+            ItemsTileView.TileHighlightColor = Options.TileSelectionColor;
 
             ItemsTileView.TileSize = newSize;
             ItemsTileView.Invalidate();
@@ -163,7 +170,7 @@ namespace UoFiddler.Controls.UserControls
                 Plugin.PluginEvents.FireModifyItemShowContextMenuEvent(TileViewContextMenuStrip);
             }
 
-            ChangeTileSize();
+            UpdateTileView();
 
             _showFreeSlots = false;
             showFreeSlotsToolStripMenuItem.Checked = false;

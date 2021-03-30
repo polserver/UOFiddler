@@ -138,6 +138,8 @@ namespace UoFiddler.Controls.UserControls
 
             treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
 
+            UpdateTileView();
+
             if (!_loaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
@@ -443,6 +445,20 @@ namespace UoFiddler.Controls.UserControls
         private void FontsControl_Resize(object sender, EventArgs e)
         {
             splitContainer2.SplitterDistance = splitContainer2.Height - 40;
+        }
+
+        public void UpdateTileView()
+        {
+            var sameFocusColor = FontsTileView.TileFocusColor == Options.TileFocusColor;
+            var sameSelectionColor = FontsTileView.TileHighlightColor == Options.TileSelectionColor;
+            if (sameFocusColor && sameSelectionColor)
+            {
+                return;
+            }
+
+            FontsTileView.TileFocusColor = Options.TileFocusColor;
+            FontsTileView.TileHighlightColor = Options.TileSelectionColor;
+            FontsTileView.Invalidate();
         }
     }
 }

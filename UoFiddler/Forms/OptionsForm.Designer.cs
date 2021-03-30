@@ -60,6 +60,8 @@ namespace UoFiddler.Forms
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.FocusColorLabel = new System.Windows.Forms.Label();
+            this.SelectedColorLabel = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.map5Nametext = new System.Windows.Forms.TextBox();
             this.argstext = new System.Windows.Forms.TextBox();
@@ -73,12 +75,17 @@ namespace UoFiddler.Forms
             this.button2 = new System.Windows.Forms.Button();
             this.textBoxOutputPath = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.ColorsGroupBox = new System.Windows.Forms.GroupBox();
+            this.DefaultColorsButton = new System.Windows.Forms.Button();
+            this.TileSelectionColorComboBox = new System.Windows.Forms.ComboBox();
+            this.TileFocusColorComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeWidth)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.ColorsGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -96,7 +103,7 @@ namespace UoFiddler.Forms
             // 
             // numericUpDownItemSizeHeight
             // 
-            this.numericUpDownItemSizeHeight.Location = new System.Drawing.Point(118, 19);
+            this.numericUpDownItemSizeHeight.Location = new System.Drawing.Point(133, 19);
             this.numericUpDownItemSizeHeight.Maximum = new decimal(new int[] {
             512,
             0,
@@ -108,7 +115,7 @@ namespace UoFiddler.Forms
             0,
             0});
             this.numericUpDownItemSizeHeight.Name = "numericUpDownItemSizeHeight";
-            this.numericUpDownItemSizeHeight.Size = new System.Drawing.Size(50, 20);
+            this.numericUpDownItemSizeHeight.Size = new System.Drawing.Size(61, 20);
             this.numericUpDownItemSizeHeight.TabIndex = 3;
             this.toolTip1.SetToolTip(this.numericUpDownItemSizeHeight, "Height");
             this.numericUpDownItemSizeHeight.Value = new decimal(new int[] {
@@ -152,7 +159,7 @@ namespace UoFiddler.Forms
             0,
             0});
             this.numericUpDownItemSizeWidth.Name = "numericUpDownItemSizeWidth";
-            this.numericUpDownItemSizeWidth.Size = new System.Drawing.Size(50, 20);
+            this.numericUpDownItemSizeWidth.Size = new System.Drawing.Size(65, 20);
             this.numericUpDownItemSizeWidth.TabIndex = 0;
             this.toolTip1.SetToolTip(this.numericUpDownItemSizeWidth, "Width");
             this.numericUpDownItemSizeWidth.Value = new decimal(new int[] {
@@ -220,7 +227,7 @@ namespace UoFiddler.Forms
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(182, 302);
+            this.button1.Location = new System.Drawing.Point(179, 381);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 4;
@@ -308,6 +315,26 @@ namespace UoFiddler.Forms
             this.label9.Text = "map5 Name";
             this.toolTip1.SetToolTip(this.label9, "Defines the map name");
             // 
+            // FocusColorLabel
+            // 
+            this.FocusColorLabel.AutoSize = true;
+            this.FocusColorLabel.Location = new System.Drawing.Point(12, 22);
+            this.FocusColorLabel.Name = "FocusColorLabel";
+            this.FocusColorLabel.Size = new System.Drawing.Size(56, 13);
+            this.FocusColorLabel.TabIndex = 11;
+            this.FocusColorLabel.Text = "Tile Focus";
+            this.toolTip1.SetToolTip(this.FocusColorLabel, "ItemSize controls the size of images in items tab");
+            // 
+            // SelectedColorLabel
+            // 
+            this.SelectedColorLabel.AutoSize = true;
+            this.SelectedColorLabel.Location = new System.Drawing.Point(12, 49);
+            this.SelectedColorLabel.Name = "SelectedColorLabel";
+            this.SelectedColorLabel.Size = new System.Drawing.Size(71, 13);
+            this.SelectedColorLabel.TabIndex = 14;
+            this.SelectedColorLabel.Text = "Tile Selection";
+            this.toolTip1.SetToolTip(this.SelectedColorLabel, "ItemSize controls the size of images in items tab");
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.label9);
@@ -394,7 +421,7 @@ namespace UoFiddler.Forms
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.textBoxOutputPath);
             this.groupBox4.Controls.Add(this.label10);
-            this.groupBox4.Location = new System.Drawing.Point(16, 248);
+            this.groupBox4.Location = new System.Drawing.Point(14, 331);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(406, 44);
             this.groupBox4.TabIndex = 6;
@@ -427,11 +454,52 @@ namespace UoFiddler.Forms
             this.label10.TabIndex = 0;
             this.label10.Text = "Output Path";
             // 
+            // ColorsGroupBox
+            // 
+            this.ColorsGroupBox.Controls.Add(this.DefaultColorsButton);
+            this.ColorsGroupBox.Controls.Add(this.SelectedColorLabel);
+            this.ColorsGroupBox.Controls.Add(this.TileSelectionColorComboBox);
+            this.ColorsGroupBox.Controls.Add(this.FocusColorLabel);
+            this.ColorsGroupBox.Controls.Add(this.TileFocusColorComboBox);
+            this.ColorsGroupBox.Location = new System.Drawing.Point(14, 248);
+            this.ColorsGroupBox.Name = "ColorsGroupBox";
+            this.ColorsGroupBox.Size = new System.Drawing.Size(406, 77);
+            this.ColorsGroupBox.TabIndex = 7;
+            this.ColorsGroupBox.TabStop = false;
+            this.ColorsGroupBox.Text = "Colors";
+            // 
+            // DefaultColorsButton
+            // 
+            this.DefaultColorsButton.Location = new System.Drawing.Point(282, 44);
+            this.DefaultColorsButton.Name = "DefaultColorsButton";
+            this.DefaultColorsButton.Size = new System.Drawing.Size(100, 23);
+            this.DefaultColorsButton.TabIndex = 15;
+            this.DefaultColorsButton.Text = "Set default colors";
+            this.DefaultColorsButton.UseVisualStyleBackColor = true;
+            this.DefaultColorsButton.Click += new System.EventHandler(this.DefaultColorsButton_Click);
+            // 
+            // TileSelectionColorComboBox
+            // 
+            this.TileSelectionColorComboBox.FormattingEnabled = true;
+            this.TileSelectionColorComboBox.Location = new System.Drawing.Point(89, 46);
+            this.TileSelectionColorComboBox.Name = "TileSelectionColorComboBox";
+            this.TileSelectionColorComboBox.Size = new System.Drawing.Size(132, 21);
+            this.TileSelectionColorComboBox.TabIndex = 13;
+            // 
+            // TileFocusColorComboBox
+            // 
+            this.TileFocusColorComboBox.FormattingEnabled = true;
+            this.TileFocusColorComboBox.Location = new System.Drawing.Point(89, 19);
+            this.TileFocusColorComboBox.Name = "TileFocusColorComboBox";
+            this.TileFocusColorComboBox.Size = new System.Drawing.Size(132, 21);
+            this.TileFocusColorComboBox.TabIndex = 9;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 340);
+            this.ClientSize = new System.Drawing.Size(434, 411);
+            this.Controls.Add(this.ColorsGroupBox);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button1);
@@ -453,6 +521,8 @@ namespace UoFiddler.Forms
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.ColorsGroupBox.ResumeLayout(false);
+            this.ColorsGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -492,5 +562,11 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TextBox textBoxOutputPath;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.CheckBox checkBoxPanelSoundsDesign;
+        private System.Windows.Forms.GroupBox ColorsGroupBox;
+        private System.Windows.Forms.Button DefaultColorsButton;
+        private System.Windows.Forms.Label SelectedColorLabel;
+        private System.Windows.Forms.ComboBox TileSelectionColorComboBox;
+        private System.Windows.Forms.Label FocusColorLabel;
+        private System.Windows.Forms.ComboBox TileFocusColorComboBox;
     }
 }

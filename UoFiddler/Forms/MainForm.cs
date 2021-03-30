@@ -313,17 +313,41 @@ namespace UoFiddler.Forms
         }
 
         /// <summary>
-        /// Reloads Item tab
+        /// Updates Item tab
         /// </summary>
-        public static void ReloadItemTab()
+        public static void UpdateItemsTab()
         {
-            _refMarker.itemShowControl.ChangeTileSize();
+            _refMarker.itemShowControl.UpdateTileView();
+        }
+
+        /// <summary>
+        /// Updates Land tiles tab
+        /// </summary>
+        public static void UpdateLandTilesTab()
+        {
+            _refMarker.landTilesControl.UpdateTileView();
+        }
+
+        /// <summary>
+        /// Updates Textures tab
+        /// </summary>
+        public static void UpdateTexturesTab()
+        {
+            _refMarker.textureControl.UpdateTileView();
+        }
+
+        /// <summary>
+        /// Updates Fonts tab
+        /// </summary>
+        public static void UpdateFontsTab()
+        {
+            _refMarker.fontsControl.UpdateTileView();
         }
 
         /// <summary>
         /// Updates Map tab
         /// </summary>
-        public static void ChangeMapSize()
+        public static void UpdateMapTab()
         {
             if (Options.LoadedUltimaClass["Map"])
             {

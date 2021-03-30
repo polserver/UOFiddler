@@ -242,11 +242,11 @@ namespace UoFiddler.Controls.UserControls.TileView
             }
         }
 
-        private const double _defaultOpacityValue = 0.6;
+        private const double _defaultOpacityValue = 0.5;
         private double _tileHighlightOpacity = _defaultOpacityValue;
 
         [Browsable(true)]
-        [Description("Opacity value for highlight color. Allowed values 0-100% (default 60%).")]
+        [Description("Opacity value for highlight color. Allowed values 0-100% (default 50%).")]
         [TypeConverter(typeof(OpacityConverter))]
         [DefaultValue(_defaultOpacityValue)]
         public double TileHighLightOpacity
@@ -263,10 +263,26 @@ namespace UoFiddler.Controls.UserControls.TileView
             }
         }
 
+        private Color _tileFocusColor = Color.DarkRed;
+
+        /// <summary>
+        /// Focused tile border and highlight color
+        /// </summary>
+        [Browsable(true)]
+        public Color TileFocusColor
+        {
+            get => _tileFocusColor;
+            set
+            {
+                _tileFocusColor = value;
+                Invalidate();
+            }
+        }
+
         private Color _tileHighlightColor = SystemColors.Highlight;
 
         /// <summary>
-        /// Color of selected item background
+        /// Selected tile highlight color
         /// </summary>
         [Browsable(true)]
         public Color TileHighlightColor
@@ -285,7 +301,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Color _tileBackgroundColor = SystemColors.Window;
         /// <summary>
-        /// Color of selected item background
+        /// Color of tile background
         /// </summary>
         [Browsable(true)]
         public Color TileBackgroundColor
@@ -656,7 +672,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
                 if (SelectedIndices.Contains(i))
                 {
-                    using (var brush = new SolidBrush(Color.FromArgb((int)(_tileHighlightOpacity * 255), _tileHighlightColor)))
+                    using (var brush = new SolidBrush(Color.FromArgb((int)(TileHighLightOpacity * 255), _tileHighlightColor)))
                     {
                         e.Graphics.FillRectangle(brush, marginRec);
                     }
@@ -670,8 +686,21 @@ namespace UoFiddler.Controls.UserControls.TileView
                 // not sure yet on should it be in DrawItem or here...
                 if (_focusIndex == i)
                 {
-                    Rectangle focusRec = new Rectangle(marginPoint + single, _tileSize + _tilePadding.Size);
-                    ControlPaint.DrawFocusRectangle(e.Graphics, focusRec);
+                    Rectangle focusRec = new Rectangle(marginPoint + single, _tileSize + _tilePadding.Size - single);
+
+                    if (!SelectedIndices.Contains(_focusIndex))
+                    {
+                        using (var brush = new SolidBrush(Color.FromArgb(32, TileFocusColor)))
+                        {
+                            e.Graphics.FillRectangle(brush, marginRec);
+                        }
+                    }
+
+                    using (var brush = new SolidBrush(TileFocusColor))
+                    using (var pen = new Pen(brush, 1f))
+                    {
+                        e.Graphics.DrawRectangle(pen, focusRec);
+                    }
                 }
             }
         }

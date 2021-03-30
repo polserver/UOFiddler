@@ -94,6 +94,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             TextureTileView.VirtualListSize = _textureList.Count;
+            UpdateTileView();
 
             if (!_loaded)
             {
@@ -604,6 +605,20 @@ namespace UoFiddler.Controls.UserControls
                 MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1);
             }
+        }
+
+        public void UpdateTileView()
+        {
+            var sameFocusColor = TextureTileView.TileFocusColor == Options.TileFocusColor;
+            var sameSelectionColor = TextureTileView.TileHighlightColor == Options.TileSelectionColor;
+            if (sameFocusColor && sameSelectionColor)
+            {
+                return;
+            }
+
+            TextureTileView.TileFocusColor = Options.TileFocusColor;
+            TextureTileView.TileHighlightColor = Options.TileSelectionColor;
+            TextureTileView.Invalidate();
         }
     }
 }

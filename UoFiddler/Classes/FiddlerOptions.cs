@@ -132,6 +132,19 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("CacheData");
             elem.SetAttribute("active", Files.CacheData.ToString());
             sr.AppendChild(elem);
+            // + Colors
+            comment = dom.CreateComment("Focus tile color for tile views");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("TileFocusColor");
+            elem.SetAttribute("value", ColorTranslator.ToHtml(Options.TileFocusColor));
+            sr.AppendChild(elem);
+            //
+            comment = dom.CreateComment("Selected tile color for tile views");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("TileSelectionColor");
+            elem.SetAttribute("value", ColorTranslator.ToHtml(Options.TileSelectionColor));
+            sr.AppendChild(elem);
+            // - Colors
             comment = dom.CreateComment("NewMapSize Felucca/Trammel width 7168?");
             sr.AppendChild(comment);
             elem = dom.CreateElement("NewMapSize");
@@ -304,6 +317,18 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 Files.CacheData = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("TileFocusColor");
+            if (elem != null)
+            {
+                Options.TileFocusColor = ColorTranslator.FromHtml(elem.GetAttribute("value"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("TileSelectionColor");
+            if (elem != null)
+            {
+                Options.TileSelectionColor = ColorTranslator.FromHtml(elem.GetAttribute("value"));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("NewMapSize");

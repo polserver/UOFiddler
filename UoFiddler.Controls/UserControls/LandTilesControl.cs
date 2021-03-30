@@ -148,7 +148,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             LandTilesTileView.VirtualListSize = _tileList.Count;
-            LandTilesTileView.Invalidate();
+            UpdateTileView();
 
             if (!IsLoaded)
             {
@@ -654,9 +654,8 @@ namespace UoFiddler.Controls.UserControls
 
                 Options.ChangedUltimaClass["Art"] = true;
             }
-
-
         }
+
         /// <summary>
         /// Check if all the indexes from baseIndex to baseIndex + count are valid
         /// </summary>
@@ -706,6 +705,20 @@ namespace UoFiddler.Controls.UserControls
             {
                 _tileList.Add(index);
             }
+        }
+
+        public void UpdateTileView()
+        {
+            var sameFocusColor = LandTilesTileView.TileFocusColor == Options.TileFocusColor;
+            var sameSelectionColor = LandTilesTileView.TileHighlightColor == Options.TileSelectionColor;
+            if (sameFocusColor && sameSelectionColor)
+            {
+                return;
+            }
+
+            LandTilesTileView.TileFocusColor = Options.TileFocusColor;
+            LandTilesTileView.TileHighlightColor = Options.TileSelectionColor;
+            LandTilesTileView.Invalidate();
         }
     }
 }
