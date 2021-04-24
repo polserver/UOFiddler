@@ -17,7 +17,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -133,10 +132,17 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            Regex regex = new Regex(name, RegexOptions.IgnoreCase);
+            var searchMethod = SearchHelper.GetSearchMethod();
+
             for (int i = index; i < RefMarker._itemList.Count; ++i)
             {
-                if (!regex.IsMatch(TileData.ItemTable[RefMarker._itemList[i]].Name))
+                var searchResult = searchMethod(name, TileData.ItemTable[RefMarker._itemList[i]].Name);
+                if (searchResult.HasErrors)
+                {
+                    break;
+                }
+
+                if (!searchResult.EntryFound)
                 {
                     continue;
                 }
@@ -144,6 +150,7 @@ namespace UoFiddler.Controls.UserControls
                 RefMarker.SelectedGraphicId = RefMarker._itemList[i];
                 return true;
             }
+
             return false;
         }
 

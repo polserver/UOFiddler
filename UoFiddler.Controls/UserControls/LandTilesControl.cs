@@ -15,7 +15,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -97,10 +96,17 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            Regex regex = new Regex(name, RegexOptions.IgnoreCase);
+            var searchMethod = SearchHelper.GetSearchMethod();
+
             for (int i = index; i < _refMarker._tileList.Count; ++i)
             {
-                if (!regex.IsMatch(TileData.LandTable[_refMarker._tileList[i]].Name))
+                var searchResult = searchMethod(name, TileData.LandTable[_refMarker._tileList[i]].Name);
+                if (searchResult.HasErrors)
+                {
+                    break;
+                }
+
+                if (!searchResult.EntryFound)
                 {
                     continue;
                 }
@@ -646,7 +652,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
 
-                
+
 
                 LandTilesTileView.VirtualListSize = _tileList.Count;
                 LandTilesTileView.Invalidate();

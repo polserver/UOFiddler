@@ -12,7 +12,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -31,6 +30,9 @@ namespace UoFiddler.Controls.UserControls
             _source = new BindingSource();
             FindEntry.TextBox.PreviewKeyDown += FindEntry_PreviewKeyDown;
         }
+
+        private const string _searchNumberPlaceholder = "Enter Number";
+        private const string _searchTextPlaceholder = "Enter Text";
 
         private static ClilocControl _refMarker;
         private static StringList _cliloc;
@@ -175,6 +177,7 @@ namespace UoFiddler.Controls.UserControls
             _sortColumn = 0;
             _cliloc.Entries.Sort(new StringList.NumberComparer(false));
             _source.DataSource = _cliloc.Entries;
+
             if (dataGridView1.Columns.Count > 0)
             {
                 dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
@@ -184,6 +187,7 @@ namespace UoFiddler.Controls.UserControls
                 dataGridView1.Columns[2].Width = 60;
                 dataGridView1.Columns[2].ReadOnly = true;
             }
+
             dataGridView1.Invalidate();
         }
 
@@ -203,6 +207,7 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
             }
+
             MessageBox.Show(
                 "Number not found.",
                 "Goto",
@@ -213,10 +218,28 @@ namespace UoFiddler.Controls.UserControls
 
         private void FindEntryClick(object sender, EventArgs e)
         {
-            Regex regex = new Regex(FindEntry.Text, RegexOptions.IgnoreCase);
+            if (string.IsNullOrEmpty(FindEntry.Text) || FindEntry.Text == _searchTextPlaceholder)
+            {
+                MessageBox.Show("Please provide search text", "Find Entry", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1);
+
+                return;
+            }
+
+            var searchMethod = SearchHelper.GetSearchMethod(RegexToolStripButton.Checked);
+
+            bool hasErrors = false;
+
             for (int i = dataGridView1.Rows.GetFirstRow(DataGridViewElementStates.Selected) + 1; i < dataGridView1.Rows.Count; ++i)
             {
-                if (!regex.IsMatch(dataGridView1.Rows[i].Cells[1].Value.ToString()))
+                var searchResult = searchMethod(FindEntry.Text, dataGridView1.Rows[i].Cells[1].Value.ToString());
+                if (searchResult.HasErrors)
+                {
+                    hasErrors = true;
+                    break;
+                }
+
+                if (!searchResult.EntryFound)
                 {
                     continue;
                 }
@@ -225,11 +248,9 @@ namespace UoFiddler.Controls.UserControls
                 dataGridView1.FirstDisplayedScrollingRowIndex = i;
                 return;
             }
-            MessageBox.Show(
-                "Entry not found.",
-                "Find Entry",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error,
+
+            MessageBox.Show(hasErrors ? "Invalid regular expression." : "Entry not found.", "Find Entry",
+                MessageBoxButtons.OK, MessageBoxIcon.Error,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -584,7 +605,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void GotoEntry_Enter(object sender, EventArgs e)
         {
-            if (GotoEntry.Text == "Enter Number")
+            if (GotoEntry.Text == _searchNumberPlaceholder)
             {
                 GotoEntry.Text = "";
             }
@@ -592,7 +613,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void FindEntry_Enter(object sender, EventArgs e)
         {
-            if (FindEntry.Text == "Enter Text")
+            if (FindEntry.Text == _searchTextPlaceholder)
             {
                 FindEntry.Text = "";
             }

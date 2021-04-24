@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -153,7 +152,9 @@ namespace UoFiddler.Controls.UserControls
         public static bool SearchName(string name, bool next, bool land)
         {
             int index = 0;
-            Regex regex = new Regex(name, RegexOptions.IgnoreCase);
+
+            var searchMethod = SearchHelper.GetSearchMethod();
+
             if (land)
             {
                 if (next)
@@ -168,10 +169,17 @@ namespace UoFiddler.Controls.UserControls
                         index = 0;
                     }
                 }
+
                 for (int i = index; i < _refMarker.treeViewLand.Nodes.Count; ++i)
                 {
                     TreeNode node = _refMarker.treeViewLand.Nodes[i];
-                    if (node.Tag == null || !regex.IsMatch(TileData.LandTable[(int)node.Tag].Name))
+                    if (node.Tag == null)
+                    {
+                        continue;
+                    }
+
+                    var searchResult = searchMethod(name, TileData.LandTable[(int)node.Tag].Name);
+                    if (!searchResult.EntryFound)
                     {
                         continue;
                     }
@@ -198,12 +206,19 @@ namespace UoFiddler.Controls.UserControls
                         sIndex = 0;
                     }
                 }
+
                 for (int i = index; i < _refMarker.treeViewItem.Nodes.Count; ++i)
                 {
                     for (int j = sIndex; j < _refMarker.treeViewItem.Nodes[i].Nodes.Count; ++j)
                     {
                         TreeNode node = _refMarker.treeViewItem.Nodes[i].Nodes[j];
-                        if (node.Tag == null || !regex.IsMatch(TileData.ItemTable[(int)node.Tag].Name))
+                        if (node.Tag == null)
+                        {
+                            continue;
+                        }
+
+                        var searchResult = searchMethod(name, TileData.ItemTable[(int)node.Tag].Name);
+                        if (!searchResult.EntryFound)
                         {
                             continue;
                         }
@@ -213,9 +228,11 @@ namespace UoFiddler.Controls.UserControls
                         node.EnsureVisible();
                         return true;
                     }
+
                     sIndex = 0;
                 }
             }
+
             return false;
         }
 
