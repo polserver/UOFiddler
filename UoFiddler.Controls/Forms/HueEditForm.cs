@@ -20,7 +20,7 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class HueEditForm : Form
     {
-        private readonly HuesControl _refMarker; // TODO: unused?
+        //private readonly HuesControl _refMarker; // TODO: unused? 
         private readonly Hue _hue;
         private readonly short[] _colors;
         private int _selected;
@@ -57,8 +57,8 @@ namespace UoFiddler.Controls.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
-            _refMarker = mRefMarker;
-            Text = $"HueEdit {index}";
+            //_refMarker = mRefMarker;
+            Text = $"HueEdit {index} / 0x{index:X}";
 
             _hue = Hues.GetHue(index);
             _colors = new short[32];

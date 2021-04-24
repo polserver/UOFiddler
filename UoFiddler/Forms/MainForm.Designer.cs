@@ -61,7 +61,7 @@ namespace UoFiddler.Forms
             this.gumpsControl = new UoFiddler.Controls.UserControls.GumpControl();
             this.SoundsTab = new System.Windows.Forms.TabPage();
             this.soundControl = new UoFiddler.Controls.UserControls.SoundsControl();
-            this.HueTab = new System.Windows.Forms.TabPage();
+            this.HuesTab = new System.Windows.Forms.TabPage();
             this.hueControl = new UoFiddler.Controls.UserControls.HuesControl();
             this.FontsTab = new System.Windows.Forms.TabPage();
             this.fontsControl = new UoFiddler.Controls.UserControls.FontsControl();
@@ -136,7 +136,7 @@ namespace UoFiddler.Forms
             this.TextureTab.SuspendLayout();
             this.GumpsTab.SuspendLayout();
             this.SoundsTab.SuspendLayout();
-            this.HueTab.SuspendLayout();
+            this.HuesTab.SuspendLayout();
             this.FontsTab.SuspendLayout();
             this.ClilocTab.SuspendLayout();
             this.MapTab.SuspendLayout();
@@ -163,7 +163,7 @@ namespace UoFiddler.Forms
             this.TabPanel.Controls.Add(this.TextureTab);
             this.TabPanel.Controls.Add(this.GumpsTab);
             this.TabPanel.Controls.Add(this.SoundsTab);
-            this.TabPanel.Controls.Add(this.HueTab);
+            this.TabPanel.Controls.Add(this.HuesTab);
             this.TabPanel.Controls.Add(this.FontsTab);
             this.TabPanel.Controls.Add(this.ClilocTab);
             this.TabPanel.Controls.Add(this.MapTab);
@@ -285,7 +285,7 @@ namespace UoFiddler.Forms
             this.itemShowControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.itemShowControl.Location = new System.Drawing.Point(3, 3);
             this.itemShowControl.Name = "itemShowControl";
-            this.itemShowControl.SelectedGraphicId = -1;
+            this.itemShowControl.SelectedGraphicId = 0;
             this.itemShowControl.Size = new System.Drawing.Size(770, 504);
             this.itemShowControl.TabIndex = 0;
             // 
@@ -307,7 +307,7 @@ namespace UoFiddler.Forms
             this.landTilesControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.landTilesControl.Location = new System.Drawing.Point(3, 3);
             this.landTilesControl.Name = "landTilesControl";
-            this.landTilesControl.SelectedGraphicId = -1;
+            this.landTilesControl.SelectedGraphicId = 0;
             this.landTilesControl.Size = new System.Drawing.Size(770, 504);
             this.landTilesControl.TabIndex = 0;
             // 
@@ -329,7 +329,7 @@ namespace UoFiddler.Forms
             this.textureControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textureControl.Location = new System.Drawing.Point(3, 3);
             this.textureControl.Name = "textureControl";
-            this.textureControl.SelectedTextureId = -1;
+            this.textureControl.SelectedTextureId = 0;
             this.textureControl.Size = new System.Drawing.Size(770, 504);
             this.textureControl.TabIndex = 0;
             // 
@@ -375,17 +375,17 @@ namespace UoFiddler.Forms
             this.soundControl.Size = new System.Drawing.Size(770, 504);
             this.soundControl.TabIndex = 0;
             // 
-            // HueTab
+            // HuesTab
             // 
-            this.HueTab.Controls.Add(this.hueControl);
-            this.HueTab.Location = new System.Drawing.Point(4, 22);
-            this.HueTab.Name = "HueTab";
-            this.HueTab.Padding = new System.Windows.Forms.Padding(3);
-            this.HueTab.Size = new System.Drawing.Size(776, 510);
-            this.HueTab.TabIndex = 6;
-            this.HueTab.Tag = 8;
-            this.HueTab.Text = "Hue";
-            this.HueTab.UseVisualStyleBackColor = true;
+            this.HuesTab.Controls.Add(this.hueControl);
+            this.HuesTab.Location = new System.Drawing.Point(4, 22);
+            this.HuesTab.Name = "HuesTab";
+            this.HuesTab.Padding = new System.Windows.Forms.Padding(3);
+            this.HuesTab.Size = new System.Drawing.Size(776, 510);
+            this.HuesTab.TabIndex = 6;
+            this.HuesTab.Tag = 8;
+            this.HuesTab.Text = "Hues";
+            this.HuesTab.UseVisualStyleBackColor = true;
             // 
             // hueControl
             // 
@@ -1041,7 +1041,7 @@ namespace UoFiddler.Forms
             this.TextureTab.ResumeLayout(false);
             this.GumpsTab.ResumeLayout(false);
             this.SoundsTab.ResumeLayout(false);
-            this.HueTab.ResumeLayout(false);
+            this.HuesTab.ResumeLayout(false);
             this.FontsTab.ResumeLayout(false);
             this.ClilocTab.ResumeLayout(false);
             this.MapTab.ResumeLayout(false);
@@ -1078,7 +1078,7 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.ToolStrip tsMainMenu;
         private System.Windows.Forms.TabPage MultisTab;
         private MultisControl multisControl;
-        private System.Windows.Forms.TabPage HueTab;
+        private System.Windows.Forms.TabPage HuesTab;
         private HuesControl hueControl;
         private System.Windows.Forms.TabPage FontsTab;
         private FontsControl fontsControl;

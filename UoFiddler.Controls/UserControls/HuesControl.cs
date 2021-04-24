@@ -125,10 +125,12 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.Invalidate();
         }
 
+        private const int _noSelectionValue = -1;
+
         private int GetIndex(int y)
         {
             int value = vScrollBar.Value + y;
-            return Hues.List.Length > value ? value : -1;
+            return Hues.List.Length > value ? value : _noSelectionValue;
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
@@ -139,6 +141,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             e.Graphics.Clear(Color.White);
+
             for (int y = 0; y <= _row; ++y)
             {
                 int index = GetIndex(y);
@@ -154,7 +157,7 @@ namespace UoFiddler.Controls.UserControls
                 Hue hue = Hues.List[index];
                 Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox.Width, _itemHeight);
                 e.Graphics.DrawString(
-                    $"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                    $"{hue.Index,-5} {$"(0x{hue.Index:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
 
                 for (int i = 0; i < hue.Colors.Length; ++i)
                 {
@@ -172,28 +175,20 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.Invalidate();
         }
 
+        private const int _scrollStep = 4;
+
         private void OnMouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta < 0)
-            {
-                if (vScrollBar.Value >= vScrollBar.Maximum)
-                {
-                    return;
-                }
+            var newValue = e.Delta < 0 ? vScrollBar.Value + _scrollStep : vScrollBar.Value - _scrollStep;
 
-                vScrollBar.Value++;
-                pictureBox.Invalidate();
-            }
-            else
+            if (newValue < vScrollBar.Minimum || newValue >= vScrollBar.Maximum)
             {
-                if (vScrollBar.Value <= 1)
-                {
-                    return;
-                }
-
-                vScrollBar.Value--;
-                pictureBox.Invalidate();
+                return;
             }
+
+            vScrollBar.Value = newValue;
+
+            pictureBox.Invalidate();
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -210,8 +205,16 @@ namespace UoFiddler.Controls.UserControls
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
             pictureBox.Focus();
-            Point m = PointToClient(MousePosition);
+
+            UpdateSelection();
+        }
+
+        private void UpdateSelection()
+        {
+            Point m = pictureBox.PointToClient(MousePosition);
+
             int index = GetIndex(m.Y / _itemHeight);
+
             if (index >= 0)
             {
                 Selected = index;
@@ -220,14 +223,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnMouseDoubleClick(object sender, MouseEventArgs e)
         {
-            Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / _itemHeight);
-            if (index >= 0)
-            {
-                Selected = index;
-            }
+            UpdateSelection();
 
-            new HueEditForm(index, _refMarker).Show();
+            if (Selected >= 0)
+            {
+                new HueEditForm(Selected, _refMarker).Show();
+            }
         }
 
         private void OnClickSave(object sender, EventArgs e)
@@ -251,20 +252,20 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(ReplaceText.Text, out int index, 1, 3000))
+            if (!Utils.ConvertStringToInt(ReplaceText.Text, out int index, 0, Hues.List.Length))
             {
                 return;
             }
 
             contextMenuStrip1.Close();
-            Hues.List[_selected] = Hues.List[index - 1];
+            Hues.List[_selected] = Hues.List[index];
             pictureBox.Invalidate();
         }
 
         private void OnExport(object sender, EventArgs e)
         {
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Hue {_selected + 1}.txt");
+            string fileName = Path.Combine(path, $"Hue {_selected}.txt");
             Hues.List[_selected].Export(fileName);
             MessageBox.Show($"Hue saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
@@ -304,6 +305,35 @@ namespace UoFiddler.Controls.UserControls
                 borderWidth, ButtonBorderStyle.Solid, borderColor, borderWidth,
                 ButtonBorderStyle.Solid, borderColor, borderWidth, ButtonBorderStyle.Solid,
                 borderColor, borderWidth, ButtonBorderStyle.Solid);
+        }
+
+        private void HueIndexToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            var maximumIndex = Hues.List.Length;
+
+            if (!Utils.ConvertStringToInt(HueIndexToolStripTextBox.Text, out int indexValue))
+            {
+                return;
+            }
+
+            if (indexValue < 0)
+            {
+                indexValue = 0;
+            }
+
+            if (indexValue >= maximumIndex)
+            {
+                indexValue = maximumIndex - 1;
+            }
+
+            var scrollPosition = indexValue - 1;
+            if (scrollPosition < 0)
+            {
+                scrollPosition = 0;
+            }
+
+            Selected = indexValue;
+            vScrollBar.Value = scrollPosition;
         }
     }
 }

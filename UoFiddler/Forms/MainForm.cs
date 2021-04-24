@@ -552,7 +552,7 @@ namespace UoFiddler.Forms
                 case 5: return TextureTab;
                 case 6: return GumpsTab;
                 case 7: return SoundsTab;
-                case 8: return HueTab;
+                case 8: return HuesTab;
                 case 9: return FontsTab;
                 case 10: return ClilocTab;
                 case 11: return MapTab;
