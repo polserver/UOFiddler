@@ -48,24 +48,107 @@ namespace UoFiddler.Controls.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
-            toolStripComboBox1.SelectedIndex = 0;
-            listView1.MultiSelect = true;
+            SelectFileToolStripComboBox.SelectedIndex = 0;
+            FramesListView.MultiSelect = true;
 
             _fileType = 0;
             _currentDir = 0;
-            _framePoint = new Point(animationPictureBox.Width / 2, animationPictureBox.Height / 2);
+            _framePoint = new Point(AnimationPictureBox.Width / 2, AnimationPictureBox.Height / 2);
             _showOnlyValid = false;
             _loaded = false;
         }
+
+        private string[][] AnimNames =
+        {
+            new string[]
+            {
+                "Walk",
+                "Run",
+                "Idle",
+                "Eat",
+                "Alert",
+                "Attack1",
+                "Attack2",
+                "GetHit",
+                "Die1",
+                "Idle",
+                "Fidget",
+                "LieDown",
+                "Die2"
+            }, //animal
+            new string[]
+            {
+                "Walk",
+                "Idle",
+                "Die1",
+                "Die2",
+                "Attack1",
+                "Attack2",
+                "Attack3",
+                "AttackBow",
+                "AttackCrossBow",
+                "AttackThrow",
+                "GetHit",
+                "Pillage",
+                "Stomp",
+                "Cast2",
+                "Cast3",
+                "BlockRight",
+                "BlockLeft",
+                "Idle",
+                "Fidget",
+                "Fly",
+                "TakeOff",
+                "GetHitInAir"
+            }, //Monster
+            new string[]
+            {
+                "Walk_01",
+                "WalkStaff_01",
+                "Run_01",
+                "RunStaff_01",
+                "Idle_01",
+                "Idle_01",
+                "Fidget_Yawn_Stretch_01",
+                "CombatIdle1H_01",
+                "CombatIdle1H_01",
+                "AttackSlash1H_01",
+                "AttackPierce1H_01",
+                "AttackBash1H_01",
+                "AttackBash2H_01",
+                "AttackSlash2H_01",
+                "AttackPierce2H_01",
+                "CombatAdvance_1H_01",
+                "Spell1",
+                "Spell2",
+                "AttackBow_01",
+                "AttackCrossbow_01",
+                "GetHit_Fr_Hi_01",
+                "Die_Hard_Fwd_01",
+                "Die_Hard_Back_01",
+                "Horse_Walk_01",
+                "Horse_Run_01",
+                "Horse_Idle_01",
+                "Horse_Attack1H_SlashRight_01",
+                "Horse_AttackBow_01",
+                "Horse_AttackCrossbow_01",
+                "Horse_Attack2H_SlashRight_01",
+                "Block_Shield_Hard_01",
+                "Punch_Punch_Jab_01",
+                "Bow_Lesser_01",
+                "Salute_Armed1h_01",
+                "Ingest_Eat_01"
+            } //human
+        };
 
         private void OnLoad(object sender, EventArgs e)
         {
             Options.LoadedUltimaClass["AnimationEdit"] = true;
 
-            treeView1.BeginUpdate();
+            AnimationListTreeView.BeginUpdate();
             try
             {
-                treeView1.Nodes.Clear();
+                AnimationListTreeView.Nodes.Clear();
                 if (_fileType != 0)
                 {
                     int count = Animations.GetAnimCount(_fileType);
@@ -86,8 +169,8 @@ namespace UoFiddler.Controls.Forms
                             TreeNode treeNode = new TreeNode
                             {
                                 Tag = j,
-                                Text = j.ToString()
-                            };
+                                Text = string.Format("{0:D2} {1}", j, AnimNames[animLength == 22 ? 1 : animLength == 13 ? 0 : 2][j])
+                        };
 
                             if (AnimationEdit.IsActionDefined(_fileType, i, j))
                             {
@@ -114,17 +197,17 @@ namespace UoFiddler.Controls.Forms
                         nodes[i] = node;
                     }
 
-                    treeView1.Nodes.AddRange(nodes.Where(n => n != null).ToArray());
+                    AnimationListTreeView.Nodes.AddRange(nodes.Where(n => n != null).ToArray());
                 }
             }
             finally
             {
-                treeView1.EndUpdate();
+                AnimationListTreeView.EndUpdate();
             }
 
-            if (treeView1.Nodes.Count > 0)
+            if (AnimationListTreeView.Nodes.Count > 0)
             {
-                treeView1.SelectedNode = treeView1.Nodes[0];
+                AnimationListTreeView.SelectedNode = AnimationListTreeView.Nodes[0];
             }
 
             if (!_loaded)
@@ -146,18 +229,18 @@ namespace UoFiddler.Controls.Forms
             _currentDir = 0;
             _currentAction = 0;
             _currentBody = 0;
-            toolStripComboBox1.SelectedIndex = 0;
-            _framePoint = new Point(animationPictureBox.Width / 2, animationPictureBox.Height / 2);
+            SelectFileToolStripComboBox.SelectedIndex = 0;
+            _framePoint = new Point(AnimationPictureBox.Width / 2, AnimationPictureBox.Height / 2);
             _showOnlyValid = false;
-            showOnlyValidToolStripMenuItem.Checked = false;
+            ShowOnlyValidToolStripMenuItem.Checked = false;
             OnLoad(null);
         }
 
         private TreeNode GetNode(int tag)
         {
             return _showOnlyValid
-                ? treeView1.Nodes.Cast<TreeNode>().FirstOrDefault(node => (int)node.Tag == tag)
-                : treeView1.Nodes[tag];
+                ? AnimationListTreeView.Nodes.Cast<TreeNode>().FirstOrDefault(node => (int)node.Tag == tag)
+                : AnimationListTreeView.Nodes[tag];
         }
 
         private unsafe void SetPaletteBox()
@@ -170,7 +253,7 @@ namespace UoFiddler.Controls.Forms
             // TODO: why is bitmapWidth constant and height is taken from picturebox?
             // TODO: looks like the value is the same as array size for pallete in AnimIdx
             const int bitmapWidth = 256;
-            int bitmapHeight = pictureBoxPalette.Height;
+            int bitmapHeight = PalettePictureBox.Height;
 
             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             Bitmap bmp = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format16bppArgb1555);
@@ -191,40 +274,40 @@ namespace UoFiddler.Controls.Forms
                 bmp.UnlockBits(bd);
             }
 
-            pictureBoxPalette.Image?.Dispose();
-            pictureBoxPalette.Image = bmp;
+            PalettePictureBox.Image?.Dispose();
+            PalettePictureBox.Image = bmp;
         }
 
         private void AfterSelectTreeView(object sender, TreeViewEventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (AnimationListTreeView.SelectedNode == null)
             {
                 return;
             }
 
-            if (treeView1.SelectedNode.Parent == null)
+            if (AnimationListTreeView.SelectedNode.Parent == null)
             {
-                if (treeView1.SelectedNode.Tag != null)
+                if (AnimationListTreeView.SelectedNode.Tag != null)
                 {
-                    _currentBody = (int)treeView1.SelectedNode.Tag;
+                    _currentBody = (int)AnimationListTreeView.SelectedNode.Tag;
                 }
 
                 _currentAction = 0;
             }
             else
             {
-                if (treeView1.SelectedNode.Parent.Tag != null)
+                if (AnimationListTreeView.SelectedNode.Parent.Tag != null)
                 {
-                    _currentBody = (int)treeView1.SelectedNode.Parent.Tag;
+                    _currentBody = (int)AnimationListTreeView.SelectedNode.Parent.Tag;
                 }
 
-                _currentAction = (int)treeView1.SelectedNode.Tag;
+                _currentAction = (int)AnimationListTreeView.SelectedNode.Tag;
             }
 
-            listView1.BeginUpdate();
+            FramesListView.BeginUpdate();
             try
             {
-                listView1.Clear();
+                FramesListView.Clear();
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 if (edit != null)
                 {
@@ -244,7 +327,7 @@ namespace UoFiddler.Controls.Forms
                             {
                                 Tag = i
                             };
-                            listView1.Items.Add(item);
+                            FramesListView.Items.Add(item);
 
                             if (currentBits[i].Width > width)
                             {
@@ -256,31 +339,31 @@ namespace UoFiddler.Controls.Forms
                                 height = currentBits[i].Height;
                             }
                         }
-                        listView1.TileSize = new Size(width + 5, height + 5);
+                        FramesListView.TileSize = new Size(width + 5, height + 5);
 
-                        trackBar2.Maximum = currentBits.Length - 1;
-                        trackBar2.Value = 0;
-                        trackBar2.Invalidate();
+                        FramesTrackBar.Maximum = currentBits.Length - 1;
+                        FramesTrackBar.Value = 0;
+                        FramesTrackBar.Invalidate();
 
-                        numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                        numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
                     }
                     //Soulblighter Modification
                     else
                     {
-                        trackBar2.Maximum = 0;
-                        trackBar2.Value = 0;
-                        trackBar2.Invalidate();
+                        FramesTrackBar.Maximum = 0;
+                        FramesTrackBar.Value = 0;
+                        FramesTrackBar.Invalidate();
                     }
                     //End of Soulblighter Modification
                 }
             }
             finally
             {
-                listView1.EndUpdate();
+                FramesListView.EndUpdate();
             }
 
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
             SetPaletteBox();
         }
 
@@ -289,7 +372,7 @@ namespace UoFiddler.Controls.Forms
             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             Bitmap[] currentBits = edit.GetFrames();
             Bitmap bmp = currentBits[(int)e.Item.Tag];
-            var penColor = listView1.SelectedItems.Contains(e.Item) ? Color.Red : Color.Gray;
+            var penColor = FramesListView.SelectedItems.Contains(e.Item) ? Color.Red : Color.Gray;
             e.Graphics.DrawRectangle(new Pen(penColor), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, bmp.Width,  bmp.Height);
             e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
@@ -297,29 +380,29 @@ namespace UoFiddler.Controls.Forms
 
         private void OnAnimChanged(object sender, EventArgs e)
         {
-            if (toolStripComboBox1.SelectedIndex == _fileType)
+            if (SelectFileToolStripComboBox.SelectedIndex == _fileType)
             {
                 return;
             }
 
-            _fileType = toolStripComboBox1.SelectedIndex;
+            _fileType = SelectFileToolStripComboBox.SelectedIndex;
             OnLoad(this, EventArgs.Empty);
         }
 
         private void OnDirectionChanged(object sender, EventArgs e)
         {
-            _currentDir = trackBarDirection.Value;
+            _currentDir = DirectionTrackBar.Value;
             AfterSelectTreeView(null, null);
         }
 
-        private void OnSizeChangedPictureBox(object sender, EventArgs e)
+        private void AnimationPictureBox_OnSizeChanged(object sender, EventArgs e)
         {
-            _framePoint = new Point(animationPictureBox.Width / 2, animationPictureBox.Height / 2);
-            animationPictureBox.Invalidate();
+            _framePoint = new Point(AnimationPictureBox.Width / 2, AnimationPictureBox.Height / 2);
+            AnimationPictureBox.Invalidate();
         }
         //Soulblighter Modification
 
-        private void OnPaintFrame(object sender, PaintEventArgs e)
+        private void AnimationPictureBox_OnPaintFrame(object sender, PaintEventArgs e)
         {
             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             if (edit == null)
@@ -330,10 +413,10 @@ namespace UoFiddler.Controls.Forms
             Bitmap[] currentBits = edit.GetFrames();
 
             e.Graphics.Clear(Color.LightGray);
-            e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, animationPictureBox.Height));
-            e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(animationPictureBox.Width, _framePoint.Y));
+            e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, AnimationPictureBox.Height));
+            e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(AnimationPictureBox.Width, _framePoint.Y));
 
-            if (currentBits?.Length > 0 && currentBits[trackBar2.Value] != null)
+            if (currentBits?.Length > 0 && currentBits[FramesTrackBar.Value] != null)
             {
                 int varW;
                 int varH;
@@ -344,8 +427,8 @@ namespace UoFiddler.Controls.Forms
                 }
                 else
                 {
-                    varW = currentBits[trackBar2.Value].Width;
-                    varH = currentBits[trackBar2.Value].Height;
+                    varW = currentBits[FramesTrackBar.Value].Width;
+                    varH = currentBits[FramesTrackBar.Value].Height;
                 }
 
                 int varFw;
@@ -357,12 +440,12 @@ namespace UoFiddler.Controls.Forms
                 }
                 else
                 {
-                    varFw = currentBits[trackBar2.Value].Width;
-                    varFh = currentBits[trackBar2.Value].Height;
+                    varFw = currentBits[FramesTrackBar.Value].Width;
+                    varFh = currentBits[FramesTrackBar.Value].Height;
                 }
 
-                int x = _framePoint.X - edit.Frames[trackBar2.Value].Center.X;
-                int y = _framePoint.Y - edit.Frames[trackBar2.Value].Center.Y - currentBits[trackBar2.Value].Height;
+                int x = _framePoint.X - edit.Frames[FramesTrackBar.Value].Center.X;
+                int y = _framePoint.Y - edit.Frames[FramesTrackBar.Value].Center.Y - currentBits[FramesTrackBar.Value].Height;
 
                 using (var whiteTransparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255)))
                 {
@@ -370,20 +453,20 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, varW, varH));
-                e.Graphics.DrawImage(currentBits[trackBar2.Value], x, y);
+                e.Graphics.DrawImage(currentBits[FramesTrackBar.Value], x, y);
 
                 //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(animationPictureBox.Width, 335-(int)numericUpDown1.Value));
             }
 
             // Draw Reference Point Arrow
             Point[] arrayPoints = {
-                new Point(418 - (int)numericUpDown2.Value, 335 - (int)numericUpDown1.Value),
-                new Point(418 - (int)numericUpDown2.Value, 352 - (int)numericUpDown1.Value),
-                new Point(422 - (int)numericUpDown2.Value, 348 - (int)numericUpDown1.Value),
-                new Point(425 - (int)numericUpDown2.Value, 353 - (int)numericUpDown1.Value),
-                new Point(427 - (int)numericUpDown2.Value, 352 - (int)numericUpDown1.Value),
-                new Point(425 - (int)numericUpDown2.Value, 347 - (int)numericUpDown1.Value),
-                new Point(430 - (int)numericUpDown2.Value, 347 - (int)numericUpDown1.Value)
+                new Point(418 - (int)RefXNumericUpDown.Value, 335 - (int)RefYNumericUpDown.Value),
+                new Point(418 - (int)RefXNumericUpDown.Value, 352 - (int)RefYNumericUpDown.Value),
+                new Point(422 - (int)RefXNumericUpDown.Value, 348 - (int)RefYNumericUpDown.Value),
+                new Point(425 - (int)RefXNumericUpDown.Value, 353 - (int)RefYNumericUpDown.Value),
+                new Point(427 - (int)RefXNumericUpDown.Value, 352 - (int)RefYNumericUpDown.Value),
+                new Point(425 - (int)RefXNumericUpDown.Value, 347 - (int)RefYNumericUpDown.Value),
+                new Point(430 - (int)RefXNumericUpDown.Value, 347 - (int)RefYNumericUpDown.Value)
             };
 
             e.Graphics.FillPolygon(_whiteUnDraw, arrayPoints);
@@ -400,13 +483,13 @@ namespace UoFiddler.Controls.Forms
             }
 
             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            if (edit != null && edit.Frames.Count >= trackBar2.Value)
+            if (edit != null && edit.Frames.Count >= FramesTrackBar.Value)
             {
-                numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
             }
 
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
         //End of Soulblighter Modification
 
@@ -420,20 +503,20 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                if (edit == null || edit.Frames.Count < trackBar2.Value)
+                if (edit == null || edit.Frames.Count < FramesTrackBar.Value)
                 {
                     return;
                 }
 
-                FrameEdit frame = edit.Frames[trackBar2.Value];
-                if (numericUpDownCx.Value == frame.Center.X)
+                FrameEdit frame = edit.Frames[FramesTrackBar.Value];
+                if (CenterXNumericUpDown.Value == frame.Center.X)
                 {
                     return;
                 }
 
-                frame.ChangeCenter((int)numericUpDownCx.Value, frame.Center.Y);
+                frame.ChangeCenter((int)CenterXNumericUpDown.Value, frame.Center.Y);
                 Options.ChangedUltimaClass["Animations"] = true;
-                animationPictureBox.Invalidate();
+                AnimationPictureBox.Invalidate();
             }
             catch (NullReferenceException)
             {
@@ -452,20 +535,20 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                if (edit == null || edit.Frames.Count < trackBar2.Value)
+                if (edit == null || edit.Frames.Count < FramesTrackBar.Value)
                 {
                     return;
                 }
 
-                FrameEdit frame = edit.Frames[trackBar2.Value];
-                if (numericUpDownCy.Value == frame.Center.Y)
+                FrameEdit frame = edit.Frames[FramesTrackBar.Value];
+                if (CenterYNumericUpDown.Value == frame.Center.Y)
                 {
                     return;
                 }
 
-                frame.ChangeCenter(frame.Center.X, (int)numericUpDownCy.Value);
+                frame.ChangeCenter(frame.Center.X, (int)CenterYNumericUpDown.Value);
                 Options.ChangedUltimaClass["Animations"] = true;
-                animationPictureBox.Invalidate();
+                AnimationPictureBox.Invalidate();
             }
             catch (NullReferenceException)
             {
@@ -490,15 +573,15 @@ namespace UoFiddler.Controls.Forms
 
             string path = Options.OutputPath;
             int body, action;
-            if (treeView1.SelectedNode.Parent == null)
+            if (AnimationListTreeView.SelectedNode.Parent == null)
             {
-                body = (int)treeView1.SelectedNode.Tag;
+                body = (int)AnimationListTreeView.SelectedNode.Tag;
                 action = -1;
             }
             else
             {
-                body = (int)treeView1.SelectedNode.Parent.Tag;
-                action = (int)treeView1.SelectedNode.Tag;
+                body = (int)AnimationListTreeView.SelectedNode.Parent.Tag;
+                action = (int)AnimationListTreeView.SelectedNode.Tag;
             }
 
             if (action == -1)
@@ -560,7 +643,7 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            if (treeView1.SelectedNode.Parent == null)
+            if (AnimationListTreeView.SelectedNode.Parent == null)
             {
                 DialogResult result = MessageBox.Show($"Are you sure to remove animation {_currentBody}", "Remove",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
@@ -569,10 +652,10 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                treeView1.SelectedNode.ForeColor = Color.Red;
-                for (int i = 0; i < treeView1.SelectedNode.Nodes.Count; ++i)
+                AnimationListTreeView.SelectedNode.ForeColor = Color.Red;
+                for (int i = 0; i < AnimationListTreeView.SelectedNode.Nodes.Count; ++i)
                 {
-                    treeView1.SelectedNode.Nodes[i].ForeColor = Color.Red;
+                    AnimationListTreeView.SelectedNode.Nodes[i].ForeColor = Color.Red;
                     for (int d = 0; d < 5; ++d)
                     {
                         AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, i, d);
@@ -582,7 +665,7 @@ namespace UoFiddler.Controls.Forms
 
                 if (_showOnlyValid)
                 {
-                    treeView1.SelectedNode.Remove();
+                    AnimationListTreeView.SelectedNode.Remove();
                 }
 
                 Options.ChangedUltimaClass["Animations"] = true;
@@ -603,9 +686,9 @@ namespace UoFiddler.Controls.Forms
                     edit?.ClearFrames();
                 }
 
-                treeView1.SelectedNode.Parent.Nodes[_currentAction].ForeColor = Color.Red;
+                AnimationListTreeView.SelectedNode.Parent.Nodes[_currentAction].ForeColor = Color.Red;
                 bool valid = false;
-                foreach (TreeNode node in treeView1.SelectedNode.Parent.Nodes)
+                foreach (TreeNode node in AnimationListTreeView.SelectedNode.Parent.Nodes)
                 {
                     if (node.ForeColor == Color.Red)
                     {
@@ -620,11 +703,11 @@ namespace UoFiddler.Controls.Forms
                 {
                     if (_showOnlyValid)
                     {
-                        treeView1.SelectedNode.Parent.Remove();
+                        AnimationListTreeView.SelectedNode.Parent.Remove();
                     }
                     else
                     {
-                        treeView1.SelectedNode.Parent.ForeColor = Color.Red;
+                        AnimationListTreeView.SelectedNode.Parent.ForeColor = Color.Red;
                     }
                 }
 
@@ -650,16 +733,16 @@ namespace UoFiddler.Controls.Forms
         //My Soulblighter Modification
         private void OnClickRemoveFrame(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count <= 0)
+            if (FramesListView.SelectedItems.Count <= 0)
             {
                 return;
             }
 
             int corrector = 0;
-            int[] frameIndex = new int[listView1.SelectedItems.Count];
-            for (int i = 0; i < listView1.SelectedItems.Count; i++)
+            int[] frameIndex = new int[FramesListView.SelectedItems.Count];
+            for (int i = 0; i < FramesListView.SelectedItems.Count; i++)
             {
-                frameIndex[i] = listView1.SelectedIndices[i] - corrector;
+                frameIndex[i] = FramesListView.SelectedIndices[i] - corrector;
                 corrector++;
             }
 
@@ -672,9 +755,9 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 edit.RemoveFrame(index);
-                listView1.Items.RemoveAt(listView1.Items.Count - 1);
-                trackBar2.Maximum = edit.Frames.Count != 0 ? edit.Frames.Count - 1 : 0;
-                listView1.Invalidate();
+                FramesListView.Items.RemoveAt(FramesListView.Items.Count - 1);
+                FramesTrackBar.Maximum = edit.Frames.Count != 0 ? edit.Frames.Count - 1 : 0;
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
             }
         }
@@ -682,14 +765,14 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count <= 0)
+            if (FramesListView.SelectedItems.Count <= 0)
             {
                 return;
             }
 
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                int frameIndex = (int)listView1.SelectedItems[0].Tag;
+                int frameIndex = (int)FramesListView.SelectedItems[0].Tag;
                 dialog.Multiselect = false;
                 dialog.Title = $"Choose image file to replace at {frameIndex}";
                 dialog.CheckFileExists = true;
@@ -712,7 +795,7 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 edit.ReplaceFrame(bmp, frameIndex);
-                listView1.Invalidate();
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
             }
         }
@@ -729,7 +812,7 @@ namespace UoFiddler.Controls.Forms
                     dialog.Filter = "Gif files (*.gif;)|*.gif; |Bitmap files (*.bmp;)|*.bmp; |Tiff files (*.tif;*.tiff)|*.tif;*.tiff; |Png files (*.png;)|*.png; |Jpeg files (*.jpeg;*.jpg;)|*.jpeg;*.jpg;";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        listView1.BeginUpdate();
+                        FramesListView.BeginUpdate();
                         try
                         {
                             //My Soulblighter Modifications
@@ -757,13 +840,13 @@ namespace UoFiddler.Controls.Forms
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
-                                    progressBar1.Maximum = frameCount;
+                                    ProgressBar.Maximum = frameCount;
                                     AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
-                                    progressBar1.Value = 0;
-                                    progressBar1.Invalidate();
+                                    ProgressBar.Value = 0;
+                                    ProgressBar.Invalidate();
                                     SetPaletteBox();
-                                    numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                    numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
                                     Options.ChangedUltimaClass["Animations"] = true;
                                 }
                                 //End of Soulblighter Modifications
@@ -782,39 +865,39 @@ namespace UoFiddler.Controls.Forms
                                     {
                                         Tag = i
                                     };
-                                    listView1.Items.Add(item);
-                                    int width = listView1.TileSize.Width - 5;
-                                    if (bmp.Width > listView1.TileSize.Width)
+                                    FramesListView.Items.Add(item);
+                                    int width = FramesListView.TileSize.Width - 5;
+                                    if (bmp.Width > FramesListView.TileSize.Width)
                                     {
                                         width = bmp.Width;
                                     }
 
-                                    int height = listView1.TileSize.Height - 5;
-                                    if (bmp.Height > listView1.TileSize.Height)
+                                    int height = FramesListView.TileSize.Height - 5;
+                                    if (bmp.Height > FramesListView.TileSize.Height)
                                     {
                                         height = bmp.Height;
                                     }
 
-                                    listView1.TileSize = new Size(width + 5, height + 5);
-                                    trackBar2.Maximum = i;
-                                    numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                    numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                                    FramesListView.TileSize = new Size(width + 5, height + 5);
+                                    FramesTrackBar.Maximum = i;
+                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
                                     Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
                         }
                         finally
                         {
-                            listView1.EndUpdate();
+                            FramesListView.EndUpdate();
                         }
 
-                        listView1.Invalidate();
+                        FramesListView.Invalidate();
                     }
                 }
             }
 
             // Refresh List
-            _currentDir = trackBarDirection.Value;
+            _currentDir = DirectionTrackBar.Value;
             AfterSelectTreeView(null, null);
         }
 
@@ -840,26 +923,26 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
             }
         }
@@ -945,7 +1028,7 @@ namespace UoFiddler.Controls.Forms
                     edit.ReplacePalette(palette);
                 }
                 SetPaletteBox();
-                listView1.Invalidate();
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
             }
         }
@@ -1050,20 +1133,20 @@ namespace UoFiddler.Controls.Forms
 
             if (_showOnlyValid)
             {
-                treeView1.BeginUpdate();
+                AnimationListTreeView.BeginUpdate();
                 try
                 {
-                    for (int i = treeView1.Nodes.Count - 1; i >= 0; --i)
+                    for (int i = AnimationListTreeView.Nodes.Count - 1; i >= 0; --i)
                     {
-                        if (treeView1.Nodes[i].ForeColor == Color.Red)
+                        if (AnimationListTreeView.Nodes[i].ForeColor == Color.Red)
                         {
-                            treeView1.Nodes[i].Remove();
+                            AnimationListTreeView.Nodes[i].Remove();
                         }
                     }
                 }
                 finally
                 {
-                    treeView1.EndUpdate();
+                    AnimationListTreeView.EndUpdate();
                 }
             }
             else
@@ -1084,7 +1167,7 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                if (edit == null || edit.Frames.Count < trackBar2.Value)
+                if (edit == null || edit.Frames.Count < FramesTrackBar.Value)
                 {
                     return;
                 }
@@ -1093,9 +1176,9 @@ namespace UoFiddler.Controls.Forms
                 for (int index = 0; index < edit.Frames.Count; index++)
                 {
                     frame[index] = edit.Frames[index];
-                    frame[index].ChangeCenter((int)numericUpDownCx.Value, (int)numericUpDownCy.Value);
+                    frame[index].ChangeCenter((int)CenterXNumericUpDown.Value, (int)CenterYNumericUpDown.Value);
                     Options.ChangedUltimaClass["Animations"] = true;
-                    animationPictureBox.Invalidate();
+                    AnimationPictureBox.Invalidate();
                 }
             }
             catch (NullReferenceException)
@@ -1138,34 +1221,34 @@ namespace UoFiddler.Controls.Forms
                 bit.SelectActiveFrame(dimension, 0);
                 edit.GetGifPalette(bit);
                 SetPaletteBox();
-                listView1.Invalidate();
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
             }
         }
 
         private void ReferencePointX(object sender, EventArgs e)
         {
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         private void ReferencePointY(object sender, EventArgs e)
         {
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         private static bool _lockButton;
 
-        private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
+        private void AnimationPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (_lockButton || !ToolStripLockButton.Enabled)
             {
                 return;
             }
 
-            numericUpDown2.Value = 418 - e.X;
-            numericUpDown1.Value = 335 - e.Y;
+            RefXNumericUpDown.Value = 418 - e.X;
+            RefYNumericUpDown.Value = 335 - e.Y;
 
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         // Change center of frame on key press
@@ -1180,30 +1263,30 @@ namespace UoFiddler.Controls.Forms
             {
                 case Keys.Right:
                 {
-                    numericUpDownCx.Value--;
-                    numericUpDownCx.Invalidate();
+                    CenterXNumericUpDown.Value--;
+                    CenterXNumericUpDown.Invalidate();
                     break;
                 }
                 case Keys.Left:
                 {
-                    numericUpDownCx.Value++;
-                    numericUpDownCx.Invalidate();
+                    CenterXNumericUpDown.Value++;
+                    CenterXNumericUpDown.Invalidate();
                     break;
                 }
                 case Keys.Up:
                 {
-                    numericUpDownCy.Value++;
-                    numericUpDownCy.Invalidate();
+                    CenterYNumericUpDown.Value++;
+                    CenterYNumericUpDown.Invalidate();
                     break;
                 }
                 case Keys.Down:
                 {
-                    numericUpDownCy.Value--;
-                    numericUpDownCy.Invalidate();
+                    CenterYNumericUpDown.Value--;
+                    CenterYNumericUpDown.Invalidate();
                     break;
                 }
             }
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         // Change center of Reference Point on key press
@@ -1218,37 +1301,37 @@ namespace UoFiddler.Controls.Forms
             {
                 case Keys.Right:
                 {
-                    numericUpDown2.Value--;
-                    numericUpDown2.Invalidate();
+                    RefXNumericUpDown.Value--;
+                    RefXNumericUpDown.Invalidate();
                     break;
                 }
                 case Keys.Left:
                 {
-                    numericUpDown2.Value++;
-                    numericUpDown2.Invalidate();
+                    RefXNumericUpDown.Value++;
+                    RefXNumericUpDown.Invalidate();
                     break;
                 }
                 case Keys.Up:
                 {
-                    numericUpDown1.Value++;
-                    numericUpDown1.Invalidate();
+                    RefYNumericUpDown.Value++;
+                    RefYNumericUpDown.Invalidate();
                     break;
                 }
                 case Keys.Down:
                 {
-                    numericUpDown1.Value--;
-                    numericUpDown1.Invalidate();
+                    RefYNumericUpDown.Value--;
+                    RefYNumericUpDown.Invalidate();
                     break;
                 }
             }
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         private void ToolStripLockButton_Click(object sender, EventArgs e)
         {
             _lockButton = !_lockButton;
-            numericUpDown2.Enabled = !_lockButton;
-            numericUpDown1.Enabled = !_lockButton;
+            RefXNumericUpDown.Enabled = !_lockButton;
+            RefYNumericUpDown.Enabled = !_lockButton;
         }
 
         // Add in all Directions
@@ -1264,10 +1347,10 @@ namespace UoFiddler.Controls.Forms
                     dialog.Filter = "Gif files (*.gif;)|*.gif;";
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        trackBarDirection.Enabled = false;
+                        DirectionTrackBar.Enabled = false;
                         if (dialog.FileNames.Length == 5)
                         {
-                            trackBarDirection.Value = 0;
+                            DirectionTrackBar.Value = 0;
 
                             AddFilesAllDirections(dialog);
                         }
@@ -1290,17 +1373,17 @@ namespace UoFiddler.Controls.Forms
                                 continue;
                             }
 
-                            trackBarDirection.Value = 0;
+                            DirectionTrackBar.Value = 0;
 
                             AddFilesAllDirections(dialog);
                         }
-                        trackBarDirection.Enabled = true;
+                        DirectionTrackBar.Enabled = true;
                     }
                 }
             }
 
             // Refresh List
-            _currentDir = trackBarDirection.Value;
+            _currentDir = DirectionTrackBar.Value;
             AfterSelectTreeView(null, null);
         }
 
@@ -1324,38 +1407,38 @@ namespace UoFiddler.Controls.Forms
                         FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
                         // Number of frames
                         int frameCount = bmp.GetFrameCount(dimension);
-                        progressBar1.Maximum = frameCount;
+                        ProgressBar.Maximum = frameCount;
                         bmp.SelectActiveFrame(dimension, 0);
                         edit.GetGifPalette(bmp);
                         Bitmap[] bitBmp = new Bitmap[frameCount];
                         AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
-                        progressBar1.Value = 0;
-                        progressBar1.Invalidate();
+                        ProgressBar.Value = 0;
+                        ProgressBar.Invalidate();
                         SetPaletteBox();
-                        listView1.Invalidate();
-                        numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                        numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                        FramesListView.Invalidate();
+                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
                         Options.ChangedUltimaClass["Animations"] = true;
                     }
                 }
 
                 if ((w < 4) && (w < dialog.FileNames.Length - 1))
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
         }
 
-        private void ToolStripButton10_Click(object sender, EventArgs e)
+        private void DrawEmptyRectangleToolStripButton_Click(object sender, EventArgs e)
         {
             _drawEmpty = !_drawEmpty;
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
-        private void ToolStripButton7_Click(object sender, EventArgs e)
+        private void DrawFullRectangleToolStripButton_Click(object sender, EventArgs e)
         {
             _drawFull = !_drawFull;
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         private void AnimationEdit_FormClosing(object sender, FormClosingEventArgs e)
@@ -1371,16 +1454,16 @@ namespace UoFiddler.Controls.Forms
 
         private void AnimationTimer_Tick(object sender, EventArgs e)
         {
-            if (trackBar2.Value < trackBar2.Maximum)
+            if (FramesTrackBar.Value < FramesTrackBar.Maximum)
             {
-                trackBar2.Value++;
+                FramesTrackBar.Value++;
             }
             else
             {
-                trackBar2.Value = 0;
+                FramesTrackBar.Value = 0;
             }
 
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         private void ToolStripButtonPlayAnimation_Click(object sender, EventArgs e)
@@ -1388,12 +1471,12 @@ namespace UoFiddler.Controls.Forms
             if (AnimationTimer.Enabled)
             {
                 AnimationTimer.Enabled = false;
-                trackBar2.Enabled = true;
+                FramesTrackBar.Enabled = true;
                 SameCenterButton.Enabled = true;
-                numericUpDownCx.Enabled = true;
-                numericUpDownCy.Enabled = true;
+                CenterXNumericUpDown.Enabled = true;
+                CenterYNumericUpDown.Enabled = true;
 
-                if (toolStripButton12.Checked)
+                if (DrawReferencialPointToolStripButton.Checked)
                 {
                     ToolStripLockButton.Enabled = false;
                     _blackUndraw = _blackUnDrawTransparent;
@@ -1406,38 +1489,38 @@ namespace UoFiddler.Controls.Forms
                     _whiteUnDraw = _whiteUnDrawOpaque;
                 }
 
-                if (ToolStripLockButton.Checked || toolStripButton12.Checked)
+                if (ToolStripLockButton.Checked || DrawReferencialPointToolStripButton.Checked)
                 {
-                    numericUpDown2.Enabled = false;
-                    numericUpDown1.Enabled = false;
+                    RefXNumericUpDown.Enabled = false;
+                    RefYNumericUpDown.Enabled = false;
                 }
                 else
                 {
-                    numericUpDown2.Enabled = true;
-                    numericUpDown1.Enabled = true;
+                    RefXNumericUpDown.Enabled = true;
+                    RefYNumericUpDown.Enabled = true;
                 }
             }
             else
             {
                 AnimationTimer.Enabled = true;
-                trackBar2.Enabled = false;
+                FramesTrackBar.Enabled = false;
                 SameCenterButton.Enabled = false;
 
-                numericUpDownCx.Enabled = false;
-                numericUpDownCy.Enabled = false;
+                CenterXNumericUpDown.Enabled = false;
+                CenterYNumericUpDown.Enabled = false;
             }
 
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         private void AnimationSpeedTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            AnimationTimer.Interval = 50 + (animationSpeedTrackBar.Value * 30);
+            AnimationTimer.Interval = 50 + (AnimationSpeedTrackBar.Value * 30);
         }
 
-        private void ToolStripButton12_Click(object sender, EventArgs e)
+        private void DrawReferencialPointToolStripButton_Click(object sender, EventArgs e)
         {
-            if (!toolStripButton12.Checked)
+            if (!DrawReferencialPointToolStripButton.Checked)
             {
                 _blackUndraw = _blackUnDrawOpaque;
                 _whiteUnDraw = _whiteUnDrawOpaque;
@@ -1445,13 +1528,13 @@ namespace UoFiddler.Controls.Forms
                 ToolStripLockButton.Enabled = true;
                 if (ToolStripLockButton.Checked)
                 {
-                    numericUpDown2.Enabled = false;
-                    numericUpDown1.Enabled = false;
+                    RefXNumericUpDown.Enabled = false;
+                    RefYNumericUpDown.Enabled = false;
                 }
                 else
                 {
-                    numericUpDown2.Enabled = true;
-                    numericUpDown1.Enabled = true;
+                    RefXNumericUpDown.Enabled = true;
+                    RefYNumericUpDown.Enabled = true;
                 }
             }
             else
@@ -1459,10 +1542,10 @@ namespace UoFiddler.Controls.Forms
                 _blackUndraw = _blackUnDrawTransparent;
                 _whiteUnDraw = _whiteUnDrawTransparent;
                 ToolStripLockButton.Enabled = false;
-                numericUpDown2.Enabled = false;
-                numericUpDown1.Enabled = false;
+                RefXNumericUpDown.Enabled = false;
+                RefYNumericUpDown.Enabled = false;
             }
-            animationPictureBox.Invalidate();
+            AnimationPictureBox.Invalidate();
         }
 
         // All Directions with Canvas
@@ -1481,10 +1564,10 @@ namespace UoFiddler.Controls.Forms
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
                             Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                            trackBarDirection.Enabled = false;
+                            DirectionTrackBar.Enabled = false;
                             if (dialog.FileNames.Length == 5)
                             {
-                                trackBarDirection.Value = 0;
+                                DirectionTrackBar.Value = 0;
                                 AddSelectedFiles(dialog, customConvert);
                             }
 
@@ -1506,17 +1589,17 @@ namespace UoFiddler.Controls.Forms
                                     continue;
                                 }
 
-                                trackBarDirection.Value = 0;
+                                DirectionTrackBar.Value = 0;
                                 AddSelectedFiles(dialog, customConvert);
                             }
 
-                            trackBarDirection.Enabled = true;
+                            DirectionTrackBar.Enabled = true;
                         }
                     }
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBarDirection.Value;
+                _currentDir = DirectionTrackBar.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (OutOfMemoryException)
@@ -1549,7 +1632,7 @@ namespace UoFiddler.Controls.Forms
 
                 if ((w < 4) && (w < dialog.FileNames.Length - 1))
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
         }
@@ -1566,7 +1649,7 @@ namespace UoFiddler.Controls.Forms
 
             // Number of frames
             int frameCount = bmp.GetFrameCount(dimension);
-            progressBar1.Maximum = frameCount;
+            ProgressBar.Maximum = frameCount;
             bmp.SelectActiveFrame(dimension, 0);
             edit.GetGifPalette(bmp);
 
@@ -1896,35 +1979,35 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
             }
 
-            progressBar1.Value = 0;
-            progressBar1.Invalidate();
+            ProgressBar.Value = 0;
+            ProgressBar.Invalidate();
             SetPaletteBox();
-            listView1.Invalidate();
-            numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-            numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+            FramesListView.Invalidate();
+            CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+            CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
             Options.ChangedUltimaClass["Animations"] = true;
         }
 
@@ -1965,7 +2048,7 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBarDirection.Value;
+                _currentDir = DirectionTrackBar.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (OutOfMemoryException)
@@ -1998,7 +2081,7 @@ namespace UoFiddler.Controls.Forms
                         edit.GetImagePalette(bit);
                     }
                     SetPaletteBox();
-                    listView1.Invalidate();
+                    FramesListView.Invalidate();
                     Options.ChangedUltimaClass["Animations"] = true;
                     SetPaletteBox();
                 }
@@ -2062,11 +2145,11 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                for (int i = 0; i < treeView1.Nodes.Count; ++i)
+                for (int i = 0; i < AnimationListTreeView.Nodes.Count; ++i)
                 {
-                    int index = (int)treeView1.Nodes[i].Tag;
-                    if (index < 0 || treeView1.Nodes[i].Parent != null ||
-                        treeView1.Nodes[i].ForeColor == Color.Red)
+                    int index = (int)AnimationListTreeView.Nodes[i].Tag;
+                    if (index < 0 || AnimationListTreeView.Nodes[i].Parent != null ||
+                        AnimationListTreeView.Nodes[i].ForeColor == Color.Red)
                     {
                         continue;
                     }
@@ -2083,65 +2166,67 @@ namespace UoFiddler.Controls.Forms
         private void CbSaveCoordinates_CheckedChanged(object sender, EventArgs e)
         {
             // Get position of all animations in array
-            if (cbSaveCoordinates.Checked)
+            if (SaveCoordinatesCheckBox.Checked)
             {
-                trackBarDirection.Enabled = false;
-                trackBar2.Value = 0;
-                SetButton.Enabled = true;
+                DirectionTrackBar.Enabled = false;
+                FramesTrackBar.Value = 0;
+                SetCoordinatesButton.Enabled = true;
                 for (int count = 0; count < 5;)
                 {
-                    if (trackBarDirection.Value < 4)
+                    if (DirectionTrackBar.Value < 4)
                     {
-                        _animCx[trackBarDirection.Value] = (int)numericUpDownCx.Value;
-                        _animCy[trackBarDirection.Value] = (int)numericUpDownCy.Value;
-                        trackBarDirection.Value++;
+                        _animCx[DirectionTrackBar.Value] = (int)CenterXNumericUpDown.Value;
+                        _animCy[DirectionTrackBar.Value] = (int)CenterYNumericUpDown.Value;
+                        DirectionTrackBar.Value++;
                         count++;
                     }
                     else
                     {
-                        _animCx[trackBarDirection.Value] = (int)numericUpDownCx.Value;
-                        _animCy[trackBarDirection.Value] = (int)numericUpDownCy.Value;
-                        trackBarDirection.Value = 0;
+                        _animCx[DirectionTrackBar.Value] = (int)CenterXNumericUpDown.Value;
+                        _animCy[DirectionTrackBar.Value] = (int)CenterYNumericUpDown.Value;
+                        DirectionTrackBar.Value = 0;
                         count++;
                     }
                 }
-                toolStripLabel8.Text = $"1: {_animCx[0]}/{_animCy[0]}";
-                toolStripLabel9.Text = $"2: {_animCx[1]}/{_animCy[1]}";
-                toolStripLabel10.Text = $"3: {_animCx[2]}/{_animCy[2]}";
-                toolStripLabel11.Text = $"4: {_animCx[3]}/{_animCy[3]}";
-                toolStripLabel12.Text = $"5: {_animCx[4]}/{_animCy[4]}";
-                trackBarDirection.Enabled = true;
+
+                SaveCoordinatesLabel1.Text = $"1: {_animCx[0]}/{_animCy[0]}";
+                SaveCoordinatesLabel2.Text = $"2: {_animCx[1]}/{_animCy[1]}";
+                SaveCoordinatesLabel3.Text = $"3: {_animCx[2]}/{_animCy[2]}";
+                SaveCoordinatesLabel4.Text = $"4: {_animCx[3]}/{_animCy[3]}";
+                SaveCoordinatesLabel5.Text = $"5: {_animCx[4]}/{_animCy[4]}";
+
+                DirectionTrackBar.Enabled = true;
             }
             else
             {
-                toolStripLabel8.Text = "1:    /     ";
-                toolStripLabel9.Text = "2:    /     ";
-                toolStripLabel10.Text = "3:    /     ";
-                toolStripLabel11.Text = "4:    /     ";
-                toolStripLabel12.Text = "5:    /     ";
-                SetButton.Enabled = false;
+                SaveCoordinatesLabel1.Text = "1:    /    ";
+                SaveCoordinatesLabel2.Text = "2:    /    ";
+                SaveCoordinatesLabel3.Text = "3:    /    ";
+                SaveCoordinatesLabel4.Text = "4:    /    ";
+                SaveCoordinatesLabel5.Text = "5:    /    ";
+                SetCoordinatesButton.Enabled = false;
             }
         }
 
         private void SetButton_Click(object sender, EventArgs e)
         {
-            trackBarDirection.Value = 0;
-            trackBarDirection.Enabled = false;
-            for (int i = 0; i <= trackBarDirection.Maximum; i++)
+            DirectionTrackBar.Value = 0;
+            DirectionTrackBar.Enabled = false;
+            for (int i = 0; i <= DirectionTrackBar.Maximum; i++)
             {
                 try
                 {
                     if (_fileType != 0)
                     {
                         AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                        if (edit != null && edit.Frames.Count >= trackBar2.Value)
+                        if (edit != null && edit.Frames.Count >= FramesTrackBar.Value)
                         {
                             foreach (var editFrame in edit.Frames)
                             {
                                 editFrame.ChangeCenter(_animCx[i], _animCy[i]);
                                 // TODO: check if we can invalidate pictture box only after the loop
                                 Options.ChangedUltimaClass["Animations"] = true;
-                                animationPictureBox.Invalidate();
+                                AnimationPictureBox.Invalidate();
                             }
                         }
                     }
@@ -2152,16 +2237,16 @@ namespace UoFiddler.Controls.Forms
                     // ignored
                 }
 
-                if (trackBarDirection.Value < trackBarDirection.Maximum)
+                if (DirectionTrackBar.Value < DirectionTrackBar.Maximum)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
                 else
                 {
-                    trackBarDirection.Value = 0;
+                    DirectionTrackBar.Value = 0;
                 }
             }
-            trackBarDirection.Enabled = true;
+            DirectionTrackBar.Enabled = true;
         }
 
         // Add Directions with Canvas ( CV5 style GIF )
@@ -2181,8 +2266,8 @@ namespace UoFiddler.Controls.Forms
                         {
                             Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
                                 (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                            trackBarDirection.Enabled = false;
-                            trackBarDirection.Value = 0;
+                            DirectionTrackBar.Enabled = false;
+                            DirectionTrackBar.Value = 0;
                             Bitmap bmp = new Bitmap(dialog.FileName);
                             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
                                 _currentDir);
@@ -2194,7 +2279,7 @@ namespace UoFiddler.Controls.Forms
                                     FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
                                     // Number of frames
                                     int frameCount = bmp.GetFrameCount(dimension);
-                                    progressBar1.Maximum = frameCount;
+                                    ProgressBar.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
@@ -2211,29 +2296,29 @@ namespace UoFiddler.Controls.Forms
 
                                     edit = Cv5AnimIdxPositions(frameCount, bitBmp, dimension, edit, bmp);
 
-                                    progressBar1.Value = 0;
-                                    progressBar1.Invalidate();
+                                    ProgressBar.Value = 0;
+                                    ProgressBar.Invalidate();
                                     SetPaletteBox();
-                                    listView1.Invalidate();
-                                    numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                    numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                                    FramesListView.Invalidate();
+                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
                                     Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
 
-                            trackBarDirection.Enabled = true;
+                            DirectionTrackBar.Enabled = true;
                         }
                     }
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBarDirection.Value;
+                _currentDir = DirectionTrackBar.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (NullReferenceException)
             {
                 // TODO: add logging or fix?
-                trackBarDirection.Enabled = true;
+                DirectionTrackBar.Enabled = true;
             }
         }
 
@@ -2258,31 +2343,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 8 * 5) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -2308,31 +2393,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 8) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -2358,31 +2443,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 8 * 6) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -2408,31 +2493,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 8 * 2) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -2458,26 +2543,26 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
             }
 
@@ -2866,7 +2951,7 @@ namespace UoFiddler.Controls.Forms
 
         private void CbLockColorControls_CheckedChanged(object sender, EventArgs e)
         {
-            if (!cbLockColorControls.Checked)
+            if (!LockColorControlsCheckBox.Checked)
             {
                 numericUpDownRed.Enabled = true;
                 numericUpDownGreen.Enabled = true;
@@ -2901,8 +2986,8 @@ namespace UoFiddler.Controls.Forms
                         {
                             Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
                                 (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                            trackBarDirection.Enabled = false;
-                            trackBarDirection.Value = 0;
+                            DirectionTrackBar.Enabled = false;
+                            DirectionTrackBar.Value = 0;
                             Bitmap bmp = new Bitmap(dialog.FileName);
                             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
                                 _currentDir);
@@ -2914,7 +2999,7 @@ namespace UoFiddler.Controls.Forms
                                     FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
                                     // Number of frames
                                     int frameCount = bmp.GetFrameCount(dimension);
-                                    progressBar1.Maximum = frameCount;
+                                    ProgressBar.Maximum = frameCount;
                                     bmp.SelectActiveFrame(dimension, 0);
                                     edit.GetGifPalette(bmp);
                                     Bitmap[] bitBmp = new Bitmap[frameCount];
@@ -2931,29 +3016,29 @@ namespace UoFiddler.Controls.Forms
 
                                     edit = KrAnimIdxPositions(frameCount, bitBmp, dimension, edit, bmp);
 
-                                    progressBar1.Value = 0;
-                                    progressBar1.Invalidate();
+                                    ProgressBar.Value = 0;
+                                    ProgressBar.Invalidate();
                                     SetPaletteBox();
-                                    listView1.Invalidate();
-                                    numericUpDownCx.Value = edit.Frames[trackBar2.Value].Center.X;
-                                    numericUpDownCy.Value = edit.Frames[trackBar2.Value].Center.Y;
+                                    FramesListView.Invalidate();
+                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
                                     Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
 
-                            trackBarDirection.Enabled = true;
+                            DirectionTrackBar.Enabled = true;
                         }
                     }
                 }
 
                 // Refresh List after Canvas reduction
-                _currentDir = trackBarDirection.Value;
+                _currentDir = DirectionTrackBar.Value;
                 AfterSelectTreeView(null, null);
             }
             catch (NullReferenceException)
             {
                 // TODO: add logging or fix?
-                trackBarDirection.Enabled = true;
+                DirectionTrackBar.Enabled = true;
             }
         }
 
@@ -2978,31 +3063,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 5 * 1) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -3028,31 +3113,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 5 * 2) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -3078,31 +3163,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 5 * 3) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -3128,31 +3213,31 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
 
                 if (index == (frameCount / 5 * 4) - 1)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
             }
 
@@ -3178,26 +3263,26 @@ namespace UoFiddler.Controls.Forms
                 {
                     Tag = i
                 };
-                listView1.Items.Add(item);
-                int width = listView1.TileSize.Width - 5;
-                if (bmp.Width > listView1.TileSize.Width)
+                FramesListView.Items.Add(item);
+                int width = FramesListView.TileSize.Width - 5;
+                if (bmp.Width > FramesListView.TileSize.Width)
                 {
                     width = bmp.Width;
                 }
 
-                int height = listView1.TileSize.Height - 5;
-                if (bmp.Height > listView1.TileSize.Height)
+                int height = FramesListView.TileSize.Height - 5;
+                if (bmp.Height > FramesListView.TileSize.Height)
                 {
                     height = bmp.Height;
                 }
 
-                listView1.TileSize = new Size(width + 5, height + 5);
-                trackBar2.Maximum = i;
+                FramesListView.TileSize = new Size(width + 5, height + 5);
+                FramesTrackBar.Maximum = i;
                 Options.ChangedUltimaClass["Animations"] = true;
-                if (progressBar1.Value < progressBar1.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    progressBar1.Value++;
-                    progressBar1.Invalidate();
+                    ProgressBar.Value++;
+                    ProgressBar.Invalidate();
                 }
             }
 
@@ -3638,16 +3723,16 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 SetPaletteBox();
-                listView1.Invalidate();
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
                 SetPaletteBox();
-                if (trackBarDirection.Value != trackBarDirection.Maximum)
+                if (DirectionTrackBar.Value != DirectionTrackBar.Maximum)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
                 else
                 {
-                    trackBarDirection.Value = 0;
+                    DirectionTrackBar.Value = 0;
                 }
             }
         }
@@ -3692,16 +3777,16 @@ namespace UoFiddler.Controls.Forms
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 edit?.PaletteReducer((int) numericUpDown6.Value, (int) numericUpDown7.Value, (int) numericUpDown8.Value);
                 SetPaletteBox();
-                listView1.Invalidate();
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
                 SetPaletteBox();
-                if (trackBarDirection.Value != trackBarDirection.Maximum)
+                if (DirectionTrackBar.Value != DirectionTrackBar.Maximum)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
                 else
                 {
-                    trackBarDirection.Value = 0;
+                    DirectionTrackBar.Value = 0;
                 }
             }
         }
@@ -3713,16 +3798,16 @@ namespace UoFiddler.Controls.Forms
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 edit?.PaletteConverter(selector);
                 SetPaletteBox();
-                listView1.Invalidate();
+                FramesListView.Invalidate();
                 Options.ChangedUltimaClass["Animations"] = true;
                 SetPaletteBox();
-                if (trackBarDirection.Value != trackBarDirection.Maximum)
+                if (DirectionTrackBar.Value != DirectionTrackBar.Maximum)
                 {
-                    trackBarDirection.Value++;
+                    DirectionTrackBar.Value++;
                 }
                 else
                 {
-                    trackBarDirection.Value = 0;
+                    DirectionTrackBar.Value = 0;
                 }
             }
         }
