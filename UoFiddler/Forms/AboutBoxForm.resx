@@ -118,7 +118,29 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.6
+    <value>Version 4.9.7
+"Select in Gump" tab option added to context menus in Items and Tiledata tabs.
+Minor updates in projects to fix building using `dotnet build` command.
+Fixed wrong map size pre-selection when using .uop format.
+"Insert starting from" option added to Gumps, Land Tiles and Textures tabs - allows to insert range of items in sequence (author Maybacco). 
+Added "Set textures" option for Tiledata tab - sets texture id for all land tiles without it but having corresponding texture. Assumption is that land tile index value is equal to texture index. Option will only update tiles where TexID is 0. You can also enable option to set individual landtile TexID to land tile index via double click in TexID text box (default is off). (author Maybacco).
+Default controls for items, land tiles and textures were removed. Alternative controls were renamed and are now main and only controls available.
+Removed obsolete hash file usage.
+"Replace" button on animation edit form has been hidden until its implementation is finished.
+Fixed inability to map animation body id values over 1696. It works now up to body id 2048 which is UO client limit. #58 
+New button "Average All" in RadarColor tab which checks all items and land tiles and sets all black non empty ones to average color. It's batch update command (author DiPaolaMarco).
+Fixed invalid marking of AnimData as modified when user only browse contents of the tab.
+Fixed 'Show Free Slots' on Items tab when using UOP file format.
+Fixed 'Show Free Slots' on Gumps tab.
+New options. You can now select selection color and focus color for tile view controls (items, land tiles, textures and fonts).
+Fixed crash when providing invalid regular expression pattern string in items, land tiles, tiledata and cliloc tabs. 
+Cliloc tab. "Goto text" uses case insensitive string comparison by default. You can switch to regular expressions if needed.
+Renamed Hue tab to Hues. Hues control - added quick Search option. You can now jump to hue by it's index. Displayed hue index values are now 0-based same as stored in hues.mul.
+Updated animation editor layout.
+Added action names to animation list in animation editor.
+Updated Serilog.Sinks.File package to latest version.
+
+Version 4.9.6
 Added new tile view control to Items, Land Tiles, Textures and Fonts. Rendering should be now smooth and fast. To use new control Alternative design mode in settings needs to be checked (thanks goes to control author Anton a.k.a 0xE1 https://github.com/0xE1/Managed-TileView and deccer for finding it).
 Added Export all... option to Textures tab.
 Changed how fonts are loaded. It should be faster now. By default when you enter Fonts tab it will load ASCII fonts only. Unicode ones are loaded after selecting checkbox.
