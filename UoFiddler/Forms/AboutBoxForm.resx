@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.7
+    <value>Version 4.9.8
+Updated animationlist.xml (you need to copy updated file from UOFiddler directory to your profile folder and override existing animationlist.xml)
+Fixed speech.mul Id value reading - no longer limited to 256.
+
+Version 4.9.7
 "Select in Gump" tab option added to context menus in Items and Tiledata tabs.
 Minor updates in projects to fix building using `dotnet build` command.
 Fixed wrong map size pre-selection when using .uop format.
