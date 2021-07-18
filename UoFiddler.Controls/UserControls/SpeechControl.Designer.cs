@@ -53,12 +53,12 @@ namespace UoFiddler.Controls.UserControls
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -84,10 +84,11 @@ namespace UoFiddler.Controls.UserControls
             // 
             // IDEntry
             // 
+            this.IDEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.IDEntry.MaxLength = 10;
             this.IDEntry.Name = "IDEntry";
             this.IDEntry.Size = new System.Drawing.Size(100, 25);
-            this.IDEntry.Text = "Find ID..";
+            this.IDEntry.Text = "Find ID...";
             this.IDEntry.Enter += new System.EventHandler(this.IDEntry_Enter);
             // 
             // IDButton
@@ -115,9 +116,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             // KeyWordEntry
             // 
+            this.KeyWordEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyWordEntry.Name = "KeyWordEntry";
             this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
-            this.KeyWordEntry.Text = "KeyWord..";
+            this.KeyWordEntry.Text = "KeyWord...";
             this.KeyWordEntry.Enter += new System.EventHandler(this.KeyWordEntry_Enter);
             // 
             // KeyWordButton
@@ -175,21 +177,6 @@ namespace UoFiddler.Controls.UserControls
             this.deleteEntryToolStripMenuItem.Text = "Delete Entry";
             this.deleteEntryToolStripMenuItem.Click += new System.EventHandler(this.OnDeleteEntry);
             // 
-            // collapsibleSplitter1
-            // 
-            this.collapsibleSplitter1.AnimationDelay = 20;
-            this.collapsibleSplitter1.AnimationStep = 20;
-            this.collapsibleSplitter1.BorderStyle3D = System.Windows.Forms.Border3DStyle.Flat;
-            this.collapsibleSplitter1.ControlToHide = this.toolStrip2;
-            this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
-            this.collapsibleSplitter1.Name = "collapsibleSplitter1";
-            this.collapsibleSplitter1.TabIndex = 5;
-            this.collapsibleSplitter1.TabStop = false;
-            this.collapsibleSplitter1.UseAnimations = false;
-            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
-            // 
             // toolStrip2
             // 
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -237,6 +224,21 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripButton3.Size = new System.Drawing.Size(100, 22);
             this.toolStripButton3.Text = "Import from CSV";
             this.toolStripButton3.Click += new System.EventHandler(this.OnClickImport);
+            // 
+            // collapsibleSplitter1
+            // 
+            this.collapsibleSplitter1.AnimationDelay = 20;
+            this.collapsibleSplitter1.AnimationStep = 20;
+            this.collapsibleSplitter1.BorderStyle3D = System.Windows.Forms.Border3DStyle.Flat;
+            this.collapsibleSplitter1.ControlToHide = this.toolStrip2;
+            this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.collapsibleSplitter1.ExpandParentForm = false;
+            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
+            this.collapsibleSplitter1.Name = "collapsibleSplitter1";
+            this.collapsibleSplitter1.TabIndex = 5;
+            this.collapsibleSplitter1.TabStop = false;
+            this.collapsibleSplitter1.UseAnimations = false;
+            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
             // 
             // SpeechControl
             // 

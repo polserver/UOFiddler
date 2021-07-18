@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Ultima
@@ -30,14 +29,20 @@ namespace Ultima
                 return;
             }
 
-            Entries = new List<SpeechEntry>();
+            const int capacity = 6500; // speech.mul contains around 6500 entries so we can start with this value
+
+            Entries = new List<SpeechEntry>(capacity);
+
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var buffer = new byte[fs.Length];
+
                 unsafe
                 {
                     int order = 0;
+
                     fs.Read(buffer, 0, buffer.Length);
+
                     fixed (byte* data = buffer)
                     {
                         byte* binData = data;
@@ -45,8 +50,9 @@ namespace Ultima
 
                         while (binData != binDataEnd)
                         {
-                            var id = (short)((*binData++ >> 8) | (*binData++)); // Swapped Endian
-                            var length = (short)((*binData++ >> 8) | (*binData++));
+                            var id = (short)((*binData++ << 8) | (*binData++)); // Big endian
+                            var length = (short)((*binData++ << 8) | (*binData++)); // Big endian
+
                             if (length > 128)
                             {
                                 length = 128;
@@ -58,7 +64,9 @@ namespace Ultima
                             }
 
                             string keyword = Encoding.UTF8.GetString(_buffer, 0, length);
+
                             Entries.Add(new SpeechEntry(id, keyword, order));
+
                             ++order;
                         }
                     }
@@ -73,13 +81,14 @@ namespace Ultima
         public static void SaveSpeechList(string fileName)
         {
             Entries.Sort(new OrderComparer());
+
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 using (var bin = new BinaryWriter(fs))
                 {
                     foreach (SpeechEntry entry in Entries)
                     {
-                        bin.Write(NativeMethods.SwapEndian(entry.ID));
+                        bin.Write(NativeMethods.SwapEndian(entry.Id));
                         byte[] utf8String = Encoding.UTF8.GetBytes(entry.KeyWord);
                         var length = (short)utf8String.Length;
                         bin.Write(NativeMethods.SwapEndian(length));
@@ -89,7 +98,7 @@ namespace Ultima
             }
         }
 
-        public static void ExportToCSV(string fileName)
+        public static void ExportToCsv(string fileName)
         {
             using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.Unicode))
             {
@@ -97,12 +106,12 @@ namespace Ultima
 
                 foreach (SpeechEntry entry in Entries)
                 {
-                    tex.WriteLine($"{entry.Order};{entry.ID};{entry.KeyWord}");
+                    tex.WriteLine($"{entry.Order};{entry.Id};{entry.KeyWord}");
                 }
             }
         }
 
-        public static void ImportFromCSV(string fileName)
+        public static void ImportFromCsv(string fileName)
         {
             Entries = new List<SpeechEntry>(0);
             if (!File.Exists(fileName))
@@ -164,29 +173,29 @@ namespace Ultima
             return result;
         }
 
-        public class IDComparer : IComparer<SpeechEntry>
+        public class IdComparer : IComparer<SpeechEntry>
         {
             private readonly bool _sortDescending;
 
-            public IDComparer(bool sortDescending)
+            public IdComparer(bool sortDescending)
             {
                 _sortDescending = sortDescending;
             }
 
             public int Compare(SpeechEntry x, SpeechEntry y)
             {
-                if (x.ID == y.ID)
+                if (x.Id == y.Id)
                 {
                     return 0;
                 }
 
                 if (_sortDescending)
                 {
-                    return (x.ID < y.ID) ? 1 : -1;
+                    return (x.Id < y.Id) ? 1 : -1;
                 }
                 else
                 {
-                    return (x.ID < y.ID) ? -1 : 1;
+                    return (x.Id < y.Id) ? -1 : 1;
                 }
             }
         }
@@ -231,7 +240,7 @@ namespace Ultima
 
     public sealed class SpeechEntry
     {
-        public short ID { get; }
+        public short Id { get; }
         public string KeyWord { get; set; }
 
         [Browsable(false)]
@@ -239,17 +248,9 @@ namespace Ultima
 
         public SpeechEntry(short id, string keyword, int order)
         {
-            ID = id;
+            Id = id;
             KeyWord = keyword;
             Order = order;
         }
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct SpeechMul
-    {
-        public short id;
-        public short length;
-        public byte[] keyword;
     }
 }
