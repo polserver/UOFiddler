@@ -160,6 +160,11 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("RightPanelInSoundsTab");
             elem.SetAttribute("active", Options.RightPanelInSoundsTab.ToString());
             sr.AppendChild(elem);
+            comment = dom.CreateComment("Offset Sound Ids by 1 (POL specific setting)");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("PolSoundIdOffset");
+            elem.SetAttribute("active", Options.PolSoundIdOffset.ToString());
+            sr.AppendChild(elem);
             comment = dom.CreateComment("Should an Update Check be done on startup?");
             sr.AppendChild(comment);
             elem = dom.CreateElement("UpdateCheck");
@@ -348,6 +353,12 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 Options.RightPanelInSoundsTab = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("PolSoundIdOffset");
+            if (elem != null)
+            {
+                Options.PolSoundIdOffset = bool.Parse(elem.GetAttribute("active"));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("UpdateCheck");

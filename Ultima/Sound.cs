@@ -7,17 +7,17 @@ using System.Text.RegularExpressions;
 
 namespace Ultima
 {
-    public sealed class UOSound
+    public sealed class UoSound
     {
         public string Name;
-        public int ID;
-        public readonly byte[] buffer;
+        public int Id;
+        public readonly byte[] Buffer;
 
-        public UOSound(string name, int id, byte[] buff)
+        public UoSound(string name, int id, byte[] buff)
         {
             Name = name;
-            ID = id;
-            buffer = buff;
+            Id = id;
+            Buffer = buff;
         }
     };
 
@@ -25,7 +25,7 @@ namespace Ultima
     {
         private static Dictionary<int, int> _translations;
         private static FileIndex _fileIndex;
-        private static UOSound[] _cache;
+        private static UoSound[] _cache;
         private static bool[] _removed;
 
         static Sounds()
@@ -38,7 +38,7 @@ namespace Ultima
         /// </summary>
         public static void Initialize()
         {
-            _cache = new UOSound[0xFFF];
+            _cache = new UoSound[0xFFF];
             _removed = new bool[0xFFF];
             _fileIndex = new FileIndex("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
             var reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
@@ -72,22 +72,22 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Returns <see cref="UOSound"/> of ID
+        /// Returns <see cref="UoSound"/> of ID
         /// </summary>
         /// <param name="soundId"></param>
         /// <returns></returns>
-        public static UOSound GetSound(int soundId)
+        public static UoSound GetSound(int soundId)
         {
             return GetSound(soundId, out bool _);
         }
 
         /// <summary>
-        /// Returns <see cref="UOSound"/> of ID with bool translated in .def
+        /// Returns <see cref="UoSound"/> of ID with bool translated in .def
         /// </summary>
         /// <param name="soundId"></param>
         /// <param name="translated"></param>
         /// <returns></returns>
-        public static UOSound GetSound(int soundId, out bool translated)
+        public static UoSound GetSound(int soundId, out bool translated)
         {
             translated = false;
             if (soundId < 0)
@@ -145,7 +145,7 @@ namespace Ultima
                 str = str.Substring(0, str.IndexOf('\0'));
             }
 
-            var sound = new UOSound(str, soundId, resultBuffer);
+            var sound = new UoSound(str, soundId, resultBuffer);
 
             if (!Files.CacheData)
             {
@@ -264,7 +264,7 @@ namespace Ultima
 
             if (_cache[soundId] != null)
             {
-                len = _cache[soundId].buffer.Length;
+                len = _cache[soundId].Buffer.Length;
                 len -= 44; // wavheaderlength
             }
             else
@@ -306,7 +306,7 @@ namespace Ultima
 
                 resultBuffer = CheckAndFixWave(resultBuffer);
 
-                _cache[id] = new UOSound(name, id, resultBuffer);
+                _cache[id] = new UoSound(name, id, resultBuffer);
                 _removed[id] = false;
             }
         }
@@ -331,7 +331,7 @@ namespace Ultima
             {
                 for (int i = 0; i < _cache.Length; ++i)
                 {
-                    UOSound sound = _cache[i];
+                    UoSound sound = _cache[i];
 
                     if (sound == null && !_removed[i])
                     {
@@ -371,7 +371,7 @@ namespace Ultima
                         }
 
                         binmul.Write(b);
-                        using (var m = new MemoryStream(sound.buffer))
+                        using (var m = new MemoryStream(sound.Buffer))
                         {
                             m.Seek(headerLength, SeekOrigin.Begin);
                             var resultBuffer = new byte[m.Length - headerLength];
@@ -387,23 +387,22 @@ namespace Ultima
             }
         }
 
-        public static void SaveSoundListToCSV(string fileName)
+        public static void SaveSoundListToCsv(string fileName, int soundIdOffset = 0)
         {
-            using (
-                var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
                 tex.WriteLine("ID;Name;Length");
 
-                for (int i = 1; i <= 0xFFF; ++i)
+                for (int i = 0; i < 0xFFF; ++i)
                 {
-                    if (!IsValidSound(i - 1, out string name, out bool _))
+                    if (!IsValidSound(i, out string name, out bool _))
                     {
                         continue;
                     }
 
-                    tex.Write("0x{0:X3}", i);
+                    tex.Write("0x{0:X3}", i + soundIdOffset);
                     tex.Write(";{0}", name);
-                    tex.WriteLine(";{0:f}", GetSoundLength(i - 1));
+                    tex.WriteLine(";{0:f}", GetSoundLength(i));
                 }
             }
         }

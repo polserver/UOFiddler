@@ -68,7 +68,7 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.ExtractSoundlistButton = new System.Windows.Forms.Button();
+            this.ExportSoundListCsvButton = new System.Windows.Forms.Button();
             this.SaveFileButton = new System.Windows.Forms.Button();
             this.SortByNameCheckbox = new System.Windows.Forms.CheckBox();
             this.SelectedSoundGroup = new System.Windows.Forms.GroupBox();
@@ -268,7 +268,7 @@ namespace UoFiddler.Controls.UserControls
             this.itemExtractSoundlist.Name = "itemExtractSoundlist";
             this.itemExtractSoundlist.Size = new System.Drawing.Size(162, 22);
             this.itemExtractSoundlist.Text = "Extract Soundlist";
-            this.itemExtractSoundlist.Click += new System.EventHandler(this.OnClickExtractSoundList);
+            this.itemExtractSoundlist.Click += new System.EventHandler(this.OnClickExportSoundListCsv);
             // 
             // tableLayoutPanel1
             // 
@@ -385,7 +385,7 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.44444F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.22222F));
-            this.tableLayoutPanel3.Controls.Add(this.ExtractSoundlistButton, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.ExportSoundListCsvButton, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.SaveFileButton, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.SortByNameCheckbox, 1, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -396,16 +396,16 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel3.Size = new System.Drawing.Size(355, 31);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
-            // ExtractSoundlistButton
+            // ExportSoundListCsvButton
             // 
-            this.ExtractSoundlistButton.AutoSize = true;
-            this.ExtractSoundlistButton.Location = new System.Drawing.Point(3, 3);
-            this.ExtractSoundlistButton.Name = "ExtractSoundlistButton";
-            this.ExtractSoundlistButton.Size = new System.Drawing.Size(111, 23);
-            this.ExtractSoundlistButton.TabIndex = 0;
-            this.ExtractSoundlistButton.Text = "Extract Soundlist";
-            this.ExtractSoundlistButton.UseVisualStyleBackColor = true;
-            this.ExtractSoundlistButton.Click += new System.EventHandler(this.OnClickExtractSoundList);
+            this.ExportSoundListCsvButton.AutoSize = true;
+            this.ExportSoundListCsvButton.Location = new System.Drawing.Point(3, 3);
+            this.ExportSoundListCsvButton.Name = "ExportSoundListCsvButton";
+            this.ExportSoundListCsvButton.Size = new System.Drawing.Size(123, 23);
+            this.ExportSoundListCsvButton.TabIndex = 0;
+            this.ExportSoundListCsvButton.Text = "Export sound list (.csv)";
+            this.ExportSoundListCsvButton.UseVisualStyleBackColor = true;
+            this.ExportSoundListCsvButton.Click += new System.EventHandler(this.OnClickExportSoundListCsv);
             // 
             // SaveFileButton
             // 
@@ -771,7 +771,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.Button ExtractSoundlistButton;
+        private System.Windows.Forms.Button ExportSoundListCsvButton;
         private System.Windows.Forms.GroupBox SelectedSoundGroup;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;

@@ -12,6 +12,8 @@
   <UseMapDiff active="True" />
   <!--Make the right panel in sounds tab visible-->
   <RightPanelInSoundsTab active="True" />
+  <!--Make the right panel in sounds tab visible-->
+  <PolSoundIdOffset active="False" />
   <!--Should an Update Check be done on startup?-->
   <UpdateCheck active="False" />
   <!--Defines the cmd to send Client to loc-->
