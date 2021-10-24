@@ -25,7 +25,6 @@ namespace UoFiddler.Forms
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
-            // FocusColorComboBox
             TileFocusColorComboBox.MaxDropDownItems = 14;
             TileFocusColorComboBox.IntegralHeight = false;
             TileFocusColorComboBox.DrawMode = DrawMode.OwnerDrawFixed;
@@ -38,7 +37,6 @@ namespace UoFiddler.Forms
 
             TileFocusColorComboBox.SelectedItem = Options.TileFocusColor;
 
-            // SelectedColorComboBox
             TileSelectionColorComboBox.MaxDropDownItems = 14;
             TileSelectionColorComboBox.IntegralHeight = false;
             TileSelectionColorComboBox.DrawMode = DrawMode.OwnerDrawFixed;
@@ -51,11 +49,11 @@ namespace UoFiddler.Forms
 
             TileSelectionColorComboBox.SelectedItem = Options.TileSelectionColor;
 
-            // other controls
             checkBoxCacheData.Checked = Files.CacheData;
             checkBoxNewMapSize.Checked = Map.Felucca.Width == 7168;
             checkBoxuseDiff.Checked = Map.UseDiff;
             checkBoxPanelSoundsDesign.Checked = Options.RightPanelInSoundsTab;
+            checkBoxPolSoundIdOffset.Checked = Options.PolSoundIdOffset;
             numericUpDownItemSizeWidth.Value = Options.ArtItemSizeWidth;
             numericUpDownItemSizeHeight.Value = Options.ArtItemSizeHeight;
             checkBoxItemClip.Checked = Options.ArtItemClip;
@@ -74,6 +72,13 @@ namespace UoFiddler.Forms
         {
             Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
 
+            if (checkBoxPolSoundIdOffset.Checked != Options.PolSoundIdOffset)
+            {
+                Options.PolSoundIdOffset = checkBoxPolSoundIdOffset.Checked;
+
+                MainForm.UpdateSoundTab();
+            }
+            
             Files.CacheData = checkBoxCacheData.Checked;
 
             if (checkBoxNewMapSize.Checked != (Map.Felucca.Width == 7168))
@@ -226,8 +231,9 @@ namespace UoFiddler.Forms
 
         private void DefaultColorsButton_Click(object sender, System.EventArgs e)
         {
-            string title = "Export all items to offset.cfg?";
-            string message = "Reset focus and selection colors to default?";
+            const string title = "Export all items to offset.cfg?";
+            const string message = "Reset focus and selection colors to default?";
+
             if (MessageBox.Show(message, title, MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return;
@@ -235,6 +241,11 @@ namespace UoFiddler.Forms
 
             TileFocusColorComboBox.SelectedItem = Color.DarkRed;
             TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;
+        }
+
+        private void OnClickClose(object sender, System.EventArgs e)
+        {
+            Close();
         }
     }
 }

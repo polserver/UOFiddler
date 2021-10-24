@@ -47,10 +47,11 @@ namespace UoFiddler.Forms
             this.numericUpDownItemSizeWidth = new System.Windows.Forms.NumericUpDown();
             this.checkBoxCacheData = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBoxPolSoundIdOffset = new System.Windows.Forms.CheckBox();
             this.checkBoxPanelSoundsDesign = new System.Windows.Forms.CheckBox();
             this.checkBoxuseDiff = new System.Windows.Forms.CheckBox();
             this.checkBoxNewMapSize = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonApply = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -79,6 +80,7 @@ namespace UoFiddler.Forms
             this.DefaultColorsButton = new System.Windows.Forms.Button();
             this.TileSelectionColorComboBox = new System.Windows.Forms.ComboBox();
             this.TileFocusColorComboBox = new System.Windows.Forms.ComboBox();
+            this.buttonClose = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeWidth)).BeginInit();
@@ -96,7 +98,7 @@ namespace UoFiddler.Forms
             this.groupBox1.Controls.Add(this.numericUpDownItemSizeWidth);
             this.groupBox1.Location = new System.Drawing.Point(14, 142);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 100);
+            this.groupBox1.Size = new System.Drawing.Size(221, 100);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Item Tab";
@@ -181,16 +183,30 @@ namespace UoFiddler.Forms
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.checkBoxPolSoundIdOffset);
             this.groupBox2.Controls.Add(this.checkBoxPanelSoundsDesign);
             this.groupBox2.Controls.Add(this.checkBoxuseDiff);
             this.groupBox2.Controls.Add(this.checkBoxNewMapSize);
             this.groupBox2.Controls.Add(this.checkBoxCacheData);
             this.groupBox2.Location = new System.Drawing.Point(14, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 136);
+            this.groupBox2.Size = new System.Drawing.Size(221, 136);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc";
+            // 
+            // checkBoxPolSoundIdOffset
+            // 
+            this.checkBoxPolSoundIdOffset.AutoSize = true;
+            this.checkBoxPolSoundIdOffset.Location = new System.Drawing.Point(6, 112);
+            this.checkBoxPolSoundIdOffset.Name = "checkBoxPolSoundIdOffset";
+            this.checkBoxPolSoundIdOffset.Size = new System.Drawing.Size(196, 17);
+            this.checkBoxPolSoundIdOffset.TabIndex = 7;
+            this.checkBoxPolSoundIdOffset.Text = "Offset Sound Id by 1 (POL emulator)";
+            this.toolTip1.SetToolTip(this.checkBoxPolSoundIdOffset, "UO Sounds are indexed from 0 but POL uses +1 offset.\r\nWhen this option is checked" +
+        " Sounds tab will display sound indexes starting from 1 instead of 0.\r\nThis optio" +
+        "n also affects the export sound list.");
+            this.checkBoxPolSoundIdOffset.UseVisualStyleBackColor = true;
             // 
             // checkBoxPanelSoundsDesign
             // 
@@ -225,15 +241,15 @@ namespace UoFiddler.Forms
             this.toolTip1.SetToolTip(this.checkBoxNewMapSize, "NewMapSize Felucca/Trammel width 7168?");
             this.checkBoxNewMapSize.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // buttonApply
             // 
-            this.button1.Location = new System.Drawing.Point(179, 381);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Apply";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickApply);
+            this.buttonApply.Location = new System.Drawing.Point(275, 381);
+            this.buttonApply.Name = "buttonApply";
+            this.buttonApply.Size = new System.Drawing.Size(75, 23);
+            this.buttonApply.TabIndex = 4;
+            this.buttonApply.Text = "Apply";
+            this.buttonApply.UseVisualStyleBackColor = true;
+            this.buttonApply.Click += new System.EventHandler(this.OnClickApply);
             // 
             // label2
             // 
@@ -353,9 +369,9 @@ namespace UoFiddler.Forms
             this.groupBox3.Controls.Add(this.map1Nametext);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.map0Nametext);
-            this.groupBox3.Location = new System.Drawing.Point(220, 5);
+            this.groupBox3.Location = new System.Drawing.Point(242, 5);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 237);
+            this.groupBox3.Size = new System.Drawing.Size(189, 237);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Map";
@@ -423,14 +439,14 @@ namespace UoFiddler.Forms
             this.groupBox4.Controls.Add(this.label10);
             this.groupBox4.Location = new System.Drawing.Point(14, 331);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(406, 44);
+            this.groupBox4.Size = new System.Drawing.Size(417, 44);
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Path";
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(325, 15);
+            this.button2.Location = new System.Drawing.Point(380, 14);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(24, 23);
             this.button2.TabIndex = 2;
@@ -442,7 +458,7 @@ namespace UoFiddler.Forms
             // 
             this.textBoxOutputPath.Location = new System.Drawing.Point(76, 17);
             this.textBoxOutputPath.Name = "textBoxOutputPath";
-            this.textBoxOutputPath.Size = new System.Drawing.Size(244, 20);
+            this.textBoxOutputPath.Size = new System.Drawing.Size(298, 20);
             this.textBoxOutputPath.TabIndex = 1;
             // 
             // label10
@@ -463,14 +479,14 @@ namespace UoFiddler.Forms
             this.ColorsGroupBox.Controls.Add(this.TileFocusColorComboBox);
             this.ColorsGroupBox.Location = new System.Drawing.Point(14, 248);
             this.ColorsGroupBox.Name = "ColorsGroupBox";
-            this.ColorsGroupBox.Size = new System.Drawing.Size(406, 77);
+            this.ColorsGroupBox.Size = new System.Drawing.Size(417, 77);
             this.ColorsGroupBox.TabIndex = 7;
             this.ColorsGroupBox.TabStop = false;
             this.ColorsGroupBox.Text = "Colors";
             // 
             // DefaultColorsButton
             // 
-            this.DefaultColorsButton.Location = new System.Drawing.Point(282, 44);
+            this.DefaultColorsButton.Location = new System.Drawing.Point(304, 44);
             this.DefaultColorsButton.Name = "DefaultColorsButton";
             this.DefaultColorsButton.Size = new System.Drawing.Size(100, 23);
             this.DefaultColorsButton.TabIndex = 15;
@@ -494,15 +510,26 @@ namespace UoFiddler.Forms
             this.TileFocusColorComboBox.Size = new System.Drawing.Size(132, 21);
             this.TileFocusColorComboBox.TabIndex = 9;
             // 
+            // buttonClose
+            // 
+            this.buttonClose.Location = new System.Drawing.Point(356, 381);
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(75, 23);
+            this.buttonClose.TabIndex = 8;
+            this.buttonClose.Text = "Close";
+            this.buttonClose.UseVisualStyleBackColor = true;
+            this.buttonClose.Click += new System.EventHandler(this.OnClickClose);
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 411);
+            this.ClientSize = new System.Drawing.Size(445, 412);
+            this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.ColorsGroupBox);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonApply);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
@@ -530,7 +557,7 @@ namespace UoFiddler.Forms
         #endregion
 
         private System.Windows.Forms.TextBox argstext;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonApply;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBoxCacheData;
         private System.Windows.Forms.CheckBox checkBoxItemClip;
@@ -568,5 +595,7 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.ComboBox TileSelectionColorComboBox;
         private System.Windows.Forms.Label FocusColorLabel;
         private System.Windows.Forms.ComboBox TileFocusColorComboBox;
+        private System.Windows.Forms.CheckBox checkBoxPolSoundIdOffset;
+        private System.Windows.Forms.Button buttonClose;
     }
 }

@@ -357,6 +357,14 @@ namespace UoFiddler.Forms
             ControlEvents.FireMapSizeChangeEvent();
         }
 
+        /// <summary>
+        /// Updates Sounds tab
+        /// </summary>
+        public static void UpdateSoundTab()
+        {
+            _refMarker.soundControl.Reload();
+        }
+
         private void OnClickUnDock(object sender, EventArgs e)
         {
             int tag = (int)TabPanel.SelectedTab.Tag;

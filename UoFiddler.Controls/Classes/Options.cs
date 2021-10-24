@@ -50,6 +50,11 @@ namespace UoFiddler.Controls.Classes
         public static bool RightPanelInSoundsTab { get; set; } = true;
 
         /// <summary>
+        /// Offsets the sound ids in Sound tab by 1 (POL specific setting)
+        /// </summary>
+        public static bool PolSoundIdOffset { get; set; }
+
+        /// <summary>
         /// Defines the cmd to Send Client to Loc
         /// </summary>
         public static string MapCmd { get; set; } = ".goforce";
