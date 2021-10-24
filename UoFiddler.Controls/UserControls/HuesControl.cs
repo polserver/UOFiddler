@@ -13,6 +13,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Ultima;
@@ -334,6 +335,54 @@ namespace UoFiddler.Controls.UserControls
 
             Selected = indexValue;
             vScrollBar.Value = scrollPosition;
+        }
+
+        private void SearchNameToolStripButton_Click(object sender, EventArgs e)
+        {
+            FindByName(Selected);
+        }
+
+        private void HueNameToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            FindByName(0);
+        }
+
+        private void FindByName(int startIndex)
+        {
+            if (HueNameToolStripTextBox.TextBox == null)
+            {
+                return;
+            }
+
+            var search = HueNameToolStripTextBox.TextBox.Text.Trim();
+
+            if (string.IsNullOrEmpty(search))
+            {
+                return;
+            }
+
+            var searchResult = FindByNameInternal(search, startIndex);
+
+            // try from the start
+            if (searchResult == null)
+            {
+                searchResult = FindByNameInternal(search, 0);
+
+                // searching from start failed we can return
+                if (searchResult == null)
+                {
+                    return;
+                }
+            }
+
+            Selected = searchResult.Index;
+            vScrollBar.Value = searchResult.Index - 1 < 0 ? 0 : searchResult.Index;
+        }
+
+        private static Hue FindByNameInternal(string search, int currentIndex)
+        {
+            return Hues.List.FirstOrDefault(hue =>
+                hue.Name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0 && hue.Index > currentIndex);
         }
     }
 }
