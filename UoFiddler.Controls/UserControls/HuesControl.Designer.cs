@@ -40,6 +40,7 @@ namespace UoFiddler.Controls.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HuesControl));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +53,9 @@ namespace UoFiddler.Controls.UserControls
             this.HuesTopMenuToolStrip = new System.Windows.Forms.ToolStrip();
             this.HueIndexToolStripLabel = new System.Windows.Forms.ToolStripLabel();
             this.HueIndexToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.HueNameToolStripLabel = new System.Windows.Forms.ToolStripLabel();
+            this.HueNameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.SearchNameToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -87,6 +91,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceText
             // 
+            this.ReplaceText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceText.Name = "ReplaceText";
             this.ReplaceText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
@@ -158,7 +163,10 @@ namespace UoFiddler.Controls.UserControls
             this.HuesTopMenuToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.HuesTopMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.HueIndexToolStripLabel,
-            this.HueIndexToolStripTextBox});
+            this.HueIndexToolStripTextBox,
+            this.HueNameToolStripLabel,
+            this.HueNameToolStripTextBox,
+            this.SearchNameToolStripButton});
             this.HuesTopMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.HuesTopMenuToolStrip.Name = "HuesTopMenuToolStrip";
             this.HuesTopMenuToolStrip.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
@@ -170,14 +178,38 @@ namespace UoFiddler.Controls.UserControls
             // HueIndexToolStripLabel
             // 
             this.HueIndexToolStripLabel.Name = "HueIndexToolStripLabel";
-            this.HueIndexToolStripLabel.Size = new System.Drawing.Size(64, 22);
+            this.HueIndexToolStripLabel.Size = new System.Drawing.Size(64, 20);
             this.HueIndexToolStripLabel.Text = "Hue Index:";
             // 
             // HueIndexToolStripTextBox
             // 
+            this.HueIndexToolStripTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.HueIndexToolStripTextBox.Name = "HueIndexToolStripTextBox";
-            this.HueIndexToolStripTextBox.Size = new System.Drawing.Size(100, 25);
+            this.HueIndexToolStripTextBox.Size = new System.Drawing.Size(100, 23);
             this.HueIndexToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HueIndexToolStripTextBox_KeyUp);
+            // 
+            // HueNameToolStripLabel
+            // 
+            this.HueNameToolStripLabel.Name = "HueNameToolStripLabel";
+            this.HueNameToolStripLabel.Size = new System.Drawing.Size(67, 20);
+            this.HueNameToolStripLabel.Text = "Hue Name:";
+            // 
+            // HueNameToolStripTextBox
+            // 
+            this.HueNameToolStripTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.HueNameToolStripTextBox.Name = "HueNameToolStripTextBox";
+            this.HueNameToolStripTextBox.Size = new System.Drawing.Size(100, 23);
+            this.HueNameToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HueNameToolStripTextBox_KeyUp);
+            // 
+            // SearchNameToolStripButton
+            // 
+            this.SearchNameToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.SearchNameToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("SearchNameToolStripButton.Image")));
+            this.SearchNameToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.SearchNameToolStripButton.Name = "SearchNameToolStripButton";
+            this.SearchNameToolStripButton.Size = new System.Drawing.Size(60, 20);
+            this.SearchNameToolStripButton.Text = "Find next";
+            this.SearchNameToolStripButton.Click += new System.EventHandler(this.SearchNameToolStripButton_Click);
             // 
             // HuesControl
             // 
@@ -217,5 +249,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStrip HuesTopMenuToolStrip;
         private System.Windows.Forms.ToolStripLabel HueIndexToolStripLabel;
         private System.Windows.Forms.ToolStripTextBox HueIndexToolStripTextBox;
+        private System.Windows.Forms.ToolStripLabel HueNameToolStripLabel;
+        private System.Windows.Forms.ToolStripTextBox HueNameToolStripTextBox;
+        private System.Windows.Forms.ToolStripButton SearchNameToolStripButton;
     }
 }
