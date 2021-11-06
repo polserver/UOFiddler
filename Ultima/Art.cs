@@ -191,8 +191,8 @@ namespace Ultima
             stream.Seek(4, SeekOrigin.Current);
             stream.Read(_validBuffer, 0, 4);
 
-            ref var width = ref _validBuffer[0];
-            ref var height = ref _validBuffer[2];
+            short width = (short)(_validBuffer[0] | (_validBuffer[1] << 8));
+            short height = (short)(_validBuffer[2] | (_validBuffer[3] << 8));
 
             return width > 0 && height > 0;
         }
