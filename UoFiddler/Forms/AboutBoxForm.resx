@@ -118,7 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.8
+    <value>Version 4.9.9
+Fixed Items tab - some larger statics items were not visible by default.
+Updated Sounds tab to use 0-based indexes by default. There is new option "Offset Sound Id by 1 (POL emulator)" for POL users. POL starts sound ids from 1.
+Added search by text to Hues control.
+
+Version 4.9.8
 Updated animationlist.xml (you need to copy updated file from UOFiddler directory to your profile folder and override existing animationlist.xml)
 Fixed speech.mul Id value reading - no longer limited to 256.
 
