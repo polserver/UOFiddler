@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 /*
@@ -43,7 +44,7 @@ namespace Ultima
             _path = Files.GetFilePath("verdata.mul");
             if (_path == null)
             {
-                Patches = new Entry5D[0];
+                Patches = Array.Empty<Entry5D>();
                 Stream = Stream.Null;
             }
             else
