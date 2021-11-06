@@ -1284,7 +1284,7 @@ namespace Ultima
 
         private MultiComponentList()
         {
-            Tiles = new MTile[0][][];
+            Tiles = Array.Empty<MTile[][]>();
         }
 
         public void ExportToTextFile(string fileName)

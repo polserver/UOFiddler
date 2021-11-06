@@ -123,9 +123,9 @@ namespace Ultima
                 {
                     0xA0, 0x00, 0x00, 0x00, 0x00, 0x84, 0xC0, 0x0F, 0x85, 0x00, 0x00, 0x00, 0x00, 0x8B, 0x0D
                 },
-                new byte[0],
-                new byte[0],
-                new byte[0],
+                Array.Empty<byte>(),
+                Array.Empty<byte>(),
+                Array.Empty<byte>(),
                 new byte[]{ 0x01, 0x04, 0xFF, 0xFF, 0xFF, 0x01 }
             ),
             new CalibrationInfo(
@@ -143,7 +143,7 @@ namespace Ultima
                 new byte[]{ 0x02, 0x04, 0x04, 0x0C, 0x01, 0x02 },
                 new byte[]{ 0x0E, 0x04, 0x04, 0x15, 0x01, 0x02 },
                 new byte[]{ 0x18, 0x04, 0x04, 0x1F, 0x01, 0x02 },
-                new byte[0]
+                Array.Empty<byte>()
             ),
             new CalibrationInfo(
                 /* UO3D Only, calibrates both */
