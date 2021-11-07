@@ -239,7 +239,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
             catch (Exception e)
             {
-                MessageBox.Show($"An error occured while performing the action.\r\n{e.Message}");
+                MessageBox.Show($"An error occurred while performing the action.\r\n{e.Message}");
             }
         }
 
@@ -272,7 +272,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
             catch (Exception e)
             {
-                MessageBox.Show($"An error occured while performing the action.\r\n{e.Message}");
+                MessageBox.Show($"An error occurred while performing the action.\r\n{e.Message}");
             }
         }
 
