@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>UOPPacker</AssemblyName>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>UOP Packer</AssemblyTitle>
 		<Product>LegacyMUL Converter</Product>
@@ -21,9 +22,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Ultima\Ultima.csproj" />
 		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="UserControls\UopPackerControl.cs">

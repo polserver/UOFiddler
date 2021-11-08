@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>MassImport</AssemblyName>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>MassImportPlugin</AssemblyTitle>
 		<Product>MassImportPlugin</Product>
@@ -18,9 +19,6 @@
 		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Forms\MassImportForm.cs">
 			<SubType>Form</SubType>

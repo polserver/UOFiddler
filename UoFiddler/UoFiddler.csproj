@@ -3,7 +3,8 @@
 		<OutputType>WinExe</OutputType>
 		<ApplicationIcon>Resources\UOFiddlerIcon.ico</ApplicationIcon>
 		<StartupObject>UoFiddler.Program</StartupObject>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>UoFiddler</AssemblyTitle>
 		<Product>UoFiddler</Product>
@@ -22,14 +23,10 @@
 		<DebugType>none</DebugType>
 		<OutputPath>bin\$(Configuration)\</OutputPath>
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-		<UseVSHostingProcess>false</UseVSHostingProcess>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Resources\UOFiddler.jpg" />
 		<None Remove="Resources\UOFiddlerIcon.ico" />
-	</ItemGroup>
-	<ItemGroup>
-		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Forms\AboutBoxForm.cs">

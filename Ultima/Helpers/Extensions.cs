@@ -30,7 +30,8 @@ namespace Ultima.Helpers
             }
         }
 
-        static readonly SHA256Managed _sha256 = new SHA256Managed();
+        static readonly SHA256 _sha256 = SHA256.Create();
+
         public static byte[] ToSha256(this byte[] buffer)
         {
             return _sha256.ComputeHash(buffer);

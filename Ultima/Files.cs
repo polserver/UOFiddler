@@ -393,7 +393,7 @@ namespace Ultima
             }
 
             FileStream fileCheck = File.OpenRead(file);
-            using (MD5 md5 = new MD5CryptoServiceProvider())
+            using (MD5 md5 = MD5.Create())
             {
                 byte[] md5Hash = md5.ComputeHash(fileCheck);
                 fileCheck.Close();
@@ -415,7 +415,7 @@ namespace Ultima
             }
 
             FileStream fileCheck = File.OpenRead(file);
-            using (MD5 md5 = new MD5CryptoServiceProvider())
+            using (MD5 md5 = MD5.Create())
             {
                 byte[] md5Hash = md5.ComputeHash(fileCheck);
                 fileCheck.Close();

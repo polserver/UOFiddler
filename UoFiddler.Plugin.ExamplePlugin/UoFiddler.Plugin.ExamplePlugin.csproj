@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>TestPlugin</AssemblyName>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>FiddlerPlugin</AssemblyTitle>
 		<Product>FiddlerPlugin</Product>
@@ -16,9 +17,6 @@
 		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Forms\ExampleForm.cs">
 			<SubType>Form</SubType>
