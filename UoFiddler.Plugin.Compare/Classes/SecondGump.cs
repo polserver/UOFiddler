@@ -7,15 +7,15 @@ namespace UoFiddler.Plugin.Compare.Classes
 {
     internal static class SecondGump
     {
-        private static SecondFileIndex _mFileIndex;
+        private static SecondFileIndex _fileIndex;
 
-        private static Bitmap[] _mCache = new Bitmap[0x10000];
-        private static byte[] _mStreamBuffer;
+        private static Bitmap[] _cache = new Bitmap[0x10000];
+        private static byte[] _streamBuffer;
 
         public static void SetFileIndex(string idxPath, string mulPath)
         {
-            _mFileIndex = new SecondFileIndex(idxPath, mulPath, 0x10000);
-            _mCache = new Bitmap[0x10000];
+            _fileIndex = new SecondFileIndex(idxPath, mulPath, 0x10000);
+            _cache = new Bitmap[0x10000];
         }
 
         /// <summary>
@@ -25,17 +25,17 @@ namespace UoFiddler.Plugin.Compare.Classes
         /// <returns></returns>
         public static bool IsValidIndex(int index)
         {
-            if (_mFileIndex == null)
+            if (_fileIndex == null)
             {
                 return false;
             }
 
-            if (_mCache[index] != null)
+            if (_cache[index] != null)
             {
                 return true;
             }
 
-            if (!_mFileIndex.Valid(index, out _, out int extra))
+            if (!_fileIndex.Valid(index, out _, out int extra))
             {
                 return false;
             }
@@ -55,7 +55,7 @@ namespace UoFiddler.Plugin.Compare.Classes
         {
             width = -1;
             height = -1;
-            Stream stream = _mFileIndex.Seek(index, out int length, out int extra);
+            Stream stream = _fileIndex.Seek(index, out int length, out int extra);
             if (stream == null)
             {
                 return null;
@@ -85,12 +85,12 @@ namespace UoFiddler.Plugin.Compare.Classes
         /// <returns></returns>
         public static unsafe Bitmap GetGump(int index)
         {
-            if (_mCache[index] != null)
+            if (_cache[index] != null)
             {
-                return _mCache[index];
+                return _cache[index];
             }
 
-            Stream stream = _mFileIndex.Seek(index, out int length, out int extra);
+            Stream stream = _fileIndex.Seek(index, out int length, out int extra);
             if (stream == null)
             {
                 return null;
@@ -106,14 +106,14 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            if (_mStreamBuffer == null || _mStreamBuffer.Length < length)
+            if (_streamBuffer == null || _streamBuffer.Length < length)
             {
-                _mStreamBuffer = new byte[length];
+                _streamBuffer = new byte[length];
             }
 
-            stream.Read(_mStreamBuffer, 0, length);
+            stream.Read(_streamBuffer, 0, length);
 
-            fixed (byte* data = _mStreamBuffer)
+            fixed (byte* data = _streamBuffer)
             {
                 int* lookup = (int*)data;
                 ushort* dat = (ushort*)data;
@@ -149,7 +149,7 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             bmp.UnlockBits(bd);
 
-            return Files.CacheData ? _mCache[index] = bmp : bmp;
+            return Files.CacheData ? _cache[index] = bmp : bmp;
         }
     }
 }

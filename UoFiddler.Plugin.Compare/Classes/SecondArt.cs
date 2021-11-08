@@ -7,16 +7,16 @@ namespace UoFiddler.Plugin.Compare.Classes
 {
     internal static class SecondArt
     {
-        private static SecondFileIndex _mFileIndex;
-        private static Bitmap[] _mCache;
+        private static SecondFileIndex _fileIndex;
+        private static Bitmap[] _cache;
 
-        private static byte[] _mStreamBuffer;
-        private static byte[] _validbuffer;
+        private static byte[] _streamBuffer;
+        private static byte[] _validBuffer;
 
         public static void SetFileIndex(string idxPath, string mulPath)
         {
-            _mFileIndex = new SecondFileIndex(idxPath, mulPath, 0x14000);
-            _mCache = new Bitmap[0x14000];
+            _fileIndex = new SecondFileIndex(idxPath, mulPath, 0x14000);
+            _cache = new Bitmap[0x14000];
         }
 
         public static int GetMaxItemId()
@@ -55,38 +55,38 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         private static int GetIdxLength()
         {
-            return (int)(_mFileIndex.IdxLength / 12);
+            return (int)(_fileIndex.IdxLength / 12);
         }
 
-        public static unsafe bool IsValidStatic(int index)
+        public static bool IsValidStatic(int index)
         {
             index = GetLegalItemId(index);
             index += 0x4000;
 
-            if (_mCache[index] != null)
+            if (_cache[index] != null)
             {
                 return true;
             }
 
-            Stream stream = _mFileIndex.Seek(index, out _, out _);
+            Stream stream = _fileIndex.Seek(index, out _, out _);
 
             if (stream == null)
             {
                 return false;
             }
 
-            if (_validbuffer == null)
+            if (_validBuffer == null)
             {
-                _validbuffer = new byte[4];
+                _validBuffer = new byte[4];
             }
 
             stream.Seek(4, SeekOrigin.Current);
-            stream.Read(_validbuffer, 0, 4);
-            fixed (byte* b = _validbuffer)
-            {
-                short* dat = (short*)b;
-                return *dat++ > 0 && *dat > 0;
-            }
+            stream.Read(_validBuffer, 0, 4);
+
+            short width = (short)(_validBuffer[0] | (_validBuffer[1] << 8));
+            short height = (short)(_validBuffer[2] | (_validBuffer[3] << 8));
+
+            return width > 0 && height > 0;
         }
 
         public static Bitmap GetStatic(int index)
@@ -94,12 +94,12 @@ namespace UoFiddler.Plugin.Compare.Classes
             index = GetLegalItemId(index);
             index += 0x4000;
 
-            if (_mCache[index] != null)
+            if (_cache[index] != null)
             {
-                return _mCache[index];
+                return _cache[index];
             }
 
-            Stream stream = _mFileIndex.Seek(index, out int length, out _);
+            Stream stream = _fileIndex.Seek(index, out int length, out _);
             if (stream == null)
             {
                 return null;
@@ -107,7 +107,7 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             if (Files.CacheData)
             {
-                return _mCache[index] = LoadStatic(stream, length);
+                return _cache[index] = LoadStatic(stream, length);
             }
             else
             {
@@ -121,7 +121,7 @@ namespace UoFiddler.Plugin.Compare.Classes
         //     index = GetLegalItemId(index);
         //     index += 0x4000;
         //
-        //     var stream = _mFileIndex.Seek(index, out var length, out _);
+        //     var stream = _fileIndex.Seek(index, out var length, out _);
         //     if (stream == null)
         //     {
         //         return null;
@@ -135,15 +135,15 @@ namespace UoFiddler.Plugin.Compare.Classes
         private static unsafe Bitmap LoadStatic(Stream stream, int length)
         {
             Bitmap bmp;
-            if (_mStreamBuffer == null || _mStreamBuffer.Length < length)
+            if (_streamBuffer == null || _streamBuffer.Length < length)
             {
-                _mStreamBuffer = new byte[length];
+                _streamBuffer = new byte[length];
             }
 
-            stream.Read(_mStreamBuffer, 0, length);
+            stream.Read(_streamBuffer, 0, length);
             stream.Close();
 
-            fixed (byte* data = _mStreamBuffer)
+            fixed (byte* data = _streamBuffer)
             {
                 ushort* binData = (ushort*)data;
                 int count = 2;
@@ -207,26 +207,26 @@ namespace UoFiddler.Plugin.Compare.Classes
         public static bool IsValidLand(int index)
         {
             index &= 0x3FFF;
-            return _mCache[index] != null || _mFileIndex.Valid(index, out _, out _);
+            return _cache[index] != null || _fileIndex.Valid(index, out _, out _);
         }
 
         public static Bitmap GetLand(int index)
         {
             index &= 0x3FFF;
 
-            if (_mCache[index] != null)
+            if (_cache[index] != null)
             {
-                return _mCache[index];
+                return _cache[index];
             }
 
-            Stream stream = _mFileIndex.Seek(index, out int length, out _);
+            Stream stream = _fileIndex.Seek(index, out int length, out _);
             if (stream == null)
             {
                 return null;
             }
 
             return Files.CacheData
-                ? _mCache[index] = LoadLand(stream, length)
+                ? _cache[index] = LoadLand(stream, length)
                 : LoadLand(stream, length);
         }
 
@@ -235,7 +235,7 @@ namespace UoFiddler.Plugin.Compare.Classes
         // {
         //     index &= 0x3FFF;
         //
-        //     var stream = _mFileIndex.Seek(index, out var length, out _);
+        //     var stream = _fileIndex.Seek(index, out var length, out _);
         //     if (stream == null)
         //     {
         //         return null;
@@ -250,14 +250,14 @@ namespace UoFiddler.Plugin.Compare.Classes
         {
             Bitmap bmp = new Bitmap(44, 44, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 44, 44), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            if (_mStreamBuffer == null || _mStreamBuffer.Length < length)
+            if (_streamBuffer == null || _streamBuffer.Length < length)
             {
-                _mStreamBuffer = new byte[length];
+                _streamBuffer = new byte[length];
             }
 
-            stream.Read(_mStreamBuffer, 0, length);
+            stream.Read(_streamBuffer, 0, length);
             stream.Close();
-            fixed (byte* binData = _mStreamBuffer)
+            fixed (byte* binData = _streamBuffer)
             {
                 ushort* bdata = (ushort*)binData;
                 int xOffset = 21;
