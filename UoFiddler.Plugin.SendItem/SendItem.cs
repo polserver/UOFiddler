@@ -114,11 +114,17 @@ namespace UoFiddler.Plugin.SendItem
             if (value)
             {
                 itemsControlTileView.MouseDoubleClick -= itemsControl.ItemsTileView_MouseDoubleClick;
+
+                // make sure that there is only one instance of event subscription
+                itemsControlTileView.MouseDoubleClick -= PlugOnDoubleClick;
                 itemsControlTileView.MouseDoubleClick += PlugOnDoubleClick;
             }
             else if (!init)
             {
                 itemsControlTileView.MouseDoubleClick -= PlugOnDoubleClick;
+
+                // make sure that there is only one instance of event subscription
+                itemsControlTileView.MouseDoubleClick -= itemsControl.ItemsTileView_MouseDoubleClick;
                 itemsControlTileView.MouseDoubleClick += itemsControl.ItemsTileView_MouseDoubleClick;
             }
         }
