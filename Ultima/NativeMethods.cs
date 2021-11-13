@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
@@ -32,6 +33,9 @@ namespace Ultima
 
         [DllImport("User32")]
         public static extern int SetForegroundWindow(ClientWindowHandle hWnd);
+
+        [DllImport("User32")]
+        public static extern bool ShowWindow(ClientWindowHandle handle, int nCmdShow);
 
         [DllImport("User32")]
         public static extern int SendMessage(ClientWindowHandle hWnd, int wMsg, int wParam, int lParam);
