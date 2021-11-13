@@ -138,15 +138,15 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Multilist.xml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<EmbeddedResource Include="Resources\UOFiddler.jpg" />
 		<EmbeddedResource Include="Resources\UOFiddlerIcon.ico" />
 		<None Include="Options_default.xml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Include="Animationlist.xml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	<ItemGroup>

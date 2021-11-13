@@ -50,7 +50,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="multieditor.xml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
