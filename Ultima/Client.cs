@@ -402,6 +402,8 @@ namespace Ultima
         /// </summary>
         public static bool Is_Iris2 { get; set; }
 
+        public static bool IsClassicUO { get; set; }
+
         private static void SendChar(ClientWindowHandle hWnd, char c)
         {
             int value = c;
@@ -445,8 +447,19 @@ namespace Ultima
                     SendChar(hWnd, text[i]);
                 }
 
-                SendChar(hWnd, '\r');
-                SendChar(hWnd, '\n');
+                if (IsClassicUO)
+                {
+                    const int WM_KEYDOWN = 0x100;
+                    const int WM_KEYUP = 0x101;
+                    const int VK_RETURN = 0x0D;
+
+                    NativeMethods.PostMessage(hWnd, WM_KEYDOWN, VK_RETURN, 0x001C0001);
+                    NativeMethods.PostMessage(hWnd, WM_KEYUP, VK_RETURN, 0x001C0001);
+                }
+                else
+                {
+                    SendChar(hWnd, '\r');
+                }
 
                 return true;
             }
@@ -487,6 +500,13 @@ namespace Ultima
             if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("OgreGLWindow", null)) != 0)
             {
                 Is_Iris2 = true;
+                return hWnd;
+            }
+
+            // ClassicUO
+            if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("SDL_app", null)) != 0)
+            {
+                IsClassicUO = true;
                 return hWnd;
             }
 
