@@ -1,22 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using Microsoft.SqlServer.Server;
 
 namespace Ultima
 {
     /// <summary>
     /// Provides methods to interact with the Ultima Online client.
     /// </summary>
-    public sealed class Client
+    public static class Client
     {
+        // ReSharper disable once InconsistentNaming
         private const int WM_CHAR = 0x102;
 
         private static ClientWindowHandle _handle = ClientWindowHandle.Invalid;
 
         private static WindowProcessStream _procStream;
         private static LocationPointer _locationPointer;
-
-        private Client()
-        { }
 
         /// <summary>
         /// Gets a <see cref="ProcessStream" /> instance which can be used to read the memory. Null is returned if the Client is not running.
@@ -132,6 +133,7 @@ namespace Ultima
             for (int i = 0; ; ++i)
             {
                 pc.Seek(0x400000 + (i * chunkSize), SeekOrigin.Begin);
+
                 int count = pc.Read(read, 0, readSize);
 
                 if (count != readSize)
@@ -151,12 +153,14 @@ namespace Ultima
                     if (ok)
                     {
                         pc.EndAccess();
+
                         return 0x400000 + (i * chunkSize) + j;
                     }
                 }
             }
 
             pc.EndAccess();
+
             return 0;
         }
 
@@ -383,6 +387,8 @@ namespace Ultima
 
                 return _handle;
             }
+
+            set { _handle = value; }
         }
 
         /// <summary>
@@ -472,7 +478,7 @@ namespace Ultima
         /// <summary>
         ///     Sends a formatted <see cref="string" /> of characters to the Client. The string is followed by a carriage return and line feed. The format functionality is the same as
         ///     <see
-        ///         cref="string.Format">
+        ///         cref="Format">
         ///         String.Format
         ///     </see>
         ///     .
@@ -511,6 +517,52 @@ namespace Ultima
             }
 
             return ClientWindowHandle.Invalid;
+        }
+
+        /// <summary> Get the text for the window pointed to by hWnd </summary>
+        public static string GetWindowText(IntPtr hWnd)
+        {
+            int size = NativeMethods.GetWindowTextLength(hWnd);
+            if (size <= 0)
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder(size + 1);
+
+            NativeMethods.GetWindowText(hWnd, builder, builder.Capacity);
+
+            return builder.ToString();
+        }
+
+        /// <summary> Find all windows that match the given filter </summary>
+        /// <param name="filter"> A delegate that returns true for windows
+        ///    that should be returned and false for windows that should
+        ///    not be returned </param>
+        private static IEnumerable<IntPtr> FindWindows(NativeMethods.EnumWindowsProc filter)
+        {
+            List<IntPtr> windows = new List<IntPtr>();
+
+            NativeMethods.EnumWindows(delegate (IntPtr wnd, IntPtr param)
+            {
+                if (filter(wnd, param))
+                {
+                    // only add the windows that pass the filter
+                    windows.Add(wnd);
+                }
+
+                // but return true here so that we iterate all windows
+                return true;
+            }, IntPtr.Zero);
+
+            return windows;
+        }
+
+        /// <summary> Find all windows that contain the given title text </summary>
+        /// <param name="titleText"> The text that the window title must contain. </param>
+        public static IEnumerable<IntPtr> FindWindowsWithText(string titleText)
+        {
+            return FindWindows((wnd, param) => GetWindowText(wnd).Contains(titleText));
         }
     }
 }
