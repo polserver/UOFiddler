@@ -41,18 +41,18 @@ namespace UoFiddler.Controls.UserControls
         private List<int> _itemList = new List<int>();
         private bool _showFreeSlots;
 
-        private int _selectedGraphicIdId = -1;
+        private int _selectedGraphicId = -1;
 
         public int SelectedGraphicId
         {
-            get => _selectedGraphicIdId;
+            get => _selectedGraphicId;
             set
             {
-                _selectedGraphicIdId = value < 0 ? 0 : value;
-                ItemsTileView.FocusIndex = _itemList.Count == 0 ? -1 : _itemList.IndexOf(_selectedGraphicIdId);
+                _selectedGraphicId = value < 0 ? 0 : value;
+                ItemsTileView.FocusIndex = _itemList.Count == 0 ? -1 : _itemList.IndexOf(_selectedGraphicId);
 
-                UpdateToolStripLabels(_selectedGraphicIdId);
-                UpdateDetail(_selectedGraphicIdId);
+                UpdateToolStripLabels(_selectedGraphicId);
+                UpdateDetail(_selectedGraphicId);
             }
         }
 
@@ -82,9 +82,9 @@ namespace UoFiddler.Controls.UserControls
             ItemsTileView.TileSize = newSize;
             ItemsTileView.Invalidate();
 
-            if (_selectedGraphicIdId != -1)
+            if (_selectedGraphicId != -1)
             {
-                UpdateDetail(_selectedGraphicIdId);
+                UpdateDetail(_selectedGraphicId);
             }
         }
 
@@ -121,9 +121,9 @@ namespace UoFiddler.Controls.UserControls
             int index = 0;
             if (next)
             {
-                if (RefMarker._selectedGraphicIdId >= 0)
+                if (RefMarker._selectedGraphicId >= 0)
                 {
-                    index = RefMarker._itemList.IndexOf(RefMarker._selectedGraphicIdId) + 1;
+                    index = RefMarker._itemList.IndexOf(RefMarker._selectedGraphicId) + 1;
                 }
 
                 if (index >= RefMarker._itemList.Count)
@@ -247,7 +247,7 @@ namespace UoFiddler.Controls.UserControls
 
             id -= 0x4000;
 
-            if (_selectedGraphicIdId != id)
+            if (_selectedGraphicId != id)
             {
                 return;
             }
@@ -415,9 +415,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _backgroundDetailColor = colorDialog.Color;
-            if (_selectedGraphicIdId != -1)
+            if (_selectedGraphicId != -1)
             {
-                UpdateDetail(_selectedGraphicIdId);
+                UpdateDetail(_selectedGraphicId);
             }
         }
 
@@ -442,7 +442,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_showFreeSlots)
             {
-                int i = _selectedGraphicIdId > -1 ? _itemList.IndexOf(_selectedGraphicIdId) + 1 : 0;
+                int i = _selectedGraphicId > -1 ? _itemList.IndexOf(_selectedGraphicId) + 1 : 0;
                 for (; i < _itemList.Count; ++i)
                 {
                     if (Art.IsValidStatic(_itemList[i]))
@@ -459,10 +459,10 @@ namespace UoFiddler.Controls.UserControls
             {
                 int id, i;
 
-                if (_selectedGraphicIdId > -1)
+                if (_selectedGraphicId > -1)
                 {
-                    id = _selectedGraphicIdId + 1;
-                    i = _itemList.IndexOf(_selectedGraphicIdId) + 1;
+                    id = _selectedGraphicId + 1;
+                    i = _itemList.IndexOf(_selectedGraphicId) + 1;
                 }
                 else
                 {
@@ -486,7 +486,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId < 0)
+            if (_selectedGraphicId < 0)
             {
                 return;
             }
@@ -508,8 +508,8 @@ namespace UoFiddler.Controls.UserControls
                     bmp = Utils.ConvertBmp(bmp);
                 }
 
-                Art.ReplaceStatic(_selectedGraphicIdId, bmp);
-                ControlEvents.FireItemChangeEvent(this, _selectedGraphicIdId);
+                Art.ReplaceStatic(_selectedGraphicId, bmp);
+                ControlEvents.FireItemChangeEvent(this, _selectedGraphicId);
                 ItemsTileView.Invalidate();
                 Options.ChangedUltimaClass["Art"] = true;
             }
@@ -517,27 +517,27 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            if (!Art.IsValidStatic(_selectedGraphicIdId))
+            if (!Art.IsValidStatic(_selectedGraphicId))
             {
                 return;
             }
 
-            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selectedGraphicIdId:X}", "Save",
+            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selectedGraphicId:X}", "Save",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
             }
 
-            Art.RemoveStatic(_selectedGraphicIdId);
-            ControlEvents.FireItemChangeEvent(this, _selectedGraphicIdId);
+            Art.RemoveStatic(_selectedGraphicId);
+            ControlEvents.FireItemChangeEvent(this, _selectedGraphicId);
 
             if (!_showFreeSlots)
             {
-                _itemList.Remove(_selectedGraphicIdId);
+                _itemList.Remove(_selectedGraphicId);
                 ItemsTileView.VirtualListSize = _itemList.Count;
-                var moveToIndex = --_selectedGraphicIdId;
-                SelectedGraphicId = moveToIndex <= 0 ? 0 : _selectedGraphicIdId; // TODO: get last index visible instead just curr -1
+                var moveToIndex = --_selectedGraphicId;
+                SelectedGraphicId = moveToIndex <= 0 ? 0 : _selectedGraphicId; // TODO: get last index visible instead just curr -1
             }
             ItemsTileView.Invalidate();
 
@@ -712,42 +712,42 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId == -1)
+            if (_selectedGraphicId == -1)
             {
                 return;
             }
 
-            ExportItemImage(_selectedGraphicIdId, ImageFormat.Bmp);
+            ExportItemImage(_selectedGraphicId, ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId == -1)
+            if (_selectedGraphicId == -1)
             {
                 return;
             }
 
-            ExportItemImage(_selectedGraphicIdId, ImageFormat.Tiff);
+            ExportItemImage(_selectedGraphicId, ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId == -1)
+            if (_selectedGraphicId == -1)
             {
                 return;
             }
 
-            ExportItemImage(_selectedGraphicIdId, ImageFormat.Jpeg);
+            ExportItemImage(_selectedGraphicId, ImageFormat.Jpeg);
         }
 
         private void Extract_Image_ClickPng(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId == -1)
+            if (_selectedGraphicId == -1)
             {
                 return;
             }
 
-            ExportItemImage(_selectedGraphicIdId, ImageFormat.Png);
+            ExportItemImage(_selectedGraphicId, ImageFormat.Png);
         }
 
         private static void ExportItemImage(int index, ImageFormat imageFormat)
@@ -771,17 +771,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId >= 0)
+            if (_selectedGraphicId >= 0)
             {
-                TileDataControl.Select(_selectedGraphicIdId, false);
+                TileDataControl.Select(_selectedGraphicId, false);
             }
         }
 
         private void OnClickSelectRadarCol(object sender, EventArgs e)
         {
-            if (_selectedGraphicIdId >= 0)
+            if (_selectedGraphicId >= 0)
             {
-                RadarColorControl.Select(_selectedGraphicIdId, false);
+                RadarColorControl.Select(_selectedGraphicId, false);
             }
         }
 
@@ -1016,8 +1016,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (ItemsTileView.FocusIndex > 0)
             {
-                UpdateDetail(_selectedGraphicIdId);
-                UpdateToolStripLabels(_selectedGraphicIdId);
+                UpdateDetail(_selectedGraphicId);
+                UpdateToolStripLabels(_selectedGraphicId);
             }
         }
 
