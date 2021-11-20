@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.10
+    <value>Version 4.9.11
+- Added "Show Free Slots" option to Land Tiles tab.
+- Added "Show Free Slots" option to Textures tab.
+
+Version 4.9.10
 - Send item plug-in should now register itself only once and not twice.
 - Send item to client plug-in should work with ClassicUO (thanks to Xuri)
 
