@@ -76,6 +76,8 @@ namespace UoFiddler.Controls.UserControls
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.LandTilesTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LandTilesContextMenuStrip.SuspendLayout();
             this.LandTilesToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -83,6 +85,8 @@ namespace UoFiddler.Controls.UserControls
             // LandTilesContextMenuStrip
             // 
             this.LandTilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showFreeSlotsToolStripMenuItem,
+            this.toolStripSeparator6,
             this.exportImageToolStripMenuItem,
             this.toolStripSeparator3,
             this.selectInTileDataTabToolStripMenuItem,
@@ -94,7 +98,7 @@ namespace UoFiddler.Controls.UserControls
             this.insertAtToolStripMenuItem,
             this.insertStartingFromToolStripMenuItem});
             this.LandTilesContextMenuStrip.Name = "contextMenuStrip1";
-            this.LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 192);
+            this.LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 242);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -190,6 +194,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
@@ -205,6 +210,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertStartingFromTb
             // 
+            this.InsertStartingFromTb.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertStartingFromTb.Name = "InsertStartingFromTb";
             this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
             this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFromTb_KeyDown);
@@ -356,6 +362,7 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.LandTilesTileView.TileBorderColor = System.Drawing.Color.Gray;
             this.LandTilesTileView.TileBorderWidth = 1F;
+            this.LandTilesTileView.TileFocusColor = System.Drawing.Color.DarkRed;
             this.LandTilesTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             this.LandTilesTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
             this.LandTilesTileView.TilePadding = new System.Windows.Forms.Padding(1);
@@ -363,6 +370,19 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesTileView.VirtualListSize = 1;
             this.LandTilesTileView.ItemSelectionChanged += new System.EventHandler<System.Windows.Forms.ListViewItemSelectionChangedEventArgs>(this.LandTilesTileView_ItemSelectionChanged);
             this.LandTilesTileView.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.LandTilesTileView_DrawItem);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(197, 6);
+            // 
+            // showFreeSlotsToolStripMenuItem
+            // 
+            this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
+            this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.showFreeSlotsToolStripMenuItem.Text = "Show Free Slots";
+            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsToolStripMenuItem_Click);
             // 
             // LandTilesControl
             // 
@@ -417,5 +437,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem insertStartingFromToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox InsertStartingFromTb;
+        private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
     }
 }
