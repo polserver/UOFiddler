@@ -23,7 +23,6 @@ using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
 {
-    // TODO: add "Show free slots" support
     public partial class TexturesControl : UserControl
     {
         public TexturesControl()
@@ -36,6 +35,7 @@ namespace UoFiddler.Controls.UserControls
 
         private static TexturesControl _refMarker;
         private List<int> _textureList = new List<int>();
+        private bool _showFreeSlots;
         private bool _loaded;
 
         private int _selectedTextureId = -1;
@@ -59,6 +59,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _textureList = new List<int>();
+            _showFreeSlots = false;
             _selectedTextureId = -1;
             OnLoad(this, EventArgs.Empty);
         }
@@ -145,6 +146,11 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
+                if (_showFreeSlots)
+                {
+                    return;
+                }
+
                 _textureList.Remove(index);
             }
 
@@ -175,35 +181,58 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickFindNext(object sender, EventArgs e)
         {
-            int id, i;
-            if (_selectedTextureId > -1)
+            if (_showFreeSlots)
             {
-                id = _selectedTextureId + 1;
-                i = _textureList.IndexOf(_selectedTextureId) + 1;
+                int i = _selectedTextureId > -1 ? _textureList.IndexOf(_selectedTextureId) + 1 : 0;
+                for (; i < _textureList.Count; ++i)
+                {
+                    if (Textures.TestTexture(_textureList[i]))
+                    {
+                        continue;
+                    }
+
+                    SelectedTextureId = _textureList[i];
+                    TextureTileView.Invalidate();
+                    break;
+                }
             }
             else
             {
-                id = 1;
-                i = 0;
-            }
-
-            for (; i < _textureList.Count; ++i, ++id)
-            {
-                if (id >= _textureList[i])
+                int id, i;
+                if (_selectedTextureId > -1)
                 {
-                    continue;
+                    id = _selectedTextureId + 1;
+                    i = _textureList.IndexOf(_selectedTextureId) + 1;
+                }
+                else
+                {
+                    id = 1;
+                    i = 0;
                 }
 
-                SelectedTextureId = _textureList[i];
-                TextureTileView.Invalidate();
+                for (; i < _textureList.Count; ++i, ++id)
+                {
+                    if (id >= _textureList[i])
+                    {
+                        continue;
+                    }
 
-                break;
+                    SelectedTextureId = _textureList[i];
+                    TextureTileView.Invalidate();
+
+                    break;
+                }
             }
         }
 
         private void OnClickRemove(object sender, EventArgs e)
         {
             if (_selectedTextureId < 0)
+            {
+                return;
+            }
+
+            if (!Textures.TestTexture(_selectedTextureId))
             {
                 return;
             }
@@ -217,10 +246,16 @@ namespace UoFiddler.Controls.UserControls
 
             Textures.Remove(_selectedTextureId);
             ControlEvents.FireTextureChangeEvent(this, _selectedTextureId);
-            _textureList.Remove(_selectedTextureId);
-            SelectedTextureId = --_selectedTextureId;
-            TextureTileView.VirtualListSize = _textureList.Count;
+
+            if (!_showFreeSlots)
+            {
+                _textureList.Remove(_selectedTextureId);
+                TextureTileView.VirtualListSize = _textureList.Count;
+                var moveToIndex = --_selectedTextureId;
+                SelectedTextureId = moveToIndex <= 0 ? 0 : _selectedTextureId; // TODO: get last index visible instead just curr -1
+            }
             TextureTileView.Invalidate();
+
             Options.ChangedUltimaClass["Texture"] = true;
         }
 
@@ -372,6 +407,11 @@ namespace UoFiddler.Controls.UserControls
 
         private static void ExportTextureImage(int index, ImageFormat imageFormat)
         {
+            if (!Textures.TestTexture(index))
+            {
+                return;
+            }
+
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"Texture 0x{index:X4}.{fileExtension}");
 
@@ -421,21 +461,33 @@ namespace UoFiddler.Controls.UserControls
             Size defaultTileSize = new Size(defaultTileWidth, defaultTileWidth);
             Rectangle tileRectangle = new Rectangle(itemPoint, defaultTileSize);
 
+            var previousClip = e.Graphics.Clip;
+
+            e.Graphics.Clip = new Region(tileRectangle);
+
             Bitmap bitmap = Textures.GetTexture(_textureList[e.Index], out bool patched);
-            if (patched)
-            {
-                // different background for verdata patched tiles
-                e.Graphics.FillRectangle(Brushes.LightCoral, tileRectangle);
-            }
 
             if (bitmap == null)
             {
-                // TODO: partial empty slots support - drawing the tile
-                itemPoint.Offset(2, 2);
-                e.Graphics.FillRectangle(Brushes.Red, new Rectangle(itemPoint, defaultTileSize - new Size(4, 4)));
+                e.Graphics.Clip = new Region(tileRectangle);
+
+                tileRectangle.X += 5;
+                tileRectangle.Y += 5;
+
+                tileRectangle.Width -= 10;
+                tileRectangle.Height -= 10;
+
+                e.Graphics.FillRectangle(Brushes.Red, tileRectangle);
+                e.Graphics.Clip = previousClip;
             }
             else
             {
+                if (patched)
+                {
+                    // different background for verdata patched tiles
+                    e.Graphics.FillRectangle(Brushes.LightCoral, tileRectangle);
+                }
+
                 // center 64x64 instead of drawing int top left corner
                 if (bitmap.Width < defaultTileWidth)
                 {
@@ -444,6 +496,8 @@ namespace UoFiddler.Controls.UserControls
 
                 Rectangle textureRectangle = new Rectangle(itemPoint, new Size(bitmap.Width, bitmap.Height));
                 e.Graphics.DrawImage(bitmap, textureRectangle);
+
+                e.Graphics.Clip = previousClip;
             }
         }
 
@@ -602,7 +656,7 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBox.Show("Invalid Height or Width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1);
             }
         }
@@ -619,6 +673,44 @@ namespace UoFiddler.Controls.UserControls
             TextureTileView.TileFocusColor = Options.TileFocusColor;
             TextureTileView.TileHighlightColor = Options.TileSelectionColor;
             TextureTileView.Invalidate();
+        }
+
+        private void ShowFreeSlotsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _showFreeSlots = !_showFreeSlots;
+
+            if (_showFreeSlots)
+            {
+                for (int j = 0; j <= Textures.GetIdxLength(); ++j)
+                {
+                    if (_textureList.Count > j)
+                    {
+                        if (_textureList[j] != j)
+                        {
+                            _textureList.Insert(j, j);
+                        }
+                    }
+                    else
+                    {
+                        _textureList.Insert(j, j);
+                    }
+                }
+
+                var prevSelected = SelectedTextureId;
+
+                TextureTileView.VirtualListSize = _textureList.Count;
+
+                if (prevSelected >= 0)
+                {
+                    SelectedTextureId = prevSelected;
+                }
+
+                TextureTileView.Invalidate();
+            }
+            else
+            {
+                Reload();
+            }
         }
     }
 }

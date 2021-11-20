@@ -41,6 +41,8 @@ namespace UoFiddler.Controls.UserControls
         {
             this.components = new System.ComponentModel.Container();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,6 +77,8 @@ namespace UoFiddler.Controls.UserControls
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showFreeSlotsToolStripMenuItem,
+            this.toolStripSeparator5,
             this.exportImageToolStripMenuItem,
             this.toolStripSeparator2,
             this.findNextFreeSlotToolStripMenuItem,
@@ -83,7 +87,20 @@ namespace UoFiddler.Controls.UserControls
             this.insertAtToolStripMenuItem,
             this.insertStartingFromToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 142);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 192);
+            // 
+            // showFreeSlotsToolStripMenuItem
+            // 
+            this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
+            this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.showFreeSlotsToolStripMenuItem.Text = "Show Free Slots";
+            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(181, 6);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -160,6 +177,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
@@ -175,6 +193,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertStartingFromTb
             // 
+            this.InsertStartingFromTb.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertStartingFromTb.Name = "InsertStartingFromTb";
             this.InsertStartingFromTb.Size = new System.Drawing.Size(100, 23);
             this.InsertStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InsertStartingFrom_OnInsert);
@@ -309,6 +328,7 @@ namespace UoFiddler.Controls.UserControls
             this.TextureTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.TextureTileView.TileBorderColor = System.Drawing.Color.Gray;
             this.TextureTileView.TileBorderWidth = 1F;
+            this.TextureTileView.TileFocusColor = System.Drawing.Color.DarkRed;
             this.TextureTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             this.TextureTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
             this.TextureTileView.TilePadding = new System.Windows.Forms.Padding(1);
@@ -365,5 +385,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem ExportAllAsPng;
         private System.Windows.Forms.ToolStripMenuItem insertStartingFromToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox InsertStartingFromTb;
+        private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
     }
 }
