@@ -710,22 +710,7 @@ namespace UoFiddler.Controls.UserControls
                         hueObject.ApplyTo(bmp, onlyHueGrayPixels);
                     }
 
-                    int width = bmp.Width;
-                    int height = bmp.Height;
-
-                    //if (width > pictureBoxDress.Width)
-                    //{
-                    //    width = pictureBoxDress.Width;
-                    //    height = bmp.Height * bmp.Height / bmp.Width;
-                    //}
-
-                    //if (height > pictureBoxDress.Height)
-                    //{
-                    //    height = pictureBoxDress.Height;
-                    //    width = pictureBoxDress.Width * bmp.Width / bmp.Height;
-                    //}
-
-                    graph.DrawImage(bmp, new Rectangle(0, 0, width, height));
+                    graph.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
                 }
             }
 
