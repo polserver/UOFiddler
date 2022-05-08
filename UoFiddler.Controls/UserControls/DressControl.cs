@@ -30,7 +30,11 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+
+            _lastNodeIndex = 0;
+            treeViewItems.HideSelection = false;
         }
 
         private static readonly int[] _drawOrder ={
@@ -99,7 +103,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _showPd = true;
         private bool _animate;
         private Timer _mTimer;
-        private Bitmap[] _mAnimation;
+        private Bitmap[] _animation;
         private int _mFrameIndex;
         private int _facing = 1;
         private int _action = 1;
@@ -130,8 +134,10 @@ namespace UoFiddler.Controls.UserControls
             _gargoyle = false;
             _showPd = true;
             _animate = false;
+
             _facing = 1;
             _action = 1;
+
             if (_mTimer != null)
             {
                 if (_mTimer.Enabled)
@@ -143,18 +149,20 @@ namespace UoFiddler.Controls.UserControls
                 _mTimer = null;
             }
 
-            if (_mAnimation != null)
+            if (_animation != null)
             {
-                for (int i = 0; i < _mAnimation.Length; ++i)
+                foreach (var frame in _animation)
                 {
-                    _mAnimation[i]?.Dispose();
+                    frame?.Dispose();
                 }
             }
 
-            _mAnimation = null;
+            _animation = null;
             _mFrameIndex = 0;
+
             EquipTable.Initialize();
             GumpTable.Initialize();
+
             OnLoad(this, EventArgs.Empty);
         }
 
@@ -535,7 +543,7 @@ namespace UoFiddler.Controls.UserControls
             Point draw = new Point();
 
             int count = mobile.Length;
-            _mAnimation = new Bitmap[count];
+            _animation = new Bitmap[count];
             int[] animOrder = _drawOrder2;
             if (((_facing - 3) & 7) >= 4 && ((_facing - 3) & 7) <= 6)
             {
@@ -544,8 +552,8 @@ namespace UoFiddler.Controls.UserControls
 
             for (int i = 0; i < count; ++i)
             {
-                _mAnimation[i] = new Bitmap(DressPic.Width, DressPic.Height);
-                using (Graphics graph = Graphics.FromImage(_mAnimation[i]))
+                _animation[i] = new Bitmap(DressPic.Width, DressPic.Height);
+                using (Graphics graph = Graphics.FromImage(_animation[i]))
                 {
                     graph.Clear(Color.WhiteSmoke);
                     if (_mount != 0)
@@ -636,19 +644,19 @@ namespace UoFiddler.Controls.UserControls
         {
             ++_mFrameIndex;
 
-            if (_mFrameIndex >= _mAnimation.Length)
+            if (_mFrameIndex >= _animation.Length)
             {
                 _mFrameIndex = 0;
             }
 
-            if (_mAnimation?[_mFrameIndex] == null)
+            if (_animation?[_mFrameIndex] == null)
             {
                 return;
             }
 
             using (Graphics graph = Graphics.FromImage(DressPic.Image))
             {
-                graph.DrawImage(_mAnimation[_mFrameIndex], _drawPoint);
+                graph.DrawImage(_animation[_mFrameIndex], _drawPoint);
             }
             DressPic.Invalidate();
         }
@@ -659,11 +667,15 @@ namespace UoFiddler.Controls.UserControls
             int gump = ani + 50000;
             int gumpOrig = gump;
             int hue = 0;
+
             Animations.Translate(ref ani);
+
             ConvertBody(ref ani, ref gump, ref hue);
+
             if (_female)
             {
                 gump += 10000;
+
                 if (!Gumps.IsValidIndex(gump))  // female gump.def entry?
                 {
                     ConvertGump(ref gump, ref hue);
@@ -683,32 +695,42 @@ namespace UoFiddler.Controls.UserControls
             using (Graphics graph = Graphics.FromImage(pictureBoxDress.Image))
             {
                 graph.Clear(Color.Transparent);
+
                 Bitmap bmp = Gumps.GetGump(gump);
+
                 if (bmp != null)
                 {
                     bool onlyHueGrayPixels = (hue & 0x8000) != 0;
+
                     hue = (hue & 0x3FFF) - 1;
+
                     if (hue >= 0 && hue < Hues.List.Length)
                     {
                         Hue hueObject = Hues.List[hue];
                         hueObject.ApplyTo(bmp, onlyHueGrayPixels);
                     }
+
                     int width = bmp.Width;
                     int height = bmp.Height;
-                    if (width > pictureBoxDress.Width)
-                    {
-                        width = pictureBoxDress.Width;
-                        height = bmp.Height * bmp.Height / bmp.Width;
-                    }
-                    if (height > pictureBoxDress.Height)
-                    {
-                        height = pictureBoxDress.Height;
-                        width = pictureBoxDress.Width * bmp.Width / bmp.Height;
-                    }
+
+                    //if (width > pictureBoxDress.Width)
+                    //{
+                    //    width = pictureBoxDress.Width;
+                    //    height = bmp.Height * bmp.Height / bmp.Width;
+                    //}
+
+                    //if (height > pictureBoxDress.Height)
+                    //{
+                    //    height = pictureBoxDress.Height;
+                    //    width = pictureBoxDress.Width * bmp.Width / bmp.Height;
+                    //}
+
                     graph.DrawImage(bmp, new Rectangle(0, 0, width, height));
                 }
             }
+
             pictureBoxDress.Invalidate();
+
             TextBox.Clear();
             TextBox.AppendText(
                 $"Objtype: 0x{(int)e.Node.Tag:X4}\nLayer: 0x{TileData.ItemTable[(int)e.Node.Tag].Quality:X2}\n");
@@ -723,7 +745,9 @@ namespace UoFiddler.Controls.UserControls
         private void OnClick_Animate(object sender, EventArgs e)
         {
             _animate = !_animate;
+
             extractAnimationToolStripMenuItem.Visible = _animate;
+
             RefreshDrawing();
         }
 
@@ -740,6 +764,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeHuman(object sender, EventArgs e)
         {
             _human = checkBoxHuman.Checked;
+
             if (checkBoxHuman.Checked && _loaded)
             {
                 RefreshDrawing();
@@ -749,6 +774,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeElve(object sender, EventArgs e)
         {
             _elve = checkBoxElve.Checked;
+
             if (checkBoxElve.Checked && _loaded)
             {
                 RefreshDrawing();
@@ -758,6 +784,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnChangeGargoyle(object sender, EventArgs e)
         {
             _gargoyle = checkBoxGargoyle.Checked;
+
             if (checkBoxGargoyle.Checked && _loaded)
             {
                 RefreshDrawing();
@@ -766,22 +793,31 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_Dress(object sender, EventArgs e)
         {
+            DressItem();
+        }
+
+        private void DressItem()
+        {
             if (treeViewItems.SelectedNode == null)
             {
                 return;
             }
 
-            int objType = (int)treeViewItems.SelectedNode.Tag;
+            int objType = (int) treeViewItems.SelectedNode.Tag;
+
             int layer = TileData.ItemTable[objType].Quality;
+
             if (Array.IndexOf(_drawOrder, layer) == -1)
             {
                 return;
             }
 
             _layers[layer] = objType;
+
             checkedListBoxWear.BeginUpdate();
             checkedListBoxWear.Items[layer] = $"0x{layer:X2} {TileData.ItemTable[objType].Name}";
             checkedListBoxWear.EndUpdate();
+
             RefreshDrawing();
         }
 
@@ -793,8 +829,11 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int layer = checkedListBoxWear.SelectedIndex;
+
             checkedListBoxWear.Items[checkedListBoxWear.SelectedIndex] = $"0x{layer:X2}";
+
             _layers[layer] = 0;
+
             RefreshDrawing();
         }
 
@@ -803,6 +842,7 @@ namespace UoFiddler.Controls.UserControls
             for (int i = 0; i < _layers.Length; ++i)
             {
                 _layers[i] = 0;
+
                 checkedListBoxWear.Items[i] = $"0x{i:X2}";
             }
 
@@ -817,12 +857,12 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _layerVisible[e.Index] = e.NewValue == CheckState.Checked;
+
             RefreshDrawing();
         }
 
         private void CheckedListBox_Change(object sender, EventArgs e)
         {
-            //RefreshDrawing();
             if (checkedListBoxWear.SelectedIndex == -1)
             {
                 return;
@@ -834,11 +874,15 @@ namespace UoFiddler.Controls.UserControls
             int gumpIdOrig = ani + 50000;
             int gumpId = gumpIdOrig;
             int hue = 0;
+
             Animations.Translate(ref ani);
+
             ConvertBody(ref ani, ref gumpId, ref hue);
+
             if (_female)
             {
                 gumpId += 10000;
+
                 if (!Gumps.IsValidIndex(gumpId))  // female gump.def entry?
                 {
                     ConvertGump(ref gumpId, ref hue);
@@ -859,8 +903,7 @@ namespace UoFiddler.Controls.UserControls
             TextBox.AppendText($"Objtype: 0x{objType:X4}  Layer: 0x{layer:X2}\n");
             TextBox.AppendText($"GumpID: 0x{gumpId:X4} (0x{gumpIdOrig:X4}) Hue: {hue}\n");
             TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[objType].Animation:X4})\n");
-            TextBox.AppendText(
-                $"ValidGump: {Gumps.IsValidIndex(gumpId)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}");
+            TextBox.AppendText($"ValidGump: {Gumps.IsValidIndex(gumpId)} ValidAnim: {Animations.IsActionDefined(ani, 0, 0)}");
         }
 
         private void OnChangeSort(object sender, EventArgs e)
@@ -871,6 +914,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnClick_ChangeDisplay(object sender, EventArgs e)
         {
             _showPd = !_showPd;
+
             if (_showPd)
             {
                 groupBoxAnimate.Visible = false;
@@ -883,6 +927,7 @@ namespace UoFiddler.Controls.UserControls
                 animateToolStripMenuItem.Visible = true;
                 showAnimationToolStripMenuItem.Text = "Show Paperdoll";
             }
+
             RefreshDrawing();
         }
 
@@ -908,16 +953,19 @@ namespace UoFiddler.Controls.UserControls
 
                     int hue = 0;
                     int gump = ani + 50000;
+
                     ConvertBody(ref ani, ref gump, ref hue);
+
                     if (!Gumps.IsValidIndex(gump))
                     {
                         ConvertGump(ref gump, ref hue);
                     }
 
                     bool hasAnimation = Animations.IsActionDefined(ani, 0, 0);
+
                     bool hasGump = Gumps.IsValidIndex(gump);
-                    TreeNode node = new TreeNode(
-                        $"0x{i:X4} (0x{TileData.ItemTable[i].Quality:X2}) {TileData.ItemTable[i].Name}")
+
+                    TreeNode node = new TreeNode($"0x{i:X4} (0x{TileData.ItemTable[i].Quality:X2}) {TileData.ItemTable[i].Name}")
                     {
                         Tag = i
                     };
@@ -938,6 +986,7 @@ namespace UoFiddler.Controls.UserControls
                     treeViewItems.Nodes.Add(node);
                 }
             }
+
             treeViewItems.EndUpdate();
         }
 
@@ -954,15 +1003,15 @@ namespace UoFiddler.Controls.UserControls
                 _mTimer = null;
             }
 
-            if (_mAnimation != null)
+            if (_animation != null)
             {
-                for (int i = 0; i < _mAnimation.Length; ++i)
+                foreach (var frame in _animation)
                 {
-                    _mAnimation[i]?.Dispose();
+                    frame?.Dispose();
                 }
             }
 
-            _mAnimation = null;
+            _animation = null;
             _mFrameIndex = 0;
 
             DrawPaperdoll();
@@ -971,7 +1020,9 @@ namespace UoFiddler.Controls.UserControls
         private void OnScroll_Facing(object sender, EventArgs e)
         {
             _facing = (FacingBar.Value - 3) & 7;
+
             toolTip1.SetToolTip(FacingBar, FacingBar.Value.ToString());
+
             RefreshDrawing();
         }
 
@@ -1192,7 +1243,7 @@ namespace UoFiddler.Controls.UserControls
                 string fileName = Path.Combine(outputPath, $"Dress IG.{fileExtension}");
                 if (_animate)
                 {
-                    _mAnimation[0].Save(fileName, imageFormat);
+                    _animation[0].Save(fileName, imageFormat);
                 }
                 else
                 {
@@ -1231,9 +1282,9 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
 
-            for (int i = 0; i < _mAnimation.Length; ++i)
+            for (int i = 0; i < _animation.Length; ++i)
             {
-                _mAnimation[i].Save(Path.Combine(path, $"{fileName}-{i}.{fileExtension}"), imageFormat);
+                _animation[i].Save(Path.Combine(path, $"{fileName}-{i}.{fileExtension}"), imageFormat);
             }
 
             MessageBox.Show($"InGame Anim saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
@@ -1525,6 +1576,77 @@ namespace UoFiddler.Controls.UserControls
 
             _mount = index;
             RefreshDrawing();
+        }
+
+        private readonly List<TreeNode> _searchResults = new List<TreeNode>();
+
+        private int _lastNodeIndex;
+
+        private string _lastSearchText;
+
+        private void SearchByName()
+        {
+            var searchText = SearchItemTextBox.Text.Trim();
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return;
+            }
+
+            if (_lastSearchText != searchText)
+            {
+                _searchResults.Clear();
+
+                _lastSearchText = searchText;
+
+                _lastNodeIndex = 0;
+
+                SearchNodes(searchText, treeViewItems.Nodes[0]);
+            }
+
+            if (_lastNodeIndex < 0 || _searchResults.Count == 0)
+            {
+                return;
+            }
+
+            if (_lastNodeIndex >= _searchResults.Count)
+            {
+                _lastNodeIndex = 0;
+            }
+
+            TreeNode selectedNode = _searchResults[_lastNodeIndex];
+
+            _lastNodeIndex++;
+
+            treeViewItems.SelectedNode = selectedNode;
+        }
+
+        private void SearchNodes(string searchText, TreeNode startNode)
+        {
+            while (startNode != null)
+            {
+                if (startNode.Text.ContainsCaseInsensitive(searchText))
+                {
+                    _searchResults.Add(startNode);
+                }
+
+                startNode = startNode.NextNode;
+            }
+        }
+
+        private void SearchItemTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            SearchByName();
+        }
+
+        private void FindNextItemButton_Click(object sender, EventArgs e)
+        {
+            SearchByName();
+        }
+
+        private void TreeViewItems_DoubleClick(object sender, EventArgs e)
+        {
+            DressItem();
         }
     }
 
