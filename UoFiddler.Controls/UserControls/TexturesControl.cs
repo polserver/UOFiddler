@@ -557,14 +557,15 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void InsertStartingFrom_OnInsert(object sender, KeyEventArgs e)
+        private void ReplaceStartingFrom_OnInsert(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
             {
                 return;
             }
-            //Why were we using 0xFFF for the Textures and 0x3FFF for the Landtiles?
-            if (!Utils.ConvertStringToInt(InsertStartingFromTb.Text, out int index, 0, 0x3FFF))
+
+            // why were we using 0xFFF for the Textures and 0x3FFF for the Landtiles?
+            if (!Utils.ConvertStringToInt(ReplaceStartingFromTb.Text, out int index, 0, 0x3FFF))
             {
                 return;
             }
@@ -574,9 +575,10 @@ namespace UoFiddler.Controls.UserControls
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.Title = $"Choose images file to insert at 0x{index:X}";
+                dialog.Title = $"Choose images to replace starting at 0x{index:X}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;

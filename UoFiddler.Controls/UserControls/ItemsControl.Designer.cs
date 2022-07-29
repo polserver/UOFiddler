@@ -65,6 +65,8 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.replaceStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReplaceStartingFromText = new System.Windows.Forms.ToolStripTextBox();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InsertText = new System.Windows.Forms.ToolStripTextBox();
@@ -212,12 +214,13 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripSeparator2,
             this.extractToolStripMenuItem,
             this.replaceToolStripMenuItem,
+            this.replaceStartingFromToolStripMenuItem,
             this.removeToolStripMenuItem,
             this.insertAtToolStripMenuItem,
             this.toolStripSeparator1,
             this.saveToolStripMenuItem});
             this.TileViewContextMenuStrip.Name = "contextMenuStrip1";
-            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 286);
+            this.TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 308);
             this.TileViewContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.TileViewContextMenuStrip_Opening);
             // 
             // showFreeSlotsToolStripMenuItem
@@ -328,6 +331,20 @@ namespace UoFiddler.Controls.UserControls
             this.replaceToolStripMenuItem.Text = "Replace...";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
+            // replaceStartingFromToolStripMenuItem
+            // 
+            this.replaceStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ReplaceStartingFromText});
+            this.replaceStartingFromToolStripMenuItem.Name = "replaceStartingFromToolStripMenuItem";
+            this.replaceStartingFromToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.replaceStartingFromToolStripMenuItem.Text = "Replace starting from..";
+            // 
+            // ReplaceStartingFromText
+            // 
+            this.ReplaceStartingFromText.Name = "ReplaceStartingFromText";
+            this.ReplaceStartingFromText.Size = new System.Drawing.Size(100, 23);
+            this.ReplaceStartingFromText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFromText_KeyDown);
+            // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
@@ -345,7 +362,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsertText);
@@ -580,5 +596,7 @@ namespace UoFiddler.Controls.UserControls
         private RichTextBox DetailTextBox;
         private ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
         private ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;
+        private ToolStripMenuItem replaceStartingFromToolStripMenuItem;
+        private ToolStripTextBox ReplaceStartingFromText;
     }
 }

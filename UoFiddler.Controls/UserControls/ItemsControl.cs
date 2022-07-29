@@ -578,57 +578,16 @@ namespace UoFiddler.Controls.UserControls
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
-                dialog.Title = $"Choose image file to insert at 0x{index:X}";
+                dialog.Title = $"Choose images to replace starting at 0x{index:X}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
-                {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
-
-                Art.ReplaceStatic(index, bmp);
-                ControlEvents.FireItemChangeEvent(this, index);
-                Options.ChangedUltimaClass["Art"] = true;
-                if (_showFreeSlots)
-                {
-                    SelectedGraphicId = index;
-                    UpdateToolStripLabels(index);
-                    UpdateDetail(index);
-                }
-                else
-                {
-                    bool done = false;
-                    for (int i = 0; i < _itemList.Count; ++i)
-                    {
-                        if (index >= _itemList[i])
-                        {
-                            continue;
-                        }
-
-                        _itemList.Insert(i, index);
-
-                        done = true;
-                        break;
-                    }
-
-                    if (!done)
-                    {
-                        _itemList.Add(index);
-                    }
-
-                    ItemsTileView.VirtualListSize = _itemList.Count;
-                    ItemsTileView.Invalidate();
-                    SelectedGraphicId = index;
-
-                    UpdateToolStripLabels(index);
-                    UpdateDetail(index);
-                }
+                AddSingleItem(dialog.FileName, index);
             }
         }
 
@@ -1076,6 +1035,94 @@ namespace UoFiddler.Controls.UserControls
                     selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
                     selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
                 }
+            }
+        }
+
+        private void ReplaceStartingFromText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+
+            if (!Utils.ConvertStringToInt(ReplaceStartingFromText.Text, out int index, 0, Art.GetMaxItemID()))
+            {
+                return;
+            }
+
+            TileViewContextMenuStrip.Close();
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = $"Choose image file to insert from 0x{index:X}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < dialog.FileNames.Length; i++)
+                {
+                    var currentIdx = index + i;
+                    AddSingleItem(dialog.FileNames[i], currentIdx);
+                }
+            }
+        }
+
+        private void AddSingleItem(string fileName, int index)
+        {
+            Bitmap bmp = new Bitmap(fileName);
+            if (fileName.Contains(".bmp"))
+            {
+                bmp = Utils.ConvertBmp(bmp);
+            }
+
+            Art.ReplaceStatic(index, bmp);
+
+            ControlEvents.FireItemChangeEvent(this, index);
+
+            Options.ChangedUltimaClass["Art"] = true;
+
+            if (_showFreeSlots)
+            {
+                SelectedGraphicId = index;
+
+                UpdateToolStripLabels(index);
+                UpdateDetail(index);
+            }
+            else
+            {
+                bool done = false;
+
+                for (int i = 0; i < _itemList.Count; ++i)
+                {
+                    if (index >= _itemList[i])
+                    {
+                        continue;
+                    }
+
+                    _itemList.Insert(i, index);
+
+                    done = true;
+
+                    break;
+                }
+
+                if (!done)
+                {
+                    _itemList.Add(index);
+                }
+
+                ItemsTileView.VirtualListSize = _itemList.Count;
+                ItemsTileView.Invalidate();
+
+                SelectedGraphicId = index;
+
+                UpdateToolStripLabels(index);
+                UpdateDetail(index);
             }
         }
     }

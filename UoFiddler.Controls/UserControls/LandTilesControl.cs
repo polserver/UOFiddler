@@ -681,7 +681,7 @@ namespace UoFiddler.Controls.UserControls
                 : _tileList[e.ItemIndex];
         }
 
-        private void InsertStartingFromTb_KeyDown(object sender, KeyEventArgs e)
+        private void ReplaceStartingFromTb_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
             {
@@ -691,7 +691,7 @@ namespace UoFiddler.Controls.UserControls
             const int graphicIdMin = 0;
             const int graphicIdMax = 0x3FFF;
 
-            if (!Utils.ConvertStringToInt(InsertStartingFromTb.Text, out int index, graphicIdMin, graphicIdMax))
+            if (!Utils.ConvertStringToInt(ReplaceStartingFromTb.Text, out int index, graphicIdMin, graphicIdMax))
             {
                 return;
             }
@@ -701,9 +701,10 @@ namespace UoFiddler.Controls.UserControls
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.Title = $"Choose image file to insert from 0x{index:X}";
+                dialog.Title = $"Choose images to replace starting at 0x{index:X}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
