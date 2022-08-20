@@ -118,7 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.12
+    <value>Version 4.9.13
+- Fix for multi (multi tab) region export/import. MultiRegion should now have same coordinates after import.
+- Added "Replace starting from.." to Items tab. Allows replacing multiple items starting from selected index.
+- Renamed "Insert Starting From.." to "Replace starting from.." as it reflects actual function better.
+- Extended Ultima.Client with method to enumerate multiple ultima windows. Author: NaphalAXT. Source: https://github.com/NaphalAXT/ultimasVos/commit/5f2847739e8c690f8caa5e41c26075f64b930c0b
+- Minor code fixes and cleanups.
+
+Version 4.9.12
 - Added search items on Dress tab.
 
 Version 4.9.11
