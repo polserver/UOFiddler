@@ -228,7 +228,7 @@ namespace UoFiddler.Controls.UserControls
 
             if (Selected >= 0)
             {
-                new HueEditForm(Selected, _refMarker).Show();
+                new HueEditForm(Selected).Show();
             }
         }
 

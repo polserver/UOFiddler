@@ -14,13 +14,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class HueEditForm : Form
     {
-        //private readonly HuesControl _refMarker; // TODO: unused? 
         private readonly Hue _hue;
         private readonly short[] _colors;
         private int _selected;
@@ -52,12 +50,11 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        public HueEditForm(int index, HuesControl mRefMarker)
+        public HueEditForm(int index)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
 
-            //_refMarker = mRefMarker;
             Text = $"HueEdit {index} / 0x{index:X}";
 
             _hue = Hues.GetHue(index);
@@ -177,7 +174,9 @@ namespace UoFiddler.Controls.Forms
 
                 _colors[start + i] = Hues.ColorToHue(newC);
             }
+
             pictureBox.Invalidate();
+
             RefreshPreview();
         }
 
@@ -190,6 +189,7 @@ namespace UoFiddler.Controls.Forms
 
             int start = Math.Min(SecondSelected, Selected);
             int end = Math.Max(SecondSelected, Selected);
+
             int diff = end - start;
             if (diff <= 1)
             {
@@ -198,9 +198,11 @@ namespace UoFiddler.Controls.Forms
 
             Color startColor = Hues.HueToColor(_colors[start]);
             Color endColor = Hues.HueToColor(_colors[end]);
+
             double redDiv = Math.Log(Math.Abs(endColor.R - startColor.R), Math.E) / Math.Log(diff, Math.E);
             double greenDiv = Math.Log(Math.Abs(endColor.G - startColor.G), Math.E) / Math.Log(diff, Math.E);
             double blueDiv = Math.Log(Math.Abs(endColor.B - startColor.B), Math.E) / Math.Log(diff, Math.E);
+
             int redFac = 1;
             if (endColor.R - startColor.R < 0)
             {
@@ -225,9 +227,12 @@ namespace UoFiddler.Controls.Forms
                     (int)(startColor.R + (redFac * Math.Pow(i, redDiv))),
                     (int)(startColor.G + (greenFac * Math.Pow(i, greenDiv))),
                     (int)(startColor.B + (blueFac * Math.Pow(i, blueDiv))));
+
                 _colors[start + i] = Hues.ColorToHue(newColor);
             }
+
             pictureBox.Invalidate();
+
             RefreshPreview();
         }
 
@@ -240,6 +245,7 @@ namespace UoFiddler.Controls.Forms
 
             int start = Math.Min(SecondSelected, Selected);
             int end = Math.Max(SecondSelected, Selected);
+
             while (start < end)
             {
                 short temp = _colors[start];
@@ -248,7 +254,9 @@ namespace UoFiddler.Controls.Forms
                 ++start;
                 --end;
             }
+
             Selected = _selected;
+
             RefreshPreview();
         }
 
@@ -261,6 +269,7 @@ namespace UoFiddler.Controls.Forms
 
             int start = Math.Min(SecondSelected, Selected);
             int end = Math.Max(SecondSelected, Selected);
+
             for (int i = start; i <= end; ++i)
             {
                 Color color = Hues.HueToColor(_colors[i]);
@@ -273,7 +282,9 @@ namespace UoFiddler.Controls.Forms
                     Math.Max(0, Math.Min(255, b)));
                 _colors[i] = Hues.ColorToHue(newColor);
             }
+
             Selected = _selected;
+
             RefreshPreview();
         }
 
@@ -307,7 +318,9 @@ namespace UoFiddler.Controls.Forms
             }
 
             contextMenuStrip1.Close();
+
             _preview = Art.GetStatic(index);
+
             RefreshPreview();
         }
 
@@ -336,14 +349,18 @@ namespace UoFiddler.Controls.Forms
             }
 
             contextMenuStrip1.Close();
+
             int hueRef = 0;
+
             AnimationFrame[] frames = Animations.GetAnimation(index, 0, 1, ref hueRef, false, true);
+
             if (frames == null)
             {
                 return;
             }
 
             _preview = frames[0].Bitmap;
+
             RefreshPreview();
         }
 
@@ -377,7 +394,9 @@ namespace UoFiddler.Controls.Forms
             }
 
             contextMenuStrip1.Close();
+
             _preview = Gumps.GetGump(index);
+
             RefreshPreview();
         }
 
@@ -399,13 +418,15 @@ namespace UoFiddler.Controls.Forms
                     g.DrawImage(bmp, x, y);
                 }
             }
+
             pictureBoxPreview.Invalidate();
         }
 
         private void SetColorButton_Click(object sender, EventArgs e)
         {
-            _colors[_selected] = Hues.ColorToHue(Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value,
-                (int)numericUpDownB.Value));
+            _colors[_selected] = Hues.ColorToHue(Color.FromArgb((int)numericUpDownR.Value,
+                                                                (int)numericUpDownG.Value,
+                                                                (int)numericUpDownB.Value));
 
             pictureBox.Invalidate();
             pictureBoxIndex.Invalidate();

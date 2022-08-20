@@ -59,7 +59,7 @@ namespace UoFiddler.Controls.Forms
             _loaded = false;
         }
 
-        private string[][] AnimNames =
+        private readonly string[][] _animNames =
         {
             new string[]
             {
@@ -170,7 +170,7 @@ namespace UoFiddler.Controls.Forms
                             TreeNode treeNode = new TreeNode
                             {
                                 Tag = j,
-                                Text = string.Format("{0:D2} {1}", j, AnimNames[animLength == 22 ? 1 : animLength == 13 ? 0 : 2][j])
+                                Text = string.Format("{0:D2} {1}", j, _animNames[animLength == 22 ? 1 : animLength == 13 ? 0 : 2][j])
                         };
 
                             if (AnimationEdit.IsActionDefined(_fileType, i, j))
