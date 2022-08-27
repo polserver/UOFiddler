@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.13
+    <value>Version 4.9.14
+- Fixed crash when browsing Textures with "show free slots" enabled.
+- Fixed crash when browsing SkillGrp that uses nonexistent skill id.
+
+Version 4.9.13
 - Fix for multi (multi tab) region export/import. MultiRegion should now have same coordinates after import.
 - Added "Replace starting from.." to Items tab. Allows replacing multiple items starting from selected index.
 - Renamed "Insert Starting From.." to "Replace starting from.." as it reflects actual function better.
