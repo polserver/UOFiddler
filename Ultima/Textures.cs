@@ -15,10 +15,10 @@ namespace Ultima
 
         private struct Checksums
         {
-            public byte[] checksum;
-            public int pos;
-            public int length;
-            public int extra;
+            public byte[] Checksum;
+            public int Position;
+            public int Length;
+            public int Extra;
         }
 
         /// <summary>
@@ -211,9 +211,9 @@ namespace Ultima
 
                         if (CompareSaveImages(checksumList, newChecksum, out Checksums sum))
                         {
-                            binIdx.Write(sum.pos); // lookup
-                            binIdx.Write(sum.length); // length
-                            binIdx.Write(sum.extra); // extra
+                            binIdx.Write(sum.Position); // lookup
+                            binIdx.Write(sum.Length); // length
+                            binIdx.Write(sum.Extra); // extra
 
                             continue;
                         }
@@ -245,10 +245,10 @@ namespace Ultima
 
                         checksumList.Add(new Checksums
                         {
-                            pos = start,
-                            length = length,
-                            checksum = newChecksum,
-                            extra = extra
+                            Position = start,
+                            Length = length,
+                            Checksum = newChecksum,
+                            Extra = extra
                         });
                     }
                 }
@@ -276,7 +276,7 @@ namespace Ultima
             sum = new Checksums();
             for (int i = 0; i < checksumList.Count; ++i)
             {
-                byte[] cmp = checksumList[i].checksum;
+                byte[] cmp = checksumList[i].Checksum;
                 if ((cmp == null) || (newChecksum == null) || (cmp.Length != newChecksum.Count))
                 {
                     return false;
