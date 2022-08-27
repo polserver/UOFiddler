@@ -37,7 +37,6 @@ namespace UoFiddler.Controls.UserControls
         private List<int> _textureList = new List<int>();
         private bool _showFreeSlots;
         private bool _loaded;
-
         private int _selectedTextureId = -1;
 
         public int SelectedTextureId
@@ -59,8 +58,10 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _textureList = new List<int>();
+
             _showFreeSlots = false;
             _selectedTextureId = -1;
+
             OnLoad(this, EventArgs.Empty);
         }
 
@@ -95,6 +96,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             TextureTileView.VirtualListSize = _textureList.Count;
+
             UpdateTileView();
 
             if (!_loaded)
@@ -102,7 +104,9 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.TextureChangeEvent += OnTextureChangeEvent;
             }
+
             _loaded = true;
+
             Cursor.Current = Cursors.Default;
         }
 
@@ -121,6 +125,7 @@ namespace UoFiddler.Controls.UserControls
             if (Textures.TestTexture(index))
             {
                 bool done = false;
+
                 for (int i = 0; i < _textureList.Count; ++i)
                 {
                     if (index < _textureList[i])
@@ -136,6 +141,7 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     done = true;
+
                     break;
                 }
 
@@ -254,6 +260,7 @@ namespace UoFiddler.Controls.UserControls
                 var moveToIndex = --_selectedTextureId;
                 SelectedTextureId = moveToIndex <= 0 ? 0 : _selectedTextureId; // TODO: get last index visible instead just curr -1
             }
+
             TextureTileView.Invalidate();
 
             Options.ChangedUltimaClass["Texture"] = true;
@@ -683,7 +690,7 @@ namespace UoFiddler.Controls.UserControls
 
             if (_showFreeSlots)
             {
-                for (int j = 0; j <= Textures.GetIdxLength(); ++j)
+                for (int j = 0; j < Textures.GetIdxLength(); ++j)
                 {
                     if (_textureList.Count > j)
                     {

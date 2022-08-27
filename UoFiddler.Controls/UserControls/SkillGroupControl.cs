@@ -62,6 +62,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     Text = group.Name
                 };
+
                 if (string.Equals("Misc", group.Name))
                 {
                     groupNode.ForeColor = Color.Blue;
@@ -74,13 +75,22 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
+                    var skillInfo = Skills.GetSkill(i);
+
+                    if (skillInfo == null)
+                    {
+                        continue;
+                    }
+
                     TreeNode skillNode = new TreeNode
                     {
-                        Text = Skills.GetSkill(i).Name,
+                        Text = skillInfo.Name,
                         Tag = i
                     };
+
                     groupNode.Nodes.Add(skillNode);
                 }
+
                 cache.Add(groupNode);
             }
 
