@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.14
+    <value>Version 4.9.15
+- Fixed problems with "Replace starting from.." in Items, Land tiles and Textures tabs. It now replaces tiles as it should. Stops when index reaches max index value.
+- Fixed "Show free slots" menu item not clearing its state after reloading files.
+
+Version 4.9.14
 - Fixed crash when browsing Textures with "show free slots" enabled.
 - Fixed crash when browsing SkillGrp that uses nonexistent skill id.
 
