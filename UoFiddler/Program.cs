@@ -36,7 +36,7 @@ namespace UoFiddler
                                               fileSizeLimitBytes: 44040192)
                                 .CreateLogger();
 
-            logger.Information("UOFiddler - Application start.");
+            logger.Information("UOFiddler - Application start");
 
             try
             {
@@ -46,10 +46,9 @@ namespace UoFiddler
             catch (Exception err)
             {
                 Clipboard.SetDataObject(err.ToString(), true);
-                logger.Fatal("UOFiddler - unhandled exception caught!");
-                logger.Fatal("{err}", err);
+                logger.Fatal(err, "UOFiddler - unhandled exception caught!");
                 Application.Run(new ExceptionForm(err));
-                logger.Fatal("UOFiddler - unhandled exception - Application exit.");
+                logger.Fatal("UOFiddler - unhandled exception - Application exit");
             }
         }
     }
