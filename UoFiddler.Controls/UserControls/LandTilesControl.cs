@@ -148,6 +148,7 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Art"] = true;
 
             _showFreeSlots = false;
+            showFreeSlotsToolStripMenuItem.Checked = false;
 
             for (int i = 0; i < _landTileMax; ++i)
             {
@@ -710,17 +711,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                if (CheckForIndexes(index, dialog.FileNames.Length)) //
+                for (int i = 0; i < dialog.FileNames.Length; i++)
                 {
-                    for (int i = 0; i < dialog.FileNames.Length; i++)
+                    var currentIdx = index + i;
+
+                    if (IsIndexValid(currentIdx))
                     {
-                        var currentIdx = index + i;
                         AddSingleLandTile(dialog.FileNames[i], currentIdx);
                     }
                 }
-
-
-
 
                 LandTilesTileView.VirtualListSize = _tileList.Count;
                 LandTilesTileView.Invalidate();
@@ -731,28 +730,22 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
-        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// Check if it's valid index for land tile. Land tiles has fixed size 0x4000.
         /// </summary>
-        /// <param name="baseIndex">Starting Index</param>
-        /// <param name="count">Number of the indexes to check.</param>
-        /// <returns></returns>
-        private bool CheckForIndexes(int baseIndex, int count)
+        /// <param name="index">Starting Index</param>
+        private static bool IsIndexValid(int index)
         {
-            for (int i = baseIndex; i < baseIndex + count; i++)
-            {
-                if (i >= 0x4000 || Art.IsValidLand(i))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return index < 0x4000;
         }
 
+        /// <summary>
+        /// Adds a single land tile.
+        /// </summary>
+        /// <param name="fileName">Filename of the image to add.</param>
+        /// <param name="index">Index where the land tile will be added.</param>
         private void AddSingleLandTile(string fileName, int index)
         {
             Bitmap bmp = new Bitmap(fileName);
-            // TODO: check this if... looks weird. We don't convert other file types? 
-            // Should we convert from png/tiff to bmp?
             if (fileName.Contains(".bmp"))
             {
                 bmp = Utils.ConvertBmp(bmp);
@@ -763,14 +756,15 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FireLandTileChangeEvent(this, index);
 
             bool done = false;
+
             for (int i = 0; i < _tileList.Count; ++i)
             {
-                if (index >= _tileList[i])
+                if (index > _tileList[i])
                 {
                     continue;
                 }
 
-                _tileList.Insert(i, index);
+                _tileList[i] = index;
                 done = true;
                 break;
             }

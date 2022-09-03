@@ -60,6 +60,8 @@ namespace UoFiddler.Controls.UserControls
             _textureList = new List<int>();
 
             _showFreeSlots = false;
+            showFreeSlotsToolStripMenuItem.Checked = false;
+
             _selectedTextureId = -1;
 
             OnLoad(this, EventArgs.Empty);
@@ -571,8 +573,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            // why were we using 0xFFF for the Textures and 0x3FFF for the Landtiles?
-            if (!Utils.ConvertStringToInt(ReplaceStartingFromTb.Text, out int index, 0, 0x3FFF))
+            const int graphicIdMin = 0;
+            const int graphicIdMax = 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(ReplaceStartingFromTb.Text, out int index, graphicIdMin, graphicIdMax))
             {
                 return;
             }
@@ -591,13 +595,13 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                var fileCount = dialog.FileNames.Length;
-
-                if (CheckForIndexes(index, fileCount))
+                for (int i = 0; i < dialog.FileNames.Length; i++)
                 {
-                    for (int i = 0; i < fileCount; i++)
+                    var currentIdx = index + i;
+
+                    if (IsIndexValid(currentIdx))
                     {
-                        AddSingleTexture(dialog.FileNames[i], index + i);
+                        AddSingleTexture(dialog.FileNames[i], currentIdx);
                     }
                 }
 
@@ -610,25 +614,16 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
-        /// Check if all the indexes from baseIndex to baseIndex + count are valid
+        /// Check if it's valid index for texture. Textures has fixed size 0x4000.
         /// </summary>
-        /// <param name="baseIndex">Starting Index</param>
-        /// <param name="count">Number of the indexes to check.</param>
-        /// <returns></returns>
-        private bool CheckForIndexes(int baseIndex, int count)
+        /// <param name="index">Starting Index</param>
+        private static bool IsIndexValid(int index)
         {
-            for (int i = baseIndex; i < baseIndex + count; i++)
-            {
-                if (i >= 0x4000 || Textures.TestTexture(i))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return index < 0x4000;
         }
 
         /// <summary>
-        /// Adds a single Texture.
+        /// Adds a single texture.
         /// </summary>
         /// <param name="fileName">Filename of the image to add.</param>
         /// <param name="index">Index where the texture will be added.</param>
@@ -643,16 +638,19 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 Textures.Replace(index, bmp);
+
                 ControlEvents.FireTextureChangeEvent(this, index);
+
                 bool done = false;
+
                 for (int i = 0; i < _textureList.Count; ++i)
                 {
-                    if (index >= _textureList[i])
+                    if (index > _textureList[i])
                     {
                         continue;
                     }
 
-                    _textureList.Insert(i, index);
+                    _textureList[i] = index;
 
                     done = true;
                     break;

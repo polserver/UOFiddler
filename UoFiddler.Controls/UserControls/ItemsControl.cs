@@ -1055,7 +1055,7 @@ namespace UoFiddler.Controls.UserControls
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.Title = $"Choose image file to insert from 0x{index:X}";
+                dialog.Title = $"Choose image file replace starting at 0x{index:X}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
 
@@ -1067,11 +1067,28 @@ namespace UoFiddler.Controls.UserControls
                 for (int i = 0; i < dialog.FileNames.Length; i++)
                 {
                     var currentIdx = index + i;
-                    AddSingleItem(dialog.FileNames[i], currentIdx);
+
+                    if (IsIndexValid(currentIdx))
+                    {
+                        AddSingleItem(dialog.FileNames[i], currentIdx);
+                    }
                 }
+
+                ItemsTileView.VirtualListSize = _itemList.Count;
+                ItemsTileView.Invalidate();
+
+                SelectedGraphicId = index;
+
+                UpdateToolStripLabels(index);
+                UpdateDetail(index);
             }
         }
 
+        /// <summary>
+        /// Adds a single static item.
+        /// </summary>
+        /// <param name="fileName">Filename of the image to add.</param>
+        /// <param name="index">Index where the static item will be added.</param>
         private void AddSingleItem(string fileName, int index)
         {
             Bitmap bmp = new Bitmap(fileName);
@@ -1099,12 +1116,12 @@ namespace UoFiddler.Controls.UserControls
 
                 for (int i = 0; i < _itemList.Count; ++i)
                 {
-                    if (index >= _itemList[i])
+                    if (index > _itemList[i])
                     {
                         continue;
                     }
 
-                    _itemList.Insert(i, index);
+                    _itemList[i] = index;
 
                     done = true;
 
@@ -1124,6 +1141,15 @@ namespace UoFiddler.Controls.UserControls
                 UpdateToolStripLabels(index);
                 UpdateDetail(index);
             }
+        }
+
+        /// <summary>
+        /// Check if it's valid index for land tile. Land tiles has fixed size 0x4000.
+        /// </summary>
+        /// <param name="index">Starting Index</param>
+        private static bool IsIndexValid(int index)
+        {
+            return index >= 0 && index <= Art.GetMaxItemID();
         }
     }
 }
