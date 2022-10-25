@@ -461,7 +461,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    listBox.SelectedIndex = i;
+                    Search(index);
                     done = true;
                     break;
                 }
@@ -716,13 +716,16 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                if (CheckForIndexes(index, dialog.FileNames.Length))
+                var fileCount = dialog.FileNames.Length;
+                if (CheckForIndexes(index, fileCount))
                 {
-                    for (int i = 0; i < dialog.FileNames.Length; i++)
+                    for (int i = 0; i < fileCount; i++)
                     {
                         var currentIdx = index + i;
                         AddSingleGump(dialog.FileNames[i], currentIdx);
                     }
+
+                    Search(index + (fileCount - 1));
                 }
             }
 
@@ -783,7 +786,6 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                listBox.SelectedIndex = i;
                 done = true;
                 break;
             }
