@@ -94,7 +94,7 @@ namespace UoFiddler.Forms
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pathSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSettingsSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.restartNeededMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadFilesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButtonView = new System.Windows.Forms.ToolStripDropDownButton();
             this.ToggleViewStart = new System.Windows.Forms.ToolStripMenuItem();
             this.ToggleViewMulti = new System.Windows.Forms.ToolStripMenuItem();
@@ -665,7 +665,7 @@ namespace UoFiddler.Forms
             this.optionsToolStripMenuItem,
             this.pathSettingsMenuItem,
             this.tsSettingsSeparator,
-            this.restartNeededMenuItem});
+            this.reloadFilesMenuItem});
             this.SettingsMenu.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SettingsMenu.Name = "SettingsMenu";
             this.SettingsMenu.Size = new System.Drawing.Size(62, 22);
@@ -698,13 +698,13 @@ namespace UoFiddler.Forms
             this.tsSettingsSeparator.Name = "tsSettingsSeparator";
             this.tsSettingsSeparator.Size = new System.Drawing.Size(149, 6);
             // 
-            // restartNeededMenuItem
+            // reloadFilesMenuItem
             // 
-            this.restartNeededMenuItem.ForeColor = System.Drawing.Color.DarkRed;
-            this.restartNeededMenuItem.Name = "restartNeededMenuItem";
-            this.restartNeededMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.restartNeededMenuItem.Text = "Reload Files";
-            this.restartNeededMenuItem.Click += new System.EventHandler(this.Restart);
+            this.reloadFilesMenuItem.ForeColor = System.Drawing.Color.DarkRed;
+            this.reloadFilesMenuItem.Name = "reloadFilesMenuItem";
+            this.reloadFilesMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reloadFilesMenuItem.Text = "Reload Files";
+            this.reloadFilesMenuItem.Click += new System.EventHandler(this.ReloadFiles);
             // 
             // toolStripDropDownButtonView
             // 
@@ -1098,7 +1098,7 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.ToolStripMenuItem AlwaysOnTopMenuitem;
         private System.Windows.Forms.ToolStripMenuItem pathSettingsMenuItem;
         private System.Windows.Forms.ToolStripSeparator tsSettingsSeparator;
-        private System.Windows.Forms.ToolStripMenuItem restartNeededMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadFilesMenuItem;
         private System.Windows.Forms.TabPage MultiMapTab;
         private MultiMapControl multimapControl;
         private System.Windows.Forms.TabPage SkillsTab;

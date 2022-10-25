@@ -105,7 +105,7 @@ namespace UoFiddler.Forms
             ControlEvents.FireAlwaysOnTopChangeEvent(TopMost);
         }
 
-        private void Restart(object sender, EventArgs e)
+        private void ReloadFiles(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
 
