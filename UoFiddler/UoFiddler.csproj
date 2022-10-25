@@ -8,9 +8,9 @@
 		<AssemblyTitle>UoFiddler</AssemblyTitle>
 		<Product>UoFiddler</Product>
 		<Copyright>Copyright © 2020</Copyright>
-		<AssemblyVersion>4.9.15</AssemblyVersion>
-		<FileVersion>4.9.15</FileVersion>
-		<Version>4.9.15</Version>
+		<AssemblyVersion>4.9.16</AssemblyVersion>
+		<FileVersion>4.9.16</FileVersion>
+		<Version>4.9.16</Version>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
