@@ -393,7 +393,7 @@ namespace Ultima
 
         /// <summary>
         /// Whether or not the Client is currently running.
-        /// <seealso cref="ClientHandle" />
+        /// <seealso cref="ClientWindowHandle" />
         /// </summary>
         public static bool Running
         {
@@ -406,9 +406,12 @@ namespace Ultima
         /// <summary>
         /// Is Client Iris2
         /// </summary>
-        public static bool Is_Iris2 { get; set; }
+        public static bool IsIris2 { get; set; }
 
-        public static bool IsClassicUO { get; set; }
+        /// <summary>
+        /// ClassicUO or OrionUO clients based on sdl_app
+        /// </summary>
+        public static bool IsAlternativeClient { get; set; }
 
         private static void SendChar(ClientWindowHandle hWnd, char c)
         {
@@ -453,7 +456,7 @@ namespace Ultima
                     SendChar(hWnd, text[i]);
                 }
 
-                if (IsClassicUO)
+                if (IsAlternativeClient)
                 {
                     const int WM_KEYDOWN = 0x100;
                     const int WM_KEYUP = 0x101;
@@ -493,6 +496,12 @@ namespace Ultima
         {
             ClientWindowHandle hWnd;
 
+            if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("SDL_app", null)) != 0)
+            {
+                IsAlternativeClient = true;
+                return hWnd;
+            }
+
             if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("Ultima Online", null)) != 0)
             {
                 return hWnd;
@@ -505,14 +514,7 @@ namespace Ultima
 
             if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("OgreGLWindow", null)) != 0)
             {
-                Is_Iris2 = true;
-                return hWnd;
-            }
-
-            // ClassicUO
-            if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("SDL_app", null)) != 0)
-            {
-                IsClassicUO = true;
+                IsIris2 = true;
                 return hWnd;
             }
 
