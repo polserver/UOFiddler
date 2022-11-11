@@ -396,5 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-# Jetbrains Rider IDE
 .idea/
+
+# InferSharp
+.infersharpconfig
+infer-out/
