@@ -600,8 +600,14 @@ namespace UoFiddler.Controls.Forms
 
                         for (int j = 0; j < bits.Length; ++j)
                         {
+                            if (bits[j] is null)
+                            {
+                                continue;
+                            }
+
                             string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, a, i, j, menu.Tag, _fileType);
                             string file = Path.Combine(path, filename);
+
                             using (Bitmap bit = new Bitmap(bits[j]))
                             {
                                 bit.Save(file, format);
@@ -623,8 +629,14 @@ namespace UoFiddler.Controls.Forms
 
                     for (int j = 0; j < bits.Length; ++j)
                     {
+                        if (bits[j] is null)
+                        {
+                            continue;
+                        }
+
                         string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, action, i, j, menu.Tag, _fileType);
                         string file = Path.Combine(path, filename);
+
                         using (Bitmap bit = new Bitmap(bits[j]))
                         {
                             bit.Save(file, format);
