@@ -1316,6 +1316,7 @@ namespace UoFiddler.Controls.UserControls
         private readonly string _text;
         private readonly Color _col;
         private readonly Pen _pen;
+        private readonly Brush _brush;
         private static Brush _background;
 
         public OverlayCursor(Point location, int m, string t, Color c)
@@ -1325,8 +1326,8 @@ namespace UoFiddler.Controls.UserControls
             _text = t;
             _col = c;
             Visible = true;
-            Brush brush = new SolidBrush(_col);
-            _pen = new Pen(brush);
+            _brush = new SolidBrush(_col);
+            _pen = new Pen(_brush);
             _background = new SolidBrush(Color.FromArgb(100, Color.White));
         }
 
@@ -1378,6 +1379,7 @@ namespace UoFiddler.Controls.UserControls
         public void Dispose()
         {
             _pen?.Dispose();
+            _brush?.Dispose();
             _background?.Dispose();
         }
     }

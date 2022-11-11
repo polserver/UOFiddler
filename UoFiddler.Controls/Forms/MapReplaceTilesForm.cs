@@ -55,15 +55,13 @@ namespace UoFiddler.Controls.Forms
 
         private void OnBrowse(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            using (OpenFileDialog dialog = new OpenFileDialog {Multiselect = false, Title = "Choose xml file to open", CheckFileExists = true, Filter = "xml files (*.xml)|*.xml"})
             {
-                Multiselect = false,
-                Title = "Choose xml file to open",
-                CheckFileExists = true,
-                Filter = "xml files (*.xml)|*.xml"
-            };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
                 if (!File.Exists(dialog.FileName))
                 {
                     return;
@@ -71,7 +69,6 @@ namespace UoFiddler.Controls.Forms
 
                 textBox1.Text = dialog.FileName;
             }
-            dialog.Dispose();
         }
 
         private bool LoadFile(string file)

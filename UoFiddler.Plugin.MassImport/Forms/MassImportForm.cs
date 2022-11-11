@@ -16,6 +16,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using UoFiddler.Controls.Classes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UoFiddler.Plugin.MassImport.Forms
 {
@@ -113,118 +114,129 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
         private void LoadXMLOnClick(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            string fileName;
+
+            using (OpenFileDialog dialog = new OpenFileDialog
             {
                 Multiselect = false,
                 Title = "Choose xml file to open",
                 CheckFileExists = true,
                 Filter = "xml files (*.xml)|*.xml"
-            };
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            })
             {
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
                 if (!File.Exists(dialog.FileName))
                 {
                     return;
                 }
 
-                XmlDocument dom = new XmlDocument();
-                dom.Load(dialog.FileName);
-
-                _importList.Clear();
-
-                OutputBox.Clear();
-
-                if (dom.SelectSingleNode("MassImport") == null)
-                {
-                    OutputBox.AppendText("Invalid XML" + Environment.NewLine);
-                    return;
-                }
-
-                int currBoxLength = 0;
-
-                foreach (XmlNode xNode in dom.SelectSingleNode("MassImport"))
-                {
-                    if (xNode.NodeType == XmlNodeType.Comment)
-                    {
-                        continue;
-                    }
-
-                    ImportEntry entry;
-                    switch (xNode.Name.ToLower())
-                    {
-                        case "item":
-                            entry = new ImportEntryItem();
-                            break;
-                        case "landtile":
-                            entry = new ImportEntryLandTile();
-                            break;
-                        case "texture":
-                            entry = new ImportEntryTexture();
-                            break;
-                        case "gump":
-                            entry = new ImportEntryGump();
-                            break;
-                        case "tiledataland":
-                            entry = new ImportEntryTileDataLand();
-                            break;
-                        case "tiledataitem":
-                            entry = new ImportEntryTileDataItem();
-                            break;
-                        case "hue":
-                            entry = new ImportEntryHue();
-                            break;
-                        default:
-                            entry = new ImportEntryInvalid();
-                            break;
-                    }
-
-                    entry.File = xNode.Attributes["file"].InnerText;
-                    if (!string.IsNullOrEmpty(entry.File))
-                    {
-                        entry.File = Path.GetFullPath(entry.File);
-                    }
-
-                    if (Utils.ConvertStringToInt(xNode.Attributes["index"].InnerText, out int temp))
-                    {
-                        entry.Index = temp;
-                    }
-                    else
-                    {
-                        entry.Index = -1;
-                    }
-
-                    entry.Remove = bool.Parse(xNode.Attributes["remove"].InnerText);
-                    entry.Valid = true;
-
-                    string message = entry.Test();
-
-                    if (entry.Valid)
-                    {
-                        _importList.Add(entry);
-                        OutputBox.AppendText(message + Environment.NewLine);
-                    }
-                    else
-                    {
-                        OutputBox.AppendText(message + Environment.NewLine);
-                        OutputBox.Select(currBoxLength, message.Length);
-                        OutputBox.SelectionColor = Color.Red;
-                    }
-
-                    currBoxLength += message.Length;
-                    Application.DoEvents();
-                }
-
-                OutputBox.AppendText("------------------------------------------------" + Environment.NewLine);
-                OutputBox.AppendText($"{_importList.Count} valid entries found{Environment.NewLine}");
-
-                if (_importList.Count > 0)
-                {
-                    button3.Enabled = true;
-                }
+                fileName = dialog.FileName;
             }
 
-            dialog.Dispose();
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return;
+            }
+
+            XmlDocument dom = new XmlDocument();
+            dom.Load(fileName);
+
+            _importList.Clear();
+
+            OutputBox.Clear();
+
+            if (dom.SelectSingleNode("MassImport") == null)
+            {
+                OutputBox.AppendText("Invalid XML" + Environment.NewLine);
+                return;
+            }
+
+            int currBoxLength = 0;
+
+            foreach (XmlNode xNode in dom.SelectSingleNode("MassImport"))
+            {
+                if (xNode.NodeType == XmlNodeType.Comment)
+                {
+                    continue;
+                }
+
+                ImportEntry entry;
+                switch (xNode.Name.ToLower())
+                {
+                    case "item":
+                        entry = new ImportEntryItem();
+                        break;
+                    case "landtile":
+                        entry = new ImportEntryLandTile();
+                        break;
+                    case "texture":
+                        entry = new ImportEntryTexture();
+                        break;
+                    case "gump":
+                        entry = new ImportEntryGump();
+                        break;
+                    case "tiledataland":
+                        entry = new ImportEntryTileDataLand();
+                        break;
+                    case "tiledataitem":
+                        entry = new ImportEntryTileDataItem();
+                        break;
+                    case "hue":
+                        entry = new ImportEntryHue();
+                        break;
+                    default:
+                        entry = new ImportEntryInvalid();
+                        break;
+                }
+
+                entry.File = xNode.Attributes["file"].InnerText;
+                if (!string.IsNullOrEmpty(entry.File))
+                {
+                    entry.File = Path.GetFullPath(entry.File);
+                }
+
+                if (Utils.ConvertStringToInt(xNode.Attributes["index"].InnerText, out int temp))
+                {
+                    entry.Index = temp;
+                }
+                else
+                {
+                    entry.Index = -1;
+                }
+
+                entry.Remove = bool.Parse(xNode.Attributes["remove"].InnerText);
+                entry.Valid = true;
+
+                string message = entry.Test();
+
+                if (entry.Valid)
+                {
+                    _importList.Add(entry);
+                    OutputBox.AppendText(message + Environment.NewLine);
+                }
+                else
+                {
+                    OutputBox.AppendText(message + Environment.NewLine);
+                    OutputBox.Select(currBoxLength, message.Length);
+                    OutputBox.SelectionColor = Color.Red;
+                }
+
+                currBoxLength += message.Length;
+                Application.DoEvents();
+            }
+
+            OutputBox.AppendText("------------------------------------------------" + Environment.NewLine);
+            OutputBox.AppendText($"{_importList.Count} valid entries found{Environment.NewLine}");
+
+            if (_importList.Count > 0)
+            {
+                button3.Enabled = true;
+            }
+
         }
 
         private void StartOnClick(object sender, EventArgs e)

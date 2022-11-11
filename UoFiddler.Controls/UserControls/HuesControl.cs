@@ -273,20 +273,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnImport(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            using (OpenFileDialog dialog = new OpenFileDialog {Multiselect = false, Title = "Choose txt file to import", CheckFileExists = true, Filter = "txt files (*.txt)|*.txt"})
             {
-                Multiselect = false,
-                Title = "Choose txt file to import",
-                CheckFileExists = true,
-                Filter = "txt files (*.txt)|*.txt"
-            };
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
 
-            if (dialog.ShowDialog() != DialogResult.OK)
-            {
-                return;
+                Hues.List[_selected].Import(dialog.FileName);
             }
 
-            Hues.List[_selected].Import(dialog.FileName);
             Options.ChangedUltimaClass["Hues"] = true;
             ControlEvents.FireHueChangeEvent();
         }
