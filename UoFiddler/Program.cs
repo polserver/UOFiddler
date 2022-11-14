@@ -11,6 +11,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using Serilog;
 using UoFiddler.Forms;
@@ -37,6 +38,8 @@ namespace UoFiddler
                                 .CreateLogger();
 
             logger.Information("UOFiddler - Application start");
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             try
             {

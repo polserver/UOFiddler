@@ -30,7 +30,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         }
 
         private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
-        private readonly SHA256Managed _shaM = new SHA256Managed();
+        private readonly SHA256 _sha256 = SHA256.Create();
         private readonly ImageConverter _ic = new ImageConverter();
 
         private void OnLoad(object sender, EventArgs e)
@@ -210,8 +210,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             byte[] btImage2 = new byte[1];
             btImage2 = (byte[])_ic.ConvertTo(bitsec, btImage2.GetType());
 
-            string hash1String = BitConverter.ToString(_shaM.ComputeHash(btImage1));
-            string hash2String = BitConverter.ToString(_shaM.ComputeHash(btImage2));
+            string hash1String = BitConverter.ToString(_sha256.ComputeHash(btImage1));
+            string hash2String = BitConverter.ToString(_sha256.ComputeHash(btImage2));
 
             bool res = hash1String == hash2String;
             _mCompare[index] = res;

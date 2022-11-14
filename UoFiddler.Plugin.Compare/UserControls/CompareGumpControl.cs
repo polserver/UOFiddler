@@ -31,7 +31,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         }
 
         private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
-        private readonly SHA256Managed _shaM = new SHA256Managed();
+        private readonly SHA256 _sha256 = SHA256.Create();
 
         private bool _loaded;
 
@@ -270,8 +270,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             else
             {
-                string hash1String = BitConverter.ToString(_shaM.ComputeHash(org));
-                string hash2String = BitConverter.ToString(_shaM.ComputeHash(sec));
+                string hash1String = BitConverter.ToString(_sha256.ComputeHash(org));
+                string hash2String = BitConverter.ToString(_sha256.ComputeHash(sec));
                 if (hash1String == hash2String)
                 {
                     res = true;
