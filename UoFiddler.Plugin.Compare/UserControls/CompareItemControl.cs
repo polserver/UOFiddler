@@ -26,7 +26,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
     {
         private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
         private readonly ImageConverter _ic = new ImageConverter();
-        private readonly SHA256Managed _shaM = new SHA256Managed();
+        private readonly SHA256 _sha256 = SHA256.Create();
 
         public CompareItemControl()
         {
@@ -223,8 +223,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             byte[] btImage2 = new byte[1];
             btImage2 = (byte[])_ic.ConvertTo(bitsec, btImage2.GetType());
 
-            byte[] checksum1 = _shaM.ComputeHash(btImage1);
-            byte[] checksum2 = _shaM.ComputeHash(btImage2);
+            byte[] checksum1 = _sha256.ComputeHash(btImage1);
+            byte[] checksum2 = _sha256.ComputeHash(btImage2);
             bool res = true;
             for (int j = 0; j < checksum1.Length; ++j)
             {

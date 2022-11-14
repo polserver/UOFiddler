@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>Controls</AssemblyName>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>Controls</AssemblyTitle>
 		<Product>Controls</Product>
@@ -21,11 +22,6 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 		<UseVSHostingProcess>false</UseVSHostingProcess>
 	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="PresentationCore" />
-		<Reference Include="System.Design" />
-		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Forms\AnimationEditForm.cs">
 			<SubType>Form</SubType>
