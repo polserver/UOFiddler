@@ -10,30 +10,43 @@ namespace UoFiddler.Classes
         {
             const string updateCheckCaption = "Check for update";
 
-            var updateChecker = new UpdateChecker(repositoryOwner, repositoryName, currentVersion);
+            try
+            {
+                var updateChecker = new UpdateChecker(repositoryOwner, repositoryName, currentVersion);
 
-            var response = await updateChecker.CheckUpdateAsync().ConfigureAwait(false);
-            if (response.HasErrors)
-            {
-                MessageBox.Show($"Update checking failed: {response.ErrorMessage}");
-            }
-            else if (response.IsNewVersion)
-            {
-                string text = $"A new version was found: {response.NewVersion}\r\nDownload now?";
-                DialogResult result = MessageBox.Show(text, updateCheckCaption, MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                var response = await updateChecker.CheckUpdateAsync().ConfigureAwait(false);
+                if (response.HasErrors)
                 {
-                    System.Diagnostics.Process.Start(response.HtmlUrl);
+                    MessageBox.Show($"Update check failed: {response.ErrorMessage}");
+                }
+                else if (response.IsNewVersion)
+                {
+                    string text = $"A new version was found: {response.NewVersion}\r\nDownload now?";
+                    DialogResult result = MessageBox.Show(text, updateCheckCaption, MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(response.HtmlUrl);
+                    }
+                }
+                else
+                {
+                    if (!upToDateNotification)
+                    {
+                        return;
+                    }
+
+                    MessageBox.Show("Your version is up-to-date", updateCheckCaption);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (!upToDateNotification)
+                // some other exception (connection issues probably). Put in log and continue as usual.
+                if (upToDateNotification)
                 {
-                    return;
+                    MessageBox.Show("Update check failed. Check application log for details.", updateCheckCaption);
                 }
 
-                MessageBox.Show("Your version is up-to-date", updateCheckCaption);
+                FiddlerOptions.Logger.Error(ex, "Update check failed");
             }
         }
     }

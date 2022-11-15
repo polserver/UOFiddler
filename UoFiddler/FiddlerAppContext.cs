@@ -39,13 +39,13 @@ namespace UoFiddler
             var profileResult = profile.ShowDialog();
             if (profileResult == DialogResult.Cancel)
             {
-                _logger.Information("No profile loaded... exiting.");
+                _logger.Information("No profile loaded... exiting");
                 return;
             }
 
             if (FiddlerOptions.UpdateCheckOnStart)
             {
-                _logger.Information("Update check. Current version is {currentVersion}", FiddlerOptions.AppVersion);
+                _logger.Information("Update check. Current version is {Version}", FiddlerOptions.AppVersion);
                 UpdateRunner.RunAsync(FiddlerOptions.RepositoryOwner, FiddlerOptions.RepositoryName, FiddlerOptions.AppVersion, false).GetAwaiter().GetResult();
             }
 
@@ -61,7 +61,7 @@ namespace UoFiddler
         {
             FiddlerOptions.SaveProfile();
             MapControl.SaveMapOverlays();
-            _logger.Information("UOFiddler - Application exit.");
+            _logger.Information("UOFiddler - Application exit");
         }
     }
 }
