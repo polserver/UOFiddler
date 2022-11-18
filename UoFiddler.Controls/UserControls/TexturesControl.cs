@@ -286,16 +286,23 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Textures.Replace(_selectedTextureId, bmp);
-                ControlEvents.FireTextureChangeEvent(this, _selectedTextureId);
-                TextureTileView.Invalidate();
-                Options.ChangedUltimaClass["Texture"] = true;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Textures.Replace(_selectedTextureId, bitmap);
+
+                    ControlEvents.FireTextureChangeEvent(this, _selectedTextureId);
+
+                    TextureTileView.Invalidate();
+
+                    Options.ChangedUltimaClass["Texture"] = true;
+                }
             }
         }
 
@@ -341,45 +348,51 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if ((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128))
+                using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    if (dialog.FileName.Contains(".bmp"))
+                    if ((bmpTemp.Width == 64 && bmpTemp.Height == 64) || (bmpTemp.Width == 128 && bmpTemp.Height == 128))
                     {
-                        bmp = Utils.ConvertBmp(bmp);
-                    }
+                        Bitmap bitmap = new Bitmap(bmpTemp);
 
-                    Textures.Replace(index, bmp);
-                    ControlEvents.FireTextureChangeEvent(this, index);
-                    bool done = false;
-                    for (int i = 0; i < _textureList.Count; ++i)
-                    {
-                        if (index >= _textureList[i])
+                        if (dialog.FileName.Contains(".bmp"))
                         {
-                            continue;
+                            bitmap = Utils.ConvertBmp(bitmap);
                         }
 
-                        _textureList.Insert(i, index);
+                        Textures.Replace(index, bitmap);
 
-                        done = true;
-                        break;
+                        ControlEvents.FireTextureChangeEvent(this, index);
+
+                        bool done = false;
+                        for (int i = 0; i < _textureList.Count; ++i)
+                        {
+                            if (index >= _textureList[i])
+                            {
+                                continue;
+                            }
+
+                            _textureList.Insert(i, index);
+
+                            done = true;
+                            break;
+                        }
+
+                        if (!done)
+                        {
+                            _textureList.Add(index);
+                        }
+
+                        TextureTileView.VirtualListSize = _textureList.Count;
+                        TextureTileView.Invalidate();
+                        SelectedTextureId = index;
+
+                        Options.ChangedUltimaClass["Texture"] = true;
                     }
-
-                    if (!done)
+                    else
                     {
-                        _textureList.Add(index);
+                        MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                            MessageBoxDefaultButton.Button1);
                     }
-
-                    TextureTileView.VirtualListSize = _textureList.Count;
-                    TextureTileView.Invalidate();
-                    SelectedTextureId = index;
-
-                    Options.ChangedUltimaClass["Texture"] = true;
-                }
-                else
-                {
-                    MessageBox.Show("Height or Width Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button1);
                 }
             }
         }
@@ -629,42 +642,46 @@ namespace UoFiddler.Controls.UserControls
         /// <param name="index">Index where the texture will be added.</param>
         private void AddSingleTexture(string fileName, int index)
         {
-            Bitmap bmp = new Bitmap(fileName);
-            if ((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128))
+            using (Bitmap bmpTemp = new Bitmap(fileName))
             {
-                if (fileName.Contains(".bmp"))
+                if ((bmpTemp.Width == 64 && bmpTemp.Height == 64) || (bmpTemp.Width == 128 && bmpTemp.Height == 128))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Textures.Replace(index, bmp);
-
-                ControlEvents.FireTextureChangeEvent(this, index);
-
-                bool done = false;
-
-                for (int i = 0; i < _textureList.Count; ++i)
-                {
-                    if (index > _textureList[i])
+                    if (fileName.Contains(".bmp"))
                     {
-                        continue;
+                        bitmap = Utils.ConvertBmp(bitmap);
                     }
 
-                    _textureList[i] = index;
+                    Textures.Replace(index, bitmap);
 
-                    done = true;
-                    break;
+                    ControlEvents.FireTextureChangeEvent(this, index);
+
+                    bool done = false;
+
+                    for (int i = 0; i < _textureList.Count; ++i)
+                    {
+                        if (index > _textureList[i])
+                        {
+                            continue;
+                        }
+
+                        _textureList[i] = index;
+
+                        done = true;
+                        break;
+                    }
+
+                    if (!done)
+                    {
+                        _textureList.Add(index);
+                    }
                 }
-
-                if (!done)
+                else
                 {
-                    _textureList.Add(index);
+                    MessageBox.Show("Invalid Height or Width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
-            }
-            else
-            {
-                MessageBox.Show("Invalid Height or Width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1);
             }
         }
 

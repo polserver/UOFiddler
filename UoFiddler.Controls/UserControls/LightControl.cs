@@ -239,17 +239,24 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                int i = (int)treeView1.SelectedNode.Tag;
-                Ultima.Light.Replace(i, bmp);
-                treeView1.Invalidate();
-                AfterSelect(this, null);
-                Options.ChangedUltimaClass["Light"] = true;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    int i = (int)treeView1.SelectedNode.Tag;
+
+                    Ultima.Light.Replace(i, bitmap);
+
+                    treeView1.Invalidate();
+                    AfterSelect(this, null);
+
+                    Options.ChangedUltimaClass["Light"] = true;
+                }
             }
         }
 

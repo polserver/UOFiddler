@@ -337,13 +337,17 @@ namespace UoFiddler.Plugin.MassImport.Forms
         {
             if (!Remove)
             {
-                Bitmap import = new Bitmap(File);
-                if (File.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(File))
                 {
-                    import = Utils.ConvertBmp(import);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Ultima.Art.ReplaceStatic(Index, import);
+                    if (File.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Ultima.Art.ReplaceStatic(Index, bitmap);
+                }
             }
             else
             {
@@ -368,10 +372,17 @@ namespace UoFiddler.Plugin.MassImport.Forms
         {
             if (!Remove)
             {
-                Bitmap import = new Bitmap(File);
-                if (File.Contains(".bmp"))
-                    import = Utils.ConvertBmp(import);
-                Ultima.Art.ReplaceLand(Index, import);
+                using (var bmpTemp = new Bitmap(File))
+                {
+                    Bitmap bitmap = new Bitmap(bmpTemp);
+
+                    if (File.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Ultima.Art.ReplaceLand(Index, bitmap);
+                }
             }
             else
             {
@@ -398,10 +409,17 @@ namespace UoFiddler.Plugin.MassImport.Forms
         {
             if (!Remove)
             {
-                Bitmap import = new Bitmap(File);
-                if (File.Contains(".bmp"))
-                    import = Utils.ConvertBmp(import);
-                Ultima.Gumps.ReplaceGump(Index, import);
+                using (var bmpTemp = new Bitmap(File))
+                {
+                    Bitmap bitmap = new Bitmap(bmpTemp);
+
+                    if (File.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Ultima.Gumps.ReplaceGump(Index, bitmap);
+                }
             }
             else
             {
@@ -428,10 +446,17 @@ namespace UoFiddler.Plugin.MassImport.Forms
         {
             if (!Remove)
             {
-                Bitmap import = new Bitmap(File);
-                if (File.Contains(".bmp"))
-                    import = Utils.ConvertBmp(import);
-                Ultima.Textures.Replace(Index, import);
+                using (var bmpTemp = new Bitmap(File))
+                {
+                    Bitmap bitmap = new Bitmap(bmpTemp);
+
+                    if (File.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Ultima.Textures.Replace(Index, bitmap);
+                }
             }
             else
             {
@@ -492,7 +517,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
         {
             if (!File.Contains(".csv"))
             {
-                message += " Invalid Fileformat";
+                message += " Invalid file format";
                 Valid = false;
             }
             else
@@ -524,7 +549,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
         {
             if (!File.Contains(".txt"))
             {
-                message += " Invalid Fileformat";
+                message += " Invalid file format";
                 Valid = false;
             }
             else
@@ -598,7 +623,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
                 return;
             }
 
-            message += " Invalid Imageformat";
+            message += " Invalid image format";
             Valid = false;
         }
 
@@ -678,6 +703,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
                         }
 
                         tiledata = split;
+
                         return true;
                     }
                 }
@@ -688,6 +714,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
             }
 
             message += " No Tiledata information found";
+
             return false;
         }
     }

@@ -502,16 +502,25 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Art.ReplaceStatic(_selectedGraphicId, bmp);
-                ControlEvents.FireItemChangeEvent(this, _selectedGraphicId);
-                ItemsTileView.Invalidate();
-                Options.ChangedUltimaClass["Art"] = true;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Art.ReplaceStatic(_selectedGraphicId, bitmap);
+
+                    ControlEvents.FireItemChangeEvent(this, _selectedGraphicId);
+
+                    ItemsTileView.Invalidate();
+                    UpdateToolStripLabels(_selectedGraphicId);
+                    UpdateDetail(_selectedGraphicId);
+
+                    Options.ChangedUltimaClass["Art"] = true;
+                }
             }
         }
 
@@ -975,8 +984,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (ItemsTileView.FocusIndex > 0)
             {
-                UpdateDetail(_selectedGraphicId);
                 UpdateToolStripLabels(_selectedGraphicId);
+                UpdateDetail(_selectedGraphicId);
             }
         }
 
@@ -1091,55 +1100,59 @@ namespace UoFiddler.Controls.UserControls
         /// <param name="index">Index where the static item will be added.</param>
         private void AddSingleItem(string fileName, int index)
         {
-            Bitmap bmp = new Bitmap(fileName);
-            if (fileName.Contains(".bmp"))
+            using (var bmpTemp = new Bitmap(fileName))
             {
-                bmp = Utils.ConvertBmp(bmp);
-            }
+                Bitmap bitmap = new Bitmap(bmpTemp);
 
-            Art.ReplaceStatic(index, bmp);
-
-            ControlEvents.FireItemChangeEvent(this, index);
-
-            Options.ChangedUltimaClass["Art"] = true;
-
-            if (_showFreeSlots)
-            {
-                SelectedGraphicId = index;
-
-                UpdateToolStripLabels(index);
-                UpdateDetail(index);
-            }
-            else
-            {
-                bool done = false;
-
-                for (int i = 0; i < _itemList.Count; ++i)
+                if (fileName.Contains(".bmp"))
                 {
-                    if (index > _itemList[i])
+                    bitmap = Utils.ConvertBmp(bitmap);
+                }
+
+                Art.ReplaceStatic(index, bitmap);
+
+                ControlEvents.FireItemChangeEvent(this, index);
+
+                Options.ChangedUltimaClass["Art"] = true;
+
+                if (_showFreeSlots)
+                {
+                    SelectedGraphicId = index;
+
+                    UpdateToolStripLabels(index);
+                    UpdateDetail(index);
+                }
+                else
+                {
+                    bool done = false;
+
+                    for (int i = 0; i < _itemList.Count; ++i)
                     {
-                        continue;
+                        if (index > _itemList[i])
+                        {
+                            continue;
+                        }
+
+                        _itemList[i] = index;
+
+                        done = true;
+
+                        break;
                     }
 
-                    _itemList[i] = index;
+                    if (!done)
+                    {
+                        _itemList.Add(index);
+                    }
 
-                    done = true;
+                    ItemsTileView.VirtualListSize = _itemList.Count;
+                    ItemsTileView.Invalidate();
 
-                    break;
+                    SelectedGraphicId = index;
+
+                    UpdateToolStripLabels(index);
+                    UpdateDetail(index);
                 }
-
-                if (!done)
-                {
-                    _itemList.Add(index);
-                }
-
-                ItemsTileView.VirtualListSize = _itemList.Count;
-                ItemsTileView.Invalidate();
-
-                SelectedGraphicId = index;
-
-                UpdateToolStripLabels(index);
-                UpdateDetail(index);
             }
         }
 

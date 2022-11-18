@@ -311,18 +311,26 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-                Gumps.ReplaceGump(i, bmp);
-                ControlEvents.FireGumpChangeEvent(this, i);
-                listBox.Invalidate();
-                ListBox_SelectedIndexChanged(this, EventArgs.Empty);
-                Options.ChangedUltimaClass["Gumps"] = true;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+
+                    Gumps.ReplaceGump(i, bitmap);
+
+                    ControlEvents.FireGumpChangeEvent(this, i);
+
+                    listBox.Invalidate();
+                    ListBox_SelectedIndexChanged(this, EventArgs.Empty);
+
+                    Options.ChangedUltimaClass["Gumps"] = true;
+                }
             }
         }
 
@@ -431,48 +439,54 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Gumps.ReplaceGump(index, bmp);
-                ControlEvents.FireGumpChangeEvent(this, index);
-                bool done = false;
-                for (int i = 0; i < listBox.Items.Count; ++i)
-                {
-                    int j = int.Parse(listBox.Items[i].ToString());
-                    if (j > index)
+                    if (dialog.FileName.Contains(".bmp"))
                     {
-                        listBox.Items.Insert(i, index);
-                        listBox.SelectedIndex = i;
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Gumps.ReplaceGump(index, bitmap);
+
+                    ControlEvents.FireGumpChangeEvent(this, index);
+
+                    bool done = false;
+                    for (int i = 0; i < listBox.Items.Count; ++i)
+                    {
+                        int j = int.Parse(listBox.Items[i].ToString());
+                        if (j > index)
+                        {
+                            listBox.Items.Insert(i, index);
+                            listBox.SelectedIndex = i;
+                            done = true;
+                            break;
+                        }
+
+                        if (!_showFreeSlots)
+                        {
+                            continue;
+                        }
+
+                        if (j != i)
+                        {
+                            continue;
+                        }
+
+                        Search(index);
                         done = true;
                         break;
                     }
 
-                    if (!_showFreeSlots)
+                    if (!done)
                     {
-                        continue;
+                        listBox.Items.Add(index);
+                        listBox.SelectedIndex = listBox.Items.Count - 1;
                     }
 
-                    if (j != i)
-                    {
-                        continue;
-                    }
-
-                    Search(index);
-                    done = true;
-                    break;
+                    Options.ChangedUltimaClass["Gumps"] = true;
                 }
-
-                if (!done)
-                {
-                    listBox.Items.Add(index);
-                    listBox.SelectedIndex = listBox.Items.Count - 1;
-                }
-
-                Options.ChangedUltimaClass["Gumps"] = true;
             }
         }
 
@@ -757,43 +771,50 @@ namespace UoFiddler.Controls.UserControls
         /// <param name="index">Index where the gump shall be added.</param>
         private void AddSingleGump(string fileName, int index)
         {
-            Bitmap bmp = new Bitmap(fileName);
-            if (fileName.Contains(".bmp"))
+            using (var bmpTemp = new Bitmap(fileName))
             {
-                bmp = Utils.ConvertBmp(bmp);
-            }
-            Gumps.ReplaceGump(index, bmp);
-            ControlEvents.FireGumpChangeEvent(this, index);
-            bool done = false;
-            for (int i = 0; i < listBox.Items.Count; ++i)
-            {
-                int j = int.Parse(listBox.Items[i].ToString());
-                if (j > index)
+                Bitmap bitmap = new Bitmap(bmpTemp);
+
+                if (fileName.Contains(".bmp"))
                 {
-                    listBox.Items.Insert(i, index);
-                    listBox.SelectedIndex = i;
+                    bitmap = Utils.ConvertBmp(bitmap);
+                }
+
+                Gumps.ReplaceGump(index, bitmap);
+
+                ControlEvents.FireGumpChangeEvent(this, index);
+
+                bool done = false;
+                for (int i = 0; i < listBox.Items.Count; ++i)
+                {
+                    int j = int.Parse(listBox.Items[i].ToString());
+                    if (j > index)
+                    {
+                        listBox.Items.Insert(i, index);
+                        listBox.SelectedIndex = i;
+                        done = true;
+                        break;
+                    }
+
+                    if (!_showFreeSlots)
+                    {
+                        continue;
+                    }
+
+                    if (j != i)
+                    {
+                        continue;
+                    }
+
                     done = true;
                     break;
                 }
 
-                if (!_showFreeSlots)
+                if (!done)
                 {
-                    continue;
+                    listBox.Items.Add(index);
+                    listBox.SelectedIndex = listBox.Items.Count - 1;
                 }
-
-                if (j != i)
-                {
-                    continue;
-                }
-
-                done = true;
-                break;
-            }
-
-            if (!done)
-            {
-                listBox.Items.Add(index);
-                listBox.SelectedIndex = listBox.Items.Count - 1;
             }
         }
     }

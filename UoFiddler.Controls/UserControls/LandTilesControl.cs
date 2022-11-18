@@ -366,16 +366,23 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Art.ReplaceLand(_selectedGraphicId, bmp);
-                ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
-                LandTilesTileView.Invalidate();
-                Options.ChangedUltimaClass["Art"] = true;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Art.ReplaceLand(_selectedGraphicId, bitmap);
+
+                    ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
+
+                    LandTilesTileView.Invalidate();
+
+                    Options.ChangedUltimaClass["Art"] = true;
+                }
             }
         }
 
@@ -419,52 +426,56 @@ namespace UoFiddler.Controls.UserControls
                 dialog.Title = $"Choose image file to insert at 0x{index:X}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                // TODO: check this if... looks weird. We don't convert other file types?
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = Utils.ConvertBmp(bmp);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                Art.ReplaceLand(index, bmp);
-
-                ControlEvents.FireLandTileChangeEvent(this, index);
-
-                if (_showFreeSlots)
-                {
-                    SelectedGraphicId = index;
-                    UpdateToolStripLabels(index);
-                }
-                else
-                {
-                    bool done = false;
-                    for (int i = 0; i < _tileList.Count; ++i)
+                    if (dialog.FileName.Contains(".bmp"))
                     {
-                        if (index >= _tileList[i])
+                        bitmap = Utils.ConvertBmp(bitmap);
+                    }
+
+                    Art.ReplaceLand(index, bitmap);
+
+                    ControlEvents.FireLandTileChangeEvent(this, index);
+
+                    if (_showFreeSlots)
+                    {
+                        SelectedGraphicId = index;
+                        UpdateToolStripLabels(index);
+                    }
+                    else
+                    {
+                        bool done = false;
+                        for (int i = 0; i < _tileList.Count; ++i)
                         {
-                            continue;
+                            if (index >= _tileList[i])
+                            {
+                                continue;
+                            }
+
+                            _tileList.Insert(i, index);
+                            done = true;
+                            break;
                         }
 
-                        _tileList.Insert(i, index);
-                        done = true;
-                        break;
+                        if (!done)
+                        {
+                            _tileList.Add(index);
+                        }
+
+                        LandTilesTileView.VirtualListSize = _tileList.Count;
+                        LandTilesTileView.Invalidate();
+                        SelectedGraphicId = index;
+
+                        Options.ChangedUltimaClass["Art"] = true;
                     }
-
-                    if (!done)
-                    {
-                        _tileList.Add(index);
-                    }
-
-                    LandTilesTileView.VirtualListSize = _tileList.Count;
-                    LandTilesTileView.Invalidate();
-                    SelectedGraphicId = index;
-
-                    Options.ChangedUltimaClass["Art"] = true;
                 }
             }
         }
@@ -745,33 +756,37 @@ namespace UoFiddler.Controls.UserControls
         /// <param name="index">Index where the land tile will be added.</param>
         private void AddSingleLandTile(string fileName, int index)
         {
-            Bitmap bmp = new Bitmap(fileName);
-            if (fileName.Contains(".bmp"))
+            using (var bmpTemp = new Bitmap(fileName))
             {
-                bmp = Utils.ConvertBmp(bmp);
-            }
+                Bitmap bitmap = new Bitmap(bmpTemp);
 
-            Art.ReplaceLand(index, bmp);
-
-            ControlEvents.FireLandTileChangeEvent(this, index);
-
-            bool done = false;
-
-            for (int i = 0; i < _tileList.Count; ++i)
-            {
-                if (index > _tileList[i])
+                if (fileName.Contains(".bmp"))
                 {
-                    continue;
+                    bitmap = Utils.ConvertBmp(bitmap);
                 }
 
-                _tileList[i] = index;
-                done = true;
-                break;
-            }
+                Art.ReplaceLand(index, bitmap);
 
-            if (!done)
-            {
-                _tileList.Add(index);
+                ControlEvents.FireLandTileChangeEvent(this, index);
+
+                bool done = false;
+
+                for (int i = 0; i < _tileList.Count; ++i)
+                {
+                    if (index > _tileList[i])
+                    {
+                        continue;
+                    }
+
+                    _tileList[i] = index;
+                    done = true;
+                    break;
+                }
+
+                if (!done)
+                {
+                    _tileList.Add(index);
+                }
             }
         }
 

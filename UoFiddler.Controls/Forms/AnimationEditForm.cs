@@ -171,7 +171,7 @@ namespace UoFiddler.Controls.Forms
                             {
                                 Tag = j,
                                 Text = string.Format("{0:D2} {1}", j, _animNames[animLength == 22 ? 1 : animLength == 13 ? 0 : 2][j])
-                        };
+                            };
 
                             if (AnimationEdit.IsActionDefined(_fileType, i, j))
                             {
@@ -786,30 +786,38 @@ namespace UoFiddler.Controls.Forms
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 int frameIndex = (int)FramesListView.SelectedItems[0].Tag;
+
                 dialog.Multiselect = false;
                 dialog.Title = $"Choose image file to replace at {frameIndex}";
                 dialog.CheckFileExists = true;
                 dialog.Filter = "Image files (*.tif;*.tiff;*.bmp)|*.tif;*.tiff;*.bmp";
+
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
-                if (dialog.FileName.Contains(".bmp"))
+                using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    bmp = ConvertBmpAnim(bmp, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                }
+                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                if (edit == null)
-                {
-                    return;
-                }
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        bitmap = ConvertBmpAnim(bitmap, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                    }
 
-                edit.ReplaceFrame(bmp, frameIndex);
-                FramesListView.Invalidate();
-                Options.ChangedUltimaClass["Animations"] = true;
+                    AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                    if (edit == null)
+                    {
+                        return;
+                    }
+
+                    edit.ReplaceFrame(bitmap, frameIndex);
+
+                    FramesListView.Invalidate();
+
+                    Options.ChangedUltimaClass["Animations"] = true;
+                }
             }
         }
 
@@ -823,6 +831,7 @@ namespace UoFiddler.Controls.Forms
                     dialog.Title = "Choose image file to add";
                     dialog.CheckFileExists = true;
                     dialog.Filter = "Gif files (*.gif;)|*.gif; |Bitmap files (*.bmp;)|*.bmp; |Tiff files (*.tif;*.tiff)|*.tif;*.tiff; |Png files (*.png;)|*.png; |Jpeg files (*.jpeg;*.jpg;)|*.jpeg;*.jpg;";
+
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         FramesListView.BeginUpdate();
@@ -831,71 +840,92 @@ namespace UoFiddler.Controls.Forms
                             //My Soulblighter Modifications
                             foreach (var fileName in dialog.FileNames)
                             {
-                                Bitmap bmp = new Bitmap(fileName);
-                                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                                if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") || dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") || dialog.FileName.Contains(".jpg"))
+                                using (var bmpTemp = new Bitmap(fileName))
                                 {
-                                    bmp = ConvertBmpAnim(bmp, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                                    //edit.GetImagePalette(bmp);
-                                }
+                                    Bitmap bitmap = new Bitmap(bmpTemp);
 
-                                if (edit == null)
-                                {
-                                    continue;
-                                }
-
-                                //Gif Especial Properties
-                                if (dialog.FileName.Contains(".gif"))
-                                {
-                                    FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                    // Number of frames
-                                    int frameCount = bmp.GetFrameCount(dimension);
-                                    Bitmap[] bitBmp = new Bitmap[frameCount];
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    UpdateGifPalette(bmp, edit);
-                                    ProgressBar.Maximum = frameCount;
-                                    AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
-                                    ProgressBar.Value = 0;
-                                    ProgressBar.Invalidate();
-                                    SetPaletteBox();
-                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
-                                    Options.ChangedUltimaClass["Animations"] = true;
-                                }
-                                //End of Soulblighter Modifications
-                                else
-                                {
-                                    edit.AddFrame(bmp);
-                                    TreeNode node = GetNode(_currentBody);
-                                    if (node != null)
+                                    if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") ||
+                                        dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") ||
+                                        dialog.FileName.Contains(".jpg"))
                                     {
-                                        node.ForeColor = Color.Black;
-                                        node.Nodes[_currentAction].ForeColor = Color.Black;
+                                        bitmap = ConvertBmpAnim(bitmap, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+
+                                        //edit.GetImagePalette(bitmap);
                                     }
 
-                                    int i = edit.Frames.Count - 1;
-                                    var item = new ListViewItem(i.ToString(), 0)
+                                    AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                                    if (edit == null)
                                     {
-                                        Tag = i
-                                    };
-                                    FramesListView.Items.Add(item);
-                                    int width = FramesListView.TileSize.Width - 5;
-                                    if (bmp.Width > FramesListView.TileSize.Width)
-                                    {
-                                        width = bmp.Width;
+                                        continue;
                                     }
 
-                                    int height = FramesListView.TileSize.Height - 5;
-                                    if (bmp.Height > FramesListView.TileSize.Height)
+                                    //Gif Especial Properties
+                                    if (dialog.FileName.Contains(".gif"))
                                     {
-                                        height = bmp.Height;
-                                    }
+                                        FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
 
-                                    FramesListView.TileSize = new Size(width + 5, height + 5);
-                                    FramesTrackBar.Maximum = i;
-                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
-                                    Options.ChangedUltimaClass["Animations"] = true;
+                                        // Number of frames
+                                        int frameCount = bitmap.GetFrameCount(dimension);
+
+                                        Bitmap[] bitBmp = new Bitmap[frameCount];
+
+                                        bitmap.SelectActiveFrame(dimension, 0);
+                                        UpdateGifPalette(bitmap, edit);
+
+                                        ProgressBar.Maximum = frameCount;
+
+                                        AddImageAtCertainIndex(frameCount, bitBmp, bitmap, dimension, edit);
+
+                                        ProgressBar.Value = 0;
+                                        ProgressBar.Invalidate();
+
+                                        SetPaletteBox();
+
+                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+
+                                        Options.ChangedUltimaClass["Animations"] = true;
+                                    }
+                                    //End of Soulblighter Modifications
+                                    else
+                                    {
+                                        edit.AddFrame(bitmap);
+
+                                        TreeNode node = GetNode(_currentBody);
+                                        if (node != null)
+                                        {
+                                            node.ForeColor = Color.Black;
+                                            node.Nodes[_currentAction].ForeColor = Color.Black;
+                                        }
+
+                                        int i = edit.Frames.Count - 1;
+                                        var item = new ListViewItem(i.ToString(), 0)
+                                        {
+                                            Tag = i
+                                        };
+
+                                        FramesListView.Items.Add(item);
+
+                                        int width = FramesListView.TileSize.Width - 5;
+                                        if (bitmap.Width > FramesListView.TileSize.Width)
+                                        {
+                                            width = bitmap.Width;
+                                        }
+
+                                        int height = FramesListView.TileSize.Height - 5;
+                                        if (bitmap.Height > FramesListView.TileSize.Height)
+                                        {
+                                            height = bitmap.Height;
+                                        }
+
+                                        FramesListView.TileSize = new Size(width + 5, height + 5);
+                                        FramesTrackBar.Maximum = i;
+
+                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+
+                                        Options.ChangedUltimaClass["Animations"] = true;
+                                    }
                                 }
                             }
                         }
@@ -1275,29 +1305,29 @@ namespace UoFiddler.Controls.Forms
             switch (e.KeyCode)
             {
                 case Keys.Right:
-                {
-                    CenterXNumericUpDown.Value--;
-                    CenterXNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        CenterXNumericUpDown.Value--;
+                        CenterXNumericUpDown.Invalidate();
+                        break;
+                    }
                 case Keys.Left:
-                {
-                    CenterXNumericUpDown.Value++;
-                    CenterXNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        CenterXNumericUpDown.Value++;
+                        CenterXNumericUpDown.Invalidate();
+                        break;
+                    }
                 case Keys.Up:
-                {
-                    CenterYNumericUpDown.Value++;
-                    CenterYNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        CenterYNumericUpDown.Value++;
+                        CenterYNumericUpDown.Invalidate();
+                        break;
+                    }
                 case Keys.Down:
-                {
-                    CenterYNumericUpDown.Value--;
-                    CenterYNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        CenterYNumericUpDown.Value--;
+                        CenterYNumericUpDown.Invalidate();
+                        break;
+                    }
             }
             AnimationPictureBox.Invalidate();
         }
@@ -1313,29 +1343,29 @@ namespace UoFiddler.Controls.Forms
             switch (e.KeyCode)
             {
                 case Keys.Right:
-                {
-                    RefXNumericUpDown.Value--;
-                    RefXNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        RefXNumericUpDown.Value--;
+                        RefXNumericUpDown.Invalidate();
+                        break;
+                    }
                 case Keys.Left:
-                {
-                    RefXNumericUpDown.Value++;
-                    RefXNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        RefXNumericUpDown.Value++;
+                        RefXNumericUpDown.Invalidate();
+                        break;
+                    }
                 case Keys.Up:
-                {
-                    RefYNumericUpDown.Value++;
-                    RefYNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        RefYNumericUpDown.Value++;
+                        RefYNumericUpDown.Invalidate();
+                        break;
+                    }
                 case Keys.Down:
-                {
-                    RefYNumericUpDown.Value--;
-                    RefYNumericUpDown.Invalidate();
-                    break;
-                }
+                    {
+                        RefYNumericUpDown.Value--;
+                        RefYNumericUpDown.Invalidate();
+                        break;
+                    }
             }
             AnimationPictureBox.Invalidate();
         }
@@ -1409,29 +1439,45 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                // dialog.Filename replaced by dialog.FileNames[w]
-                Bitmap bmp = new Bitmap(dialog.FileNames[w]);
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+
                 if (edit != null)
                 {
                     // Gif Especial Properties
-                    if (dialog.FileName.Contains(".gif"))
+                    if (dialog.FileNames[w].Contains(".gif"))
                     {
-                        FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                        // Number of frames
-                        int frameCount = bmp.GetFrameCount(dimension);
-                        ProgressBar.Maximum = frameCount;
-                        bmp.SelectActiveFrame(dimension, 0);
-                        UpdateGifPalette(bmp, edit);
-                        Bitmap[] bitBmp = new Bitmap[frameCount];
-                        AddImageAtCertainIndex(frameCount, bitBmp, bmp, dimension, edit);
-                        ProgressBar.Value = 0;
-                        ProgressBar.Invalidate();
-                        SetPaletteBox();
-                        FramesListView.Invalidate();
-                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
-                        Options.ChangedUltimaClass["Animations"] = true;
+                        // dialog.Filename replaced by dialog.FileNames[w]
+                        using (Bitmap bmpTemp = new Bitmap(dialog.FileNames[w]))
+                        {
+                            Bitmap bitmap = new Bitmap(bmpTemp);
+
+                            FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
+
+                            // Number of frames
+                            int frameCount = bitmap.GetFrameCount(dimension);
+
+                            ProgressBar.Maximum = frameCount;
+
+                            bitmap.SelectActiveFrame(dimension, 0);
+
+                            UpdateGifPalette(bitmap, edit);
+
+                            Bitmap[] bitBmp = new Bitmap[frameCount];
+
+                            AddImageAtCertainIndex(frameCount, bitBmp, bitmap, dimension, edit);
+
+                            ProgressBar.Value = 0;
+                            ProgressBar.Invalidate();
+
+                            SetPaletteBox();
+
+                            FramesListView.Invalidate();
+
+                            CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                            CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+
+                            Options.ChangedUltimaClass["Animations"] = true;
+                        }
                     }
                 }
 
@@ -2275,47 +2321,61 @@ namespace UoFiddler.Controls.Forms
                         dialog.Title = "Choose 1 Gif ( with all directions in CV5 Style ) to add";
                         dialog.CheckFileExists = true;
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
+
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
-                                (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+
                             DirectionTrackBar.Enabled = false;
                             DirectionTrackBar.Value = 0;
-                            Bitmap bmp = new Bitmap(dialog.FileName);
-                            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
-                                _currentDir);
+
+                            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+
                             if (edit != null)
                             {
-                                //Gif Especial Properties
+                                // Gif Especial Properties
                                 if (dialog.FileName.Contains(".gif"))
                                 {
-                                    FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                    // Number of frames
-                                    int frameCount = bmp.GetFrameCount(dimension);
-                                    ProgressBar.Maximum = frameCount;
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    UpdateGifPalette(bmp, edit);
-                                    Bitmap[] bitBmp = new Bitmap[frameCount];
-                                    // Return an Image at a certain index
-                                    for (int index = 0; index < frameCount; index++)
+                                    using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
                                     {
-                                        bitBmp[index] = new Bitmap(bmp.Width, bmp.Height,
-                                            PixelFormat.Format16bppArgb1555);
-                                        bmp.SelectActiveFrame(dimension, index);
-                                        bitBmp[index] = bmp;
+                                        Bitmap bitmap = new Bitmap(bmpTemp);
+
+                                        FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
+
+                                        // Number of frames
+                                        int frameCount = bitmap.GetFrameCount(dimension);
+
+                                        ProgressBar.Maximum = frameCount;
+
+                                        bitmap.SelectActiveFrame(dimension, 0);
+
+                                        UpdateGifPalette(bitmap, edit);
+
+                                        Bitmap[] bitBmp = new Bitmap[frameCount];
+
+                                        // Return an Image at a certain index
+                                        for (int index = 0; index < frameCount; index++)
+                                        {
+                                            bitBmp[index] = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format16bppArgb1555);
+                                            bitmap.SelectActiveFrame(dimension, index);
+                                            bitBmp[index] = bitmap;
+                                        }
+
+                                        Cv5CanvasAlgorithm(bitBmp, frameCount, dimension, customConvert);
+
+                                        edit = Cv5AnimIdxPositions(frameCount, bitBmp, dimension, edit, bitmap);
+
+                                        ProgressBar.Value = 0;
+                                        ProgressBar.Invalidate();
+
+                                        SetPaletteBox();
+                                        FramesListView.Invalidate();
+
+                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+
+                                        Options.ChangedUltimaClass["Animations"] = true;
                                     }
-
-                                    Cv5CanvasAlgorithm(bitBmp, frameCount, dimension, customConvert);
-
-                                    edit = Cv5AnimIdxPositions(frameCount, bitBmp, dimension, edit, bmp);
-
-                                    ProgressBar.Value = 0;
-                                    ProgressBar.Invalidate();
-                                    SetPaletteBox();
-                                    FramesListView.Invalidate();
-                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
-                                    Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
 
@@ -2995,47 +3055,61 @@ namespace UoFiddler.Controls.Forms
                         dialog.Title = "Choose 1 Gif ( with all directions in KRFrameViewer Style ) to add";
                         dialog.CheckFileExists = true;
                         dialog.Filter = "Gif files (*.gif;)|*.gif;";
+
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value,
-                                (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                            Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
+                            
                             DirectionTrackBar.Enabled = false;
                             DirectionTrackBar.Value = 0;
-                            Bitmap bmp = new Bitmap(dialog.FileName);
-                            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction,
-                                _currentDir);
+                            
+                            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+
                             if (edit != null)
                             {
                                 //Gif Especial Properties
                                 if (dialog.FileName.Contains(".gif"))
                                 {
-                                    FrameDimension dimension = new FrameDimension(bmp.FrameDimensionsList[0]);
-                                    // Number of frames
-                                    int frameCount = bmp.GetFrameCount(dimension);
-                                    ProgressBar.Maximum = frameCount;
-                                    bmp.SelectActiveFrame(dimension, 0);
-                                    UpdateGifPalette(bmp, edit);
-                                    Bitmap[] bitBmp = new Bitmap[frameCount];
-                                    // Return an Image at a certain index
-                                    for (int index = 0; index < frameCount; index++)
+                                    using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
                                     {
-                                        bitBmp[index] = new Bitmap(bmp.Width, bmp.Height,
-                                            PixelFormat.Format16bppArgb1555);
-                                        bmp.SelectActiveFrame(dimension, index);
-                                        bitBmp[index] = bmp;
+                                        Bitmap bitmap = new Bitmap(bmpTemp);
+
+                                        FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
+
+                                        // Number of frames
+                                        int frameCount = bitmap.GetFrameCount(dimension);
+
+                                        ProgressBar.Maximum = frameCount;
+
+                                        bitmap.SelectActiveFrame(dimension, 0);
+
+                                        UpdateGifPalette(bitmap, edit);
+
+                                        Bitmap[] bitBmp = new Bitmap[frameCount];
+
+                                        // Return an Image at a certain index
+                                        for (int index = 0; index < frameCount; index++)
+                                        {
+                                            bitBmp[index] = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format16bppArgb1555);
+                                            bitmap.SelectActiveFrame(dimension, index);
+                                            bitBmp[index] = bitmap;
+                                        }
+
+                                        KrCanvasAlgorithm(bitBmp, frameCount, dimension, customConvert);
+
+                                        edit = KrAnimIdxPositions(frameCount, bitBmp, dimension, edit, bitmap);
+
+                                        ProgressBar.Value = 0;
+                                        ProgressBar.Invalidate();
+
+                                        SetPaletteBox();
+                                        FramesListView.Invalidate();
+
+                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
+                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+
+                                        Options.ChangedUltimaClass["Animations"] = true;
                                     }
-
-                                    KrCanvasAlgorithm(bitBmp, frameCount, dimension, customConvert);
-
-                                    edit = KrAnimIdxPositions(frameCount, bitBmp, dimension, edit, bmp);
-
-                                    ProgressBar.Value = 0;
-                                    ProgressBar.Invalidate();
-                                    SetPaletteBox();
-                                    FramesListView.Invalidate();
-                                    CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                    CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
-                                    Options.ChangedUltimaClass["Animations"] = true;
                                 }
                             }
 
