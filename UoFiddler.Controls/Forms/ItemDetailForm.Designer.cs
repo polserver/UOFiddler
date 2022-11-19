@@ -48,10 +48,12 @@ namespace UoFiddler.Controls.Forms
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Graphic = new System.Windows.Forms.PictureBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ItemDetailMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.extractImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setHueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.animateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Data = new System.Windows.Forms.RichTextBox();
@@ -60,7 +62,7 @@ namespace UoFiddler.Controls.Forms
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Graphic)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
+            this.ItemDetailMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -78,37 +80,39 @@ namespace UoFiddler.Controls.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.Data);
-            this.splitContainer1.Size = new System.Drawing.Size(298, 269);
-            this.splitContainer1.SplitterDistance = 61;
+            this.splitContainer1.Size = new System.Drawing.Size(304, 281);
+            this.splitContainer1.SplitterDistance = 62;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             // 
             // Graphic
             // 
-            this.Graphic.ContextMenuStrip = this.contextMenuStrip1;
+            this.Graphic.ContextMenuStrip = this.ItemDetailMenuStrip;
             this.Graphic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Graphic.Location = new System.Drawing.Point(0, 0);
             this.Graphic.Name = "Graphic";
-            this.Graphic.Size = new System.Drawing.Size(298, 61);
+            this.Graphic.Size = new System.Drawing.Size(304, 62);
             this.Graphic.TabIndex = 0;
             this.Graphic.TabStop = false;
             this.Graphic.SizeChanged += new System.EventHandler(this.OnSizeChange);
             this.Graphic.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             // 
-            // contextMenuStrip1
+            // ItemDetailMenuStrip
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ItemDetailMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extractImageToolStripMenuItem,
             this.setHueToolStripMenuItem,
             this.animateToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(151, 70);
+            this.ItemDetailMenuStrip.Name = "contextMenuStrip1";
+            this.ItemDetailMenuStrip.Size = new System.Drawing.Size(151, 70);
             // 
             // extractImageToolStripMenuItem
             // 
             this.extractImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.asBmpToolStripMenuItem,
-            this.asTiffToolStripMenuItem});
+            this.asTiffToolStripMenuItem,
+            this.asJpgToolStripMenuItem,
+            this.asPngToolStripMenuItem});
             this.extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
             this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.extractImageToolStripMenuItem.Text = "Export Image..";
@@ -126,6 +130,20 @@ namespace UoFiddler.Controls.Forms
             this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickTiff);
+            // 
+            // asJpgToolStripMenuItem
+            // 
+            this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asJpgToolStripMenuItem.Text = "As Jpg";
+            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickJpg);
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem.Text = "As Png";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.Extract_Image_ClickPng);
             // 
             // setHueToolStripMenuItem
             // 
@@ -147,7 +165,7 @@ namespace UoFiddler.Controls.Forms
             this.Data.Location = new System.Drawing.Point(0, 0);
             this.Data.Name = "Data";
             this.Data.ReadOnly = true;
-            this.Data.Size = new System.Drawing.Size(298, 207);
+            this.Data.Size = new System.Drawing.Size(304, 218);
             this.Data.TabIndex = 0;
             this.Data.Text = "";
             // 
@@ -155,7 +173,7 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(298, 269);
+            this.ClientSize = new System.Drawing.Size(304, 281);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -168,7 +186,7 @@ namespace UoFiddler.Controls.Forms
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Graphic)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.ItemDetailMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -178,11 +196,13 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip ItemDetailMenuStrip;
         private System.Windows.Forms.RichTextBox Data;
         private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;
         private System.Windows.Forms.PictureBox Graphic;
         private System.Windows.Forms.ToolStripMenuItem setHueToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
     }
 }

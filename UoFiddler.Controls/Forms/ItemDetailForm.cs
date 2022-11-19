@@ -33,33 +33,36 @@ namespace UoFiddler.Controls.Forms
         }
 
         private readonly int _index;
-        private int _defHue = -1;
         private bool _partialHue;
         private bool _animate;
         private Timer _mTimer;
         private int _frame;
         private Animdata.AnimdataEntry _info;
 
+        private int _hue = -1;
+
         /// <summary>
         /// Sets Hue
         /// </summary>
-        public int DefHue
+        public int Hue
         {
-            get => _defHue;
+            get => _hue;
             set
             {
-                _defHue = value;
+                _hue = value;
+
                 if (_animate)
                 {
                     return;
                 }
 
                 Bitmap hueBit = new Bitmap(Art.GetStatic(_index));
-                if (_defHue >= 0)
+                if (_hue >= 0)
                 {
-                    Hue hue = Hues.List[_defHue];
+                    Hue hue = Hues.List[_hue];
                     hue.ApplyTo(hueBit, _partialHue);
                 }
+
                 Graphic.Tag = hueBit;
                 Graphic.Invalidate();
             }
@@ -76,16 +79,6 @@ namespace UoFiddler.Controls.Forms
             Bitmap bit = (Bitmap)Graphic.Tag;
             e.Graphics.DrawImage(bit, (e.ClipRectangle.Width - bit.Width) / 2, 5);
         }
-
-        // TODO: unused method?
-        //private void SetPicture(Bitmap bit)
-        //{
-        //    var newbit = new Bitmap(Graphic.Size.Width, Graphic.Size.Height);
-        //    var newgraph = Graphics.FromImage(newbit);
-        //    newgraph.DrawImage(bit, (Graphic.Size.Width - bit.Width) / 2, 5);
-        //    Graphic.Image = newbit;
-        //    newgraph.Dispose();
-        //}
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -148,9 +141,9 @@ namespace UoFiddler.Controls.Forms
             }
 
             Bitmap animBit = new Bitmap(Art.GetStatic(_index + _info.FrameData[_frame]));
-            if (_defHue >= 0)
+            if (_hue >= 0)
             {
-                Hue hue = Hues.List[_defHue];
+                Hue hue = Hues.List[_hue];
                 hue.ApplyTo(animBit, _partialHue);
             }
             Graphic.Tag = animBit;
@@ -163,11 +156,11 @@ namespace UoFiddler.Controls.Forms
         {
             if (_showForm?.IsDisposed != false)
             {
-                _showForm = new HuePopUpItemForm(this, DefHue);
+                _showForm = new HuePopUpItemForm(this, Hue);
             }
             else
             {
-                _showForm.SetHue(DefHue);
+                _showForm.SetHue(Hue);
             }
 
             _showForm.TopMost = true;
@@ -228,6 +221,16 @@ namespace UoFiddler.Controls.Forms
             SaveImage(ImageFormat.Tiff);
         }
 
+        private void Extract_Image_ClickJpg(object sender, EventArgs e)
+        {
+            SaveImage(ImageFormat.Jpeg);
+        }
+
+        private void Extract_Image_ClickPng(object sender, EventArgs e)
+        {
+            SaveImage(ImageFormat.Png);
+        }
+
         private void SaveImage(ImageFormat imageFormat)
         {
             if (!Art.IsValidStatic(_index))
@@ -245,9 +248,9 @@ namespace UoFiddler.Controls.Forms
                     newGraphic.Clear(Color.Transparent);
                     using (Bitmap huedBitmap = new Bitmap(Art.GetStatic(_index)))
                     {
-                        if (_defHue > 0)
+                        if (_hue > 0)
                         {
-                            Hue hue = Hues.List[_defHue];
+                            Hue hue = Hues.List[_hue];
                             hue.ApplyTo(huedBitmap, _partialHue);
                         }
 

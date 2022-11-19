@@ -22,7 +22,9 @@ namespace UoFiddler.Controls.Forms
         public HuePopUpItemForm(ItemDetailForm refItemDetailForm, int hue)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
             if (hue >= 0)
             {
                 control.Selected = hue;
@@ -33,16 +35,16 @@ namespace UoFiddler.Controls.Forms
 
         private void Click_OK(object sender, EventArgs e)
         {
-            _refItemDetailFormItem.DefHue = control.Selected;
-            //this.Close();
+            _refItemDetailFormItem.Hue = control.Selected;
+
             Hide();
         }
 
         private void OnClick_Clear(object sender, EventArgs e)
         {
-            _refItemDetailFormItem.DefHue = -1;
+            _refItemDetailFormItem.Hue = -1;
+
             Hide();
-            //this.Close();
         }
 
         public void SetHue(int hue)
