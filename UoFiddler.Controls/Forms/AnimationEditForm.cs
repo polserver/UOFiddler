@@ -566,14 +566,30 @@ namespace UoFiddler.Controls.Forms
             }
 
             ToolStripMenuItem menu = (ToolStripMenuItem)sender;
-            ImageFormat format = ImageFormat.Bmp;
-            if ((string)menu.Tag == ".tiff")
+
+            ImageFormat format;
+
+            switch ((string)menu.Tag)
             {
-                format = ImageFormat.Tiff;
+                case ".tiff":
+                    format = ImageFormat.Tiff;
+                    break;
+                case ".png":
+                    format = ImageFormat.Png;
+                    break;
+                case ".jpg":
+                    format = ImageFormat.Jpeg;
+                    break;
+                default:
+                    format = ImageFormat.Bmp;
+                    break;
             }
 
             string path = Options.OutputPath;
-            int body, action;
+
+            int body;
+            int action;
+
             if (AnimationListTreeView.SelectedNode.Parent == null)
             {
                 body = (int)AnimationListTreeView.SelectedNode.Tag;

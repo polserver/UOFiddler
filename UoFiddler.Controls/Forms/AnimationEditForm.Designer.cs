@@ -101,6 +101,7 @@
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.DrawReferencialPointToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.AnimationPictureBox = new System.Windows.Forms.PictureBox();
             this.EditSidePanel = new System.Windows.Forms.Panel();
             this.FramesGroupBox = new System.Windows.Forms.GroupBox();
             this.FramesTrackBar = new System.Windows.Forms.TrackBar();
@@ -134,7 +135,8 @@
             this.ShowOnlyValidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportAllToVDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AnimationTimer = new System.Windows.Forms.Timer(this.components);
-            this.AnimationPictureBox = new System.Windows.Forms.PictureBox();
+            this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -156,6 +158,7 @@
             this.AnimationEditPage.SuspendLayout();
             this.AnimationTableLayoutPanel.SuspendLayout();
             this.AnimationEditToolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AnimationPictureBox)).BeginInit();
             this.EditSidePanel.SuspendLayout();
             this.FramesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FramesTrackBar)).BeginInit();
@@ -170,7 +173,6 @@
             this.CoordinatesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DirectionTrackBar)).BeginInit();
             this.StatusStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AnimationPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // MainSplitContainer
@@ -215,19 +217,19 @@
             this.importToolStripMenuItem1,
             this.exportToolStripMenuItem1});
             this.ContextMenuStripTreeView.Name = "contextMenuStrip2";
-            this.ContextMenuStripTreeView.Size = new System.Drawing.Size(158, 114);
+            this.ContextMenuStripTreeView.Size = new System.Drawing.Size(181, 136);
             // 
             // addToolStripMenuItem
             // 
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addToolStripMenuItem.Text = "Replace";
             this.addToolStripMenuItem.Visible = false;
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemoveAction);
             // 
@@ -235,15 +237,17 @@
             // 
             this.extractImagesToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.asBmpToolStripMenuItem,
-            this.asTiffToolStripMenuItem});
+            this.asTiffToolStripMenuItem,
+            this.asJpgToolStripMenuItem,
+            this.asPngToolStripMenuItem});
             this.extractImagesToolStripMenuItem1.Name = "extractImagesToolStripMenuItem1";
-            this.extractImagesToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
+            this.extractImagesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.extractImagesToolStripMenuItem1.Text = "Extract Images..";
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asBmpToolStripMenuItem.Tag = ".bmp";
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
@@ -251,7 +255,7 @@
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.asTiffToolStripMenuItem.Tag = ".tiff";
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
@@ -261,13 +265,13 @@
             this.importToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fromvdToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.importToolStripMenuItem1.Text = "Import..";
             // 
             // fromvdToolStripMenuItem
             // 
             this.fromvdToolStripMenuItem.Name = "fromvdToolStripMenuItem";
-            this.fromvdToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.fromvdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fromvdToolStripMenuItem.Text = "From .vd";
             this.fromvdToolStripMenuItem.Click += new System.EventHandler(this.OnClickImportFromVD);
             // 
@@ -276,13 +280,13 @@
             this.exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tovdToolStripMenuItem});
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
-            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
+            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.exportToolStripMenuItem1.Text = "Export..";
             // 
             // tovdToolStripMenuItem
             // 
             this.tovdToolStripMenuItem.Name = "tovdToolStripMenuItem";
-            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tovdToolStripMenuItem.Text = "To .vd";
             this.tovdToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportToVD);
             // 
@@ -955,6 +959,18 @@
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
             // 
+            // AnimationPictureBox
+            // 
+            this.AnimationPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AnimationPictureBox.Location = new System.Drawing.Point(3, 3);
+            this.AnimationPictureBox.Name = "AnimationPictureBox";
+            this.AnimationPictureBox.Size = new System.Drawing.Size(529, 476);
+            this.AnimationPictureBox.TabIndex = 1;
+            this.AnimationPictureBox.TabStop = false;
+            this.AnimationPictureBox.SizeChanged += new System.EventHandler(this.AnimationPictureBox_OnSizeChanged);
+            this.AnimationPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.AnimationPictureBox_OnPaintFrame);
+            this.AnimationPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AnimationPictureBox_MouseClick);
+            // 
             // EditSidePanel
             // 
             this.EditSidePanel.BackColor = System.Drawing.SystemColors.Control;
@@ -1345,17 +1361,21 @@
             // 
             this.AnimationTimer.Tick += new System.EventHandler(this.AnimationTimer_Tick);
             // 
-            // AnimationPictureBox
+            // asJpgToolStripMenuItem
             // 
-            this.AnimationPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AnimationPictureBox.Location = new System.Drawing.Point(3, 3);
-            this.AnimationPictureBox.Name = "AnimationPictureBox";
-            this.AnimationPictureBox.Size = new System.Drawing.Size(529, 476);
-            this.AnimationPictureBox.TabIndex = 1;
-            this.AnimationPictureBox.TabStop = false;
-            this.AnimationPictureBox.SizeChanged += new System.EventHandler(this.AnimationPictureBox_OnSizeChanged);
-            this.AnimationPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.AnimationPictureBox_OnPaintFrame);
-            this.AnimationPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AnimationPictureBox_MouseClick);
+            this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asJpgToolStripMenuItem.Tag = ".jpg";
+            this.asJpgToolStripMenuItem.Text = "As Jpg";
+            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asPngToolStripMenuItem.Tag = ".png";
+            this.asPngToolStripMenuItem.Text = "As Png";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
             // 
             // AnimationEditForm
             // 
@@ -1397,6 +1417,7 @@
             this.AnimationTableLayoutPanel.PerformLayout();
             this.AnimationEditToolStrip.ResumeLayout(false);
             this.AnimationEditToolStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AnimationPictureBox)).EndInit();
             this.EditSidePanel.ResumeLayout(false);
             this.FramesGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.FramesTrackBar)).EndInit();
@@ -1415,7 +1436,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.DirectionTrackBar)).EndInit();
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AnimationPictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1527,5 +1547,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.GroupBox FramesGroupBox;
         private System.Windows.Forms.PictureBox AnimationPictureBox;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
     }
 }
