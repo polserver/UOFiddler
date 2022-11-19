@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.20
+    <value>Version 4.9.21
+- Added export to JPG and PNG on item detail form.
+- Added export to JPG and PNG on animation edit form.
+
+Version 4.9.20
 - Removed source file locking when importing or replacing assets.
 
 Version 4.9.19
