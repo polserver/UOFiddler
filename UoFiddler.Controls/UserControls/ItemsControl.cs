@@ -105,6 +105,8 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
+            // we have to invalidate focus so it will scroll to item
+            RefMarker.ItemsTileView.FocusIndex = -1;
             RefMarker.SelectedGraphicId = graphic;
 
             return true;
@@ -147,7 +149,10 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
+                // we have to invalidate focus so it will scroll to item
+                RefMarker.ItemsTileView.FocusIndex = -1;
                 RefMarker.SelectedGraphicId = RefMarker._itemList[i];
+
                 return true;
             }
 

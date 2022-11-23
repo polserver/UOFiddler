@@ -71,6 +71,8 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
+            // we have to invalidate focus so it will scroll to item
+            _refMarker.LandTilesTileView.FocusIndex = -1;
             _refMarker.SelectedGraphicId = graphic;
 
             return true;
@@ -113,7 +115,10 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
+                // we have to invalidate focus so it will scroll to item
+                _refMarker.LandTilesTileView.FocusIndex = -1;
                 _refMarker.SelectedGraphicId = _refMarker._tileList[i];
+
                 return true;
             }
 

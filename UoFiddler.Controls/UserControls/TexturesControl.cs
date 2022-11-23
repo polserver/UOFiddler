@@ -74,6 +74,8 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
+            // we have to invalidate focus so it will scroll to item
+            _refMarker.TextureTileView.FocusIndex = -1;
             _refMarker.SelectedTextureId = graphic;
 
             return true;
