@@ -572,15 +572,8 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FireMultiChangeEvent(this, id);
         }
 
-        private MultiImportForm _multiImportForm;
-
         private void OnClickImport(object sender, EventArgs e)
         {
-            if (_multiImportForm?.IsDisposed == false)
-            {
-                return;
-            }
-
             MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
             if (multi != MultiComponentList.Empty)
@@ -593,11 +586,10 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            _multiImportForm = new MultiImportForm(this, id)
+            using (var dialog = new MultiImportForm(this, id) { TopMost = true })
             {
-                TopMost = true
-            };
-            _multiImportForm.Show();
+                dialog.ShowDialog();
+            }
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
@@ -755,6 +747,61 @@ namespace UoFiddler.Controls.UserControls
                 MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
+        }
+
+        private void OnClick_SaveAllCSV(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select directory";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                {
+                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    if (index < 0)
+                    {
+                        continue;
+                    }
+
+                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    if (multi == MultiComponentList.Empty)
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"{index:D4}.csv");
+                    multi.ExportToCsvFile(fileName);
+                }
+                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
+        }
+
+        private void OnExportCsvFile(object sender, EventArgs e)
+        {
+            if (TreeViewMulti.SelectedNode == null)
+            {
+                return;
+            }
+
+            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            if (multi == MultiComponentList.Empty)
+            {
+                return;
+            }
+
+            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"{id:D4}.csv");
+            multi.ExportToCsvFile(fileName);
+            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
 
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)

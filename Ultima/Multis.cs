@@ -20,6 +20,7 @@ namespace Ultima
             UOA,
             UOAB,
             WSC,
+            CSV, // Punt's multi tool csv format
             MULTICACHE,
             UOADESIGN
         }
@@ -792,7 +793,6 @@ namespace Ultima
                     }
                     break;
                 }
-
                 case Multis.ImportType.WSC:
                 {
                     itemCount = 0;
@@ -888,7 +888,95 @@ namespace Ultima
                     }
                     break;
                 }
+                case Multis.ImportType.CSV: 
+                {
+                    const string headerCheck = "TileID,OffsetX";
+
+                    itemCount = 0;
+
+                    using (var ip = new StreamReader(fileName))
+                    {
+                        string line;
+
+                        while ((line = ip.ReadLine()) != null)
+                        {
+                            line = line.Trim();
+
+                            if (!line.StartsWith(headerCheck))
+                            {
+                                ++itemCount;
+                            }
+                        }
+                    }
+
+                    SortedTiles = new MultiTileEntry[itemCount];
+
+                    itemCount = 0;
+
+                    _min.X = 10000;
+                    _min.Y = 10000;
+
+                    using (var ip = new StreamReader(fileName))
+                    {
+                        string line;
+                        while ((line = ip.ReadLine()) != null)
+                        {
+                            if (line.StartsWith(headerCheck))
+                            {
+                                continue;
+                            }
+
+                            string[] split = line.Split(',');
+
+                            string tmp = split[0];
+                            tmp = tmp.Replace("0x", "");
+
+                            SortedTiles[itemCount].ItemId = ushort.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
+                            SortedTiles[itemCount].OffsetX = Convert.ToInt16(split[1]);
+                            SortedTiles[itemCount].OffsetY = Convert.ToInt16(split[2]);
+                            SortedTiles[itemCount].OffsetZ = Convert.ToInt16(split[3]);
+
+                            tmp = split[4];
+                            tmp = tmp.Replace("0x", "");
+
+                            SortedTiles[itemCount].Flags = int.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
+                            SortedTiles[itemCount].Unk1 = 0;
+
+                            MultiTileEntry e = SortedTiles[itemCount];
+
+                            if (e.OffsetX < _min.X)
+                            {
+                                _min.X = e.OffsetX;
+                            }
+
+                            if (e.OffsetY < _min.Y)
+                            {
+                                _min.Y = e.OffsetY;
+                            }
+
+                            if (e.OffsetX > _max.X)
+                            {
+                                _max.X = e.OffsetX;
+                            }
+
+                            if (e.OffsetY > _max.Y)
+                            {
+                                _max.Y = e.OffsetY;
+                            }
+
+                            if (e.OffsetZ > MaxHeight)
+                            {
+                                MaxHeight = e.OffsetZ;
+                            }
+
+                            itemCount++;
+                        }
+                    }
+
+                    break;
+                }
             }
+
             ConvertList();
         }
 
@@ -1156,6 +1244,23 @@ namespace Ultima
                 {
                     tex.WriteLine(
                         $"{SortedTiles[i].ItemId} {SortedTiles[i].OffsetX} {SortedTiles[i].OffsetY} {SortedTiles[i].OffsetZ} {SortedTiles[i].Flags}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Punt's multi tool csv format
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void ExportToCsvFile(string fileName)
+        {
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            {
+                tex.WriteLine("TileID,OffsetX,OffsetY,OffsetZ,Flag,Cliloc");
+
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    tex.WriteLine($"0x{SortedTiles[i].ItemId:x4},{SortedTiles[i].OffsetX},{SortedTiles[i].OffsetY},{SortedTiles[i].OffsetZ},0x{SortedTiles[i].Flags:x},");
                 }
             }
         }

@@ -59,6 +59,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.treeViewMultiList = new System.Windows.Forms.TreeView();
             this.Save = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.BTN_Export_CSV = new System.Windows.Forms.Button();
             this.BTN_Export_WSC = new System.Windows.Forms.Button();
             this.BTN_Export_UOA = new System.Windows.Forms.Button();
             this.textBox_Export = new System.Windows.Forms.TextBox();
@@ -254,7 +255,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.designTab.Location = new System.Drawing.Point(4, 22);
             this.designTab.Name = "designTab";
             this.designTab.Padding = new System.Windows.Forms.Padding(3);
-            this.designTab.Size = new System.Drawing.Size(192, 207);
+            this.designTab.Size = new System.Drawing.Size(192, 226);
             this.designTab.TabIndex = 1;
             this.designTab.Text = "Design";
             this.designTab.UseVisualStyleBackColor = true;
@@ -325,7 +326,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.importTab.Controls.Add(this.treeViewMultiList);
             this.importTab.Location = new System.Drawing.Point(4, 22);
             this.importTab.Name = "importTab";
-            this.importTab.Size = new System.Drawing.Size(192, 202);
+            this.importTab.Size = new System.Drawing.Size(192, 221);
             this.importTab.TabIndex = 2;
             this.importTab.Text = "Import";
             this.importTab.UseVisualStyleBackColor = true;
@@ -338,7 +339,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.treeViewMultiList.HotTracking = true;
             this.treeViewMultiList.Location = new System.Drawing.Point(0, 0);
             this.treeViewMultiList.Name = "treeViewMultiList";
-            this.treeViewMultiList.Size = new System.Drawing.Size(192, 202);
+            this.treeViewMultiList.Size = new System.Drawing.Size(192, 221);
             this.treeViewMultiList.TabIndex = 0;
             this.treeViewMultiList.NodeMouseHover += new System.Windows.Forms.TreeNodeMouseHoverEventHandler(this.TreeViewMultiList_NodeMouseHover);
             this.treeViewMultiList.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewMultiList_NodeMouseDoubleClick);
@@ -350,7 +351,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Save.Location = new System.Drawing.Point(4, 22);
             this.Save.Name = "Save";
             this.Save.Padding = new System.Windows.Forms.Padding(3);
-            this.Save.Size = new System.Drawing.Size(192, 207);
+            this.Save.Size = new System.Drawing.Size(192, 221);
             this.Save.TabIndex = 3;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;
@@ -358,16 +359,27 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // groupBox4
             // 
             this.groupBox4.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox4.Controls.Add(this.BTN_Export_CSV);
             this.groupBox4.Controls.Add(this.BTN_Export_WSC);
             this.groupBox4.Controls.Add(this.BTN_Export_UOA);
             this.groupBox4.Controls.Add(this.textBox_Export);
             this.groupBox4.Controls.Add(this.BTN_Export_Txt);
             this.groupBox4.Location = new System.Drawing.Point(7, 71);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(179, 78);
+            this.groupBox4.Size = new System.Drawing.Size(179, 112);
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Export";
+            // 
+            // BTN_Export_CSV
+            // 
+            this.BTN_Export_CSV.Location = new System.Drawing.Point(10, 75);
+            this.BTN_Export_CSV.Name = "BTN_Export_CSV";
+            this.BTN_Export_CSV.Size = new System.Drawing.Size(40, 23);
+            this.BTN_Export_CSV.TabIndex = 4;
+            this.BTN_Export_CSV.Text = ".csv";
+            this.BTN_Export_CSV.UseVisualStyleBackColor = true;
+            this.BTN_Export_CSV.Click += new System.EventHandler(this.BTN_Export_CSV_OnClick);
             // 
             // BTN_Export_WSC
             // 
@@ -1130,5 +1142,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private System.Windows.Forms.VScrollBar vScrollBarDrawTiles;
 
         #endregion
+
+        private System.Windows.Forms.Button BTN_Export_CSV;
     }
 }

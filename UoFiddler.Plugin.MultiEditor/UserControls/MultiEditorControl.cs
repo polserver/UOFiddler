@@ -190,6 +190,19 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             sdkList.ExportToWscFile(fileName);
         }
 
+        private void BTN_Export_CSV_OnClick(object sender, EventArgs e)
+        {
+            if (_compList == null)
+            {
+                return;
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"{textBox_Export.Text}.csv");
+            MultiComponentList sdkList = _compList.ConvertToSdk();
+            sdkList.ExportToCsvFile(fileName);
+        }
+
         /// <summary>
         /// Virtual Floor clicked (check on click)
         /// </summary>
@@ -557,6 +570,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             TreeNode uoadesignNode = new TreeNode("UOA Design File") { Tag = "uoadesign" };
             fileNode.Nodes.Add(uoadesignNode);
+
+            TreeNode csvNode = new TreeNode("CSV File") { Tag = "csv" };
+            fileNode.Nodes.Add(csvNode);
 
             treeViewMultiList.Nodes.Add(fileNode);
             treeViewMultiList.EndUpdate();
@@ -965,6 +981,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 case Multis.ImportType.UOADESIGN:
                     type = "Designs";
                     break;
+                case Multis.ImportType.CSV:
+                    type = "csv";
+                    break;
                 default:
                     return;
             }
@@ -1077,6 +1096,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     return;
                 case "uoadesign":
                     TreeViewMultiList_LoadFromFile(Multis.ImportType.UOADESIGN);
+                    return;
+                case "csv":
+                    TreeViewMultiList_LoadFromFile(Multis.ImportType.CSV);
                     return;
             }
 
