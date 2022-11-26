@@ -91,11 +91,11 @@ namespace Ultima
                     {
                         for (int colorIndex = 0; colorIndex < 32; ++colorIndex)
                         {
-                            binMul.Write((short)(List[index].Colors[colorIndex] ^ 0x8000));
+                            binMul.Write(List[index].Colors[colorIndex]);
                         }
 
-                        binMul.Write((short)(List[index].TableStart ^ 0x8000));
-                        binMul.Write((short)(List[index].TableEnd ^ 0x8000));
+                        binMul.Write(List[index].TableStart);
+                        binMul.Write(List[index].TableEnd);
 
                         var nameBuffer = new byte[20];
                         if (List[index].Name != null)
@@ -137,7 +137,7 @@ namespace Ultima
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static short ColorToHue(Color color)
+        public static ushort ColorToHue(Color color)
         {
             const double scale = 31.0 / 255;
 
@@ -162,7 +162,7 @@ namespace Ultima
                 newBlue = 1;
             }
 
-            return (short)((newRed << 10) | (newGreen << 5) | newBlue);
+            return (ushort)((newRed << 10) | (newGreen << 5) | newBlue);
         }
 
         /// <summary>
@@ -170,28 +170,28 @@ namespace Ultima
         /// </summary>
         /// <param name="hue"></param>
         /// <returns></returns>
-        public static Color HueToColor(short hue)
+        public static Color HueToColor(ushort hue)
         {
             const int scale = 255 / 31;
             return Color.FromArgb(((hue & 0x7c00) >> 10) * scale, ((hue & 0x3e0) >> 5) * scale, (hue & 0x1f) * scale);
         }
 
-        public static int HueToColorR(short hue)
+        public static int HueToColorR(ushort hue)
         {
             return ((hue & 0x7c00) >> 10) * (255 / 31);
         }
 
-        public static int HueToColorG(short hue)
+        public static int HueToColorG(ushort hue)
         {
             return ((hue & 0x3e0) >> 5) * (255 / 31);
         }
 
-        public static int HueToColorB(short hue)
+        public static int HueToColorB(ushort hue)
         {
             return (hue & 0x1f) * (255 / 31);
         }
 
-        public static unsafe void ApplyTo(Bitmap bmp, short[] colors, bool onlyHueGrayPixels)
+        public static unsafe void ApplyTo(Bitmap bmp, ushort[] colors, bool onlyHueGrayPixels)
         {
             BitmapData bd = bmp.LockBits(
                 new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format16bppArgb1555);
@@ -201,7 +201,7 @@ namespace Ultima
             int height = bd.Height;
             int delta = stride - width;
 
-            var pBuffer = (ushort*)bd.Scan0;
+            ushort* pBuffer = (ushort*)bd.Scan0;
             ushort* pLineEnd = pBuffer + width;
             ushort* pImageEnd = pBuffer + (stride * height);
 
@@ -219,7 +219,7 @@ namespace Ultima
                             int b = c & 0x1F;
                             if (r == g && r == b)
                             {
-                                *pBuffer = (ushort)colors[(c >> 10) & 0x1F];
+                                *pBuffer = colors[(c >> 10) & 0x1F];
                             }
                         }
                         ++pBuffer;
@@ -237,7 +237,7 @@ namespace Ultima
                     {
                         if (*pBuffer != 0)
                         {
-                            *pBuffer = (ushort)colors[(*pBuffer >> 10) & 0x1F];
+                            *pBuffer = colors[(*pBuffer >> 10) & 0x1F];
                         }
 
                         ++pBuffer;
@@ -255,16 +255,16 @@ namespace Ultima
     public sealed class Hue
     {
         public int Index { get; }
-        public short[] Colors { get; }
+        public ushort[] Colors { get; }
         public string Name { get; set; }
-        public short TableStart { get; set; }
-        public short TableEnd { get; set; }
+        public ushort TableStart { get; set; }
+        public ushort TableEnd { get; set; }
 
         public Hue(int index)
         {
             Name = "Null";
             Index = index;
-            Colors = new short[32];
+            Colors = new ushort[32];
             TableStart = 0;
             TableEnd = 0;
         }
@@ -279,7 +279,7 @@ namespace Ultima
         public Hue(int index, BinaryReader bin)
         {
             Index = index;
-            Colors = new short[32];
+            Colors = new ushort[32];
 
             byte[] buffer = bin.ReadBytes(88);
             unsafe
@@ -289,11 +289,12 @@ namespace Ultima
                     var buf = (ushort*)bufferPtr;
                     for (int i = 0; i < 32; ++i)
                     {
-                        Colors[i] = (short)(*buf++ | 0x8000);
+                        Colors[i] = *buf++;
                     }
 
-                    TableStart = (short)(*buf++ | 0x8000);
-                    TableEnd = (short)(*buf++ | 0x8000);
+                    TableStart = *buf++;
+                    TableEnd = *buf++;
+
                     var stringBuffer = (byte*)buf;
                     int count;
                     for (count = 0; count < 20 && *stringBuffer != 0; ++count)
@@ -310,14 +311,14 @@ namespace Ultima
         public Hue(int index, HueDataMul mulStruct)
         {
             Index = index;
-            Colors = new short[32];
+            Colors = new ushort[32];
             for (int i = 0; i < 32; ++i)
             {
-                Colors[i] = (short)(mulStruct.colors[i] | 0x8000);
+                Colors[i] = mulStruct.colors[i];
             }
 
-            TableStart = (short)(mulStruct.tableStart | 0x8000);
-            TableEnd = (short)(mulStruct.tableEnd | 0x8000);
+            TableStart = mulStruct.tableStart;
+            TableEnd = mulStruct.tableEnd;
 
             Name = NativeMethods.ReadNameString(mulStruct.name, 20);
             Name = Name.Replace("\n", " ");
@@ -356,7 +357,7 @@ namespace Ultima
                             int b = c & 0x1F;
                             if (r == g && r == b)
                             {
-                                *pBuffer = (ushort)Colors[(c >> 10) & 0x1F];
+                                *pBuffer = Colors[(c >> 10) & 0x1F];
                             }
                         }
                         ++pBuffer;
@@ -374,7 +375,7 @@ namespace Ultima
                     {
                         if (*pBuffer != 0)
                         {
-                            *pBuffer = (ushort)Colors[(*pBuffer >> 10) & 0x1F];
+                            *pBuffer = Colors[(*pBuffer >> 10) & 0x1F];
                         }
 
                         ++pBuffer;
@@ -393,12 +394,12 @@ namespace Ultima
             using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
                 tex.WriteLine(Name);
-                tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString());
-                tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString());
+                tex.WriteLine(TableStart.ToString());
+                tex.WriteLine(TableEnd.ToString());
 
                 foreach (var colorValue in Colors)
                 {
-                    tex.WriteLine(((short)(colorValue ^ 0x8000)).ToString());
+                    tex.WriteLine(colorValue.ToString());
                 }
             }
         }
@@ -430,13 +431,13 @@ namespace Ultima
                                 Name = line;
                                 break;
                             case -2:
-                                TableStart = (short)(ushort.Parse(line) | 0x8000);
+                                TableStart = ushort.Parse(line);
                                 break;
                             case -1:
-                                TableEnd = (short)(ushort.Parse(line) | 0x8000);
+                                TableEnd = ushort.Parse(line);
                                 break;
                             default:
-                                Colors[i] = (short)(ushort.Parse(line) | 0x8000);
+                                Colors[i] = ushort.Parse(line);
                                 break;
                         }
                         ++i;

@@ -16,7 +16,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using UoFiddler.Controls.Classes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UoFiddler.Plugin.MassImport.Forms
 {
@@ -567,13 +566,14 @@ namespace UoFiddler.Plugin.MassImport.Forms
             else
             {
                 Ultima.Hues.List[Index].Name = "";
+
                 for (int i = 0; i < Ultima.Hues.List[Index].Colors.Length; ++i)
                 {
-                    Ultima.Hues.List[Index].Colors[i] = -32767;
+                    Ultima.Hues.List[Index].Colors[i] = 0;
                 }
 
-                Ultima.Hues.List[Index].TableStart = -32768;
-                Ultima.Hues.List[Index].TableEnd = -32768;
+                Ultima.Hues.List[Index].TableStart = 0;
+                Ultima.Hues.List[Index].TableEnd = 0;
             }
 
             if (!direct)

@@ -12,24 +12,24 @@ namespace Ultima
             Initialize();
         }
 
-        public static short[] Colors { get; private set; }
+        public static ushort[] Colors { get; private set; }
 
-        public static short GetItemColor(int index)
+        public static ushort GetItemColor(int index)
         {
-            return index + 0x4000 < Colors.Length ? Colors[index + 0x4000] : (short)0;
+            return index + 0x4000 < Colors.Length ? Colors[index + 0x4000] : (ushort)0;
         }
 
-        public static short GetLandColor(int index)
+        public static ushort GetLandColor(int index)
         {
-            return index < Colors.Length ? Colors[index] : (short)0;
+            return index < Colors.Length ? Colors[index] : (ushort)0;
         }
 
-        public static void SetItemColor(int index, short value)
+        public static void SetItemColor(int index, ushort value)
         {
             Colors[index + 0x4000] = value;
         }
 
-        public static void SetLandColor(int index, short value)
+        public static void SetLandColor(int index, ushort value)
         {
             Colors[index] = value;
         }
@@ -41,7 +41,7 @@ namespace Ultima
             {
                 using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    Colors = new short[fs.Length / 2];
+                    Colors = new ushort[fs.Length / 2];
                     GCHandle gc = GCHandle.Alloc(Colors, GCHandleType.Pinned);
                     var buffer = new byte[(int)fs.Length];
                     fs.Read(buffer, 0, (int)fs.Length);
@@ -51,7 +51,7 @@ namespace Ultima
             }
             else
             {
-                Colors = new short[0x8000];
+                Colors = new ushort[0x8000];
             }
         }
 
@@ -107,7 +107,7 @@ namespace Ultima
                     ++count;
                 }
 
-                Colors = new short[count];
+                Colors = new ushort[count];
             }
 
             using (var sr = new StreamReader(fileName))
@@ -135,7 +135,7 @@ namespace Ultima
 
                         int id = ConvertStringToInt(split[0]);
                         int color = ConvertStringToInt(split[1]);
-                        Colors[id] = (short)color;
+                        Colors[id] = (ushort)color;
                     }
                     catch
                     {

@@ -32,7 +32,7 @@ namespace UoFiddler.Controls.UserControls
         }
 
         private int _selectedIndex = -1;
-        private short _currentColor = -1;
+        private ushort _currentColor;
         private static RadarColorControl _refMarker;
         private bool _updating;
 
@@ -40,7 +40,7 @@ namespace UoFiddler.Controls.UserControls
 
         [Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public short CurrentColor
+        public ushort CurrentColor
         {
             get => _currentColor;
             set
@@ -312,7 +312,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (!_updating)
             {
-                CurrentColor = (short)numericUpDownShortCol.Value;
+                CurrentColor = (ushort)numericUpDownShortCol.Value;
             }
         }
 
@@ -362,9 +362,9 @@ namespace UoFiddler.Controls.UserControls
                         {
                             if (cur[x] != 0)
                             {
-                                meanr += Hues.HueToColorR((short)cur[x]);
-                                meang += Hues.HueToColorG((short)cur[x]);
-                                meanb += Hues.HueToColorB((short)cur[x]);
+                                meanr += Hues.HueToColorR(cur[x]);
+                                meang += Hues.HueToColorG(cur[x]);
+                                meanb += Hues.HueToColorB(cur[x]);
                                 ++count;
                             }
                         }
@@ -519,7 +519,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    short currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                    var currentColor = Hues.ColorToHue(AverageColorFrom(image));
                     RadarCol.SetItemColor(i, currentColor);
                     Options.ChangedUltimaClass["RadarCol"] = true;
                 }
@@ -547,7 +547,8 @@ namespace UoFiddler.Controls.UserControls
                     {
                         continue;
                     }
-                    short currentColor = Hues.ColorToHue(AverageColorFrom(image));
+
+                    var currentColor = Hues.ColorToHue(AverageColorFrom(image));
                     RadarCol.SetLandColor(i, currentColor);
                     Options.ChangedUltimaClass["RadarCol"] = true;
                 }
@@ -581,9 +582,9 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    meanR += Hues.HueToColorR((short)cur[x]);
-                    meanG += Hues.HueToColorG((short)cur[x]);
-                    meanB += Hues.HueToColorB((short)cur[x]);
+                    meanR += Hues.HueToColorR(cur[x]);
+                    meanG += Hues.HueToColorG(cur[x]);
+                    meanB += Hues.HueToColorB(cur[x]);
                     ++count;
                 }
             }

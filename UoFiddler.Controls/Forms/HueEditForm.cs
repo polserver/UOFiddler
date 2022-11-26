@@ -20,7 +20,7 @@ namespace UoFiddler.Controls.Forms
     public partial class HueEditForm : Form
     {
         private readonly Hue _hue;
-        private readonly short[] _colors;
+        private readonly ushort[] _colors;
         private int _selected;
         private int _secondSel;
         private Bitmap _preview;
@@ -58,7 +58,7 @@ namespace UoFiddler.Controls.Forms
             Text = $"HueEdit {index} / 0x{index:X}";
 
             _hue = Hues.GetHue(index);
-            _colors = new short[32];
+            _colors = new ushort[32];
             _hue.Colors.CopyTo(_colors, 0);
             textBoxName.Text = _hue.Name;
 
@@ -138,8 +138,8 @@ namespace UoFiddler.Controls.Forms
         {
             _colors.CopyTo(_hue.Colors, 0);
             _hue.Name = textBoxName.Text;
-            _hue.TableStart = _colors[0];
-            _hue.TableEnd = _colors[_hue.Colors.Length - 1];
+            _hue.TableStart = (ushort)_colors[0];
+            _hue.TableEnd = (ushort)(_colors[_hue.Colors.Length - 1] + 1057);
             ControlEvents.FireHueChangeEvent();
             Options.ChangedUltimaClass["Hues"] = true;
         }
@@ -248,7 +248,7 @@ namespace UoFiddler.Controls.Forms
 
             while (start < end)
             {
-                short temp = _colors[start];
+                var temp = _colors[start];
                 _colors[start] = _colors[end];
                 _colors[end] = temp;
                 ++start;

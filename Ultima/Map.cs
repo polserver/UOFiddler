@@ -149,11 +149,11 @@ namespace Ultima
         private bool _isCachedNoPatch;
         private bool _isCachedNoStaticsNoPatch;
 
-        private short[][][] _cache;
-        private short[][][] _cacheNoStatics;
-        private short[][][] _cacheNoPatch;
-        private short[][][] _cacheNoStaticsNoPatch;
-        private short[] _black;
+        private ushort[][][] _cache;
+        private ushort[][][] _cacheNoStatics;
+        private ushort[][][] _cacheNoPatch;
+        private ushort[][][] _cacheNoStaticsNoPatch;
+        private ushort[] _black;
 
         public bool IsCached(bool statics)
         {
@@ -173,13 +173,13 @@ namespace Ultima
             {
                 if (_black == null)
                 {
-                    _black = new short[64];
+                    _black = new ushort[64];
                 }
 
                 return;
             }
 
-            short[][][] cache;
+            ushort[][][] cache;
             if (UseDiff)
             {
                 if (statics)
@@ -213,29 +213,29 @@ namespace Ultima
                 {
                     if (statics)
                     {
-                        _cache = cache = new short[_tiles.BlockHeight][][];
+                        _cache = cache = new ushort[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        _cacheNoStatics = cache = new short[_tiles.BlockHeight][][];
+                        _cacheNoStatics = cache = new ushort[_tiles.BlockHeight][][];
                     }
                 }
                 else
                 {
                     if (statics)
                     {
-                        _cacheNoPatch = cache = new short[_tiles.BlockHeight][][];
+                        _cacheNoPatch = cache = new ushort[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        _cacheNoStaticsNoPatch = cache = new short[_tiles.BlockHeight][][];
+                        _cacheNoStaticsNoPatch = cache = new ushort[_tiles.BlockHeight][][];
                     }
                 }
             }
 
             if (cache[y] == null)
             {
-                cache[y] = new short[_tiles.BlockWidth][];
+                cache[y] = new ushort[_tiles.BlockWidth][];
             }
 
             if (cache[y][x] == null)
@@ -246,16 +246,16 @@ namespace Ultima
             _tiles.CloseStreams();
         }
 
-        private short[] GetRenderedBlock(int x, int y, bool statics)
+        private ushort[] GetRenderedBlock(int x, int y, bool statics)
         {
             TileMatrix matrix = Tiles;
 
             if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
             {
-                return _black ?? (_black = new short[64]);
+                return _black ?? (_black = new ushort[64]);
             }
 
-            short[][][] cache;
+            ushort[][][] cache;
             if (UseDiff)
             {
                 cache = (statics ? _cache : _cacheNoStatics);
@@ -271,32 +271,32 @@ namespace Ultima
                 {
                     if (statics)
                     {
-                        _cache = cache = new short[_tiles.BlockHeight][][];
+                        _cache = cache = new ushort[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        _cacheNoStatics = cache = new short[_tiles.BlockHeight][][];
+                        _cacheNoStatics = cache = new ushort[_tiles.BlockHeight][][];
                     }
                 }
                 else
                 {
                     if (statics)
                     {
-                        _cacheNoPatch = cache = new short[_tiles.BlockHeight][][];
+                        _cacheNoPatch = cache = new ushort[_tiles.BlockHeight][][];
                     }
                     else
                     {
-                        _cacheNoStaticsNoPatch = cache = new short[_tiles.BlockHeight][][];
+                        _cacheNoStaticsNoPatch = cache = new ushort[_tiles.BlockHeight][][];
                     }
                 }
             }
 
             if (cache[y] == null)
             {
-                cache[y] = new short[_tiles.BlockWidth][];
+                cache[y] = new ushort[_tiles.BlockWidth][];
             }
 
-            short[] data = cache[y][x];
+            ushort[] data = cache[y][x];
 
             if (data == null)
             {
@@ -306,13 +306,13 @@ namespace Ultima
             return data;
         }
 
-        private unsafe short[] RenderBlock(int x, int y, bool drawStatics, bool diff)
+        private unsafe ushort[] RenderBlock(int x, int y, bool drawStatics, bool diff)
         {
-            var data = new short[64];
+            var data = new ushort[64];
 
             Tile[] tiles = _tiles.GetLandBlock(x, y, diff);
 
-            fixed (short* pColors = RadarCol.Colors)
+            fixed (ushort* pColors = RadarCol.Colors)
             {
                 fixed (int* pHeight = TileData.HeightTable)
                 {
@@ -320,9 +320,9 @@ namespace Ultima
                     {
                         Tile* pTiles = ptTiles;
 
-                        fixed (short* pData = data)
+                        fixed (ushort* pData = data)
                         {
-                            short* pvData = pData;
+                            ushort* pvData = pData;
 
                             if (drawStatics)
                             {
@@ -423,8 +423,7 @@ namespace Ultima
                                         }
                                         else
                                         {
-                                            *pvData++ = Hues.GetHue(highHue - 1)
-                                                .Colors[(pColors[highId + 0x4000] >> 10) & 0x1F];
+                                            *pvData++ = Hues.GetHue(highHue - 1).Colors[(pColors[highId + 0x4000] >> 10) & 0x1F];
                                         }
 
                                         ++pTiles;
@@ -492,9 +491,9 @@ namespace Ultima
 
                 for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
                 {
-                    short[] data = GetRenderedBlock(bx, by, statics);
+                    ushort[] data = GetRenderedBlock(bx, by, statics);
 
-                    fixed (short* pData = data)
+                    fixed (ushort* pData = data)
                     {
                         var pvData = (int*)pData;
 

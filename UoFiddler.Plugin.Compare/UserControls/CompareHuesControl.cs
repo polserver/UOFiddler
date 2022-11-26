@@ -328,7 +328,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             sec.Colors.CopyTo(org.Colors, 0);
             org.Name = sec.Name;
             org.TableStart = org.Colors[0];
-            org.TableEnd = org.Colors[org.Colors.Length - 1];
+            org.TableEnd = (ushort)(org.Colors[org.Colors.Length - 1] + 1057);
             _compare[_selected] = true;
             PaintBox1();
             PaintBox2();

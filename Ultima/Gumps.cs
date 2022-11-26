@@ -222,7 +222,7 @@ namespace Ultima
 
             stream.Read(streamBuffer, 0, length);
 
-            fixed (short* psHueColors = hue.Colors)
+            fixed (ushort* psHueColors = hue.Colors)
             {
                 fixed (byte* pbStream = streamBuffer)
                 {
@@ -230,7 +230,7 @@ namespace Ultima
                     {
                         fixed (byte* pbColorTable = colorTable)
                         {
-                            var pHueColors = (ushort*)psHueColors;
+                            var pHueColors = psHueColors;
                             ushort* pHueColorsEnd = pHueColors + 32;
 
                             var pColorTable = (ushort*)pbColorTable;
