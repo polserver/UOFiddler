@@ -16,6 +16,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Plugin.MassImport.Imports;
 
 namespace UoFiddler.Plugin.MassImport.Forms
 {
@@ -24,6 +25,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
         public MassImportForm()
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
             _importList = new List<ImportEntry>();
         }
@@ -38,7 +40,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
             XmlComment comment = dom.CreateComment(
                 Environment.NewLine + "MassImport Control XML" + Environment.NewLine +
-                "Supported Nodes: item/landtile/texture/gump/tiledataitem/tiledataland/hue" + Environment.NewLine +
+                "Supported Nodes: item/landtile/texture/gump/tiledataitem/tiledataland/hue/multi" + Environment.NewLine +
                 "file=relative or absolute" + Environment.NewLine +
                 "remove=bool" + Environment.NewLine +
                 "Examples:" + Environment.NewLine +
@@ -47,6 +49,14 @@ namespace UoFiddler.Plugin.MassImport.Forms
                 @"<landtile index='195' file='C:\import\test.bmp' remove='False' />-> Adds/Replace LandTileArt from c:\import\text.bmp to 195" +
                 Environment.NewLine +
                 "<gump index='100' file='' remove='True' /> -> Removes gump with index 100" + Environment.NewLine +
+                "<multi index='100' file='multi.txt' remove='False' /> -> Adds/Replace multi information from multi.txt for index 100" +
+                Environment.NewLine +
+                "Formats are inferred from file extensions." +
+                Environment.NewLine +
+                "TXT -> .txt, CSV (punt's multi tool) -> .csv, WSC -> .wsc, UOA (text) -> .uoa, UOA (binary) .uoab" +
+                Environment.NewLine +
+                "There is only minimal validation available so make sure your multi files are ok :-)" +
+                Environment.NewLine +
                 "<tiledataitem index='100' file='test.csv' remove='False' /> -> Reads TileData information from test.csv for index 100" +
                 Environment.NewLine +
                 "Note: TileData.csv can be one for all (it searches for the right entry)"
@@ -98,6 +108,12 @@ namespace UoFiddler.Plugin.MassImport.Forms
             sr.AppendChild(elem);
 
             elem = dom.CreateElement("hue");
+            elem.SetAttribute("index", "0");
+            elem.SetAttribute("file", "");
+            elem.SetAttribute("remove", "False");
+            sr.AppendChild(elem);
+
+            elem = dom.CreateElement("multi");
             elem.SetAttribute("index", "0");
             elem.SetAttribute("file", "");
             elem.SetAttribute("remove", "False");
@@ -186,6 +202,9 @@ namespace UoFiddler.Plugin.MassImport.Forms
                         break;
                     case "hue":
                         entry = new ImportEntryHue();
+                        break;
+                    case "multi":
+                        entry = new ImportEntryMulti();
                         break;
                     default:
                         entry = new ImportEntryInvalid();
@@ -287,435 +306,50 @@ namespace UoFiddler.Plugin.MassImport.Forms
                 entry.Import(checkBoxDirectSave.Checked, ref changedUltimaClass);
             }
 
-            OutputBox.AppendText("Done" + Environment.NewLine);
+            OutputBox.AppendText($"Done{Environment.NewLine}");
 
             if (checkBoxDirectSave.Checked)
             {
                 if (changedUltimaClass["Art"])
                 {
-                    OutputBox.AppendText("Saving Items/LandTiles.." + Environment.NewLine);
+                    OutputBox.AppendText($"Saving Items/LandTiles..{Environment.NewLine}");
                     Ultima.Art.Save(Options.OutputPath);
                 }
 
                 if (changedUltimaClass["Texture"])
                 {
-                    OutputBox.AppendText("Saving Textures.." + Environment.NewLine);
+                    OutputBox.AppendText($"Saving Textures..{Environment.NewLine}");
                     Ultima.Textures.Save(Options.OutputPath);
                 }
 
                 if (changedUltimaClass["Gumps"])
                 {
-                    OutputBox.AppendText("Saving Gumps.." + Environment.NewLine);
+                    OutputBox.AppendText($"Saving Gumps..{Environment.NewLine}");
                     Ultima.Gumps.Save(Options.OutputPath);
                 }
 
                 if (changedUltimaClass["TileData"])
                 {
-                    OutputBox.AppendText("Saving TileData.." + Environment.NewLine);
+                    OutputBox.AppendText($"Saving TileData..{Environment.NewLine}");
                     Ultima.TileData.SaveTileData(Path.Combine(Options.OutputPath, "tiledata.mul"));
                 }
 
                 if (changedUltimaClass["Hues"])
                 {
-                    OutputBox.AppendText("Saving Hues.." + Environment.NewLine);
+                    OutputBox.AppendText($"Saving Hues..{Environment.NewLine}");
                     Ultima.Hues.Save(Options.OutputPath);
                 }
+
+                if (changedUltimaClass["Multis"])
+                {
+                    OutputBox.AppendText($"Saving Multis..{Environment.NewLine}");
+                    Ultima.Multis.Save(Options.OutputPath);
+                }
+
+                OutputBox.AppendText($"Done{Environment.NewLine}");
             }
 
             Cursor.Current = Cursors.Default;
-        }
-    }
-
-    public class ImportEntryItem : ImportEntry
-    {
-        public override int MaxIndex => Ultima.Art.GetMaxItemID();
-
-        public override string Name => "Item";
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            if (!Remove)
-            {
-                using (var bmpTemp = new Bitmap(File))
-                {
-                    Bitmap bitmap = new Bitmap(bmpTemp);
-
-                    if (File.Contains(".bmp"))
-                    {
-                        bitmap = Utils.ConvertBmp(bitmap);
-                    }
-
-                    Ultima.Art.ReplaceStatic(Index, bitmap);
-                }
-            }
-            else
-            {
-                Ultima.Art.RemoveStatic(Index);
-            }
-
-            if (!direct)
-            {
-                ControlEvents.FireItemChangeEvent(this, Index);
-                Options.ChangedUltimaClass["Art"] = true;
-            }
-
-            changedClasses["Art"] = true;
-        }
-    }
-
-    public class ImportEntryLandTile : ImportEntry
-    {
-        public override string Name => "LandTile";
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            if (!Remove)
-            {
-                using (var bmpTemp = new Bitmap(File))
-                {
-                    Bitmap bitmap = new Bitmap(bmpTemp);
-
-                    if (File.Contains(".bmp"))
-                    {
-                        bitmap = Utils.ConvertBmp(bitmap);
-                    }
-
-                    Ultima.Art.ReplaceLand(Index, bitmap);
-                }
-            }
-            else
-            {
-                Ultima.Art.RemoveLand(Index);
-            }
-
-            if (!direct)
-            {
-                ControlEvents.FireLandTileChangeEvent(this, Index);
-                Options.ChangedUltimaClass["Art"] = true;
-            }
-
-            changedClasses["Art"] = true;
-        }
-    }
-
-    public class ImportEntryGump : ImportEntry
-    {
-        public override int MaxIndex => 0xFFFF;
-
-        public override string Name => "Gump";
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            if (!Remove)
-            {
-                using (var bmpTemp = new Bitmap(File))
-                {
-                    Bitmap bitmap = new Bitmap(bmpTemp);
-
-                    if (File.Contains(".bmp"))
-                    {
-                        bitmap = Utils.ConvertBmp(bitmap);
-                    }
-
-                    Ultima.Gumps.ReplaceGump(Index, bitmap);
-                }
-            }
-            else
-            {
-                Ultima.Gumps.RemoveGump(Index);
-            }
-
-            if (!direct)
-            {
-                ControlEvents.FireGumpChangeEvent(this, Index);
-                Options.ChangedUltimaClass["Gumps"] = true;
-            }
-
-            changedClasses["Gumps"] = true;
-        }
-    }
-
-    public class ImportEntryTexture : ImportEntry
-    {
-        public override int MaxIndex => Ultima.Textures.GetIdxLength();
-
-        public override string Name => "Texture";
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            if (!Remove)
-            {
-                using (var bmpTemp = new Bitmap(File))
-                {
-                    Bitmap bitmap = new Bitmap(bmpTemp);
-
-                    if (File.Contains(".bmp"))
-                    {
-                        bitmap = Utils.ConvertBmp(bitmap);
-                    }
-
-                    Ultima.Textures.Replace(Index, bitmap);
-                }
-            }
-            else
-            {
-                Ultima.Textures.Remove(Index);
-            }
-
-            if (!direct)
-            {
-                ControlEvents.FireTextureChangeEvent(this, Index);
-                Options.ChangedUltimaClass["Texture"] = true;
-            }
-
-            changedClasses["Texture"] = true;
-        }
-    }
-
-    public class ImportEntryTileDataItem : ImportEntry
-    {
-        private string[] _tiledata;
-
-        public override int MaxIndex => Ultima.Art.GetMaxItemID();
-
-        public override string Name => "TileDataItem";
-
-        protected override void TestFile(ref string message)
-        {
-            if (!File.Contains(".csv"))
-            {
-                message += " Invalid File format";
-                Valid = false;
-            }
-            else
-            {
-                Valid = GetTileDataInfo(File, ref message, ref _tiledata);
-            }
-        }
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            Ultima.TileData.ItemTable[Index].ReadData(_tiledata);
-            if (!direct)
-            {
-                Options.ChangedUltimaClass["TileData"] = true;
-                ControlEvents.FireTileDataChangeEvent(this, Index + 0x4000);
-            }
-
-            changedClasses["TileData"] = true;
-        }
-    }
-
-    public class ImportEntryTileDataLand : ImportEntry
-    {
-        private string[] _tiledata;
-
-        public override string Name => "TileDataLand";
-
-        protected override void TestFile(ref string message)
-        {
-            if (!File.Contains(".csv"))
-            {
-                message += " Invalid file format";
-                Valid = false;
-            }
-            else
-            {
-                Valid = GetTileDataInfo(File, ref message, ref _tiledata);
-            }
-        }
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            Ultima.TileData.LandTable[Index].ReadData(_tiledata);
-            if (!direct)
-            {
-                Options.ChangedUltimaClass["TileData"] = true;
-                ControlEvents.FireTileDataChangeEvent(this, Index);
-            }
-
-            changedClasses["TileData"] = true;
-        }
-    }
-
-    public class ImportEntryHue : ImportEntry
-    {
-        public override int MaxIndex => 3000;
-
-        public override string Name => "Hue";
-
-        protected override void TestFile(ref string message)
-        {
-            if (!File.Contains(".txt"))
-            {
-                message += " Invalid file format";
-                Valid = false;
-            }
-            else
-            {
-                Valid = true;
-            }
-        }
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-            if (!Remove)
-            {
-                Ultima.Hues.List[Index].Import(File);
-            }
-            else
-            {
-                Ultima.Hues.List[Index].Name = "";
-
-                for (int i = 0; i < Ultima.Hues.List[Index].Colors.Length; ++i)
-                {
-                    Ultima.Hues.List[Index].Colors[i] = 0;
-                }
-
-                Ultima.Hues.List[Index].TableStart = 0;
-                Ultima.Hues.List[Index].TableEnd = 0;
-            }
-
-            if (!direct)
-            {
-                ControlEvents.FireHueChangeEvent();
-                Options.ChangedUltimaClass["Hues"] = true;
-            }
-
-            changedClasses["Hues"] = true;
-        }
-    }
-
-    public class ImportEntryInvalid : ImportEntry
-    {
-        public override string Name => "Invalid";
-
-        protected override void TestFile(ref string message)
-        {
-            Valid = false;
-        }
-
-        public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
-        {
-        }
-    }
-
-    public abstract class ImportEntry
-    {
-        public virtual int MaxIndex => 0x3FFF;
-
-        public abstract void Import(bool direct, ref Dictionary<string, bool> changedClasses);
-
-        public abstract string Name { get; }
-
-        public string File { get; set; }
-
-        public int Index { get; set; }
-
-        public bool Remove { get; set; }
-
-        public bool Valid { get; set; }
-
-        protected virtual void TestFile(ref string message)
-        {
-            if (File.Contains(".bmp") || File.Contains(".tiff"))
-            {
-                return;
-            }
-
-            message += " Invalid image format";
-            Valid = false;
-        }
-
-        public string Test()
-        {
-            string message = $"{Name}: ({Index})";
-            Valid = true;
-
-            if (Index < 0)
-            {
-                message += " Invalid Index ";
-                Valid = false;
-            }
-
-            if (Index > MaxIndex)
-            {
-                message += " Invalid Index ";
-                Valid = false;
-            }
-
-            if (!Remove)
-            {
-                if (!System.IO.File.Exists(File))
-                {
-                    message += $" File not found ({File}) ";
-                    Valid = false;
-                }
-                else
-                {
-                    TestFile(ref message);
-                }
-            }
-
-            if (!Valid)
-            {
-                return message;
-            }
-
-            message += !Remove ? $" Add/Replace ({File})" : " Remove";
-
-            return message;
-        }
-
-        protected bool GetTileDataInfo(string fileName, ref string message, ref string[] tiledata)
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader(fileName))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
-                        {
-                            continue;
-                        }
-
-                        if (line.StartsWith("ID;"))
-                        {
-                            continue;
-                        }
-
-                        string[] split = line.Split(';');
-                        if (split.Length < 36)
-                        {
-                            continue;
-                        }
-
-                        if (!Utils.ConvertStringToInt(split[0], out int id))
-                        {
-                            continue;
-                        }
-
-                        if (Index != id)
-                        {
-                            continue;
-                        }
-
-                        tiledata = split;
-
-                        return true;
-                    }
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            message += " No Tiledata information found";
-
-            return false;
         }
     }
 }
