@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.22
+    <value>Version 4.9.23
+- Import multi dialog will now run as modal.
+- Added import/export for multi as csv. To be used with punt's multi utilities.
+- Added import multi to "Mass import" plug-in
+- Fixed hue format saving to match original format better.
+
+Version 4.9.22
 - Fixed focusing of an item after search on Items, Land tiles and Textures tabs.
 
 Version 4.9.21
