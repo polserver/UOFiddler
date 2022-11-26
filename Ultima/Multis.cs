@@ -1232,6 +1232,24 @@ namespace Ultima
             }
         }
 
+        public void ExportToUox3File(string fileName)
+        {
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            {
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    tex.WriteLine($"[HOUSE ITEM {i}]");
+                    tex.WriteLine("{");
+                    tex.WriteLine($"ITEM=0x{SortedTiles[i].ItemId:X4}");
+                    tex.WriteLine($"X={SortedTiles[i].OffsetX}");
+                    tex.WriteLine($"Y={SortedTiles[i].OffsetY}");
+                    tex.WriteLine($"Z={SortedTiles[i].OffsetZ}");
+                    tex.WriteLine("}");
+                    tex.WriteLine(string.Empty);
+                }
+            }
+        }
+
         public void ExportToUOAFile(string fileName)
         {
             using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))

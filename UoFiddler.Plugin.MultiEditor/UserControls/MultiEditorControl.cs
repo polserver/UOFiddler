@@ -203,6 +203,19 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             sdkList.ExportToCsvFile(fileName);
         }
 
+        private void BTN_Export_UOX3_Click(object sender, EventArgs e)
+        {
+            if (_compList == null)
+            {
+                return;
+            }
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"{textBox_Export.Text}.uox3");
+            MultiComponentList sdkList = _compList.ConvertToSdk();
+            sdkList.ExportToUox3File(fileName);
+        }
+
         /// <summary>
         /// Virtual Floor clicked (check on click)
         /// </summary>

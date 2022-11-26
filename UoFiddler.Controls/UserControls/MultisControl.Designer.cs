@@ -50,6 +50,7 @@ namespace UoFiddler.Controls.UserControls
             this.toUOAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toWscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toUOX3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -66,6 +67,7 @@ namespace UoFiddler.Controls.UserControls
             this.toUOAFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toWSCFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toCSVFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toUOX3FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl3 = new System.Windows.Forms.TabControl();
@@ -172,7 +174,8 @@ namespace UoFiddler.Controls.UserControls
             this.toTextfileToolStripMenuItem,
             this.toUOAToolStripMenuItem,
             this.toWscToolStripMenuItem,
-            this.toCsvToolStripMenuItem});
+            this.toCsvToolStripMenuItem,
+            this.toUOX3ToolStripMenuItem});
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.exportToolStripMenuItem.Text = "Export..";
@@ -195,15 +198,22 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.toWscToolStripMenuItem.Name = "toWscToolStripMenuItem";
             this.toWscToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
-            this.toWscToolStripMenuItem.Text = "To Wsc";
+            this.toWscToolStripMenuItem.Text = "To WSC";
             this.toWscToolStripMenuItem.Click += new System.EventHandler(this.OnExportWscFile);
             // 
             // toCsvToolStripMenuItem
             // 
             this.toCsvToolStripMenuItem.Name = "toCsvToolStripMenuItem";
             this.toCsvToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
-            this.toCsvToolStripMenuItem.Text = "To Csv";
+            this.toCsvToolStripMenuItem.Text = "To CSV";
             this.toCsvToolStripMenuItem.Click += new System.EventHandler(this.OnExportCsvFile);
+            // 
+            // toUOX3ToolStripMenuItem
+            // 
+            this.toUOX3ToolStripMenuItem.Name = "toUOX3ToolStripMenuItem";
+            this.toUOX3ToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.toUOX3ToolStripMenuItem.Text = "To UOX3";
+            this.toUOX3ToolStripMenuItem.Click += new System.EventHandler(this.OnExportUox3File);
             // 
             // removeToolStripMenuItem
             // 
@@ -309,7 +319,8 @@ namespace UoFiddler.Controls.UserControls
             this.toTextFileToolStripMenuItem1,
             this.toUOAFileToolStripMenuItem,
             this.toWSCFileToolStripMenuItem,
-            this.toCSVFileToolStripMenuItem});
+            this.toCSVFileToolStripMenuItem,
+            this.toUOX3FileToolStripMenuItem});
             this.exportAllPartsToolStripMenuItem.Name = "exportAllPartsToolStripMenuItem";
             this.exportAllPartsToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.exportAllPartsToolStripMenuItem.Text = "Export All Parts";
@@ -317,30 +328,37 @@ namespace UoFiddler.Controls.UserControls
             // toTextFileToolStripMenuItem1
             // 
             this.toTextFileToolStripMenuItem1.Name = "toTextFileToolStripMenuItem1";
-            this.toTextFileToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toTextFileToolStripMenuItem1.Size = new System.Drawing.Size(140, 22);
             this.toTextFileToolStripMenuItem1.Text = "To Text File";
             this.toTextFileToolStripMenuItem1.Click += new System.EventHandler(this.OnClick_SaveAllText);
             // 
             // toUOAFileToolStripMenuItem
             // 
             this.toUOAFileToolStripMenuItem.Name = "toUOAFileToolStripMenuItem";
-            this.toUOAFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toUOAFileToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.toUOAFileToolStripMenuItem.Text = "To UOA File";
             this.toUOAFileToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllUOA);
             // 
             // toWSCFileToolStripMenuItem
             // 
             this.toWSCFileToolStripMenuItem.Name = "toWSCFileToolStripMenuItem";
-            this.toWSCFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toWSCFileToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.toWSCFileToolStripMenuItem.Text = "To WSC File";
             this.toWSCFileToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllWSC);
             // 
             // toCSVFileToolStripMenuItem
             // 
             this.toCSVFileToolStripMenuItem.Name = "toCSVFileToolStripMenuItem";
-            this.toCSVFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toCSVFileToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.toCSVFileToolStripMenuItem.Text = "To CSV File";
             this.toCSVFileToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllCSV);
+            // 
+            // toUOX3FileToolStripMenuItem
+            // 
+            this.toUOX3FileToolStripMenuItem.Name = "toUOX3FileToolStripMenuItem";
+            this.toUOX3FileToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.toUOX3FileToolStripMenuItem.Text = "To UOX3 File";
+            this.toUOX3FileToolStripMenuItem.Click += new System.EventHandler(this.OnClick_SaveAllUox3);
             // 
             // toolStripSeparator2
             // 
@@ -511,7 +529,7 @@ namespace UoFiddler.Controls.UserControls
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(420, 349);
+            this.tabPage6.Size = new System.Drawing.Size(420, 354);
             this.tabPage6.TabIndex = 1;
             this.tabPage6.Text = "Component List";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -522,7 +540,7 @@ namespace UoFiddler.Controls.UserControls
             this.MultiComponentBox.Location = new System.Drawing.Point(3, 3);
             this.MultiComponentBox.Name = "MultiComponentBox";
             this.MultiComponentBox.ReadOnly = true;
-            this.MultiComponentBox.Size = new System.Drawing.Size(414, 343);
+            this.MultiComponentBox.Size = new System.Drawing.Size(414, 348);
             this.MultiComponentBox.TabIndex = 0;
             this.MultiComponentBox.Text = "";
             // 
@@ -618,5 +636,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem UseTransparencyForPNGToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toCsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toCSVFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toUOX3FileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toUOX3ToolStripMenuItem;
     }
 }

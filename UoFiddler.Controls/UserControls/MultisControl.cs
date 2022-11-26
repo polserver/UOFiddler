@@ -782,6 +782,39 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void OnClick_SaveAllUox3(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select directory";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                {
+                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    if (index < 0)
+                    {
+                        continue;
+                    }
+
+                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    if (multi == MultiComponentList.Empty)
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.uox3");
+                    multi.ExportToUox3File(fileName);
+                }
+                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
+        }
+
         private void OnExportCsvFile(object sender, EventArgs e)
         {
             if (TreeViewMulti.SelectedNode == null)
@@ -800,6 +833,28 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"{id:D4}.csv");
             multi.ExportToCsvFile(fileName);
+            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
+        }
+
+        private void OnExportUox3File(object sender, EventArgs e)
+        {
+            if (TreeViewMulti.SelectedNode == null)
+            {
+                return;
+            }
+
+            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            if (multi == MultiComponentList.Empty)
+            {
+                return;
+            }
+
+            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
+
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Multi 0x{id:X4}.uox3");
+            multi.ExportToUox3File(fileName);
             MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
