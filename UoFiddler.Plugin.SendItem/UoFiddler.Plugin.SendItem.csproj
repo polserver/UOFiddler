@@ -5,7 +5,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>SendItem</AssemblyTitle>
 		<Product>SendItem</Product>
-		<Copyright>Copyright © 2020</Copyright>
+		<Copyright>Copyright © 2022</Copyright>
 		<AssemblyVersion>1.0.1.0</AssemblyVersion>
 		<FileVersion>1.0.1.0</FileVersion>
 	</PropertyGroup>
