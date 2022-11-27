@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.24
+    <value>Version 4.9.25
+- Fixed multi editor plugin import range (maximum multi id was lower than in multi tab). 
+- Minor cleanup.
+
+Version 4.9.24
 - Added UOX3 multi export. It's very basic version so expect some features to be missing.
 
 Version 4.9.23
