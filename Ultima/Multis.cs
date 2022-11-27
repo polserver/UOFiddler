@@ -21,6 +21,7 @@ namespace Ultima
             UOAB,
             WSC,
             CSV, // Punt's multi tool csv format
+            UOX3,
             MULTICACHE,
             UOADESIGN
         }

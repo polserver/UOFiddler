@@ -59,6 +59,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.treeViewMultiList = new System.Windows.Forms.TreeView();
             this.Save = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.BTN_Export_UOX3 = new System.Windows.Forms.Button();
             this.BTN_Export_CSV = new System.Windows.Forms.Button();
             this.BTN_Export_WSC = new System.Windows.Forms.Button();
             this.BTN_Export_UOA = new System.Windows.Forms.Button();
@@ -115,7 +116,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.toolStripLabelCoord = new System.Windows.Forms.ToolStripLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.FloatingPreviewPanel = new System.Windows.Forms.Panel();
-            this.BTN_Export_UOX3 = new System.Windows.Forms.Button();
             this.TC_MultiEditorToolbox.SuspendLayout();
             this.tileTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
@@ -352,7 +352,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.Save.Location = new System.Drawing.Point(4, 22);
             this.Save.Name = "Save";
             this.Save.Padding = new System.Windows.Forms.Padding(3);
-            this.Save.Size = new System.Drawing.Size(192, 221);
+            this.Save.Size = new System.Drawing.Size(192, 226);
             this.Save.TabIndex = 3;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;
@@ -372,6 +372,16 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Export";
+            // 
+            // BTN_Export_UOX3
+            // 
+            this.BTN_Export_UOX3.Location = new System.Drawing.Point(57, 75);
+            this.BTN_Export_UOX3.Name = "BTN_Export_UOX3";
+            this.BTN_Export_UOX3.Size = new System.Drawing.Size(64, 23);
+            this.BTN_Export_UOX3.TabIndex = 5;
+            this.BTN_Export_UOX3.Text = ".uox3";
+            this.BTN_Export_UOX3.UseVisualStyleBackColor = true;
+            this.BTN_Export_UOX3.Click += new System.EventHandler(this.BTN_Export_UOX3_Click);
             // 
             // BTN_Export_CSV
             // 
@@ -1010,16 +1020,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             this.FloatingPreviewPanel.Name = "FloatingPreviewPanel";
             this.FloatingPreviewPanel.Size = new System.Drawing.Size(200, 100);
             this.FloatingPreviewPanel.TabIndex = 4;
-            // 
-            // BTN_Export_UOX3
-            // 
-            this.BTN_Export_UOX3.Location = new System.Drawing.Point(57, 75);
-            this.BTN_Export_UOX3.Name = "BTN_Export_UOX3";
-            this.BTN_Export_UOX3.Size = new System.Drawing.Size(64, 23);
-            this.BTN_Export_UOX3.TabIndex = 5;
-            this.BTN_Export_UOX3.Text = ".uox3";
-            this.BTN_Export_UOX3.UseVisualStyleBackColor = true;
-            this.BTN_Export_UOX3.Click += new System.EventHandler(this.BTN_Export_UOX3_Click);
             // 
             // MultiEditorControl
             // 

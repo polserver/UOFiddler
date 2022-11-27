@@ -33,35 +33,38 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private readonly List<MultiTile> _overlayList = new List<MultiTile>();
         private bool _loaded;
         private bool _moving;
-        private readonly MultiTile _mDrawTile;
-        private MultiTile _mHoverTile;
-        private MultiTile _mSelectedTile;
+        private readonly MultiTile _drawTile;
+        private MultiTile _hoverTile;
+        private MultiTile _selectedTile;
 
         /// <summary>
         /// Current MouseLoc + Scrollbar values (for hover effect)
         /// </summary>
         private Point _mouseLoc;
-
         private Point _movingLoc;
+
         private int _pictureBoxDrawTilesCol;
         private int _pictureBoxDrawTilesRow;
-        //private bool _forceRefresh; // TODO: unused?
 
         public MultiEditorControl()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint,
-                true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             InitializeComponent();
+
             _mouseLoc = new Point();
             _movingLoc = new Point();
-            _mDrawTile = new MultiTile();
+
+            _drawTile = new MultiTile();
+
             Selectedpanel.Visible = false;
+
             FloatingPreviewPanel.Visible = false;
             FloatingPreviewPanel.Tag = -1;
+
             BTN_Select.Checked = true;
+
             pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
             pictureBoxMulti.ContextMenuStrip = null;
-            //_forceRefresh = true;
         }
 
         /// <summary>
@@ -74,11 +77,11 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         public MultiTile HoverTile
         {
-            get => _mHoverTile;
+            get => _hoverTile;
             set
             {
-                _mHoverTile = value;
-                toolTip1.SetToolTip(pictureBoxMulti, value != null ? $"ID: 0x{_mHoverTile.Id:X} Z: {_mHoverTile.Z}" : string.Empty);
+                _hoverTile = value;
+                toolTip1.SetToolTip(pictureBoxMulti, value != null ? $"ID: 0x{_hoverTile.Id:X} Z: {_hoverTile.Z}" : string.Empty);
             }
         }
 
@@ -87,10 +90,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         public MultiTile SelectedTile
         {
-            get => _mSelectedTile;
+            get => _selectedTile;
             private set
             {
-                _mSelectedTile = value;
+                _selectedTile = value;
                 if (value != null)
                 {
                     SelectedTileLabel.Text = $"ID: 0x{value.Id:X} Z: {value.Z}";
@@ -124,15 +127,20 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             int width = (int)numericUpDown_Size_Width.Value;
             int height = (int)numericUpDown_Size_Height.Value;
+
             _compList = new MultiEditorComponentList(width, height, this);
+
             UndoList_Clear();
+
             MaxHeightTrackBar.Minimum = _compList.ZMin;
             MaxHeightTrackBar.Maximum = _compList.ZMax;
             MaxHeightTrackBar.Value = _compList.ZMax;
+
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -147,73 +155,64 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
+        }
+
+        private void DoExport(Multis.ImportType type)
+        {
+            if (_compList == null)
+            {
+                return;
+            }
+
+            string path = Options.OutputPath;
+            
+            MultiComponentList sdkList = _compList.ConvertToSdk();
+
+            switch (type)
+            {
+                case Multis.ImportType.TXT:
+                    sdkList.ExportToTextFile(Path.Combine(path, $"{textBox_Export.Text}.txt"));
+                    break;
+                case Multis.ImportType.WSC:
+                    sdkList.ExportToWscFile(Path.Combine(path, $"{textBox_Export.Text}.wsc"));
+                    break;
+                case Multis.ImportType.UOA:
+                    sdkList.ExportToUOAFile(Path.Combine(path, $"{textBox_Export.Text}.uoa.txt"));
+                    break;
+                case Multis.ImportType.CSV:
+                    sdkList.ExportToCsvFile(Path.Combine(path, $"{textBox_Export.Text}.csv"));
+                    break;
+                case Multis.ImportType.UOX3:
+                    sdkList.ExportToUox3File(Path.Combine(path, $"{textBox_Export.Text}.uox3"));
+                    break;
+            }
         }
 
         private void BTN_Export_TXT_OnClick(object sender, EventArgs e)
         {
-            if (_compList == null)
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{textBox_Export.Text}.txt");
-            MultiComponentList sdkList = _compList.ConvertToSdk();
-            sdkList.ExportToTextFile(fileName);
+            DoExport(Multis.ImportType.TXT);
         }
 
         private void BTN_Export_UOA_OnClick(object sender, EventArgs e)
         {
-            if (_compList == null)
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{textBox_Export.Text}.uoa.txt");
-            MultiComponentList sdkList = _compList.ConvertToSdk();
-            sdkList.ExportToUOAFile(fileName);
+            DoExport(Multis.ImportType.UOA);
         }
 
         private void BTN_Export_WSC_OnClick(object sender, EventArgs e)
         {
-            if (_compList == null)
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{textBox_Export.Text}.wsc");
-            MultiComponentList sdkList = _compList.ConvertToSdk();
-            sdkList.ExportToWscFile(fileName);
+            DoExport(Multis.ImportType.WSC);
         }
 
         private void BTN_Export_CSV_OnClick(object sender, EventArgs e)
         {
-            if (_compList == null)
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{textBox_Export.Text}.csv");
-            MultiComponentList sdkList = _compList.ConvertToSdk();
-            sdkList.ExportToCsvFile(fileName);
+            DoExport(Multis.ImportType.CSV);
         }
 
         private void BTN_Export_UOX3_Click(object sender, EventArgs e)
         {
-            if (_compList == null)
-            {
-                return;
-            }
-
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"{textBox_Export.Text}.uox3");
-            MultiComponentList sdkList = _compList.ConvertToSdk();
-            sdkList.ExportToUox3File(fileName);
+            DoExport(Multis.ImportType.UOX3);
         }
 
         /// <summary>
@@ -222,8 +221,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void BTN_Floor_Clicked(object sender, EventArgs e)
         {
             DrawFloorZ = (int)numericUpDown_Floor.Value;
+
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -238,7 +238,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = true;
             BTN_Trans.Checked = false;
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -253,7 +253,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -269,14 +269,18 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             int width = (int)numericUpDown_Size_Width.Value;
             int height = (int)numericUpDown_Size_Height.Value;
+
             _compList.Resize(width, height);
+
             MaxHeightTrackBar.Minimum = _compList.ZMin;
             MaxHeightTrackBar.Maximum = _compList.ZMax;
             MaxHeightTrackBar.Value = _compList.ZMax;
+
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -285,10 +289,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void BTN_Save_Click(object sender, EventArgs e)
         {
-            if (_compList != null &&
-                Utils.ConvertStringToInt(textBox_SaveToID.Text, out int id, 0, 0x1FFF))
+            if (_compList != null && Utils.ConvertStringToInt(textBox_SaveToID.Text, out int id, 0, Multis.MaximumMultiIndex - 1))
             {
-                _compList.AddToSdkComponentList(id); //fires MultiChangeEvent
+                _compList.AddToSdkComponentList(id); // fires MultiChangeEvent
             }
         }
 
@@ -303,13 +306,14 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
         private void BTN_Toolbox_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox thisBox = (CheckBox)sender;
+
             switch (thisBox.Name)
             {
                 case "BTN_Select":
@@ -347,7 +351,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = true;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -359,7 +363,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = true;
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -368,10 +372,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void ConvertCoords(Point point, out int x, out int y, out int z)
         {
-            //first check if current Tile matches
+            // first check if current Tile matches
             if (HoverTile != null)
             {
-                //visible?
+                // visible?
                 if (!BTN_Floor.Checked || HoverTile.Z >= DrawFloorZ)
                 {
                     x = HoverTile.X;
@@ -381,11 +385,12 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 }
             }
 
-            //damn the hard way
+            // damn the hard way
             z = 0;
 
-            int cx = 0; //Get MouseCoords for (0/0)
+            int cx = 0; // Get MouseCoords for (0/0)
             int cy = 0;
+
             if (BTN_Floor.Checked)
             {
                 cy -= DrawFloorZ * 4;
@@ -402,10 +407,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             double my = point.Y - cy;
             double xx = mx;
             double yy = my;
-            my = (xx * _coordinateTransform) - (yy * _coordinateTransform); //Rotate 45° Coordinate system
+            my = (xx * _coordinateTransform) - (yy * _coordinateTransform); // Rotate 45° Coordinate system
             mx = (yy * _coordinateTransform) + (xx * _coordinateTransform);
-            mx /= _coordinateTransform * 44; //Math.Sqrt(2)*22==CoordinateTransform*44
-            my /= _coordinateTransform * 44; //CoordinateTransform=Math.Sqrt(2)/2
+            mx /= _coordinateTransform * 44; // Math.Sqrt(2)*22==CoordinateTransform*44
+            my /= _coordinateTransform * 44; // CoordinateTransform=Math.Sqrt(2)/2
             my *= -1;
             x = (int)mx;
             y = (int)my;
@@ -417,8 +422,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void MaxHeightTrackBarOnValueChanged(object sender, EventArgs e)
         {
             ScrollbarsSetValue();
+
             toolTip1.SetToolTip(MaxHeightTrackBar, MaxHeightTrackBar.Value.ToString());
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -433,14 +439,16 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             DrawFloorZ = (int)numericUpDown_Floor.Value;
+
             _compList.SetFloorZ(DrawFloorZ);
+
             if (!BTN_Floor.Checked)
             {
                 return;
             }
 
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -452,7 +460,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (_compList != null && SelectedTile != null && (int)numericUpDown_Selected_X.Value != SelectedTile.X)
             {
                 _compList.TileMove(SelectedTile, (int)numericUpDown_Selected_X.Value, SelectedTile.Y);
-                //_forceRefresh = true;
+
                 pictureBoxMulti.Invalidate();
             }
         }
@@ -465,7 +473,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (_compList != null && SelectedTile != null && (int)numericUpDown_Selected_Y.Value != SelectedTile.Y)
             {
                 _compList.TileMove(SelectedTile, SelectedTile.X, (int)numericUpDown_Selected_Y.Value);
-                //_forceRefresh = true;
+
                 pictureBoxMulti.Invalidate();
             }
         }
@@ -490,7 +498,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 MaxHeightTrackBar.Value = SelectedTile.Z;
             }
 
-            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -534,7 +541,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             // Let's create a root for import from Multi file and put these in there
             TreeNode multiNode = new TreeNode("Multi.mul");
-            for (int i = 0; i < 0x2000; ++i)
+            for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
             {
                 if (Multis.GetComponents(i) == MultiComponentList.Empty)
                 {
@@ -589,6 +596,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             treeViewMultiList.Nodes.Add(fileNode);
             treeViewMultiList.EndUpdate();
+
             if (!_loaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
@@ -601,35 +609,49 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void OnMultiChangeEvent(object sender, int id)
         {
             if (!_loaded)
+            {
                 return;
+            }
+
             if (sender.Equals(this))
+            {
                 return;
+            }
+
             bool done = false;
             bool remove = Multis.GetComponents(id) == MultiComponentList.Empty;
+
             for (int i = 0; i < treeViewMultiList.Nodes[0].Nodes.Count; ++i)
             {
                 if (id == (int)treeViewMultiList.Nodes[0].Nodes[i].Tag)
                 {
                     done = true;
+
                     if (remove)
-                        treeViewMultiList.Nodes[0].Nodes.RemoveAt(i);
-                    break;
-                }
-                else if (id < (int)treeViewMultiList.Nodes[0].Nodes[i].Tag)
-                {
-                    if (!remove)
                     {
-                        TreeNode node = new TreeNode(string.Format("{0,5} (0x{0:X})", id))
-                        {
-                            Tag = id,
-                            Name = id.ToString()
-                        };
-                        treeViewMultiList.Nodes[0].Nodes.Insert(i, node);
+                        treeViewMultiList.Nodes[0].Nodes.RemoveAt(i);
                     }
 
-                    done = true;
                     break;
                 }
+
+                if (id >= (int)treeViewMultiList.Nodes[0].Nodes[i].Tag)
+                {
+                    continue;
+                }
+
+                if (!remove)
+                {
+                    TreeNode node = new TreeNode(string.Format("{0,5} (0x{0:X})", id))
+                    {
+                        Tag = id,
+                        Name = id.ToString()
+                    };
+                    treeViewMultiList.Nodes[0].Nodes.Insert(i, node);
+                }
+
+                done = true;
+                break;
             }
 
             if (!remove && !done)
@@ -639,6 +661,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     Tag = id,
                     Name = id.ToString()
                 };
+
                 treeViewMultiList.Nodes[0].Nodes.Add(node);
             }
         }
@@ -651,11 +674,14 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             _mouseLoc = e.Location;
             _mouseLoc.X += hScrollBar.Value;
             _mouseLoc.Y += vScrollBar.Value;
+
             if (_moving)
             {
                 int deltaX = -1 * (e.X - _movingLoc.X);
                 int deltaY = -1 * (e.Y - _movingLoc.Y);
+
                 _movingLoc = e.Location;
+
                 hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
                 vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
             }
@@ -668,12 +694,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (e.Button == MouseButtons.Right)
             {
                 _moving = true;
+
                 _movingLoc = e.Location;
+
                 Cursor = Cursors.Hand;
             }
             else
             {
                 _moving = false;
+
                 Cursor = Cursors.Default;
             }
         }
@@ -684,6 +713,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxMultiOnMouseUp(object sender, MouseEventArgs e)
         {
             _moving = false;
+
             Cursor = Cursors.Default;
 
             if (e.Button == MouseButtons.Right)
@@ -699,16 +729,17 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (e.Button == MouseButtons.Middle)
             {
                 _overlayList.Clear();
-                if (_mHoverTile != null)
+
+                if (_hoverTile != null)
                 {
-                    foreach (MultiTile tile in _compList.GetMultiTileLitAtCoordinate(_mHoverTile.X, _mHoverTile.Y))
+                    foreach (MultiTile tile in _compList.GetMultiTileLitAtCoordinate(_hoverTile.X, _hoverTile.Y))
                     {
                         if (tile.IsVirtualFloor)
                         {
                             continue;
                         }
 
-                        if (tile.Z == _mHoverTile.Z)
+                        if (tile.Z == _hoverTile.Z)
                         {
                             _overlayList.Add(tile);
                         }
@@ -717,7 +748,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (BTN_Select.Checked)
             {
-                SelectedTile = _mHoverTile;
+                SelectedTile = _hoverTile;
             }
             else if (BTN_Draw.Checked)
             {
@@ -725,7 +756,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
                 if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
                 {
-                    _compList.TileAdd(x, y, z, _mDrawTile.Id);
+                    _compList.TileAdd(x, y, z, _drawTile.Id);
                     MaxHeightTrackBar.Minimum = _compList.ZMin;
                     MaxHeightTrackBar.Maximum = _compList.ZMax;
                     if (MaxHeightTrackBar.Value < z)
@@ -736,14 +767,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (BTN_Remove.Checked)
             {
-                if (_mHoverTile != null)
+                if (_hoverTile != null)
                 {
-                    _compList.TileRemove(_mHoverTile);
+                    _compList.TileRemove(_hoverTile);
                 }
                 else
                 {
                     int overX = 0;
                     const int overY = 0;
+
                     foreach (MultiTile tile in _overlayList)
                     {
                         Bitmap bmp = tile.GetBitmap();
@@ -755,7 +787,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                         if (_mouseLoc.X > overX && _mouseLoc.X < overX + bmp.Width && _mouseLoc.Y > overY &&
                             _mouseLoc.Y < overY + bmp.Height)
                         {
-                            //Check for transparent part
+                            // Check for transparent part
                             Color p = bmp.GetPixel(_mouseLoc.X - overX, _mouseLoc.Y - overY);
                             if (!(p.R == 0 && p.G == 0 && p.B == 0))
                             {
@@ -774,32 +806,32 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (BTN_Z.Checked)
             {
-                if (_mHoverTile != null)
+                if (_hoverTile != null)
                 {
                     int z = (int)numericUpDown_Z.Value;
-                    _compList.TileZMod(_mHoverTile, z);
+                    _compList.TileZMod(_hoverTile, z);
                     MaxHeightTrackBar.Minimum = _compList.ZMin;
                     MaxHeightTrackBar.Maximum = _compList.ZMax;
-                    if (MaxHeightTrackBar.Value < _mHoverTile.Z)
+                    if (MaxHeightTrackBar.Value < _hoverTile.Z)
                     {
-                        MaxHeightTrackBar.Value = _mHoverTile.Z;
+                        MaxHeightTrackBar.Value = _hoverTile.Z;
                     }
                 }
             }
             else if (BTN_Pipette.Checked)
             {
-                if (_mHoverTile != null)
+                if (_hoverTile != null)
                 {
-                    _mDrawTile.Set(_mHoverTile.Id, 0);
+                    _drawTile.Set(_hoverTile.Id, 0);
                     PictureBoxDrawTiles_Select();
-                    DrawTileLabel.Text = $"Draw ID: 0x{_mHoverTile.Id:X}";
+                    DrawTileLabel.Text = $"Draw ID: 0x{_hoverTile.Id:X}";
                 }
             }
             else if (BTN_Trans.Checked)
             {
-                if (_mHoverTile != null)
+                if (_hoverTile != null)
                 {
-                    _mHoverTile.Transparent = !_mHoverTile.Transparent;
+                    _hoverTile.Transparent = !_hoverTile.Transparent;
                 }
             }
 
@@ -812,7 +844,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 _overlayList.Clear();
             }
 
-            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -830,14 +861,13 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxMultiOnPaint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
+
             if (_compList == null)
             {
                 return;
             }
 
-            _compList.GetImage(e.Graphics, hScrollBar.Value, vScrollBar.Value, MaxHeightTrackBar.Value, _mouseLoc,
-                BTN_Floor.Checked);
-            //_forceRefresh = false;
+            _compList.GetImage(e.Graphics, hScrollBar.Value, vScrollBar.Value, MaxHeightTrackBar.Value, _mouseLoc, BTN_Floor.Checked);
 
             if (ShowWalkables)
             {
@@ -850,6 +880,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             ConvertCoords(_mouseLoc, out int x, out int y, out int z);
+
             if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
             {
                 Invoke(new ADelegate(SetToolStripText), $"{x},{y},{z}");
@@ -863,7 +894,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 }
 
                 Invoke(new ADelegate(SetToolStripText), $"{x},{y},{z}");
-                Bitmap bmp = _mDrawTile.GetBitmap();
+
+                Bitmap bmp = _drawTile.GetBitmap();
+
                 if (bmp == null)
                 {
                     return;
@@ -877,22 +910,27 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 py -= bmp.Height;
                 px -= _compList.XMin;
                 py -= _compList.YMin;
-                py += MultiEditorComponentList.GapYMod; //Mod for a bit of gap
+                py += MultiEditorComponentList.GapYMod; // Mod for a bit of gap
                 px += MultiEditorComponentList.GapXMod;
                 px -= hScrollBar.Value;
                 py -= vScrollBar.Value;
-                e.Graphics.DrawImage(bmp, new Rectangle(px, py, bmp.Width, bmp.Height), 0, 0, bmp.Width,
-                    bmp.Height, GraphicsUnit.Pixel, MultiTile.DrawColor);
+
+                e.Graphics.DrawImage(bmp, new Rectangle(px, py, bmp.Width, bmp.Height), 0, 0, bmp.Width, bmp.Height,
+                    GraphicsUnit.Pixel, MultiTile.DrawColor);
             }
             else if (_overlayList.Count > 0)
             {
                 int overX = 0;
                 const int overY = 0;
+
                 foreach (MultiTile tile in _overlayList)
                 {
                     Bitmap bmp = tile.GetBitmap();
                     if (bmp == null)
+                    {
                         continue;
+                    }
+
                     e.Graphics.DrawImage(bmp, new Rectangle(overX, overY, bmp.Width, bmp.Height));
                     overX += bmp.Width + 10;
                 }
@@ -905,7 +943,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxMultiOnResize(object sender, EventArgs e)
         {
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -915,7 +953,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void ScrollbarsSetValue()
         {
             if (_compList == null)
+            {
                 return;
+            }
+
             int yMin = _compList.YMinOrg;
             int yMax = _compList.YMaxOrg;
 
@@ -966,14 +1007,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void ScrollBarsValueChanged(object sender, EventArgs e)
         {
-            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
         private void TreeViewMultiList_LoadFromFile(Multis.ImportType importType)
         {
             OpenFileDialog dialog = new OpenFileDialog { Multiselect = false };
+
             string type;
+
             switch (importType)
             {
                 case Multis.ImportType.TXT:
@@ -1057,20 +1099,29 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     default:
                         {
                             MultiComponentList multi = Multis.LoadFromFile(dialog.FileName, importType);
+
                             _compList = new MultiEditorComponentList(multi, this);
+
                             UndoList_Clear();
+
                             MaxHeightTrackBar.Minimum = _compList.ZMin;
                             MaxHeightTrackBar.Maximum = _compList.ZMax;
+
                             MaxHeightTrackBar.Value = _compList.ZMax;
+
                             textBox_SaveToID.Text = "0";
+
                             numericUpDown_Size_Width.Value = _compList.Width;
                             numericUpDown_Size_Height.Value = _compList.Height;
+
                             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
                             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+
                             vScrollBar.Value = 0;
                             hScrollBar.Value = 0;
+
                             ScrollbarsSetValue();
-                            //_forceRefresh = true;
+
                             pictureBoxMulti.Invalidate();
                             break;
                         }
@@ -1121,42 +1172,40 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
-            if (e.Node.Parent?.Tag != null && e.Node.Parent.Tag.ToString() == "cache")
+            if (e.Node.Parent?.Tag != null && (e.Node.Parent.Tag.ToString() == "cache" || e.Node.Parent.Tag.ToString() == "uoadesign"))
             {
                 MultiComponentList list = (MultiComponentList)e.Node.Tag;
                 if (list != null)
                 {
                     _compList = new MultiEditorComponentList(list, this);
-                    textBox_SaveToID.Text = "0";
-                }
-            }
-            else if (e.Node.Parent?.Tag?.ToString() == "uoadesign")
-            {
-                MultiComponentList list = (MultiComponentList)e.Node.Tag;
-                if (list != null)
-                {
-                    _compList = new MultiEditorComponentList(list, this);
+
                     textBox_SaveToID.Text = "0";
                 }
             }
             else
             {
                 _compList = new MultiEditorComponentList(Multis.GetComponents((int)e.Node.Tag), this);
+
                 textBox_SaveToID.Text = e.Node.Tag.ToString();
             }
 
             UndoList_Clear();
+
             MaxHeightTrackBar.Minimum = _compList.ZMin;
             MaxHeightTrackBar.Maximum = _compList.ZMax;
             MaxHeightTrackBar.Value = _compList.ZMax;
+
             numericUpDown_Size_Width.Value = _compList.Width;
             numericUpDown_Size_Height.Value = _compList.Height;
+
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+
             vScrollBar.Value = 0;
             hScrollBar.Value = 0;
+
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -1203,17 +1252,22 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
+
             int undo = (int)item.Tag;
             _compList.Undo(undo);
+
             MaxHeightTrackBar.Minimum = _compList.ZMin;
             MaxHeightTrackBar.Maximum = _compList.ZMax;
             MaxHeightTrackBar.Value = _compList.ZMax;
+
             numericUpDown_Size_Width.Value = _compList.Width;
             numericUpDown_Size_Height.Value = _compList.Height;
+
             numericUpDown_Selected_X.Maximum = _compList.Width - 1;
             numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+
             ScrollbarsSetValue();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -1260,7 +1314,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                         {
                             int i = int.Parse(elem.GetAttribute("index"));
                             if (Art.IsValidStatic(i))
+                            {
                                 list.Add(i);
+                            }
                         }
 
                         tempNode.Tag = list;
@@ -1305,7 +1361,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         public void SelectDrawTile(ushort id)
         {
-            _mDrawTile.Set(id, 0);
+            _drawTile.Set(id, 0);
             PictureBoxDrawTiles_Select();
             DrawTileLabel.Text = $"Draw ID: 0x{id:X}";
         }
@@ -1317,8 +1373,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return -1;
             }
 
-            int value = Math.Max(0,
-                (_pictureBoxDrawTilesCol * (vScrollBarDrawTiles.Value - 1)) + x + (y * _pictureBoxDrawTilesCol));
+            int value = Math.Max(0, (_pictureBoxDrawTilesCol * (vScrollBarDrawTiles.Value - 1)) + x + (y * _pictureBoxDrawTilesCol));
 
             if (_drawTilesList.Count > value)
             {
@@ -1331,6 +1386,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxDrawTiles_OnMouseClick(object sender, MouseEventArgs e)
         {
             pictureBoxDrawTiles.Focus();
+
             int x = e.X / (_drawTileSizeWidth - 1);
             int y = e.Y / (_drawTileSizeHeight - 1);
 
@@ -1340,8 +1396,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
-            _mDrawTile.Set((ushort)index, 0);
+            _drawTile.Set((ushort)index, 0);
+
             DrawTileLabel.Text = $"Draw ID: 0x{index:X}";
+
             pictureBoxDrawTiles.Invalidate();
         }
 
@@ -1353,6 +1411,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void PictureBoxDrawTilesMouseLeave(object sender, EventArgs e)
         {
             FloatingPreviewPanel.Visible = false;
+
             pictureBoxDrawTiles.Invalidate();
         }
 
@@ -1383,8 +1442,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
                     e.Graphics.Clip = new Region(rect);
 
-                    if (index == _mDrawTile.Id)
+                    if (index == _drawTile.Id)
+                    {
                         e.Graphics.FillRectangle(Brushes.LightBlue, rect);
+                    }
 
                     int width = b.Width;
                     int height = b.Height;
@@ -1492,7 +1553,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
                     foreach (int index in (List<int>)childNode.Tag)
                     {
-                        if (index != _mDrawTile.Id)
+                        if (index != _drawTile.Id)
                         {
                             continue;
                         }
@@ -1527,7 +1588,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             _compList.CalcWalkable();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
@@ -1543,20 +1604,20 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 tile.Transparent = false;
             }
 
-            //_forceRefresh = true;
             pictureBoxMulti.Invalidate();
         }
 
         private void BTN_ShowDoubleSurface(object sender, EventArgs e)
         {
             showDoubleSurfaceMenuItem.Text = "Show double surface";
+
             if (!ShowDoubleSurface || _compList == null)
             {
                 return;
             }
 
             _compList.CalcDoubleSurface();
-            //_forceRefresh = true;
+
             pictureBoxMulti.Invalidate();
         }
 
