@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.25
+    <value>Version 4.9.26
+- Added "Export all sounds" option to Sonds tab.
+
+Version 4.9.25
 - Fixed multi editor plugin import range (maximum multi id was lower than in multi tab). 
 - Minor cleanup.
 
