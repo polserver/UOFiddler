@@ -57,7 +57,8 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.itemExtractSoundlist = new System.Windows.Forms.ToolStripMenuItem();
+            this.itemExportSoundlist = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.statusStripSounds = new System.Windows.Forms.StatusStrip();
             this.seconds = new System.Windows.Forms.ToolStripStatusLabel();
@@ -68,9 +69,11 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.exportAllSoundsButton = new System.Windows.Forms.Button();
             this.ExportSoundListCsvButton = new System.Windows.Forms.Button();
             this.SaveFileButton = new System.Windows.Forms.Button();
             this.SortByNameCheckbox = new System.Windows.Forms.CheckBox();
+            this.includeSoundIdCheckBox = new System.Windows.Forms.CheckBox();
             this.SelectedSoundGroup = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.PlaySoundButton = new System.Windows.Forms.Button();
@@ -257,18 +260,26 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.itemExtractSoundlist});
+            this.itemExportSoundlist,
+            this.exportAllSoundsToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
             this.toolStripDropDownButton1.Text = "Misc";
             // 
-            // itemExtractSoundlist
+            // itemExportSoundlist
             // 
-            this.itemExtractSoundlist.Name = "itemExtractSoundlist";
-            this.itemExtractSoundlist.Size = new System.Drawing.Size(162, 22);
-            this.itemExtractSoundlist.Text = "Extract Soundlist";
-            this.itemExtractSoundlist.Click += new System.EventHandler(this.OnClickExportSoundListCsv);
+            this.itemExportSoundlist.Name = "itemExportSoundlist";
+            this.itemExportSoundlist.Size = new System.Drawing.Size(191, 22);
+            this.itemExportSoundlist.Text = "Export Soundlist (.csv)";
+            this.itemExportSoundlist.Click += new System.EventHandler(this.OnClickExportSoundListCsv);
+            // 
+            // exportAllSoundsToolStripMenuItem
+            // 
+            this.exportAllSoundsToolStripMenuItem.Name = "exportAllSoundsToolStripMenuItem";
+            this.exportAllSoundsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.exportAllSoundsToolStripMenuItem.Text = "Export All Sounds";
+            this.exportAllSoundsToolStripMenuItem.Click += new System.EventHandler(this.ExportAllSoundsToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -374,7 +385,7 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(361, 50);
+            this.groupBox1.Size = new System.Drawing.Size(361, 80);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generic";
@@ -385,16 +396,29 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.44444F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.22222F));
+            this.tableLayoutPanel3.Controls.Add(this.exportAllSoundsButton, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.ExportSoundListCsvButton, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.SaveFileButton, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.SortByNameCheckbox, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.includeSoundIdCheckBox, 1, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(355, 31);
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(355, 61);
             this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // exportAllSoundsButton
+            // 
+            this.exportAllSoundsButton.Location = new System.Drawing.Point(3, 32);
+            this.exportAllSoundsButton.Name = "exportAllSoundsButton";
+            this.exportAllSoundsButton.Size = new System.Drawing.Size(123, 23);
+            this.exportAllSoundsButton.TabIndex = 9;
+            this.exportAllSoundsButton.Text = "Export all sounds";
+            this.exportAllSoundsButton.UseVisualStyleBackColor = true;
+            this.exportAllSoundsButton.Click += new System.EventHandler(this.ExportAllSoundsButton_Click);
             // 
             // ExportSoundListCsvButton
             // 
@@ -425,18 +449,31 @@ namespace UoFiddler.Controls.UserControls
             this.SortByNameCheckbox.AutoSize = true;
             this.SortByNameCheckbox.Location = new System.Drawing.Point(163, 3);
             this.SortByNameCheckbox.Name = "SortByNameCheckbox";
-            this.SortByNameCheckbox.Size = new System.Drawing.Size(109, 25);
+            this.SortByNameCheckbox.Size = new System.Drawing.Size(109, 23);
             this.SortByNameCheckbox.TabIndex = 2;
             this.SortByNameCheckbox.Text = "Sort tree by name";
             this.SortByNameCheckbox.UseVisualStyleBackColor = true;
             this.SortByNameCheckbox.CheckedChanged += new System.EventHandler(this.OnChangeSort);
+            // 
+            // includeSoundIdCheckBox
+            // 
+            this.includeSoundIdCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.includeSoundIdCheckBox.AutoSize = true;
+            this.tableLayoutPanel3.SetColumnSpan(this.includeSoundIdCheckBox, 2);
+            this.includeSoundIdCheckBox.Location = new System.Drawing.Point(160, 32);
+            this.includeSoundIdCheckBox.Name = "includeSoundIdCheckBox";
+            this.includeSoundIdCheckBox.Size = new System.Drawing.Size(177, 26);
+            this.includeSoundIdCheckBox.TabIndex = 10;
+            this.includeSoundIdCheckBox.Text = "Export with sound id in file name";
+            this.includeSoundIdCheckBox.UseVisualStyleBackColor = true;
             // 
             // SelectedSoundGroup
             // 
             this.SelectedSoundGroup.Controls.Add(this.tableLayoutPanel4);
             this.SelectedSoundGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SelectedSoundGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectedSoundGroup.Location = new System.Drawing.Point(3, 165);
+            this.SelectedSoundGroup.Location = new System.Drawing.Point(3, 195);
             this.SelectedSoundGroup.Name = "SelectedSoundGroup";
             this.SelectedSoundGroup.Size = new System.Drawing.Size(361, 164);
             this.SelectedSoundGroup.TabIndex = 1;
@@ -524,7 +561,7 @@ namespace UoFiddler.Controls.UserControls
             this.groupBox2.Controls.Add(this.tableLayoutPanel5);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(3, 59);
+            this.groupBox2.Location = new System.Drawing.Point(3, 89);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(361, 100);
             this.groupBox2.TabIndex = 2;
@@ -611,9 +648,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.groupBox3.Controls.Add(this.tableLayoutPanel6);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(3, 335);
+            this.groupBox3.Location = new System.Drawing.Point(3, 365);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(361, 217);
+            this.groupBox3.Size = new System.Drawing.Size(361, 187);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Insert \\ Replace";
@@ -637,9 +674,9 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel6.RowCount = 3;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(355, 198);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(355, 168);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
             // label1
@@ -698,7 +735,7 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel6.SetColumnSpan(this.AddInsertReplaceButton, 2);
             this.AddInsertReplaceButton.Location = new System.Drawing.Point(3, 53);
             this.AddInsertReplaceButton.Name = "AddInsertReplaceButton";
-            this.AddInsertReplaceButton.Size = new System.Drawing.Size(87, 23);
+            this.AddInsertReplaceButton.Size = new System.Drawing.Size(104, 23);
             this.AddInsertReplaceButton.TabIndex = 7;
             this.AddInsertReplaceButton.Text = "Add \\ Replace";
             this.AddInsertReplaceButton.UseVisualStyleBackColor = true;
@@ -745,7 +782,7 @@ namespace UoFiddler.Controls.UserControls
 
         private System.Windows.Forms.ContextMenuStrip cmStripSounds;
         private System.Windows.Forms.ToolStripMenuItem extractSoundToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem itemExtractSoundlist;
+        private System.Windows.Forms.ToolStripMenuItem itemExportSoundlist;
         private System.Windows.Forms.ToolStripMenuItem itemSave;
         private System.Windows.Forms.ToolStripMenuItem nameSortToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextFreeSlotToolStripMenuItem;
@@ -796,5 +833,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Button ExtractSoundButton;
         private System.Windows.Forms.Button RemoveSoundButton;
         private System.Windows.Forms.Button GoPrevResultButton;
+        private System.Windows.Forms.ToolStripMenuItem exportAllSoundsToolStripMenuItem;
+        private System.Windows.Forms.Button exportAllSoundsButton;
+        private System.Windows.Forms.CheckBox includeSoundIdCheckBox;
     }
 }

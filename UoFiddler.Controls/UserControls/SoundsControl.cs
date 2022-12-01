@@ -24,6 +24,8 @@ namespace UoFiddler.Controls.UserControls
 {
     public partial class SoundsControl : UserControl
     {
+        private const int _soundsLength = 0xFFF;
+
         private System.Media.SoundPlayer _sp;
         private readonly Timer _spTimer;
         private int _spTimerMax;
@@ -98,7 +100,7 @@ namespace UoFiddler.Controls.UserControls
                 _soundIdOffset = GetSoundIdOffset();
 
                 var cache = new List<TreeNode>();
-                for (int i = 0; i < 0xFFF; ++i)
+                for (int i = 0; i < _soundsLength; ++i)
                 {
                     if (Sounds.IsValidSound(i, out string name, out bool translated))
                     {
@@ -745,6 +747,7 @@ namespace UoFiddler.Controls.UserControls
         }
 
         private string _wavChosen;
+
         private void WavChooseInsertButton_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dialog = new OpenFileDialog())
@@ -793,6 +796,49 @@ namespace UoFiddler.Controls.UserControls
         private void GoPrevResultButton_Click(object sender, EventArgs e)
         {
             DoSearchName(SearchNameTextbox.Text, false, true);
+        }
+
+        private void ExportAllSoundsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportAllSounds();
+        }
+
+        private void ExportAllSoundsButton_Click(object sender, EventArgs e)
+        {
+            ExportAllSounds();
+        }
+
+        private void ExportAllSounds()
+        {
+            for (int i = 0; i < _soundsLength; ++i)
+            {
+                if (!Sounds.IsValidSound(i, out string name, out _))
+                {
+                    continue;
+                }
+
+                string fileName = includeSoundIdCheckBox.Checked
+                    ? $"0x{i:X4} {name}"
+                    : $"{name}";
+
+                string path = Path.Combine(Options.OutputPath, fileName);
+
+                if (!path.EndsWith(".wav"))
+                {
+                    path += ".wav";
+                }
+
+                using (MemoryStream stream = new MemoryStream(Sounds.GetSound(i).Buffer))
+                {
+                    using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
+                    {
+                        stream.WriteTo(fs);
+                    }
+                }
+            }
+
+            MessageBox.Show("Extract all sounds complete.", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1);
         }
     }
 }
