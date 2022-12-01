@@ -119,7 +119,7 @@
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Version 4.9.26
-- Added "Export all sounds" option to Sonds tab.
+- Added "Export all sounds" option to Sounds tab.
 
 Version 4.9.25
 - Fixed multi editor plugin import range (maximum multi id was lower than in multi tab). 
