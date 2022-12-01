@@ -58,9 +58,11 @@ namespace UoFiddler.Plugin.SendItem.Forms
             this.groupBox1.Controls.Add(this.argstext);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.cmdtext);
-            this.groupBox1.Location = new System.Drawing.Point(15, 13);
+            this.groupBox1.Location = new System.Drawing.Point(18, 15);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 105);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(233, 121);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Send Item";
@@ -68,9 +70,10 @@ namespace UoFiddler.Plugin.SendItem.Forms
             // SendOnClick
             // 
             this.SendOnClick.AutoSize = true;
-            this.SendOnClick.Location = new System.Drawing.Point(37, 80);
+            this.SendOnClick.Location = new System.Drawing.Point(43, 92);
+            this.SendOnClick.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SendOnClick.Name = "SendOnClick";
-            this.SendOnClick.Size = new System.Drawing.Size(126, 17);
+            this.SendOnClick.Size = new System.Drawing.Size(136, 19);
             this.SendOnClick.TabIndex = 18;
             this.SendOnClick.Text = "Send on DoubleClick";
             this.toolTip1.SetToolTip(this.SendOnClick, "Overrides DoubleClick");
@@ -79,42 +82,47 @@ namespace UoFiddler.Plugin.SendItem.Forms
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(15, 56);
+            this.label8.Location = new System.Drawing.Point(18, 65);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(28, 13);
+            this.label8.Size = new System.Drawing.Size(31, 15);
             this.label8.TabIndex = 17;
             this.label8.Text = "Args";
             this.toolTip1.SetToolTip(this.label8, "{1} = Selected item ObjType");
             // 
             // argstext
             // 
-            this.argstext.Location = new System.Drawing.Point(85, 53);
+            this.argstext.Location = new System.Drawing.Point(99, 61);
+            this.argstext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.argstext.Name = "argstext";
-            this.argstext.Size = new System.Drawing.Size(100, 20);
+            this.argstext.Size = new System.Drawing.Size(116, 23);
             this.argstext.TabIndex = 16;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 30);
+            this.label7.Location = new System.Drawing.Point(18, 35);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(28, 13);
+            this.label7.Size = new System.Drawing.Size(33, 15);
             this.label7.TabIndex = 15;
             this.label7.Text = "Cmd";
             this.toolTip1.SetToolTip(this.label7, "Defines the cmd to send Client for selected Item");
             // 
             // cmdtext
             // 
-            this.cmdtext.Location = new System.Drawing.Point(85, 27);
+            this.cmdtext.Location = new System.Drawing.Point(99, 31);
+            this.cmdtext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cmdtext.Name = "cmdtext";
-            this.cmdtext.Size = new System.Drawing.Size(100, 20);
+            this.cmdtext.Size = new System.Drawing.Size(116, 23);
             this.cmdtext.TabIndex = 14;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(77, 124);
+            this.button1.Location = new System.Drawing.Point(90, 143);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(88, 27);
             this.button1.TabIndex = 1;
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
@@ -122,12 +130,13 @@ namespace UoFiddler.Plugin.SendItem.Forms
             // 
             // SendItemOptionsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(230, 157);
+            this.ClientSize = new System.Drawing.Size(269, 181);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SendItemOptionsForm";
             this.Text = "SendItem Options";
             this.groupBox1.ResumeLayout(false);

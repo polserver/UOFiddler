@@ -53,9 +53,10 @@ namespace UoFiddler.Forms
             // comboBoxLoad
             // 
             this.comboBoxLoad.FormattingEnabled = true;
-            this.comboBoxLoad.Location = new System.Drawing.Point(21, 31);
+            this.comboBoxLoad.Location = new System.Drawing.Point(24, 36);
+            this.comboBoxLoad.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxLoad.Name = "comboBoxLoad";
-            this.comboBoxLoad.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxLoad.Size = new System.Drawing.Size(140, 23);
             this.comboBoxLoad.TabIndex = 0;
             this.comboBoxLoad.SelectedIndexChanged += new System.EventHandler(this.ComboBoxLoad_SelectedIndexChanged);
             this.comboBoxLoad.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ComboBoxLoad_KeyDown);
@@ -64,9 +65,10 @@ namespace UoFiddler.Forms
             // button1
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Location = new System.Drawing.Point(165, 29);
+            this.button1.Location = new System.Drawing.Point(192, 33);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(85, 23);
+            this.button1.Size = new System.Drawing.Size(99, 27);
             this.button1.TabIndex = 1;
             this.button1.Text = "Load Profile";
             this.button1.UseVisualStyleBackColor = true;
@@ -74,17 +76,19 @@ namespace UoFiddler.Forms
             // 
             // textBoxCreate
             // 
-            this.textBoxCreate.Location = new System.Drawing.Point(9, 19);
+            this.textBoxCreate.Location = new System.Drawing.Point(10, 22);
+            this.textBoxCreate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBoxCreate.Name = "textBoxCreate";
-            this.textBoxCreate.Size = new System.Drawing.Size(121, 20);
+            this.textBoxCreate.Size = new System.Drawing.Size(140, 23);
             this.textBoxCreate.TabIndex = 2;
             // 
             // button2
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button2.Location = new System.Drawing.Point(153, 17);
+            this.button2.Location = new System.Drawing.Point(178, 20);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(85, 23);
+            this.button2.Size = new System.Drawing.Size(99, 27);
             this.button2.TabIndex = 3;
             this.button2.Text = "Create Profile";
             this.button2.UseVisualStyleBackColor = true;
@@ -92,9 +96,11 @@ namespace UoFiddler.Forms
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(14, 14);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(253, 57);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(295, 66);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Load";
@@ -105,9 +111,11 @@ namespace UoFiddler.Forms
             this.groupBox2.Controls.Add(this.comboBoxBasedOn);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.textBoxCreate);
-            this.groupBox2.Location = new System.Drawing.Point(12, 75);
+            this.groupBox2.Location = new System.Drawing.Point(14, 87);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(253, 83);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(295, 96);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create";
@@ -115,31 +123,34 @@ namespace UoFiddler.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 49);
+            this.label1.Location = new System.Drawing.Point(7, 58);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.Size = new System.Drawing.Size(57, 15);
             this.label1.TabIndex = 5;
             this.label1.Text = "Based On";
             // 
             // comboBoxBasedOn
             // 
             this.comboBoxBasedOn.FormattingEnabled = true;
-            this.comboBoxBasedOn.Location = new System.Drawing.Point(66, 46);
+            this.comboBoxBasedOn.Location = new System.Drawing.Point(77, 54);
+            this.comboBoxBasedOn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxBasedOn.Name = "comboBoxBasedOn";
-            this.comboBoxBasedOn.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxBasedOn.Size = new System.Drawing.Size(140, 23);
             this.comboBoxBasedOn.TabIndex = 4;
             // 
             // LoadProfileForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(277, 166);
+            this.ClientSize = new System.Drawing.Size(325, 193);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBoxLoad);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LoadProfileForm";

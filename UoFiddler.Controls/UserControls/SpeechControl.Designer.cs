@@ -78,16 +78,15 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 33);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(628, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(734, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // IDEntry
             // 
-            this.IDEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.IDEntry.MaxLength = 10;
             this.IDEntry.Name = "IDEntry";
-            this.IDEntry.Size = new System.Drawing.Size(100, 25);
+            this.IDEntry.Size = new System.Drawing.Size(116, 25);
             this.IDEntry.Text = "Find ID...";
             this.IDEntry.Enter += new System.EventHandler(this.IDEntry_Enter);
             // 
@@ -116,9 +115,8 @@ namespace UoFiddler.Controls.UserControls
             // 
             // KeyWordEntry
             // 
-            this.KeyWordEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyWordEntry.Name = "KeyWordEntry";
-            this.KeyWordEntry.Size = new System.Drawing.Size(100, 25);
+            this.KeyWordEntry.Size = new System.Drawing.Size(116, 25);
             this.KeyWordEntry.Text = "KeyWord...";
             this.KeyWordEntry.Enter += new System.EventHandler(this.KeyWordEntry_Enter);
             // 
@@ -147,10 +145,11 @@ namespace UoFiddler.Controls.UserControls
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 58);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(628, 269);
+            this.dataGridView1.Size = new System.Drawing.Size(734, 321);
             this.dataGridView1.TabIndex = 4;
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellValueChanged);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClick);
@@ -187,7 +186,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(628, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(734, 25);
             this.toolStrip2.TabIndex = 6;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -234,7 +233,9 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsibleSplitter1.ExpandParentForm = false;
             this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
+            this.collapsibleSplitter1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.collapsibleSplitter1.Name = "collapsibleSplitter1";
+            this.collapsibleSplitter1.Size = new System.Drawing.Size(734, 8);
             this.collapsibleSplitter1.TabIndex = 5;
             this.collapsibleSplitter1.TabStop = false;
             this.collapsibleSplitter1.UseAnimations = false;
@@ -242,15 +243,16 @@ namespace UoFiddler.Controls.UserControls
             // 
             // SpeechControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.toolStrip2);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SpeechControl";
-            this.Size = new System.Drawing.Size(628, 327);
+            this.Size = new System.Drawing.Size(734, 379);
             this.Load += new System.EventHandler(this.OnLoad);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

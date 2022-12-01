@@ -28,7 +28,7 @@ namespace UoFiddler.Controls.UserControls
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
-            splitContainer2.Panel2MinSize = 230;
+            splitContainer2.Panel2MinSize = 260;
             splitContainer2.SplitterDistance = splitContainer2.Width - splitContainer2.Panel2MinSize - splitContainer2.SplitterWidth;
         }
 

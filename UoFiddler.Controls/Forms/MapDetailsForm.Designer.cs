@@ -47,20 +47,22 @@ namespace UoFiddler.Controls.Forms
             this.richTextBox.DetectUrls = false;
             this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ReadOnly = true;
-            this.richTextBox.Size = new System.Drawing.Size(297, 267);
+            this.richTextBox.Size = new System.Drawing.Size(345, 308);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             // 
             // MapDetailsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(297, 267);
+            this.ClientSize = new System.Drawing.Size(345, 308);
             this.Controls.Add(this.richTextBox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MapDetailsForm";
             this.Text = "MapDetails";
             this.ResumeLayout(false);

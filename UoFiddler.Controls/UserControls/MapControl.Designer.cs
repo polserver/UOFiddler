@@ -126,9 +126,10 @@ namespace UoFiddler.Controls.UserControls
             this.CoordsLabel,
             this.ClientLocLabel,
             this.ZoomLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 296);
+            this.statusStrip.Location = new System.Drawing.Point(0, 347);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(623, 33);
+            this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip.Size = new System.Drawing.Size(731, 33);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -160,10 +161,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(0, 33);
+            this.pictureBox.Location = new System.Drawing.Point(0, 36);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(398, 246);
+            this.pictureBox.Size = new System.Drawing.Size(473, 294);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
@@ -346,18 +347,18 @@ namespace UoFiddler.Controls.UserControls
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 279);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 330);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(398, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(473, 17);
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(398, 33);
+            this.vScrollBar.Location = new System.Drawing.Point(473, 36);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 263);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 311);
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.HandleScroll);
             // 
@@ -409,9 +410,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.panel1.Controls.Add(this.OverlayObjectTree);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(423, 33);
+            this.panel1.Location = new System.Drawing.Point(498, 36);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 263);
+            this.panel1.Size = new System.Drawing.Size(233, 311);
             this.panel1.TabIndex = 5;
             // 
             // OverlayObjectTree
@@ -419,8 +421,9 @@ namespace UoFiddler.Controls.UserControls
             this.OverlayObjectTree.ContextMenuStrip = this.contextMenuStrip2;
             this.OverlayObjectTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OverlayObjectTree.Location = new System.Drawing.Point(0, 0);
+            this.OverlayObjectTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.OverlayObjectTree.Name = "OverlayObjectTree";
-            this.OverlayObjectTree.Size = new System.Drawing.Size(200, 263);
+            this.OverlayObjectTree.Size = new System.Drawing.Size(233, 311);
             this.OverlayObjectTree.TabIndex = 5;
             this.OverlayObjectTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClickMarker);
             // 
@@ -436,7 +439,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(623, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(731, 28);
             this.toolStrip1.TabIndex = 7;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -450,7 +453,7 @@ namespace UoFiddler.Controls.UserControls
             this.showClientCrossToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 25);
             this.toolStripDropDownButton1.Text = "View";
             this.toolStripDropDownButton1.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
@@ -503,7 +506,7 @@ namespace UoFiddler.Controls.UserControls
             this.sendClientToCenterToolStripMenuItem});
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(94, 22);
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(94, 25);
             this.toolStripDropDownButton2.Text = "Client Interact";
             this.toolStripDropDownButton2.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
@@ -538,7 +541,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.ProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(100, 22);
+            this.ProgressBar.Size = new System.Drawing.Size(117, 25);
             // 
             // PreloadMap
             // 
@@ -546,7 +549,7 @@ namespace UoFiddler.Controls.UserControls
             this.PreloadMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.PreloadMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PreloadMap.Name = "PreloadMap";
-            this.PreloadMap.Size = new System.Drawing.Size(78, 22);
+            this.PreloadMap.Size = new System.Drawing.Size(78, 25);
             this.PreloadMap.Text = "Preload Map";
             this.PreloadMap.Click += new System.EventHandler(this.OnClickPreloadMap);
             // 
@@ -570,7 +573,7 @@ namespace UoFiddler.Controls.UserControls
             this.replaceTilesToolStripMenuItem});
             this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
-            this.toolStripDropDownButton3.Size = new System.Drawing.Size(45, 22);
+            this.toolStripDropDownButton3.Size = new System.Drawing.Size(45, 25);
             this.toolStripDropDownButton3.Text = "Misc";
             this.toolStripDropDownButton3.DropDownClosed += new System.EventHandler(this.OnDropDownClosed);
             // 
@@ -678,8 +681,10 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter2.ControlToHide = this.panel1;
             this.collapsibleSplitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.collapsibleSplitter2.ExpandParentForm = false;
-            this.collapsibleSplitter2.Location = new System.Drawing.Point(415, 33);
+            this.collapsibleSplitter2.Location = new System.Drawing.Point(490, 36);
+            this.collapsibleSplitter2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.collapsibleSplitter2.Name = "collapsibleSplitter2";
+            this.collapsibleSplitter2.Size = new System.Drawing.Size(8, 311);
             this.collapsibleSplitter2.TabIndex = 8;
             this.collapsibleSplitter2.TabStop = false;
             this.toolTip1.SetToolTip(this.collapsibleSplitter2, "Click to Show/Hide Marker list");
@@ -694,8 +699,10 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.ControlToHide = this.toolStrip1;
             this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
+            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 28);
+            this.collapsibleSplitter1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.collapsibleSplitter1.Name = "collapsibleSplitter1";
+            this.collapsibleSplitter1.Size = new System.Drawing.Size(731, 8);
             this.collapsibleSplitter1.TabIndex = 6;
             this.collapsibleSplitter1.TabStop = false;
             this.toolTip1.SetToolTip(this.collapsibleSplitter1, "Click To Show/Hide Toolbar");
@@ -704,7 +711,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // MapControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.hScrollBar);
@@ -717,7 +724,7 @@ namespace UoFiddler.Controls.UserControls
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "MapControl";
-            this.Size = new System.Drawing.Size(623, 329);
+            this.Size = new System.Drawing.Size(731, 380);
             this.Load += new System.EventHandler(this.OnLoad);
             this.SizeChanged += new System.EventHandler(this.OnResize);
             this.statusStrip.ResumeLayout(false);

@@ -124,6 +124,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -133,8 +134,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer1.Size = new System.Drawing.Size(780, 540);
-            this.splitContainer1.SplitterDistance = 421;
+            this.splitContainer1.Size = new System.Drawing.Size(915, 623);
+            this.splitContainer1.SplitterDistance = 493;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -143,6 +145,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
@@ -152,8 +155,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(421, 540);
+            this.splitContainer2.Size = new System.Drawing.Size(493, 623);
             this.splitContainer2.SplitterDistance = 248;
+            this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
             // ItemsSplitContainer
@@ -162,6 +166,7 @@ namespace UoFiddler.Controls.UserControls
             this.ItemsSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.ItemsSplitContainer.IsSplitterFixed = true;
             this.ItemsSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.ItemsSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ItemsSplitContainer.Name = "ItemsSplitContainer";
             this.ItemsSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -173,23 +178,25 @@ namespace UoFiddler.Controls.UserControls
             // ItemsSplitContainer.Panel2
             // 
             this.ItemsSplitContainer.Panel2.Controls.Add(this.treeViewItems);
-            this.ItemsSplitContainer.Size = new System.Drawing.Size(248, 540);
-            this.ItemsSplitContainer.SplitterDistance = 40;
+            this.ItemsSplitContainer.Size = new System.Drawing.Size(248, 623);
+            this.ItemsSplitContainer.SplitterWidth = 5;
             this.ItemsSplitContainer.TabIndex = 1;
             // 
             // SearchItemTextBox
             // 
-            this.SearchItemTextBox.Location = new System.Drawing.Point(3, 9);
+            this.SearchItemTextBox.Location = new System.Drawing.Point(4, 14);
+            this.SearchItemTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SearchItemTextBox.Name = "SearchItemTextBox";
-            this.SearchItemTextBox.Size = new System.Drawing.Size(125, 20);
+            this.SearchItemTextBox.Size = new System.Drawing.Size(145, 23);
             this.SearchItemTextBox.TabIndex = 0;
             this.SearchItemTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SearchItemTextBox_KeyUp);
             // 
             // FindNextItemButton
             // 
-            this.FindNextItemButton.Location = new System.Drawing.Point(134, 7);
+            this.FindNextItemButton.Location = new System.Drawing.Point(156, 12);
+            this.FindNextItemButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FindNextItemButton.Name = "FindNextItemButton";
-            this.FindNextItemButton.Size = new System.Drawing.Size(71, 23);
+            this.FindNextItemButton.Size = new System.Drawing.Size(83, 27);
             this.FindNextItemButton.TabIndex = 1;
             this.FindNextItemButton.Text = "Find next";
             this.FindNextItemButton.UseVisualStyleBackColor = true;
@@ -199,8 +206,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.treeViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewItems.Location = new System.Drawing.Point(0, 0);
+            this.treeViewItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(248, 496);
+            this.treeViewItems.Size = new System.Drawing.Size(248, 568);
             this.treeViewItems.TabIndex = 1;
             this.treeViewItems.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeView);
             this.treeViewItems.DoubleClick += new System.EventHandler(this.TreeViewItems_DoubleClick);
@@ -211,6 +219,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer3.IsSplitterFixed = true;
             this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer3.Name = "splitContainer3";
             this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -227,17 +236,19 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.pictureBoxDress);
-            this.splitContainer3.Size = new System.Drawing.Size(169, 540);
-            this.splitContainer3.SplitterDistance = 200;
+            this.splitContainer3.Size = new System.Drawing.Size(240, 623);
+            this.splitContainer3.SplitterDistance = 240;
+            this.splitContainer3.SplitterWidth = 5;
             this.splitContainer3.TabIndex = 0;
             // 
             // checkBoxHuman
             // 
             this.checkBoxHuman.AutoSize = true;
             this.checkBoxHuman.Checked = true;
-            this.checkBoxHuman.Location = new System.Drawing.Point(15, 55);
+            this.checkBoxHuman.Location = new System.Drawing.Point(18, 63);
+            this.checkBoxHuman.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxHuman.Name = "checkBoxHuman";
-            this.checkBoxHuman.Size = new System.Drawing.Size(59, 17);
+            this.checkBoxHuman.Size = new System.Drawing.Size(65, 19);
             this.checkBoxHuman.TabIndex = 5;
             this.checkBoxHuman.TabStop = true;
             this.checkBoxHuman.Text = "Human";
@@ -247,9 +258,10 @@ namespace UoFiddler.Controls.UserControls
             // checkBoxGargoyle
             // 
             this.checkBoxGargoyle.AutoSize = true;
-            this.checkBoxGargoyle.Location = new System.Drawing.Point(15, 101);
+            this.checkBoxGargoyle.Location = new System.Drawing.Point(18, 117);
+            this.checkBoxGargoyle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxGargoyle.Name = "checkBoxGargoyle";
-            this.checkBoxGargoyle.Size = new System.Drawing.Size(67, 17);
+            this.checkBoxGargoyle.Size = new System.Drawing.Size(72, 19);
             this.checkBoxGargoyle.TabIndex = 4;
             this.checkBoxGargoyle.Text = "Gargoyle";
             this.checkBoxGargoyle.UseVisualStyleBackColor = true;
@@ -258,9 +270,10 @@ namespace UoFiddler.Controls.UserControls
             // button1
             // 
             this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(15, 168);
+            this.button1.Location = new System.Drawing.Point(18, 194);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(82, 23);
+            this.button1.Size = new System.Drawing.Size(104, 29);
             this.button1.TabIndex = 1;
             this.button1.Text = "Export Report";
             this.button1.UseVisualStyleBackColor = true;
@@ -269,9 +282,10 @@ namespace UoFiddler.Controls.UserControls
             // LayerSort
             // 
             this.LayerSort.AutoSize = true;
-            this.LayerSort.Location = new System.Drawing.Point(15, 9);
+            this.LayerSort.Location = new System.Drawing.Point(18, 10);
+            this.LayerSort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LayerSort.Name = "LayerSort";
-            this.LayerSort.Size = new System.Drawing.Size(74, 17);
+            this.LayerSort.Size = new System.Drawing.Size(78, 19);
             this.LayerSort.TabIndex = 3;
             this.LayerSort.Text = "Layer Sort";
             this.LayerSort.UseVisualStyleBackColor = true;
@@ -280,9 +294,10 @@ namespace UoFiddler.Controls.UserControls
             // checkBoxElve
             // 
             this.checkBoxElve.AutoSize = true;
-            this.checkBoxElve.Location = new System.Drawing.Point(15, 78);
+            this.checkBoxElve.Location = new System.Drawing.Point(18, 90);
+            this.checkBoxElve.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxElve.Name = "checkBoxElve";
-            this.checkBoxElve.Size = new System.Drawing.Size(37, 17);
+            this.checkBoxElve.Size = new System.Drawing.Size(38, 19);
             this.checkBoxElve.TabIndex = 2;
             this.checkBoxElve.Text = "Elf";
             this.checkBoxElve.UseVisualStyleBackColor = true;
@@ -291,9 +306,10 @@ namespace UoFiddler.Controls.UserControls
             // checkBoxfemale
             // 
             this.checkBoxfemale.AutoSize = true;
-            this.checkBoxfemale.Location = new System.Drawing.Point(15, 32);
+            this.checkBoxfemale.Location = new System.Drawing.Point(18, 37);
+            this.checkBoxfemale.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxfemale.Name = "checkBoxfemale";
-            this.checkBoxfemale.Size = new System.Drawing.Size(60, 17);
+            this.checkBoxfemale.Size = new System.Drawing.Size(64, 19);
             this.checkBoxfemale.TabIndex = 1;
             this.checkBoxfemale.Text = "Female";
             this.checkBoxfemale.UseVisualStyleBackColor = true;
@@ -301,9 +317,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             // buttonDress
             // 
-            this.buttonDress.Location = new System.Drawing.Point(15, 139);
+            this.buttonDress.Location = new System.Drawing.Point(18, 160);
+            this.buttonDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonDress.Name = "buttonDress";
-            this.buttonDress.Size = new System.Drawing.Size(75, 23);
+            this.buttonDress.Size = new System.Drawing.Size(88, 27);
             this.buttonDress.TabIndex = 0;
             this.buttonDress.Text = "Dress Item";
             this.buttonDress.UseVisualStyleBackColor = true;
@@ -314,8 +331,9 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBoxDress.BackColor = System.Drawing.SystemColors.Control;
             this.pictureBoxDress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxDress.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBoxDress.Name = "pictureBoxDress";
-            this.pictureBoxDress.Size = new System.Drawing.Size(169, 336);
+            this.pictureBoxDress.Size = new System.Drawing.Size(240, 378);
             this.pictureBoxDress.TabIndex = 0;
             this.pictureBoxDress.TabStop = false;
             this.pictureBoxDress.SizeChanged += new System.EventHandler(this.OnResizePictureDress);
@@ -326,6 +344,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer4.IsSplitterFixed = true;
             this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer4.Name = "splitContainer4";
             // 
             // splitContainer4.Panel1
@@ -336,8 +355,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(355, 540);
+            this.splitContainer4.Size = new System.Drawing.Size(417, 623);
             this.splitContainer4.SplitterDistance = 160;
+            this.splitContainer4.SplitterWidth = 5;
             this.splitContainer4.TabIndex = 1;
             // 
             // checkedListBoxWear
@@ -347,8 +367,9 @@ namespace UoFiddler.Controls.UserControls
             this.checkedListBoxWear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkedListBoxWear.FormattingEnabled = true;
             this.checkedListBoxWear.Location = new System.Drawing.Point(0, 0);
+            this.checkedListBoxWear.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkedListBoxWear.Name = "checkedListBoxWear";
-            this.checkedListBoxWear.Size = new System.Drawing.Size(160, 493);
+            this.checkedListBoxWear.Size = new System.Drawing.Size(160, 569);
             this.checkedListBoxWear.TabIndex = 0;
             this.checkedListBoxWear.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBox_ItemCheck);
             this.checkedListBoxWear.SelectedIndexChanged += new System.EventHandler(this.CheckedListBox_Change);
@@ -388,7 +409,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // toolStripTextBox1
             // 
-            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
             this.toolStripTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownHue);
@@ -409,18 +429,21 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.groupBox1.Controls.Add(this.textBoxMount);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox1.Location = new System.Drawing.Point(0, 493);
+            this.groupBox1.Location = new System.Drawing.Point(0, 569);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(160, 47);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(160, 54);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Mount";
             // 
             // textBoxMount
             // 
-            this.textBoxMount.Location = new System.Drawing.Point(6, 19);
+            this.textBoxMount.Location = new System.Drawing.Point(7, 22);
+            this.textBoxMount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBoxMount.Name = "textBoxMount";
-            this.textBoxMount.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMount.Size = new System.Drawing.Size(116, 23);
             this.textBoxMount.TabIndex = 0;
             this.textBoxMount.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MountTextBoxOnKeyDown);
             // 
@@ -428,6 +451,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer5.Name = "splitContainer5";
             this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -439,8 +463,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.TextBox);
-            this.splitContainer5.Size = new System.Drawing.Size(191, 540);
-            this.splitContainer5.SplitterDistance = 414;
+            this.splitContainer5.Size = new System.Drawing.Size(252, 623);
+            this.splitContainer5.SplitterDistance = 477;
+            this.splitContainer5.SplitterWidth = 5;
             this.splitContainer5.TabIndex = 1;
             // 
             // groupBoxAnimate
@@ -449,9 +474,11 @@ namespace UoFiddler.Controls.UserControls
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxAnimate.Controls.Add(this.ActionBar);
             this.groupBoxAnimate.Controls.Add(this.FacingBar);
-            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 314);
+            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 361);
+            this.groupBoxAnimate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBoxAnimate.Name = "groupBoxAnimate";
-            this.groupBoxAnimate.Size = new System.Drawing.Size(188, 97);
+            this.groupBoxAnimate.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBoxAnimate.Size = new System.Drawing.Size(248, 112);
             this.groupBoxAnimate.TabIndex = 1;
             this.groupBoxAnimate.TabStop = false;
             this.groupBoxAnimate.Text = "Facing/Action";
@@ -461,10 +488,11 @@ namespace UoFiddler.Controls.UserControls
             this.ActionBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ActionBar.AutoSize = false;
-            this.ActionBar.Location = new System.Drawing.Point(2, 53);
+            this.ActionBar.Location = new System.Drawing.Point(2, 61);
+            this.ActionBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ActionBar.Maximum = 34;
             this.ActionBar.Name = "ActionBar";
-            this.ActionBar.Size = new System.Drawing.Size(183, 35);
+            this.ActionBar.Size = new System.Drawing.Size(243, 40);
             this.ActionBar.TabIndex = 1;
             this.toolTip1.SetToolTip(this.ActionBar, "0 Walk_01");
             this.ActionBar.Scroll += new System.EventHandler(this.OnScroll_Action);
@@ -474,10 +502,11 @@ namespace UoFiddler.Controls.UserControls
             this.FacingBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FacingBar.AutoSize = false;
-            this.FacingBar.Location = new System.Drawing.Point(2, 20);
+            this.FacingBar.Location = new System.Drawing.Point(2, 23);
+            this.FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FacingBar.Maximum = 7;
             this.FacingBar.Name = "FacingBar";
-            this.FacingBar.Size = new System.Drawing.Size(183, 36);
+            this.FacingBar.Size = new System.Drawing.Size(243, 42);
             this.FacingBar.TabIndex = 0;
             this.toolTip1.SetToolTip(this.FacingBar, "1");
             this.FacingBar.Scroll += new System.EventHandler(this.OnScroll_Facing);
@@ -487,8 +516,9 @@ namespace UoFiddler.Controls.UserControls
             this.DressPic.ContextMenuStrip = this.contextMenuStrip2;
             this.DressPic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DressPic.Location = new System.Drawing.Point(0, 0);
+            this.DressPic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DressPic.Name = "DressPic";
-            this.DressPic.Size = new System.Drawing.Size(191, 414);
+            this.DressPic.Size = new System.Drawing.Size(252, 477);
             this.DressPic.TabIndex = 0;
             this.DressPic.TabStop = false;
             this.DressPic.SizeChanged += new System.EventHandler(this.OnResizeDressPic);
@@ -602,20 +632,22 @@ namespace UoFiddler.Controls.UserControls
             this.TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextBox.Location = new System.Drawing.Point(0, 0);
+            this.TextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TextBox.Name = "TextBox";
             this.TextBox.ReadOnly = true;
-            this.TextBox.Size = new System.Drawing.Size(191, 122);
+            this.TextBox.Size = new System.Drawing.Size(252, 141);
             this.TextBox.TabIndex = 0;
             this.TextBox.Text = "";
             // 
             // DressControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "DressControl";
-            this.Size = new System.Drawing.Size(780, 540);
+            this.Size = new System.Drawing.Size(915, 623);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

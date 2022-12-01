@@ -50,8 +50,9 @@ namespace UoFiddler.Controls.Forms
             // 
             this.TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextBox.Location = new System.Drawing.Point(0, 25);
+            this.TextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TextBox.Name = "TextBox";
-            this.TextBox.Size = new System.Drawing.Size(303, 247);
+            this.TextBox.Size = new System.Drawing.Size(360, 290);
             this.TextBox.TabIndex = 0;
             this.TextBox.Text = "";
             // 
@@ -64,7 +65,7 @@ namespace UoFiddler.Controls.Forms
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(303, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(360, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -86,13 +87,14 @@ namespace UoFiddler.Controls.Forms
             // 
             // ClilocDetailForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(303, 272);
+            this.ClientSize = new System.Drawing.Size(360, 315);
             this.Controls.Add(this.TextBox);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ClilocDetailForm";
             this.Text = "ClilocDetail";
             this.toolStrip1.ResumeLayout(false);

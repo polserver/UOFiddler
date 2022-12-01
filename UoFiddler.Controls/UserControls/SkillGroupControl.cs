@@ -149,6 +149,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnItemDrag(object sender, ItemDragEventArgs e)
         {
             _sourceNode = (TreeNode)e.Item;
+
             if (_sourceNode == null)
             {
                 return;

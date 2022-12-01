@@ -96,16 +96,19 @@ namespace UoFiddler.Forms
             this.groupBox1.Controls.Add(this.checkBoxItemClip);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.numericUpDownItemSizeWidth);
-            this.groupBox1.Location = new System.Drawing.Point(14, 142);
+            this.groupBox1.Location = new System.Drawing.Point(16, 164);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(221, 100);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(258, 115);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Item Tab";
             // 
             // numericUpDownItemSizeHeight
             // 
-            this.numericUpDownItemSizeHeight.Location = new System.Drawing.Point(133, 19);
+            this.numericUpDownItemSizeHeight.Location = new System.Drawing.Point(155, 22);
+            this.numericUpDownItemSizeHeight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownItemSizeHeight.Maximum = new decimal(new int[] {
             512,
             0,
@@ -117,7 +120,7 @@ namespace UoFiddler.Forms
             0,
             0});
             this.numericUpDownItemSizeHeight.Name = "numericUpDownItemSizeHeight";
-            this.numericUpDownItemSizeHeight.Size = new System.Drawing.Size(61, 20);
+            this.numericUpDownItemSizeHeight.Size = new System.Drawing.Size(71, 23);
             this.numericUpDownItemSizeHeight.TabIndex = 3;
             this.toolTip1.SetToolTip(this.numericUpDownItemSizeHeight, "Height");
             this.numericUpDownItemSizeHeight.Value = new decimal(new int[] {
@@ -129,9 +132,10 @@ namespace UoFiddler.Forms
             // checkBoxItemClip
             // 
             this.checkBoxItemClip.AutoSize = true;
-            this.checkBoxItemClip.Location = new System.Drawing.Point(9, 47);
+            this.checkBoxItemClip.Location = new System.Drawing.Point(10, 54);
+            this.checkBoxItemClip.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxItemClip.Name = "checkBoxItemClip";
-            this.checkBoxItemClip.Size = new System.Drawing.Size(66, 17);
+            this.checkBoxItemClip.Size = new System.Drawing.Size(74, 19);
             this.checkBoxItemClip.TabIndex = 2;
             this.checkBoxItemClip.Text = "Item Clip";
             this.toolTip1.SetToolTip(this.checkBoxItemClip, "ItemClip images in items tab shrinked or clipped");
@@ -140,16 +144,18 @@ namespace UoFiddler.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 21);
+            this.label1.Location = new System.Drawing.Point(7, 24);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 13);
+            this.label1.Size = new System.Drawing.Size(54, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "Item Size";
             this.toolTip1.SetToolTip(this.label1, "ItemSize controls the size of images in items tab");
             // 
             // numericUpDownItemSizeWidth
             // 
-            this.numericUpDownItemSizeWidth.Location = new System.Drawing.Point(62, 19);
+            this.numericUpDownItemSizeWidth.Location = new System.Drawing.Point(72, 22);
+            this.numericUpDownItemSizeWidth.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownItemSizeWidth.Maximum = new decimal(new int[] {
             512,
             0,
@@ -161,7 +167,7 @@ namespace UoFiddler.Forms
             0,
             0});
             this.numericUpDownItemSizeWidth.Name = "numericUpDownItemSizeWidth";
-            this.numericUpDownItemSizeWidth.Size = new System.Drawing.Size(65, 20);
+            this.numericUpDownItemSizeWidth.Size = new System.Drawing.Size(76, 23);
             this.numericUpDownItemSizeWidth.TabIndex = 0;
             this.toolTip1.SetToolTip(this.numericUpDownItemSizeWidth, "Width");
             this.numericUpDownItemSizeWidth.Value = new decimal(new int[] {
@@ -173,9 +179,10 @@ namespace UoFiddler.Forms
             // checkBoxCacheData
             // 
             this.checkBoxCacheData.AutoSize = true;
-            this.checkBoxCacheData.Location = new System.Drawing.Point(6, 20);
+            this.checkBoxCacheData.Location = new System.Drawing.Point(7, 23);
+            this.checkBoxCacheData.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxCacheData.Name = "checkBoxCacheData";
-            this.checkBoxCacheData.Size = new System.Drawing.Size(83, 17);
+            this.checkBoxCacheData.Size = new System.Drawing.Size(86, 19);
             this.checkBoxCacheData.TabIndex = 2;
             this.checkBoxCacheData.Text = "Cache Data";
             this.toolTip1.SetToolTip(this.checkBoxCacheData, "CacheData should mul entries be cached for faster load");
@@ -188,9 +195,11 @@ namespace UoFiddler.Forms
             this.groupBox2.Controls.Add(this.checkBoxuseDiff);
             this.groupBox2.Controls.Add(this.checkBoxNewMapSize);
             this.groupBox2.Controls.Add(this.checkBoxCacheData);
-            this.groupBox2.Location = new System.Drawing.Point(14, 5);
+            this.groupBox2.Location = new System.Drawing.Point(16, 6);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(221, 136);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(258, 157);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc";
@@ -198,9 +207,10 @@ namespace UoFiddler.Forms
             // checkBoxPolSoundIdOffset
             // 
             this.checkBoxPolSoundIdOffset.AutoSize = true;
-            this.checkBoxPolSoundIdOffset.Location = new System.Drawing.Point(6, 112);
+            this.checkBoxPolSoundIdOffset.Location = new System.Drawing.Point(7, 129);
+            this.checkBoxPolSoundIdOffset.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxPolSoundIdOffset.Name = "checkBoxPolSoundIdOffset";
-            this.checkBoxPolSoundIdOffset.Size = new System.Drawing.Size(196, 17);
+            this.checkBoxPolSoundIdOffset.Size = new System.Drawing.Size(217, 19);
             this.checkBoxPolSoundIdOffset.TabIndex = 7;
             this.checkBoxPolSoundIdOffset.Text = "Offset Sound Id by 1 (POL emulator)";
             this.toolTip1.SetToolTip(this.checkBoxPolSoundIdOffset, "UO Sounds are indexed from 0 but POL uses +1 offset.\r\nWhen this option is checked" +
@@ -211,9 +221,10 @@ namespace UoFiddler.Forms
             // checkBoxPanelSoundsDesign
             // 
             this.checkBoxPanelSoundsDesign.AutoSize = true;
-            this.checkBoxPanelSoundsDesign.Location = new System.Drawing.Point(6, 89);
+            this.checkBoxPanelSoundsDesign.Location = new System.Drawing.Point(7, 103);
+            this.checkBoxPanelSoundsDesign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxPanelSoundsDesign.Name = "checkBoxPanelSoundsDesign";
-            this.checkBoxPanelSoundsDesign.Size = new System.Drawing.Size(146, 17);
+            this.checkBoxPanelSoundsDesign.Size = new System.Drawing.Size(160, 19);
             this.checkBoxPanelSoundsDesign.TabIndex = 5;
             this.checkBoxPanelSoundsDesign.Text = "Right panel in sounds tab";
             this.toolTip1.SetToolTip(this.checkBoxPanelSoundsDesign, "Show right panel in Sounds tab.");
@@ -222,9 +233,10 @@ namespace UoFiddler.Forms
             // checkBoxuseDiff
             // 
             this.checkBoxuseDiff.AutoSize = true;
-            this.checkBoxuseDiff.Location = new System.Drawing.Point(6, 66);
+            this.checkBoxuseDiff.Location = new System.Drawing.Point(7, 76);
+            this.checkBoxuseDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxuseDiff.Name = "checkBoxuseDiff";
-            this.checkBoxuseDiff.Size = new System.Drawing.Size(110, 17);
+            this.checkBoxuseDiff.Size = new System.Drawing.Size(119, 19);
             this.checkBoxuseDiff.TabIndex = 4;
             this.checkBoxuseDiff.Text = "Use Map diff Files";
             this.toolTip1.SetToolTip(this.checkBoxuseDiff, "Should map diff files be used");
@@ -233,9 +245,10 @@ namespace UoFiddler.Forms
             // checkBoxNewMapSize
             // 
             this.checkBoxNewMapSize.AutoSize = true;
-            this.checkBoxNewMapSize.Location = new System.Drawing.Point(6, 43);
+            this.checkBoxNewMapSize.Location = new System.Drawing.Point(7, 50);
+            this.checkBoxNewMapSize.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxNewMapSize.Name = "checkBoxNewMapSize";
-            this.checkBoxNewMapSize.Size = new System.Drawing.Size(95, 17);
+            this.checkBoxNewMapSize.Size = new System.Drawing.Size(100, 19);
             this.checkBoxNewMapSize.TabIndex = 3;
             this.checkBoxNewMapSize.Text = "New Map Size";
             this.toolTip1.SetToolTip(this.checkBoxNewMapSize, "NewMapSize Felucca/Trammel width 7168?");
@@ -243,9 +256,10 @@ namespace UoFiddler.Forms
             // 
             // buttonApply
             // 
-            this.buttonApply.Location = new System.Drawing.Point(275, 381);
+            this.buttonApply.Location = new System.Drawing.Point(321, 440);
+            this.buttonApply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonApply.Name = "buttonApply";
-            this.buttonApply.Size = new System.Drawing.Size(75, 23);
+            this.buttonApply.Size = new System.Drawing.Size(88, 27);
             this.buttonApply.TabIndex = 4;
             this.buttonApply.Text = "Apply";
             this.buttonApply.UseVisualStyleBackColor = true;
@@ -254,9 +268,10 @@ namespace UoFiddler.Forms
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 20);
+            this.label2.Location = new System.Drawing.Point(7, 23);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 13);
+            this.label2.Size = new System.Drawing.Size(72, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "map0 Name";
             this.toolTip1.SetToolTip(this.label2, "Defines the map name");
@@ -264,9 +279,10 @@ namespace UoFiddler.Forms
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 46);
+            this.label3.Location = new System.Drawing.Point(7, 53);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
+            this.label3.Size = new System.Drawing.Size(72, 15);
             this.label3.TabIndex = 3;
             this.label3.Text = "map1 Name";
             this.toolTip1.SetToolTip(this.label3, "Defines the map name");
@@ -274,9 +290,10 @@ namespace UoFiddler.Forms
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 72);
+            this.label4.Location = new System.Drawing.Point(7, 83);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 13);
+            this.label4.Size = new System.Drawing.Size(72, 15);
             this.label4.TabIndex = 5;
             this.label4.Text = "map2 Name";
             this.toolTip1.SetToolTip(this.label4, "Defines the map name");
@@ -284,9 +301,10 @@ namespace UoFiddler.Forms
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 98);
+            this.label5.Location = new System.Drawing.Point(7, 113);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(64, 13);
+            this.label5.Size = new System.Drawing.Size(72, 15);
             this.label5.TabIndex = 7;
             this.label5.Text = "map3 Name";
             this.toolTip1.SetToolTip(this.label5, "Defines the map name");
@@ -294,9 +312,10 @@ namespace UoFiddler.Forms
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 123);
+            this.label6.Location = new System.Drawing.Point(7, 142);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(64, 13);
+            this.label6.Size = new System.Drawing.Size(72, 15);
             this.label6.TabIndex = 9;
             this.label6.Text = "map4 Name";
             this.toolTip1.SetToolTip(this.label6, "Defines the map name");
@@ -304,9 +323,10 @@ namespace UoFiddler.Forms
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 183);
+            this.label7.Location = new System.Drawing.Point(7, 211);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(28, 13);
+            this.label7.Size = new System.Drawing.Size(33, 15);
             this.label7.TabIndex = 11;
             this.label7.Text = "Cmd";
             this.toolTip1.SetToolTip(this.label7, "Defines the cmd to send Client to loc");
@@ -314,9 +334,10 @@ namespace UoFiddler.Forms
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 209);
+            this.label8.Location = new System.Drawing.Point(7, 241);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(28, 13);
+            this.label8.Size = new System.Drawing.Size(31, 15);
             this.label8.TabIndex = 13;
             this.label8.Text = "Args";
             this.toolTip1.SetToolTip(this.label8, "{1} = x, {2} = y, {3} = z, {4} = mapid, {5} = mapname");
@@ -324,9 +345,10 @@ namespace UoFiddler.Forms
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 149);
+            this.label9.Location = new System.Drawing.Point(7, 172);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(64, 13);
+            this.label9.Size = new System.Drawing.Size(72, 15);
             this.label9.TabIndex = 15;
             this.label9.Text = "map5 Name";
             this.toolTip1.SetToolTip(this.label9, "Defines the map name");
@@ -334,9 +356,10 @@ namespace UoFiddler.Forms
             // FocusColorLabel
             // 
             this.FocusColorLabel.AutoSize = true;
-            this.FocusColorLabel.Location = new System.Drawing.Point(12, 22);
+            this.FocusColorLabel.Location = new System.Drawing.Point(14, 25);
+            this.FocusColorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.FocusColorLabel.Name = "FocusColorLabel";
-            this.FocusColorLabel.Size = new System.Drawing.Size(56, 13);
+            this.FocusColorLabel.Size = new System.Drawing.Size(59, 15);
             this.FocusColorLabel.TabIndex = 11;
             this.FocusColorLabel.Text = "Tile Focus";
             this.toolTip1.SetToolTip(this.FocusColorLabel, "ItemSize controls the size of images in items tab");
@@ -344,9 +367,10 @@ namespace UoFiddler.Forms
             // SelectedColorLabel
             // 
             this.SelectedColorLabel.AutoSize = true;
-            this.SelectedColorLabel.Location = new System.Drawing.Point(12, 49);
+            this.SelectedColorLabel.Location = new System.Drawing.Point(14, 57);
+            this.SelectedColorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SelectedColorLabel.Name = "SelectedColorLabel";
-            this.SelectedColorLabel.Size = new System.Drawing.Size(71, 13);
+            this.SelectedColorLabel.Size = new System.Drawing.Size(76, 15);
             this.SelectedColorLabel.TabIndex = 14;
             this.SelectedColorLabel.Text = "Tile Selection";
             this.toolTip1.SetToolTip(this.SelectedColorLabel, "ItemSize controls the size of images in items tab");
@@ -369,67 +393,77 @@ namespace UoFiddler.Forms
             this.groupBox3.Controls.Add(this.map1Nametext);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.map0Nametext);
-            this.groupBox3.Location = new System.Drawing.Point(242, 5);
+            this.groupBox3.Location = new System.Drawing.Point(282, 6);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(189, 237);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox3.Size = new System.Drawing.Size(220, 273);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Map";
             // 
             // map5Nametext
             // 
-            this.map5Nametext.Location = new System.Drawing.Point(76, 146);
+            this.map5Nametext.Location = new System.Drawing.Point(89, 168);
+            this.map5Nametext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.map5Nametext.Name = "map5Nametext";
-            this.map5Nametext.Size = new System.Drawing.Size(100, 20);
+            this.map5Nametext.Size = new System.Drawing.Size(116, 23);
             this.map5Nametext.TabIndex = 14;
             // 
             // argstext
             // 
-            this.argstext.Location = new System.Drawing.Point(76, 206);
+            this.argstext.Location = new System.Drawing.Point(89, 238);
+            this.argstext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.argstext.Name = "argstext";
-            this.argstext.Size = new System.Drawing.Size(100, 20);
+            this.argstext.Size = new System.Drawing.Size(116, 23);
             this.argstext.TabIndex = 12;
             // 
             // cmdtext
             // 
-            this.cmdtext.Location = new System.Drawing.Point(76, 180);
+            this.cmdtext.Location = new System.Drawing.Point(89, 208);
+            this.cmdtext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cmdtext.Name = "cmdtext";
-            this.cmdtext.Size = new System.Drawing.Size(100, 20);
+            this.cmdtext.Size = new System.Drawing.Size(116, 23);
             this.cmdtext.TabIndex = 10;
             // 
             // map4Nametext
             // 
-            this.map4Nametext.Location = new System.Drawing.Point(76, 120);
+            this.map4Nametext.Location = new System.Drawing.Point(89, 138);
+            this.map4Nametext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.map4Nametext.Name = "map4Nametext";
-            this.map4Nametext.Size = new System.Drawing.Size(100, 20);
+            this.map4Nametext.Size = new System.Drawing.Size(116, 23);
             this.map4Nametext.TabIndex = 8;
             // 
             // map3Nametext
             // 
-            this.map3Nametext.Location = new System.Drawing.Point(76, 95);
+            this.map3Nametext.Location = new System.Drawing.Point(89, 110);
+            this.map3Nametext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.map3Nametext.Name = "map3Nametext";
-            this.map3Nametext.Size = new System.Drawing.Size(100, 20);
+            this.map3Nametext.Size = new System.Drawing.Size(116, 23);
             this.map3Nametext.TabIndex = 6;
             // 
             // map2Nametext
             // 
-            this.map2Nametext.Location = new System.Drawing.Point(76, 69);
+            this.map2Nametext.Location = new System.Drawing.Point(89, 80);
+            this.map2Nametext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.map2Nametext.Name = "map2Nametext";
-            this.map2Nametext.Size = new System.Drawing.Size(100, 20);
+            this.map2Nametext.Size = new System.Drawing.Size(116, 23);
             this.map2Nametext.TabIndex = 4;
             // 
             // map1Nametext
             // 
-            this.map1Nametext.Location = new System.Drawing.Point(76, 43);
+            this.map1Nametext.Location = new System.Drawing.Point(89, 50);
+            this.map1Nametext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.map1Nametext.Name = "map1Nametext";
-            this.map1Nametext.Size = new System.Drawing.Size(100, 20);
+            this.map1Nametext.Size = new System.Drawing.Size(116, 23);
             this.map1Nametext.TabIndex = 2;
             // 
             // map0Nametext
             // 
-            this.map0Nametext.Location = new System.Drawing.Point(76, 17);
+            this.map0Nametext.Location = new System.Drawing.Point(89, 20);
+            this.map0Nametext.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.map0Nametext.Name = "map0Nametext";
-            this.map0Nametext.Size = new System.Drawing.Size(100, 20);
+            this.map0Nametext.Size = new System.Drawing.Size(116, 23);
             this.map0Nametext.TabIndex = 0;
             // 
             // groupBox4
@@ -437,18 +471,21 @@ namespace UoFiddler.Forms
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.textBoxOutputPath);
             this.groupBox4.Controls.Add(this.label10);
-            this.groupBox4.Location = new System.Drawing.Point(14, 331);
+            this.groupBox4.Location = new System.Drawing.Point(16, 382);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(417, 44);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox4.Size = new System.Drawing.Size(486, 51);
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Path";
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(380, 14);
+            this.button2.Location = new System.Drawing.Point(443, 16);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(24, 23);
+            this.button2.Size = new System.Drawing.Size(28, 27);
             this.button2.TabIndex = 2;
             this.button2.Text = "...";
             this.button2.UseVisualStyleBackColor = true;
@@ -456,17 +493,19 @@ namespace UoFiddler.Forms
             // 
             // textBoxOutputPath
             // 
-            this.textBoxOutputPath.Location = new System.Drawing.Point(76, 17);
+            this.textBoxOutputPath.Location = new System.Drawing.Point(89, 20);
+            this.textBoxOutputPath.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBoxOutputPath.Name = "textBoxOutputPath";
-            this.textBoxOutputPath.Size = new System.Drawing.Size(298, 20);
+            this.textBoxOutputPath.Size = new System.Drawing.Size(347, 23);
             this.textBoxOutputPath.TabIndex = 1;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 20);
+            this.label10.Location = new System.Drawing.Point(7, 23);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(64, 13);
+            this.label10.Size = new System.Drawing.Size(72, 15);
             this.label10.TabIndex = 0;
             this.label10.Text = "Output Path";
             // 
@@ -477,18 +516,21 @@ namespace UoFiddler.Forms
             this.ColorsGroupBox.Controls.Add(this.TileSelectionColorComboBox);
             this.ColorsGroupBox.Controls.Add(this.FocusColorLabel);
             this.ColorsGroupBox.Controls.Add(this.TileFocusColorComboBox);
-            this.ColorsGroupBox.Location = new System.Drawing.Point(14, 248);
+            this.ColorsGroupBox.Location = new System.Drawing.Point(16, 286);
+            this.ColorsGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ColorsGroupBox.Name = "ColorsGroupBox";
-            this.ColorsGroupBox.Size = new System.Drawing.Size(417, 77);
+            this.ColorsGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ColorsGroupBox.Size = new System.Drawing.Size(486, 89);
             this.ColorsGroupBox.TabIndex = 7;
             this.ColorsGroupBox.TabStop = false;
             this.ColorsGroupBox.Text = "Colors";
             // 
             // DefaultColorsButton
             // 
-            this.DefaultColorsButton.Location = new System.Drawing.Point(304, 44);
+            this.DefaultColorsButton.Location = new System.Drawing.Point(355, 51);
+            this.DefaultColorsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DefaultColorsButton.Name = "DefaultColorsButton";
-            this.DefaultColorsButton.Size = new System.Drawing.Size(100, 23);
+            this.DefaultColorsButton.Size = new System.Drawing.Size(117, 27);
             this.DefaultColorsButton.TabIndex = 15;
             this.DefaultColorsButton.Text = "Set default colors";
             this.DefaultColorsButton.UseVisualStyleBackColor = true;
@@ -497,24 +539,27 @@ namespace UoFiddler.Forms
             // TileSelectionColorComboBox
             // 
             this.TileSelectionColorComboBox.FormattingEnabled = true;
-            this.TileSelectionColorComboBox.Location = new System.Drawing.Point(89, 46);
+            this.TileSelectionColorComboBox.Location = new System.Drawing.Point(104, 53);
+            this.TileSelectionColorComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TileSelectionColorComboBox.Name = "TileSelectionColorComboBox";
-            this.TileSelectionColorComboBox.Size = new System.Drawing.Size(132, 21);
+            this.TileSelectionColorComboBox.Size = new System.Drawing.Size(153, 23);
             this.TileSelectionColorComboBox.TabIndex = 13;
             // 
             // TileFocusColorComboBox
             // 
             this.TileFocusColorComboBox.FormattingEnabled = true;
-            this.TileFocusColorComboBox.Location = new System.Drawing.Point(89, 19);
+            this.TileFocusColorComboBox.Location = new System.Drawing.Point(104, 22);
+            this.TileFocusColorComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TileFocusColorComboBox.Name = "TileFocusColorComboBox";
-            this.TileFocusColorComboBox.Size = new System.Drawing.Size(132, 21);
+            this.TileFocusColorComboBox.Size = new System.Drawing.Size(153, 23);
             this.TileFocusColorComboBox.TabIndex = 9;
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(356, 381);
+            this.buttonClose.Location = new System.Drawing.Point(415, 440);
+            this.buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(75, 23);
+            this.buttonClose.Size = new System.Drawing.Size(88, 27);
             this.buttonClose.TabIndex = 8;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
@@ -522,9 +567,9 @@ namespace UoFiddler.Forms
             // 
             // OptionsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(445, 412);
+            this.ClientSize = new System.Drawing.Size(519, 475);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.ColorsGroupBox);
             this.Controls.Add(this.groupBox4);
@@ -534,6 +579,7 @@ namespace UoFiddler.Forms
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "OptionsForm";

@@ -50,9 +50,10 @@ namespace UoFiddler.Controls.Forms
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 9);
+            this.label5.Location = new System.Drawing.Point(10, 10);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(73, 13);
+            this.label5.Size = new System.Drawing.Size(79, 15);
             this.label5.TabIndex = 17;
             this.label5.Text = "Replace From";
             // 
@@ -60,9 +61,10 @@ namespace UoFiddler.Controls.Forms
             // 
             this.button1.AutoSize = true;
             this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Location = new System.Drawing.Point(316, 6);
+            this.button1.Location = new System.Drawing.Point(369, 7);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(26, 23);
+            this.button1.Size = new System.Drawing.Size(26, 25);
             this.button1.TabIndex = 16;
             this.button1.Text = "...";
             this.button1.UseVisualStyleBackColor = true;
@@ -70,16 +72,18 @@ namespace UoFiddler.Controls.Forms
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(88, 8);
+            this.textBox1.Location = new System.Drawing.Point(103, 9);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(222, 20);
+            this.textBox1.Size = new System.Drawing.Size(258, 23);
             this.textBox1.TabIndex = 15;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(138, 157);
+            this.button2.Location = new System.Drawing.Point(161, 181);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(88, 27);
             this.button2.TabIndex = 18;
             this.button2.Text = "Replace";
             this.button2.UseVisualStyleBackColor = true;
@@ -88,18 +92,19 @@ namespace UoFiddler.Controls.Forms
             // richTextBox1
             // 
             this.richTextBox1.DetectUrls = false;
-            this.richTextBox1.Location = new System.Drawing.Point(12, 33);
+            this.richTextBox1.Location = new System.Drawing.Point(14, 38);
+            this.richTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(330, 118);
+            this.richTextBox1.Size = new System.Drawing.Size(384, 136);
             this.richTextBox1.TabIndex = 19;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
             // MapReplaceTilesForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(355, 190);
+            this.ClientSize = new System.Drawing.Size(411, 219);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label5);
@@ -107,6 +112,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.textBox1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MapReplaceTilesForm";
             this.Text = "MapReplaceTiles";
             this.ResumeLayout(false);

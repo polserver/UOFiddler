@@ -54,6 +54,7 @@ namespace UoFiddler.Controls.UserControls
             this.GotoButton = new System.Windows.Forms.ToolStripButton();
             this.FindEntry = new System.Windows.Forms.ToolStripTextBox();
             this.FindButton = new System.Windows.Forms.ToolStripButton();
+            this.RegexToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -61,7 +62,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tileDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RegexToolStripButton = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -75,11 +75,12 @@ namespace UoFiddler.Controls.UserControls
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
             this.dataGridView1.Location = new System.Drawing.Point(0, 25);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGridView1.RowHeadersWidth = 30;
-            this.dataGridView1.Size = new System.Drawing.Size(773, 357);
+            this.dataGridView1.Size = new System.Drawing.Size(906, 418);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCell_dbClick);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
@@ -146,7 +147,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(773, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(906, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -158,7 +159,7 @@ namespace UoFiddler.Controls.UserControls
             "Custom 1",
             "Custom 2"});
             this.LangComboBox.Name = "LangComboBox";
-            this.LangComboBox.Size = new System.Drawing.Size(121, 25);
+            this.LangComboBox.Size = new System.Drawing.Size(140, 25);
             this.LangComboBox.SelectedIndexChanged += new System.EventHandler(this.OnLangChange);
             // 
             // toolStripSeparator1
@@ -168,10 +169,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // GotoEntry
             // 
-            this.GotoEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.GotoEntry.MaxLength = 10;
             this.GotoEntry.Name = "GotoEntry";
-            this.GotoEntry.Size = new System.Drawing.Size(100, 25);
+            this.GotoEntry.Size = new System.Drawing.Size(116, 25);
             this.GotoEntry.Text = "Enter Number";
             this.GotoEntry.Enter += new System.EventHandler(this.GotoEntry_Enter);
             this.GotoEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GotoEntry_KeyDown);
@@ -188,9 +188,8 @@ namespace UoFiddler.Controls.UserControls
             // FindEntry
             // 
             this.FindEntry.AcceptsTab = true;
-            this.FindEntry.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FindEntry.Name = "FindEntry";
-            this.FindEntry.Size = new System.Drawing.Size(140, 25);
+            this.FindEntry.Size = new System.Drawing.Size(163, 25);
             this.FindEntry.Text = "Enter Text";
             this.FindEntry.Enter += new System.EventHandler(this.FindEntry_Enter);
             this.FindEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindEntry_KeyDown);
@@ -203,6 +202,15 @@ namespace UoFiddler.Controls.UserControls
             this.FindButton.Size = new System.Drawing.Size(34, 22);
             this.FindButton.Text = "Find";
             this.FindButton.Click += new System.EventHandler(this.FindEntryClick);
+            // 
+            // RegexToolStripButton
+            // 
+            this.RegexToolStripButton.CheckOnClick = true;
+            this.RegexToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.RegexToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RegexToolStripButton.Name = "RegexToolStripButton";
+            this.RegexToolStripButton.Size = new System.Drawing.Size(129, 22);
+            this.RegexToolStripButton.Text = "Use regular expression";
             // 
             // toolStripSeparator2
             // 
@@ -259,24 +267,16 @@ namespace UoFiddler.Controls.UserControls
             this.tileDataToolStripMenuItem.Text = "TileData";
             this.tileDataToolStripMenuItem.Click += new System.EventHandler(this.TileDataToolStripMenuItem_Click);
             // 
-            // RegexToolStripButton
-            // 
-            this.RegexToolStripButton.CheckOnClick = true;
-            this.RegexToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.RegexToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.RegexToolStripButton.Name = "RegexToolStripButton";
-            this.RegexToolStripButton.Size = new System.Drawing.Size(129, 22);
-            this.RegexToolStripButton.Text = "Use regular expression";
-            // 
             // ClilocControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ClilocControl";
-            this.Size = new System.Drawing.Size(773, 382);
+            this.Size = new System.Drawing.Size(906, 443);
             this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);

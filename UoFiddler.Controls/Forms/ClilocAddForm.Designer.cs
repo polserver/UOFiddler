@@ -47,25 +47,28 @@ namespace UoFiddler.Controls.Forms
             // 
             // NumberBox
             // 
-            this.NumberBox.Location = new System.Drawing.Point(39, 12);
+            this.NumberBox.Location = new System.Drawing.Point(46, 14);
+            this.NumberBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.NumberBox.Name = "NumberBox";
-            this.NumberBox.Size = new System.Drawing.Size(132, 20);
+            this.NumberBox.Size = new System.Drawing.Size(153, 23);
             this.NumberBox.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 15);
+            this.label1.Location = new System.Drawing.Point(14, 17);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(21, 13);
+            this.label1.Size = new System.Drawing.Size(23, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "Nr:";
             // 
             // Add_Button
             // 
-            this.Add_Button.Location = new System.Drawing.Point(15, 38);
+            this.Add_Button.Location = new System.Drawing.Point(18, 44);
+            this.Add_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Add_Button.Name = "Add_Button";
-            this.Add_Button.Size = new System.Drawing.Size(75, 23);
+            this.Add_Button.Size = new System.Drawing.Size(88, 27);
             this.Add_Button.TabIndex = 2;
             this.Add_Button.Text = "Add";
             this.Add_Button.UseVisualStyleBackColor = true;
@@ -73,9 +76,10 @@ namespace UoFiddler.Controls.Forms
             // 
             // Cancel_Button
             // 
-            this.Cancel_Button.Location = new System.Drawing.Point(96, 38);
+            this.Cancel_Button.Location = new System.Drawing.Point(112, 44);
+            this.Cancel_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Cancel_Button.Name = "Cancel_Button";
-            this.Cancel_Button.Size = new System.Drawing.Size(75, 23);
+            this.Cancel_Button.Size = new System.Drawing.Size(88, 27);
             this.Cancel_Button.TabIndex = 3;
             this.Cancel_Button.Text = "Cancel";
             this.Cancel_Button.UseVisualStyleBackColor = true;
@@ -83,15 +87,16 @@ namespace UoFiddler.Controls.Forms
             // 
             // ClilocAddForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(184, 74);
+            this.ClientSize = new System.Drawing.Size(217, 85);
             this.Controls.Add(this.Cancel_Button);
             this.Controls.Add(this.Add_Button);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.NumberBox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ClilocAddForm";
             this.Text = "Add CliLoc";
             this.ResumeLayout(false);

@@ -84,19 +84,21 @@ namespace UoFiddler.Controls.Forms
             // 
             // textBoxName
             // 
-            this.textBoxName.Location = new System.Drawing.Point(12, 12);
+            this.textBoxName.Location = new System.Drawing.Point(14, 14);
+            this.textBoxName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBoxName.MaxLength = 20;
             this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(197, 20);
+            this.textBoxName.Size = new System.Drawing.Size(229, 23);
             this.textBoxName.TabIndex = 0;
             // 
             // pictureBox
             // 
             this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox.Location = new System.Drawing.Point(12, 38);
+            this.pictureBox.Location = new System.Drawing.Point(14, 44);
+            this.pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(552, 38);
+            this.pictureBox.Size = new System.Drawing.Size(648, 44);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.toolTip1.SetToolTip(this.pictureBox, "Select Second per Right Mouse");
@@ -105,18 +107,20 @@ namespace UoFiddler.Controls.Forms
             // 
             // pictureBoxIndex
             // 
-            this.pictureBoxIndex.Location = new System.Drawing.Point(12, 82);
+            this.pictureBoxIndex.Location = new System.Drawing.Point(14, 95);
+            this.pictureBoxIndex.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBoxIndex.Name = "pictureBoxIndex";
-            this.pictureBoxIndex.Size = new System.Drawing.Size(100, 73);
+            this.pictureBoxIndex.Size = new System.Drawing.Size(117, 84);
             this.pictureBoxIndex.TabIndex = 2;
             this.pictureBoxIndex.TabStop = false;
             this.pictureBoxIndex.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaintIndexColor);
             // 
             // ColorPickerButton
             // 
-            this.ColorPickerButton.Location = new System.Drawing.Point(12, 161);
+            this.ColorPickerButton.Location = new System.Drawing.Point(14, 186);
+            this.ColorPickerButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ColorPickerButton.Name = "ColorPickerButton";
-            this.ColorPickerButton.Size = new System.Drawing.Size(100, 23);
+            this.ColorPickerButton.Size = new System.Drawing.Size(117, 27);
             this.ColorPickerButton.TabIndex = 3;
             this.ColorPickerButton.Text = "Color Picker";
             this.ColorPickerButton.UseVisualStyleBackColor = true;
@@ -124,9 +128,10 @@ namespace UoFiddler.Controls.Forms
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(492, 373);
+            this.SaveButton.Location = new System.Drawing.Point(574, 430);
+            this.SaveButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 23);
+            this.SaveButton.Size = new System.Drawing.Size(88, 27);
             this.SaveButton.TabIndex = 6;
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = true;
@@ -135,9 +140,10 @@ namespace UoFiddler.Controls.Forms
             // Spread
             // 
             this.Spread.AutoSize = true;
-            this.Spread.Location = new System.Drawing.Point(304, 82);
+            this.Spread.Location = new System.Drawing.Point(355, 95);
+            this.Spread.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Spread.Name = "Spread";
-            this.Spread.Size = new System.Drawing.Size(89, 23);
+            this.Spread.Size = new System.Drawing.Size(104, 27);
             this.Spread.TabIndex = 7;
             this.Spread.Text = "Linear Gradient";
             this.Spread.UseVisualStyleBackColor = true;
@@ -145,47 +151,51 @@ namespace UoFiddler.Controls.Forms
             // 
             // numericUpDownR
             // 
-            this.numericUpDownR.Location = new System.Drawing.Point(152, 82);
+            this.numericUpDownR.Location = new System.Drawing.Point(177, 95);
+            this.numericUpDownR.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownR.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.numericUpDownR.Name = "numericUpDownR";
-            this.numericUpDownR.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownR.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownR.TabIndex = 8;
             // 
             // numericUpDownG
             // 
-            this.numericUpDownG.Location = new System.Drawing.Point(152, 108);
+            this.numericUpDownG.Location = new System.Drawing.Point(177, 125);
+            this.numericUpDownG.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownG.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.numericUpDownG.Name = "numericUpDownG";
-            this.numericUpDownG.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownG.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownG.TabIndex = 9;
             // 
             // numericUpDownB
             // 
-            this.numericUpDownB.Location = new System.Drawing.Point(152, 134);
+            this.numericUpDownB.Location = new System.Drawing.Point(177, 155);
+            this.numericUpDownB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.numericUpDownB.Name = "numericUpDownB";
-            this.numericUpDownB.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownB.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownB.TabIndex = 10;
             // 
             // pictureBoxPreview
             // 
             this.pictureBoxPreview.BackColor = System.Drawing.Color.White;
             this.pictureBoxPreview.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBoxPreview.Location = new System.Drawing.Point(12, 190);
+            this.pictureBoxPreview.Location = new System.Drawing.Point(14, 219);
+            this.pictureBoxPreview.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBoxPreview.Name = "pictureBoxPreview";
-            this.pictureBoxPreview.Size = new System.Drawing.Size(267, 206);
+            this.pictureBoxPreview.Size = new System.Drawing.Size(312, 238);
             this.pictureBoxPreview.TabIndex = 11;
             this.pictureBoxPreview.TabStop = false;
             // 
@@ -254,9 +264,10 @@ namespace UoFiddler.Controls.Forms
             // 
             // InverseButton
             // 
-            this.InverseButton.Location = new System.Drawing.Point(304, 140);
+            this.InverseButton.Location = new System.Drawing.Point(355, 162);
+            this.InverseButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.InverseButton.Name = "InverseButton";
-            this.InverseButton.Size = new System.Drawing.Size(89, 23);
+            this.InverseButton.Size = new System.Drawing.Size(104, 27);
             this.InverseButton.TabIndex = 13;
             this.InverseButton.Text = "Inverse";
             this.InverseButton.UseVisualStyleBackColor = true;
@@ -264,7 +275,8 @@ namespace UoFiddler.Controls.Forms
             // 
             // numericUpDownB_R
             // 
-            this.numericUpDownB_R.Location = new System.Drawing.Point(404, 140);
+            this.numericUpDownB_R.Location = new System.Drawing.Point(471, 162);
+            this.numericUpDownB_R.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownB_R.Maximum = new decimal(new int[] {
             255,
             0,
@@ -276,12 +288,13 @@ namespace UoFiddler.Controls.Forms
             0,
             -2147483648});
             this.numericUpDownB_R.Name = "numericUpDownB_R";
-            this.numericUpDownB_R.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownB_R.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownB_R.TabIndex = 16;
             // 
             // numericUpDownG_R
             // 
-            this.numericUpDownG_R.Location = new System.Drawing.Point(404, 111);
+            this.numericUpDownG_R.Location = new System.Drawing.Point(471, 128);
+            this.numericUpDownG_R.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownG_R.Maximum = new decimal(new int[] {
             255,
             0,
@@ -293,12 +306,13 @@ namespace UoFiddler.Controls.Forms
             0,
             -2147483648});
             this.numericUpDownG_R.Name = "numericUpDownG_R";
-            this.numericUpDownG_R.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownG_R.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownG_R.TabIndex = 15;
             // 
             // numericUpDownR_R
             // 
-            this.numericUpDownR_R.Location = new System.Drawing.Point(404, 82);
+            this.numericUpDownR_R.Location = new System.Drawing.Point(471, 95);
+            this.numericUpDownR_R.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownR_R.Maximum = new decimal(new int[] {
             255,
             0,
@@ -310,15 +324,16 @@ namespace UoFiddler.Controls.Forms
             0,
             -2147483648});
             this.numericUpDownR_R.Name = "numericUpDownR_R";
-            this.numericUpDownR_R.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownR_R.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownR_R.TabIndex = 14;
             // 
             // ModifyRangeButton
             // 
             this.ModifyRangeButton.AutoSize = true;
-            this.ModifyRangeButton.Location = new System.Drawing.Point(477, 111);
+            this.ModifyRangeButton.Location = new System.Drawing.Point(556, 128);
+            this.ModifyRangeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ModifyRangeButton.Name = "ModifyRangeButton";
-            this.ModifyRangeButton.Size = new System.Drawing.Size(90, 23);
+            this.ModifyRangeButton.Size = new System.Drawing.Size(105, 27);
             this.ModifyRangeButton.TabIndex = 17;
             this.ModifyRangeButton.Text = "Modify Range";
             this.ModifyRangeButton.UseVisualStyleBackColor = true;
@@ -327,9 +342,10 @@ namespace UoFiddler.Controls.Forms
             // ExpGradientButton
             // 
             this.ExpGradientButton.AutoSize = true;
-            this.ExpGradientButton.Location = new System.Drawing.Point(304, 111);
+            this.ExpGradientButton.Location = new System.Drawing.Point(355, 128);
+            this.ExpGradientButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ExpGradientButton.Name = "ExpGradientButton";
-            this.ExpGradientButton.Size = new System.Drawing.Size(89, 23);
+            this.ExpGradientButton.Size = new System.Drawing.Size(104, 27);
             this.ExpGradientButton.TabIndex = 18;
             this.ExpGradientButton.Text = "Exp Gradient";
             this.ExpGradientButton.UseVisualStyleBackColor = true;
@@ -338,35 +354,39 @@ namespace UoFiddler.Controls.Forms
             // RLabel
             // 
             this.RLabel.AutoSize = true;
-            this.RLabel.Location = new System.Drawing.Point(131, 84);
+            this.RLabel.Location = new System.Drawing.Point(153, 97);
+            this.RLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.RLabel.Name = "RLabel";
-            this.RLabel.Size = new System.Drawing.Size(15, 13);
+            this.RLabel.Size = new System.Drawing.Size(14, 15);
             this.RLabel.TabIndex = 19;
             this.RLabel.Text = "R";
             // 
             // GLabel
             // 
             this.GLabel.AutoSize = true;
-            this.GLabel.Location = new System.Drawing.Point(131, 110);
+            this.GLabel.Location = new System.Drawing.Point(153, 127);
+            this.GLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.GLabel.Name = "GLabel";
-            this.GLabel.Size = new System.Drawing.Size(15, 13);
+            this.GLabel.Size = new System.Drawing.Size(15, 15);
             this.GLabel.TabIndex = 20;
             this.GLabel.Text = "G";
             // 
             // BLabel
             // 
             this.BLabel.AutoSize = true;
-            this.BLabel.Location = new System.Drawing.Point(131, 136);
+            this.BLabel.Location = new System.Drawing.Point(153, 157);
+            this.BLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BLabel.Name = "BLabel";
-            this.BLabel.Size = new System.Drawing.Size(14, 13);
+            this.BLabel.Size = new System.Drawing.Size(14, 15);
             this.BLabel.TabIndex = 21;
             this.BLabel.Text = "B";
             // 
             // SetColorButton
             // 
-            this.SetColorButton.Location = new System.Drawing.Point(215, 105);
+            this.SetColorButton.Location = new System.Drawing.Point(251, 121);
+            this.SetColorButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SetColorButton.Name = "SetColorButton";
-            this.SetColorButton.Size = new System.Drawing.Size(64, 23);
+            this.SetColorButton.Size = new System.Drawing.Size(75, 27);
             this.SetColorButton.TabIndex = 22;
             this.SetColorButton.Text = "Set color";
             this.SetColorButton.UseVisualStyleBackColor = true;
@@ -374,9 +394,9 @@ namespace UoFiddler.Controls.Forms
             // 
             // HueEditForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(576, 408);
+            this.ClientSize = new System.Drawing.Size(676, 471);
             this.Controls.Add(this.SetColorButton);
             this.Controls.Add(this.BLabel);
             this.Controls.Add(this.GLabel);
@@ -399,6 +419,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.textBoxName);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "HueEditForm";

@@ -242,7 +242,7 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesToolStrip.Location = new System.Drawing.Point(0, 0);
             this.LandTilesToolStrip.Name = "LandTilesToolStrip";
             this.LandTilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.LandTilesToolStrip.Size = new System.Drawing.Size(611, 25);
+            this.LandTilesToolStrip.Size = new System.Drawing.Size(716, 25);
             this.LandTilesToolStrip.TabIndex = 5;
             // 
             // NameLabel
@@ -366,9 +366,10 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LandTilesTileView.FocusIndex = -1;
             this.LandTilesTileView.Location = new System.Drawing.Point(0, 25);
+            this.LandTilesTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LandTilesTileView.MultiSelect = false;
             this.LandTilesTileView.Name = "LandTilesTileView";
-            this.LandTilesTileView.Size = new System.Drawing.Size(611, 320);
+            this.LandTilesTileView.Size = new System.Drawing.Size(716, 373);
             this.LandTilesTileView.TabIndex = 8;
             this.LandTilesTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.LandTilesTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -384,13 +385,14 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LandTilesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.LandTilesTileView);
             this.Controls.Add(this.LandTilesToolStrip);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "LandTilesControl";
-            this.Size = new System.Drawing.Size(611, 345);
+            this.Size = new System.Drawing.Size(716, 398);
             this.Load += new System.EventHandler(this.OnLoad);
             this.LandTilesContextMenuStrip.ResumeLayout(false);
             this.LandTilesToolStrip.ResumeLayout(false);

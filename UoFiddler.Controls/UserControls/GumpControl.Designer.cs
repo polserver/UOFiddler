@@ -90,6 +90,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -101,8 +102,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(632, 331);
-            this.splitContainer1.SplitterDistance = 207;
+            this.splitContainer1.Size = new System.Drawing.Size(742, 382);
+            this.splitContainer1.SplitterDistance = 243;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 0;
             // 
             // listBox
@@ -114,8 +116,9 @@ namespace UoFiddler.Controls.UserControls
             this.listBox.IntegralHeight = false;
             this.listBox.ItemHeight = 60;
             this.listBox.Location = new System.Drawing.Point(0, 25);
+            this.listBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(207, 306);
+            this.listBox.Size = new System.Drawing.Size(243, 357);
             this.listBox.TabIndex = 0;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.listBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.ListBox_MeasureItem);
@@ -260,7 +263,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(207, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(243, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -337,8 +340,9 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(421, 309);
+            this.pictureBox.Size = new System.Drawing.Size(494, 357);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             // 
@@ -353,10 +357,10 @@ namespace UoFiddler.Controls.UserControls
             this.ProgressBar,
             this.Preload,
             this.toolStripSeparator3});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 309);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 357);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(421, 22);
+            this.toolStrip1.Size = new System.Drawing.Size(494, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -380,7 +384,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.ProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(100, 19);
+            this.ProgressBar.Size = new System.Drawing.Size(117, 22);
             // 
             // Preload
             // 
@@ -388,7 +392,7 @@ namespace UoFiddler.Controls.UserControls
             this.Preload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.Preload.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Preload.Name = "Preload";
-            this.Preload.Size = new System.Drawing.Size(51, 19);
+            this.Preload.Size = new System.Drawing.Size(51, 22);
             this.Preload.Text = "Preload";
             this.Preload.Click += new System.EventHandler(this.OnClickPreLoad);
             // 
@@ -396,7 +400,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 22);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // PreLoader
             // 
@@ -407,12 +411,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // GumpControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "GumpControl";
-            this.Size = new System.Drawing.Size(632, 331);
+            this.Size = new System.Drawing.Size(742, 382);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Gump_KeyUp);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();

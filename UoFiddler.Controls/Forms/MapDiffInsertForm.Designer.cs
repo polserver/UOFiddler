@@ -67,9 +67,10 @@ namespace UoFiddler.Controls.Forms
             // checkBoxMap
             // 
             this.checkBoxMap.AutoSize = true;
-            this.checkBoxMap.Location = new System.Drawing.Point(6, 19);
+            this.checkBoxMap.Location = new System.Drawing.Point(7, 22);
+            this.checkBoxMap.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxMap.Name = "checkBoxMap";
-            this.checkBoxMap.Size = new System.Drawing.Size(76, 17);
+            this.checkBoxMap.Size = new System.Drawing.Size(82, 19);
             this.checkBoxMap.TabIndex = 2;
             this.checkBoxMap.Text = "Insert Map";
             this.checkBoxMap.UseVisualStyleBackColor = true;
@@ -77,9 +78,10 @@ namespace UoFiddler.Controls.Forms
             // checkBoxStatics
             // 
             this.checkBoxStatics.AutoSize = true;
-            this.checkBoxStatics.Location = new System.Drawing.Point(11, 19);
+            this.checkBoxStatics.Location = new System.Drawing.Point(13, 22);
+            this.checkBoxStatics.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkBoxStatics.Name = "checkBoxStatics";
-            this.checkBoxStatics.Size = new System.Drawing.Size(87, 17);
+            this.checkBoxStatics.Size = new System.Drawing.Size(92, 19);
             this.checkBoxStatics.TabIndex = 3;
             this.checkBoxStatics.Text = "Insert Statics";
             this.checkBoxStatics.UseVisualStyleBackColor = true;
@@ -91,26 +93,29 @@ namespace UoFiddler.Controls.Forms
             0,
             0,
             0});
-            this.numericUpDownX1.Location = new System.Drawing.Point(85, 19);
+            this.numericUpDownX1.Location = new System.Drawing.Point(99, 22);
+            this.numericUpDownX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownX1.Name = "numericUpDownX1";
-            this.numericUpDownX1.Size = new System.Drawing.Size(54, 20);
+            this.numericUpDownX1.Size = new System.Drawing.Size(63, 23);
             this.numericUpDownX1.TabIndex = 4;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(54, 21);
+            this.label1.Location = new System.Drawing.Point(63, 24);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 13);
+            this.label1.Size = new System.Drawing.Size(20, 15);
             this.label1.TabIndex = 5;
             this.label1.Text = "X1";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(54, 47);
+            this.label2.Location = new System.Drawing.Point(63, 54);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(20, 13);
+            this.label2.Size = new System.Drawing.Size(20, 15);
             this.label2.TabIndex = 7;
             this.label2.Text = "Y1";
             // 
@@ -121,17 +126,19 @@ namespace UoFiddler.Controls.Forms
             0,
             0,
             0});
-            this.numericUpDownY1.Location = new System.Drawing.Point(85, 45);
+            this.numericUpDownY1.Location = new System.Drawing.Point(99, 52);
+            this.numericUpDownY1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownY1.Name = "numericUpDownY1";
-            this.numericUpDownY1.Size = new System.Drawing.Size(54, 20);
+            this.numericUpDownY1.Size = new System.Drawing.Size(63, 23);
             this.numericUpDownY1.TabIndex = 6;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(165, 21);
+            this.label3.Location = new System.Drawing.Point(192, 24);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(20, 13);
+            this.label3.Size = new System.Drawing.Size(20, 15);
             this.label3.TabIndex = 9;
             this.label3.Text = "X2";
             // 
@@ -142,17 +149,19 @@ namespace UoFiddler.Controls.Forms
             0,
             0,
             0});
-            this.numericUpDownX2.Location = new System.Drawing.Point(196, 19);
+            this.numericUpDownX2.Location = new System.Drawing.Point(229, 22);
+            this.numericUpDownX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownX2.Name = "numericUpDownX2";
-            this.numericUpDownX2.Size = new System.Drawing.Size(54, 20);
+            this.numericUpDownX2.Size = new System.Drawing.Size(63, 23);
             this.numericUpDownX2.TabIndex = 8;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(165, 49);
+            this.label4.Location = new System.Drawing.Point(192, 57);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 13);
+            this.label4.Size = new System.Drawing.Size(20, 15);
             this.label4.TabIndex = 11;
             this.label4.Text = "Y2";
             // 
@@ -163,16 +172,18 @@ namespace UoFiddler.Controls.Forms
             0,
             0,
             0});
-            this.numericUpDownY2.Location = new System.Drawing.Point(196, 47);
+            this.numericUpDownY2.Location = new System.Drawing.Point(229, 54);
+            this.numericUpDownY2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownY2.Name = "numericUpDownY2";
-            this.numericUpDownY2.Size = new System.Drawing.Size(54, 20);
+            this.numericUpDownY2.Size = new System.Drawing.Size(63, 23);
             this.numericUpDownY2.TabIndex = 10;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(126, 163);
+            this.button2.Location = new System.Drawing.Point(147, 188);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(88, 27);
             this.button2.TabIndex = 12;
             this.button2.Text = "Insert";
             this.button2.UseVisualStyleBackColor = true;
@@ -181,17 +192,19 @@ namespace UoFiddler.Controls.Forms
             // progressBar1
             // 
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar1.Location = new System.Drawing.Point(0, 208);
+            this.progressBar1.Location = new System.Drawing.Point(0, 241);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(329, 23);
+            this.progressBar1.Size = new System.Drawing.Size(389, 27);
             this.progressBar1.TabIndex = 13;
             // 
             // RemoveDupl
             // 
             this.RemoveDupl.AutoSize = true;
-            this.RemoveDupl.Location = new System.Drawing.Point(11, 42);
+            this.RemoveDupl.Location = new System.Drawing.Point(13, 48);
+            this.RemoveDupl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RemoveDupl.Name = "RemoveDupl";
-            this.RemoveDupl.Size = new System.Drawing.Size(119, 17);
+            this.RemoveDupl.Size = new System.Drawing.Size(127, 19);
             this.RemoveDupl.TabIndex = 17;
             this.RemoveDupl.Text = "Remove Duplicates";
             this.RemoveDupl.UseVisualStyleBackColor = true;
@@ -199,9 +212,11 @@ namespace UoFiddler.Controls.Forms
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.checkBoxMap);
-            this.groupBox1.Location = new System.Drawing.Point(12, 11);
+            this.groupBox1.Location = new System.Drawing.Point(14, 13);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(145, 65);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(169, 75);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Map";
@@ -210,9 +225,11 @@ namespace UoFiddler.Controls.Forms
             // 
             this.groupBox2.Controls.Add(this.checkBoxStatics);
             this.groupBox2.Controls.Add(this.RemoveDupl);
-            this.groupBox2.Location = new System.Drawing.Point(170, 11);
+            this.groupBox2.Location = new System.Drawing.Point(198, 13);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(145, 65);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(169, 75);
             this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Statics";
@@ -227,18 +244,20 @@ namespace UoFiddler.Controls.Forms
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.numericUpDownY2);
-            this.groupBox3.Location = new System.Drawing.Point(11, 83);
+            this.groupBox3.Location = new System.Drawing.Point(13, 96);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(304, 74);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox3.Size = new System.Drawing.Size(355, 85);
             this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Region";
             // 
             // MapDiffInsertForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(329, 231);
+            this.ClientSize = new System.Drawing.Size(389, 268);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -246,8 +265,9 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.button2);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(335, 252);
+            this.MinimumSize = new System.Drawing.Size(388, 285);
             this.Name = "MapDiffInsertForm";
             this.Text = "Map Diff Insert";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX1)).EndInit();

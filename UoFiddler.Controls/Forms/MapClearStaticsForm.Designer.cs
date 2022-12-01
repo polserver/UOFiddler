@@ -57,44 +57,49 @@ namespace UoFiddler.Controls.Forms
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(32, 13);
+            this.label2.Location = new System.Drawing.Point(37, 15);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(20, 13);
+            this.label2.Size = new System.Drawing.Size(20, 15);
             this.label2.TabIndex = 3;
             this.label2.Text = "X1";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(126, 13);
+            this.label3.Location = new System.Drawing.Point(147, 15);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(20, 13);
+            this.label3.Size = new System.Drawing.Size(20, 15);
             this.label3.TabIndex = 5;
             this.label3.Text = "Y1";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(32, 39);
+            this.label4.Location = new System.Drawing.Point(37, 45);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 13);
+            this.label4.Size = new System.Drawing.Size(20, 15);
             this.label4.TabIndex = 7;
             this.label4.Text = "X2";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(126, 42);
+            this.label5.Location = new System.Drawing.Point(147, 48);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(20, 13);
+            this.label5.Size = new System.Drawing.Size(20, 15);
             this.label5.TabIndex = 9;
             this.label5.Text = "Y2";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(86, 72);
+            this.button1.Location = new System.Drawing.Point(100, 83);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(88, 27);
             this.button1.TabIndex = 10;
             this.button1.Text = "Clear";
             this.button1.UseVisualStyleBackColor = true;
@@ -102,37 +107,41 @@ namespace UoFiddler.Controls.Forms
             // 
             // numericUpDownX1
             // 
-            this.numericUpDownX1.Location = new System.Drawing.Point(58, 11);
+            this.numericUpDownX1.Location = new System.Drawing.Point(68, 13);
+            this.numericUpDownX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownX1.Name = "numericUpDownX1";
-            this.numericUpDownX1.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDownX1.Size = new System.Drawing.Size(69, 23);
             this.numericUpDownX1.TabIndex = 11;
             // 
             // numericUpDownX2
             // 
-            this.numericUpDownX2.Location = new System.Drawing.Point(58, 35);
+            this.numericUpDownX2.Location = new System.Drawing.Point(68, 40);
+            this.numericUpDownX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownX2.Name = "numericUpDownX2";
-            this.numericUpDownX2.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDownX2.Size = new System.Drawing.Size(69, 23);
             this.numericUpDownX2.TabIndex = 13;
             // 
             // numericUpDownY1
             // 
-            this.numericUpDownY1.Location = new System.Drawing.Point(152, 11);
+            this.numericUpDownY1.Location = new System.Drawing.Point(177, 13);
+            this.numericUpDownY1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownY1.Name = "numericUpDownY1";
-            this.numericUpDownY1.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDownY1.Size = new System.Drawing.Size(69, 23);
             this.numericUpDownY1.TabIndex = 12;
             // 
             // numericUpDownY2
             // 
-            this.numericUpDownY2.Location = new System.Drawing.Point(152, 37);
+            this.numericUpDownY2.Location = new System.Drawing.Point(177, 43);
+            this.numericUpDownY2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownY2.Name = "numericUpDownY2";
-            this.numericUpDownY2.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDownY2.Size = new System.Drawing.Size(69, 23);
             this.numericUpDownY2.TabIndex = 14;
             // 
             // MapClearStaticsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(244, 106);
+            this.ClientSize = new System.Drawing.Size(287, 122);
             this.Controls.Add(this.numericUpDownY2);
             this.Controls.Add(this.numericUpDownY1);
             this.Controls.Add(this.numericUpDownX2);
@@ -144,6 +153,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.label2);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MapClearStaticsForm";
             this.Text = "Clear Statics";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX1)).EndInit();

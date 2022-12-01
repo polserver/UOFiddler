@@ -119,8 +119,9 @@ namespace UoFiddler.Controls.UserControls
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(626, 331);
+            this.treeView1.Size = new System.Drawing.Size(733, 384);
             this.treeView1.TabIndex = 1;
             this.treeView1.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.AfterLabelEdit);
             this.treeView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnItemDrag);
@@ -129,12 +130,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // SkillGroupControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.treeView1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SkillGroupControl";
-            this.Size = new System.Drawing.Size(626, 331);
+            this.Size = new System.Drawing.Size(733, 384);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);

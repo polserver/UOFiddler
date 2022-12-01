@@ -46,9 +46,10 @@ namespace UoFiddler.Forms
             // OK
             // 
             this.OK.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.OK.Location = new System.Drawing.Point(0, 227);
+            this.OK.Location = new System.Drawing.Point(0, 261);
+            this.OK.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.OK.Name = "OK";
-            this.OK.Size = new System.Drawing.Size(575, 23);
+            this.OK.Size = new System.Drawing.Size(675, 27);
             this.OK.TabIndex = 0;
             this.OK.Text = "OK";
             this.OK.UseVisualStyleBackColor = true;
@@ -58,21 +59,23 @@ namespace UoFiddler.Forms
             // 
             this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ReadOnly = true;
-            this.richTextBox.Size = new System.Drawing.Size(575, 227);
+            this.richTextBox.Size = new System.Drawing.Size(675, 261);
             this.richTextBox.TabIndex = 1;
             this.richTextBox.Text = "";
             // 
             // ExceptionForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(575, 250);
+            this.ClientSize = new System.Drawing.Size(675, 288);
             this.Controls.Add(this.richTextBox);
             this.Controls.Add(this.OK);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ExceptionForm";
             this.Text = "Exception";
             this.ResumeLayout(false);

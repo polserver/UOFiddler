@@ -43,10 +43,11 @@ namespace UoFiddler.Forms
             // 
             // UnDockedForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(618, 334);
+            this.ClientSize = new System.Drawing.Size(721, 385);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "UnDockedForm";
             this.Text = "UnDocked";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);

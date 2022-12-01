@@ -43,10 +43,11 @@ namespace UoFiddler.Plugin.ExamplePlugin.Forms
             // 
             // ExampleForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(327, 250);
+            this.ClientSize = new System.Drawing.Size(386, 292);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ExampleForm";
             this.Text = "Example";
             this.ResumeLayout(false);

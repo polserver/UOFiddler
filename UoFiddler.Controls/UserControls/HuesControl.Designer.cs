@@ -91,7 +91,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceText
             // 
-            this.ReplaceText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceText.Name = "ReplaceText";
             this.ReplaceText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
@@ -120,13 +119,15 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripContainer.ContentPanel.AutoScroll = true;
             this.toolStripContainer.ContentPanel.Controls.Add(this.vScrollBar);
             this.toolStripContainer.ContentPanel.Controls.Add(this.pictureBox);
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(634, 305);
+            this.toolStripContainer.ContentPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(744, 357);
             this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer.LeftToolStripPanelVisible = false;
             this.toolStripContainer.Location = new System.Drawing.Point(1, 1);
+            this.toolStripContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.toolStripContainer.Name = "toolStripContainer";
             this.toolStripContainer.RightToolStripPanelVisible = false;
-            this.toolStripContainer.Size = new System.Drawing.Size(634, 336);
+            this.toolStripContainer.Size = new System.Drawing.Size(744, 388);
             this.toolStripContainer.TabIndex = 9;
             this.toolStripContainer.Text = "toolStripContainer";
             // 
@@ -137,9 +138,9 @@ namespace UoFiddler.Controls.UserControls
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(617, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(727, 0);
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 305);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 357);
             this.vScrollBar.TabIndex = 4;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
             // 
@@ -148,8 +149,9 @@ namespace UoFiddler.Controls.UserControls
             this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(634, 305);
+            this.pictureBox.Size = new System.Drawing.Size(744, 357);
             this.pictureBox.TabIndex = 3;
             this.pictureBox.TabStop = false;
             this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
@@ -171,7 +173,7 @@ namespace UoFiddler.Controls.UserControls
             this.HuesTopMenuToolStrip.Name = "HuesTopMenuToolStrip";
             this.HuesTopMenuToolStrip.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
             this.HuesTopMenuToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.HuesTopMenuToolStrip.Size = new System.Drawing.Size(634, 31);
+            this.HuesTopMenuToolStrip.Size = new System.Drawing.Size(744, 31);
             this.HuesTopMenuToolStrip.Stretch = true;
             this.HuesTopMenuToolStrip.TabIndex = 0;
             // 
@@ -183,7 +185,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // HueIndexToolStripTextBox
             // 
-            this.HueIndexToolStripTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.HueIndexToolStripTextBox.Name = "HueIndexToolStripTextBox";
             this.HueIndexToolStripTextBox.Size = new System.Drawing.Size(100, 23);
             this.HueIndexToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HueIndexToolStripTextBox_KeyUp);
@@ -196,7 +197,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // HueNameToolStripTextBox
             // 
-            this.HueNameToolStripTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.HueNameToolStripTextBox.Name = "HueNameToolStripTextBox";
             this.HueNameToolStripTextBox.Size = new System.Drawing.Size(100, 23);
             this.HueNameToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HueNameToolStripTextBox_KeyUp);
@@ -213,14 +213,15 @@ namespace UoFiddler.Controls.UserControls
             // 
             // HuesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.toolStripContainer);
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HuesControl";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(636, 338);
+            this.Size = new System.Drawing.Size(746, 390);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStripContainer.ContentPanel.ResumeLayout(false);

@@ -52,9 +52,10 @@ namespace UoFiddler.Forms
             this.pgPaths.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgPaths.HelpVisible = false;
             this.pgPaths.Location = new System.Drawing.Point(0, 25);
+            this.pgPaths.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pgPaths.Name = "pgPaths";
             this.pgPaths.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            this.pgPaths.Size = new System.Drawing.Size(643, 336);
+            this.pgPaths.Size = new System.Drawing.Size(750, 392);
             this.pgPaths.TabIndex = 0;
             this.pgPaths.ToolbarVisible = false;
             // 
@@ -68,7 +69,7 @@ namespace UoFiddler.Forms
             this.tsPathSettingsMenu.Location = new System.Drawing.Point(0, 0);
             this.tsPathSettingsMenu.Name = "tsPathSettingsMenu";
             this.tsPathSettingsMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.tsPathSettingsMenu.Size = new System.Drawing.Size(643, 25);
+            this.tsPathSettingsMenu.Size = new System.Drawing.Size(750, 25);
             this.tsPathSettingsMenu.TabIndex = 1;
             this.tsPathSettingsMenu.Text = "toolStrip1";
             // 
@@ -93,20 +94,21 @@ namespace UoFiddler.Forms
             // tsTbRootPath
             // 
             this.tsTbRootPath.Name = "tsTbRootPath";
-            this.tsTbRootPath.Size = new System.Drawing.Size(350, 25);
+            this.tsTbRootPath.Size = new System.Drawing.Size(408, 25);
             this.tsTbRootPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownDir);
             // 
             // PathSettingsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(643, 361);
+            this.ClientSize = new System.Drawing.Size(750, 417);
             this.Controls.Add(this.pgPaths);
             this.Controls.Add(this.tsPathSettingsMenu);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MaximumSize = new System.Drawing.Size(680, 800);
-            this.MinimumSize = new System.Drawing.Size(640, 300);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MaximumSize = new System.Drawing.Size(791, 917);
+            this.MinimumSize = new System.Drawing.Size(744, 340);
             this.Name = "PathSettingsForm";
             this.Text = "Path Settings";
             this.tsPathSettingsMenu.ResumeLayout(false);

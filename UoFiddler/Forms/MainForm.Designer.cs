@@ -181,7 +181,7 @@ namespace UoFiddler.Forms
             this.TabPanel.Margin = new System.Windows.Forms.Padding(0);
             this.TabPanel.Name = "TabPanel";
             this.TabPanel.SelectedIndex = 0;
-            this.TabPanel.Size = new System.Drawing.Size(784, 536);
+            this.TabPanel.Size = new System.Drawing.Size(915, 622);
             this.TabPanel.TabIndex = 1;
             this.TabPanel.Tag = "20";
             // 
@@ -205,10 +205,11 @@ namespace UoFiddler.Forms
             this.StartTab.BackgroundImage = global::UoFiddler.Properties.Resources.UOFiddler;
             this.StartTab.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.StartTab.Controls.Add(this.Versionlabel);
-            this.StartTab.Location = new System.Drawing.Point(4, 22);
+            this.StartTab.Location = new System.Drawing.Point(4, 24);
+            this.StartTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.StartTab.Name = "StartTab";
-            this.StartTab.Padding = new System.Windows.Forms.Padding(3);
-            this.StartTab.Size = new System.Drawing.Size(776, 510);
+            this.StartTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.StartTab.Size = new System.Drawing.Size(907, 594);
             this.StartTab.TabIndex = 10;
             this.StartTab.Tag = 0;
             this.StartTab.Text = "Start";
@@ -217,10 +218,11 @@ namespace UoFiddler.Forms
             // 
             this.Versionlabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Versionlabel.AutoSize = true;
-            this.Versionlabel.Location = new System.Drawing.Point(726, 492);
+            this.Versionlabel.Location = new System.Drawing.Point(844, 572);
+            this.Versionlabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.Versionlabel.Name = "Versionlabel";
             this.Versionlabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.Versionlabel.Size = new System.Drawing.Size(42, 13);
+            this.Versionlabel.Size = new System.Drawing.Size(45, 15);
             this.Versionlabel.TabIndex = 1;
             this.Versionlabel.Text = "Version";
             this.Versionlabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -228,10 +230,11 @@ namespace UoFiddler.Forms
             // MultisTab
             // 
             this.MultisTab.Controls.Add(this.multisControl);
-            this.MultisTab.Location = new System.Drawing.Point(4, 22);
+            this.MultisTab.Location = new System.Drawing.Point(4, 24);
+            this.MultisTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MultisTab.Name = "MultisTab";
-            this.MultisTab.Padding = new System.Windows.Forms.Padding(3);
-            this.MultisTab.Size = new System.Drawing.Size(776, 510);
+            this.MultisTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MultisTab.Size = new System.Drawing.Size(907, 590);
             this.MultisTab.TabIndex = 1;
             this.MultisTab.Tag = 1;
             this.MultisTab.Text = "Multis";
@@ -239,20 +242,21 @@ namespace UoFiddler.Forms
             // 
             // multisControl
             // 
-            this.multisControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.multisControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.multisControl.Location = new System.Drawing.Point(3, 3);
+            this.multisControl.Location = new System.Drawing.Point(4, 3);
+            this.multisControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.multisControl.Name = "multisControl";
-            this.multisControl.Size = new System.Drawing.Size(770, 504);
+            this.multisControl.Size = new System.Drawing.Size(899, 584);
             this.multisControl.TabIndex = 0;
             // 
             // AnimationTab
             // 
             this.AnimationTab.Controls.Add(this.animationsControl);
-            this.AnimationTab.Location = new System.Drawing.Point(4, 22);
+            this.AnimationTab.Location = new System.Drawing.Point(4, 24);
+            this.AnimationTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationTab.Name = "AnimationTab";
-            this.AnimationTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AnimationTab.Size = new System.Drawing.Size(776, 510);
+            this.AnimationTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.AnimationTab.Size = new System.Drawing.Size(907, 590);
             this.AnimationTab.TabIndex = 0;
             this.AnimationTab.Tag = 2;
             this.AnimationTab.Text = "Animations";
@@ -260,20 +264,21 @@ namespace UoFiddler.Forms
             // 
             // animationsControl
             // 
-            this.animationsControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.animationsControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.animationsControl.Location = new System.Drawing.Point(3, 3);
+            this.animationsControl.Location = new System.Drawing.Point(4, 3);
+            this.animationsControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.animationsControl.Name = "animationsControl";
-            this.animationsControl.Size = new System.Drawing.Size(770, 504);
+            this.animationsControl.Size = new System.Drawing.Size(899, 584);
             this.animationsControl.TabIndex = 0;
             // 
             // ItemsTab
             // 
             this.ItemsTab.Controls.Add(this.itemShowControl);
-            this.ItemsTab.Location = new System.Drawing.Point(4, 22);
+            this.ItemsTab.Location = new System.Drawing.Point(4, 24);
+            this.ItemsTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ItemsTab.Name = "ItemsTab";
-            this.ItemsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ItemsTab.Size = new System.Drawing.Size(776, 510);
+            this.ItemsTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ItemsTab.Size = new System.Drawing.Size(907, 590);
             this.ItemsTab.TabIndex = 2;
             this.ItemsTab.Tag = 3;
             this.ItemsTab.Text = "Items";
@@ -281,21 +286,22 @@ namespace UoFiddler.Forms
             // 
             // itemShowControl
             // 
-            this.itemShowControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.itemShowControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.itemShowControl.Location = new System.Drawing.Point(3, 3);
+            this.itemShowControl.Location = new System.Drawing.Point(4, 3);
+            this.itemShowControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.itemShowControl.Name = "itemShowControl";
             this.itemShowControl.SelectedGraphicId = 0;
-            this.itemShowControl.Size = new System.Drawing.Size(770, 504);
+            this.itemShowControl.Size = new System.Drawing.Size(899, 584);
             this.itemShowControl.TabIndex = 0;
             // 
             // LandTilesTab
             // 
             this.LandTilesTab.Controls.Add(this.landTilesControl);
-            this.LandTilesTab.Location = new System.Drawing.Point(4, 22);
+            this.LandTilesTab.Location = new System.Drawing.Point(4, 24);
+            this.LandTilesTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LandTilesTab.Name = "LandTilesTab";
-            this.LandTilesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.LandTilesTab.Size = new System.Drawing.Size(776, 510);
+            this.LandTilesTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.LandTilesTab.Size = new System.Drawing.Size(907, 590);
             this.LandTilesTab.TabIndex = 3;
             this.LandTilesTab.Tag = 4;
             this.LandTilesTab.Text = "Land Tiles";
@@ -303,21 +309,22 @@ namespace UoFiddler.Forms
             // 
             // landTilesControl
             // 
-            this.landTilesControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.landTilesControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.landTilesControl.Location = new System.Drawing.Point(3, 3);
+            this.landTilesControl.Location = new System.Drawing.Point(4, 3);
+            this.landTilesControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.landTilesControl.Name = "landTilesControl";
             this.landTilesControl.SelectedGraphicId = 0;
-            this.landTilesControl.Size = new System.Drawing.Size(770, 504);
+            this.landTilesControl.Size = new System.Drawing.Size(899, 584);
             this.landTilesControl.TabIndex = 0;
             // 
             // TextureTab
             // 
             this.TextureTab.Controls.Add(this.textureControl);
-            this.TextureTab.Location = new System.Drawing.Point(4, 22);
+            this.TextureTab.Location = new System.Drawing.Point(4, 24);
+            this.TextureTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TextureTab.Name = "TextureTab";
-            this.TextureTab.Padding = new System.Windows.Forms.Padding(3);
-            this.TextureTab.Size = new System.Drawing.Size(776, 510);
+            this.TextureTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.TextureTab.Size = new System.Drawing.Size(907, 590);
             this.TextureTab.TabIndex = 11;
             this.TextureTab.Tag = 5;
             this.TextureTab.Text = "Textures";
@@ -325,21 +332,22 @@ namespace UoFiddler.Forms
             // 
             // textureControl
             // 
-            this.textureControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.textureControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textureControl.Location = new System.Drawing.Point(3, 3);
+            this.textureControl.Location = new System.Drawing.Point(4, 3);
+            this.textureControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.textureControl.Name = "textureControl";
             this.textureControl.SelectedTextureId = 0;
-            this.textureControl.Size = new System.Drawing.Size(770, 504);
+            this.textureControl.Size = new System.Drawing.Size(899, 584);
             this.textureControl.TabIndex = 0;
             // 
             // GumpsTab
             // 
             this.GumpsTab.Controls.Add(this.gumpsControl);
-            this.GumpsTab.Location = new System.Drawing.Point(4, 22);
+            this.GumpsTab.Location = new System.Drawing.Point(4, 24);
+            this.GumpsTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.GumpsTab.Name = "GumpsTab";
-            this.GumpsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.GumpsTab.Size = new System.Drawing.Size(776, 510);
+            this.GumpsTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.GumpsTab.Size = new System.Drawing.Size(907, 590);
             this.GumpsTab.TabIndex = 4;
             this.GumpsTab.Tag = 6;
             this.GumpsTab.Text = "Gumps";
@@ -347,20 +355,21 @@ namespace UoFiddler.Forms
             // 
             // gumpsControl
             // 
-            this.gumpsControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.gumpsControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gumpsControl.Location = new System.Drawing.Point(3, 3);
+            this.gumpsControl.Location = new System.Drawing.Point(4, 3);
+            this.gumpsControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.gumpsControl.Name = "gumpsControl";
-            this.gumpsControl.Size = new System.Drawing.Size(770, 504);
+            this.gumpsControl.Size = new System.Drawing.Size(899, 584);
             this.gumpsControl.TabIndex = 0;
             // 
             // SoundsTab
             // 
             this.SoundsTab.Controls.Add(this.soundControl);
-            this.SoundsTab.Location = new System.Drawing.Point(4, 22);
+            this.SoundsTab.Location = new System.Drawing.Point(4, 24);
+            this.SoundsTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SoundsTab.Name = "SoundsTab";
-            this.SoundsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SoundsTab.Size = new System.Drawing.Size(776, 510);
+            this.SoundsTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SoundsTab.Size = new System.Drawing.Size(907, 590);
             this.SoundsTab.TabIndex = 5;
             this.SoundsTab.Tag = 7;
             this.SoundsTab.Text = "Sounds";
@@ -368,20 +377,21 @@ namespace UoFiddler.Forms
             // 
             // soundControl
             // 
-            this.soundControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.soundControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.soundControl.Location = new System.Drawing.Point(3, 3);
+            this.soundControl.Location = new System.Drawing.Point(4, 3);
+            this.soundControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.soundControl.Name = "soundControl";
-            this.soundControl.Size = new System.Drawing.Size(770, 504);
+            this.soundControl.Size = new System.Drawing.Size(899, 584);
             this.soundControl.TabIndex = 0;
             // 
             // HuesTab
             // 
             this.HuesTab.Controls.Add(this.hueControl);
-            this.HuesTab.Location = new System.Drawing.Point(4, 22);
+            this.HuesTab.Location = new System.Drawing.Point(4, 24);
+            this.HuesTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.HuesTab.Name = "HuesTab";
-            this.HuesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.HuesTab.Size = new System.Drawing.Size(776, 510);
+            this.HuesTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.HuesTab.Size = new System.Drawing.Size(907, 590);
             this.HuesTab.TabIndex = 6;
             this.HuesTab.Tag = 8;
             this.HuesTab.Text = "Hues";
@@ -389,22 +399,23 @@ namespace UoFiddler.Forms
             // 
             // hueControl
             // 
-            this.hueControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.hueControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hueControl.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.hueControl.Location = new System.Drawing.Point(3, 3);
+            this.hueControl.Location = new System.Drawing.Point(4, 3);
+            this.hueControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.hueControl.Name = "hueControl";
             this.hueControl.Padding = new System.Windows.Forms.Padding(1);
-            this.hueControl.Size = new System.Drawing.Size(770, 504);
+            this.hueControl.Size = new System.Drawing.Size(899, 584);
             this.hueControl.TabIndex = 0;
             // 
             // FontsTab
             // 
             this.FontsTab.Controls.Add(this.fontsControl);
-            this.FontsTab.Location = new System.Drawing.Point(4, 22);
+            this.FontsTab.Location = new System.Drawing.Point(4, 24);
+            this.FontsTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FontsTab.Name = "FontsTab";
-            this.FontsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.FontsTab.Size = new System.Drawing.Size(776, 510);
+            this.FontsTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.FontsTab.Size = new System.Drawing.Size(907, 590);
             this.FontsTab.TabIndex = 7;
             this.FontsTab.Tag = 9;
             this.FontsTab.Text = "Fonts";
@@ -412,20 +423,21 @@ namespace UoFiddler.Forms
             // 
             // fontsControl
             // 
-            this.fontsControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.fontsControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fontsControl.Location = new System.Drawing.Point(3, 3);
+            this.fontsControl.Location = new System.Drawing.Point(4, 3);
+            this.fontsControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.fontsControl.Name = "fontsControl";
-            this.fontsControl.Size = new System.Drawing.Size(770, 504);
+            this.fontsControl.Size = new System.Drawing.Size(899, 584);
             this.fontsControl.TabIndex = 0;
             // 
             // ClilocTab
             // 
             this.ClilocTab.Controls.Add(this.clilocControl);
-            this.ClilocTab.Location = new System.Drawing.Point(4, 22);
+            this.ClilocTab.Location = new System.Drawing.Point(4, 24);
+            this.ClilocTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ClilocTab.Name = "ClilocTab";
-            this.ClilocTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ClilocTab.Size = new System.Drawing.Size(776, 510);
+            this.ClilocTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ClilocTab.Size = new System.Drawing.Size(907, 590);
             this.ClilocTab.TabIndex = 8;
             this.ClilocTab.Tag = 10;
             this.ClilocTab.Text = "CliLoc";
@@ -433,20 +445,21 @@ namespace UoFiddler.Forms
             // 
             // clilocControl
             // 
-            this.clilocControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.clilocControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clilocControl.Location = new System.Drawing.Point(3, 3);
+            this.clilocControl.Location = new System.Drawing.Point(4, 3);
+            this.clilocControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.clilocControl.Name = "clilocControl";
-            this.clilocControl.Size = new System.Drawing.Size(770, 504);
+            this.clilocControl.Size = new System.Drawing.Size(899, 584);
             this.clilocControl.TabIndex = 0;
             // 
             // MapTab
             // 
             this.MapTab.Controls.Add(this.mapControl);
-            this.MapTab.Location = new System.Drawing.Point(4, 22);
+            this.MapTab.Location = new System.Drawing.Point(4, 24);
+            this.MapTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MapTab.Name = "MapTab";
-            this.MapTab.Padding = new System.Windows.Forms.Padding(3);
-            this.MapTab.Size = new System.Drawing.Size(776, 510);
+            this.MapTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MapTab.Size = new System.Drawing.Size(907, 590);
             this.MapTab.TabIndex = 9;
             this.MapTab.Tag = 11;
             this.MapTab.Text = "Map";
@@ -454,20 +467,20 @@ namespace UoFiddler.Forms
             // 
             // mapControl
             // 
-            this.mapControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.mapControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapControl.Location = new System.Drawing.Point(3, 3);
+            this.mapControl.Location = new System.Drawing.Point(4, 3);
             this.mapControl.Margin = new System.Windows.Forms.Padding(0);
             this.mapControl.Name = "mapControl";
-            this.mapControl.Size = new System.Drawing.Size(770, 504);
+            this.mapControl.Size = new System.Drawing.Size(899, 584);
             this.mapControl.TabIndex = 0;
             // 
             // LightTab
             // 
             this.LightTab.Controls.Add(this.lightControl);
-            this.LightTab.Location = new System.Drawing.Point(4, 22);
+            this.LightTab.Location = new System.Drawing.Point(4, 24);
+            this.LightTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LightTab.Name = "LightTab";
-            this.LightTab.Size = new System.Drawing.Size(776, 510);
+            this.LightTab.Size = new System.Drawing.Size(907, 590);
             this.LightTab.TabIndex = 12;
             this.LightTab.Tag = 12;
             this.LightTab.Text = "Light";
@@ -475,19 +488,20 @@ namespace UoFiddler.Forms
             // 
             // lightControl
             // 
-            this.lightControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.lightControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lightControl.Location = new System.Drawing.Point(0, 0);
+            this.lightControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.lightControl.Name = "lightControl";
-            this.lightControl.Size = new System.Drawing.Size(776, 510);
+            this.lightControl.Size = new System.Drawing.Size(907, 590);
             this.lightControl.TabIndex = 0;
             // 
             // SpeechTab
             // 
             this.SpeechTab.Controls.Add(this.speechControl);
-            this.SpeechTab.Location = new System.Drawing.Point(4, 22);
+            this.SpeechTab.Location = new System.Drawing.Point(4, 24);
+            this.SpeechTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SpeechTab.Name = "SpeechTab";
-            this.SpeechTab.Size = new System.Drawing.Size(776, 510);
+            this.SpeechTab.Size = new System.Drawing.Size(907, 590);
             this.SpeechTab.TabIndex = 17;
             this.SpeechTab.Tag = 13;
             this.SpeechTab.Text = "Speech";
@@ -497,17 +511,19 @@ namespace UoFiddler.Forms
             // 
             this.speechControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.speechControl.Location = new System.Drawing.Point(0, 0);
+            this.speechControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.speechControl.Name = "speechControl";
-            this.speechControl.Size = new System.Drawing.Size(776, 510);
+            this.speechControl.Size = new System.Drawing.Size(907, 590);
             this.speechControl.TabIndex = 0;
             // 
             // SkillsTab
             // 
             this.SkillsTab.Controls.Add(this.skillsControl);
-            this.SkillsTab.Location = new System.Drawing.Point(4, 22);
+            this.SkillsTab.Location = new System.Drawing.Point(4, 24);
+            this.SkillsTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SkillsTab.Name = "SkillsTab";
-            this.SkillsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SkillsTab.Size = new System.Drawing.Size(776, 510);
+            this.SkillsTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SkillsTab.Size = new System.Drawing.Size(907, 590);
             this.SkillsTab.TabIndex = 15;
             this.SkillsTab.Tag = 14;
             this.SkillsTab.Text = "Skills";
@@ -515,19 +531,20 @@ namespace UoFiddler.Forms
             // 
             // skillsControl
             // 
-            this.skillsControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.skillsControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.skillsControl.Location = new System.Drawing.Point(3, 3);
+            this.skillsControl.Location = new System.Drawing.Point(4, 3);
+            this.skillsControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.skillsControl.Name = "skillsControl";
-            this.skillsControl.Size = new System.Drawing.Size(770, 504);
+            this.skillsControl.Size = new System.Drawing.Size(899, 584);
             this.skillsControl.TabIndex = 0;
             // 
             // AnimDataTab
             // 
             this.AnimDataTab.Controls.Add(this.animdataControl);
-            this.AnimDataTab.Location = new System.Drawing.Point(4, 22);
+            this.AnimDataTab.Location = new System.Drawing.Point(4, 24);
+            this.AnimDataTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimDataTab.Name = "AnimDataTab";
-            this.AnimDataTab.Size = new System.Drawing.Size(776, 510);
+            this.AnimDataTab.Size = new System.Drawing.Size(907, 590);
             this.AnimDataTab.TabIndex = 18;
             this.AnimDataTab.Tag = 15;
             this.AnimDataTab.Text = "AnimData";
@@ -537,17 +554,19 @@ namespace UoFiddler.Forms
             // 
             this.animdataControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.animdataControl.Location = new System.Drawing.Point(0, 0);
+            this.animdataControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.animdataControl.Name = "animdataControl";
-            this.animdataControl.Size = new System.Drawing.Size(776, 510);
+            this.animdataControl.Size = new System.Drawing.Size(907, 590);
             this.animdataControl.TabIndex = 0;
             // 
             // MultiMapTab
             // 
             this.MultiMapTab.Controls.Add(this.multimapControl);
-            this.MultiMapTab.Location = new System.Drawing.Point(4, 22);
+            this.MultiMapTab.Location = new System.Drawing.Point(4, 24);
+            this.MultiMapTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MultiMapTab.Name = "MultiMapTab";
-            this.MultiMapTab.Padding = new System.Windows.Forms.Padding(3);
-            this.MultiMapTab.Size = new System.Drawing.Size(776, 510);
+            this.MultiMapTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MultiMapTab.Size = new System.Drawing.Size(907, 590);
             this.MultiMapTab.TabIndex = 14;
             this.MultiMapTab.Tag = 16;
             this.MultiMapTab.Text = "MultiMap/Facets";
@@ -556,18 +575,20 @@ namespace UoFiddler.Forms
             // multimapControl
             // 
             this.multimapControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.multimapControl.Location = new System.Drawing.Point(3, 3);
+            this.multimapControl.Location = new System.Drawing.Point(4, 3);
+            this.multimapControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.multimapControl.Name = "multimapControl";
-            this.multimapControl.Size = new System.Drawing.Size(770, 504);
+            this.multimapControl.Size = new System.Drawing.Size(899, 584);
             this.multimapControl.TabIndex = 0;
             // 
             // DressTab
             // 
             this.DressTab.Controls.Add(this.dressControl);
-            this.DressTab.Location = new System.Drawing.Point(4, 22);
+            this.DressTab.Location = new System.Drawing.Point(4, 24);
+            this.DressTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DressTab.Name = "DressTab";
-            this.DressTab.Padding = new System.Windows.Forms.Padding(3);
-            this.DressTab.Size = new System.Drawing.Size(776, 510);
+            this.DressTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.DressTab.Size = new System.Drawing.Size(907, 590);
             this.DressTab.TabIndex = 13;
             this.DressTab.Tag = 17;
             this.DressTab.Text = "Dress";
@@ -575,19 +596,20 @@ namespace UoFiddler.Forms
             // 
             // dressControl
             // 
-            this.dressControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.dressControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dressControl.Location = new System.Drawing.Point(3, 3);
+            this.dressControl.Location = new System.Drawing.Point(4, 3);
+            this.dressControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.dressControl.Name = "dressControl";
-            this.dressControl.Size = new System.Drawing.Size(770, 504);
+            this.dressControl.Size = new System.Drawing.Size(899, 584);
             this.dressControl.TabIndex = 0;
             // 
             // TileDataTab
             // 
             this.TileDataTab.Controls.Add(this.tileDataControl);
-            this.TileDataTab.Location = new System.Drawing.Point(4, 22);
+            this.TileDataTab.Location = new System.Drawing.Point(4, 24);
+            this.TileDataTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TileDataTab.Name = "TileDataTab";
-            this.TileDataTab.Size = new System.Drawing.Size(776, 510);
+            this.TileDataTab.Size = new System.Drawing.Size(907, 590);
             this.TileDataTab.TabIndex = 16;
             this.TileDataTab.Tag = 18;
             this.TileDataTab.Text = "TileData";
@@ -595,19 +617,20 @@ namespace UoFiddler.Forms
             // 
             // tileDataControl
             // 
-            this.tileDataControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.tileDataControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tileDataControl.Location = new System.Drawing.Point(0, 0);
+            this.tileDataControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.tileDataControl.Name = "tileDataControl";
-            this.tileDataControl.Size = new System.Drawing.Size(776, 510);
+            this.tileDataControl.Size = new System.Drawing.Size(907, 590);
             this.tileDataControl.TabIndex = 0;
             // 
             // RadarColTab
             // 
             this.RadarColTab.Controls.Add(this.radarColControl);
-            this.RadarColTab.Location = new System.Drawing.Point(4, 22);
+            this.RadarColTab.Location = new System.Drawing.Point(4, 24);
+            this.RadarColTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RadarColTab.Name = "RadarColTab";
-            this.RadarColTab.Size = new System.Drawing.Size(776, 510);
+            this.RadarColTab.Size = new System.Drawing.Size(907, 590);
             this.RadarColTab.TabIndex = 19;
             this.RadarColTab.Tag = 19;
             this.RadarColTab.Text = "RadarColor";
@@ -615,20 +638,21 @@ namespace UoFiddler.Forms
             // 
             // radarColControl
             // 
-            this.radarColControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.radarColControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radarColControl.Location = new System.Drawing.Point(0, 0);
+            this.radarColControl.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.radarColControl.Name = "radarColControl";
-            this.radarColControl.Size = new System.Drawing.Size(776, 510);
+            this.radarColControl.Size = new System.Drawing.Size(907, 590);
             this.radarColControl.TabIndex = 0;
             // 
             // SkillGrpTab
             // 
             this.SkillGrpTab.Controls.Add(this.skillGroupControl);
-            this.SkillGrpTab.Location = new System.Drawing.Point(4, 22);
+            this.SkillGrpTab.Location = new System.Drawing.Point(4, 24);
+            this.SkillGrpTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SkillGrpTab.Name = "SkillGrpTab";
-            this.SkillGrpTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SkillGrpTab.Size = new System.Drawing.Size(776, 510);
+            this.SkillGrpTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SkillGrpTab.Size = new System.Drawing.Size(907, 590);
             this.SkillGrpTab.TabIndex = 20;
             this.SkillGrpTab.Tag = 20;
             this.SkillGrpTab.Text = "SkillGrp";
@@ -637,9 +661,10 @@ namespace UoFiddler.Forms
             // skillGroupControl
             // 
             this.skillGroupControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.skillGroupControl.Location = new System.Drawing.Point(3, 3);
+            this.skillGroupControl.Location = new System.Drawing.Point(4, 3);
+            this.skillGroupControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.skillGroupControl.Name = "skillGroupControl";
-            this.skillGroupControl.Size = new System.Drawing.Size(770, 504);
+            this.skillGroupControl.Size = new System.Drawing.Size(899, 584);
             this.skillGroupControl.TabIndex = 0;
             // 
             // tsMainMenu
@@ -653,7 +678,7 @@ namespace UoFiddler.Forms
             this.tsMainMenu.Location = new System.Drawing.Point(0, 0);
             this.tsMainMenu.Name = "tsMainMenu";
             this.tsMainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.tsMainMenu.Size = new System.Drawing.Size(784, 25);
+            this.tsMainMenu.Size = new System.Drawing.Size(915, 25);
             this.tsMainMenu.TabIndex = 2;
             this.tsMainMenu.Text = "toolStrip1";
             // 
@@ -1020,13 +1045,14 @@ namespace UoFiddler.Forms
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(915, 647);
             this.Controls.Add(this.TabPanel);
             this.Controls.Add(this.tsMainMenu);
             this.DoubleBuffered = true;
-            this.MinimumSize = new System.Drawing.Size(640, 480);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MinimumSize = new System.Drawing.Size(744, 548);
             this.Name = "MainForm";
             this.Text = "UOFiddler";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);

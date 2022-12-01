@@ -55,33 +55,37 @@ namespace UoFiddler.Controls.Forms
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(44, 50);
+            this.textBox1.Location = new System.Drawing.Point(51, 58);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(235, 20);
+            this.textBox1.Size = new System.Drawing.Size(274, 23);
             this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 53);
+            this.label1.Location = new System.Drawing.Point(12, 61);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(28, 13);
+            this.label1.Size = new System.Drawing.Size(28, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "Text";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(83, 80);
+            this.pictureBox1.Location = new System.Drawing.Point(97, 92);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(39, 32);
+            this.pictureBox1.Size = new System.Drawing.Size(46, 37);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(128, 85);
+            this.button1.Location = new System.Drawing.Point(149, 98);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(88, 27);
             this.button1.TabIndex = 3;
             this.button1.Text = "Choose Color";
             this.button1.UseVisualStyleBackColor = true;
@@ -89,9 +93,10 @@ namespace UoFiddler.Controls.Forms
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(106, 118);
+            this.button2.Location = new System.Drawing.Point(124, 136);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(88, 27);
             this.button2.TabIndex = 4;
             this.button2.Text = "Save";
             this.button2.UseVisualStyleBackColor = true;
@@ -99,41 +104,44 @@ namespace UoFiddler.Controls.Forms
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(18, 13);
+            this.numericUpDown1.Location = new System.Drawing.Point(21, 15);
+            this.numericUpDown1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             7168,
             0,
             0,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(64, 20);
+            this.numericUpDown1.Size = new System.Drawing.Size(75, 23);
             this.numericUpDown1.TabIndex = 5;
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(88, 13);
+            this.numericUpDown2.Location = new System.Drawing.Point(103, 15);
+            this.numericUpDown2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             4096,
             0,
             0,
             0});
             this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDown2.Size = new System.Drawing.Size(69, 23);
             this.numericUpDown2.TabIndex = 6;
             // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(153, 12);
+            this.comboBox1.Location = new System.Drawing.Point(178, 14);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.Size = new System.Drawing.Size(140, 23);
             this.comboBox1.TabIndex = 7;
             // 
             // MapMarkerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(295, 150);
+            this.ClientSize = new System.Drawing.Size(348, 174);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.numericUpDown2);
             this.Controls.Add(this.numericUpDown1);
@@ -144,6 +152,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.textBox1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MapMarkerForm";

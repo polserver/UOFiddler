@@ -101,6 +101,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -112,8 +113,9 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer1.Panel2.Controls.Add(this.FacingBar);
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(629, 333);
-            this.splitContainer1.SplitterDistance = 204;
+            this.splitContainer1.Size = new System.Drawing.Size(737, 384);
+            this.splitContainer1.SplitterDistance = 239;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 1;
             // 
             // TreeViewMobs
@@ -123,9 +125,10 @@ namespace UoFiddler.Controls.UserControls
             this.TreeViewMobs.HideSelection = false;
             this.TreeViewMobs.LabelEdit = true;
             this.TreeViewMobs.Location = new System.Drawing.Point(0, 0);
+            this.TreeViewMobs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TreeViewMobs.Name = "TreeViewMobs";
             this.TreeViewMobs.ShowNodeToolTips = true;
-            this.TreeViewMobs.Size = new System.Drawing.Size(204, 333);
+            this.TreeViewMobs.Size = new System.Drawing.Size(239, 384);
             this.TreeViewMobs.TabIndex = 0;
             this.TreeViewMobs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewMobs_AfterSelect);
             // 
@@ -148,10 +151,11 @@ namespace UoFiddler.Controls.UserControls
             this.FacingBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.FacingBar.AutoSize = false;
             this.FacingBar.LargeChange = 1;
-            this.FacingBar.Location = new System.Drawing.Point(333, 313);
+            this.FacingBar.Location = new System.Drawing.Point(390, 361);
+            this.FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FacingBar.Maximum = 7;
             this.FacingBar.Name = "FacingBar";
-            this.FacingBar.Size = new System.Drawing.Size(88, 20);
+            this.FacingBar.Size = new System.Drawing.Size(103, 23);
             this.FacingBar.TabIndex = 2;
             this.FacingBar.Scroll += new System.EventHandler(this.OnScrollFacing);
             // 
@@ -162,18 +166,20 @@ namespace UoFiddler.Controls.UserControls
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(421, 311);
+            this.tabControl1.Size = new System.Drawing.Size(493, 362);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.MainPictureBox);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(413, 285);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage1.Size = new System.Drawing.Size(485, 334);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Animation";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -183,9 +189,10 @@ namespace UoFiddler.Controls.UserControls
             this.MainPictureBox.BackColor = System.Drawing.Color.White;
             this.MainPictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainPictureBox.Location = new System.Drawing.Point(3, 3);
+            this.MainPictureBox.Location = new System.Drawing.Point(4, 3);
+            this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MainPictureBox.Name = "MainPictureBox";
-            this.MainPictureBox.Size = new System.Drawing.Size(407, 279);
+            this.MainPictureBox.Size = new System.Drawing.Size(477, 328);
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint_MainPicture);
@@ -279,10 +286,11 @@ namespace UoFiddler.Controls.UserControls
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.listView);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 24);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(410, 281);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage2.Size = new System.Drawing.Size(485, 334);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thumbnail List";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -291,14 +299,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.listView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(3, 3);
+            this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.listView.Location = new System.Drawing.Point(4, 3);
             this.listView.Margin = new System.Windows.Forms.Padding(0);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.OwnerDraw = true;
-            this.listView.Size = new System.Drawing.Size(404, 275);
+            this.listView.Size = new System.Drawing.Size(477, 328);
             this.listView.TabIndex = 0;
             this.listView.TileSize = new System.Drawing.Size(81, 110);
             this.listView.UseCompatibleStateImageBehavior = false;
@@ -310,10 +317,11 @@ namespace UoFiddler.Controls.UserControls
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.listView1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 24);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(410, 281);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage3.Size = new System.Drawing.Size(485, 334);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Frames";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -322,12 +330,12 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.listView1.ContextMenuStrip = this.contextMenuStrip3;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(3, 3);
+            this.listView1.Location = new System.Drawing.Point(4, 3);
+            this.listView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
-            this.listView1.Size = new System.Drawing.Size(404, 275);
+            this.listView1.Size = new System.Drawing.Size(477, 328);
             this.listView1.TabIndex = 0;
             this.listView1.TileSize = new System.Drawing.Size(81, 110);
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -387,10 +395,11 @@ namespace UoFiddler.Controls.UserControls
             this.GraphicLabel,
             this.BaseGraphicLabel,
             this.HueLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 311);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 362);
             this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
             this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.statusStrip1.Size = new System.Drawing.Size(421, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(493, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
@@ -491,12 +500,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // AnimationListControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "AnimationListControl";
-            this.Size = new System.Drawing.Size(629, 333);
+            this.Size = new System.Drawing.Size(737, 384);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

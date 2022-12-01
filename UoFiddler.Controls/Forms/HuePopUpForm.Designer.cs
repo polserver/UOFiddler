@@ -56,17 +56,17 @@ namespace UoFiddler.Controls.Forms
             this.toolStripButton1,
             this.toolStripButton2,
             this.HueOnlyGray});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 267);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 311);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(526, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(621, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripButton1
             // 
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
+            this.toolStripButton1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(26, 22);
@@ -76,7 +76,7 @@ namespace UoFiddler.Controls.Forms
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
+            this.toolStripButton2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(40, 22);
@@ -97,20 +97,22 @@ namespace UoFiddler.Controls.Forms
             this.control.Dock = System.Windows.Forms.DockStyle.Fill;
             this.control.ForeColor = System.Drawing.SystemColors.ControlText;
             this.control.Location = new System.Drawing.Point(0, 0);
+            this.control.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.control.Name = "control";
             this.control.Padding = new System.Windows.Forms.Padding(1);
-            this.control.Size = new System.Drawing.Size(526, 267);
+            this.control.Size = new System.Drawing.Size(621, 311);
             this.control.TabIndex = 1;
             // 
             // HuePopUpForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(526, 292);
+            this.ClientSize = new System.Drawing.Size(621, 336);
             this.Controls.Add(this.control);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HuePopUpForm";
             this.Text = "Hue Picker";
             this.toolStrip1.ResumeLayout(false);

@@ -46,29 +46,32 @@ namespace UoFiddler.Controls.Forms
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(13, 97);
+            this.textBox1.Location = new System.Drawing.Point(15, 112);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(267, 20);
+            this.textBox1.Size = new System.Drawing.Size(311, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.OnTextChange);
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(13, 13);
+            this.pictureBox1.Location = new System.Drawing.Point(15, 15);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(267, 78);
+            this.pictureBox1.Size = new System.Drawing.Size(312, 90);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
             // FontTextForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(295, 132);
+            this.ClientSize = new System.Drawing.Size(343, 153);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "FontTextForm";
             this.Text = "FontText";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

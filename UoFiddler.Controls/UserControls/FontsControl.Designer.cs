@@ -124,6 +124,7 @@ namespace UoFiddler.Controls.UserControls
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -134,14 +135,16 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.FontsTileView);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(627, 330);
+            this.splitContainer1.Size = new System.Drawing.Size(735, 381);
             this.splitContainer1.SplitterDistance = 150;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 1;
             // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -152,8 +155,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.LoadUnicodeFontsCheckBox);
-            this.splitContainer2.Size = new System.Drawing.Size(150, 330);
-            this.splitContainer2.SplitterDistance = 281;
+            this.splitContainer2.Size = new System.Drawing.Size(150, 381);
+            this.splitContainer2.SplitterDistance = 324;
+            this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
             // treeView
@@ -161,17 +165,19 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(0, 0);
+            this.treeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(150, 281);
+            this.treeView.Size = new System.Drawing.Size(150, 324);
             this.treeView.TabIndex = 2;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnSelect);
             // 
             // LoadUnicodeFontsCheckBox
             // 
             this.LoadUnicodeFontsCheckBox.AutoSize = true;
-            this.LoadUnicodeFontsCheckBox.Location = new System.Drawing.Point(15, 14);
+            this.LoadUnicodeFontsCheckBox.Location = new System.Drawing.Point(18, 16);
+            this.LoadUnicodeFontsCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LoadUnicodeFontsCheckBox.Name = "LoadUnicodeFontsCheckBox";
-            this.LoadUnicodeFontsCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.LoadUnicodeFontsCheckBox.Size = new System.Drawing.Size(131, 19);
             this.LoadUnicodeFontsCheckBox.TabIndex = 0;
             this.LoadUnicodeFontsCheckBox.Text = "Load Unicode Fonts";
             this.LoadUnicodeFontsCheckBox.UseVisualStyleBackColor = true;
@@ -186,13 +192,15 @@ namespace UoFiddler.Controls.UserControls
             this.FontsTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FontsTileView.FocusIndex = -1;
             this.FontsTileView.Location = new System.Drawing.Point(0, 0);
+            this.FontsTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FontsTileView.MultiSelect = false;
             this.FontsTileView.Name = "FontsTileView";
-            this.FontsTileView.Size = new System.Drawing.Size(473, 308);
+            this.FontsTileView.Size = new System.Drawing.Size(580, 359);
             this.FontsTileView.TabIndex = 8;
             this.FontsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.FontsTileView.TileBorderColor = System.Drawing.Color.Gray;
             this.FontsTileView.TileBorderWidth = 1F;
+            this.FontsTileView.TileFocusColor = System.Drawing.Color.DarkRed;
             this.FontsTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             this.FontsTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
             this.FontsTileView.TilePadding = new System.Windows.Forms.Padding(0);
@@ -205,9 +213,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 308);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 359);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(473, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(580, 22);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -219,12 +228,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // FontsControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "FontsControl";
-            this.Size = new System.Drawing.Size(627, 330);
+            this.Size = new System.Drawing.Size(735, 381);
             this.Load += new System.EventHandler(this.OnLoad);
             this.Resize += new System.EventHandler(this.FontsControl_Resize);
             this.contextMenuStrip1.ResumeLayout(false);

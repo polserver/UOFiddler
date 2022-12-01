@@ -50,9 +50,10 @@ namespace UoFiddler.Controls.Forms
             // 
             this.textBoxId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxId.Location = new System.Drawing.Point(18, 12);
+            this.textBoxId.Location = new System.Drawing.Point(21, 14);
+            this.textBoxId.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBoxId.Name = "textBoxId";
-            this.textBoxId.Size = new System.Drawing.Size(254, 20);
+            this.textBoxId.Size = new System.Drawing.Size(296, 23);
             this.textBoxId.TabIndex = 0;
             this.textBoxId.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
@@ -61,9 +62,10 @@ namespace UoFiddler.Controls.Forms
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(101, 39);
+            this.button1.Location = new System.Drawing.Point(118, 45);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 23);
+            this.button1.Size = new System.Drawing.Size(115, 27);
             this.button1.TabIndex = 1;
             this.button1.Text = "Search ID";
             this.button1.UseVisualStyleBackColor = true;
@@ -71,9 +73,10 @@ namespace UoFiddler.Controls.Forms
             // 
             // textBoxSoundName
             // 
-            this.textBoxSoundName.Location = new System.Drawing.Point(18, 79);
+            this.textBoxSoundName.Location = new System.Drawing.Point(21, 91);
+            this.textBoxSoundName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBoxSoundName.Name = "textBoxSoundName";
-            this.textBoxSoundName.Size = new System.Drawing.Size(256, 20);
+            this.textBoxSoundName.Size = new System.Drawing.Size(298, 23);
             this.textBoxSoundName.TabIndex = 2;
             this.textBoxSoundName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
@@ -82,9 +85,10 @@ namespace UoFiddler.Controls.Forms
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.AutoSize = true;
-            this.button2.Location = new System.Drawing.Point(54, 105);
+            this.button2.Location = new System.Drawing.Point(63, 121);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(86, 23);
+            this.button2.Size = new System.Drawing.Size(104, 27);
             this.button2.TabIndex = 3;
             this.button2.Text = "Search Name";
             this.button2.UseVisualStyleBackColor = true;
@@ -92,19 +96,20 @@ namespace UoFiddler.Controls.Forms
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(163, 105);
+            this.button4.Location = new System.Drawing.Point(190, 121);
+            this.button4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(88, 27);
             this.button4.TabIndex = 5;
             this.button4.Text = "Search Next";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.SearchNextName);
             // 
-            // SoundsSearch
+            // SoundsSearchForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(290, 140);
+            this.ClientSize = new System.Drawing.Size(338, 163);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.textBoxSoundName);
@@ -112,6 +117,7 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.textBoxId);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.Name = "SoundsSearchForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
