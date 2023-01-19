@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.26
+    <value>Version 4.9.27
+- Added "Remove tile border" option that makes tile borders invisible (tabs: items, land tiles, textures, fonts).
+- Added "Set background color same as tile background". When you select custom tile background color it will be applied to whole control too when this option is checked (currently limited to Items tab only).
+
+Version 4.9.26
 - Added "Export all sounds" option to Sounds tab.
 
 Version 4.9.25
