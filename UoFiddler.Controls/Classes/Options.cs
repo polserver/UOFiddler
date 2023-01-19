@@ -207,6 +207,8 @@ namespace UoFiddler.Controls.Classes
         public static string ProfileName { get; set; }
         public static Color TileFocusColor { get; set; } = Color.DarkRed;
         public static Color TileSelectionColor { get; set; } = Color.DodgerBlue;
+        public static bool OverrideBackgroundColorFromTile { get; set; }
+        public static bool RemoveTileBorder { get; set; }
 
         static Options()
         {

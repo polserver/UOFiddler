@@ -47,6 +47,9 @@ namespace UoFiddler.Forms
                 .Where(x => x.PropertyType == typeof(Color))
                 .Select(x => x.GetValue(null)).ToList();
 
+            checkBoxOverrideBackgroundColorFromTile.Checked = Options.OverrideBackgroundColorFromTile;
+            checkboxRemoveTileBorder.Checked = Options.RemoveTileBorder;
+
             TileSelectionColorComboBox.SelectedItem = Options.TileSelectionColor;
 
             checkBoxCacheData.Checked = Files.CacheData;
@@ -126,6 +129,20 @@ namespace UoFiddler.Forms
             if ((Color)TileSelectionColorComboBox.SelectedItem != Options.TileSelectionColor)
             {
                 Options.TileSelectionColor = (Color)TileSelectionColorComboBox.SelectedItem;
+
+                UpdateAllTileViews();
+            }
+
+            if (checkBoxOverrideBackgroundColorFromTile.Checked != Options.OverrideBackgroundColorFromTile)
+            {
+                Options.OverrideBackgroundColorFromTile = checkBoxOverrideBackgroundColorFromTile.Checked;
+
+                UpdateAllTileViews();
+            }
+
+            if (checkboxRemoveTileBorder.Checked != Options.RemoveTileBorder)
+            {
+                Options.RemoveTileBorder = checkboxRemoveTileBorder.Checked;
 
                 UpdateAllTileViews();
             }
@@ -229,15 +246,18 @@ namespace UoFiddler.Forms
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
         }
 
-        private void DefaultColorsButton_Click(object sender, System.EventArgs e)
+        private void RestoreDefaultsButton_Click(object sender, System.EventArgs e)
         {
-            const string title = "Export all items to offset.cfg?";
-            const string message = "Reset focus and selection colors to default?";
+            const string title = "Restore defaults";
+            const string message = "Do you want to reset tile views settings to default?";
 
             if (MessageBox.Show(message, title, MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return;
             }
+
+            checkBoxOverrideBackgroundColorFromTile.Checked = false;
+            checkboxRemoveTileBorder.Checked = false;
 
             TileFocusColorComboBox.SelectedItem = Color.DarkRed;
             TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;

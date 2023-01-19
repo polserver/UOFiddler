@@ -68,6 +68,15 @@ namespace UoFiddler.Controls.UserControls
         {
             var newSize = new Size(Options.ArtItemSizeWidth, Options.ArtItemSizeHeight);
 
+            ItemsTileView.TileBorderColor = Options.RemoveTileBorder
+                ? Color.Transparent
+                : Color.Gray;
+
+            if (Options.OverrideBackgroundColorFromTile)
+            {
+                ItemsTileView.BackColor = _backgroundColorItem;
+            }
+
             var sameTileSize = ItemsTileView.TileSize == newSize;
             var sameFocusColor = ItemsTileView.TileFocusColor == Options.TileFocusColor;
             var sameSelectionColor = ItemsTileView.TileHighlightColor == Options.TileSelectionColor;
@@ -323,6 +332,11 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _backgroundColorItem = colorDialog.Color;
+
+            if (Options.OverrideBackgroundColorFromTile)
+            {
+                ItemsTileView.BackColor = _backgroundColorItem;
+            }
 
             ItemsTileView.Invalidate();
         }

@@ -341,6 +341,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceStartingFromText
             // 
+            this.ReplaceStartingFromText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceStartingFromText.Name = "ReplaceStartingFromText";
             this.ReplaceStartingFromText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceStartingFromText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFromText_KeyDown);
@@ -362,6 +363,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
+            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsertText);

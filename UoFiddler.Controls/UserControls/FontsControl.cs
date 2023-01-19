@@ -449,6 +449,10 @@ namespace UoFiddler.Controls.UserControls
 
         public void UpdateTileView()
         {
+            FontsTileView.TileBorderColor = Options.RemoveTileBorder
+                ? Color.Transparent
+                : Color.Gray;
+
             var sameFocusColor = FontsTileView.TileFocusColor == Options.TileFocusColor;
             var sameSelectionColor = FontsTileView.TileHighlightColor == Options.TileSelectionColor;
             if (sameFocusColor && sameSelectionColor)

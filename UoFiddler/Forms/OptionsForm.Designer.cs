@@ -77,10 +77,12 @@ namespace UoFiddler.Forms
             this.textBoxOutputPath = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.ColorsGroupBox = new System.Windows.Forms.GroupBox();
-            this.DefaultColorsButton = new System.Windows.Forms.Button();
+            this.checkboxRemoveTileBorder = new System.Windows.Forms.CheckBox();
+            this.RestoreDefaultsButton = new System.Windows.Forms.Button();
             this.TileSelectionColorComboBox = new System.Windows.Forms.ComboBox();
             this.TileFocusColorComboBox = new System.Windows.Forms.ComboBox();
             this.buttonClose = new System.Windows.Forms.Button();
+            this.checkBoxOverrideBackgroundColorFromTile = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownItemSizeWidth)).BeginInit();
@@ -92,13 +94,14 @@ namespace UoFiddler.Forms
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxOverrideBackgroundColorFromTile);
             this.groupBox1.Controls.Add(this.numericUpDownItemSizeHeight);
             this.groupBox1.Controls.Add(this.checkBoxItemClip);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.numericUpDownItemSizeWidth);
             this.groupBox1.Location = new System.Drawing.Point(14, 142);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(221, 100);
+            this.groupBox1.Size = new System.Drawing.Size(221, 113);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Item Tab";
@@ -243,7 +246,7 @@ namespace UoFiddler.Forms
             // 
             // buttonApply
             // 
-            this.buttonApply.Location = new System.Drawing.Point(275, 381);
+            this.buttonApply.Location = new System.Drawing.Point(275, 401);
             this.buttonApply.Name = "buttonApply";
             this.buttonApply.Size = new System.Drawing.Size(75, 23);
             this.buttonApply.TabIndex = 4;
@@ -371,7 +374,7 @@ namespace UoFiddler.Forms
             this.groupBox3.Controls.Add(this.map0Nametext);
             this.groupBox3.Location = new System.Drawing.Point(242, 5);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(189, 237);
+            this.groupBox3.Size = new System.Drawing.Size(189, 250);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Map";
@@ -437,7 +440,7 @@ namespace UoFiddler.Forms
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.textBoxOutputPath);
             this.groupBox4.Controls.Add(this.label10);
-            this.groupBox4.Location = new System.Drawing.Point(14, 331);
+            this.groupBox4.Location = new System.Drawing.Point(14, 351);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(417, 44);
             this.groupBox4.TabIndex = 6;
@@ -472,27 +475,38 @@ namespace UoFiddler.Forms
             // 
             // ColorsGroupBox
             // 
-            this.ColorsGroupBox.Controls.Add(this.DefaultColorsButton);
+            this.ColorsGroupBox.Controls.Add(this.checkboxRemoveTileBorder);
+            this.ColorsGroupBox.Controls.Add(this.RestoreDefaultsButton);
             this.ColorsGroupBox.Controls.Add(this.SelectedColorLabel);
             this.ColorsGroupBox.Controls.Add(this.TileSelectionColorComboBox);
             this.ColorsGroupBox.Controls.Add(this.FocusColorLabel);
             this.ColorsGroupBox.Controls.Add(this.TileFocusColorComboBox);
-            this.ColorsGroupBox.Location = new System.Drawing.Point(14, 248);
+            this.ColorsGroupBox.Location = new System.Drawing.Point(14, 261);
             this.ColorsGroupBox.Name = "ColorsGroupBox";
-            this.ColorsGroupBox.Size = new System.Drawing.Size(417, 77);
+            this.ColorsGroupBox.Size = new System.Drawing.Size(417, 84);
             this.ColorsGroupBox.TabIndex = 7;
             this.ColorsGroupBox.TabStop = false;
-            this.ColorsGroupBox.Text = "Colors";
+            this.ColorsGroupBox.Text = "Tile view settings";
             // 
-            // DefaultColorsButton
+            // checkboxRemoveTileBorder
             // 
-            this.DefaultColorsButton.Location = new System.Drawing.Point(304, 44);
-            this.DefaultColorsButton.Name = "DefaultColorsButton";
-            this.DefaultColorsButton.Size = new System.Drawing.Size(100, 23);
-            this.DefaultColorsButton.TabIndex = 15;
-            this.DefaultColorsButton.Text = "Set default colors";
-            this.DefaultColorsButton.UseVisualStyleBackColor = true;
-            this.DefaultColorsButton.Click += new System.EventHandler(this.DefaultColorsButton_Click);
+            this.checkboxRemoveTileBorder.AutoSize = true;
+            this.checkboxRemoveTileBorder.Location = new System.Drawing.Point(289, 23);
+            this.checkboxRemoveTileBorder.Name = "checkboxRemoveTileBorder";
+            this.checkboxRemoveTileBorder.Size = new System.Drawing.Size(115, 17);
+            this.checkboxRemoveTileBorder.TabIndex = 17;
+            this.checkboxRemoveTileBorder.Text = "Remove tile border";
+            this.checkboxRemoveTileBorder.UseVisualStyleBackColor = true;
+            // 
+            // RestoreDefaultsButton
+            // 
+            this.RestoreDefaultsButton.Location = new System.Drawing.Point(304, 46);
+            this.RestoreDefaultsButton.Name = "RestoreDefaultsButton";
+            this.RestoreDefaultsButton.Size = new System.Drawing.Size(100, 23);
+            this.RestoreDefaultsButton.TabIndex = 15;
+            this.RestoreDefaultsButton.Text = "Restore defaults";
+            this.RestoreDefaultsButton.UseVisualStyleBackColor = true;
+            this.RestoreDefaultsButton.Click += new System.EventHandler(this.RestoreDefaultsButton_Click);
             // 
             // TileSelectionColorComboBox
             // 
@@ -512,7 +526,7 @@ namespace UoFiddler.Forms
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(356, 381);
+            this.buttonClose.Location = new System.Drawing.Point(356, 401);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 8;
@@ -520,11 +534,20 @@ namespace UoFiddler.Forms
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.OnClickClose);
             // 
+            // checkBoxOverrideBackgroundColorFromTile
+            // 
+            this.checkBoxOverrideBackgroundColorFromTile.Location = new System.Drawing.Point(9, 69);
+            this.checkBoxOverrideBackgroundColorFromTile.Name = "checkBoxOverrideBackgroundColorFromTile";
+            this.checkBoxOverrideBackgroundColorFromTile.Size = new System.Drawing.Size(193, 31);
+            this.checkBoxOverrideBackgroundColorFromTile.TabIndex = 17;
+            this.checkBoxOverrideBackgroundColorFromTile.Text = "Set background color same as tile background";
+            this.checkBoxOverrideBackgroundColorFromTile.UseVisualStyleBackColor = true;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(445, 412);
+            this.ClientSize = new System.Drawing.Size(443, 434);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.ColorsGroupBox);
             this.Controls.Add(this.groupBox4);
@@ -590,12 +613,14 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.CheckBox checkBoxPanelSoundsDesign;
         private System.Windows.Forms.GroupBox ColorsGroupBox;
-        private System.Windows.Forms.Button DefaultColorsButton;
+        private System.Windows.Forms.Button RestoreDefaultsButton;
         private System.Windows.Forms.Label SelectedColorLabel;
         private System.Windows.Forms.ComboBox TileSelectionColorComboBox;
         private System.Windows.Forms.Label FocusColorLabel;
         private System.Windows.Forms.ComboBox TileFocusColorComboBox;
         private System.Windows.Forms.CheckBox checkBoxPolSoundIdOffset;
         private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.CheckBox checkboxRemoveTileBorder;
+        private System.Windows.Forms.CheckBox checkBoxOverrideBackgroundColorFromTile;
     }
 }

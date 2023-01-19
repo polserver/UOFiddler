@@ -144,6 +144,18 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("TileSelectionColor");
             elem.SetAttribute("value", ColorTranslator.ToHtml(Options.TileSelectionColor));
             sr.AppendChild(elem);
+            //
+            comment = dom.CreateComment("Use tile background color as tile view background color");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("OverrideBackgroundColorFromTile");
+            elem.SetAttribute("active", Options.OverrideBackgroundColorFromTile.ToString());
+            sr.AppendChild(elem);
+            //
+            comment = dom.CreateComment("Remove tile border in tile views");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("RemoveTileBorder");
+            elem.SetAttribute("active", Options.RemoveTileBorder.ToString());
+            sr.AppendChild(elem);
             // - Colors
             comment = dom.CreateComment("NewMapSize Felucca/Trammel width 7168?");
             sr.AppendChild(comment);
@@ -334,6 +346,18 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 Options.TileSelectionColor = ColorTranslator.FromHtml(elem.GetAttribute("value"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("OverrideBackgroundColorFromTile");
+            if (elem != null)
+            {
+                Options.OverrideBackgroundColorFromTile = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("RemoveTileBorder");
+            if (elem != null)
+            {
+                Options.RemoveTileBorder = bool.Parse(elem.GetAttribute("active"));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("NewMapSize");
