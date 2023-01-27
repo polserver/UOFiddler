@@ -41,7 +41,7 @@ namespace UoFiddler.Controls.Forms
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapReplaceTilesForm));
             this.label5 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.browseButton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -50,34 +50,33 @@ namespace UoFiddler.Controls.Forms
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 9);
+            this.label5.Location = new System.Drawing.Point(11, 15);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(73, 13);
             this.label5.TabIndex = 17;
             this.label5.Text = "Replace From";
             // 
-            // button1
+            // browseButton
             // 
-            this.button1.AutoSize = true;
-            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Location = new System.Drawing.Point(316, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(26, 23);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnBrowse);
+            this.browseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.browseButton.Location = new System.Drawing.Point(389, 8);
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(44, 23);
+            this.browseButton.TabIndex = 16;
+            this.browseButton.Text = "...";
+            this.browseButton.UseVisualStyleBackColor = true;
+            this.browseButton.Click += new System.EventHandler(this.OnBrowse);
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(88, 8);
+            this.textBox1.Location = new System.Drawing.Point(86, 10);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(222, 20);
+            this.textBox1.Size = new System.Drawing.Size(297, 20);
             this.textBox1.TabIndex = 15;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(138, 157);
+            this.button2.Location = new System.Drawing.Point(358, 188);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 18;
@@ -88,10 +87,10 @@ namespace UoFiddler.Controls.Forms
             // richTextBox1
             // 
             this.richTextBox1.DetectUrls = false;
-            this.richTextBox1.Location = new System.Drawing.Point(12, 33);
+            this.richTextBox1.Location = new System.Drawing.Point(11, 36);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(330, 118);
+            this.richTextBox1.Size = new System.Drawing.Size(422, 146);
             this.richTextBox1.TabIndex = 19;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
@@ -99,16 +98,16 @@ namespace UoFiddler.Controls.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(355, 190);
+            this.ClientSize = new System.Drawing.Size(445, 219);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.browseButton);
             this.Controls.Add(this.textBox1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "MapReplaceTilesForm";
-            this.Text = "MapReplaceTiles";
+            this.Text = "Map - replace tiles";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -116,7 +115,7 @@ namespace UoFiddler.Controls.Forms
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button browseButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.RichTextBox richTextBox1;
