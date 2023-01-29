@@ -608,7 +608,11 @@ namespace UoFiddler.Forms
 
         private void ToolStripMenuItemHelp_Click(object sender, EventArgs e)
         {
-            Process.Start("http://uofiddler.polserver.com/help.html");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "http://uofiddler.polserver.com/help.html",
+                UseShellExecute = true
+            });
         }
 
         private void ToolStripMenuItemAbout_Click(object sender, EventArgs e)

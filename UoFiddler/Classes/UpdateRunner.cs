@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -25,7 +26,11 @@ namespace UoFiddler.Classes
                     DialogResult result = MessageBox.Show(text, updateCheckCaption, MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
-                        System.Diagnostics.Process.Start(response.HtmlUrl);
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = response.HtmlUrl,
+                            UseShellExecute = true
+                        });
                     }
                 }
                 else
