@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
@@ -39,7 +40,11 @@ namespace UoFiddler.Forms
 
         private void OnClickLink(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://uofiddler.polserver.com/");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "http://uofiddler.polserver.com/",
+                UseShellExecute = true
+            });
         }
 
         private void OnChangeFormState(object sender, EventArgs e)
