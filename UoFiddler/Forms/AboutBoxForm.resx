@@ -58,7 +58,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.9.28
+    <value>Version 4.10.0
+- Migrate to .net 7.
+
+Version 4.9.28
 - Fixed applying hues to items and animations.
 - Updated map replace tiles form to better indicate progress and possible issues with XML file.
 
