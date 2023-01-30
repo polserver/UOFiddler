@@ -68,24 +68,24 @@ jobs:
         fetch-depth: 0
 
     # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
+    #- name: Install .NET Core
+    #  uses: actions/setup-dotnet@v3
+    #  with:
+    #    dotnet-version: 7.0.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    #- name: Setup MSBuild.exe
-    #  uses: microsoft/setup-msbuild@v1.1.3
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.1.3
 
     # Execute all unit tests in the solution
     # - name: Execute unit tests
     #  run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
-    #- name: Restore the application
-    #  run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /m /v:n
-    #  env:
-    #    Configuration: ${{ matrix.configuration }}
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /m /v:n
+      env:
+        Configuration: ${{ matrix.configuration }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     # - name: Decode the pfx
@@ -107,21 +107,17 @@ jobs:
     #- name: Remove the pfx
     #  run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
         
-    - name: env listing
-      run: env
+    #- name: env listing
+    #  run: env
     
     - name: where am i?!!
-      run: |
-        echo "AAAA: $env:GITHUB_WORKSPACE/UOFiddler"
-        dir
-        Get-ChildItem
-        Get-ChildItem -Path $env:GITHUB_WORKSPACE\UOFiddler\
+      run: Get-ChildItem -Path $env:GITHUB_WORKSPACE\UOFiddler\bin\Release\
     
-    #- name: Upload build artifacts
-    #  uses: actions/upload-artifact@v3
-    #  with:
-    #    name: UOFiddler-release
-    #    path: $env:GITHUB_WORKSPACE\UOFiddler\bin\Release\
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: UOFiddler-release
+        path: $env:GITHUB_WORKSPACE\UOFiddler\bin\Release\
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     #- name: Upload build artifacts
