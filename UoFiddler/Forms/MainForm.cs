@@ -260,23 +260,25 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            Process process = new Process();
-            ExternTool tool = FiddlerOptions.ExternTools[toolInfo];
-            process.StartInfo.FileName = tool.FileName;
-            if (argInfo >= 0)
+            using (Process process = new Process())
             {
-                process.StartInfo.Arguments = tool.Args[argInfo];
-            }
+                ExternTool tool = FiddlerOptions.ExternTools[toolInfo];
+                process.StartInfo.FileName = tool.FileName;
+                if (argInfo >= 0)
+                {
+                    process.StartInfo.Arguments = tool.Args[argInfo];
+                }
 
-            try
-            {
-                process.Start();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error starting tool",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1);
+                try
+                {
+                    process.Start();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error starting tool",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
+                }
             }
         }
 
