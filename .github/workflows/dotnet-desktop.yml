@@ -114,7 +114,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: UOFiddler-release
-        path: .\UOFiddler\UOFiddler\UoFiddler\
+        path: .\UOFiddler\bin\Release\
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     #- name: Upload build artifacts
