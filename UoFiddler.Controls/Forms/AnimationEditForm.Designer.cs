@@ -38,6 +38,8 @@
             this.extractImagesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fromvdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,8 +137,6 @@
             this.ShowOnlyValidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportAllToVDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AnimationTimer = new System.Windows.Forms.Timer(this.components);
-            this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -179,6 +179,7 @@
             // 
             this.MainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.MainSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MainSplitContainer.Name = "MainSplitContainer";
             // 
             // MainSplitContainer.Panel1
@@ -192,8 +193,9 @@
             this.MainSplitContainer.Panel2.Controls.Add(this.AnimationTabControl);
             this.MainSplitContainer.Panel2.Controls.Add(this.DirectionTrackBar);
             this.MainSplitContainer.Panel2.Controls.Add(this.StatusStrip);
-            this.MainSplitContainer.Size = new System.Drawing.Size(924, 561);
-            this.MainSplitContainer.SplitterDistance = 201;
+            this.MainSplitContainer.Size = new System.Drawing.Size(1080, 651);
+            this.MainSplitContainer.SplitterDistance = 234;
+            this.MainSplitContainer.SplitterWidth = 5;
             this.MainSplitContainer.TabIndex = 0;
             this.MainSplitContainer.TabStop = false;
             // 
@@ -203,8 +205,9 @@
             this.AnimationListTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnimationListTreeView.HideSelection = false;
             this.AnimationListTreeView.Location = new System.Drawing.Point(0, 25);
+            this.AnimationListTreeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationListTreeView.Name = "AnimationListTreeView";
-            this.AnimationListTreeView.Size = new System.Drawing.Size(201, 536);
+            this.AnimationListTreeView.Size = new System.Drawing.Size(234, 626);
             this.AnimationListTreeView.TabIndex = 0;
             this.AnimationListTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeView);
             // 
@@ -217,19 +220,19 @@
             this.importToolStripMenuItem1,
             this.exportToolStripMenuItem1});
             this.ContextMenuStripTreeView.Name = "contextMenuStrip2";
-            this.ContextMenuStripTreeView.Size = new System.Drawing.Size(181, 136);
+            this.ContextMenuStripTreeView.Size = new System.Drawing.Size(158, 114);
             // 
             // addToolStripMenuItem
             // 
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.addToolStripMenuItem.Text = "Replace";
             this.addToolStripMenuItem.Visible = false;
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemoveAction);
             // 
@@ -241,13 +244,13 @@
             this.asJpgToolStripMenuItem,
             this.asPngToolStripMenuItem});
             this.extractImagesToolStripMenuItem1.Name = "extractImagesToolStripMenuItem1";
-            this.extractImagesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.extractImagesToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.extractImagesToolStripMenuItem1.Text = "Extract Images..";
             // 
             // asBmpToolStripMenuItem
             // 
             this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asBmpToolStripMenuItem.Tag = ".bmp";
             this.asBmpToolStripMenuItem.Text = "As Bmp";
             this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
@@ -255,23 +258,39 @@
             // asTiffToolStripMenuItem
             // 
             this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.asTiffToolStripMenuItem.Tag = ".tiff";
             this.asTiffToolStripMenuItem.Text = "As Tiff";
             this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
+            // 
+            // asJpgToolStripMenuItem
+            // 
+            this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
+            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asJpgToolStripMenuItem.Tag = ".jpg";
+            this.asJpgToolStripMenuItem.Text = "As Jpg";
+            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
+            // 
+            // asPngToolStripMenuItem
+            // 
+            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.asPngToolStripMenuItem.Tag = ".png";
+            this.asPngToolStripMenuItem.Text = "As Png";
+            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
             // 
             // importToolStripMenuItem1
             // 
             this.importToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fromvdToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.importToolStripMenuItem1.Text = "Import..";
             // 
             // fromvdToolStripMenuItem
             // 
             this.fromvdToolStripMenuItem.Name = "fromvdToolStripMenuItem";
-            this.fromvdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fromvdToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.fromvdToolStripMenuItem.Text = "From .vd";
             this.fromvdToolStripMenuItem.Click += new System.EventHandler(this.OnClickImportFromVD);
             // 
@@ -280,13 +299,13 @@
             this.exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tovdToolStripMenuItem});
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
-            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.exportToolStripMenuItem1.Text = "Export..";
             // 
             // tovdToolStripMenuItem
             // 
             this.tovdToolStripMenuItem.Name = "tovdToolStripMenuItem";
-            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tovdToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
             this.tovdToolStripMenuItem.Text = "To .vd";
             this.tovdToolStripMenuItem.Click += new System.EventHandler(this.OnClickExportToVD);
             // 
@@ -297,7 +316,7 @@
             this.AnimationFileToolStrip.Location = new System.Drawing.Point(0, 0);
             this.AnimationFileToolStrip.Name = "AnimationFileToolStrip";
             this.AnimationFileToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.AnimationFileToolStrip.Size = new System.Drawing.Size(201, 25);
+            this.AnimationFileToolStrip.Size = new System.Drawing.Size(234, 25);
             this.AnimationFileToolStrip.TabIndex = 8;
             this.AnimationFileToolStrip.Text = "toolStrip1";
             // 
@@ -311,15 +330,16 @@
             "anim4",
             "anim5"});
             this.SelectFileToolStripComboBox.Name = "SelectFileToolStripComboBox";
-            this.SelectFileToolStripComboBox.Size = new System.Drawing.Size(121, 25);
+            this.SelectFileToolStripComboBox.Size = new System.Drawing.Size(140, 25);
             this.SelectFileToolStripComboBox.SelectedIndexChanged += new System.EventHandler(this.OnAnimChanged);
             // 
             // ProgressBar
             // 
             this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProgressBar.Location = new System.Drawing.Point(438, 541);
+            this.ProgressBar.Location = new System.Drawing.Point(513, 628);
+            this.ProgressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(169, 17);
+            this.ProgressBar.Size = new System.Drawing.Size(197, 20);
             this.ProgressBar.TabIndex = 8;
             // 
             // AnimationTabControl
@@ -328,9 +348,10 @@
             this.AnimationTabControl.Controls.Add(this.AnimationEditPage);
             this.AnimationTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnimationTabControl.Location = new System.Drawing.Point(0, 0);
+            this.AnimationTabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationTabControl.Name = "AnimationTabControl";
             this.AnimationTabControl.SelectedIndex = 0;
-            this.AnimationTabControl.Size = new System.Drawing.Size(719, 539);
+            this.AnimationTabControl.Size = new System.Drawing.Size(841, 629);
             this.AnimationTabControl.TabIndex = 7;
             this.AnimationTabControl.TabStop = false;
             // 
@@ -362,19 +383,21 @@
             this.FramePage.Controls.Add(this.FramesListView);
             this.FramePage.Controls.Add(this.pictureBox2);
             this.FramePage.Controls.Add(this.PalettePictureBox);
-            this.FramePage.Location = new System.Drawing.Point(4, 22);
+            this.FramePage.Location = new System.Drawing.Point(4, 24);
+            this.FramePage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FramePage.Name = "FramePage";
-            this.FramePage.Padding = new System.Windows.Forms.Padding(3);
-            this.FramePage.Size = new System.Drawing.Size(711, 513);
+            this.FramePage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.FramePage.Size = new System.Drawing.Size(833, 601);
             this.FramePage.TabIndex = 0;
             this.FramePage.Text = "Frame";
             this.FramePage.UseVisualStyleBackColor = true;
             // 
             // ApplyButton
             // 
-            this.ApplyButton.Location = new System.Drawing.Point(658, 22);
+            this.ApplyButton.Location = new System.Drawing.Point(768, 25);
+            this.ApplyButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ApplyButton.Name = "ApplyButton";
-            this.ApplyButton.Size = new System.Drawing.Size(41, 21);
+            this.ApplyButton.Size = new System.Drawing.Size(48, 24);
             this.ApplyButton.TabIndex = 25;
             this.ApplyButton.Text = "Apply";
             this.ApplyButton.UseVisualStyleBackColor = true;
@@ -384,15 +407,17 @@
             // 
             this.ColorBlueLabel.AutoSize = true;
             this.ColorBlueLabel.ForeColor = System.Drawing.Color.Navy;
-            this.ColorBlueLabel.Location = new System.Drawing.Point(592, 25);
+            this.ColorBlueLabel.Location = new System.Drawing.Point(691, 29);
+            this.ColorBlueLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ColorBlueLabel.Name = "ColorBlueLabel";
-            this.ColorBlueLabel.Size = new System.Drawing.Size(14, 13);
+            this.ColorBlueLabel.Size = new System.Drawing.Size(14, 15);
             this.ColorBlueLabel.TabIndex = 24;
             this.ColorBlueLabel.Text = "B";
             // 
             // numericUpDown8
             // 
-            this.numericUpDown8.Location = new System.Drawing.Point(611, 22);
+            this.numericUpDown8.Location = new System.Drawing.Point(713, 25);
+            this.numericUpDown8.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDown8.Maximum = new decimal(new int[] {
             255,
             0,
@@ -404,22 +429,24 @@
             0,
             -2147483648});
             this.numericUpDown8.Name = "numericUpDown8";
-            this.numericUpDown8.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDown8.Size = new System.Drawing.Size(48, 23);
             this.numericUpDown8.TabIndex = 23;
             // 
             // ColorGreenLabel
             // 
             this.ColorGreenLabel.AutoSize = true;
             this.ColorGreenLabel.ForeColor = System.Drawing.Color.Green;
-            this.ColorGreenLabel.Location = new System.Drawing.Point(524, 25);
+            this.ColorGreenLabel.Location = new System.Drawing.Point(611, 29);
+            this.ColorGreenLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ColorGreenLabel.Name = "ColorGreenLabel";
-            this.ColorGreenLabel.Size = new System.Drawing.Size(15, 13);
+            this.ColorGreenLabel.Size = new System.Drawing.Size(15, 15);
             this.ColorGreenLabel.TabIndex = 22;
             this.ColorGreenLabel.Text = "G";
             // 
             // numericUpDown7
             // 
-            this.numericUpDown7.Location = new System.Drawing.Point(545, 22);
+            this.numericUpDown7.Location = new System.Drawing.Point(636, 25);
+            this.numericUpDown7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDown7.Maximum = new decimal(new int[] {
             255,
             0,
@@ -431,12 +458,13 @@
             0,
             -2147483648});
             this.numericUpDown7.Name = "numericUpDown7";
-            this.numericUpDown7.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDown7.Size = new System.Drawing.Size(48, 23);
             this.numericUpDown7.TabIndex = 21;
             // 
             // numericUpDown6
             // 
-            this.numericUpDown6.Location = new System.Drawing.Point(477, 22);
+            this.numericUpDown6.Location = new System.Drawing.Point(556, 25);
+            this.numericUpDown6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDown6.Maximum = new decimal(new int[] {
             255,
             0,
@@ -448,33 +476,36 @@
             0,
             -2147483648});
             this.numericUpDown6.Name = "numericUpDown6";
-            this.numericUpDown6.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDown6.Size = new System.Drawing.Size(48, 23);
             this.numericUpDown6.TabIndex = 20;
             // 
             // ColorRedLabel
             // 
             this.ColorRedLabel.AutoSize = true;
             this.ColorRedLabel.ForeColor = System.Drawing.Color.Red;
-            this.ColorRedLabel.Location = new System.Drawing.Point(456, 25);
+            this.ColorRedLabel.Location = new System.Drawing.Point(532, 29);
+            this.ColorRedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ColorRedLabel.Name = "ColorRedLabel";
-            this.ColorRedLabel.Size = new System.Drawing.Size(15, 13);
+            this.ColorRedLabel.Size = new System.Drawing.Size(14, 15);
             this.ColorRedLabel.TabIndex = 19;
             this.ColorRedLabel.Text = "R";
             // 
             // ColorBalanceLabel
             // 
             this.ColorBalanceLabel.AutoSize = true;
-            this.ColorBalanceLabel.Location = new System.Drawing.Point(382, 25);
+            this.ColorBalanceLabel.Location = new System.Drawing.Point(446, 29);
+            this.ColorBalanceLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ColorBalanceLabel.Name = "ColorBalanceLabel";
-            this.ColorBalanceLabel.Size = new System.Drawing.Size(76, 13);
+            this.ColorBalanceLabel.Size = new System.Drawing.Size(83, 15);
             this.ColorBalanceLabel.TabIndex = 18;
             this.ColorBalanceLabel.Text = "Color Balance:";
             // 
             // SetPalleteButton
             // 
-            this.SetPalleteButton.Location = new System.Drawing.Point(21, 23);
+            this.SetPalleteButton.Location = new System.Drawing.Point(24, 27);
+            this.SetPalleteButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SetPalleteButton.Name = "SetPalleteButton";
-            this.SetPalleteButton.Size = new System.Drawing.Size(31, 19);
+            this.SetPalleteButton.Size = new System.Drawing.Size(36, 22);
             this.SetPalleteButton.TabIndex = 17;
             this.SetPalleteButton.Text = "Set";
             this.SetPalleteButton.UseVisualStyleBackColor = true;
@@ -483,9 +514,10 @@
             // rbBRG
             // 
             this.rbBRG.AutoSize = true;
-            this.rbBRG.Location = new System.Drawing.Point(328, 24);
+            this.rbBRG.Location = new System.Drawing.Point(383, 28);
+            this.rbBRG.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rbBRG.Name = "rbBRG";
-            this.rbBRG.Size = new System.Drawing.Size(48, 17);
+            this.rbBRG.Size = new System.Drawing.Size(47, 19);
             this.rbBRG.TabIndex = 16;
             this.rbBRG.Text = "BRG";
             this.rbBRG.UseVisualStyleBackColor = true;
@@ -494,9 +526,10 @@
             // rbBGR
             // 
             this.rbBGR.AutoSize = true;
-            this.rbBGR.Location = new System.Drawing.Point(274, 24);
+            this.rbBGR.Location = new System.Drawing.Point(320, 28);
+            this.rbBGR.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rbBGR.Name = "rbBGR";
-            this.rbBGR.Size = new System.Drawing.Size(48, 17);
+            this.rbBGR.Size = new System.Drawing.Size(47, 19);
             this.rbBGR.TabIndex = 15;
             this.rbBGR.Text = "BGR";
             this.rbBGR.UseVisualStyleBackColor = true;
@@ -505,9 +538,10 @@
             // rbGBR
             // 
             this.rbGBR.AutoSize = true;
-            this.rbGBR.Location = new System.Drawing.Point(220, 24);
+            this.rbGBR.Location = new System.Drawing.Point(257, 28);
+            this.rbGBR.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rbGBR.Name = "rbGBR";
-            this.rbGBR.Size = new System.Drawing.Size(48, 17);
+            this.rbGBR.Size = new System.Drawing.Size(47, 19);
             this.rbGBR.TabIndex = 14;
             this.rbGBR.Text = "GBR";
             this.rbGBR.UseVisualStyleBackColor = true;
@@ -516,9 +550,10 @@
             // rbGRB
             // 
             this.rbGRB.AutoSize = true;
-            this.rbGRB.Location = new System.Drawing.Point(166, 24);
+            this.rbGRB.Location = new System.Drawing.Point(194, 28);
+            this.rbGRB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rbGRB.Name = "rbGRB";
-            this.rbGRB.Size = new System.Drawing.Size(48, 17);
+            this.rbGRB.Size = new System.Drawing.Size(47, 19);
             this.rbGRB.TabIndex = 13;
             this.rbGRB.Text = "GRB";
             this.rbGRB.UseVisualStyleBackColor = true;
@@ -527,9 +562,10 @@
             // rbRBG
             // 
             this.rbRBG.AutoSize = true;
-            this.rbRBG.Location = new System.Drawing.Point(112, 24);
+            this.rbRBG.Location = new System.Drawing.Point(131, 28);
+            this.rbRBG.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rbRBG.Name = "rbRBG";
-            this.rbRBG.Size = new System.Drawing.Size(48, 17);
+            this.rbRBG.Size = new System.Drawing.Size(47, 19);
             this.rbRBG.TabIndex = 12;
             this.rbRBG.Text = "RBG";
             this.rbRBG.UseVisualStyleBackColor = true;
@@ -539,9 +575,10 @@
             // 
             this.rbRGB.AutoSize = true;
             this.rbRGB.Checked = true;
-            this.rbRGB.Location = new System.Drawing.Point(58, 24);
+            this.rbRGB.Location = new System.Drawing.Point(68, 28);
+            this.rbRGB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rbRGB.Name = "rbRGB";
-            this.rbRGB.Size = new System.Drawing.Size(48, 17);
+            this.rbRGB.Size = new System.Drawing.Size(47, 19);
             this.rbRGB.TabIndex = 11;
             this.rbRGB.TabStop = true;
             this.rbRGB.Text = "RGB";
@@ -551,9 +588,10 @@
             // 
             this.LockColorControlsCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
             this.LockColorControlsCheckBox.Image = global::UoFiddler.Controls.Properties.Resources.cadeado;
-            this.LockColorControlsCheckBox.Location = new System.Drawing.Point(556, 0);
+            this.LockColorControlsCheckBox.Location = new System.Drawing.Point(649, 0);
+            this.LockColorControlsCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LockColorControlsCheckBox.Name = "LockColorControlsCheckBox";
-            this.LockColorControlsCheckBox.Size = new System.Drawing.Size(22, 23);
+            this.LockColorControlsCheckBox.Size = new System.Drawing.Size(26, 27);
             this.LockColorControlsCheckBox.TabIndex = 9;
             this.LockColorControlsCheckBox.UseVisualStyleBackColor = true;
             this.LockColorControlsCheckBox.CheckedChanged += new System.EventHandler(this.CbLockColorControls_CheckedChanged);
@@ -561,9 +599,10 @@
             // ExtraBackgroundLabel
             // 
             this.ExtraBackgroundLabel.AutoSize = true;
-            this.ExtraBackgroundLabel.Location = new System.Drawing.Point(260, 5);
+            this.ExtraBackgroundLabel.Location = new System.Drawing.Point(303, 6);
+            this.ExtraBackgroundLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ExtraBackgroundLabel.Name = "ExtraBackgroundLabel";
-            this.ExtraBackgroundLabel.Size = new System.Drawing.Size(95, 13);
+            this.ExtraBackgroundLabel.Size = new System.Drawing.Size(103, 15);
             this.ExtraBackgroundLabel.TabIndex = 8;
             this.ExtraBackgroundLabel.Text = "Extra Background:";
             // 
@@ -571,9 +610,10 @@
             // 
             this.BackgroundBlueLabel.AutoSize = true;
             this.BackgroundBlueLabel.ForeColor = System.Drawing.Color.Navy;
-            this.BackgroundBlueLabel.Location = new System.Drawing.Point(489, 5);
+            this.BackgroundBlueLabel.Location = new System.Drawing.Point(570, 6);
+            this.BackgroundBlueLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BackgroundBlueLabel.Name = "BackgroundBlueLabel";
-            this.BackgroundBlueLabel.Size = new System.Drawing.Size(14, 13);
+            this.BackgroundBlueLabel.Size = new System.Drawing.Size(14, 15);
             this.BackgroundBlueLabel.TabIndex = 7;
             this.BackgroundBlueLabel.Text = "B";
             // 
@@ -581,9 +621,10 @@
             // 
             this.BackgroundGreenLabel.AutoSize = true;
             this.BackgroundGreenLabel.ForeColor = System.Drawing.Color.Green;
-            this.BackgroundGreenLabel.Location = new System.Drawing.Point(421, 5);
+            this.BackgroundGreenLabel.Location = new System.Drawing.Point(491, 6);
+            this.BackgroundGreenLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BackgroundGreenLabel.Name = "BackgroundGreenLabel";
-            this.BackgroundGreenLabel.Size = new System.Drawing.Size(15, 13);
+            this.BackgroundGreenLabel.Size = new System.Drawing.Size(15, 15);
             this.BackgroundGreenLabel.TabIndex = 6;
             this.BackgroundGreenLabel.Text = "G";
             // 
@@ -591,15 +632,17 @@
             // 
             this.BackgroundRedLabel.AutoSize = true;
             this.BackgroundRedLabel.ForeColor = System.Drawing.Color.Red;
-            this.BackgroundRedLabel.Location = new System.Drawing.Point(353, 5);
+            this.BackgroundRedLabel.Location = new System.Drawing.Point(412, 6);
+            this.BackgroundRedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BackgroundRedLabel.Name = "BackgroundRedLabel";
-            this.BackgroundRedLabel.Size = new System.Drawing.Size(15, 13);
+            this.BackgroundRedLabel.Size = new System.Drawing.Size(14, 15);
             this.BackgroundRedLabel.TabIndex = 5;
             this.BackgroundRedLabel.Text = "R";
             // 
             // numericUpDownBlue
             // 
-            this.numericUpDownBlue.Location = new System.Drawing.Point(509, 2);
+            this.numericUpDownBlue.Location = new System.Drawing.Point(594, 2);
+            this.numericUpDownBlue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownBlue.Maximum = new decimal(new int[] {
             255,
             0,
@@ -611,7 +654,7 @@
             0,
             0});
             this.numericUpDownBlue.Name = "numericUpDownBlue";
-            this.numericUpDownBlue.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDownBlue.Size = new System.Drawing.Size(48, 23);
             this.numericUpDownBlue.TabIndex = 4;
             this.numericUpDownBlue.Value = new decimal(new int[] {
             255,
@@ -621,14 +664,15 @@
             // 
             // numericUpDownGreen
             // 
-            this.numericUpDownGreen.Location = new System.Drawing.Point(442, 2);
+            this.numericUpDownGreen.Location = new System.Drawing.Point(516, 2);
+            this.numericUpDownGreen.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownGreen.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.numericUpDownGreen.Name = "numericUpDownGreen";
-            this.numericUpDownGreen.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDownGreen.Size = new System.Drawing.Size(48, 23);
             this.numericUpDownGreen.TabIndex = 3;
             this.numericUpDownGreen.Value = new decimal(new int[] {
             255,
@@ -638,14 +682,15 @@
             // 
             // numericUpDownRed
             // 
-            this.numericUpDownRed.Location = new System.Drawing.Point(374, 2);
+            this.numericUpDownRed.Location = new System.Drawing.Point(436, 2);
+            this.numericUpDownRed.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.numericUpDownRed.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.numericUpDownRed.Name = "numericUpDownRed";
-            this.numericUpDownRed.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDownRed.Size = new System.Drawing.Size(48, 23);
             this.numericUpDownRed.TabIndex = 2;
             this.numericUpDownRed.Value = new decimal(new int[] {
             255,
@@ -657,12 +702,12 @@
             // 
             this.FramesListView.ContextMenuStrip = this.ContextMenuStripListView;
             this.FramesListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FramesListView.HideSelection = false;
-            this.FramesListView.Location = new System.Drawing.Point(3, 43);
+            this.FramesListView.Location = new System.Drawing.Point(4, 49);
+            this.FramesListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FramesListView.MultiSelect = false;
             this.FramesListView.Name = "FramesListView";
             this.FramesListView.OwnerDraw = true;
-            this.FramesListView.Size = new System.Drawing.Size(705, 467);
+            this.FramesListView.Size = new System.Drawing.Size(825, 549);
             this.FramesListView.TabIndex = 0;
             this.FramesListView.TileSize = new System.Drawing.Size(81, 110);
             this.FramesListView.UseCompatibleStateImageBehavior = false;
@@ -754,11 +799,12 @@
             // 
             this.pictureBox2.ContextMenuStrip = this.contextMenuStripPalette;
             this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pictureBox2.Location = new System.Drawing.Point(3, 23);
-            this.pictureBox2.MaximumSize = new System.Drawing.Size(0, 20);
-            this.pictureBox2.MinimumSize = new System.Drawing.Size(256, 20);
+            this.pictureBox2.Location = new System.Drawing.Point(4, 26);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.pictureBox2.MaximumSize = new System.Drawing.Size(0, 23);
+            this.pictureBox2.MinimumSize = new System.Drawing.Size(299, 23);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(705, 20);
+            this.pictureBox2.Size = new System.Drawing.Size(825, 23);
             this.pictureBox2.TabIndex = 10;
             this.pictureBox2.TabStop = false;
             // 
@@ -839,21 +885,23 @@
             // 
             this.PalettePictureBox.ContextMenuStrip = this.contextMenuStripPalette;
             this.PalettePictureBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PalettePictureBox.Location = new System.Drawing.Point(3, 3);
-            this.PalettePictureBox.MaximumSize = new System.Drawing.Size(0, 20);
-            this.PalettePictureBox.MinimumSize = new System.Drawing.Size(256, 20);
+            this.PalettePictureBox.Location = new System.Drawing.Point(4, 3);
+            this.PalettePictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.PalettePictureBox.MaximumSize = new System.Drawing.Size(0, 23);
+            this.PalettePictureBox.MinimumSize = new System.Drawing.Size(299, 23);
             this.PalettePictureBox.Name = "PalettePictureBox";
-            this.PalettePictureBox.Size = new System.Drawing.Size(705, 20);
+            this.PalettePictureBox.Size = new System.Drawing.Size(825, 23);
             this.PalettePictureBox.TabIndex = 1;
             this.PalettePictureBox.TabStop = false;
             // 
             // AnimationEditPage
             // 
             this.AnimationEditPage.Controls.Add(this.AnimationTableLayoutPanel);
-            this.AnimationEditPage.Location = new System.Drawing.Point(4, 22);
+            this.AnimationEditPage.Location = new System.Drawing.Point(4, 24);
+            this.AnimationEditPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationEditPage.Name = "AnimationEditPage";
-            this.AnimationEditPage.Padding = new System.Windows.Forms.Padding(3);
-            this.AnimationEditPage.Size = new System.Drawing.Size(711, 513);
+            this.AnimationEditPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.AnimationEditPage.Size = new System.Drawing.Size(833, 601);
             this.AnimationEditPage.TabIndex = 1;
             this.AnimationEditPage.Text = "Preview/Edit";
             this.AnimationEditPage.UseVisualStyleBackColor = true;
@@ -862,18 +910,19 @@
             // 
             this.AnimationTableLayoutPanel.ColumnCount = 2;
             this.AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 170F));
+            this.AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 198F));
             this.AnimationTableLayoutPanel.Controls.Add(this.AnimationEditToolStrip, 0, 1);
             this.AnimationTableLayoutPanel.Controls.Add(this.AnimationPictureBox, 0, 0);
             this.AnimationTableLayoutPanel.Controls.Add(this.EditSidePanel, 1, 0);
             this.AnimationTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AnimationTableLayoutPanel.Location = new System.Drawing.Point(3, 3);
+            this.AnimationTableLayoutPanel.Location = new System.Drawing.Point(4, 3);
+            this.AnimationTableLayoutPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationTableLayoutPanel.Name = "AnimationTableLayoutPanel";
             this.AnimationTableLayoutPanel.RowCount = 2;
             this.AnimationTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AnimationTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.AnimationTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.AnimationTableLayoutPanel.Size = new System.Drawing.Size(705, 507);
+            this.AnimationTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.AnimationTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.AnimationTableLayoutPanel.Size = new System.Drawing.Size(825, 595);
             this.AnimationTableLayoutPanel.TabIndex = 21;
             // 
             // AnimationEditToolStrip
@@ -889,10 +938,10 @@
             this.toolStripSeparator6,
             this.DrawReferencialPointToolStripButton,
             this.toolStripSeparator10});
-            this.AnimationEditToolStrip.Location = new System.Drawing.Point(0, 482);
+            this.AnimationEditToolStrip.Location = new System.Drawing.Point(0, 570);
             this.AnimationEditToolStrip.Name = "AnimationEditToolStrip";
             this.AnimationEditToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.AnimationEditToolStrip.Size = new System.Drawing.Size(705, 25);
+            this.AnimationEditToolStrip.Size = new System.Drawing.Size(825, 25);
             this.AnimationEditToolStrip.TabIndex = 11;
             this.AnimationEditToolStrip.Text = "X";
             // 
@@ -962,9 +1011,10 @@
             // AnimationPictureBox
             // 
             this.AnimationPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AnimationPictureBox.Location = new System.Drawing.Point(3, 3);
+            this.AnimationPictureBox.Location = new System.Drawing.Point(4, 3);
+            this.AnimationPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationPictureBox.Name = "AnimationPictureBox";
-            this.AnimationPictureBox.Size = new System.Drawing.Size(529, 476);
+            this.AnimationPictureBox.Size = new System.Drawing.Size(619, 560);
             this.AnimationPictureBox.TabIndex = 1;
             this.AnimationPictureBox.TabStop = false;
             this.AnimationPictureBox.SizeChanged += new System.EventHandler(this.AnimationPictureBox_OnSizeChanged);
@@ -980,18 +1030,21 @@
             this.EditSidePanel.Controls.Add(this.ReferencialPointGroupBox);
             this.EditSidePanel.Controls.Add(this.CoordinatesGroupBox);
             this.EditSidePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.EditSidePanel.Location = new System.Drawing.Point(538, 3);
+            this.EditSidePanel.Location = new System.Drawing.Point(631, 3);
+            this.EditSidePanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.EditSidePanel.Name = "EditSidePanel";
-            this.EditSidePanel.Size = new System.Drawing.Size(164, 476);
+            this.EditSidePanel.Size = new System.Drawing.Size(190, 560);
             this.EditSidePanel.TabIndex = 0;
             // 
             // FramesGroupBox
             // 
             this.FramesGroupBox.Controls.Add(this.FramesTrackBar);
             this.FramesGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.FramesGroupBox.Location = new System.Drawing.Point(0, 330);
+            this.FramesGroupBox.Location = new System.Drawing.Point(0, 380);
+            this.FramesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FramesGroupBox.Name = "FramesGroupBox";
-            this.FramesGroupBox.Size = new System.Drawing.Size(164, 49);
+            this.FramesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.FramesGroupBox.Size = new System.Drawing.Size(190, 57);
             this.FramesGroupBox.TabIndex = 23;
             this.FramesGroupBox.TabStop = false;
             this.FramesGroupBox.Text = "Animation Frames";
@@ -1000,10 +1053,11 @@
             // 
             this.FramesTrackBar.AutoSize = false;
             this.FramesTrackBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.FramesTrackBar.Location = new System.Drawing.Point(3, 16);
+            this.FramesTrackBar.Location = new System.Drawing.Point(4, 19);
+            this.FramesTrackBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FramesTrackBar.Maximum = 0;
             this.FramesTrackBar.Name = "FramesTrackBar";
-            this.FramesTrackBar.Size = new System.Drawing.Size(158, 26);
+            this.FramesTrackBar.Size = new System.Drawing.Size(182, 30);
             this.FramesTrackBar.TabIndex = 22;
             this.FramesTrackBar.ValueChanged += new System.EventHandler(this.OnFrameCountBarChanged);
             // 
@@ -1012,9 +1066,11 @@
             this.SpeedGroupBox.Controls.Add(this.PlayButton);
             this.SpeedGroupBox.Controls.Add(this.AnimationSpeedTrackBar);
             this.SpeedGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.SpeedGroupBox.Location = new System.Drawing.Point(0, 269);
+            this.SpeedGroupBox.Location = new System.Drawing.Point(0, 310);
+            this.SpeedGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SpeedGroupBox.Name = "SpeedGroupBox";
-            this.SpeedGroupBox.Size = new System.Drawing.Size(164, 61);
+            this.SpeedGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SpeedGroupBox.Size = new System.Drawing.Size(190, 70);
             this.SpeedGroupBox.TabIndex = 19;
             this.SpeedGroupBox.TabStop = false;
             this.SpeedGroupBox.Text = "Animation Speed";
@@ -1023,9 +1079,10 @@
             // 
             this.PlayButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("PlayButton.BackgroundImage")));
             this.PlayButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.PlayButton.Location = new System.Drawing.Point(9, 19);
+            this.PlayButton.Location = new System.Drawing.Point(10, 22);
+            this.PlayButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.PlayButton.Name = "PlayButton";
-            this.PlayButton.Size = new System.Drawing.Size(26, 26);
+            this.PlayButton.Size = new System.Drawing.Size(30, 30);
             this.PlayButton.TabIndex = 13;
             this.PlayButton.UseVisualStyleBackColor = true;
             this.PlayButton.Click += new System.EventHandler(this.ToolStripButtonPlayAnimation_Click);
@@ -1033,10 +1090,11 @@
             // AnimationSpeedTrackBar
             // 
             this.AnimationSpeedTrackBar.AutoSize = false;
-            this.AnimationSpeedTrackBar.Location = new System.Drawing.Point(41, 19);
+            this.AnimationSpeedTrackBar.Location = new System.Drawing.Point(48, 22);
+            this.AnimationSpeedTrackBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AnimationSpeedTrackBar.Maximum = 14;
             this.AnimationSpeedTrackBar.Name = "AnimationSpeedTrackBar";
-            this.AnimationSpeedTrackBar.Size = new System.Drawing.Size(117, 26);
+            this.AnimationSpeedTrackBar.Size = new System.Drawing.Size(136, 30);
             this.AnimationSpeedTrackBar.TabIndex = 12;
             this.AnimationSpeedTrackBar.Value = 3;
             this.AnimationSpeedTrackBar.ValueChanged += new System.EventHandler(this.AnimationSpeedTrackBar_ValueChanged);
@@ -1049,9 +1107,11 @@
             this.LocationCenterGroupBox.Controls.Add(this.CenterXNumericUpDown);
             this.LocationCenterGroupBox.Controls.Add(this.CenterYNumericUpDown);
             this.LocationCenterGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.LocationCenterGroupBox.Location = new System.Drawing.Point(0, 192);
+            this.LocationCenterGroupBox.Location = new System.Drawing.Point(0, 221);
+            this.LocationCenterGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LocationCenterGroupBox.Name = "LocationCenterGroupBox";
-            this.LocationCenterGroupBox.Size = new System.Drawing.Size(164, 77);
+            this.LocationCenterGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.LocationCenterGroupBox.Size = new System.Drawing.Size(190, 89);
             this.LocationCenterGroupBox.TabIndex = 21;
             this.LocationCenterGroupBox.TabStop = false;
             this.LocationCenterGroupBox.Text = "Location Center";
@@ -1059,26 +1119,29 @@
             // CenterYLabel
             // 
             this.CenterYLabel.AutoSize = true;
-            this.CenterYLabel.Location = new System.Drawing.Point(75, 21);
+            this.CenterYLabel.Location = new System.Drawing.Point(88, 24);
+            this.CenterYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.CenterYLabel.Name = "CenterYLabel";
-            this.CenterYLabel.Size = new System.Drawing.Size(14, 13);
+            this.CenterYLabel.Size = new System.Drawing.Size(14, 15);
             this.CenterYLabel.TabIndex = 18;
             this.CenterYLabel.Text = "Y";
             // 
             // CenterXLabel
             // 
             this.CenterXLabel.AutoSize = true;
-            this.CenterXLabel.Location = new System.Drawing.Point(8, 21);
+            this.CenterXLabel.Location = new System.Drawing.Point(9, 24);
+            this.CenterXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.CenterXLabel.Name = "CenterXLabel";
-            this.CenterXLabel.Size = new System.Drawing.Size(14, 13);
+            this.CenterXLabel.Size = new System.Drawing.Size(14, 15);
             this.CenterXLabel.TabIndex = 17;
             this.CenterXLabel.Text = "X";
             // 
             // SameCenterButton
             // 
-            this.SameCenterButton.Location = new System.Drawing.Point(54, 45);
+            this.SameCenterButton.Location = new System.Drawing.Point(63, 52);
+            this.SameCenterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SameCenterButton.Name = "SameCenterButton";
-            this.SameCenterButton.Size = new System.Drawing.Size(84, 23);
+            this.SameCenterButton.Size = new System.Drawing.Size(98, 27);
             this.SameCenterButton.TabIndex = 16;
             this.SameCenterButton.Text = "Same Center";
             this.SameCenterButton.UseVisualStyleBackColor = true;
@@ -1088,7 +1151,8 @@
             // 
             this.CenterXNumericUpDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.CenterXNumericUpDown.InterceptArrowKeys = false;
-            this.CenterXNumericUpDown.Location = new System.Drawing.Point(28, 19);
+            this.CenterXNumericUpDown.Location = new System.Drawing.Point(33, 22);
+            this.CenterXNumericUpDown.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.CenterXNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -1100,7 +1164,7 @@
             0,
             -2147483648});
             this.CenterXNumericUpDown.Name = "CenterXNumericUpDown";
-            this.CenterXNumericUpDown.Size = new System.Drawing.Size(43, 20);
+            this.CenterXNumericUpDown.Size = new System.Drawing.Size(50, 23);
             this.CenterXNumericUpDown.TabIndex = 5;
             this.CenterXNumericUpDown.ValueChanged += new System.EventHandler(this.OnCenterXValueChanged);
             this.CenterXNumericUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown);
@@ -1108,7 +1172,8 @@
             // CenterYNumericUpDown
             // 
             this.CenterYNumericUpDown.InterceptArrowKeys = false;
-            this.CenterYNumericUpDown.Location = new System.Drawing.Point(95, 19);
+            this.CenterYNumericUpDown.Location = new System.Drawing.Point(111, 22);
+            this.CenterYNumericUpDown.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.CenterYNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -1120,7 +1185,7 @@
             0,
             -2147483648});
             this.CenterYNumericUpDown.Name = "CenterYNumericUpDown";
-            this.CenterYNumericUpDown.Size = new System.Drawing.Size(43, 20);
+            this.CenterYNumericUpDown.Size = new System.Drawing.Size(50, 23);
             this.CenterYNumericUpDown.TabIndex = 4;
             this.CenterYNumericUpDown.ValueChanged += new System.EventHandler(this.OnCenterYValueChanged);
             this.CenterYNumericUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown);
@@ -1133,9 +1198,11 @@
             this.ReferencialPointGroupBox.Controls.Add(this.RefXNumericUpDown);
             this.ReferencialPointGroupBox.Controls.Add(this.RefYNumericUpDown);
             this.ReferencialPointGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ReferencialPointGroupBox.Location = new System.Drawing.Point(0, 119);
+            this.ReferencialPointGroupBox.Location = new System.Drawing.Point(0, 137);
+            this.ReferencialPointGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ReferencialPointGroupBox.Name = "ReferencialPointGroupBox";
-            this.ReferencialPointGroupBox.Size = new System.Drawing.Size(164, 73);
+            this.ReferencialPointGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ReferencialPointGroupBox.Size = new System.Drawing.Size(190, 84);
             this.ReferencialPointGroupBox.TabIndex = 20;
             this.ReferencialPointGroupBox.TabStop = false;
             this.ReferencialPointGroupBox.Text = "Referencial Point";
@@ -1144,9 +1211,10 @@
             // 
             this.ToolStripLockButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.ToolStripLockButton.BackgroundImage = global::UoFiddler.Controls.Properties.Resources.cadeado;
-            this.ToolStripLockButton.Location = new System.Drawing.Point(112, 43);
+            this.ToolStripLockButton.Location = new System.Drawing.Point(131, 50);
+            this.ToolStripLockButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ToolStripLockButton.Name = "ToolStripLockButton";
-            this.ToolStripLockButton.Size = new System.Drawing.Size(26, 26);
+            this.ToolStripLockButton.Size = new System.Drawing.Size(30, 30);
             this.ToolStripLockButton.TabIndex = 11;
             this.ToolStripLockButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.ToolStripLockButton.UseVisualStyleBackColor = true;
@@ -1155,25 +1223,28 @@
             // RefYLabel
             // 
             this.RefYLabel.AutoSize = true;
-            this.RefYLabel.Location = new System.Drawing.Point(75, 21);
+            this.RefYLabel.Location = new System.Drawing.Point(88, 24);
+            this.RefYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.RefYLabel.Name = "RefYLabel";
-            this.RefYLabel.Size = new System.Drawing.Size(14, 13);
+            this.RefYLabel.Size = new System.Drawing.Size(14, 15);
             this.RefYLabel.TabIndex = 10;
             this.RefYLabel.Text = "Y";
             // 
             // RefXLabel
             // 
             this.RefXLabel.AutoSize = true;
-            this.RefXLabel.Location = new System.Drawing.Point(8, 21);
+            this.RefXLabel.Location = new System.Drawing.Point(9, 24);
+            this.RefXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.RefXLabel.Name = "RefXLabel";
-            this.RefXLabel.Size = new System.Drawing.Size(14, 13);
+            this.RefXLabel.Size = new System.Drawing.Size(14, 15);
             this.RefXLabel.TabIndex = 9;
             this.RefXLabel.Text = "X";
             // 
             // RefXNumericUpDown
             // 
             this.RefXNumericUpDown.InterceptArrowKeys = false;
-            this.RefXNumericUpDown.Location = new System.Drawing.Point(28, 17);
+            this.RefXNumericUpDown.Location = new System.Drawing.Point(33, 20);
+            this.RefXNumericUpDown.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RefXNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -1185,7 +1256,7 @@
             0,
             -2147483648});
             this.RefXNumericUpDown.Name = "RefXNumericUpDown";
-            this.RefXNumericUpDown.Size = new System.Drawing.Size(43, 20);
+            this.RefXNumericUpDown.Size = new System.Drawing.Size(50, 23);
             this.RefXNumericUpDown.TabIndex = 7;
             this.RefXNumericUpDown.ValueChanged += new System.EventHandler(this.ReferencePointX);
             this.RefXNumericUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown2);
@@ -1193,7 +1264,8 @@
             // RefYNumericUpDown
             // 
             this.RefYNumericUpDown.InterceptArrowKeys = false;
-            this.RefYNumericUpDown.Location = new System.Drawing.Point(95, 17);
+            this.RefYNumericUpDown.Location = new System.Drawing.Point(111, 20);
+            this.RefYNumericUpDown.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RefYNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -1205,7 +1277,7 @@
             0,
             -2147483648});
             this.RefYNumericUpDown.Name = "RefYNumericUpDown";
-            this.RefYNumericUpDown.Size = new System.Drawing.Size(43, 20);
+            this.RefYNumericUpDown.Size = new System.Drawing.Size(50, 23);
             this.RefYNumericUpDown.TabIndex = 6;
             this.RefYNumericUpDown.ValueChanged += new System.EventHandler(this.ReferencePointY);
             this.RefYNumericUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSendData_KeyDown2);
@@ -1221,8 +1293,10 @@
             this.CoordinatesGroupBox.Controls.Add(this.SaveCoordinatesCheckBox);
             this.CoordinatesGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.CoordinatesGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.CoordinatesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.CoordinatesGroupBox.Name = "CoordinatesGroupBox";
-            this.CoordinatesGroupBox.Size = new System.Drawing.Size(164, 119);
+            this.CoordinatesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.CoordinatesGroupBox.Size = new System.Drawing.Size(190, 137);
             this.CoordinatesGroupBox.TabIndex = 18;
             this.CoordinatesGroupBox.TabStop = false;
             this.CoordinatesGroupBox.Text = "Coordinates";
@@ -1230,8 +1304,9 @@
             // SaveCoordinatesLabel5
             // 
             this.SaveCoordinatesLabel5.AutoSize = true;
-            this.SaveCoordinatesLabel5.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveCoordinatesLabel5.Location = new System.Drawing.Point(6, 99);
+            this.SaveCoordinatesLabel5.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveCoordinatesLabel5.Location = new System.Drawing.Point(7, 114);
+            this.SaveCoordinatesLabel5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SaveCoordinatesLabel5.Name = "SaveCoordinatesLabel5";
             this.SaveCoordinatesLabel5.Size = new System.Drawing.Size(79, 13);
             this.SaveCoordinatesLabel5.TabIndex = 21;
@@ -1240,8 +1315,9 @@
             // SaveCoordinatesLabel4
             // 
             this.SaveCoordinatesLabel4.AutoSize = true;
-            this.SaveCoordinatesLabel4.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveCoordinatesLabel4.Location = new System.Drawing.Point(6, 84);
+            this.SaveCoordinatesLabel4.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveCoordinatesLabel4.Location = new System.Drawing.Point(7, 97);
+            this.SaveCoordinatesLabel4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SaveCoordinatesLabel4.Name = "SaveCoordinatesLabel4";
             this.SaveCoordinatesLabel4.Size = new System.Drawing.Size(79, 13);
             this.SaveCoordinatesLabel4.TabIndex = 20;
@@ -1250,8 +1326,9 @@
             // SaveCoordinatesLabel3
             // 
             this.SaveCoordinatesLabel3.AutoSize = true;
-            this.SaveCoordinatesLabel3.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveCoordinatesLabel3.Location = new System.Drawing.Point(6, 69);
+            this.SaveCoordinatesLabel3.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveCoordinatesLabel3.Location = new System.Drawing.Point(7, 80);
+            this.SaveCoordinatesLabel3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SaveCoordinatesLabel3.Name = "SaveCoordinatesLabel3";
             this.SaveCoordinatesLabel3.Size = new System.Drawing.Size(79, 13);
             this.SaveCoordinatesLabel3.TabIndex = 19;
@@ -1260,8 +1337,9 @@
             // SaveCoordinatesLabel2
             // 
             this.SaveCoordinatesLabel2.AutoSize = true;
-            this.SaveCoordinatesLabel2.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveCoordinatesLabel2.Location = new System.Drawing.Point(6, 54);
+            this.SaveCoordinatesLabel2.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveCoordinatesLabel2.Location = new System.Drawing.Point(7, 62);
+            this.SaveCoordinatesLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SaveCoordinatesLabel2.Name = "SaveCoordinatesLabel2";
             this.SaveCoordinatesLabel2.Size = new System.Drawing.Size(79, 13);
             this.SaveCoordinatesLabel2.TabIndex = 18;
@@ -1270,8 +1348,9 @@
             // SaveCoordinatesLabel1
             // 
             this.SaveCoordinatesLabel1.AutoSize = true;
-            this.SaveCoordinatesLabel1.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveCoordinatesLabel1.Location = new System.Drawing.Point(6, 39);
+            this.SaveCoordinatesLabel1.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveCoordinatesLabel1.Location = new System.Drawing.Point(7, 45);
+            this.SaveCoordinatesLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SaveCoordinatesLabel1.Name = "SaveCoordinatesLabel1";
             this.SaveCoordinatesLabel1.Size = new System.Drawing.Size(79, 13);
             this.SaveCoordinatesLabel1.TabIndex = 17;
@@ -1281,9 +1360,10 @@
             // 
             this.SetCoordinatesButton.AutoSize = true;
             this.SetCoordinatesButton.Enabled = false;
-            this.SetCoordinatesButton.Location = new System.Drawing.Point(105, 13);
+            this.SetCoordinatesButton.Location = new System.Drawing.Point(122, 15);
+            this.SetCoordinatesButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SetCoordinatesButton.Name = "SetCoordinatesButton";
-            this.SetCoordinatesButton.Size = new System.Drawing.Size(33, 23);
+            this.SetCoordinatesButton.Size = new System.Drawing.Size(38, 29);
             this.SetCoordinatesButton.TabIndex = 16;
             this.SetCoordinatesButton.TabStop = false;
             this.SetCoordinatesButton.Text = "Set";
@@ -1294,9 +1374,10 @@
             // 
             this.SaveCoordinatesCheckBox.AutoSize = true;
             this.SaveCoordinatesCheckBox.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SaveCoordinatesCheckBox.Location = new System.Drawing.Point(9, 17);
+            this.SaveCoordinatesCheckBox.Location = new System.Drawing.Point(10, 20);
+            this.SaveCoordinatesCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SaveCoordinatesCheckBox.Name = "SaveCoordinatesCheckBox";
-            this.SaveCoordinatesCheckBox.Size = new System.Drawing.Size(51, 17);
+            this.SaveCoordinatesCheckBox.Size = new System.Drawing.Size(50, 19);
             this.SaveCoordinatesCheckBox.TabIndex = 15;
             this.SaveCoordinatesCheckBox.Text = "Save";
             this.SaveCoordinatesCheckBox.UseVisualStyleBackColor = false;
@@ -1306,10 +1387,11 @@
             // 
             this.DirectionTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.DirectionTrackBar.AutoSize = false;
-            this.DirectionTrackBar.Location = new System.Drawing.Point(613, 539);
+            this.DirectionTrackBar.Location = new System.Drawing.Point(717, 626);
+            this.DirectionTrackBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DirectionTrackBar.Maximum = 4;
             this.DirectionTrackBar.Name = "DirectionTrackBar";
-            this.DirectionTrackBar.Size = new System.Drawing.Size(94, 19);
+            this.DirectionTrackBar.Size = new System.Drawing.Size(110, 22);
             this.DirectionTrackBar.TabIndex = 1;
             this.DirectionTrackBar.ValueChanged += new System.EventHandler(this.OnDirectionChanged);
             // 
@@ -1317,9 +1399,10 @@
             // 
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MiscToolStripButton});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 539);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 629);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(719, 22);
+            this.StatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.StatusStrip.Size = new System.Drawing.Size(841, 22);
             this.StatusStrip.TabIndex = 1;
             this.StatusStrip.Text = "statusStrip1";
             // 
@@ -1361,30 +1444,15 @@
             // 
             this.AnimationTimer.Tick += new System.EventHandler(this.AnimationTimer_Tick);
             // 
-            // asJpgToolStripMenuItem
-            // 
-            this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.asJpgToolStripMenuItem.Tag = ".jpg";
-            this.asJpgToolStripMenuItem.Text = "As Jpg";
-            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
-            // 
-            // asPngToolStripMenuItem
-            // 
-            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.asPngToolStripMenuItem.Tag = ".png";
-            this.asPngToolStripMenuItem.Text = "As Png";
-            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImages);
-            // 
             // AnimationEditForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(924, 561);
+            this.ClientSize = new System.Drawing.Size(1080, 651);
             this.Controls.Add(this.MainSplitContainer);
             this.DoubleBuffered = true;
-            this.MinimumSize = new System.Drawing.Size(940, 510);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MinimumSize = new System.Drawing.Size(1094, 582);
             this.Name = "AnimationEditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Animation Edit - By Soulblighter";

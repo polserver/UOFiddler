@@ -70,6 +70,7 @@ namespace UoFiddler.Controls.Forms
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -80,8 +81,8 @@ namespace UoFiddler.Controls.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.Data);
-            this.splitContainer1.Size = new System.Drawing.Size(304, 281);
-            this.splitContainer1.SplitterDistance = 62;
+            this.splitContainer1.Size = new System.Drawing.Size(356, 325);
+            this.splitContainer1.SplitterDistance = 71;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -90,8 +91,9 @@ namespace UoFiddler.Controls.Forms
             this.Graphic.ContextMenuStrip = this.ItemDetailMenuStrip;
             this.Graphic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Graphic.Location = new System.Drawing.Point(0, 0);
+            this.Graphic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Graphic.Name = "Graphic";
-            this.Graphic.Size = new System.Drawing.Size(304, 62);
+            this.Graphic.Size = new System.Drawing.Size(356, 71);
             this.Graphic.TabIndex = 0;
             this.Graphic.TabStop = false;
             this.Graphic.SizeChanged += new System.EventHandler(this.OnSizeChange);
@@ -163,20 +165,22 @@ namespace UoFiddler.Controls.Forms
             // 
             this.Data.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Data.Location = new System.Drawing.Point(0, 0);
+            this.Data.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Data.Name = "Data";
             this.Data.ReadOnly = true;
-            this.Data.Size = new System.Drawing.Size(304, 218);
+            this.Data.Size = new System.Drawing.Size(356, 253);
             this.Data.TabIndex = 0;
             this.Data.Text = "";
             // 
             // ItemDetailForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 281);
+            this.ClientSize = new System.Drawing.Size(356, 325);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ItemDetailForm";
             this.Text = "ItemDetail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);

@@ -58,10 +58,10 @@ namespace UoFiddler.Controls.UserControls
             this.findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.InsertText = new System.Windows.Forms.ToolStripTextBox();
             this.replaceStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReplaceStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
+            this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InsertText = new System.Windows.Forms.ToolStripTextBox();
             this.LandTilesToolStrip = new System.Windows.Forms.ToolStrip();
             this.NameLabel = new System.Windows.Forms.ToolStripLabel();
             this.GraphicLabel = new System.Windows.Forms.ToolStripLabel();
@@ -197,6 +197,20 @@ namespace UoFiddler.Controls.UserControls
             this.replaceToolStripMenuItem.Text = "Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
             // 
+            // replaceStartingFromToolStripMenuItem
+            // 
+            this.replaceStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ReplaceStartingFromTb});
+            this.replaceStartingFromToolStripMenuItem.Name = "replaceStartingFromToolStripMenuItem";
+            this.replaceStartingFromToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.replaceStartingFromToolStripMenuItem.Text = "Replace starting from..";
+            // 
+            // ReplaceStartingFromTb
+            // 
+            this.ReplaceStartingFromTb.Name = "ReplaceStartingFromTb";
+            this.ReplaceStartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.ReplaceStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFromTb_KeyDown);
+            // 
             // insertAtToolStripMenuItem
             // 
             this.insertAtToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -211,20 +225,6 @@ namespace UoFiddler.Controls.UserControls
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
-            // 
-            // replaceStartingFromToolStripMenuItem
-            // 
-            this.replaceStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ReplaceStartingFromTb});
-            this.replaceStartingFromToolStripMenuItem.Name = "replaceStartingFromToolStripMenuItem";
-            this.replaceStartingFromToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.replaceStartingFromToolStripMenuItem.Text = "Replace starting from..";
-            // 
-            // ReplaceStartingFromTb
-            // 
-            this.ReplaceStartingFromTb.Name = "ReplaceStartingFromTb";
-            this.ReplaceStartingFromTb.Size = new System.Drawing.Size(100, 23);
-            this.ReplaceStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFromTb_KeyDown);
             // 
             // LandTilesToolStrip
             // 
@@ -242,7 +242,7 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesToolStrip.Location = new System.Drawing.Point(0, 0);
             this.LandTilesToolStrip.Name = "LandTilesToolStrip";
             this.LandTilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.LandTilesToolStrip.Size = new System.Drawing.Size(611, 25);
+            this.LandTilesToolStrip.Size = new System.Drawing.Size(716, 25);
             this.LandTilesToolStrip.TabIndex = 5;
             // 
             // NameLabel
@@ -366,9 +366,10 @@ namespace UoFiddler.Controls.UserControls
             this.LandTilesTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LandTilesTileView.FocusIndex = -1;
             this.LandTilesTileView.Location = new System.Drawing.Point(0, 25);
+            this.LandTilesTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LandTilesTileView.MultiSelect = false;
             this.LandTilesTileView.Name = "LandTilesTileView";
-            this.LandTilesTileView.Size = new System.Drawing.Size(611, 320);
+            this.LandTilesTileView.Size = new System.Drawing.Size(716, 376);
             this.LandTilesTileView.TabIndex = 8;
             this.LandTilesTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.LandTilesTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -384,13 +385,14 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LandTilesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.LandTilesTileView);
             this.Controls.Add(this.LandTilesToolStrip);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "LandTilesControl";
-            this.Size = new System.Drawing.Size(611, 345);
+            this.Size = new System.Drawing.Size(716, 401);
             this.Load += new System.EventHandler(this.OnLoad);
             this.LandTilesContextMenuStrip.ResumeLayout(false);
             this.LandTilesToolStrip.ResumeLayout(false);

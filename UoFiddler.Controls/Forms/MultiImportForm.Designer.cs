@@ -54,25 +54,28 @@ namespace UoFiddler.Controls.Forms
             "UOA Binary file",
             "WSC file",
             "CSV (punt\'s multi tool)"});
-            this.importTypeComboBox.Location = new System.Drawing.Point(11, 10);
+            this.importTypeComboBox.Location = new System.Drawing.Point(13, 12);
+            this.importTypeComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.importTypeComboBox.Name = "importTypeComboBox";
-            this.importTypeComboBox.Size = new System.Drawing.Size(153, 21);
+            this.importTypeComboBox.Size = new System.Drawing.Size(178, 23);
             this.importTypeComboBox.TabIndex = 0;
             // 
             // filenameTextBox
             // 
-            this.filenameTextBox.Location = new System.Drawing.Point(11, 36);
+            this.filenameTextBox.Location = new System.Drawing.Point(13, 42);
+            this.filenameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.filenameTextBox.Name = "filenameTextBox";
-            this.filenameTextBox.Size = new System.Drawing.Size(236, 20);
+            this.filenameTextBox.Size = new System.Drawing.Size(275, 23);
             this.filenameTextBox.TabIndex = 2;
             // 
             // button1
             // 
             this.button1.AutoSize = true;
             this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Location = new System.Drawing.Point(254, 36);
+            this.button1.Location = new System.Drawing.Point(296, 42);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(26, 23);
+            this.button1.Size = new System.Drawing.Size(26, 25);
             this.button1.TabIndex = 3;
             this.button1.Text = "...";
             this.button1.UseVisualStyleBackColor = true;
@@ -80,9 +83,10 @@ namespace UoFiddler.Controls.Forms
             // 
             // importButton
             // 
-            this.importButton.Location = new System.Drawing.Point(201, 62);
+            this.importButton.Location = new System.Drawing.Point(234, 72);
+            this.importButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.importButton.Name = "importButton";
-            this.importButton.Size = new System.Drawing.Size(75, 23);
+            this.importButton.Size = new System.Drawing.Size(88, 27);
             this.importButton.TabIndex = 4;
             this.importButton.Text = "Import";
             this.importButton.UseVisualStyleBackColor = true;
@@ -90,15 +94,16 @@ namespace UoFiddler.Controls.Forms
             // 
             // MultiImportForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(289, 94);
+            this.ClientSize = new System.Drawing.Size(337, 109);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.filenameTextBox);
             this.Controls.Add(this.importTypeComboBox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MultiImportForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Multi Import";

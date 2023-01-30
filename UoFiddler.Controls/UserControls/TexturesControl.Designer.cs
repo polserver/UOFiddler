@@ -52,10 +52,10 @@ namespace UoFiddler.Controls.UserControls
             this.findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.InsertText = new System.Windows.Forms.ToolStripTextBox();
             this.replaceStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReplaceStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
+            this.insertAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InsertText = new System.Windows.Forms.ToolStripTextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.GraphicLabel = new System.Windows.Forms.ToolStripLabel();
             this.MiscToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
@@ -87,20 +87,20 @@ namespace UoFiddler.Controls.UserControls
             this.replaceStartingFromToolStripMenuItem,
             this.insertAtToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(188, 192);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(194, 170);
             // 
             // showFreeSlotsToolStripMenuItem
             // 
             this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
             this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
-            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.showFreeSlotsToolStripMenuItem.Text = "Show Free Slots";
             this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(190, 6);
             // 
             // exportImageToolStripMenuItem
             // 
@@ -110,7 +110,7 @@ namespace UoFiddler.Controls.UserControls
             this.asJpgToolStripMenuItem,
             this.asPngToolStripMenuItem});
             this.exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
-            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.exportImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBmpToolStripMenuItem
@@ -144,35 +144,49 @@ namespace UoFiddler.Controls.UserControls
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(190, 6);
             // 
             // findNextFreeSlotToolStripMenuItem
             // 
             this.findNextFreeSlotToolStripMenuItem.Name = "findNextFreeSlotToolStripMenuItem";
-            this.findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
             this.findNextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.OnClickFindNext);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
             // 
             // replaceToolStripMenuItem
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.replaceToolStripMenuItem.Text = "Replace";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
+            // 
+            // replaceStartingFromToolStripMenuItem
+            // 
+            this.replaceStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ReplaceStartingFromTb});
+            this.replaceStartingFromToolStripMenuItem.Name = "replaceStartingFromToolStripMenuItem";
+            this.replaceStartingFromToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.replaceStartingFromToolStripMenuItem.Text = "Replace starting from..";
+            // 
+            // ReplaceStartingFromTb
+            // 
+            this.ReplaceStartingFromTb.Name = "ReplaceStartingFromTb";
+            this.ReplaceStartingFromTb.Size = new System.Drawing.Size(100, 23);
+            this.ReplaceStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFrom_OnInsert);
             // 
             // insertAtToolStripMenuItem
             // 
             this.insertAtToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.InsertText});
             this.insertAtToolStripMenuItem.Name = "insertAtToolStripMenuItem";
-            this.insertAtToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.insertAtToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.insertAtToolStripMenuItem.Text = "Insert At..";
             // 
             // InsertText
@@ -181,20 +195,6 @@ namespace UoFiddler.Controls.UserControls
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsert);
             this.InsertText.TextChanged += new System.EventHandler(this.OnTextChangedInsert);
-            // 
-            // replaceStartingFromToolStripMenuItem
-            // 
-            this.replaceStartingFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ReplaceStartingFromTb});
-            this.replaceStartingFromToolStripMenuItem.Name = "replaceStartingFromToolStripMenuItem";
-            this.replaceStartingFromToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.replaceStartingFromToolStripMenuItem.Text = "Replace starting from..";
-            // 
-            // ReplaceStartingFromTb
-            // 
-            this.ReplaceStartingFromTb.Name = "ReplaceStartingFromTb";
-            this.ReplaceStartingFromTb.Size = new System.Drawing.Size(100, 23);
-            this.ReplaceStartingFromTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFrom_OnInsert);
             // 
             // toolStrip1
             // 
@@ -210,7 +210,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(625, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(733, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -319,9 +319,10 @@ namespace UoFiddler.Controls.UserControls
             this.TextureTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextureTileView.FocusIndex = -1;
             this.TextureTileView.Location = new System.Drawing.Point(0, 25);
+            this.TextureTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.TextureTileView.MultiSelect = false;
             this.TextureTileView.Name = "TextureTileView";
-            this.TextureTileView.Size = new System.Drawing.Size(625, 303);
+            this.TextureTileView.Size = new System.Drawing.Size(733, 356);
             this.TextureTileView.TabIndex = 5;
             this.TextureTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.TextureTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -337,13 +338,14 @@ namespace UoFiddler.Controls.UserControls
             // 
             // TexturesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.TextureTileView);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "TexturesControl";
-            this.Size = new System.Drawing.Size(625, 328);
+            this.Size = new System.Drawing.Size(733, 381);
             this.Load += new System.EventHandler(this.OnLoad);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
