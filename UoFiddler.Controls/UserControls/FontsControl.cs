@@ -253,7 +253,10 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap import = new Bitmap(dialog.FileName);
                 if (import.Height > 255 || import.Width > 255)
                 {
+                    import.Dispose();
+
                     MessageBox.Show("Image Height or Width exceeds 255", "Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+
                     return;
                 }
 
