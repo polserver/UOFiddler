@@ -27,7 +27,7 @@ namespace UoFiddler.Forms
 
             Icon = Options.GetFiddlerIcon();
             _profiles = GetProfiles();
-            FiddlerOptions.Logger.Information("Found profiles: {profiles}", _profiles);
+            FiddlerOptions.Logger.Information("Found profiles: {Profiles}", _profiles);
 
             foreach (string profile in _profiles)
             {
@@ -67,7 +67,7 @@ namespace UoFiddler.Forms
             }
 
             Options.ProfileName = $"{_profiles[comboBoxLoad.SelectedIndex]}.xml";
-            FiddlerOptions.Logger.Information("Loading profile: {profileName}", Options.ProfileName);
+            FiddlerOptions.Logger.Information("Loading profile: {ProfileName}", Options.ProfileName);
             FiddlerOptions.LoadProfile($"{_profiles[comboBoxLoad.SelectedIndex]}.xml");
 
             Close();
@@ -82,7 +82,7 @@ namespace UoFiddler.Forms
             }
 
             Options.ProfileName = $"Options_{textBoxCreate.Text}.xml";
-            FiddlerOptions.Logger.Information("Creating profile: {profileName}", Options.ProfileName);
+            FiddlerOptions.Logger.Information("Creating profile: {ProfileName}", Options.ProfileName);
             FiddlerOptions.LoadProfile($"{_profiles[comboBoxBasedOn.SelectedIndex]}.xml");
 
             Close();

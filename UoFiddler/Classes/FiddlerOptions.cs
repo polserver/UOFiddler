@@ -55,11 +55,11 @@ namespace UoFiddler.Classes
                 string destFileName = Path.Combine(path, file.Name);
                 if (File.Exists(destFileName))
                 {
-                    Logger.Information("MoveFiles. File exists. Skipping: {file}", destFileName);
+                    Logger.Information("MoveFiles. File exists. Skipping: {File}", destFileName);
                     continue;
                 }
 
-                Logger.Information("MoveFiles. Copying file: {file}", destFileName);
+                Logger.Information("MoveFiles. Copying file: {File}", destFileName);
                 file.CopyTo(destFileName);
             }
         }
@@ -90,7 +90,7 @@ namespace UoFiddler.Classes
             string fileName = Path.Combine(Options.AppDataPath, "Options_default.xml");
             if (!File.Exists(fileName))
             {
-                Logger.Fatal("Can't find default profile file: {fileName}", fileName);
+                Logger.Fatal("Can't find default profile file: {FileName}", fileName);
                 throw new FileNotFoundException($"Can't load default profile file {fileName}", "Options_default.xml");
             }
         }
@@ -104,7 +104,7 @@ namespace UoFiddler.Classes
             }
 
             string fileName = Path.Combine(Options.AppDataPath, Options.ProfileName);
-            Logger.Information("SaveProfile - start {filename}", fileName);
+            Logger.Information("SaveProfile - start {Filename}", fileName);
 
             XmlDocument dom = new XmlDocument();
             XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -231,7 +231,7 @@ namespace UoFiddler.Classes
             {
                 foreach (string plugIn in Options.PluginsToLoad)
                 {
-                    Logger.Information("SaveProfile - saving plugin {plugIn}", plugIn);
+                    Logger.Information("SaveProfile - saving plugin {PlugIn}", plugIn);
                     XmlElement xmlPlugin = dom.CreateElement("Plugin");
                     xmlPlugin.SetAttribute("name", plugIn);
                     sr.AppendChild(xmlPlugin);
@@ -286,17 +286,17 @@ namespace UoFiddler.Classes
             sr.AppendChild(elem);
 
             dom.Save(fileName);
-            Logger.Information("SaveProfile - done {filename}", fileName);
+            Logger.Information("SaveProfile - done {Filename}", fileName);
         }
 
         public static void LoadProfile(string filename)
         {
-            Logger.Information("LoadProfile - start: {filename}", filename);
+            Logger.Information("LoadProfile - start: {Filename}", filename);
 
             string fileName = Path.Combine(Options.AppDataPath, filename);
             if (!File.Exists(fileName))
             {
-                Logger.Warning("LoadProfile: profile file doesn't exist: {filename}", filename);
+                Logger.Warning("LoadProfile: profile file doesn't exist: {Filename}", filename);
                 return;
             }
 
@@ -428,7 +428,7 @@ namespace UoFiddler.Classes
             foreach (XmlElement xPlug in xOptions.SelectNodes("Plugin"))
             {
                 string name = xPlug.GetAttribute("name");
-                Logger.Information("LoadProfile: adding plugin to load: {pluginName}", name);
+                Logger.Information("LoadProfile: adding plugin to load: {PluginName}", name);
                 Options.PluginsToLoad.Add(name);
             }
 
@@ -464,7 +464,7 @@ namespace UoFiddler.Classes
 
             Files.CheckForNewMapSize();
 
-            Logger.Information("LoadProfile - done: {filename}", filename);
+            Logger.Information("LoadProfile - done: {Filename}", filename);
         }
     }
 }
