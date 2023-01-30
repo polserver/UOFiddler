@@ -121,8 +121,9 @@ namespace UoFiddler.Controls.UserControls
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(0, 0);
+            this.treeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(349, 555);
+            this.treeView.Size = new System.Drawing.Size(408, 645);
             this.treeView.TabIndex = 0;
             this.treeView.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.BeforeSelect);
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect);
@@ -192,7 +193,7 @@ namespace UoFiddler.Controls.UserControls
             // playSoundToolStripMenuItem
             // 
             this.playSoundToolStripMenuItem.Enabled = false;
-            this.playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.playSoundToolStripMenuItem.Name = "playSoundToolStripMenuItem";
             this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.playSoundToolStripMenuItem.Text = "Play";
@@ -243,7 +244,7 @@ namespace UoFiddler.Controls.UserControls
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(726, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(851, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "tsSoundsMenu";
             // 
@@ -290,13 +291,14 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(726, 606);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(851, 699);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // statusStripSounds
@@ -306,9 +308,10 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripStatusSpacer,
             this.playing,
             this.stopButton});
-            this.statusStripSounds.Location = new System.Drawing.Point(0, 586);
+            this.statusStripSounds.Location = new System.Drawing.Point(0, 677);
             this.statusStripSounds.Name = "statusStripSounds";
-            this.statusStripSounds.Size = new System.Drawing.Size(726, 20);
+            this.statusStripSounds.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStripSounds.Size = new System.Drawing.Size(851, 22);
             this.statusStripSounds.SizingGrip = false;
             this.statusStripSounds.TabIndex = 1;
             this.statusStripSounds.Text = "statusStrip1";
@@ -316,18 +319,18 @@ namespace UoFiddler.Controls.UserControls
             // seconds
             // 
             this.seconds.Name = "seconds";
-            this.seconds.Size = new System.Drawing.Size(0, 15);
+            this.seconds.Size = new System.Drawing.Size(0, 17);
             // 
             // toolStripStatusSpacer
             // 
             this.toolStripStatusSpacer.Name = "toolStripStatusSpacer";
-            this.toolStripStatusSpacer.Size = new System.Drawing.Size(711, 15);
+            this.toolStripStatusSpacer.Size = new System.Drawing.Size(834, 17);
             this.toolStripStatusSpacer.Spring = true;
             // 
             // playing
             // 
             this.playing.Name = "playing";
-            this.playing.Size = new System.Drawing.Size(100, 14);
+            this.playing.Size = new System.Drawing.Size(117, 16);
             this.playing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.playing.Visible = false;
             // 
@@ -337,7 +340,7 @@ namespace UoFiddler.Controls.UserControls
             this.stopButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stopButton.Name = "stopButton";
             this.stopButton.ShowDropDownArrow = false;
-            this.stopButton.Size = new System.Drawing.Size(35, 18);
+            this.stopButton.Size = new System.Drawing.Size(35, 20);
             this.stopButton.Text = "Stop";
             this.stopButton.Visible = false;
             this.stopButton.Click += new System.EventHandler(this.OnClickStop);
@@ -346,7 +349,8 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 28);
+            this.splitContainer1.Location = new System.Drawing.Point(4, 28);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -356,8 +360,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel2);
-            this.splitContainer1.Size = new System.Drawing.Size(720, 555);
-            this.splitContainer1.SplitterDistance = 349;
+            this.splitContainer1.Size = new System.Drawing.Size(843, 645);
+            this.splitContainer1.SplitterDistance = 408;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
             // 
             // tableLayoutPanel2
@@ -370,22 +375,25 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel2.Controls.Add(this.groupBox3, 0, 3);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 4;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 170F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(367, 555);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 196F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(430, 645);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.tableLayoutPanel3);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Location = new System.Drawing.Point(4, 3);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(361, 80);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(422, 92);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generic";
@@ -402,19 +410,21 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel3.Controls.Add(this.SortByNameCheckbox, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.includeSoundIdCheckBox, 1, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 19);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(355, 61);
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(414, 70);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // exportAllSoundsButton
             // 
-            this.exportAllSoundsButton.Location = new System.Drawing.Point(3, 32);
+            this.exportAllSoundsButton.Location = new System.Drawing.Point(4, 38);
+            this.exportAllSoundsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.exportAllSoundsButton.Name = "exportAllSoundsButton";
-            this.exportAllSoundsButton.Size = new System.Drawing.Size(123, 23);
+            this.exportAllSoundsButton.Size = new System.Drawing.Size(144, 24);
             this.exportAllSoundsButton.TabIndex = 9;
             this.exportAllSoundsButton.Text = "Export all sounds";
             this.exportAllSoundsButton.UseVisualStyleBackColor = true;
@@ -423,9 +433,10 @@ namespace UoFiddler.Controls.UserControls
             // ExportSoundListCsvButton
             // 
             this.ExportSoundListCsvButton.AutoSize = true;
-            this.ExportSoundListCsvButton.Location = new System.Drawing.Point(3, 3);
+            this.ExportSoundListCsvButton.Location = new System.Drawing.Point(4, 3);
+            this.ExportSoundListCsvButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ExportSoundListCsvButton.Name = "ExportSoundListCsvButton";
-            this.ExportSoundListCsvButton.Size = new System.Drawing.Size(123, 23);
+            this.ExportSoundListCsvButton.Size = new System.Drawing.Size(159, 29);
             this.ExportSoundListCsvButton.TabIndex = 0;
             this.ExportSoundListCsvButton.Text = "Export sound list (.csv)";
             this.ExportSoundListCsvButton.UseVisualStyleBackColor = true;
@@ -434,9 +445,10 @@ namespace UoFiddler.Controls.UserControls
             // SaveFileButton
             // 
             this.SaveFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveFileButton.Location = new System.Drawing.Point(279, 3);
+            this.SaveFileButton.Location = new System.Drawing.Point(325, 3);
+            this.SaveFileButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SaveFileButton.Name = "SaveFileButton";
-            this.SaveFileButton.Size = new System.Drawing.Size(73, 23);
+            this.SaveFileButton.Size = new System.Drawing.Size(85, 27);
             this.SaveFileButton.TabIndex = 1;
             this.SaveFileButton.Text = "Save";
             this.SaveFileButton.UseVisualStyleBackColor = true;
@@ -447,9 +459,10 @@ namespace UoFiddler.Controls.UserControls
             this.SortByNameCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SortByNameCheckbox.AutoSize = true;
-            this.SortByNameCheckbox.Location = new System.Drawing.Point(163, 3);
+            this.SortByNameCheckbox.Location = new System.Drawing.Point(198, 3);
+            this.SortByNameCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SortByNameCheckbox.Name = "SortByNameCheckbox";
-            this.SortByNameCheckbox.Size = new System.Drawing.Size(109, 23);
+            this.SortByNameCheckbox.Size = new System.Drawing.Size(119, 29);
             this.SortByNameCheckbox.TabIndex = 2;
             this.SortByNameCheckbox.Text = "Sort tree by name";
             this.SortByNameCheckbox.UseVisualStyleBackColor = true;
@@ -461,9 +474,10 @@ namespace UoFiddler.Controls.UserControls
             | System.Windows.Forms.AnchorStyles.Left)));
             this.includeSoundIdCheckBox.AutoSize = true;
             this.tableLayoutPanel3.SetColumnSpan(this.includeSoundIdCheckBox, 2);
-            this.includeSoundIdCheckBox.Location = new System.Drawing.Point(160, 32);
+            this.includeSoundIdCheckBox.Location = new System.Drawing.Point(188, 38);
+            this.includeSoundIdCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.includeSoundIdCheckBox.Name = "includeSoundIdCheckBox";
-            this.includeSoundIdCheckBox.Size = new System.Drawing.Size(177, 26);
+            this.includeSoundIdCheckBox.Size = new System.Drawing.Size(200, 29);
             this.includeSoundIdCheckBox.TabIndex = 10;
             this.includeSoundIdCheckBox.Text = "Export with sound id in file name";
             this.includeSoundIdCheckBox.UseVisualStyleBackColor = true;
@@ -472,10 +486,12 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.SelectedSoundGroup.Controls.Add(this.tableLayoutPanel4);
             this.SelectedSoundGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedSoundGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectedSoundGroup.Location = new System.Drawing.Point(3, 195);
+            this.SelectedSoundGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SelectedSoundGroup.Location = new System.Drawing.Point(4, 222);
+            this.SelectedSoundGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SelectedSoundGroup.Name = "SelectedSoundGroup";
-            this.SelectedSoundGroup.Size = new System.Drawing.Size(361, 164);
+            this.SelectedSoundGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SelectedSoundGroup.Size = new System.Drawing.Size(422, 190);
             this.SelectedSoundGroup.TabIndex = 1;
             this.SelectedSoundGroup.TabStop = false;
             this.SelectedSoundGroup.Text = "Current Sound";
@@ -491,22 +507,24 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel4.Controls.Add(this.ExtractSoundButton, 0, 3);
             this.tableLayoutPanel4.Controls.Add(this.RemoveSoundButton, 1, 3);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(4, 16);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 4;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(355, 145);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(414, 171);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // PlaySoundButton
             // 
             this.PlaySoundButton.AutoSize = true;
-            this.PlaySoundButton.Location = new System.Drawing.Point(3, 29);
+            this.PlaySoundButton.Location = new System.Drawing.Point(4, 32);
+            this.PlaySoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.PlaySoundButton.Name = "PlaySoundButton";
-            this.PlaySoundButton.Size = new System.Drawing.Size(82, 23);
+            this.PlaySoundButton.Size = new System.Drawing.Size(95, 29);
             this.PlaySoundButton.TabIndex = 0;
             this.PlaySoundButton.Text = "Play";
             this.PlaySoundButton.UseVisualStyleBackColor = true;
@@ -516,9 +534,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.tableLayoutPanel4.SetColumnSpan(this.SoundPlaytimeBar, 2);
             this.SoundPlaytimeBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SoundPlaytimeBar.Location = new System.Drawing.Point(3, 3);
+            this.SoundPlaytimeBar.Location = new System.Drawing.Point(4, 3);
+            this.SoundPlaytimeBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SoundPlaytimeBar.Name = "SoundPlaytimeBar";
-            this.SoundPlaytimeBar.Size = new System.Drawing.Size(349, 20);
+            this.SoundPlaytimeBar.Size = new System.Drawing.Size(406, 23);
             this.SoundPlaytimeBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.SoundPlaytimeBar.TabIndex = 1;
             // 
@@ -526,9 +545,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.StopSoundButton.AutoSize = true;
             this.StopSoundButton.Enabled = false;
-            this.StopSoundButton.Location = new System.Drawing.Point(91, 29);
+            this.StopSoundButton.Location = new System.Drawing.Point(107, 32);
+            this.StopSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.StopSoundButton.Name = "StopSoundButton";
-            this.StopSoundButton.Size = new System.Drawing.Size(75, 23);
+            this.StopSoundButton.Size = new System.Drawing.Size(88, 29);
             this.StopSoundButton.TabIndex = 2;
             this.StopSoundButton.Text = "Stop";
             this.StopSoundButton.UseVisualStyleBackColor = true;
@@ -537,9 +557,10 @@ namespace UoFiddler.Controls.UserControls
             // ExtractSoundButton
             // 
             this.ExtractSoundButton.AutoSize = true;
-            this.ExtractSoundButton.Location = new System.Drawing.Point(3, 78);
+            this.ExtractSoundButton.Location = new System.Drawing.Point(4, 90);
+            this.ExtractSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ExtractSoundButton.Name = "ExtractSoundButton";
-            this.ExtractSoundButton.Size = new System.Drawing.Size(82, 23);
+            this.ExtractSoundButton.Size = new System.Drawing.Size(95, 29);
             this.ExtractSoundButton.TabIndex = 3;
             this.ExtractSoundButton.Text = "Extract";
             this.ExtractSoundButton.UseVisualStyleBackColor = true;
@@ -548,9 +569,10 @@ namespace UoFiddler.Controls.UserControls
             // RemoveSoundButton
             // 
             this.RemoveSoundButton.AutoSize = true;
-            this.RemoveSoundButton.Location = new System.Drawing.Point(91, 78);
+            this.RemoveSoundButton.Location = new System.Drawing.Point(107, 90);
+            this.RemoveSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RemoveSoundButton.Name = "RemoveSoundButton";
-            this.RemoveSoundButton.Size = new System.Drawing.Size(75, 23);
+            this.RemoveSoundButton.Size = new System.Drawing.Size(88, 29);
             this.RemoveSoundButton.TabIndex = 4;
             this.RemoveSoundButton.Text = "Remove";
             this.RemoveSoundButton.UseVisualStyleBackColor = true;
@@ -560,10 +582,12 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.groupBox2.Controls.Add(this.tableLayoutPanel5);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(3, 89);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.groupBox2.Location = new System.Drawing.Point(4, 101);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(361, 100);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(422, 115);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Search";
@@ -581,22 +605,24 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel5.Controls.Add(this.SearchByIdButton, 0, 1);
             this.tableLayoutPanel5.Controls.Add(this.SearchByNameButton, 1, 1);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(4, 16);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(355, 81);
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(414, 96);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // GoPrevResultButton
             // 
             this.GoPrevResultButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.GoPrevResultButton.AutoSize = true;
-            this.GoPrevResultButton.Location = new System.Drawing.Point(211, 29);
+            this.GoPrevResultButton.Location = new System.Drawing.Point(245, 29);
+            this.GoPrevResultButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.GoPrevResultButton.Name = "GoPrevResultButton";
-            this.GoPrevResultButton.Size = new System.Drawing.Size(65, 23);
+            this.GoPrevResultButton.Size = new System.Drawing.Size(76, 29);
             this.GoPrevResultButton.TabIndex = 5;
             this.GoPrevResultButton.Text = "Prev";
             this.GoPrevResultButton.UseVisualStyleBackColor = true;
@@ -606,17 +632,19 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.tableLayoutPanel5.SetColumnSpan(this.SearchNameTextbox, 4);
             this.SearchNameTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SearchNameTextbox.Location = new System.Drawing.Point(3, 3);
+            this.SearchNameTextbox.Location = new System.Drawing.Point(4, 3);
+            this.SearchNameTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SearchNameTextbox.Name = "SearchNameTextbox";
-            this.SearchNameTextbox.Size = new System.Drawing.Size(349, 20);
+            this.SearchNameTextbox.Size = new System.Drawing.Size(406, 20);
             this.SearchNameTextbox.TabIndex = 0;
             // 
             // GoNextResultButton
             // 
             this.GoNextResultButton.AutoSize = true;
-            this.GoNextResultButton.Location = new System.Drawing.Point(282, 29);
+            this.GoNextResultButton.Location = new System.Drawing.Point(329, 29);
+            this.GoNextResultButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.GoNextResultButton.Name = "GoNextResultButton";
-            this.GoNextResultButton.Size = new System.Drawing.Size(65, 23);
+            this.GoNextResultButton.Size = new System.Drawing.Size(76, 29);
             this.GoNextResultButton.TabIndex = 3;
             this.GoNextResultButton.Text = "Next";
             this.GoNextResultButton.UseVisualStyleBackColor = true;
@@ -625,9 +653,10 @@ namespace UoFiddler.Controls.UserControls
             // SearchByIdButton
             // 
             this.SearchByIdButton.AutoSize = true;
-            this.SearchByIdButton.Location = new System.Drawing.Point(3, 29);
+            this.SearchByIdButton.Location = new System.Drawing.Point(4, 29);
+            this.SearchByIdButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SearchByIdButton.Name = "SearchByIdButton";
-            this.SearchByIdButton.Size = new System.Drawing.Size(78, 23);
+            this.SearchByIdButton.Size = new System.Drawing.Size(94, 29);
             this.SearchByIdButton.TabIndex = 4;
             this.SearchByIdButton.Text = "Search by Id";
             this.SearchByIdButton.UseVisualStyleBackColor = true;
@@ -636,9 +665,10 @@ namespace UoFiddler.Controls.UserControls
             // SearchByNameButton
             // 
             this.SearchByNameButton.AutoSize = true;
-            this.SearchByNameButton.Location = new System.Drawing.Point(96, 29);
+            this.SearchByNameButton.Location = new System.Drawing.Point(112, 29);
+            this.SearchByNameButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SearchByNameButton.Name = "SearchByNameButton";
-            this.SearchByNameButton.Size = new System.Drawing.Size(96, 23);
+            this.SearchByNameButton.Size = new System.Drawing.Size(120, 29);
             this.SearchByNameButton.TabIndex = 1;
             this.SearchByNameButton.Text = "Search by Name";
             this.SearchByNameButton.UseVisualStyleBackColor = true;
@@ -648,9 +678,11 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.groupBox3.Controls.Add(this.tableLayoutPanel6);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(3, 365);
+            this.groupBox3.Location = new System.Drawing.Point(4, 418);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(361, 187);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox3.Size = new System.Drawing.Size(422, 224);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Insert \\ Replace";
@@ -660,8 +692,8 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel6.ColumnCount = 4;
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 36F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 42F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tableLayoutPanel6.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel6.Controls.Add(this.label3, 0, 1);
             this.tableLayoutPanel6.Controls.Add(this.IdInsertTextbox, 1, 0);
@@ -669,23 +701,25 @@ namespace UoFiddler.Controls.UserControls
             this.tableLayoutPanel6.Controls.Add(this.WavChooseInsertButton, 2, 1);
             this.tableLayoutPanel6.Controls.Add(this.AddInsertReplaceButton, 0, 2);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(4, 19);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 3;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(355, 168);
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(414, 202);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Location = new System.Drawing.Point(4, 0);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 25);
+            this.label1.Size = new System.Drawing.Size(32, 29);
             this.label1.TabIndex = 0;
             this.label1.Text = "ID";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -694,9 +728,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(3, 25);
+            this.label3.Location = new System.Drawing.Point(4, 29);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(32, 25);
+            this.label3.Size = new System.Drawing.Size(32, 29);
             this.label3.TabIndex = 2;
             this.label3.Text = "WAV";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -705,25 +740,28 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.tableLayoutPanel6.SetColumnSpan(this.IdInsertTextbox, 2);
             this.IdInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.IdInsertTextbox.Location = new System.Drawing.Point(41, 3);
+            this.IdInsertTextbox.Location = new System.Drawing.Point(44, 3);
+            this.IdInsertTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.IdInsertTextbox.Name = "IdInsertTextbox";
             this.IdInsertTextbox.ReadOnly = true;
-            this.IdInsertTextbox.Size = new System.Drawing.Size(291, 20);
+            this.IdInsertTextbox.Size = new System.Drawing.Size(343, 23);
             this.IdInsertTextbox.TabIndex = 3;
             // 
             // WavFileInsertTextbox
             // 
             this.WavFileInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.WavFileInsertTextbox.Location = new System.Drawing.Point(41, 28);
+            this.WavFileInsertTextbox.Location = new System.Drawing.Point(44, 32);
+            this.WavFileInsertTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.WavFileInsertTextbox.Name = "WavFileInsertTextbox";
-            this.WavFileInsertTextbox.Size = new System.Drawing.Size(255, 20);
+            this.WavFileInsertTextbox.Size = new System.Drawing.Size(301, 23);
             this.WavFileInsertTextbox.TabIndex = 5;
             // 
             // WavChooseInsertButton
             // 
-            this.WavChooseInsertButton.Location = new System.Drawing.Point(302, 28);
+            this.WavChooseInsertButton.Location = new System.Drawing.Point(353, 32);
+            this.WavChooseInsertButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.WavChooseInsertButton.Name = "WavChooseInsertButton";
-            this.WavChooseInsertButton.Size = new System.Drawing.Size(30, 19);
+            this.WavChooseInsertButton.Size = new System.Drawing.Size(34, 22);
             this.WavChooseInsertButton.TabIndex = 6;
             this.WavChooseInsertButton.Text = "...";
             this.WavChooseInsertButton.UseVisualStyleBackColor = true;
@@ -733,9 +771,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.AddInsertReplaceButton.AutoSize = true;
             this.tableLayoutPanel6.SetColumnSpan(this.AddInsertReplaceButton, 2);
-            this.AddInsertReplaceButton.Location = new System.Drawing.Point(3, 53);
+            this.AddInsertReplaceButton.Location = new System.Drawing.Point(4, 61);
+            this.AddInsertReplaceButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AddInsertReplaceButton.Name = "AddInsertReplaceButton";
-            this.AddInsertReplaceButton.Size = new System.Drawing.Size(104, 23);
+            this.AddInsertReplaceButton.Size = new System.Drawing.Size(121, 29);
             this.AddInsertReplaceButton.TabIndex = 7;
             this.AddInsertReplaceButton.Text = "Add \\ Replace";
             this.AddInsertReplaceButton.UseVisualStyleBackColor = true;
@@ -743,12 +782,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // SoundsControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SoundsControl";
-            this.Size = new System.Drawing.Size(726, 606);
+            this.Size = new System.Drawing.Size(851, 699);
             this.Load += new System.EventHandler(this.OnLoad);
             this.cmStripSounds.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);

@@ -107,6 +107,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -117,8 +118,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.DetailTextBox);
-            this.splitContainer2.Size = new System.Drawing.Size(164, 286);
-            this.splitContainer2.SplitterDistance = 164;
+            this.splitContainer2.Size = new System.Drawing.Size(194, 342);
+            this.splitContainer2.SplitterDistance = 196;
+            this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
             // DetailPictureBox
@@ -126,8 +128,9 @@ namespace UoFiddler.Controls.UserControls
             this.DetailPictureBox.ContextMenuStrip = this.DetailPictureBoxContextMenuStrip;
             this.DetailPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DetailPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.DetailPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DetailPictureBox.Name = "DetailPictureBox";
-            this.DetailPictureBox.Size = new System.Drawing.Size(164, 164);
+            this.DetailPictureBox.Size = new System.Drawing.Size(194, 196);
             this.DetailPictureBox.TabIndex = 0;
             this.DetailPictureBox.TabStop = false;
             // 
@@ -149,15 +152,17 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.DetailTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DetailTextBox.Location = new System.Drawing.Point(0, 0);
+            this.DetailTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DetailTextBox.Name = "DetailTextBox";
-            this.DetailTextBox.Size = new System.Drawing.Size(164, 118);
+            this.DetailTextBox.Size = new System.Drawing.Size(194, 141);
             this.DetailTextBox.TabIndex = 0;
             this.DetailTextBox.Text = "";
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -167,8 +172,9 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(643, 286);
-            this.splitContainer1.SplitterDistance = 475;
+            this.splitContainer1.Size = new System.Drawing.Size(758, 342);
+            this.splitContainer1.SplitterDistance = 559;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 6;
             // 
             // ItemsTileView
@@ -180,9 +186,10 @@ namespace UoFiddler.Controls.UserControls
             this.ItemsTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ItemsTileView.FocusIndex = -1;
             this.ItemsTileView.Location = new System.Drawing.Point(0, 0);
+            this.ItemsTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ItemsTileView.MultiSelect = true;
             this.ItemsTileView.Name = "ItemsTileView";
-            this.ItemsTileView.Size = new System.Drawing.Size(475, 286);
+            this.ItemsTileView.Size = new System.Drawing.Size(559, 342);
             this.ItemsTileView.TabIndex = 0;
             this.ItemsTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
             this.ItemsTileView.TileBorderColor = System.Drawing.Color.Gray;
@@ -341,7 +348,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ReplaceStartingFromText
             // 
-            this.ReplaceStartingFromText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ReplaceStartingFromText.Name = "ReplaceStartingFromText";
             this.ReplaceStartingFromText.Size = new System.Drawing.Size(100, 23);
             this.ReplaceStartingFromText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ReplaceStartingFromText_KeyDown);
@@ -363,7 +369,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // InsertText
             // 
-            this.InsertText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.InsertText.Name = "InsertText";
             this.InsertText.Size = new System.Drawing.Size(100, 23);
             this.InsertText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInsertText);
@@ -386,9 +391,10 @@ namespace UoFiddler.Controls.UserControls
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NameLabel,
             this.GraphicLabel});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 319);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 378);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(643, 22);
+            this.StatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.StatusStrip.Size = new System.Drawing.Size(758, 22);
             this.StatusStrip.TabIndex = 5;
             this.StatusStrip.Text = "statusStrip1";
             // 
@@ -428,7 +434,7 @@ namespace UoFiddler.Controls.UserControls
             this.ToolStrip.Location = new System.Drawing.Point(0, 0);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ToolStrip.Size = new System.Drawing.Size(643, 25);
+            this.ToolStrip.Size = new System.Drawing.Size(758, 28);
             this.ToolStrip.TabIndex = 7;
             // 
             // SearchToolStripButton
@@ -436,7 +442,7 @@ namespace UoFiddler.Controls.UserControls
             this.SearchToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.SearchToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SearchToolStripButton.Name = "SearchToolStripButton";
-            this.SearchToolStripButton.Size = new System.Drawing.Size(46, 22);
+            this.SearchToolStripButton.Size = new System.Drawing.Size(46, 25);
             this.SearchToolStripButton.Text = "Search";
             this.SearchToolStripButton.Click += new System.EventHandler(this.OnSearchClick);
             // 
@@ -444,7 +450,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.ProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(100, 22);
+            this.ProgressBar.Size = new System.Drawing.Size(117, 25);
             // 
             // PreloadItemsToolStripButton
             // 
@@ -452,7 +458,7 @@ namespace UoFiddler.Controls.UserControls
             this.PreloadItemsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.PreloadItemsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PreloadItemsToolStripButton.Name = "PreloadItemsToolStripButton";
-            this.PreloadItemsToolStripButton.Size = new System.Drawing.Size(83, 22);
+            this.PreloadItemsToolStripButton.Size = new System.Drawing.Size(83, 25);
             this.PreloadItemsToolStripButton.Text = "Preload Items";
             this.PreloadItemsToolStripButton.Click += new System.EventHandler(this.OnClickPreLoad);
             // 
@@ -463,7 +469,7 @@ namespace UoFiddler.Controls.UserControls
             this.ExportAllToolStripMenuItem});
             this.MiscToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.MiscToolStripDropDownButton.Name = "MiscToolStripDropDownButton";
-            this.MiscToolStripDropDownButton.Size = new System.Drawing.Size(45, 22);
+            this.MiscToolStripDropDownButton.Size = new System.Drawing.Size(45, 25);
             this.MiscToolStripDropDownButton.Text = "Misc";
             // 
             // ExportAllToolStripMenuItem
@@ -513,8 +519,10 @@ namespace UoFiddler.Controls.UserControls
             this.collapsibleSplitter1.ControlToHide = this.ToolStrip;
             this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
+            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 28);
+            this.collapsibleSplitter1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.collapsibleSplitter1.Name = "collapsibleSplitter1";
+            this.collapsibleSplitter1.Size = new System.Drawing.Size(758, 8);
             this.collapsibleSplitter1.TabIndex = 8;
             this.collapsibleSplitter1.TabStop = false;
             this.collapsibleSplitter1.UseAnimations = false;
@@ -522,15 +530,16 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ItemsControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.StatusStrip);
             this.Controls.Add(this.collapsibleSplitter1);
             this.Controls.Add(this.ToolStrip);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ItemsControl";
-            this.Size = new System.Drawing.Size(643, 341);
+            this.Size = new System.Drawing.Size(758, 400);
             this.Load += new System.EventHandler(this.OnLoad);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
