@@ -41,12 +41,12 @@ namespace UoFiddler.Controls.Plugin
         /// <param name="path">Directory to search for Plugins in</param>
         public void FindPlugins(string path)
         {
-            Options.Logger.Information("FindPlugins - searching for plugins in [AppDomain.CurrentDomain.BaseDirectory = {path}]", path);
+            Options.Logger.Information("FindPlugins - searching for plugins in [AppDomain.CurrentDomain.BaseDirectory = {Path}]", path);
 
             AvailablePlugins.Clear();
             if (!Directory.Exists(path))
             {
-                Options.Logger.Warning("FindPlugins - plugin directory doesn't exist: {path}", path);
+                Options.Logger.Warning("FindPlugins - plugin directory doesn't exist: {Path}", path);
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace UoFiddler.Controls.Plugin
                 }
                 catch (Exception ex)
                 {
-                    Options.Logger.Fatal("FindPlugins - exception caught: {ex}", ex);
+                    Options.Logger.Fatal(ex, "FindPlugins - exception caught");
                 }
             }
         }
@@ -68,16 +68,16 @@ namespace UoFiddler.Controls.Plugin
         /// </summary>
         public void ClosePlugins()
         {
-            foreach (AvailablePlugin pluginOn in AvailablePlugins)
+            foreach (AvailablePlugin plugin in AvailablePlugins)
             {
-                if (pluginOn.Instance == null)
+                if (plugin.Instance == null)
                 {
                     continue;
                 }
 
-                Options.Logger.Information("FindPlugins - disposing plugin: {pluginOn}", pluginOn.Type.ToString());
-                pluginOn.Instance.Unload();
-                pluginOn.Instance = null;
+                Options.Logger.Information("FindPlugins - disposing plugin: {Plugin}", plugin.Type.ToString());
+                plugin.Instance.Unload();
+                plugin.Instance = null;
             }
 
             AvailablePlugins.Clear();
@@ -107,7 +107,7 @@ namespace UoFiddler.Controls.Plugin
 
                 if (Options.PluginsToLoad?.Contains(pluginType.ToString()) == true)
                 {
-                    Options.Logger.Information("FindPlugins - AddPlugin of type: {type} from file: {fileName}", pluginType.ToString(), newPlugin.AssemblyPath);
+                    Options.Logger.Information("FindPlugins - AddPlugin of type: {Type} from file: {FileName}", pluginType.ToString(), newPlugin.AssemblyPath);
                     newPlugin.CreateInstance();
                     newPlugin.Instance.Host = this;
                     newPlugin.Instance.Initialize();

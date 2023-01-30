@@ -424,7 +424,7 @@ namespace UoFiddler.Forms
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
-            FiddlerOptions.Logger.Information("MainForm - OnClosing - start.");
+            FiddlerOptions.Logger.Information("MainForm - OnClosing - start");
             string files = Options.ChangedUltimaClass
                                     .Where(key => key.Value)
                                     .Aggregate(string.Empty, (current, key) => current + $"- {key.Key} \r\n");
@@ -446,10 +446,10 @@ namespace UoFiddler.Forms
             FiddlerOptions.FormPosition = Location;
             FiddlerOptions.FormSize = Size;
 
-            FiddlerOptions.Logger.Information("MainForm - OnClosing - unloading plugins.");
+            FiddlerOptions.Logger.Information("MainForm - OnClosing - unloading plugins");
             GlobalPlugins.Plugins.ClosePlugins();
 
-            FiddlerOptions.Logger.Information("MainForm - OnClosing - done.");
+            FiddlerOptions.Logger.Information("MainForm - OnClosing - done");
         }
 
         private static bool IsOkFormStateLocation(Point loc, Size size)
