@@ -106,18 +106,18 @@ jobs:
     # Remove the pfx
     #- name: Remove the pfx
     #  run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
-        
-    #- name: env listing
-    #  run: env
     
-    - name: where am i?!!
+    - name: where am i 1?!!
+      run: Get-ChildItem
+    
+    - name: where am i 2?!!
       run: Get-ChildItem -Path $env:GITHUB_WORKSPACE\UOFiddler\bin\Release
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: UOFiddler-release
-        path: $env:GITHUB_WORKSPACE\UOFiddler\bin\Release\
+        path: .\UOFiddler\bin\Release\
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     #- name: Upload build artifacts
