@@ -82,8 +82,8 @@ jobs:
     #  run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /m /v:n
+    - name: Restore & build the application
+      run: msbuild $env:Solution_Name /restore /p:Configuration=$env:Configuration /m /v:n
       env:
         Configuration: ${{ matrix.configuration }}
 
@@ -107,11 +107,11 @@ jobs:
     #- name: Remove the pfx
     #  run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
         
-    - name: env listing
-      run: env
+    #- name: env listing
+    #  run: env
     
     - name: where am i?!!
-      run: Get-ChildItem -Path $env:GITHUB_WORKSPACE\UOFiddler\
+      run: Get-ChildItem -Path $env:GITHUB_WORKSPACE\UOFiddler\bin\Release
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
