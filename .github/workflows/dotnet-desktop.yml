@@ -113,7 +113,9 @@ jobs:
     - name: where am i?!!
       run: |
         echo "AAAA: $env:GITHUB_WORKSPACE/UOFiddler"
-        ./dir
+        dir
+        Get-ChildItem
+        Get-ChildItem -Path $env:GITHUB_WORKSPACE\UOFiddler\
     
     #- name: Upload build artifacts
     #  uses: actions/upload-artifact@v3
