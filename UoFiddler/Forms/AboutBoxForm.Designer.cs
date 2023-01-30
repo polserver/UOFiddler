@@ -209,7 +209,7 @@ namespace UoFiddler.Forms
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutBoxForm";
-            this.Padding = new System.Windows.Forms.Padding(10, 10, 10, 10);
+            this.Padding = new System.Windows.Forms.Padding(10);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About";
