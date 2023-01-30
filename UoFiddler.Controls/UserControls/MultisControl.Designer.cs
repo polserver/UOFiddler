@@ -603,7 +603,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
-        private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem exportAllImagesToolStripMenuItem;
