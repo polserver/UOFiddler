@@ -9,6 +9,9 @@
 		<FileVersion>4.3.2</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<OutputPath>bin\$(Configuration)\</OutputPath>
 		<FileAlignment>4096</FileAlignment>

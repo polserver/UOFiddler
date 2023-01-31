@@ -8,6 +8,9 @@
 		<Product>FiddlerPlugin</Product>
 		<Copyright>Copyright © 2023</Copyright>
 	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>portable</DebugType>
 		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
