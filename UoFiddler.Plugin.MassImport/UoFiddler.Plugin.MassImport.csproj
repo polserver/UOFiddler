@@ -10,9 +10,15 @@
 		<AssemblyVersion>1.1.0.0</AssemblyVersion>
 		<FileVersion>1.1.0.0</FileVersion>
 	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>portable</DebugType>
 		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>none</DebugType>

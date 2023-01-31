@@ -11,6 +11,9 @@
 		<FileVersion>1.5.0.0</FileVersion>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>portable</DebugType>
 		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>

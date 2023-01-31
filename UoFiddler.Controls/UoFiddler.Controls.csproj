@@ -12,6 +12,9 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>portable</DebugType>
 		<OutputPath>bin\$(Configuration)\</OutputPath>
