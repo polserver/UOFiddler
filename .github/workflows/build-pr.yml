@@ -1,0 +1,39 @@
+name: Build (PR)
+
+on:
+  pull_request:
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        configuration:
+          - Release
+
+    env:
+      Solution_Name: UoFiddler.sln
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Restore & build the application
+        run: dotnet build $env:Solution_Name --configuration $env:Configuration
+        env:
+          Configuration: ${{ matrix.configuration }}
