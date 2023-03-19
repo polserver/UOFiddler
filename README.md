@@ -8,15 +8,15 @@ UOFiddler based on Ultima SDK it's a tool to view and alter almost every UO 2D c
 
 Starting from version 4.10.0:
 
-- Requires .NET 7.0 runtime (or SDK)
-- You can download it at: <https://dotnet.microsoft.com/en-us/download/dotnet/7.0>
+- Requires .NET Desktop Runtime 7.0.x (or SDK) installed to run the application.
+- You can download .NET 7.0 at: <https://dotnet.microsoft.com/en-us/download/dotnet/7.0>
 - Minimum supported Windows version is Windows 10.
 
-Older version 4.9.28 and lower use .Net Framework 4.8
+Older versions, 4.9.28 and lower use .Net Framework 4.8
 
 ## Building
 
-You'll need Visual Studio 2022 v17.4 with .NET desktop development workload. For version 4.10.0 and newer .NET 7.0 is needed and for older versions you'll need .Net Framework 4.8. This project uses Windows Forms so it's Windows only.
+You'll need Visual Studio 2022 v17.4, .NET 7.0 and .NET desktop development workload.
 
 ## Reporting bugs and issues
 
