@@ -11,7 +11,7 @@
 
 using System;
 
-namespace UoFiddler.Controls.Plugin.Types
+namespace UoFiddler.Controls.Plugin
 {
     /// <summary>
     /// Data Class for Available Plugin.
