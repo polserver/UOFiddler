@@ -9,7 +9,7 @@
  *
  ***************************************************************************/
 
-namespace UoFiddler.Controls.Plugin.Types
+namespace UoFiddler.Controls.Plugin
 {
     /// <summary>
     /// Collection for AvailablePlugin Type

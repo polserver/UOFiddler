@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
-using UoFiddler.Controls.Plugin.Types;
 
 namespace UoFiddler.Forms
 {

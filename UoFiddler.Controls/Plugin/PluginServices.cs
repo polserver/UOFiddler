@@ -14,7 +14,6 @@ using System.IO;
 using System.Reflection;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin.Interfaces;
-using UoFiddler.Controls.Plugin.Types;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Controls.UserControls.TileView;
 
