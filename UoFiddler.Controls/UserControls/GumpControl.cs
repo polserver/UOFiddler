@@ -61,7 +61,7 @@ namespace UoFiddler.Controls.UserControls
 
         protected override void OnLoad(EventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }

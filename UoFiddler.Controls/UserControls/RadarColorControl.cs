@@ -114,7 +114,7 @@ namespace UoFiddler.Controls.UserControls
 
         public void OnLoad(object sender, EventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }

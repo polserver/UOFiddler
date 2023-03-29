@@ -170,7 +170,7 @@ namespace UoFiddler.Controls.UserControls
 
         public void OnLoad(object sender, EventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
@@ -345,7 +345,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateDetail(int graphic)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
@@ -621,7 +621,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateToolStripLabels(int graphic)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
@@ -871,7 +871,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void ItemsTileView_DrawItem(object sender, TileViewControl.DrawTileListItemEventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }

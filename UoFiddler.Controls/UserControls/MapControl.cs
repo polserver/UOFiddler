@@ -69,7 +69,7 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void Reload()
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
@@ -86,7 +86,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
@@ -245,7 +245,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnResize(object sender, EventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
@@ -615,7 +615,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }

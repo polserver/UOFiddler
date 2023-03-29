@@ -77,7 +77,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
-            if (FormsDesignerHelper.IsInDesignMode())
+            if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
