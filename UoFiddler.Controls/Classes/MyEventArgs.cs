@@ -13,7 +13,7 @@ using System;
 
 namespace UoFiddler.Controls.Classes
 {
-    public class MyEventArgs : EventArgs
+    public sealed class MyEventArgs : EventArgs
     {
         public enum Types
         {

@@ -5,7 +5,7 @@ using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Classes
 {
-    internal class UpdateChecker
+    internal sealed class UpdateChecker
     {
         private readonly IGitHubClient _githubClient;
         private readonly string _repositoryName;
@@ -38,7 +38,7 @@ namespace UoFiddler.Classes
                 var latestRelease = await _githubClient.Repository.Release.GetLatest(_repositoryOwner, _repositoryName).ConfigureAwait(false);
 
                 bool isNewVersion = false;
-                if (Version.TryParse(TagHelper.StripInitialV(latestRelease.TagName), out Version newVersion))
+                if (Version.TryParse(StripInitialV(latestRelease.TagName), out Version newVersion))
                 {
                     isNewVersion = newVersion > _currentVersion;
                 }
@@ -60,6 +60,11 @@ namespace UoFiddler.Classes
 
                 return UpdateResponse.Error($"Problem with checking version:\r\n{message}");
             }
+        }
+
+        private static string StripInitialV(string versionString)
+        {
+            return (versionString[0] == 'v') ? versionString[1..] : versionString;
         }
     }
 }

@@ -32,9 +32,9 @@ namespace UoFiddler
             var logger = new LoggerConfiguration()
                                 .MinimumLevel.Information()
                                 .WriteTo.File(logFileName,
+                                              fileSizeLimitBytes: 44040192,
                                               rollingInterval: RollingInterval.Day,
-                                              rollOnFileSizeLimit: true,
-                                              fileSizeLimitBytes: 44040192)
+                                              rollOnFileSizeLimit: true)
                                 .CreateLogger();
 
             logger.Information("UOFiddler - Application start");

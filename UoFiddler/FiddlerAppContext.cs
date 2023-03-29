@@ -19,7 +19,7 @@ using UoFiddler.Forms;
 
 namespace UoFiddler
 {
-    internal class FiddlerAppContext : ApplicationContext
+    internal sealed class FiddlerAppContext : ApplicationContext
     {
         private readonly ILogger _logger;
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace UoFiddler.Classes
 {
-    public class ExternTool
+    public sealed class ExternTool
     {
         public string Name { get; set; }
         public string FileName { get; set; }
