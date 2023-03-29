@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,10 +21,24 @@ namespace UoFiddler.Forms
 {
     public partial class OptionsForm : Form
     {
-        public OptionsForm()
+        private readonly Action _updateAllTileViewsAction;
+        private readonly Action _updateMapTabAction;
+        private readonly Action _updateItemsTabAction;
+        private readonly Action _updateSoundTabAction;
+
+        public OptionsForm(Action updateAllTileViewsAction,
+            Action updateItemsTabAction,
+            Action updateSoundTabAction,
+            Action updateMapTabAction)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _updateAllTileViewsAction = updateAllTileViewsAction;
+            _updateItemsTabAction = updateItemsTabAction;
+            _updateSoundTabAction = updateSoundTabAction;
+            _updateMapTabAction = updateMapTabAction;
 
             TileFocusColorComboBox.MaxDropDownItems = 14;
             TileFocusColorComboBox.IntegralHeight = false;
@@ -71,7 +86,7 @@ namespace UoFiddler.Forms
             textBoxOutputPath.Text = Options.OutputPath;
         }
 
-        private void OnClickApply(object sender, System.EventArgs e)
+        private void OnClickApply(object sender, EventArgs e)
         {
             Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
 
@@ -79,9 +94,9 @@ namespace UoFiddler.Forms
             {
                 Options.PolSoundIdOffset = checkBoxPolSoundIdOffset.Checked;
 
-                MainForm.UpdateSoundTab();
+                _updateSoundTabAction();
             }
-            
+
             Files.CacheData = checkBoxCacheData.Checked;
 
             if (checkBoxNewMapSize.Checked != (Map.Felucca.Width == 7168))
@@ -96,7 +111,8 @@ namespace UoFiddler.Forms
                     Map.Felucca.Width = 6144;
                     Map.Trammel.Width = 6144;
                 }
-                MainForm.UpdateMapTab();
+
+                _updateMapTabAction();
             }
 
             if (checkBoxuseDiff.Checked != Map.UseDiff)
@@ -110,41 +126,43 @@ namespace UoFiddler.Forms
             {
                 Options.ArtItemSizeWidth = (int)numericUpDownItemSizeWidth.Value;
                 Options.ArtItemSizeHeight = (int)numericUpDownItemSizeHeight.Value;
-                MainForm.UpdateItemsTab();
+
+                _updateItemsTabAction();
             }
 
             if (checkBoxItemClip.Checked != Options.ArtItemClip)
             {
                 Options.ArtItemClip = checkBoxItemClip.Checked;
-                MainForm.UpdateItemsTab();
+
+                _updateItemsTabAction();
             }
 
             if ((Color)TileFocusColorComboBox.SelectedItem != Options.TileFocusColor)
             {
                 Options.TileFocusColor = (Color)TileFocusColorComboBox.SelectedItem;
 
-                UpdateAllTileViews();
+                _updateAllTileViewsAction();
             }
 
             if ((Color)TileSelectionColorComboBox.SelectedItem != Options.TileSelectionColor)
             {
                 Options.TileSelectionColor = (Color)TileSelectionColorComboBox.SelectedItem;
 
-                UpdateAllTileViews();
+                _updateAllTileViewsAction();
             }
 
             if (checkBoxOverrideBackgroundColorFromTile.Checked != Options.OverrideBackgroundColorFromTile)
             {
                 Options.OverrideBackgroundColorFromTile = checkBoxOverrideBackgroundColorFromTile.Checked;
 
-                UpdateAllTileViews();
+                _updateAllTileViewsAction();
             }
 
             if (checkboxRemoveTileBorder.Checked != Options.RemoveTileBorder)
             {
                 Options.RemoveTileBorder = checkboxRemoveTileBorder.Checked;
 
-                UpdateAllTileViews();
+                _updateAllTileViewsAction();
             }
 
             if (map0Nametext.Text != Options.MapNames[0]
@@ -172,15 +190,7 @@ namespace UoFiddler.Forms
             }
         }
 
-        private static void UpdateAllTileViews()
-        {
-            MainForm.UpdateItemsTab();
-            MainForm.UpdateLandTilesTab();
-            MainForm.UpdateTexturesTab();
-            MainForm.UpdateFontsTab();
-        }
-
-        private void OnClickBrowseOutputPath(object sender, System.EventArgs e)
+        private void OnClickBrowseOutputPath(object sender, EventArgs e)
         {
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
@@ -246,7 +256,7 @@ namespace UoFiddler.Forms
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
         }
 
-        private void RestoreDefaultsButton_Click(object sender, System.EventArgs e)
+        private void RestoreDefaultsButton_Click(object sender, EventArgs e)
         {
             const string title = "Restore defaults";
             const string message = "Do you want to reset tile views settings to default?";
@@ -263,7 +273,7 @@ namespace UoFiddler.Forms
             TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;
         }
 
-        private void OnClickClose(object sender, System.EventArgs e)
+        private void OnClickClose(object sender, EventArgs e)
         {
             Close();
         }

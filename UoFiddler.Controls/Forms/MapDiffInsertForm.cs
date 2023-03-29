@@ -133,7 +133,7 @@ namespace UoFiddler.Controls.Forms
                                         {
                                             tileid = patchtile[i].Id;
                                             z = (sbyte)patchtile[i].Z;
-                                            tileid = Art.GetLegalItemID(tileid);
+                                            tileid = Art.GetLegalItemId(tileid);
                                             if (z < -128)
                                             {
                                                 z = -128;
@@ -156,7 +156,7 @@ namespace UoFiddler.Controls.Forms
                                     {
                                         tileid = mMapReader.ReadUInt16();
                                         z = mMapReader.ReadSByte();
-                                        tileid = Art.GetLegalItemID(tileid);
+                                        tileid = Art.GetLegalItemId(tileid);
                                         if (z < -128)
                                         {
                                             z = -128;
@@ -278,7 +278,7 @@ namespace UoFiddler.Controls.Forms
                                                             Hue = (short)htile.Hue
                                                         };
 
-                                                        if (tile.Id > Art.GetMaxItemID())
+                                                        if (tile.Id > Art.GetMaxItemId())
                                                         {
                                                             continue;
                                                         }
@@ -331,7 +331,7 @@ namespace UoFiddler.Controls.Forms
                                                         sbyte sz = (sbyte)tile.Z;
                                                         short sHue = (short)tile.Hue;
 
-                                                        if (graphic > Art.GetMaxItemID())
+                                                        if (graphic > Art.GetMaxItemId())
                                                         {
                                                             continue;
                                                         }
@@ -398,7 +398,7 @@ namespace UoFiddler.Controls.Forms
                                                     Hue = mStaticsReader.ReadInt16()
                                                 };
 
-                                                if (tile.Id <= Art.GetMaxItemID())
+                                                if (tile.Id <= Art.GetMaxItemId())
                                                 {
                                                     if (tile.Hue < 0)
                                                     {
@@ -444,7 +444,7 @@ namespace UoFiddler.Controls.Forms
                                                 var sz = mStaticsReader.ReadSByte();
                                                 var shue = mStaticsReader.ReadInt16();
 
-                                                if (graphic <= Art.GetMaxItemID())
+                                                if (graphic <= Art.GetMaxItemId())
                                                 {
                                                     if (shue < 0)
                                                     {

@@ -20,10 +20,15 @@ namespace UoFiddler.Forms
 {
     public partial class ManageToolsForm : Form
     {
-        public ManageToolsForm()
+        private readonly Action _loadExternToolStripMenuAction;
+
+        public ManageToolsForm(Action loadExternToolStripMenuAction)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _loadExternToolStripMenuAction = loadExternToolStripMenuAction;
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -49,7 +54,7 @@ namespace UoFiddler.Forms
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
-            MainForm.LoadExternToolStripMenu();
+            _loadExternToolStripMenuAction.Invoke();
         }
 
         private void OnToolIndexChanged(object sender, EventArgs e)

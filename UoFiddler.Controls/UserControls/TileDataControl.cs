@@ -236,13 +236,15 @@ namespace UoFiddler.Controls.UserControls
             return false;
         }
 
-        public static void ApplyFilterItem(ItemData item)
+        public void ApplyFilterItem(ItemData item)
         {
-            _refMarker.treeViewItem.BeginUpdate();
-            _refMarker.treeViewItem.Nodes.Clear();
+            treeViewItem.BeginUpdate();
+            treeViewItem.Nodes.Clear();
+
             var nodes = new List<TreeNode>();
             var nodesSa = new List<TreeNode>();
             var nodesHsa = new List<TreeNode>();
+
             for (int i = 0; i < TileData.ItemTable.Length; ++i)
             {
                 if (!string.IsNullOrEmpty(item.Name) && TileData.ItemTable[i].Name.IndexOf(item.Name, StringComparison.OrdinalIgnoreCase) < 0)
@@ -331,23 +333,24 @@ namespace UoFiddler.Controls.UserControls
 
             if (nodes.Count > 0)
             {
-                _refMarker.treeViewItem.Nodes.Add(new TreeNode("AOS - ML", nodes.ToArray()));
+                treeViewItem.Nodes.Add(new TreeNode("AOS - ML", nodes.ToArray()));
             }
 
             if (nodesSa.Count > 0)
             {
-                _refMarker.treeViewItem.Nodes.Add(new TreeNode("Stygian Abyss", nodesSa.ToArray()));
+                treeViewItem.Nodes.Add(new TreeNode("Stygian Abyss", nodesSa.ToArray()));
             }
 
             if (nodesHsa.Count > 0)
             {
-                _refMarker.treeViewItem.Nodes.Add(new TreeNode("Adventures High Seas", nodesHsa.ToArray()));
+                treeViewItem.Nodes.Add(new TreeNode("Adventures High Seas", nodesHsa.ToArray()));
             }
 
-            _refMarker.treeViewItem.EndUpdate();
-            if (_refMarker.treeViewItem.Nodes.Count > 0 && _refMarker.treeViewItem.Nodes[0].Nodes.Count > 0)
+            treeViewItem.EndUpdate();
+
+            if (treeViewItem.Nodes.Count > 0 && _refMarker.treeViewItem.Nodes[0].Nodes.Count > 0)
             {
-                _refMarker.treeViewItem.SelectedNode = _refMarker.treeViewItem.Nodes[0].Nodes[0];
+                treeViewItem.SelectedNode = _refMarker.treeViewItem.Nodes[0].Nodes[0];
             }
         }
 
@@ -363,7 +366,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                if (land.TextureID != 0 && TileData.LandTable[i].TextureID != land.TextureID)
+                if (land.TextureId != 0 && TileData.LandTable[i].TextureId != land.TextureId)
                 {
                     continue;
                 }
@@ -645,7 +648,7 @@ namespace UoFiddler.Controls.UserControls
             LandData data = TileData.LandTable[index];
             _changingIndex = true;
             textBoxNameLand.Text = data.Name;
-            textBoxTexID.Text = data.TextureID.ToString();
+            textBoxTexID.Text = data.TextureId.ToString();
 
             Array enumValues = Enum.GetValues(typeof(TileFlag));
             int maxLength = Art.IsUOAHS() ? enumValues.Length : (enumValues.Length / 2) + 1;
@@ -782,7 +785,7 @@ namespace UoFiddler.Controls.UserControls
                 treeViewLand.SelectedNode.Text = $"0x{index:X4} {name}";
                 if (ushort.TryParse(textBoxTexID.Text, out ushort shortRes))
                 {
-                    land.TextureID = shortRes;
+                    land.TextureId = shortRes;
                 }
 
                 land.Flags = TileFlag.None;
@@ -1277,7 +1280,7 @@ namespace UoFiddler.Controls.UserControls
 
             int index = (int)treeViewLand.SelectedNode.Tag;
             LandData land = TileData.LandTable[index];
-            land.TextureID = shortRes;
+            land.TextureId = shortRes;
             TileData.LandTable[index] = land;
             treeViewLand.SelectedNode.ForeColor = Color.Red;
             Options.ChangedUltimaClass["TileData"] = true;
@@ -1426,19 +1429,19 @@ namespace UoFiddler.Controls.UserControls
             if (tabcontrol.SelectedIndex == 0) // items
             {
                 string fileName = Path.Combine(path, "ItemData.csv");
-                TileData.ExportItemDataToCSV(fileName);
+                TileData.ExportItemDataToCsv(fileName);
                 MessageBox.Show($"ItemData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
             else
             {
                 string fileName = Path.Combine(path, "LandData.csv");
-                TileData.ExportLandDataToCSV(fileName);
+                TileData.ExportLandDataToCsv(fileName);
                 MessageBox.Show($"LandData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
-        private TileDatasSearchForm _showForm1;
-        private TileDatasSearchForm _showForm2;
+        private TileDataSearchForm _showForm1;
+        private TileDataSearchForm _showForm2;
 
         private void OnClickSearch(object sender, EventArgs e)
         {
@@ -1449,7 +1452,7 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                _showForm1 = new TileDatasSearchForm(false)
+                _showForm1 = new TileDataSearchForm(false, SearchGraphic, SearchName)
                 {
                     TopMost = true
                 };
@@ -1462,7 +1465,7 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                _showForm2 = new TileDatasSearchForm(true)
+                _showForm2 = new TileDataSearchForm(true, SearchGraphic, SearchName)
                 {
                     TopMost = true
                 };
@@ -1536,12 +1539,12 @@ namespace UoFiddler.Controls.UserControls
                 Options.ChangedUltimaClass["TileData"] = true;
                 if (tabcontrol.SelectedIndex == 0) // items
                 {
-                    TileData.ImportItemDataFromCSV(dialog.FileName);
+                    TileData.ImportItemDataFromCsv(dialog.FileName);
                     AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
                 }
                 else
                 {
-                    TileData.ImportLandDataFromCSV(dialog.FileName);
+                    TileData.ImportLandDataFromCsv(dialog.FileName);
                     AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
                 }
             }
@@ -1557,7 +1560,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _filterFormForm = new TileDataFilterForm
+            _filterFormForm = new TileDataFilterForm(ApplyFilterItem, ApplyFilterLand)
             {
                 TopMost = true
             };
@@ -1669,8 +1672,8 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
-        /// Click event handler on the "Set Textures" menu item. Sets all the land tiles TextureID to their index.
-        /// This is written under the assumption that LandTileID == TextureID for every LandTile.
+        /// Click event handler on the "Set Textures" menu item. Sets all the land tiles TextureId to their index.
+        /// This is written under the assumption that LandTileID == TextureId for every LandTile.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1690,12 +1693,12 @@ namespace UoFiddler.Controls.UserControls
             var updated = 0;
             for (int i = 0; i < TileData.LandTable.Length; ++i)
             {
-                if (!Textures.TestTexture(i) || TileData.LandTable[i].TextureID != 0)
+                if (!Textures.TestTexture(i) || TileData.LandTable[i].TextureId != 0)
                 {
                     continue;
                 }
 
-                TileData.LandTable[i].TextureID = (ushort)i;
+                TileData.LandTable[i].TextureId = (ushort)i;
 
                 var node = treeViewLand.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag.Equals(i));
                 if (node != null)

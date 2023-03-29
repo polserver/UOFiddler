@@ -156,7 +156,7 @@ namespace UoFiddler.Controls.Forms
         {
             if (_showForm?.IsDisposed != false)
             {
-                _showForm = new HuePopUpItemForm(this, Hue);
+                _showForm = new HuePopUpItemForm(UpdateSelectedHue, Hue);
             }
             else
             {
@@ -165,6 +165,11 @@ namespace UoFiddler.Controls.Forms
 
             _showForm.TopMost = true;
             _showForm.Show();
+        }
+
+        private void UpdateSelectedHue(int selectedHue)
+        {
+            Hue = selectedHue;
         }
 
         private void OnClickAnimate(object sender, EventArgs e)

@@ -586,7 +586,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            using (var dialog = new MultiImportForm(this, id) { TopMost = true })
+            using (var dialog = new MultiImportForm(id, ChangeMulti) { TopMost = true })
             {
                 dialog.ShowDialog();
             }

@@ -53,14 +53,14 @@ namespace Ultima
             Height = import.Height;
         }
 
-        public static ASCIIFont GetFixed(int font)
+        public static ASCIIFont GetFixed(int font, ASCIIFont[] fonts)
         {
-            if (font < 0 || font > 9)
+            if (font is < 0 or > 9)
             {
-                return ASCIIText.Fonts[3];
+                font = 3;
             }
 
-            return ASCIIText.Fonts[font];
+            return fonts[font];
         }
     }
 
@@ -193,7 +193,7 @@ namespace Ultima
         /// <returns></returns>
         public static Bitmap DrawText(int fontId, string text)
         {
-            ASCIIFont font = ASCIIFont.GetFixed(fontId);
+            ASCIIFont font = ASCIIFont.GetFixed(fontId, Fonts);
             var result = new Bitmap(font.GetWidth(text) + 2, font.Height + 2);
 
             int dx = 2;

@@ -18,7 +18,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
     {
         private string[] _tiledata;
 
-        public override int MaxIndex => Ultima.Art.GetMaxItemID();
+        public override int MaxIndex => Ultima.Art.GetMaxItemId();
 
         public override string Name => "TileDataItem";
 

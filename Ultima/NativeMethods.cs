@@ -5,6 +5,50 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Ultima
 {
+    public class ClientWindowHandle : CriticalHandleZeroOrMinusOneIsInvalid
+    {
+        public static ClientWindowHandle Invalid = new ClientWindowHandle(new IntPtr(-1));
+
+        public ClientWindowHandle()
+        { }
+
+        public ClientWindowHandle(IntPtr value)
+        {
+            handle = value;
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            if (!IsClosed)
+            {
+                return ReleaseHandle();
+            }
+
+            return true;
+        }
+    }
+
+    public class ClientProcessHandle : CriticalHandleZeroOrMinusOneIsInvalid
+    {
+        public static ClientProcessHandle Invalid = new ClientProcessHandle(new IntPtr(-1));
+
+        public ClientProcessHandle()
+        { }
+
+        public ClientProcessHandle(IntPtr value)
+        {
+            handle = value;
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            return CloseHandle(this) == 0;
+        }
+
+        [DllImport("Kernel32")]
+        private static extern int CloseHandle(ClientProcessHandle handle);
+    }
+
     public static class NativeMethods
     {
         [DllImport("User32")]
@@ -19,9 +63,6 @@ namespace Ultima
         [DllImport("Kernel32")]
         public static extern ClientProcessHandle OpenProcess(
             int desiredAccess, int inheritClientHandle, ClientProcessHandle processId);
-
-        [DllImport("Kernel32")]
-        public static extern int CloseHandle(ClientProcessHandle handle);
 
         [DllImport("Kernel32")]
         public static extern unsafe int ReadProcessMemory(
@@ -70,36 +111,6 @@ namespace Ultima
         {
             var y = (ushort)x;
             return (short)((y >> 8) | (y << 8));
-        }
-
-        private static byte[] _stringBuffer;
-
-        public static unsafe string ReadNameString(byte* buffer, int len)
-        {
-            if ((_stringBuffer == null) || (_stringBuffer.Length < len))
-            {
-                _stringBuffer = new byte[20];
-            }
-
-            int count;
-            for (count = 0; count < len && *buffer != 0; ++count)
-            {
-                _stringBuffer[count] = *buffer++;
-            }
-
-            return Encoding.ASCII.GetString(_stringBuffer, 0, count);
-        }
-
-        public static string ReadNameString(byte[] buffer, int len)
-        {
-            int count;
-            for (count = 0; count < 20 && buffer[count] != 0; ++count)
-            {
-                // TODO: this loop is weird
-                //;
-            }
-
-            return Encoding.ASCII.GetString(buffer, 0, count);
         }
     }
 }

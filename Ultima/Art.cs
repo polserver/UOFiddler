@@ -18,16 +18,15 @@ namespace Ultima
         private static byte[] _streamBuffer;
         private static readonly byte[] _validBuffer = new byte[4];
 
-        private struct CheckSums
+        private struct ImageData
         {
-            public byte[] checksum;
-            public int pos;
-            public int length;
-            // public int index;
+            public byte[] Data;
+            public int Position;
+            public int Length;
         }
 
-        private static List<CheckSums> _checksumsLand;
-        private static List<CheckSums> _checksumsStatic;
+        private static List<ImageData> _landImageData;
+        private static List<ImageData> _staticImageData;
 
         static Art()
         {
@@ -35,7 +34,7 @@ namespace Ultima
             _removed = new bool[0x14000];
         }
 
-        public static int GetMaxItemID()
+        public static int GetMaxItemId()
         {
             // High Seas
             if (GetIdxLength() >= 0x13FDC)
@@ -58,7 +57,7 @@ namespace Ultima
             return GetIdxLength() >= 0x13FDC;
         }
 
-        public static ushort GetLegalItemID(int itemId, bool checkMaxId = true)
+        public static ushort GetLegalItemId(int itemId, bool checkMaxId = true)
         {
             if (itemId < 0)
             {
@@ -70,7 +69,7 @@ namespace Ultima
                 return (ushort)itemId;
             }
 
-            int max = GetMaxItemID();
+            int max = GetMaxItemId();
             if (itemId > max)
             {
                 return 0;
@@ -104,7 +103,7 @@ namespace Ultima
         /// <param name="bmp"></param>
         public static void ReplaceStatic(int index, Bitmap bmp)
         {
-            index = GetLegalItemID(index);
+            index = GetLegalItemId(index);
             index += 0x4000;
 
             _cache[index] = bmp;
@@ -143,7 +142,7 @@ namespace Ultima
         /// <param name="index"></param>
         public static void RemoveStatic(int index)
         {
-            index = GetLegalItemID(index);
+            index = GetLegalItemId(index);
             index += 0x4000;
 
             _removed[index] = true;
@@ -168,7 +167,7 @@ namespace Ultima
         /// <returns></returns>
         public static bool IsValidStatic(int index)
         {
-            index = GetLegalItemID(index);
+            index = GetLegalItemId(index);
             index += 0x4000;
 
             if (_removed[index])
@@ -268,6 +267,7 @@ namespace Ultima
             return LoadLand(stream, length);
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static byte[] GetRawLand(int index)
         {
             index &= 0x3FFF;
@@ -304,7 +304,7 @@ namespace Ultima
         /// <returns></returns>
         public static Bitmap GetStatic(int index, out bool patched, bool checkMaxId = true)
         {
-            index = GetLegalItemID(index, checkMaxId);
+            index = GetLegalItemId(index, checkMaxId);
             index += 0x4000;
 
             patched = _patched.ContainsKey(index) && _patched[index];
@@ -338,9 +338,10 @@ namespace Ultima
             return LoadStatic(stream, length);
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static byte[] GetRawStatic(int index)
         {
-            index = GetLegalItemID(index);
+            index = GetLegalItemId(index);
             index += 0x4000;
 
             Stream stream = _fileIndex.Seek(index, out int length, out int _, out bool _);
@@ -558,8 +559,8 @@ namespace Ultima
         /// <param name="path"></param>
         public static unsafe void Save(string path)
         {
-            _checksumsLand = new List<CheckSums>();
-            _checksumsStatic = new List<CheckSums>();
+            _landImageData = new List<ImageData>();
+            _staticImageData = new List<ImageData>();
 
             string idx = Path.Combine(path, "artidx.mul");
             string mul = Path.Combine(path, "art.mul");
@@ -592,16 +593,16 @@ namespace Ultima
                         if (bmp == null || _removed[index])
                         {
                             binidx.Write(-1); // lookup
-                            binidx.Write(0);  // length
+                            binidx.Write(0);  // Length
                             binidx.Write(-1); // extra
                         }
                         else if (index < 0x4000)
                         {
-                            byte[] checksum = bmp.ToArray(PixelFormat.Format16bppArgb1555).ToSha256();
-                            if (CompareSaveImagesLand(checksum, out CheckSums sum))
+                            byte[] imageData = bmp.ToArray(PixelFormat.Format16bppArgb1555).ToSha256();
+                            if (CompareSaveImagesLand(imageData, out ImageData resultImageData))
                             {
-                                binidx.Write(sum.pos); // lookup
-                                binidx.Write(sum.length);
+                                binidx.Write(resultImageData.Position); // lookup
+                                binidx.Write(resultImageData.Length);
                                 binidx.Write(0);
 
                                 continue;
@@ -648,15 +649,20 @@ namespace Ultima
                             binidx.Write(0);
                             bmp.UnlockBits(bd);
 
-                            _checksumsLand.Add(new CheckSums { pos = start, length = length, checksum = checksum });
+                            _landImageData.Add(new ImageData
+                            {
+                                Position = start,
+                                Length = length,
+                                Data = imageData
+                            });
                         }
                         else
                         {
-                            byte[] checksum = bmp.ToArray(PixelFormat.Format16bppArgb1555).ToSha256();
-                            if (CompareSaveImagesStatic(checksum, out CheckSums sum))
+                            byte[] imageData = bmp.ToArray(PixelFormat.Format16bppArgb1555).ToSha256();
+                            if (CompareSaveImagesStatic(imageData, out ImageData resultImageData))
                             {
-                                binidx.Write(sum.pos); // lookup
-                                binidx.Write(sum.length);
+                                binidx.Write(resultImageData.Position); // lookup
+                                binidx.Write(resultImageData.Length);
                                 binidx.Write(0);
 
                                 continue;
@@ -740,7 +746,12 @@ namespace Ultima
                             binidx.Write(0);
                             bmp.UnlockBits(bd);
 
-                            _checksumsStatic.Add(new CheckSums {pos = start, length = length, checksum = checksum});
+                            _staticImageData.Add(new ImageData
+                            {
+                                Position = start,
+                                Length = length,
+                                Data = imageData
+                            });
                         }
                     }
 
@@ -750,12 +761,12 @@ namespace Ultima
             }
         }
 
-        private static bool CompareSaveImagesLand(IReadOnlyList<byte> newChecksum, out CheckSums sum)
+        private static bool CompareSaveImagesLand(IReadOnlyList<byte> newChecksum, out ImageData sum)
         {
-            sum = new CheckSums();
-            for (int i = 0; i < _checksumsLand.Count; ++i)
+            sum = new ImageData();
+            for (int i = 0; i < _landImageData.Count; ++i)
             {
-                byte[] cmp = _checksumsLand[i].checksum;
+                byte[] cmp = _landImageData[i].Data;
                 if (cmp == null || newChecksum == null || cmp.Length != newChecksum.Count)
                 {
                     return false;
@@ -779,7 +790,7 @@ namespace Ultima
                     continue;
                 }
 
-                sum = _checksumsLand[i];
+                sum = _landImageData[i];
 
                 return true;
             }
@@ -787,13 +798,15 @@ namespace Ultima
             return false;
         }
 
-        private static bool CompareSaveImagesStatic(byte[] newChecksum, out CheckSums sum)
+        private static bool CompareSaveImagesStatic(byte[] imageData, out ImageData resultImageData)
         {
-            sum = new CheckSums();
-            for (int i = 0; i < _checksumsStatic.Count; ++i)
+            resultImageData = new ImageData();
+
+            for (int i = 0; i < _staticImageData.Count; ++i)
             {
-                byte[] cmp = _checksumsStatic[i].checksum;
-                if (cmp == null || newChecksum == null || cmp.Length != newChecksum.Length)
+                byte[] cmp = _staticImageData[i].Data;
+
+                if (cmp == null || imageData == null || cmp.Length != imageData.Length)
                 {
                     return false;
                 }
@@ -802,7 +815,7 @@ namespace Ultima
 
                 for (int j = 0; j < cmp.Length; ++j)
                 {
-                    if (cmp[j] == newChecksum[j])
+                    if (cmp[j] == imageData[j])
                     {
                         continue;
                     }
@@ -816,7 +829,7 @@ namespace Ultima
                     continue;
                 }
 
-                sum = _checksumsStatic[i];
+                resultImageData = _staticImageData[i];
 
                 return true;
             }

@@ -21,20 +21,7 @@ namespace Ultima
         private FileStream _statics;
         private Entry3D[] _staticIndex;
 
-        public Entry3D[] StaticIndex
-        {
-            get
-            {
-                if (!StaticIndexInit)
-                {
-                    InitStatics();
-                }
-
-                return _staticIndex;
-            }
-        }
-
-        public bool StaticIndexInit;
+        public bool StaticIndexInit { get; set; }
 
         public TileMatrixPatch Patch { get; }
 
@@ -328,7 +315,7 @@ namespace Ultima
                 {
                     var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + (i * sizeof(StaticTile)));
                     var cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
-                    lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemID(cur.Id), cur.Hue, cur.Z);
+                    lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemId(cur.Id), cur.Hue, cur.Z);
                 }
 
                 var tiles = new HuedTile[8][][];
@@ -642,7 +629,7 @@ namespace Ultima
 
         public MTile(ushort id, sbyte z)
         {
-            Id = Art.GetLegalItemID(id);
+            Id = Art.GetLegalItemId(id);
             Z = z;
             Flag = 1;
             Solver = 0;
@@ -651,7 +638,7 @@ namespace Ultima
 
         public MTile(ushort id, sbyte z, sbyte flag)
         {
-            Id = Art.GetLegalItemID(id);
+            Id = Art.GetLegalItemId(id);
             Z = z;
             Flag = flag;
             Solver = 0;
@@ -660,7 +647,7 @@ namespace Ultima
 
         public MTile(ushort id, sbyte z, sbyte flag, int unk1)
         {
-            Id = Art.GetLegalItemID(id);
+            Id = Art.GetLegalItemId(id);
             Z = z;
             Flag = flag;
             Solver = 0;
@@ -669,20 +656,20 @@ namespace Ultima
 
         public void Set(ushort id, sbyte z)
         {
-            Id = Art.GetLegalItemID(id);
+            Id = Art.GetLegalItemId(id);
             Z = z;
         }
 
         public void Set(ushort id, sbyte z, sbyte flag)
         {
-            Id = Art.GetLegalItemID(id);
+            Id = Art.GetLegalItemId(id);
             Z = z;
             Flag = flag;
         }
 
         public void Set(ushort id, sbyte z, sbyte flag, int unk1)
         {
-            Id = Art.GetLegalItemID(id);
+            Id = Art.GetLegalItemId(id);
             Z = z;
             Flag = flag;
             Unk1 = unk1;

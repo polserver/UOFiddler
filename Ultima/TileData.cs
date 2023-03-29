@@ -1,8 +1,8 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using Ultima.Helpers;
 
 namespace Ultima
 {
@@ -17,16 +17,16 @@ namespace Ultima
     {
         public unsafe LandData(NewLandTileDataMul mulStruct)
         {
-            TextureID = mulStruct.texID;
+            TextureId = mulStruct.texID;
             Flags = (TileFlag)mulStruct.flags;
-            Name = TileData.ReadNameString(mulStruct.name);
+            Name = TileDataHelpers.ReadNameString(mulStruct.name);
         }
 
         public unsafe LandData(OldLandTileDataMul mulStruct)
         {
-            TextureID = mulStruct.texID;
+            TextureId = mulStruct.texID;
             Flags = (TileFlag)mulStruct.flags;
-            Name = TileData.ReadNameString(mulStruct.name);
+            Name = TileDataHelpers.ReadNameString(mulStruct.name);
         }
 
         /// <summary>
@@ -35,9 +35,9 @@ namespace Ultima
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets the Texture ID of this land tile.
+        /// Gets the texture id of this land tile.
         /// </summary>
-        public ushort TextureID { get; set; }
+        public ushort TextureId { get; set; }
 
         /// <summary>
         /// Gets a bitfield representing the 32 individual flags of this land tile.
@@ -48,7 +48,7 @@ namespace Ultima
         {
             int i = 1;
             Name = split[i++];
-            TextureID = (ushort)TileData.ConvertStringToInt(split[i++]);
+            TextureId = (ushort)TileDataHelpers.ConvertStringToInt(split[i++]);
 
             Flags = 0;
             int temp = Convert.ToByte(split[i++]);
@@ -446,7 +446,7 @@ namespace Ultima
     {
         public unsafe ItemData(NewItemTileDataMul mulStruct)
         {
-            Name = TileData.ReadNameString(mulStruct.name);
+            Name = TileDataHelpers.ReadNameString(mulStruct.name);
             Flags = (TileFlag)mulStruct.flags;
             Weight = mulStruct.weight;
             Quality = mulStruct.quality;
@@ -463,7 +463,7 @@ namespace Ultima
 
         public unsafe ItemData(OldItemTileDataMul mulStruct)
         {
-            Name = TileData.ReadNameString(mulStruct.name);
+            Name = TileDataHelpers.ReadNameString(mulStruct.name);
             Flags = (TileFlag)mulStruct.flags;
             Weight = mulStruct.weight;
             Quality = mulStruct.quality;
@@ -612,7 +612,7 @@ namespace Ultima
             Name = split[i++];
             Weight = Convert.ToByte(split[i++]);
             Quality = Convert.ToByte(split[i++]);
-            Animation = (short)TileData.ConvertStringToInt(split[i++]);
+            Animation = (short)TileDataHelpers.ConvertStringToInt(split[i++]);
             Height = Convert.ToByte(split[i++]);
             Hue = Convert.ToByte(split[i++]);
             Quantity = Convert.ToByte(split[i++]);
@@ -1165,7 +1165,7 @@ namespace Ultima
         /// </summary>
         Unused8 = 0x08000000000,
         /// <summary>
-        /// Disallow shadow on this tile, lightsource? lava?
+        /// Disallow shadow on this tile, light source? lava?
         /// </summary>
         NoShadow = 0x1000000000,
         /// <summary>
@@ -1293,19 +1293,6 @@ namespace Ultima
 
         public static int[] HeightTable { get; private set; }
 
-        private static readonly byte[] _stringBuffer = new byte[20];
-
-        public static unsafe string ReadNameString(byte* buffer)
-        {
-            int count;
-            for (count = 0; count < 20 && *buffer != 0; ++count)
-            {
-                _stringBuffer[count] = *buffer++;
-            }
-
-            return Encoding.ASCII.GetString(_stringBuffer, 0, count);
-        }
-
         private static int[] _landHeader;
         private static int[] _itemHeader;
 
@@ -1428,7 +1415,7 @@ namespace Ultima
                         bin.Write((uint)LandTable[i].Flags);
                     }
 
-                    bin.Write(LandTable[i].TextureID);
+                    bin.Write(LandTable[i].TextureId);
                     var b = new byte[20];
                     if (LandTable[i].Name != null)
                     {
@@ -1495,7 +1482,7 @@ namespace Ultima
         /// Exports <see cref="ItemData"/> to csv file
         /// </summary>
         /// <param name="fileName"></param>
-        public static void ExportItemDataToCSV(string fileName)
+        public static void ExportItemDataToCsv(string fileName)
         {
             using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
@@ -1535,24 +1522,29 @@ namespace Ultima
         {
             string[] enumNames = Enum.GetNames(typeof(TileFlag));
             int maxLength = Art.IsUOAHS() ? enumNames.Length : (enumNames.Length / 2) + 1;
-            string columnNames = string.Empty;
+
+            // full column string length for latest client is around ~580 characters
+            const int capacity = 600;
+
+            var stringBuilder = new StringBuilder(capacity);
+
             for (int i = 1; i < maxLength; ++i)
             {
-                columnNames += $";{enumNames[i]}";
+                stringBuilder.Append(';').Append(enumNames[i]);
             }
 
-            return columnNames;
+            return stringBuilder.ToString();
         }
 
         /// <summary>
         /// Exports <see cref="LandData"/> to csv file
         /// </summary>
         /// <param name="fileName"></param>
-        public static void ExportLandDataToCSV(string fileName)
+        public static void ExportLandDataToCsv(string fileName)
         {
             using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)))
             {
-                tex.Write("ID;Name;TextureID");
+                tex.Write("ID;Name;TextureId");
 
                 string columnNames = GetTileFlagColumnNames();
                 tex.Write($"{columnNames}\r\n");
@@ -1562,7 +1554,7 @@ namespace Ultima
                     LandData tile = LandTable[i];
                     tex.Write("0x{0:X4}", i);
                     tex.Write($";{tile.Name}");
-                    tex.Write($";0x{tile.TextureID:X4}");
+                    tex.Write($";0x{tile.TextureId:X4}");
 
                     Array enumValues = Enum.GetValues(typeof(TileFlag));
                     int maxLength = Art.IsUOAHS() ? enumValues.Length : (enumValues.Length / 2) + 1;
@@ -1575,23 +1567,7 @@ namespace Ultima
             }
         }
 
-        public static int ConvertStringToInt(string text)
-        {
-            int result;
-            if (text.Contains("0x"))
-            {
-                string convert = text.Replace("0x", "");
-                int.TryParse(convert, NumberStyles.HexNumber, null, out result);
-            }
-            else
-            {
-                int.TryParse(text, NumberStyles.Integer, null, out result);
-            }
-
-            return result;
-        }
-
-        public static void ImportItemDataFromCSV(string fileName)
+        public static void ImportItemDataFromCsv(string fileName)
         {
             if (!File.Exists(fileName))
             {
@@ -1621,7 +1597,7 @@ namespace Ultima
                             continue;
                         }
 
-                        int id = ConvertStringToInt(split[0]);
+                        int id = TileDataHelpers.ConvertStringToInt(split[0]);
                         ItemTable[id].ReadData(split);
                     }
                     catch
@@ -1633,7 +1609,7 @@ namespace Ultima
             }
         }
 
-        public static void ImportLandDataFromCSV(string fileName)
+        public static void ImportLandDataFromCsv(string fileName)
         {
             if (!File.Exists(fileName))
             {
@@ -1642,10 +1618,11 @@ namespace Ultima
 
             using (var sr = new StreamReader(fileName))
             {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+                while (sr.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#"))
                     {
                         continue;
                     }
@@ -1663,7 +1640,7 @@ namespace Ultima
                             continue;
                         }
 
-                        int id = ConvertStringToInt(split[0]);
+                        int id = TileDataHelpers.ConvertStringToInt(split[0]);
                         LandTable[id].ReadData(split);
                     }
                     catch

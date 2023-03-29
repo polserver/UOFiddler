@@ -12,16 +12,22 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class SoundsSearchForm : Form
     {
-        public SoundsSearchForm()
+        private readonly Func<int, bool> _searchByIdCallback;
+        private readonly Func<string, bool, bool> _searchByNameCallback;
+
+        public SoundsSearchForm(Func<int, bool> searchByIdCallback, Func<string, bool, bool> searchByNameCallback)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _searchByIdCallback = searchByIdCallback;
+            _searchByNameCallback = searchByNameCallback;
         }
 
         private void Search_Id(object sender, EventArgs e)
@@ -31,8 +37,8 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            bool res = SoundsControl.SearchId(graphic);
-            if (res)
+            bool exist = _searchByIdCallback(graphic);
+            if (exist)
             {
                 return;
             }
@@ -48,8 +54,8 @@ namespace UoFiddler.Controls.Forms
         private void Search_SoundName(object sender, EventArgs e)
         {
             _lastSearchedName = textBoxSoundName.Text;
-            bool res = SoundsControl.SearchName(textBoxSoundName.Text, false);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxSoundName.Text, false);
+            if (exist)
             {
                 return;
             }
@@ -64,8 +70,8 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = SoundsControl.SearchName(textBoxSoundName.Text, true);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxSoundName.Text, true);
+            if (exist)
             {
                 return;
             }
@@ -99,11 +105,13 @@ namespace UoFiddler.Controls.Forms
                         SearchNextName(sender, e);
                     }
                 }
+
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
                 Close();
+
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

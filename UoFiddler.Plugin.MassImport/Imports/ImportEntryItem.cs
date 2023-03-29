@@ -17,7 +17,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 {
     public class ImportEntryItem : ImportEntry
     {
-        public override int MaxIndex => Ultima.Art.GetMaxItemID();
+        public override int MaxIndex => Ultima.Art.GetMaxItemId();
 
         public override string Name => "Item";
 

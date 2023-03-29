@@ -53,7 +53,7 @@ namespace UoFiddler.Controls.UserControls
                 _currentColor = value;
                 _updating = true;
                 numericUpDownShortCol.Value = _currentColor;
-                Color color = Hues.HueToColor(_currentColor);
+                Color color = HueHelpers.HueToColor(_currentColor);
                 pictureBoxColor.BackColor = color;
                 numericUpDownR.Value = color.R;
                 numericUpDownG.Value = color.G;
@@ -135,8 +135,8 @@ namespace UoFiddler.Controls.UserControls
                 treeViewItem.Nodes.Clear();
                 if (TileData.ItemTable != null)
                 {
-                    TreeNode[] nodes = new TreeNode[Art.GetMaxItemID()];
-                    for (int i = 0; i < Art.GetMaxItemID(); ++i)
+                    TreeNode[] nodes = new TreeNode[Art.GetMaxItemId()];
+                    for (int i = 0; i < Art.GetMaxItemId(); ++i)
                     {
                         nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
                         {
@@ -243,7 +243,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            CurrentColor = Hues.ColorToHue(AverageColorFrom(image));
+            CurrentColor = HueHelpers.ColorToHue(AverageColorFrom(image));
         }
 
         private void OnClickSaveFile(object sender, EventArgs e)
@@ -283,7 +283,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            CurrentColor = Hues.ColorToHue(col);
+            CurrentColor = HueHelpers.ColorToHue(col);
         }
 
         private void OnChangeG(object sender, EventArgs e)
@@ -294,7 +294,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            CurrentColor = Hues.ColorToHue(col);
+            CurrentColor = HueHelpers.ColorToHue(col);
         }
 
         private void OnChangeB(object sender, EventArgs e)
@@ -305,7 +305,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Color col = Color.FromArgb((int)numericUpDownR.Value, (int)numericUpDownG.Value, (int)numericUpDownB.Value);
-            CurrentColor = Hues.ColorToHue(col);
+            CurrentColor = HueHelpers.ColorToHue(col);
         }
 
         private void OnNumericShortColChanged(object sender, EventArgs e)
@@ -362,9 +362,9 @@ namespace UoFiddler.Controls.UserControls
                         {
                             if (cur[x] != 0)
                             {
-                                meanr += Hues.HueToColorR(cur[x]);
-                                meang += Hues.HueToColorG(cur[x]);
-                                meanb += Hues.HueToColorB(cur[x]);
+                                meanr += HueHelpers.HueToColorR(cur[x]);
+                                meang += HueHelpers.HueToColorG(cur[x]);
+                                meanb += HueHelpers.HueToColorB(cur[x]);
                                 ++count;
                             }
                         }
@@ -386,7 +386,7 @@ namespace UoFiddler.Controls.UserControls
             gmeanb /= to - from;
 
             Color col = Color.FromArgb(gmeanr, gmeang, gmeanb);
-            CurrentColor = Hues.ColorToHue(col);
+            CurrentColor = HueHelpers.ColorToHue(col);
         }
 
         private void OnClickSelectItemsTab(object sender, EventArgs e)
@@ -497,7 +497,7 @@ namespace UoFiddler.Controls.UserControls
 
             if (TileData.ItemTable != null)
             {
-                int itemsLength = Art.GetMaxItemID();
+                int itemsLength = Art.GetMaxItemId();
                 progressBar1.Maximum = itemsLength;
 
                 for (int i = 0; i < itemsLength; ++i)
@@ -519,7 +519,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    var currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                    var currentColor = HueHelpers.ColorToHue(AverageColorFrom(image));
                     RadarCol.SetItemColor(i, currentColor);
                     Options.ChangedUltimaClass["RadarCol"] = true;
                 }
@@ -548,7 +548,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    var currentColor = Hues.ColorToHue(AverageColorFrom(image));
+                    var currentColor = HueHelpers.ColorToHue(AverageColorFrom(image));
                     RadarCol.SetLandColor(i, currentColor);
                     Options.ChangedUltimaClass["RadarCol"] = true;
                 }
@@ -582,9 +582,9 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    meanR += Hues.HueToColorR(cur[x]);
-                    meanG += Hues.HueToColorG(cur[x]);
-                    meanB += Hues.HueToColorB(cur[x]);
+                    meanR += HueHelpers.HueToColorR(cur[x]);
+                    meanG += HueHelpers.HueToColorG(cur[x]);
+                    meanB += HueHelpers.HueToColorB(cur[x]);
                     ++count;
                 }
             }

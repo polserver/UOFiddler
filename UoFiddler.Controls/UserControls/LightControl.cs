@@ -440,7 +440,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemID()))
+            if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()))
             {
                 LightTileText.ForeColor = !Ultima.Art.IsValidStatic(index) ? Color.Red : Color.Black;
             }
@@ -454,7 +454,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemID()))
+                if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()))
                 {
                     if (!Ultima.Art.IsValidStatic(index))
                     {

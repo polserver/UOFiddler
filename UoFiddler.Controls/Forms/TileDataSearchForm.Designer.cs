@@ -11,7 +11,7 @@
 
 namespace UoFiddler.Controls.Forms
 {
-    partial class TileDatasSearchForm
+    partial class TileDataSearchForm
     {
         /// <summary>
         /// Required designer variable.
@@ -105,7 +105,7 @@ namespace UoFiddler.Controls.Forms
             this.textBoxGraphic.TabIndex = 6;
             this.textBoxGraphic.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
             // 
-            // TileDatasSearchForm
+            // TileDataSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -118,7 +118,7 @@ namespace UoFiddler.Controls.Forms
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "TileDatasSearchForm";
+            this.Name = "TileDataSearchForm";
             this.Text = "TileData Search";
             this.ResumeLayout(false);
             this.PerformLayout();

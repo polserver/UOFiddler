@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using Ultima.Helpers;
 
 namespace Ultima
 {
@@ -165,17 +166,6 @@ namespace Ultima
             return (ushort)((newRed << 10) | (newGreen << 5) | newBlue);
         }
 
-        /// <summary>
-        /// Converts Hue color to RGB color
-        /// </summary>
-        /// <param name="hue"></param>
-        /// <returns></returns>
-        public static Color HueToColor(ushort hue)
-        {
-            const int scale = 255 / 31;
-            return Color.FromArgb(((hue & 0x7c00) >> 10) * scale, ((hue & 0x3e0) >> 5) * scale, (hue & 0x1f) * scale);
-        }
-
         public static int HueToColorR(ushort hue)
         {
             return ((hue & 0x7c00) >> 10) * (255 / 31);
@@ -271,7 +261,21 @@ namespace Ultima
 
         public Color GetColor(int index)
         {
-            return Hues.HueToColor(Colors[index]);
+            return HueToColor(Colors[index]);
+        }
+
+        /// <summary>
+        /// Converts Hue color to RGB color
+        /// </summary>
+        /// <param name="hue"></param>
+        private static Color HueToColor(ushort hue)
+        {
+            const int scale = 255 / 31;
+
+            return Color.FromArgb(
+                ((hue & 0x7c00) >> 10) * scale,
+                ((hue & 0x3e0) >> 5) * scale,
+                (hue & 0x1f) * scale);
         }
 
         private static readonly byte[] _stringBuffer = new byte[20];
@@ -320,7 +324,7 @@ namespace Ultima
             TableStart = mulStruct.tableStart;
             TableEnd = mulStruct.tableEnd;
 
-            Name = NativeMethods.ReadNameString(mulStruct.name, 20);
+            Name = TileDataHelpers.ReadNameString(mulStruct.name, 20);
             Name = Name.Replace("\n", " ");
         }
 

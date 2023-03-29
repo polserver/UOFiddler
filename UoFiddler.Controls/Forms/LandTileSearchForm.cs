@@ -12,35 +12,40 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class LandTileSearchForm : Form
     {
-        public LandTileSearchForm()
+        private readonly Func<int, bool> _searchByIdCallback;
+        private readonly Func<string, bool, bool> _searchByNameCallback;
+
+        public LandTileSearchForm(Func<int, bool> searchByIdCallback, Func<string, bool, bool> searchByNameCallback)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _searchByIdCallback = searchByIdCallback;
+            _searchByNameCallback = searchByNameCallback;
         }
 
         private void SearchGraphic(object sender, EventArgs e)
         {
             if (Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, 0x3FFF))
             {
-                bool res = LandTilesControl.SearchGraphic(graphic);
-                if (!res)
+                bool exist = _searchByIdCallback(graphic);
+                if (exist)
                 {
-                    DialogResult result = MessageBox.Show(
-                        "No landtile found",
-                        "Result",
-                        MessageBoxButtons.OKCancel,
-                        MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Cancel)
-                    {
-                        Close();
-                    }
+                    return;
+                }
+
+                DialogResult result = MessageBox.Show("No landtile found", "Result", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+
+                if (result == DialogResult.Cancel)
+                {
+                    Close();
                 }
             }
         }
@@ -49,18 +54,15 @@ namespace UoFiddler.Controls.Forms
         {
             _lastSearchedName = textBoxItemName.Text;
 
-            bool res = LandTilesControl.SearchName(textBoxItemName.Text, false);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxItemName.Text, false);
+            if (exist)
             {
                 return;
             }
 
-            DialogResult result = MessageBox.Show(
-                "No landtile found",
-                "Result",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1);
+            DialogResult result = MessageBox.Show("No landtile found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+
             if (result == DialogResult.Cancel)
             {
                 Close();
@@ -69,18 +71,15 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = LandTilesControl.SearchName(textBoxItemName.Text, true);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxItemName.Text, true);
+            if (exist)
             {
                 return;
             }
 
-            DialogResult result = MessageBox.Show(
-                "No landtile found",
-                "Result",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1);
+            DialogResult result = MessageBox.Show("No landtile found", "Result", MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+
             if (result == DialogResult.Cancel)
             {
                 Close();
@@ -108,11 +107,13 @@ namespace UoFiddler.Controls.Forms
                         SearchNextName(sender, e);
                     }
                 }
+
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
                 Close();
+
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

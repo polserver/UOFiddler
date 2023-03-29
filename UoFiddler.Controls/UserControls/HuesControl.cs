@@ -31,20 +31,20 @@ namespace UoFiddler.Controls.UserControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
             pictureBox.MouseWheel += OnMouseWheel;
-            _refMarker = this;
         }
 
         private const int _itemHeight = 20;
         private int _selected;
         private bool _loaded;
         private int _row;
-        private readonly HuesControl _refMarker;
+
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool HuesEditable { get; set; } = true;
 
         /// <summary>
         /// Sets Selected Hue
         /// </summary>
-        [Browsable(false),
-        DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Selected
         {
             get => _selected;
@@ -90,7 +90,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Options.LoadedUltimaClass["Hues"] = true;
-            if (Parent.GetType() == typeof(HuePopUpItemForm) || Parent.GetType() == typeof(HuePopUpForm) || Parent.GetType() == typeof(HuePopUpDress))
+
+            if (!HuesEditable)
             {
                 pictureBox.MouseDoubleClick -= OnMouseDoubleClick;
                 pictureBox.ContextMenuStrip = new ContextMenuStrip();

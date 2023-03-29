@@ -34,7 +34,6 @@ namespace UoFiddler.Controls.UserControls
         private bool _playing;
 
         private bool _loaded;
-        public static SoundsControl RefMarker { get; private set; }
 
         private int _soundIdOffset;
 
@@ -42,8 +41,6 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-
-            RefMarker = this;
 
             _spTimer = new Timer();
             _spTimer.Tick += OnSpTimerTick;
@@ -185,9 +182,9 @@ namespace UoFiddler.Controls.UserControls
                 }));
         }
 
-        public static bool SearchName(string text, bool v)
+        private bool SearchName(string text, bool v)
         {
-            return RefMarker.DoSearchName(text, v, false);
+            return DoSearchName(text, v, false);
         }
 
         private void OnFilePathChangeEvent()
@@ -360,7 +357,7 @@ namespace UoFiddler.Controls.UserControls
                     index = 0;
                 }
 
-                for (int i = index; i >= 0; --i)
+                for (int i = index - 1; i >= 0; --i)
                 {
                     TreeNode node = treeView.Nodes[i];
                     if (!node.Text.ContainsCaseInsensitive(name))
@@ -502,25 +499,27 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new SoundsSearchForm
+            _showForm = new SoundsSearchForm(SearchId, SearchName)
             {
                 TopMost = true
             };
             _showForm.Show();
         }
 
-        public static bool SearchId(int id)
+        public bool SearchId(int id)
         {
-            for (int i = 0; i < RefMarker.treeView.Nodes.Count; ++i)
+            for (int i = 0; i < treeView.Nodes.Count; ++i)
             {
-                TreeNode node = RefMarker.treeView.Nodes[i];
+                TreeNode node = treeView.Nodes[i];
+
                 if ((int)node.Tag != id)
                 {
                     continue;
                 }
 
-                RefMarker.treeView.SelectedNode = node;
+                treeView.SelectedNode = node;
                 node.EnsureVisible();
+
                 return true;
             }
 
@@ -638,7 +637,7 @@ namespace UoFiddler.Controls.UserControls
         {
             for (int i = treeView.Nodes.IndexOf(treeView.SelectedNode) + 1; i < treeView.Nodes.Count; ++i)
             {
-                TreeNode node = RefMarker.treeView.Nodes[i];
+                TreeNode node = treeView.Nodes[i];
 
                 if (Sounds.IsValidSound((int)node.Tag, out _, out _))
                 {

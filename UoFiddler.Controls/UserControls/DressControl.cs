@@ -1162,12 +1162,17 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            int layer = checkedListBoxWear.SelectedIndex;
-            _showForm = new HuePopUpDress(this, _hues[layer], layer)
+            _showForm = new HuePopUpDress(ChangeHue, _hues[checkedListBoxWear.SelectedIndex])
             {
                 TopMost = true
             };
             _showForm.Show();
+        }
+
+        private void ChangeHue(int hue)
+        {
+            SetHue(checkedListBoxWear.SelectedIndex, hue);
+            RefreshDrawing();
         }
 
         private void OnKeyDownHue(object sender, KeyEventArgs e)

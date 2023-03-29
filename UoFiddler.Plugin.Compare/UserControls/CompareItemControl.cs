@@ -38,7 +38,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             listBoxOrg.Items.Clear();
             listBoxOrg.BeginUpdate();
             List<object> cache = new List<object>();
-            int staticsLength = Art.GetMaxItemID() + 1;
+            int staticsLength = Art.GetMaxItemId() + 1;
             for (int i = 0; i < staticsLength; i++)
             {
                 cache.Add(i);
@@ -111,7 +111,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickLoadSecond(object sender, EventArgs e)
         {
-            if (textBoxSecondDir.Text == null)
+            if (string.IsNullOrWhiteSpace(textBoxSecondDir.Text))
             {
                 return;
             }
@@ -255,7 +255,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             listBoxOrg.Items.Clear();
             listBoxSec.Items.Clear();
             List<object> cache = new List<object>();
-            int staticLength = Math.Max(Art.GetMaxItemID(), SecondArt.GetMaxItemId());
+            int staticLength = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
             if (checkBox1.Checked)
             {
                 for (int i = 0; i < staticLength; i++)
@@ -340,7 +340,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            int staticLength = Art.GetMaxItemID() + 1;
+            int staticLength = Art.GetMaxItemId() + 1;
             if (i >= staticLength)
             {
                 return;

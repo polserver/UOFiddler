@@ -14,23 +14,24 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class MultiImportForm : Form
     {
-        public MultiImportForm(MultisControl parent, int id)
+        private readonly int _id;
+        private readonly Action<int, MultiComponentList> _changeMultiAction;
+
+        public MultiImportForm(int id, Action<int, MultiComponentList> changeMultiAction)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+
             _id = id;
-            _parent = parent;
+            _changeMultiAction = changeMultiAction;
+
             importTypeComboBox.SelectedIndex = 0;
         }
-
-        private readonly int _id;
-        private readonly MultisControl _parent;
 
         private void OnClickBrowse(object sender, EventArgs e)
         {
@@ -78,7 +79,7 @@ namespace UoFiddler.Controls.Forms
             Multis.ImportType type = (Multis.ImportType)importTypeComboBox.SelectedIndex;
             MultiComponentList multi = Multis.ImportFromFile(_id, filenameTextBox.Text, type);
 
-            _parent.ChangeMulti(_id, multi);
+            _changeMultiAction(_id, multi);
 
             Options.ChangedUltimaClass["Multis"] = true;
 

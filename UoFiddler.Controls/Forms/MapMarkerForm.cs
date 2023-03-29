@@ -13,22 +13,27 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class MapMarkerForm : Form
     {
+        private readonly Action<int, int, int, Color, string> _addOverlayAction;
         private static Color _lastColor = Color.FromArgb(180, Color.Yellow);
 
-        public MapMarkerForm(int x, int y, int map)
+        public MapMarkerForm(Action<int, int, int, Color, string> addOverlayAction, int x, int y, int map)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+
+            _addOverlayAction = addOverlayAction;
+
             numericUpDown1.Value = x;
             numericUpDown2.Value = y;
+
             comboBox1.Items.AddRange(Options.MapNames);
             comboBox1.SelectedIndex = map;
+
             pictureBox1.BackColor = _lastColor;
         }
 
@@ -42,12 +47,13 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            MapControl.AddOverlay(
+            _addOverlayAction(
                 (int)numericUpDown1.Value,
                 (int)numericUpDown2.Value,
                 comboBox1.SelectedIndex,
                 pictureBox1.BackColor,
                 textBox1.Text);
+
             Close();
         }
     }

@@ -14,6 +14,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Ultima;
+using Ultima.Helpers;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
@@ -22,11 +24,8 @@ namespace UoFiddler.Forms
 {
     public partial class MainForm : Form
     {
-        private static MainForm _refMarker;
-
         public MainForm()
         {
-            _refMarker = this;
             InitializeComponent();
 
             if (FiddlerOptions.StoreFormState)
@@ -108,90 +107,90 @@ namespace UoFiddler.Forms
         {
             Cursor.Current = Cursors.WaitCursor;
 
-            Ultima.Verdata.Initialize();
+            Verdata.Initialize();
 
             if (Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"])
             {
                 // Looks like we have to reload art first to have proper tiledata loading
                 // and order here is important
-                Ultima.Art.Reload();
-                Ultima.TileData.Initialize();
+                Art.Reload();
+                TileData.Initialize();
             }
 
             if (Options.LoadedUltimaClass["Hues"])
             {
-                Ultima.Hues.Initialize();
+                Hues.Initialize();
             }
 
             if (Options.LoadedUltimaClass["ASCIIFont"])
             {
-                Ultima.ASCIIText.Initialize();
+                ASCIIText.Initialize();
             }
 
             if (Options.LoadedUltimaClass["UnicodeFont"])
             {
-                Ultima.UnicodeFonts.Initialize();
+                UnicodeFonts.Initialize();
             }
 
             if (Options.LoadedUltimaClass["Animdata"])
             {
-                Ultima.Animdata.Initialize();
+                Animdata.Initialize();
             }
 
             if (Options.LoadedUltimaClass["Light"])
             {
-                Ultima.Light.Reload();
+                Light.Reload();
             }
 
             if (Options.LoadedUltimaClass["Skills"])
             {
-                Ultima.Skills.Reload();
+                Skills.Reload();
             }
 
             if (Options.LoadedUltimaClass["Sound"])
             {
-                Ultima.Sounds.Initialize();
+                Sounds.Initialize();
             }
 
             if (Options.LoadedUltimaClass["Texture"])
             {
-                Ultima.Textures.Reload();
+                Textures.Reload();
             }
 
             if (Options.LoadedUltimaClass["Gumps"])
             {
-                Ultima.Gumps.Reload();
+                Gumps.Reload();
             }
 
             if (Options.LoadedUltimaClass["Animations"])
             {
-                Ultima.Animations.Reload();
+                Animations.Reload();
             }
 
             if (Options.LoadedUltimaClass["RadarColor"])
             {
-                Ultima.RadarCol.Initialize();
+                RadarCol.Initialize();
             }
 
             if (Options.LoadedUltimaClass["Map"])
             {
-                Ultima.Files.CheckForNewMapSize();
-                Ultima.Map.Reload();
+                MapHelper.CheckForNewMapSize();
+                Map.Reload();
             }
 
             if (Options.LoadedUltimaClass["Multis"])
             {
-                Ultima.Multis.Reload();
+                Multis.Reload();
             }
 
             if (Options.LoadedUltimaClass["Speech"])
             {
-                Ultima.SpeechList.Initialize();
+                SpeechList.Initialize();
             }
 
             if (Options.LoadedUltimaClass["AnimationEdit"])
             {
-                Ultima.AnimationEdit.Reload();
+                AnimationEdit.Reload();
             }
 
             ControlEvents.FireFilePathChangeEvent();
@@ -202,17 +201,18 @@ namespace UoFiddler.Forms
         /// <summary>
         /// Reloads the Extern Tools DropDown <see cref="FiddlerOptions.ExternTools"/>
         /// </summary>
-        public static void LoadExternToolStripMenu()
+        public void LoadExternToolStripMenu()
         {
-            _refMarker.ExternToolsDropDown.DropDownItems.Clear();
+            ExternToolsDropDown.DropDownItems.Clear();
+
             ToolStripMenuItem item = new ToolStripMenuItem
             {
                 Text = "Manage.."
             };
-            item.Click += _refMarker.OnClickToolManage;
+            item.Click += OnClickToolManage;
 
-            _refMarker.ExternToolsDropDown.DropDownItems.Add(item);
-            _refMarker.ExternToolsDropDown.DropDownItems.Add(new ToolStripSeparator());
+            ExternToolsDropDown.DropDownItems.Add(item);
+            ExternToolsDropDown.DropDownItems.Add(new ToolStripSeparator());
 
             if (FiddlerOptions.ExternTools is null)
             {
@@ -227,6 +227,7 @@ namespace UoFiddler.Forms
                     Text = tool.Name,
                     Tag = i
                 };
+
                 item.DropDownItemClicked += ExternTool_ItemClicked;
 
                 ToolStripMenuItem sub = new ToolStripMenuItem
@@ -234,8 +235,10 @@ namespace UoFiddler.Forms
                     Text = "Start",
                     Tag = -1
                 };
+
                 item.DropDownItems.Add(sub);
                 item.DropDownItems.Add(new ToolStripSeparator());
+
                 for (int j = 0; j < tool.Args.Count; j++)
                 {
                     ToolStripMenuItem arg = new ToolStripMenuItem
@@ -245,7 +248,8 @@ namespace UoFiddler.Forms
                     };
                     item.DropDownItems.Add(arg);
                 }
-                _refMarker.ExternToolsDropDown.DropDownItems.Add(item);
+
+                ExternToolsDropDown.DropDownItems.Add(item);
             }
         }
 
@@ -290,7 +294,7 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            _manageForm = new ManageToolsForm
+            _manageForm = new ManageToolsForm(LoadExternToolStripMenu)
             {
                 TopMost = true
             };
@@ -306,7 +310,11 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            _optionsForm = new OptionsForm
+            _optionsForm = new OptionsForm(
+                UpdateAllTileViews,
+                UpdateItemsTab,
+                UpdateSoundTab,
+                UpdateMapTab)
             {
                 TopMost = true
             };
@@ -314,45 +322,56 @@ namespace UoFiddler.Forms
         }
 
         /// <summary>
+        /// Updates all tile view tabs
+        /// </summary>
+        private void UpdateAllTileViews()
+        {
+            UpdateItemsTab();
+            UpdateLandTilesTab();
+            UpdateTexturesTab();
+            UpdateFontsTab();
+        }
+
+        /// <summary>
         /// Updates Item tab
         /// </summary>
-        public static void UpdateItemsTab()
+        private void UpdateItemsTab()
         {
-            _refMarker.itemShowControl.UpdateTileView();
+            itemShowControl.UpdateTileView();
         }
 
         /// <summary>
         /// Updates Land tiles tab
         /// </summary>
-        public static void UpdateLandTilesTab()
+        private void UpdateLandTilesTab()
         {
-            _refMarker.landTilesControl.UpdateTileView();
+            landTilesControl.UpdateTileView();
         }
 
         /// <summary>
         /// Updates Textures tab
         /// </summary>
-        public static void UpdateTexturesTab()
+        private void UpdateTexturesTab()
         {
-            _refMarker.textureControl.UpdateTileView();
+            textureControl.UpdateTileView();
         }
 
         /// <summary>
         /// Updates Fonts tab
         /// </summary>
-        public static void UpdateFontsTab()
+        private void UpdateFontsTab()
         {
-            _refMarker.fontsControl.UpdateTileView();
+            fontsControl.UpdateTileView();
         }
 
         /// <summary>
         /// Updates Map tab
         /// </summary>
-        public static void UpdateMapTab()
+        private void UpdateMapTab()
         {
             if (Options.LoadedUltimaClass["Map"])
             {
-                Ultima.Map.Reload();
+                Map.Reload();
             }
 
             ControlEvents.FireMapSizeChangeEvent();
@@ -361,9 +380,9 @@ namespace UoFiddler.Forms
         /// <summary>
         /// Updates Sounds tab
         /// </summary>
-        public static void UpdateSoundTab()
+        private void UpdateSoundTab()
         {
-            _refMarker.soundControl.Reload();
+            soundControl.Reload();
         }
 
         private void OnClickUnDock(object sender, EventArgs e)
@@ -374,7 +393,7 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            new UnDockedForm(TabPanel.SelectedTab).Show();
+            new UnDockedForm(TabPanel.SelectedTab, ReDock).Show();
             TabPanel.TabPages.Remove(TabPanel.SelectedTab);
         }
 
@@ -382,27 +401,27 @@ namespace UoFiddler.Forms
         /// ReDocks closed Form
         /// </summary>
         /// <param name="oldTab"></param>
-        public static void ReDock(TabPage oldTab)
+        public void ReDock(TabPage oldTab)
         {
             bool done = false;
-            foreach (TabPage page in _refMarker.TabPanel.TabPages)
+            foreach (TabPage page in TabPanel.TabPages)
             {
                 if ((int)page.Tag <= (int)oldTab.Tag)
                 {
                     continue;
                 }
 
-                _refMarker.TabPanel.TabPages.Insert(_refMarker.TabPanel.TabPages.IndexOf(page), oldTab);
+                TabPanel.TabPages.Insert(TabPanel.TabPages.IndexOf(page), oldTab);
                 done = true;
                 break;
             }
 
             if (!done)
             {
-                _refMarker.TabPanel.TabPages.Add(oldTab);
+                TabPanel.TabPages.Add(oldTab);
             }
 
-            _refMarker.TabPanel.SelectedTab = oldTab;
+            TabPanel.SelectedTab = oldTab;
         }
 
         private ManagePluginsForm _pluginsFormForm;
@@ -488,20 +507,21 @@ namespace UoFiddler.Forms
             {
                 theMenuItem.Checked = true;
                 bool done = false;
-                foreach (TabPage page in _refMarker.TabPanel.TabPages)
+                foreach (TabPage page in TabPanel.TabPages)
                 {
                     if ((int)page.Tag <= tag)
                     {
                         continue;
                     }
 
-                    _refMarker.TabPanel.TabPages.Insert(_refMarker.TabPanel.TabPages.IndexOf(page), thePage);
+                    TabPanel.TabPages.Insert(TabPanel.TabPages.IndexOf(page), thePage);
                     done = true;
                     break;
                 }
+
                 if (!done)
                 {
-                    _refMarker.TabPanel.TabPages.Add(thePage);
+                    TabPanel.TabPages.Add(thePage);
                 }
 
                 Options.ChangedViewState[tag] = true;
@@ -528,21 +548,21 @@ namespace UoFiddler.Forms
             {
                 theMenuItem.Checked = true;
                 bool done = false;
-                foreach (TabPage page in _refMarker.TabPanel.TabPages)
+                foreach (TabPage page in TabPanel.TabPages)
                 {
                     if ((int)page.Tag <= tag)
                     {
                         continue;
                     }
 
-                    _refMarker.TabPanel.TabPages.Insert(_refMarker.TabPanel.TabPages.IndexOf(page), thePage);
+                    TabPanel.TabPages.Insert(TabPanel.TabPages.IndexOf(page), thePage);
                     done = true;
                     break;
                 }
 
                 if (!done)
                 {
-                    _refMarker.TabPanel.TabPages.Add(thePage);
+                    TabPanel.TabPages.Add(thePage);
                 }
 
                 Options.ChangedViewState[tag] = true;

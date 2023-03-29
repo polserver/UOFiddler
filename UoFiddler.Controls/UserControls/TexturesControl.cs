@@ -28,12 +28,10 @@ namespace UoFiddler.Controls.UserControls
         public TexturesControl()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
 
-            _refMarker = this;
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
-        private static TexturesControl _refMarker;
         private List<int> _textureList = new List<int>();
         private bool _showFreeSlots;
         private bool _loaded;
@@ -67,16 +65,16 @@ namespace UoFiddler.Controls.UserControls
             OnLoad(this, EventArgs.Empty);
         }
 
-        public static bool SearchGraphic(int graphic)
+        private bool SearchGraphic(int graphic)
         {
-            if (_refMarker._textureList.All(id => id != graphic))
+            if (_textureList.All(id => id != graphic))
             {
                 return false;
             }
 
             // we have to invalidate focus so it will scroll to item
-            _refMarker.TextureTileView.FocusIndex = -1;
-            _refMarker.SelectedTextureId = graphic;
+            TextureTileView.FocusIndex = -1;
+            SelectedTextureId = graphic;
 
             return true;
         }
@@ -182,7 +180,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new TextureSearchForm
+            _showForm = new TextureSearchForm(SearchGraphic)
             {
                 TopMost = true
             };

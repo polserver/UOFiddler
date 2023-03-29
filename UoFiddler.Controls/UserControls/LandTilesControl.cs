@@ -280,7 +280,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new LandTileSearchForm
+            _showForm = new LandTileSearchForm(SearchGraphic, SearchName)
             {
                 TopMost = true
             };

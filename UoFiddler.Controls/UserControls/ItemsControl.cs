@@ -198,7 +198,7 @@ namespace UoFiddler.Controls.UserControls
 
             var prevSelected = SelectedGraphicId;
 
-            int staticLength = Art.GetMaxItemID();
+            int staticLength = Art.GetMaxItemId();
             _itemList = new List<int>(staticLength);
             for (int i = 0; i <= staticLength; ++i)
             {
@@ -450,7 +450,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new ItemSearchForm
+            _showForm = new ItemSearchForm(SearchGraphic, SearchName)
             {
                 TopMost = true
             };
@@ -574,7 +574,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedInsert(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemID()))
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemId()))
             {
                 InsertText.ForeColor = Art.IsValidStatic(index) ? Color.Red : Color.Black;
             }
@@ -591,7 +591,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Art.GetMaxItemId()))
             {
                 return;
             }
@@ -665,7 +665,7 @@ namespace UoFiddler.Controls.UserControls
             _showFreeSlots = !_showFreeSlots;
             if (_showFreeSlots)
             {
-                for (int j = 0; j <= Art.GetMaxItemID(); ++j)
+                for (int j = 0; j <= Art.GetMaxItemId(); ++j)
                 {
                     if (_itemList.Count > j)
                     {
@@ -1073,7 +1073,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(ReplaceStartingFromText.Text, out int index, 0, Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(ReplaceStartingFromText.Text, out int index, 0, Art.GetMaxItemId()))
             {
                 return;
             }
@@ -1181,7 +1181,7 @@ namespace UoFiddler.Controls.UserControls
         /// <param name="index">Starting Index</param>
         private static bool IsIndexValid(int index)
         {
-            return index >= 0 && index <= Art.GetMaxItemID();
+            return index >= 0 && index <= Art.GetMaxItemId();
         }
     }
 }

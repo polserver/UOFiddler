@@ -34,7 +34,7 @@ namespace UoFiddler.Controls.UserControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
-        public string[][] GetAnimNames { get; } = {
+        public string[][] GetActionNames { get; } = {
             // Monster
             new[]
             {
@@ -262,14 +262,14 @@ namespace UoFiddler.Controls.UserControls
                 TreeViewMobs.Nodes[0].Nodes.Add(nodeParent);
             }
 
-            for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+            for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
             {
                 if (!Animations.IsActionDefined(graphic, i, 0))
                 {
                     continue;
                 }
 
-                TreeNode node = new TreeNode($"{i} {GetAnimNames[type][i]}")
+                TreeNode node = new TreeNode($"{i} {GetActionNames[type][i]}")
                 {
                     Tag = i
                 };
@@ -593,14 +593,14 @@ namespace UoFiddler.Controls.UserControls
                     };
                     rootNode.Nodes.Add(node);
 
-                    for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+                    for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
                     {
                         if (!Animations.IsActionDefined(value, i, 0))
                         {
                             continue;
                         }
 
-                        typeNode = new TreeNode($"{i} {GetAnimNames[type][i]}")
+                        typeNode = new TreeNode($"{i} {GetActionNames[type][i]}")
                         {
                             Tag = i
                         };
@@ -627,14 +627,14 @@ namespace UoFiddler.Controls.UserControls
                     };
                     rootNode.Nodes.Add(node);
 
-                    for (int i = 0; i < GetAnimNames[type].GetLength(0); ++i)
+                    for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
                     {
                         if (!Animations.IsActionDefined(value, i, 0))
                         {
                             continue;
                         }
 
-                        typeNode = new TreeNode($"{i} {GetAnimNames[type][i]}")
+                        typeNode = new TreeNode($"{i} {GetActionNames[type][i]}")
                         {
                             Tag = i
                         };
@@ -736,8 +736,8 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _showForm = _customHue == 0
-                ? new HuePopUpForm(this, _defHue + 1)
-                : new HuePopUpForm(this, _customHue - 1);
+                ? new HuePopUpForm(ChangeHue, _defHue + 1)
+                : new HuePopUpForm(ChangeHue, _customHue - 1);
 
             _showForm.TopMost = true;
             _showForm.Show();
@@ -857,7 +857,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _animNewEntryForm = new AnimationListNewEntriesForm(this)
+            _animNewEntryForm = new AnimationListNewEntriesForm(IsAlreadyDefined, AddGraphic, GetActionNames)
             {
                 TopMost = true
             };
