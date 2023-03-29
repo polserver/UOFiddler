@@ -348,7 +348,7 @@ namespace UoFiddler.Controls.UserControls
                 index += CurrAnim;
             }
 
-            if (index > Art.GetMaxItemID() || index < 0)
+            if (index > Art.GetMaxItemId() || index < 0)
             {
                 canDone = false;
             }
@@ -381,7 +381,7 @@ namespace UoFiddler.Controls.UserControls
                 index += CurrAnim;
             }
 
-            if (index > Art.GetMaxItemID() || index < 0)
+            if (index > Art.GetMaxItemId() || index < 0)
             {
                 canDone = false;
             }
@@ -500,7 +500,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangeAdd(object sender, EventArgs e)
         {
-            if (Utils.ConvertStringToInt(AddTextBox.Text, out int index, 0, Art.GetMaxItemID()))
+            if (Utils.ConvertStringToInt(AddTextBox.Text, out int index, 0, Art.GetMaxItemId()))
             {
                 AddTextBox.ForeColor = Animdata.GetAnimData(index) != null ? Color.Red : Color.Black;
             }
@@ -517,7 +517,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(AddTextBox.Text, out int index, 0, Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(AddTextBox.Text, out int index, 0, Art.GetMaxItemId()))
             {
                 return;
             }

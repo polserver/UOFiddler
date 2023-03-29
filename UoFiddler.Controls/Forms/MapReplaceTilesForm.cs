@@ -334,7 +334,7 @@ namespace UoFiddler.Controls.Forms
                                         short sHue = staticsReader.ReadInt16();
                                         int temp = ModArea.IsStaticReplace(_toReplace, graphic, x, y, i);
 
-                                        if (graphic > Art.GetMaxItemID())
+                                        if (graphic > Art.GetMaxItemId())
                                         {
                                             continue;
                                         }

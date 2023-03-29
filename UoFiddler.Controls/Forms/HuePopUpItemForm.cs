@@ -17,32 +17,34 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class HuePopUpItemForm : Form
     {
-        private readonly ItemDetailForm _refItemDetailFormItem;
+        private readonly Action<int> _updateSelectedHueAction;
 
-        public HuePopUpItemForm(ItemDetailForm refItemDetailForm, int hue)
+        public HuePopUpItemForm(Action<int> updateSelectedHueAction, int hue)
         {
             InitializeComponent();
 
             Icon = Options.GetFiddlerIcon();
+
+            control.HuesEditable = false;
 
             if (hue >= 0)
             {
                 control.Selected = hue;
             }
 
-            _refItemDetailFormItem = refItemDetailForm;
+            _updateSelectedHueAction = updateSelectedHueAction;
         }
 
         private void Click_OK(object sender, EventArgs e)
         {
-            _refItemDetailFormItem.Hue = control.Selected;
+            _updateSelectedHueAction(control.Selected);
 
             Hide();
         }
 
         private void OnClick_Clear(object sender, EventArgs e)
         {
-            _refItemDetailFormItem.Hue = -1;
+            _updateSelectedHueAction(-1);
 
             Hide();
         }

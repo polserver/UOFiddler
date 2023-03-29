@@ -47,21 +47,20 @@ namespace UoFiddler.Controls.UserControls
         public static double Zoom = 1;
 
         private Bitmap _map;
-        private Map _currMap;
-        private int _currMapId;
+        private int _currentMapId;
         private bool _syncWithClient;
         private int _clientX;
         private int _clientY;
         private int _clientZ;
         private int _clientMap;
-        private Point _currPoint;
+        private Point _currentPoint;
         private bool _moving;
         private Point _movingPoint;
         private bool _renderingZoom;
 
-        public static int HScrollBar => _refMarker.hScrollBar.Value;
-        public static int VScrollBar => _refMarker.vScrollBar.Value;
-        public static Map CurrMap => _refMarker._currMap;
+        private int HScrollBar => hScrollBar.Value;
+        private int VScrollBar => vScrollBar.Value;
+        public Map CurrentMap { get; private set; }
 
         private static bool _loaded;
 
@@ -97,7 +96,7 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Map"] = true;
             Options.LoadedUltimaClass["RadarColor"] = true;
 
-            _currMap = Map.Felucca;
+            CurrentMap = Map.Felucca;
             feluccaToolStripMenuItem.Checked = true;
             trammelToolStripMenuItem.Checked = false;
             ilshenarToolStripMenuItem.Checked = false;
@@ -218,7 +217,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            hScrollBar.Maximum = _currMap.Width;
+            hScrollBar.Maximum = CurrentMap.Width;
             hScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Width / Zoom) - 8);
             if (Zoom >= 1)
             {
@@ -230,7 +229,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             hScrollBar.Maximum = Math.Max(0, Round(hScrollBar.Maximum));
-            vScrollBar.Maximum = _currMap.Height;
+            vScrollBar.Maximum = CurrentMap.Height;
             vScrollBar.Maximum -= Round((int)(pictureBox.ClientSize.Height / Zoom) - 8);
             if (Zoom >= 1)
             {
@@ -267,7 +266,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void ChangeMap()
         {
-            PreloadMap.Visible = !_currMap.IsCached(showStaticsToolStripMenuItem1.Checked);
+            PreloadMap.Visible = !CurrentMap.IsCached(showStaticsToolStripMenuItem1.Checked);
             SetScrollBarValues();
             pictureBox.Invalidate();
         }
@@ -291,8 +290,8 @@ namespace UoFiddler.Controls.UserControls
 
             ResetCheckedMap();
             feluccaToolStripMenuItem.Checked = true;
-            _currMap = Map.Felucca;
-            _currMapId = 0;
+            CurrentMap = Map.Felucca;
+            _currentMapId = 0;
             ChangeMap();
         }
 
@@ -305,8 +304,8 @@ namespace UoFiddler.Controls.UserControls
 
             ResetCheckedMap();
             trammelToolStripMenuItem.Checked = true;
-            _currMap = Map.Trammel;
-            _currMapId = 1;
+            CurrentMap = Map.Trammel;
+            _currentMapId = 1;
             ChangeMap();
         }
 
@@ -319,8 +318,8 @@ namespace UoFiddler.Controls.UserControls
 
             ResetCheckedMap();
             ilshenarToolStripMenuItem.Checked = true;
-            _currMap = Map.Ilshenar;
-            _currMapId = 2;
+            CurrentMap = Map.Ilshenar;
+            _currentMapId = 2;
             ChangeMap();
         }
 
@@ -333,8 +332,8 @@ namespace UoFiddler.Controls.UserControls
 
             ResetCheckedMap();
             malasToolStripMenuItem.Checked = true;
-            _currMap = Map.Malas;
-            _currMapId = 3;
+            CurrentMap = Map.Malas;
+            _currentMapId = 3;
             ChangeMap();
         }
 
@@ -347,8 +346,8 @@ namespace UoFiddler.Controls.UserControls
 
             ResetCheckedMap();
             tokunoToolStripMenuItem.Checked = true;
-            _currMap = Map.Tokuno;
-            _currMapId = 4;
+            CurrentMap = Map.Tokuno;
+            _currentMapId = 4;
             ChangeMap();
         }
 
@@ -361,8 +360,8 @@ namespace UoFiddler.Controls.UserControls
 
             ResetCheckedMap();
             terMurToolStripMenuItem.Checked = true;
-            _currMap = Map.TerMur;
-            _currMapId = 5;
+            CurrentMap = Map.TerMur;
+            _currentMapId = 5;
             ChangeMap();
         }
 
@@ -400,8 +399,8 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            int xDelta = Math.Min(_currMap.Width, (int)(e.X / Zoom) + Round(hScrollBar.Value));
-            int yDelta = Math.Min(_currMap.Height, (int)(e.Y / Zoom) + Round(vScrollBar.Value));
+            int xDelta = Math.Min(CurrentMap.Width, (int)(e.X / Zoom) + Round(hScrollBar.Value));
+            int yDelta = Math.Min(CurrentMap.Height, (int)(e.Y / Zoom) + Round(vScrollBar.Value));
 
             CoordsLabel.Text = $"Coords: {xDelta},{yDelta}";
 
@@ -444,11 +443,11 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (_currMapId != mapClient)
+            if (_currentMapId != mapClient)
             {
                 ResetCheckedMap();
                 SwitchMap(mapClient);
-                _currMapId = mapClient;
+                _currentMapId = mapClient;
             }
             _clientX = x;
             _clientY = y;
@@ -467,27 +466,27 @@ namespace UoFiddler.Controls.UserControls
             {
                 case 0:
                     feluccaToolStripMenuItem.Checked = true;
-                    _currMap = Map.Felucca;
+                    CurrentMap = Map.Felucca;
                     break;
                 case 1:
                     trammelToolStripMenuItem.Checked = true;
-                    _currMap = Map.Trammel;
+                    CurrentMap = Map.Trammel;
                     break;
                 case 2:
                     ilshenarToolStripMenuItem.Checked = true;
-                    _currMap = Map.Ilshenar;
+                    CurrentMap = Map.Ilshenar;
                     break;
                 case 3:
                     malasToolStripMenuItem.Checked = true;
-                    _currMap = Map.Malas;
+                    CurrentMap = Map.Malas;
                     break;
                 case 4:
                     tokunoToolStripMenuItem.Checked = true;
-                    _currMap = Map.Tokuno;
+                    CurrentMap = Map.Tokuno;
                     break;
                 case 5:
                     terMurToolStripMenuItem.Checked = true;
-                    _currMap = Map.TerMur;
+                    CurrentMap = Map.TerMur;
                     break;
             }
         }
@@ -528,16 +527,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void GetMapInfo(object sender, EventArgs e)
         {
-            new MapDetailsForm(_currMap, _currPoint).Show();
+            new MapDetailsForm(CurrentMap, _currentPoint).Show();
         }
 
         private void OnOpenContext(object sender, CancelEventArgs e)  // Save for GetMapInfo
         {
-            _currPoint = pictureBox.PointToClient(MousePosition);
-            _currPoint.X = (int)(_currPoint.X / Zoom);
-            _currPoint.Y = (int)(_currPoint.Y / Zoom);
-            _currPoint.X += Round(hScrollBar.Value);
-            _currPoint.Y += Round(vScrollBar.Value);
+            _currentPoint = pictureBox.PointToClient(MousePosition);
+            _currentPoint.X = (int)(_currentPoint.X / Zoom);
+            _currentPoint.Y = (int)(_currentPoint.Y / Zoom);
+            _currentPoint.X += Round(hScrollBar.Value);
+            _currentPoint.Y += Round(vScrollBar.Value);
         }
 
         private void OnContextClosed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -604,8 +603,8 @@ namespace UoFiddler.Controls.UserControls
             _renderingZoom = true;
             ChangeScrollBar();
             ZoomLabel.Text = $"Zoom: {Zoom}";
-            int x = Math.Max(0, _currPoint.X - ((int)(pictureBox.ClientSize.Width / Zoom) / 2));
-            int y = Math.Max(0, _currPoint.Y - ((int)(pictureBox.ClientSize.Height / Zoom) / 2));
+            int x = Math.Max(0, _currentPoint.X - ((int)(pictureBox.ClientSize.Width / Zoom) / 2));
+            int y = Math.Max(0, _currentPoint.Y - ((int)(pictureBox.ClientSize.Height / Zoom) / 2));
             x = Math.Min(x, hScrollBar.Maximum);
             y = Math.Min(y, vScrollBar.Maximum);
             hScrollBar.Value = Round(x);
@@ -627,7 +626,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _map = _currMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
+            _map = CurrentMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
                 (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
                 showStaticsToolStripMenuItem1.Checked);
             ZoomMap(ref _map);
@@ -652,7 +651,7 @@ namespace UoFiddler.Controls.UserControls
                     _clientX < hScrollBar.Value + (e.ClipRectangle.Width / Zoom) &&
                     _clientY > vScrollBar.Value &&
                     _clientY < vScrollBar.Value + (e.ClipRectangle.Height / Zoom) &&
-                    _clientMap == _currMapId)
+                    _clientMap == _currentMapId)
                 {
                     using (Brush brush = new SolidBrush(Color.FromArgb(180, Color.Yellow)))
                     using (Pen pen = new Pen(brush))
@@ -673,12 +672,12 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapId].Nodes)
+            foreach (TreeNode obj in OverlayObjectTree.Nodes[_currentMapId].Nodes)
             {
                 OverlayObject o = (OverlayObject)obj.Tag;
-                if (o.IsVisible(e.ClipRectangle, _currMapId))
+                if (o.IsVisible(e.ClipRectangle, _currentMapId, HScrollBar, VScrollBar, Zoom))
                 {
-                    o.Draw(e.Graphics);
+                    o.Draw(e.Graphics, Round(HScrollBar), Round(VScrollBar), Zoom, CurrentMap.Width);
                 }
             }
         }
@@ -701,7 +700,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if (args.Length == 2 && int.TryParse(args[0], out int x) && int.TryParse(args[1], out int y))
                 {
-                    if (x >= 0 && y >= 0 && x <= _currMap.Width && x <= _currMap.Height)
+                    if (x >= 0 && y >= 0 && x <= CurrentMap.Width && x <= CurrentMap.Height)
                     {
                         contextMenuStrip1.Close();
                         hScrollBar.Value = (int)Math.Max(0, x - (pictureBox.Right / Zoom / 2));
@@ -730,15 +729,15 @@ namespace UoFiddler.Controls.UserControls
         {
             if (Client.Running)
             {
-                SendCharTo(_currPoint.X, _currPoint.Y);
+                SendCharTo(_currentPoint.X, _currentPoint.Y);
             }
         }
 
         private void SendCharTo(int x, int y)
         {
             string format = "{0} " + Options.MapArgs;
-            int z = _currMap.Tiles.GetLandTile(x, y).Z;
-            Client.SendText(string.Format(format, Options.MapCmd, x, y, z, _currMapId, Options.MapNames[_currMapId]));
+            int z = CurrentMap.Tiles.GetLandTile(x, y).Z;
+            Client.SendText(string.Format(format, Options.MapCmd, x, y, z, _currentMapId, Options.MapNames[_currentMapId]));
         }
 
         private void ExtractMapBmp(object sender, EventArgs e)
@@ -766,21 +765,21 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
 
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"{Options.MapNames[_currMapId]}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"{Options.MapNames[_currentMapId]}.{fileExtension}");
 
             try
             {
-                Bitmap extract = _currMap.GetImage(0, 0, _currMap.Width >> 3, _currMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
+                Bitmap extract = CurrentMap.GetImage(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
 
                 if (showMarkersToolStripMenuItem.Checked)
                 {
                     Graphics g = Graphics.FromImage(extract);
-                    foreach (TreeNode obj in OverlayObjectTree.Nodes[_currMapId].Nodes)
+                    foreach (TreeNode obj in OverlayObjectTree.Nodes[_currentMapId].Nodes)
                     {
                         OverlayObject o = (OverlayObject)obj.Tag;
                         if (o.Visible)
                         {
-                            o.Draw(g);
+                            o.Draw(g, Round(HScrollBar), Round(VScrollBar), Zoom, CurrentMap.Width);
                         }
                     }
                     g.Save();
@@ -805,7 +804,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _mapMarkerForm = new MapMarkerForm(_currPoint.X, _currPoint.Y, _currMapId)
+            _mapMarkerForm = new MapMarkerForm(AddOverlay, _currentPoint.X, _currentPoint.Y, _currentMapId)
             {
                 TopMost = true
             };
@@ -948,24 +947,24 @@ namespace UoFiddler.Controls.UserControls
             }
 
             ProgressBar.Minimum = 0;
-            ProgressBar.Maximum = (_currMap.Width >> 3) * (_currMap.Height >> 3);
+            ProgressBar.Maximum = (CurrentMap.Width >> 3) * (CurrentMap.Height >> 3);
             ProgressBar.Step = 1;
             ProgressBar.Value = 0;
             ProgressBar.Visible = true;
-            PreloadWorker.RunWorkerAsync(new object[] { _currMap, showStaticsToolStripMenuItem1.Checked });
+            PreloadWorker.RunWorkerAsync(new object[] { CurrentMap, showStaticsToolStripMenuItem1.Checked });
         }
 
         private void PreLoadDoWork(object sender, DoWorkEventArgs e)
         {
             //Ultima.Map workmap = (Ultima.Map)((object[])e.Argument)[0]; // TODO: unused variable?
             bool statics = (bool)((object[])e.Argument)[1];
-            int width = _currMap.Width >> 3;
-            int height = _currMap.Height >> 3;
+            int width = CurrentMap.Width >> 3;
+            int height = CurrentMap.Height >> 3;
             for (int x = 0; x < width; ++x)
             {
                 for (int y = 0; y < height; ++y)
                 {
-                    _currMap.PreloadRenderedBlock(x, y, statics);
+                    CurrentMap.PreloadRenderedBlock(x, y, statics);
                     PreloadWorker.ReportProgress(1);
                 }
             }
@@ -996,11 +995,11 @@ namespace UoFiddler.Controls.UserControls
             }
 
             OverlayObject o = (OverlayObject)OverlayObjectTree.SelectedNode.Tag;
-            if (_currMapId != o.DefMap)
+            if (_currentMapId != o.DefMap)
             {
                 ResetCheckedMap();
                 SwitchMap(o.DefMap);
-                _currMapId = o.DefMap;
+                _currentMapId = o.DefMap;
             }
             SetScrollBarValues();
             hScrollBar.Value = (int)Math.Max(0, o.Loc.X - (pictureBox.Right / Zoom / 2));
@@ -1036,7 +1035,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnChangeView(object sender, EventArgs e)
         {
-            PreloadMap.Visible = !_currMap.IsCached(showStaticsToolStripMenuItem1.Checked);
+            PreloadMap.Visible = !CurrentMap.IsCached(showStaticsToolStripMenuItem1.Checked);
             pictureBox.Invalidate();
         }
 
@@ -1044,7 +1043,7 @@ namespace UoFiddler.Controls.UserControls
         {
             Cursor.Current = Cursors.WaitCursor;
             Map.DefragStatics(Options.OutputPath,
-                _currMap, _currMap.Width, _currMap.Height, false);
+                CurrentMap, CurrentMap.Width, CurrentMap.Height, false);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Statics saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
@@ -1053,7 +1052,7 @@ namespace UoFiddler.Controls.UserControls
         {
             Cursor.Current = Cursors.WaitCursor;
             Map.DefragStatics(Options.OutputPath,
-                _currMap, _currMap.Width, _currMap.Height, true);
+                CurrentMap, CurrentMap.Width, CurrentMap.Height, true);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Statics saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
@@ -1078,7 +1077,7 @@ namespace UoFiddler.Controls.UserControls
         {
             Cursor.Current = Cursors.WaitCursor;
             Map.RewriteMap(Options.OutputPath,
-                _currMapId, _currMap.Width, _currMap.Height);
+                _currentMapId, CurrentMap.Width, CurrentMap.Height);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Map saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
@@ -1087,7 +1086,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickReportInvisStatics(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            _currMap.ReportInvisStatics(Options.OutputPath);
+            CurrentMap.ReportInvisStatics(Options.OutputPath);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
@@ -1096,7 +1095,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickReportInvalidMapIDs(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            _currMap.ReportInvalidMapIDs(Options.OutputPath);
+            CurrentMap.ReportInvalidMapIDs(Options.OutputPath);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
@@ -1111,7 +1110,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new MapReplaceForm(_currMap)
+            _showForm = new MapReplaceForm(CurrentMap)
             {
                 TopMost = true
             };
@@ -1127,7 +1126,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showFormMapDiff = new MapDiffInsertForm(_currMap)
+            _showFormMapDiff = new MapDiffInsertForm(CurrentMap)
             {
                 TopMost = true
             };
@@ -1180,7 +1179,7 @@ namespace UoFiddler.Controls.UserControls
                     {
                         if (newTile.Id != 0xFFFF)
                         {
-                            _currMap.Tiles.AddPendingStatic(blockX, blockY, newTile);
+                            CurrentMap.Tiles.AddPendingStatic(blockX, blockY, newTile);
                             blockX = blockY = 0;
                         }
                         newTile = new StaticTile
@@ -1194,7 +1193,7 @@ namespace UoFiddler.Controls.UserControls
                         line = line.Remove(0, 2);
                         line = line.TrimStart(' ');
                         line = line.TrimEnd(' ');
-                        newTile.Id = Art.GetLegalItemID(Convert.ToUInt16(line));
+                        newTile.Id = Art.GetLegalItemId(Convert.ToUInt16(line));
                     }
                     else if (line.StartsWith("X"))
                     {
@@ -1239,14 +1238,14 @@ namespace UoFiddler.Controls.UserControls
             }
             if (newTile.Id != 0xFFFF)
             {
-                _currMap.Tiles.AddPendingStatic(blockX, blockY, newTile);
+                CurrentMap.Tiles.AddPendingStatic(blockX, blockY, newTile);
             }
 
             ip.Close();
 
             MessageBox.Show("Done", "Freeze Static", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
-            _currMap.ResetCache();
+            CurrentMap.ResetCache();
             pictureBox.Invalidate();
         }
 
@@ -1259,7 +1258,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showMeltStaticsForm = new MapMeltStaticsForm(this, _currMap)
+            _showMeltStaticsForm = new MapMeltStaticsForm(RefreshMap, CurrentMap)
             {
                 TopMost = true
             };
@@ -1275,7 +1274,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showClearStaticsForm = new MapClearStaticsForm(this, _currMap)
+            _showClearStaticsForm = new MapClearStaticsForm(RefreshMap, CurrentMap)
             {
                 TopMost = true
             };
@@ -1291,7 +1290,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showMapReplaceTilesForm = new MapReplaceTilesForm(_currMap)
+            _showMapReplaceTilesForm = new MapReplaceTilesForm(CurrentMap)
             {
                 TopMost = true
             };
@@ -1301,10 +1300,10 @@ namespace UoFiddler.Controls.UserControls
 
     public class OverlayObject
     {
-        public virtual bool IsVisible(Rectangle bounds, int m) { return false; }
-        public virtual void Draw(Graphics g) { }
+        public virtual bool IsVisible(Rectangle bounds, int m, int hScrollBar, int vScrollBar, double zoom) { return false; }
+        public virtual void Draw(Graphics g, int roundedHScrollbar, int roundedVScrollbar, double zoom, int width) { }
         public virtual void Save(XmlElement elem) { }
-        public override string ToString() { return ""; }
+        public override string ToString() { return string.Empty; }
 
         public bool Visible { get; set; }
         public Point Loc { get; protected set; }
@@ -1331,7 +1330,7 @@ namespace UoFiddler.Controls.UserControls
             _background = new SolidBrush(Color.FromArgb(100, Color.White));
         }
 
-        public override bool IsVisible(Rectangle bounds, int m)
+        public override bool IsVisible(Rectangle bounds, int m, int hScrollBar, int vScrollBar, double zoom)
         {
             if (!Visible)
             {
@@ -1343,21 +1342,21 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
-            return Loc.X > MapControl.HScrollBar &&
-                Loc.X < MapControl.HScrollBar + (bounds.Width / MapControl.Zoom) &&
-                Loc.Y > MapControl.VScrollBar &&
-                Loc.Y < MapControl.VScrollBar + (bounds.Height / MapControl.Zoom);
+            return Loc.X > hScrollBar &&
+                Loc.X < hScrollBar + (bounds.Width / zoom) &&
+                Loc.Y > vScrollBar &&
+                Loc.Y < vScrollBar + (bounds.Height / zoom);
         }
 
-        public override void Draw(Graphics g)
+        public override void Draw(Graphics g, int roundedHScrollbar, int roundedVScrollbar, double zoom, int width)
         {
-            int x = (int)((Loc.X - MapControl.Round(MapControl.HScrollBar)) * MapControl.Zoom);
-            int y = (int)((Loc.Y - MapControl.Round(MapControl.VScrollBar)) * MapControl.Zoom);
+            int x = (int)((Loc.X - roundedHScrollbar) * zoom);
+            int y = (int)((Loc.Y - roundedVScrollbar) * zoom);
             g.DrawLine(_pen, x - 4, y, x + 4, y);
             g.DrawLine(_pen, x, y - 4, x, y + 4);
             g.DrawEllipse(_pen, x - 2, y - 2, 2 * 2, 2 * 2);
             SizeF tSize = g.MeasureString(_text, Control.DefaultFont);
-            int xStr = Loc.X + tSize.Width > MapControl.CurrMap.Width ? x - (int)tSize.Width - 6 : x + 6;
+            int xStr = Loc.X + tSize.Width > width ? x - (int)tSize.Width - 6 : x + 6;
             g.FillRectangle(_background, xStr, y - tSize.Height, tSize.Width, tSize.Height);
             g.DrawString(_text, Control.DefaultFont, Brushes.Black, xStr, y - tSize.Height);
         }

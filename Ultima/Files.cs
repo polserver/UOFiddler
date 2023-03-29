@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using Microsoft.Win32;
 
 namespace Ultima
@@ -376,110 +375,6 @@ namespace Ultima
             catch
             {
                 return null;
-            }
-        }
-
-        /// <summary>
-        /// Compares given MD5 hash with hash of given file
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="hash"></param>
-        /// <returns></returns>
-        public static bool CompareMD5(string file, string hash)
-        {
-            if (file == null)
-            {
-                return false;
-            }
-
-            FileStream fileCheck = File.OpenRead(file);
-            using (MD5 md5 = MD5.Create())
-            {
-                byte[] md5Hash = md5.ComputeHash(fileCheck);
-                fileCheck.Close();
-                string md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
-                return md5String == hash;
-            }
-        }
-
-        /// <summary>
-        /// Returns MD5 hash from given file
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static byte[] GetMD5(string file)
-        {
-            if (file == null)
-            {
-                return null;
-            }
-
-            FileStream fileCheck = File.OpenRead(file);
-            using (MD5 md5 = MD5.Create())
-            {
-                byte[] md5Hash = md5.ComputeHash(fileCheck);
-                fileCheck.Close();
-                return md5Hash;
-            }
-        }
-
-        /// <summary>
-        /// Compares MD5 hash from given mul file with hash in responsible hash-file
-        /// </summary>
-        /// <param name="what"></param>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static bool CompareHashFile(string what, string path)
-        {
-            string fileName = Path.Combine(path, $"UOFiddler{what}.hash");
-            if (!File.Exists(fileName))
-            {
-                return false;
-            }
-
-            try
-            {
-                using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    if (fs.Length == 0)
-                    {
-                        return false; // If file is empty there is nothing to compare
-                    }
-
-                    using (var bin = new BinaryReader(fs))
-                    {
-                        int length = bin.ReadInt32();
-                        var buffer = new byte[length];
-                        bin.Read(buffer, 0, length);
-
-                        string hashOld = BitConverter.ToString(buffer).Replace("-", "").ToLower();
-
-                        return CompareMD5(GetFilePath($"{what}.mul"), hashOld);
-                    }
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Checks if map1.mul exists and sets <see cref="Ultima.Map"/>
-        /// </summary>
-        public static void CheckForNewMapSize()
-        {
-            if (GetFilePath("map1.mul") != null || GetFilePath("map1legacymul.uop") != null)
-            {
-                Map.Trammel = Map.Trammel.Width == 7168
-                    ? new Map(1, 1, 7168, 4096)
-                    : new Map(1, 1, 6144, 4096);
-            }
-            else
-            {
-                Map.Trammel = Map.Trammel.Width == 7168
-                    ? new Map(0, 1, 7168, 4096)
-                    : new Map(0, 1, 6144, 4096);
             }
         }
     }

@@ -145,13 +145,13 @@ namespace Ultima
             public byte FrameInterval { get; set; }
             public byte FrameStart { get; set; }
 
-            public AnimdataEntry(sbyte[] frame, byte unk, byte fcount, byte finter, byte fstart)
+            public AnimdataEntry(sbyte[] frame, byte unk, byte frameCount, byte frameInterval, byte frameStart)
             {
                 FrameData = frame;
                 Unknown = unk;
-                FrameCount = fcount;
-                FrameInterval = finter;
-                FrameStart = fstart;
+                FrameCount = frameCount;
+                FrameInterval = frameInterval;
+                FrameStart = frameStart;
             }
         }
     }

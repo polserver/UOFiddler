@@ -13,7 +13,6 @@ using System;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -37,7 +36,7 @@ namespace UoFiddler.Controls.Forms
         {
             UnicodeFonts.Fonts[_font].Chars[_char].XOffset = (sbyte)offsetx.Value;
             UnicodeFonts.Fonts[_font].Chars[_char].YOffset = (sbyte)offsety.Value;
-            FontsControl.RefreshOnCharChange();
+
             Close();
         }
 

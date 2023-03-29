@@ -220,7 +220,7 @@ namespace UoFiddler.Controls.Forms
                                         z = mMapReader.ReadSByte();
                                     }
 
-                                    tileId = Art.GetLegalItemID(tileId);
+                                    tileId = Art.GetLegalItemId(tileId);
 
                                     if (z < -128)
                                     {
@@ -367,7 +367,7 @@ namespace UoFiddler.Controls.Forms
                                                 tile.Hue = mStaticsReader.ReadInt16();
                                             }
 
-                                            if (tile.Id > Art.GetMaxItemID())
+                                            if (tile.Id > Art.GetMaxItemId())
                                             {
                                                 continue;
                                             }
@@ -430,7 +430,7 @@ namespace UoFiddler.Controls.Forms
                                                 sHue = mStaticsReader.ReadInt16();
                                             }
 
-                                            if (graphic > Art.GetMaxItemID())
+                                            if (graphic > Art.GetMaxItemId())
                                             {
                                                 continue;
                                             }

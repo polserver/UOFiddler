@@ -26,7 +26,7 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
-            _refMarker = this;
+
             _source = new BindingSource();
             FindEntry.TextBox.PreviewKeyDown += FindEntry_PreviewKeyDown;
         }
@@ -34,7 +34,6 @@ namespace UoFiddler.Controls.UserControls
         private const string _searchNumberPlaceholder = "Enter Number";
         private const string _searchTextPlaceholder = "Enter Text";
 
-        private static ClilocControl _refMarker;
         private static StringList _cliloc;
         private static BindingSource _source;
         private int _lang;
@@ -296,12 +295,13 @@ namespace UoFiddler.Controls.UserControls
 
             int cellNr = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
             string cellText = (string)dataGridView1.Rows[e.RowIndex].Cells[1].Value;
-            new ClilocDetailForm(cellNr, cellText).Show();
+
+            new ClilocDetailForm(cellNr, cellText, SaveEntry).Show();
         }
 
         private void OnClick_AddEntry(object sender, EventArgs e)
         {
-            new ClilocAddForm().Show();
+            new ClilocAddForm(IsNumberFree, AddEntry).Show();
         }
 
         private void OnClick_DeleteEntry(object sender, EventArgs e)
@@ -365,7 +365,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        public static void SaveEntry(int number, string text)
+        public void SaveEntry(int number, string text)
         {
             for (int i = 0; i < _cliloc.Entries.Count; ++i)
             {
@@ -376,16 +376,18 @@ namespace UoFiddler.Controls.UserControls
 
                 _cliloc.Entries[i].Text = text;
                 _cliloc.Entries[i].Flag = StringEntry.CliLocFlag.Modified;
-                _refMarker.dataGridView1.Invalidate();
-                _refMarker.dataGridView1.Rows[i].Selected = true;
-                _refMarker.dataGridView1.FirstDisplayedScrollingRowIndex = i;
+
+                dataGridView1.Invalidate();
+                dataGridView1.Rows[i].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = i;
 
                 Options.ChangedUltimaClass["CliLoc"] = true;
+
                 return;
             }
         }
 
-        public static bool IsNumberFree(int number)
+        public bool IsNumberFree(int number)
         {
             foreach (StringEntry entry in _cliloc.Entries)
             {
@@ -394,23 +396,29 @@ namespace UoFiddler.Controls.UserControls
                     return false;
                 }
             }
+
             return true;
         }
 
-        public static void AddEntry(int number)
+        public void AddEntry(int number)
         {
             int index = 0;
+
             foreach (StringEntry entry in _cliloc.Entries)
             {
                 if (entry.Number > number)
                 {
                     _cliloc.Entries.Insert(index, new StringEntry(number, "", StringEntry.CliLocFlag.Custom));
-                    _refMarker.dataGridView1.Invalidate();
-                    _refMarker.dataGridView1.Rows[index].Selected = true;
-                    _refMarker.dataGridView1.FirstDisplayedScrollingRowIndex = index;
+
+                    dataGridView1.Invalidate();
+                    dataGridView1.Rows[index].Selected = true;
+                    dataGridView1.FirstDisplayedScrollingRowIndex = index;
+
                     Options.ChangedUltimaClass["CliLoc"] = true;
+
                     return;
                 }
+
                 ++index;
             }
         }
@@ -425,14 +433,17 @@ namespace UoFiddler.Controls.UserControls
         {
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "CliLoc.csv");
+
             using (StreamWriter tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)))
             {
                 tex.WriteLine("Number;Text;Flag");
+
                 foreach (StringEntry entry in _cliloc.Entries)
                 {
                     tex.WriteLine("{0};{1};{2}", entry.Number, entry.Text, entry.Flag);
                 }
             }
+
             MessageBox.Show($"CliLoc saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
@@ -445,13 +456,14 @@ namespace UoFiddler.Controls.UserControls
                 CheckFileExists = true,
                 Filter = "csv files (*.csv)|*.csv"
             };
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 using (StreamReader sr = new StreamReader(dialog.FileName))
                 {
-                    string line;
                     int count = 0;
-                    while ((line = sr.ReadLine()) != null)
+
+                    while (sr.ReadLine() is { } line)
                     {
                         if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
                         {
@@ -531,9 +543,9 @@ namespace UoFiddler.Controls.UserControls
                 if (string.IsNullOrWhiteSpace(itemData.Name))
                 {
                     int i = _cliloc.Entries.FindIndex(x => x.Number == id);
+
                     if (i >= 0)
                     {
-                        //Debug.WriteLine($"Removing {id} at {i} for {itemData.Name}.");
                         _cliloc.Entries.RemoveAt(i);
                         count++;
                     }
@@ -547,17 +559,16 @@ namespace UoFiddler.Controls.UserControls
                         {
                             if (entry.Text != itemData.Name)
                             {
-                                //Debug.WriteLine($"Changing {id} from {entry.Text} to {itemData.Name}.");
                                 entry.Text = itemData.Name;
                                 entry.Flag = StringEntry.CliLocFlag.Modified;
                                 count++;
                             }
+
                             break;
                         }
 
                         if (entry.Number > id)
                         {
-                            //Debug.WriteLine($"Adding {id} before {entry.Number} for {itemData.Name}.");
                             _cliloc.Entries.Insert(entryIndex, new StringEntry(id, itemData.Name, StringEntry.CliLocFlag.Modified));
                             count++;
                             break;

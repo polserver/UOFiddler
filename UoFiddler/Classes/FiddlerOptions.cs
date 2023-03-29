@@ -18,6 +18,7 @@ using System.Xml;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using Serilog;
+using Ultima.Helpers;
 
 namespace UoFiddler.Classes
 {
@@ -462,7 +463,7 @@ namespace UoFiddler.Classes
             elem = (XmlElement)xOptions.SelectSingleNode("TileDataDirectlySaveOnChange");
             Options.TileDataDirectlySaveOnChange = elem != null && (elem.GetAttribute("value") ?? "").Equals("true", StringComparison.OrdinalIgnoreCase);
 
-            Files.CheckForNewMapSize();
+            MapHelper.CheckForNewMapSize();
 
             Logger.Information("LoadProfile - done: {Filename}", filename);
         }

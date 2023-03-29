@@ -11,7 +11,6 @@ namespace Ultima
         /// <summary>
         /// Returns Bitmap
         /// </summary>
-        /// <returns></returns>
         public static unsafe Bitmap GetMultiMap()
         {
             string path = Files.GetFilePath("Multimap.rle");

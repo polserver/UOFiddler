@@ -17,13 +17,15 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class AnimationListNewEntriesForm : Form
     {
-        private readonly AnimationListControl _form;
+        private readonly string[][] _actionNames;
+        private readonly Func<int, bool> _isAlreadyDefinedCallback;
+        private readonly Action<int, int, string> _addGraphicAction;
+
         private int _currentSelect;
         private int _facing = 1;
         private bool _animate;
@@ -31,11 +33,16 @@ namespace UoFiddler.Controls.Forms
         private int _frameIndex;
         private AnimationFrame[] _animation;
 
-        public AnimationListNewEntriesForm(AnimationListControl form)
+        public AnimationListNewEntriesForm(Func<int, bool> isAlreadyDefinedCallback,
+            Action<int, int, string> addGraphicAction, string[][] actionNames)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
-            _form = form;
+
+            _actionNames = actionNames;
+            _addGraphicAction = addGraphicAction;
+            _isAlreadyDefinedCallback = isAlreadyDefinedCallback;
         }
 
         private bool Animate
@@ -49,7 +56,9 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 _animate = value;
+
                 StopAnimation();
+
                 if (_animate)
                 {
                     SetAnimation();
@@ -96,8 +105,11 @@ namespace UoFiddler.Controls.Forms
         {
             int body = _currentSelect;
             Animations.Translate(ref body);
+
             int hue = 0;
+
             _animation = Animations.GetAnimation(_currentSelect, CurrentSelectAction, _facing, ref hue, false, false);
+
             if (_animation == null)
             {
                 return;
@@ -108,6 +120,7 @@ namespace UoFiddler.Controls.Forms
             {
                 Interval = 1000 / _animation.Length
             };
+
             _timer.Tick += AnimTick;
             _timer.Start();
         }
@@ -141,7 +154,7 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                if (_form.IsAlreadyDefined(entry.NewId))
+                if (_isAlreadyDefinedCallback(entry.NewId))
                 {
                     continue;
                 }
@@ -194,7 +207,7 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                if (_form.IsAlreadyDefined(entry))
+                if (_isAlreadyDefinedCallback(entry))
                 {
                     continue;
                 }
@@ -246,7 +259,7 @@ namespace UoFiddler.Controls.Forms
                     try
                     {
                         string[] split = line.Split('\t');
-                        if (int.TryParse(split[0], out int graphic) && !AlreadyFound(graphic) && !_form.IsAlreadyDefined(graphic))
+                        if (int.TryParse(split[0], out int graphic) && !AlreadyFound(graphic) && !_isAlreadyDefinedCallback(graphic))
                         {
                             TreeNode node = new TreeNode(graphic.ToString())
                             {
@@ -292,14 +305,14 @@ namespace UoFiddler.Controls.Forms
                 type = 3;
             }
 
-            for (int i = 0; i < _form.GetAnimNames[type].GetLength(0); ++i)
+            for (int i = 0; i < _actionNames[type].GetLength(0); ++i)
             {
                 if (!Animations.IsActionDefined(graphic, i, 0))
                 {
                     continue;
                 }
 
-                TreeNode node = new TreeNode($"{i} {_form.GetAnimNames[type][i]}")
+                TreeNode node = new TreeNode($"{i} {_actionNames[type][i]}")
                 {
                     Tag = i
                 };
@@ -391,6 +404,7 @@ namespace UoFiddler.Controls.Forms
         private void OnScrollFacing(object sender, EventArgs e)
         {
             _facing = (facingbar.Value - 3) & 7;
+
             CurrentSelect = CurrentSelect;
         }
 
@@ -407,7 +421,8 @@ namespace UoFiddler.Controls.Forms
                 node = node.Parent;
             }
 
-            _form.AddGraphic(((int[])node.Tag)[0], ((int[])node.Tag)[1], node.Text);
+            _addGraphicAction(((int[])node.Tag)[0], ((int[])node.Tag)[1], node.Text);
+
             tvAnimationList.SelectedNode.Remove();
         }
     }

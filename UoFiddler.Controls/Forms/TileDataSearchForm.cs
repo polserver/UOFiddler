@@ -12,30 +12,35 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
-    public partial class TileDatasSearchForm : Form
+    public partial class TileDataSearchForm : Form
     {
         private readonly bool _land;
+        private readonly Func<int, bool, bool> _searchByIdCallback;
+        private readonly Func<string, bool, bool, bool> _searchByNameCallback;
 
-        public TileDatasSearchForm(bool landTile)
+        public TileDataSearchForm(bool landTile, Func<int, bool, bool> searchByIdCallback, Func<string, bool, bool, bool> searchByNameCallback)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
             _land = landTile;
+            _searchByIdCallback = searchByIdCallback;
+            _searchByNameCallback = searchByNameCallback;
         }
 
         private void SearchGraphic(object sender, EventArgs e)
         {
-            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
             {
                 return;
             }
 
-            bool res = TileDataControl.SearchGraphic(graphic, _land);
-            if (res)
+            bool exist = _searchByIdCallback(graphic, _land);
+            if (exist)
             {
                 return;
             }
@@ -51,8 +56,9 @@ namespace UoFiddler.Controls.Forms
         private void SearchName(object sender, EventArgs e)
         {
             _lastSearchedName = textBoxItemName.Text;
-            bool res = TileDataControl.SearchName(textBoxItemName.Text, false, _land);
-            if (res)
+
+            bool exist = _searchByNameCallback(textBoxItemName.Text, false, _land);
+            if (exist)
             {
                 return;
             }
@@ -67,8 +73,8 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = TileDataControl.SearchName(textBoxItemName.Text, true, _land);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxItemName.Text, true, _land);
+            if (exist)
             {
                 return;
             }
@@ -102,11 +108,13 @@ namespace UoFiddler.Controls.Forms
                         SearchNextName(sender, e);
                     }
                 }
+
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
                 Close();
+
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

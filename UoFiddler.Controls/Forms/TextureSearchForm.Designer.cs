@@ -39,55 +39,52 @@ namespace UoFiddler.Controls.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBoxGraphic = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
+            searchButton = new System.Windows.Forms.Button();
+            graphicTextbox = new System.Windows.Forms.TextBox();
+            SuspendLayout();
             // 
-            // button1
+            // searchButton
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(118, 45);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(112, 27);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Search ID";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.SearchGraphic);
+            searchButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            searchButton.AutoSize = true;
+            searchButton.Location = new System.Drawing.Point(116, 45);
+            searchButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            searchButton.Name = "searchButton";
+            searchButton.Size = new System.Drawing.Size(112, 27);
+            searchButton.TabIndex = 11;
+            searchButton.Text = "Search ID";
+            searchButton.UseVisualStyleBackColor = true;
+            searchButton.Click += SearchGraphic;
             // 
-            // textBoxGraphic
+            // graphicTextbox
             // 
-            this.textBoxGraphic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxGraphic.Location = new System.Drawing.Point(21, 14);
-            this.textBoxGraphic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxGraphic.Name = "textBoxGraphic";
-            this.textBoxGraphic.Size = new System.Drawing.Size(302, 23);
-            this.textBoxGraphic.TabIndex = 10;
-            this.textBoxGraphic.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownSearch);
+            graphicTextbox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            graphicTextbox.Location = new System.Drawing.Point(21, 14);
+            graphicTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            graphicTextbox.Name = "graphicTextbox";
+            graphicTextbox.Size = new System.Drawing.Size(302, 23);
+            graphicTextbox.TabIndex = 10;
+            graphicTextbox.KeyDown += OnKeyDownSearch;
             // 
             // TextureSearchForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 81);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBoxGraphic);
-            this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "TextureSearchForm";
-            this.Text = "Texture Search";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(344, 81);
+            Controls.Add(searchButton);
+            Controls.Add(graphicTextbox);
+            DoubleBuffered = true;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "TextureSearchForm";
+            Text = "Texture Search";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBoxGraphic;
+        private System.Windows.Forms.Button searchButton;
+        private System.Windows.Forms.TextBox graphicTextbox;
     }
 }

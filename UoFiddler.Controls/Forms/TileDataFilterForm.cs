@@ -13,16 +13,21 @@ using System;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class TileDataFilterForm : Form
     {
-        public TileDataFilterForm()
+        private readonly Action<ItemData> _applyItemFilterAction;
+        private readonly Action<LandData> _applyLandFilterAction;
+
+        public TileDataFilterForm(Action<ItemData> applyItemFilterAction, Action<LandData> applyLandFilterAction)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+
+            _applyItemFilterAction = applyItemFilterAction;
+            _applyLandFilterAction = applyLandFilterAction;
 
             InitFlagCheckBoxes();
         }
@@ -61,59 +66,59 @@ namespace UoFiddler.Controls.Forms
             }
 
             item.Name = name;
-            if (short.TryParse(textBoxAnim.Text, out short shortres))
+            if (short.TryParse(textBoxAnim.Text, out short animation))
             {
-                item.Animation = shortres;
+                item.Animation = animation;
             }
 
-            if (byte.TryParse(textBoxWeight.Text, out byte byteres))
+            if (byte.TryParse(textBoxWeight.Text, out byte weight))
             {
-                item.Weight = byteres;
+                item.Weight = weight;
             }
 
-            if (byte.TryParse(textBoxQuality.Text, out byteres))
+            if (byte.TryParse(textBoxQuality.Text, out byte quality))
             {
-                item.Quality = byteres;
+                item.Quality = quality;
             }
 
-            if (byte.TryParse(textBoxQuantity.Text, out byteres))
+            if (byte.TryParse(textBoxQuantity.Text, out byte quantity))
             {
-                item.Quantity = byteres;
+                item.Quantity = quantity;
             }
 
-            if (byte.TryParse(textBoxHue.Text, out byteres))
+            if (byte.TryParse(textBoxHue.Text, out byte hue))
             {
-                item.Hue = byteres;
+                item.Hue = hue;
             }
 
-            if (byte.TryParse(textBoxStackOff.Text, out byteres))
+            if (byte.TryParse(textBoxStackOff.Text, out byte stackingOffset))
             {
-                item.StackingOffset = byteres;
+                item.StackingOffset = stackingOffset;
             }
 
-            if (byte.TryParse(textBoxValue.Text, out byteres))
+            if (byte.TryParse(textBoxValue.Text, out byte value))
             {
-                item.Value = byteres;
+                item.Value = value;
             }
 
-            if (byte.TryParse(textBoxHeigth.Text, out byteres))
+            if (byte.TryParse(textBoxHeigth.Text, out byte height))
             {
-                item.Height = byteres;
+                item.Height = height;
             }
 
-            if (short.TryParse(textBoxUnk1.Text, out shortres))
+            if (short.TryParse(textBoxUnk1.Text, out short miscData))
             {
-                item.MiscData = shortres;
+                item.MiscData = miscData;
             }
 
-            if (byte.TryParse(textBoxUnk2.Text, out byteres))
+            if (byte.TryParse(textBoxUnk2.Text, out byte unk2))
             {
-                item.Unk2 = byteres;
+                item.Unk2 = unk2;
             }
 
-            if (byte.TryParse(textBoxUnk3.Text, out byteres))
+            if (byte.TryParse(textBoxUnk3.Text, out byte unk3))
             {
-                item.Unk3 = byteres;
+                item.Unk3 = unk3;
             }
 
             item.Flags = TileFlag.None;
@@ -125,7 +130,8 @@ namespace UoFiddler.Controls.Forms
                     item.Flags |= (TileFlag)enumValues.GetValue(i + 1);
                 }
             }
-            TileDataControl.ApplyFilterItem(item);
+
+            _applyItemFilterAction(item);
         }
 
         private void OnClickApplyFilterLand(object sender, EventArgs e)
@@ -138,9 +144,9 @@ namespace UoFiddler.Controls.Forms
             }
 
             land.Name = name;
-            if (ushort.TryParse(textBoxTexID.Text, out ushort shortres))
+            if (ushort.TryParse(textBoxTexID.Text, out ushort value))
             {
-                land.TextureID = shortres;
+                land.TextureId = value;
             }
 
             land.Flags = TileFlag.None;
@@ -152,7 +158,8 @@ namespace UoFiddler.Controls.Forms
                     land.Flags |= (TileFlag)enumValues.GetValue(i + 1);
                 }
             }
-            TileDataControl.ApplyFilterLand(land);
+
+            _applyLandFilterAction(land);
         }
 
         private void OnClickResetFilterItem(object sender, EventArgs e)

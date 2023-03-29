@@ -313,11 +313,11 @@
 		<Compile Update="UserControls\TileDataControl.Designer.cs">
 			<DependentUpon>TileDataControl.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Forms\TileDatasSearchForm.cs">
+		<Compile Update="Forms\TileDataSearchForm.cs">
 			<SubType>Form</SubType>
 		</Compile>
-		<Compile Update="Forms\TileDatasSearchForm.Designer.cs">
-			<DependentUpon>TileDatasSearchForm.cs</DependentUpon>
+		<Compile Update="Forms\TileDataSearchForm.Designer.cs">
+			<DependentUpon>TileDataSearchForm.cs</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
@@ -466,8 +466,8 @@
 		<EmbeddedResource Update="UserControls\TileDataControl.resx">
 			<DependentUpon>TileDataControl.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\TileDatasSearchForm.resx">
-			<DependentUpon>TileDatasSearchForm.cs</DependentUpon>
+		<EmbeddedResource Update="Forms\TileDataSearchForm.resx">
+			<DependentUpon>TileDataSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\CollapsibleSplitter.resx">
 			<DependentUpon>CollapsibleSplitter.cs</DependentUpon>

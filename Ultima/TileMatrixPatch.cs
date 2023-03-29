@@ -284,7 +284,7 @@ namespace Ultima
                         for (int j = 0; j < tileCount; ++j)
                         {
                             StaticTile cur = staTiles[j];
-                            lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemID(cur.Id), cur.Hue, cur.Z);
+                            lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemId(cur.Id), cur.Hue, cur.Z);
                         }
 
                         var tiles = new HuedTile[8][][];

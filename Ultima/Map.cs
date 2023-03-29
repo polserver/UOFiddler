@@ -624,7 +624,7 @@ namespace Ultima
                                             sbyte sz = staticsReader.ReadSByte();
                                             short shue = staticsReader.ReadInt16();
 
-                                            if (graphic > Art.GetMaxItemID())
+                                            if (graphic > Art.GetMaxItemId())
                                             {
                                                 continue;
                                             }
@@ -652,7 +652,7 @@ namespace Ultima
                                         {
                                             for (int i = 0; i < tileList.Length; ++i)
                                             {
-                                                if (tileList[i].Id > Art.GetMaxItemID())
+                                                if (tileList[i].Id > Art.GetMaxItemId())
                                                 {
                                                     continue;
                                                 }
@@ -691,7 +691,7 @@ namespace Ultima
                                                 Hue = staticsReader.ReadInt16()
                                             };
 
-                                            if (tile.Id > Art.GetMaxItemID())
+                                            if (tile.Id > Art.GetMaxItemId())
                                             {
                                                 continue;
                                             }
@@ -728,7 +728,7 @@ namespace Ultima
                                             old.CopyTo(tileList, 0);
                                             for (int i = 0; i < pending.Length; ++i)
                                             {
-                                                if (pending[i].Id > Art.GetMaxItemID())
+                                                if (pending[i].Id > Art.GetMaxItemId())
                                                 {
                                                     continue;
                                                 }

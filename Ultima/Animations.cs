@@ -33,7 +33,7 @@ namespace Ultima
         }
 
         /// <summary>
-        ///     Returns Framelist
+        ///     Returns animation frames
         /// </summary>
         /// <param name="body"></param>
         /// <param name="action"></param>
@@ -389,7 +389,7 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Gets Fileseek index based on fileType,body,action,direction
+        /// Gets files index index based on fileType, body, action and direction
         /// </summary>
         /// <param name="body"></param>
         /// <param name="action"></param>

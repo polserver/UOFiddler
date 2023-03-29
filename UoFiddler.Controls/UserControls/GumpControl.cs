@@ -632,7 +632,7 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(EventArgs.Empty);
             }
 
-            Search(gumpId);
+            _refMarker.Search(gumpId);
         }
 
         public static bool HasGumpId(int gumpId)
@@ -667,11 +667,11 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _showForm = new GumpSearchForm { TopMost = true };
+            _showForm = new GumpSearchForm(Search) { TopMost = true };
             _showForm.Show();
         }
 
-        public static bool Search(int graphic)
+        public bool Search(int graphic)
         {
             if (!_refMarker._loaded)
             {

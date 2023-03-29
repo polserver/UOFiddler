@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Ultima;
+using Ultima.Helpers;
 using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Forms
@@ -34,7 +35,7 @@ namespace UoFiddler.Forms
         {
             Files.ReLoadDirectory();
             Files.LoadMulPath();
-            Files.CheckForNewMapSize();
+            MapHelper.CheckForNewMapSize();
             pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
             pgPaths.Refresh();
             tsTbRootPath.Text = Files.RootDir;
@@ -55,7 +56,7 @@ namespace UoFiddler.Forms
                 pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
                 pgPaths.Update();
                 tsTbRootPath.Text = Files.RootDir;
-                Files.CheckForNewMapSize();
+                MapHelper.CheckForNewMapSize();
             }
         }
 
@@ -70,7 +71,7 @@ namespace UoFiddler.Forms
             pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
             pgPaths.Refresh();
             tsTbRootPath.Text = Files.RootDir;
-            Files.CheckForNewMapSize();
+            MapHelper.CheckForNewMapSize();
         }
     }
 

@@ -12,27 +12,30 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class ClilocDetailForm : Form
     {
-        public ClilocDetailForm(int number, string text)
+        private readonly int _number;
+        private readonly Action<int, string> _saveEntryAction;
+
+        public ClilocDetailForm(int number, string text, Action<int, string> saveEntryAction)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
             TopMost = true;
             NumberLabel.Text = $"Nr: {number}";
-            _number = number;
             TextBox.AppendText(text);
-        }
 
-        private readonly int _number;
+            _number = number;
+            _saveEntryAction = saveEntryAction;
+        }
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            ClilocControl.SaveEntry(_number, TextBox.Text);
+            _saveEntryAction(_number, TextBox.Text);
         }
     }
 }

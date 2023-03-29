@@ -12,26 +12,30 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class GumpSearchForm : Form
     {
-        public GumpSearchForm()
+        private readonly Func<int, bool> _searchByIdCallback;
+
+        public GumpSearchForm(Func<int, bool> searchByIdCallback)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _searchByIdCallback = searchByIdCallback;
         }
 
         private void SearchId(object sender, EventArgs e)
         {
-            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
             {
                 return;
             }
 
-            if (GumpControl.Search(graphic))
+            if (_searchByIdCallback(graphic))
             {
                 return;
             }
@@ -58,6 +62,7 @@ namespace UoFiddler.Controls.Forms
             else if (e.KeyCode == Keys.Escape)
             {
                 Close();
+
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

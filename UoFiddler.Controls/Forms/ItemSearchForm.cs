@@ -12,27 +12,33 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class ItemSearchForm : Form
     {
-        public ItemSearchForm()
+        private readonly Func<int, bool> _searchByIdCallback;
+        private readonly Func<string, bool, bool> _searchByNameCallback;
+
+        public ItemSearchForm(Func<int, bool> searchByIdCallback, Func<string, bool, bool> searchByNameCallback)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _searchByIdCallback = searchByIdCallback;
+            _searchByNameCallback = searchByNameCallback;
         }
 
         private void Search_Graphic(object sender, EventArgs e)
         {
-            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemID()))
+            if (!Utils.ConvertStringToInt(textBoxGraphic.Text, out int graphic, 0, Ultima.Art.GetMaxItemId()))
             {
                 return;
             }
 
-            bool res = ItemsControl.SearchGraphic(graphic);
-            if (res)
+            bool exist = _searchByIdCallback(graphic);
+            if (exist)
             {
                 return;
             }
@@ -49,8 +55,8 @@ namespace UoFiddler.Controls.Forms
         {
             _lastSearchedName = textBoxItemName.Text;
 
-            bool res = ItemsControl.SearchName(textBoxItemName.Text, false);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxItemName.Text, false);
+            if (exist)
             {
                 return;
             }
@@ -65,8 +71,8 @@ namespace UoFiddler.Controls.Forms
 
         private void SearchNextName(object sender, EventArgs e)
         {
-            bool res = ItemsControl.SearchName(textBoxItemName.Text, true);
-            if (res)
+            bool exist = _searchByNameCallback(textBoxItemName.Text, true);
+            if (exist)
             {
                 return;
             }
@@ -100,11 +106,13 @@ namespace UoFiddler.Controls.Forms
                         SearchNextName(sender, e);
                     }
                 }
+
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
                 Close();
+
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }

@@ -323,6 +323,8 @@ namespace UoFiddler.Controls.UserControls
                 TopMost = true
             };
             _form.Show();
+
+            RefreshOnCharChange();
         }
 
         private void OnClickWriteText(object sender, EventArgs e)

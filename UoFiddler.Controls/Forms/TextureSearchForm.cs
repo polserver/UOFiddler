@@ -12,39 +12,43 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
     public partial class TextureSearchForm : Form
     {
-        public TextureSearchForm()
+        private readonly Func<int, bool> _searchByIdCallback;
+
+        public TextureSearchForm(Func<int, bool> searchByIdCallback)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
+
+            _searchByIdCallback = searchByIdCallback;
         }
 
         private void SearchGraphic(object sender, EventArgs e)
         {
             int graphic;
-            bool canDone;
-            if (textBoxGraphic.Text.Contains("0x"))
+            bool isValidValue;
+            if (graphicTextbox.Text.Contains("0x"))
             {
-                string convert = textBoxGraphic.Text.Replace("0x", "");
-                canDone = int.TryParse(convert, System.Globalization.NumberStyles.HexNumber, null, out graphic);
+                string convert = graphicTextbox.Text.Replace("0x", "");
+                isValidValue = int.TryParse(convert, System.Globalization.NumberStyles.HexNumber, null, out graphic);
             }
             else
             {
-                canDone = int.TryParse(textBoxGraphic.Text, System.Globalization.NumberStyles.Integer, null, out graphic);
+                isValidValue = int.TryParse(graphicTextbox.Text, System.Globalization.NumberStyles.Integer, null, out graphic);
             }
 
-            if (!canDone)
+            if (!isValidValue)
             {
                 return;
             }
 
-            bool res = TexturesControl.SearchGraphic(graphic);
-            if (res)
+            bool exists = _searchByIdCallback(graphic);
+            if (exists)
             {
                 return;
             }
