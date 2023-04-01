@@ -262,7 +262,6 @@ namespace Ultima
             }
 
             memIdx.Dispose();
-            memIdx.Dispose();
         }
 
         private static int GetExtraFlag(int length)

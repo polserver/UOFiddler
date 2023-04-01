@@ -1008,43 +1008,42 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public int Solver { get; set; }
 
-        public int CompareTo(object x)
+        public int CompareTo(object obj)
         {
-            if (x == null)
+            if (obj == null)
             {
                 return 1;
             }
 
-            if (!(x is MultiTile))
+            if (obj is not MultiTile multiTile)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(obj));
             }
 
-            MultiTile a = (MultiTile)x;
-            if (X > a.X)
+            if (X > multiTile.X)
             {
                 return 1;
             }
 
-            if (X < a.X)
+            if (X < multiTile.X)
             {
                 return -1;
             }
 
-            if (Y > a.Y)
+            if (Y > multiTile.Y)
             {
                 return 1;
             }
 
-            if (Y < a.Y)
+            if (Y < multiTile.Y)
             {
                 return -1;
             }
 
-            if (!a.IsVirtualFloor && !IsVirtualFloor)
+            if (!multiTile.IsVirtualFloor && !IsVirtualFloor)
             {
                 ItemData ourData = TileData.ItemTable[Id];
-                ItemData theirData = TileData.ItemTable[a.Id];
+                ItemData theirData = TileData.ItemTable[multiTile.Id];
 
                 int ourThreshold = 0;
                 if (ourData.Height > 0)
@@ -1070,7 +1069,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     ++theirThreshold;
                 }
 
-                int theirZ = a.Z;
+                int theirZ = multiTile.Z;
 
                 ourZ += ourThreshold;
                 theirZ += theirThreshold;
@@ -1083,24 +1082,24 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
                 if (res == 0)
                 {
-                    res = Solver - a.Solver;
+                    res = Solver - multiTile.Solver;
                 }
 
                 return res;
             }
             else
             {
-                if (Z > a.Z)
+                if (Z > multiTile.Z)
                 {
                     return 1;
                 }
 
-                if (a.Z > Z)
+                if (multiTile.Z > Z)
                 {
                     return -1;
                 }
 
-                if (a.IsVirtualFloor)
+                if (multiTile.IsVirtualFloor)
                 {
                     return 1;
                 }
