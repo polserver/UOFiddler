@@ -29,49 +29,52 @@ namespace Ultima
             }
 
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var bin = new BinaryReader(fs))
             {
-                using (var bin = new BinaryReader(fs))
+                unsafe
                 {
-                    unsafe
+                    int id = 0;
+                    int h = 0;
+
+                    _header = new int[bin.BaseStream.Length / (4 + (8 * (64 + 4)))];
+
+                    while (h < _header.Length)
                     {
-                        int id = 0;
-                        int h = 0;
+                        _header[h++] = bin.ReadInt32(); // chunk header
 
-                        _header = new int[bin.BaseStream.Length / (4 + (8 * (64 + 4)))];
+                        // Read 8 tiles
+                        byte[] buffer = bin.ReadBytes(544);
 
-                        while (h < _header.Length)
+                        fixed (byte* buf = buffer)
                         {
-                            _header[h++] = bin.ReadInt32(); // chunk header
-                            // Read 8 tiles
-                            byte[] buffer = bin.ReadBytes(544);
-                            fixed (byte* buf = buffer)
-                            {
-                                byte* data = buf;
-                                for (int i = 0; i < 8; ++i, ++id)
-                                {
-                                    sbyte[] fdata = new sbyte[64];
-                                    for (int j = 0; j < 64; ++j)
-                                    {
-                                        fdata[j] = (sbyte)*data++;
-                                    }
+                            byte* data = buf;
 
-                                    byte unk = *data++;
-                                    byte fcount = *data++;
-                                    byte finter = *data++;
-                                    byte fstart = *data++;
-                                    if (fcount > 0)
-                                    {
-                                        AnimData[id] = new AnimdataEntry(fdata, unk, fcount, finter, fstart);
-                                    }
+                            for (int i = 0; i < 8; ++i, ++id)
+                            {
+                                sbyte[] frame = new sbyte[64];
+
+                                for (int j = 0; j < 64; ++j)
+                                {
+                                    frame[j] = (sbyte)*data++;
+                                }
+
+                                byte unk = *data++;
+                                byte frameCount = *data++;
+                                byte frameInterval = *data++;
+                                byte frameStart = *data++;
+
+                                if (frameCount > 0)
+                                {
+                                    AnimData[id] = new AnimdataEntry(frame, unk, frameCount, frameInterval, frameStart);
                                 }
                             }
                         }
+                    }
 
-                        var remaining = (int)(bin.BaseStream.Length - bin.BaseStream.Position);
-                        if (remaining > 0)
-                        {
-                            _unknown = bin.ReadBytes(remaining);
-                        }
+                    var remaining = (int)(bin.BaseStream.Length - bin.BaseStream.Position);
+                    if (remaining > 0)
+                    {
+                        _unknown = bin.ReadBytes(remaining);
                     }
                 }
             }
@@ -81,15 +84,15 @@ namespace Ultima
         /// Gets Animation <see cref="AnimdataEntry"/>
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         public static AnimdataEntry GetAnimData(int id)
         {
-            return AnimData.ContainsKey(id) ? AnimData[id] : null;
+            return AnimData.TryGetValue(id, out AnimdataEntry value) ? value : null;
         }
 
         public static void Save(string path)
         {
             string fileName = Path.Combine(path, "animdata.mul");
+
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
