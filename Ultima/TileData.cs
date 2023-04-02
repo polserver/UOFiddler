@@ -1163,7 +1163,7 @@ namespace Ultima
         /// <summary>
         /// Unused8 ??
         /// </summary>
-        Unused8 = 0x08000000000,
+        Unused8 = 0x0800000000,
         /// <summary>
         /// Disallow shadow on this tile, light source? lava?
         /// </summary>
