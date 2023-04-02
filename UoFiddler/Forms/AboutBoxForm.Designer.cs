@@ -39,183 +39,182 @@ namespace UoFiddler.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBoxForm));
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.checkBoxCheckOnStart = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.checkBoxFormState = new System.Windows.Forms.CheckBox();
-            this.SuspendLayout();
+            richTextBox1 = new System.Windows.Forms.RichTextBox();
+            checkBoxCheckOnStart = new System.Windows.Forms.CheckBox();
+            button1 = new System.Windows.Forms.Button();
+            linkLabel1 = new System.Windows.Forms.LinkLabel();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            checkBoxFormState = new System.Windows.Forms.CheckBox();
+            SuspendLayout();
             // 
             // richTextBox1
             // 
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.richTextBox1.Location = new System.Drawing.Point(15, 29);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(478, 252);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            richTextBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            richTextBox1.Location = new System.Drawing.Point(15, 29);
+            richTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new System.Drawing.Size(478, 252);
+            richTextBox1.TabIndex = 0;
+            richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
             // checkBoxCheckOnStart
             // 
-            this.checkBoxCheckOnStart.AutoSize = true;
-            this.checkBoxCheckOnStart.Location = new System.Drawing.Point(15, 483);
-            this.checkBoxCheckOnStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxCheckOnStart.Name = "checkBoxCheckOnStart";
-            this.checkBoxCheckOnStart.Size = new System.Drawing.Size(105, 19);
-            this.checkBoxCheckOnStart.TabIndex = 1;
-            this.checkBoxCheckOnStart.Text = "Check On Start";
-            this.checkBoxCheckOnStart.UseVisualStyleBackColor = true;
-            this.checkBoxCheckOnStart.CheckedChanged += new System.EventHandler(this.OnChangeCheck);
+            checkBoxCheckOnStart.AutoSize = true;
+            checkBoxCheckOnStart.Location = new System.Drawing.Point(15, 483);
+            checkBoxCheckOnStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxCheckOnStart.Name = "checkBoxCheckOnStart";
+            checkBoxCheckOnStart.Size = new System.Drawing.Size(105, 19);
+            checkBoxCheckOnStart.TabIndex = 1;
+            checkBoxCheckOnStart.Text = "Check On Start";
+            checkBoxCheckOnStart.UseVisualStyleBackColor = true;
+            checkBoxCheckOnStart.CheckedChanged += OnChangeCheck;
             // 
             // button1
             // 
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(138, 479);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(118, 27);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Check for Update";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickUpdate);
+            button1.AutoSize = true;
+            button1.Location = new System.Drawing.Point(138, 479);
+            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(118, 27);
+            button1.TabIndex = 2;
+            button1.Text = "Check for Update";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += OnClickUpdate;
             // 
             // linkLabel1
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(14, 10);
-            this.linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(91, 15);
-            this.linkLabel1.TabIndex = 4;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Visit HomePage";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnClickLink);
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new System.Drawing.Point(14, 10);
+            linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new System.Drawing.Size(91, 15);
+            linkLabel1.TabIndex = 4;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "Visit HomePage";
+            linkLabel1.LinkClicked += OnClickLink;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(15, 290);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(151, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Project Author and Admin";
+            label1.AutoSize = true;
+            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            label1.ForeColor = System.Drawing.SystemColors.ControlText;
+            label1.Location = new System.Drawing.Point(15, 290);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(151, 13);
+            label1.TabIndex = 5;
+            label1.Text = "Project Author and Admin";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(48, 309);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 15);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Turley";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(48, 309);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(39, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Turley";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(19, 331);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(121, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Special Contributers";
+            label3.AutoSize = true;
+            label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            label3.Location = new System.Drawing.Point(19, 331);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(121, 13);
+            label3.TabIndex = 7;
+            label3.Text = "Special Contributers";
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(48, 346);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(250, 15);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "MuadDib, Soulblighter, Nibbio, Andreew, Ares";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(48, 346);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(250, 15);
+            label4.TabIndex = 8;
+            label4.Text = "MuadDib, Soulblighter, Nibbio, Andreew, Ares";
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(22, 375);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 13);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Special Thanks";
+            label5.AutoSize = true;
+            label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            label5.Location = new System.Drawing.Point(22, 375);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(95, 13);
+            label5.TabIndex = 9;
+            label5.Text = "Special Thanks";
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(48, 390);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(367, 15);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "http://www.polserver.com community for all their feedback and use";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(48, 390);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(367, 15);
+            label6.TabIndex = 10;
+            label6.Text = "http://www.polserver.com community for all their feedback and use";
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(48, 405);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(253, 15);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "UltimaSDK Devs for the backbone we modified";
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(48, 405);
+            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(253, 15);
+            label7.TabIndex = 11;
+            label7.Text = "UltimaSDK Devs for the backbone we modified";
             // 
             // checkBoxFormState
             // 
-            this.checkBoxFormState.AutoSize = true;
-            this.checkBoxFormState.Location = new System.Drawing.Point(15, 457);
-            this.checkBoxFormState.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxFormState.Name = "checkBoxFormState";
-            this.checkBoxFormState.Size = new System.Drawing.Size(109, 19);
-            this.checkBoxFormState.TabIndex = 12;
-            this.checkBoxFormState.Text = "Store Formstate";
-            this.checkBoxFormState.UseVisualStyleBackColor = true;
-            this.checkBoxFormState.CheckedChanged += new System.EventHandler(this.OnChangeFormState);
+            checkBoxFormState.AutoSize = true;
+            checkBoxFormState.Location = new System.Drawing.Point(15, 457);
+            checkBoxFormState.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxFormState.Name = "checkBoxFormState";
+            checkBoxFormState.Size = new System.Drawing.Size(109, 19);
+            checkBoxFormState.TabIndex = 12;
+            checkBoxFormState.Text = "Store Formstate";
+            checkBoxFormState.UseVisualStyleBackColor = true;
+            checkBoxFormState.CheckedChanged += OnChangeFormState;
             // 
             // AboutBoxForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(504, 521);
-            this.Controls.Add(this.checkBoxFormState);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.checkBoxCheckOnStart);
-            this.Controls.Add(this.richTextBox1);
-            this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "AboutBoxForm";
-            this.Padding = new System.Windows.Forms.Padding(10);
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "About";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(504, 521);
+            Controls.Add(checkBoxFormState);
+            Controls.Add(label7);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(linkLabel1);
+            Controls.Add(button1);
+            Controls.Add(checkBoxCheckOnStart);
+            Controls.Add(richTextBox1);
+            DoubleBuffered = true;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "AboutBoxForm";
+            Padding = new System.Windows.Forms.Padding(10);
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "About";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
