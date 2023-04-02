@@ -474,18 +474,10 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="Resources\cadeado.gif" />
-	</ItemGroup>
-	<ItemGroup>
+		<None Include="Resources\emptySquare.jpg" />
+		<None Include="Resources\fullSquare.jpg" />
 		<None Include="Resources\mouse.bmp" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="Resources\QuadradoCheio.jpg" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="Resources\QuadradoVazio.gif" />
-	</ItemGroup>
-	<ItemGroup>
+		<None Include="Resources\padlock.jpg" />
 		<None Include="Resources\staticPlayButton.png" />
 	</ItemGroup>
 	<ItemGroup>

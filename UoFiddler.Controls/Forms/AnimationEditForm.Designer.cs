@@ -587,7 +587,7 @@
             // LockColorControlsCheckBox
             // 
             this.LockColorControlsCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
-            this.LockColorControlsCheckBox.Image = global::UoFiddler.Controls.Properties.Resources.cadeado;
+            this.LockColorControlsCheckBox.Image = global::UoFiddler.Controls.Properties.Resources.padlock;
             this.LockColorControlsCheckBox.Location = new System.Drawing.Point(649, 0);
             this.LockColorControlsCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.LockColorControlsCheckBox.Name = "LockColorControlsCheckBox";
@@ -956,7 +956,7 @@
             this.DrawFullRectangleToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.DrawFullRectangleToolStripButton.CheckOnClick = true;
             this.DrawFullRectangleToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.DrawFullRectangleToolStripButton.Image = global::UoFiddler.Controls.Properties.Resources.QuadradoCheio;
+            this.DrawFullRectangleToolStripButton.Image = global::UoFiddler.Controls.Properties.Resources.fullSquare;
             this.DrawFullRectangleToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DrawFullRectangleToolStripButton.Name = "DrawFullRectangleToolStripButton";
             this.DrawFullRectangleToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -975,7 +975,7 @@
             this.DrawEmptyRectangleToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.DrawEmptyRectangleToolStripButton.CheckOnClick = true;
             this.DrawEmptyRectangleToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.DrawEmptyRectangleToolStripButton.Image = global::UoFiddler.Controls.Properties.Resources.QuadradoVazio;
+            this.DrawEmptyRectangleToolStripButton.Image = global::UoFiddler.Controls.Properties.Resources.emptySquare;
             this.DrawEmptyRectangleToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DrawEmptyRectangleToolStripButton.Name = "DrawEmptyRectangleToolStripButton";
             this.DrawEmptyRectangleToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1210,7 +1210,7 @@
             // ToolStripLockButton
             // 
             this.ToolStripLockButton.Appearance = System.Windows.Forms.Appearance.Button;
-            this.ToolStripLockButton.BackgroundImage = global::UoFiddler.Controls.Properties.Resources.cadeado;
+            this.ToolStripLockButton.BackgroundImage = global::UoFiddler.Controls.Properties.Resources.padlock;
             this.ToolStripLockButton.Location = new System.Drawing.Point(131, 50);
             this.ToolStripLockButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ToolStripLockButton.Name = "ToolStripLockButton";

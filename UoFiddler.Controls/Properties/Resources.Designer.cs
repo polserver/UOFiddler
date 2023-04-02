@@ -63,9 +63,19 @@ namespace UoFiddler.Controls.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap cadeado {
+        public static System.Drawing.Bitmap emptySquare {
             get {
-                object obj = ResourceManager.GetObject("cadeado", resourceCulture);
+                object obj = ResourceManager.GetObject("emptySquare", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fullSquare {
+            get {
+                object obj = ResourceManager.GetObject("fullSquare", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,19 +93,9 @@ namespace UoFiddler.Controls.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap QuadradoCheio {
+        public static System.Drawing.Bitmap padlock {
             get {
-                object obj = ResourceManager.GetObject("QuadradoCheio", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap QuadradoVazio {
-            get {
-                object obj = ResourceManager.GetObject("QuadradoVazio", resourceCulture);
+                object obj = ResourceManager.GetObject("padlock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
