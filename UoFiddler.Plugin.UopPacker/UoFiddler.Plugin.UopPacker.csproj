@@ -23,8 +23,14 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Ultima\Ultima.csproj" />
-		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj" />
+		<ProjectReference Include="..\Ultima\Ultima.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="UserControls\UopPackerControl.cs">
