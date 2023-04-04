@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -34,42 +35,27 @@ namespace Ultima
             Entries = new List<SpeechEntry>(capacity);
 
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var bin = new BinaryReader(fs))
             {
-                var buffer = new byte[fs.Length];
+                int order = 0;
 
-                unsafe
+                while (bin.BaseStream.Length != bin.BaseStream.Position)
                 {
-                    int order = 0;
+                    var id = BinaryPrimitives.ReverseEndianness(bin.ReadInt16());
+                    var length = BinaryPrimitives.ReverseEndianness(bin.ReadInt16());
 
-                    fs.Read(buffer, 0, buffer.Length);
-
-                    fixed (byte* data = buffer)
+                    if (length > 128)
                     {
-                        byte* binData = data;
-                        byte* binDataEnd = binData + buffer.Length;
-
-                        while (binData != binDataEnd)
-                        {
-                            var id = (short)((*binData++ << 8) | (*binData++)); // Big endian
-                            var length = (short)((*binData++ << 8) | (*binData++)); // Big endian
-
-                            if (length > 128)
-                            {
-                                length = 128;
-                            }
-
-                            for (int i = 0; i < length; ++i)
-                            {
-                                _buffer[i] = *binData++;
-                            }
-
-                            string keyword = Encoding.UTF8.GetString(_buffer, 0, length);
-
-                            Entries.Add(new SpeechEntry(id, keyword, order));
-
-                            ++order;
-                        }
+                        length = 128;
                     }
+
+                    _ = bin.Read(_buffer, 0, length);
+
+                    string keyword = Encoding.UTF8.GetString(_buffer, 0, length);
+
+                    Entries.Add(new SpeechEntry(id, keyword, order));
+
+                    ++order;
                 }
             }
         }
@@ -83,17 +69,15 @@ namespace Ultima
             Entries.Sort(new OrderComparer());
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var bin = new BinaryWriter(fs))
             {
-                using (var bin = new BinaryWriter(fs))
+                foreach (SpeechEntry entry in Entries)
                 {
-                    foreach (SpeechEntry entry in Entries)
-                    {
-                        bin.Write(NativeMethods.SwapEndian(entry.Id));
-                        byte[] utf8String = Encoding.UTF8.GetBytes(entry.KeyWord);
-                        var length = (short)utf8String.Length;
-                        bin.Write(NativeMethods.SwapEndian(length));
-                        bin.Write(utf8String);
-                    }
+                    bin.Write(BinaryPrimitives.ReverseEndianness(entry.Id));
+                    byte[] utf8String = Encoding.UTF8.GetBytes(entry.KeyWord);
+                    var length = (short)utf8String.Length;
+                    bin.Write(BinaryPrimitives.ReverseEndianness(length));
+                    bin.Write(utf8String);
                 }
             }
         }

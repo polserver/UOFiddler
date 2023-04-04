@@ -101,16 +101,5 @@ namespace Ultima
 
         // Delegate to filter which windows to include 
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        /// <summary>
-        /// Swaps from Big to LittleEndian and vise versa
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public static short SwapEndian(short x)
-        {
-            var y = (ushort)x;
-            return (short)((y >> 8) | (y << 8));
-        }
     }
 }
