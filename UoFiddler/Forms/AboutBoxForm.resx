@@ -58,7 +58,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.10.1
+    <value>Version 4.10.2
+- Fixed preview coloring in hue editor.
+
+Version 4.10.1
 - Fixed invalid value for tiledata flag `Unused8`. As tiledata csv export is positional this fix may affect files exported before this version. You'll have to compare files on your own. To fix older files just reorder columns later in file so this part `artused,noshadow,pixelbleed,playanimonce,unused8` should be `artused,unused8,noshadow,pixelbleed,playanimonce`.
 
 Version 4.10.0
