@@ -209,7 +209,7 @@ namespace Ultima
                             int b = c & 0x1F;
                             if (r == g && r == b)
                             {
-                                *pBuffer = colors[(c >> 10) & 0x1F];
+                                *pBuffer = (ushort)(colors[(c >> 10) & 0x1F] | 0x8000);
                             }
                         }
                         ++pBuffer;
@@ -227,7 +227,7 @@ namespace Ultima
                     {
                         if (*pBuffer != 0)
                         {
-                            *pBuffer = colors[(*pBuffer >> 10) & 0x1F];
+                            *pBuffer = (ushort)(colors[(*pBuffer >> 10) & 0x1F] | 0x8000);
                         }
 
                         ++pBuffer;
