@@ -323,10 +323,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                         writerIdx.Write(chunkId + 1);
                                         break;
                                     }
-                                case FileType.ArtLegacyMul:
-                                    break;
-                                case FileType.MapLegacyMul:
-                                    break;
                                 default:
                                     {
                                         writerIdx.Write(chunkData.Length); // Size
