@@ -256,7 +256,7 @@ namespace Ultima
         /// <returns>The calibrated memory location -or- 0 if it could not be found.</returns>
         public static void Calibrate()
         {
-            Calibrate(CalibrationInfo.GetList());
+            Calibrate(CalibrationInfo.Get());
         }
 
         /// <summary>

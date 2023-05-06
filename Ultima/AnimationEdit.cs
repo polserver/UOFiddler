@@ -438,8 +438,8 @@ namespace Ultima
             for (int i = 0; i < bits.Length; ++i)
             {
                 FrameEdit frame = Frames[i];
-                int width = frame.width;
-                int height = frame.height;
+                int width = frame.Width;
+                int height = frame.Height;
                 if (height == 0 || width == 0)
                 {
                     continue;
@@ -669,17 +669,18 @@ namespace Ultima
         public Raw[] RawData { get; }
         public Point Center { get; set; }
 
-        public readonly int width;
-        public readonly int height;
+        public readonly int Width;
+        public readonly int Height;
 
         public FrameEdit(BinaryReader bin)
         {
             int xCenter = bin.ReadInt16();
             int yCenter = bin.ReadInt16();
 
-            width = bin.ReadUInt16();
-            height = bin.ReadUInt16();
-            if (height == 0 || width == 0)
+            Width = bin.ReadUInt16();
+            Height = bin.ReadUInt16();
+
+            if (Height == 0 || Width == 0)
             {
                 return;
             }
@@ -714,10 +715,10 @@ namespace Ultima
         public unsafe FrameEdit(Bitmap bit, ushort[] palette, int centerX, int centerY)
         {
             Center = new Point(centerX, centerY);
-            width = bit.Width;
-            height = bit.Height;
+            Width = bit.Width;
+            Height = bit.Height;
 
-            BitmapData bd = bit.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            BitmapData bd = bit.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
             var tmp = new List<Raw>();
@@ -811,8 +812,8 @@ namespace Ultima
         {
             bin.Write((short)Center.X);
             bin.Write((short)Center.Y);
-            bin.Write((ushort)width);
-            bin.Write((ushort)height);
+            bin.Write((ushort)Width);
+            bin.Write((ushort)Height);
 
             if (RawData != null)
             {

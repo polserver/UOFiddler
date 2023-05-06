@@ -53,10 +53,11 @@ namespace Ultima
 
             using (var reader = new StreamReader(path))
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                while (reader.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#"))
                     {
                         continue;
                     }

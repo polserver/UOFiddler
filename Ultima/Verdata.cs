@@ -70,15 +70,12 @@ namespace Ultima
 
         public static void Seek(int lookup)
         {
-            if (Stream?.CanRead != true || !Stream.CanSeek)
+            if ((Stream?.CanRead != true || !Stream.CanSeek) && _path != null)
             {
-                if (_path != null)
-                {
-                    Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                }
+                Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
-            Stream.Seek(lookup, SeekOrigin.Begin);
+            _ = Stream.Seek(lookup, SeekOrigin.Begin);
         }
     }
 

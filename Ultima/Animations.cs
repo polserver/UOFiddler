@@ -15,7 +15,6 @@ namespace Ultima
         private static FileIndex _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
 
         private static byte[] _streamBuffer;
-        private static MemoryStream _memoryStream;
 
         /// <summary>
         /// Rereads AnimX files and bodyconv, body.def
@@ -70,12 +69,13 @@ namespace Ultima
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
-            _memoryStream = new MemoryStream(_streamBuffer, false);
+            _ = stream.Read(_streamBuffer, 0, length);
+
+            var memoryStream = new MemoryStream(_streamBuffer, false);
 
             bool flip = direction > 4;
             AnimationFrame[] frames;
-            using (var bin = new BinaryReader(_memoryStream))
+            using (var bin = new BinaryReader(memoryStream))
             {
                 var palette = new ushort[0x100];
 
@@ -128,7 +128,7 @@ namespace Ultima
                 }
             }
 
-            _memoryStream.Close();
+            memoryStream.Close();
 
             return frames;
         }

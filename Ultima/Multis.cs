@@ -125,8 +125,7 @@ namespace Ultima
             var multiComponentLists = new List<MultiComponentList>();
             using (var ip = new StreamReader(fileName))
             {
-                string line;
-                while ((line = ip.ReadLine()) != null)
+                while (ip.ReadLine() is { } line)
                 {
                     string[] split = Regex.Split(line, @"\s+");
                     if (split.Length != 7)

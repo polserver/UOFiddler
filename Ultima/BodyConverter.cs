@@ -43,11 +43,11 @@ namespace Ultima
 
             using (var ip = new StreamReader(path))
             {
-                string line;
-
-                while ((line = ip.ReadLine()) != null)
+                while (ip.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#") || line.StartsWith("\""))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#") || line.StartsWith("\""))
                     {
                         continue;
                     }

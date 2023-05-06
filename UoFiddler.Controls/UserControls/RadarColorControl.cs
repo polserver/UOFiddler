@@ -16,6 +16,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 using Ultima;
+using Ultima.Helpers;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Helpers;
 

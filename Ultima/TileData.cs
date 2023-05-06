@@ -1324,12 +1324,12 @@ namespace Ultima
                     fs.Read(buffer, 0, buffer.Length);
                     for (int i = 0; i < 0x4000; i += 32)
                     {
-                        var ptrHeader = new IntPtr((long)gc.AddrOfPinnedObject() + currentPos);
+                        var ptrHeader = new IntPtr(gc.AddrOfPinnedObject() + currentPos);
                         currentPos += 4;
                         _landHeader[j++] = (int)Marshal.PtrToStructure(ptrHeader, typeof(int));
                         for (int count = 0; count < 32; ++count)
                         {
-                            var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + currentPos);
+                            var ptr = new IntPtr(gc.AddrOfPinnedObject() + currentPos);
                             if (useNeWTileDataFormat)
                             {
                                 currentPos += sizeof(NewLandTileDataMul);
@@ -1358,12 +1358,12 @@ namespace Ultima
                     j = 0;
                     for (int i = 0; i < itemLength; i += 32)
                     {
-                        var ptrHeader = new IntPtr((long)gc.AddrOfPinnedObject() + currentPos);
+                        var ptrHeader = new IntPtr(gc.AddrOfPinnedObject() + currentPos);
                         currentPos += 4;
                         _itemHeader[j++] = (int)Marshal.PtrToStructure(ptrHeader, typeof(int));
                         for (int count = 0; count < 32; ++count)
                         {
-                            var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + currentPos);
+                            var ptr = new IntPtr(gc.AddrOfPinnedObject() + currentPos);
                             if (useNeWTileDataFormat)
                             {
                                 currentPos += sizeof(NewItemTileDataMul);
@@ -1576,10 +1576,11 @@ namespace Ultima
 
             using (var sr = new StreamReader(fileName))
             {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+                while (sr.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#"))
                     {
                         continue;
                     }

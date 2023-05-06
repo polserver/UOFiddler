@@ -11,7 +11,7 @@
 
 using System.Drawing;
 
-namespace Ultima
+namespace Ultima.Helpers
 {
     public static class HueHelpers
     {

@@ -5,14 +5,14 @@ using System.IO;
 // ascii text support written by arul
 namespace Ultima
 {
-    public sealed class ASCIIFont
+    public sealed class AsciiFont
     {
         public byte Header { get; }
         public byte[] Unk { get; set; }
         public Bitmap[] Characters { get; set; }
         public int Height { get; set; }
 
-        public ASCIIFont(byte header)
+        public AsciiFont(byte header)
         {
             Header = header;
             Height = 0;
@@ -53,7 +53,7 @@ namespace Ultima
             Height = import.Height;
         }
 
-        public static ASCIIFont GetFixed(int font, ASCIIFont[] fonts)
+        public static AsciiFont GetFixed(int font, AsciiFont[] fonts)
         {
             if (font is < 0 or > 9)
             {
@@ -64,11 +64,11 @@ namespace Ultima
         }
     }
 
-    public static class ASCIIText
+    public static class AsciiText
     {
-        public static readonly ASCIIFont[] Fonts = new ASCIIFont[10];
+        public static readonly AsciiFont[] Fonts = new AsciiFont[10];
 
-        static ASCIIText()
+        static AsciiText()
         {
             Initialize();
         }
@@ -94,7 +94,7 @@ namespace Ultima
                     for (int i = 0; i < 10; ++i)
                     {
                         byte header = *read++;
-                        Fonts[i] = new ASCIIFont(header);
+                        Fonts[i] = new AsciiFont(header);
 
                         for (int k = 0; k < 224; ++k)
                         {
@@ -193,7 +193,7 @@ namespace Ultima
         /// <returns></returns>
         public static Bitmap DrawText(int fontId, string text)
         {
-            ASCIIFont font = ASCIIFont.GetFixed(fontId, Fonts);
+            AsciiFont font = AsciiFont.GetFixed(fontId, Fonts);
             var result = new Bitmap(font.GetWidth(text) + 2, font.Height + 2);
 
             int dx = 2;

@@ -103,7 +103,7 @@ namespace Ultima
         {
             get
             {
-                return _tiles ?? (_tiles = new TileMatrix(FileIndex, _mapId, Width, Height, _path));
+                return _tiles ??= new TileMatrix(FileIndex, _mapId, Width, Height, _path);
             }
         }
 
@@ -252,7 +252,7 @@ namespace Ultima
 
             if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
             {
-                return _black ?? (_black = new ushort[64]);
+                return _black ??= new ushort[64];
             }
 
             ushort[][][] cache;
@@ -849,24 +849,15 @@ namespace Ultima
                                 binmul.Write(header);
                                 for (int i = 0; i < 64; ++i)
                                 {
-                                    short tileid = mapReader.ReadInt16();
+                                    short tileId = mapReader.ReadInt16();
                                     sbyte z = mapReader.ReadSByte();
-                                    if ((tileid < 0) || (tileid >= 0x4000))
+
+                                    if (tileId is < 0 or >= 0x4000)
                                     {
-                                        tileid = 0;
+                                        tileId = 0;
                                     }
 
-                                    if (z < -128)
-                                    {
-                                        z = -128;
-                                    }
-
-                                    if (z > 127)
-                                    {
-                                        z = 127;
-                                    }
-
-                                    binmul.Write(tileid);
+                                    binmul.Write(tileId);
                                     binmul.Write(z);
                                 }
                             }

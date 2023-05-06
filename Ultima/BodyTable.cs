@@ -26,11 +26,11 @@ namespace Ultima
 
             using (var def = new StreamReader(filePath))
             {
-                string line;
-
-                while ((line = def.ReadLine()) != null)
+                while (def.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#"))
                     {
                         continue;
                     }

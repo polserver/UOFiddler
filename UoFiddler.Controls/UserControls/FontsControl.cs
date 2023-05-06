@@ -97,7 +97,7 @@ namespace UoFiddler.Controls.UserControls
                 };
                 treeView.Nodes.Add(node);
 
-                for (int i = 0; i < ASCIIText.Fonts.Length; ++i)
+                for (int i = 0; i < AsciiText.Fonts.Length; ++i)
                 {
                     node = new TreeNode(i.ToString())
                     {
@@ -175,16 +175,16 @@ namespace UoFiddler.Controls.UserControls
                 {
                     setOffsetsToolStripMenuItem.Visible = false;
 
-                    if (ASCIIText.Fonts[font] == null)
+                    if (AsciiText.Fonts[font] == null)
                     {
                         return;
                     }
 
-                    var length = ASCIIText.Fonts[font].Characters.Length;
+                    var length = AsciiText.Fonts[font].Characters.Length;
                     FontsTileView.VirtualListSize = length;
 
                     _fonts = new List<int>(length);
-                    for (int i = 0; i < ASCIIText.Fonts[font].Characters.Length; ++i)
+                    for (int i = 0; i < AsciiText.Fonts[font].Characters.Length; ++i)
                     {
                         _fonts.Add(i);
                     }
@@ -220,7 +220,7 @@ namespace UoFiddler.Controls.UserControls
             else
             {
                 var font = (int)treeView.SelectedNode.Tag;
-                Bitmap bmp = ASCIIText.Fonts[font].Characters[_fonts[FontsTileView.SelectedIndices[0]]]
+                Bitmap bmp = AsciiText.Fonts[font].Characters[_fonts[FontsTileView.SelectedIndices[0]]]
                              ?? new Bitmap(10, 10);
 
                 bmp.Save(fileName, ImageFormat.Tiff);
@@ -269,7 +269,7 @@ namespace UoFiddler.Controls.UserControls
                 }
                 else
                 {
-                    ASCIIText.Fonts[font].ReplaceCharacter(FontsTileView.SelectedIndices[0], import);
+                    AsciiText.Fonts[font].ReplaceCharacter(FontsTileView.SelectedIndices[0], import);
                     Options.ChangedUltimaClass["ASCIIFont"] = true;
                 }
 
@@ -290,7 +290,7 @@ namespace UoFiddler.Controls.UserControls
             else
             {
                 string fileName = Path.Combine(path, "fonts.mul");
-                ASCIIText.Save(fileName);
+                AsciiText.Save(fileName);
                 MessageBox.Show($"Fonts saved to {fileName}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
                     MessageBoxDefaultButton.Button1);
                 Options.ChangedUltimaClass["ASCIIFont"] = false;
@@ -394,7 +394,7 @@ namespace UoFiddler.Controls.UserControls
 
                 // draw using font from uo if character exists
                 var font = (int)treeView.SelectedNode.Tag;
-                e.Graphics.DrawImage(ASCIIText.Fonts[font].Characters[_fonts[i]], new Point(e.Bounds.X + 2, e.Bounds.Y + 2));
+                e.Graphics.DrawImage(AsciiText.Fonts[font].Characters[_fonts[i]], new Point(e.Bounds.X + 2, e.Bounds.Y + 2));
             }
         }
 

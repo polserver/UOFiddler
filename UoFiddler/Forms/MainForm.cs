@@ -124,7 +124,7 @@ namespace UoFiddler.Forms
 
             if (Options.LoadedUltimaClass["ASCIIFont"])
             {
-                ASCIIText.Initialize();
+                AsciiText.Initialize();
             }
 
             if (Options.LoadedUltimaClass["UnicodeFont"])

@@ -386,10 +386,7 @@ namespace Ultima
                 string file = $"build/{pattern}/{i:D8}.dat";
                 ulong hash = UopUtils.HashFileName(file);
 
-                if (!hashes.ContainsKey(hash))
-                {
-                    hashes.Add(hash, i);
-                }
+                hashes.TryAdd(hash, i);
             }
 
             _uopReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin);

@@ -52,13 +52,13 @@ namespace Ultima
 
                         for (int i = 0; i < blockCount; ++i)
                         {
-                            var ptrHeader = new IntPtr((long)gc.AddrOfPinnedObject() + currentPos);
+                            var ptrHeader = new IntPtr(gc.AddrOfPinnedObject() + currentPos);
                             currentPos += 4;
                             _header[i] = (int)Marshal.PtrToStructure(ptrHeader, typeof(int));
 
                             for (int j = 0; j < 8; ++j, ++index)
                             {
-                                var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + currentPos);
+                                var ptr = new IntPtr(gc.AddrOfPinnedObject() + currentPos);
                                 currentPos += structSize;
                                 var cur = (HueDataMul)Marshal.PtrToStructure(ptr, typeof(HueDataMul));
                                 List[index] = new Hue(index, cur);
@@ -417,11 +417,12 @@ namespace Ultima
 
             using (var sr = new StreamReader(fileName))
             {
-                string line;
                 int i = -3;
-                while ((line = sr.ReadLine()) != null)
+
+                while (sr.ReadLine() is { } line)
                 {
                     line = line.Trim();
+
                     try
                     {
                         if (i >= Colors.Length)
@@ -444,6 +445,7 @@ namespace Ultima
                                 Colors[i] = ushort.Parse(line);
                                 break;
                         }
+
                         ++i;
                     }
                     catch

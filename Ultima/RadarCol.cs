@@ -89,12 +89,13 @@ namespace Ultima
 
             using (var sr = new StreamReader(fileName))
             {
-                string line;
                 int count = 0;
 
-                while ((line = sr.ReadLine()) != null)
+                while (sr.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#"))
                     {
                         continue;
                     }
@@ -112,10 +113,11 @@ namespace Ultima
 
             using (var sr = new StreamReader(fileName))
             {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+                while (sr.ReadLine() is { } line)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    line = line.Trim();
+
+                    if (line.Length == 0 || line.StartsWith("#"))
                     {
                         continue;
                     }

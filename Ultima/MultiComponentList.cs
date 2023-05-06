@@ -220,8 +220,7 @@ namespace Ultima
                         _min.Y = 10000;
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 string[] split = line.Split(' ');
 
@@ -273,8 +272,7 @@ namespace Ultima
 
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 ++itemCount;
 
@@ -294,9 +292,8 @@ namespace Ultima
                         _min.Y = 10000;
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
                             int i = -1;
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 ++i;
                                 if (i < 4)
@@ -417,8 +414,7 @@ namespace Ultima
                         itemCount = 0;
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 line = line.Trim();
                                 if (line.StartsWith("SECTION WORLDITEM"))
@@ -433,7 +429,6 @@ namespace Ultima
                         _min.Y = 10000;
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
                             var tempItem = new MultiTileEntry
                             {
                                 ItemId = 0xFFFF,
@@ -441,7 +436,7 @@ namespace Ultima
                                 Unk1 = 0
                             };
 
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 line = line.Trim();
                                 if (line.StartsWith("SECTION WORLDITEM"))
@@ -515,9 +510,7 @@ namespace Ultima
 
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
-
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 line = line.Trim();
 
@@ -537,8 +530,7 @@ namespace Ultima
 
                         using (var ip = new StreamReader(fileName))
                         {
-                            string line;
-                            while ((line = ip.ReadLine()) != null)
+                            while (ip.ReadLine() is { } line)
                             {
                                 if (line.StartsWith(headerCheck))
                                 {
@@ -645,14 +637,13 @@ namespace Ultima
 
         public MultiComponentList(StreamReader stream, int count)
         {
-            string line;
             int itemCount = 0;
             _min = _max = Point.Empty;
             SortedTiles = new MultiTileEntry[count];
             _min.X = 10000;
             _min.Y = 10000;
 
-            while ((line = stream.ReadLine()) != null)
+            while (stream.ReadLine() is { } line)
             {
                 string[] split = Regex.Split(line, @"\s+");
                 SortedTiles[itemCount].ItemId = Convert.ToUInt16(split[0]);

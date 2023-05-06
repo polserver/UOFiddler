@@ -23,7 +23,7 @@ namespace Ultima
             DetF = detf;
         }
 
-        private static byte[] ReadBytes(StreamReader ip)
+        private static byte[] ReadBytes(TextReader ip)
         {
             string line = ip.ReadLine();
 
@@ -166,20 +166,23 @@ namespace Ultima
             )
         };
 
-        public static CalibrationInfo[] GetList()
+        public static CalibrationInfo[] Get()
         {
             var list = new List<CalibrationInfo>();
 
             string path = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return Array.Empty<CalibrationInfo>();
+            }
+
             path = Path.Combine(path, "calibration.cfg");
 
             if (File.Exists(path))
             {
                 using (var ip = new StreamReader(path))
                 {
-                    string line;
-
-                    while ((line = ip.ReadLine()) != null)
+                    while (ip.ReadLine() is { } line)
                     {
                         line = line.Trim();
 
