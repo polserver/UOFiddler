@@ -53,10 +53,10 @@ namespace Ultima
 
             if (path == null)
             {
-                _mapPath = Files.GetFilePath("map{0}.mul", fileIndex);
+                _mapPath = Files.GetFilePath($"map{fileIndex}.mul");
                 if (string.IsNullOrEmpty(_mapPath) || !File.Exists(_mapPath))
                 {
-                    _mapPath = Files.GetFilePath("map{0}LegacyMUL.uop", fileIndex);
+                    _mapPath = Files.GetFilePath($"map{fileIndex}LegacyMUL.uop");
                 }
 
                 if (_mapPath?.EndsWith(".uop") == true)
@@ -84,7 +84,7 @@ namespace Ultima
 
             if (path == null)
             {
-                _indexPath = Files.GetFilePath("staidx{0}.mul", fileIndex);
+                _indexPath = Files.GetFilePath($"staidx{fileIndex}.mul");
             }
             else
             {
@@ -97,7 +97,7 @@ namespace Ultima
 
             if (path == null)
             {
-                _staticsPath = Files.GetFilePath("statics{0}.mul", fileIndex);
+                _staticsPath = Files.GetFilePath($"statics{fileIndex}.mul");
             }
             else
             {

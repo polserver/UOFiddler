@@ -113,18 +113,19 @@ namespace Ultima
 
         public int FileIndex { get; }
 
-        /// <summary>
-        /// Returns Bitmap with Statics
-        /// </summary>
-        /// <param name="x">8x8 Block</param>
-        /// <param name="y">8x8 Block</param>
-        /// <param name="width">8x8 Block</param>
-        /// <param name="height">8x8 Block</param>
-        /// <returns></returns>
-        public Bitmap GetImage(int x, int y, int width, int height)
-        {
-            return GetImage(x, y, width, height, true);
-        }
+        ///// <summary>
+        ///// Returns Bitmap with Statics
+        ///// </summary>
+        ///// <param name="x">8x8 Block</param>
+        ///// <param name="y">8x8 Block</param>
+        ///// <param name="width">8x8 Block</param>
+        ///// <param name="height">8x8 Block</param>
+        ///// <returns></returns>
+        // TODO: unused?
+        //public Bitmap GetImage(int x, int y, int width, int height)
+        //{
+        //    return GetImage(x, y, width, height, true);
+        //}
 
         /// <summary>
         /// Returns Bitmap
@@ -546,7 +547,7 @@ namespace Ultima
 
         public static void DefragStatics(string path, Map map, int width, int height, bool remove)
         {
-            string indexPath = Files.GetFilePath("staidx{0}.mul", map.FileIndex);
+            string indexPath = Files.GetFilePath($"staidx{map.FileIndex}.mul");
             BinaryReader indexReader;
             if (indexPath != null)
             {
@@ -558,7 +559,7 @@ namespace Ultima
                 return;
             }
 
-            string staticsPath = Files.GetFilePath("statics{0}.mul", map.FileIndex);
+            string staticsPath = Files.GetFilePath($"statics{map.FileIndex}.mul");
 
             FileStream staticsStream;
             BinaryReader staticsReader;
@@ -815,9 +816,9 @@ namespace Ultima
             staticsReader.Close();
         }
 
-        public static void RewriteMap(string path, int map, int width, int height)
+        public static void RewriteMap(string path, int mapIndex, int width, int height)
         {
-            string mapPath = Files.GetFilePath("map{0}.mul", map);
+            string mapPath = Files.GetFilePath($"map{mapIndex}.mul");
             BinaryReader mapReader;
             if (mapPath != null)
             {
@@ -829,24 +830,25 @@ namespace Ultima
                 return;
             }
 
-            int blockx = width >> 3;
-            int blocky = height >> 3;
+            int blockX = width >> 3;
+            int blockY = height >> 3;
 
-            string mul = Path.Combine(path, $"map{map}.mul");
-            using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+            string mulPath = Path.Combine(path, $"map{mapIndex}.mul");
+
+            using (var fileStream = new FileStream(mulPath, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                var memmul = new MemoryStream();
-                using (var binmul = new BinaryWriter(memmul))
+                var memoryStream = new MemoryStream();
+                using (var binaryWriter = new BinaryWriter(memoryStream))
                 {
-                    for (int x = 0; x < blockx; ++x)
+                    for (int x = 0; x < blockX; ++x)
                     {
-                        for (int y = 0; y < blocky; ++y)
+                        for (int y = 0; y < blockY; ++y)
                         {
                             try
                             {
-                                mapReader.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
+                                mapReader.BaseStream.Seek(((x * blockY) + y) * 196, SeekOrigin.Begin);
                                 int header = mapReader.ReadInt32();
-                                binmul.Write(header);
+                                binaryWriter.Write(header);
                                 for (int i = 0; i < 64; ++i)
                                 {
                                     short tileId = mapReader.ReadInt16();
@@ -857,22 +859,22 @@ namespace Ultima
                                         tileId = 0;
                                     }
 
-                                    binmul.Write(tileId);
-                                    binmul.Write(z);
+                                    binaryWriter.Write(tileId);
+                                    binaryWriter.Write(z);
                                 }
                             }
                             catch // fill rest
                             {
-                                binmul.BaseStream.Seek(((x * blocky) + y) * 196, SeekOrigin.Begin);
-                                for (; x < blockx; ++x)
+                                binaryWriter.BaseStream.Seek(((x * blockY) + y) * 196, SeekOrigin.Begin);
+                                for (; x < blockX; ++x)
                                 {
-                                    for (; y < blocky; ++y)
+                                    for (; y < blockY; ++y)
                                     {
-                                        binmul.Write(0);
+                                        binaryWriter.Write(0);
                                         for (int i = 0; i < 64; ++i)
                                         {
-                                            binmul.Write((short)0);
-                                            binmul.Write((sbyte)0);
+                                            binaryWriter.Write((short)0);
+                                            binaryWriter.Write((sbyte)0);
                                         }
                                     }
                                     y = 0;
@@ -881,29 +883,33 @@ namespace Ultima
                         }
                     }
 
-                    memmul.WriteTo(fsmul);
+                    memoryStream.WriteTo(fileStream);
                 }
             }
 
             mapReader.Close();
         }
 
-        public void ReportInvisStatics(string reportfile)
+        public void ReportInvisibleStatics(string reportFile)
         {
-            reportfile = Path.Combine(reportfile, $"staticReport-{_mapId}.csv");
-            using (var tex = new StreamWriter(new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            reportFile = Path.Combine(reportFile, $"staticReport-{_mapId}.csv");
+
+            using (var tex = new StreamWriter(new FileStream(reportFile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
                 tex.WriteLine("x;y;z;Static");
+
                 for (int x = 0; x < Width; ++x)
                 {
                     for (int y = 0; y < Height; ++y)
                     {
-                        Tile currtile = Tiles.GetLandTile(x, y);
-                        foreach (HuedTile currstatic in Tiles.GetStaticTiles(x, y))
+                        Tile currentTile = Tiles.GetLandTile(x, y);
+
+                        foreach (HuedTile currentStatic in Tiles.GetStaticTiles(x, y))
                         {
-                            if (currstatic.Z < currtile.Z && TileData.ItemTable[currstatic.Id].Height + currstatic.Z < currtile.Z)
+                            if (currentStatic.Z < currentTile.Z &&
+                                TileData.ItemTable[currentStatic.Id].Height + currentStatic.Z < currentTile.Z)
                             {
-                                tex.WriteLine("{0};{1};{2};0x{3:X}", x, y, currstatic.Z, currstatic.Id);
+                                tex.WriteLine("{0};{1};{2};0x{3:X}", x, y, currentStatic.Z, currentStatic.Id);
                             }
                         }
                     }
@@ -911,27 +917,30 @@ namespace Ultima
             }
         }
 
-        public void ReportInvalidMapIDs(string reportfile)
+        public void ReportInvalidMapIDs(string reportFile)
         {
-            reportfile = Path.Combine(reportfile, $"ReportInvalidMapIDs-{_mapId}.csv");
-            using (var tex = new StreamWriter(new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            reportFile = Path.Combine(reportFile, $"ReportInvalidMapIDs-{_mapId}.csv");
+
+            using (var tex = new StreamWriter(new FileStream(reportFile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
                 tex.WriteLine("x;y;z;Static;LandTile");
+
                 for (int x = 0; x < Width; ++x)
                 {
                     for (int y = 0; y < Height; ++y)
                     {
-                        Tile currtile = Tiles.GetLandTile(x, y);
-                        if (!Art.IsValidLand(currtile.Id))
+                        Tile currentTile = Tiles.GetLandTile(x, y);
+
+                        if (!Art.IsValidLand(currentTile.Id))
                         {
-                            tex.WriteLine("{0};{1};{2};0;0x{3:X}", x, y, currtile.Z, currtile.Id);
+                            tex.WriteLine("{0};{1};{2};0;0x{3:X}", x, y, currentTile.Z, currentTile.Id);
                         }
 
-                        foreach (HuedTile currstatic in Tiles.GetStaticTiles(x, y))
+                        foreach (HuedTile currentStatics in Tiles.GetStaticTiles(x, y))
                         {
-                            if (!Art.IsValidStatic(currstatic.Id))
+                            if (!Art.IsValidStatic(currentStatics.Id))
                             {
-                                tex.WriteLine("{0};{1};{2};0x{3:X};0", x, y, currstatic.Z, currstatic.Id);
+                                tex.WriteLine("{0};{1};{2};0x{3:X};0", x, y, currentStatics.Z, currentStatics.Id);
                             }
                         }
                     }

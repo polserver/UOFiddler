@@ -22,17 +22,17 @@ namespace UoFiddler.Controls.Forms
         private readonly int _type;
         private readonly int _font;
 
-        public FontTextForm(int mType, int mFont)
+        public FontTextForm(int type, int font)
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
             TopMost = true;
-            _type = mType;
-            _font = mFont;
+            _type = type;
+            _font = font;
             pictureBox1.BackColor = Color.White;
             Text = _type == 1
-                ? $"Unicode Font:{mFont}"
-                : $"ASCII Font:{mFont}";
+                ? $"Unicode Font: {font}"
+                : $"ASCII Font: {font}";
         }
 
         private void OnTextChange(object sender, EventArgs e)

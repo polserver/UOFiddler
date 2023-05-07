@@ -266,11 +266,6 @@ namespace Ultima
             return File.Exists(path) ? path : null;
         }
 
-        internal static string GetFilePath(string format, params object[] args)
-        {
-            return GetFilePath(string.Format(format, args));
-        }
-
         private static readonly string[] _knownRegKeys = {
             @"Origin Worlds Online\Ultima Online\1.0",
             @"Origin Worlds Online\Ultima Online Third Dawn\1.0",

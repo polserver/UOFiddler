@@ -106,8 +106,8 @@ namespace Ultima
             string mapDataPath, mapIndexPath;
             if (path == null)
             {
-                mapDataPath = Files.GetFilePath("mapdif{0}.mul", index);
-                mapIndexPath = Files.GetFilePath("mapdifl{0}.mul", index);
+                mapDataPath = Files.GetFilePath($"mapdif{index}.mul");
+                mapIndexPath = Files.GetFilePath($"mapdifl{index}.mul");
             }
             else
             {
@@ -133,9 +133,9 @@ namespace Ultima
             string staDataPath, staIndexPath, staLookupPath;
             if (path == null)
             {
-                staDataPath = Files.GetFilePath("stadif{0}.mul", index);
-                staIndexPath = Files.GetFilePath("stadifl{0}.mul", index);
-                staLookupPath = Files.GetFilePath("stadifi{0}.mul", index);
+                staDataPath = Files.GetFilePath($"stadif{index}.mul");
+                staIndexPath = Files.GetFilePath($"stadifl{index}.mul");
+                staLookupPath = Files.GetFilePath($"stadifi{index}.mul");
             }
             else
             {

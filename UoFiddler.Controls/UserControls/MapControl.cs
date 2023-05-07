@@ -1086,7 +1086,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickReportInvisStatics(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            CurrentMap.ReportInvisStatics(Options.OutputPath);
+            CurrentMap.ReportInvisibleStatics(Options.OutputPath);
             Cursor.Current = Cursors.Default;
             MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
