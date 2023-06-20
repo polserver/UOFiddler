@@ -27,55 +27,68 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             _conv = new LegacyMulFileConverter();
 
             multype.DataSource = uoptype.DataSource = Enum.GetValues(typeof(FileType));
-            mulmaptype.ReadOnly = uopmaptype.ReadOnly = true;
+            mulMapIndex.ReadOnly = uopMapIndex.ReadOnly = true;
 
             Dock = DockStyle.Fill;
         }
 
         public UopPackerControl(string version) : this()
         {
-            versionlabel.Text = version;
+            VersionLabel.Text = version;
         }
 
-        private void Inmulselect(object sender, EventArgs e)
+        private void InputMulSelect(object sender, EventArgs e)
         {
-            if (selectfile.ShowDialog() == DialogResult.OK)
+            FileDialog.FilterIndex = 1;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
             {
-                inmul.Text = selectfile.FileName;
+                inmul.Text = FileDialog.FileName;
             }
         }
 
-        private void Inidxselect(object sender, EventArgs e)
+        private void InputIdxSelect(object sender, EventArgs e)
         {
-            if (selectfile.ShowDialog() == DialogResult.OK)
+            FileDialog.FilterIndex = 3;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
             {
-                inidx.Text = selectfile.FileName;
+                inidx.Text = FileDialog.FileName;
             }
         }
 
-        private void Outuopselect(object sender, EventArgs e)
+        private void OutputUopSelect(object sender, EventArgs e)
         {
-            if (selectfile.ShowDialog() == DialogResult.OK)
+            FileDialog.FilterIndex = 2;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
             {
-                outuop.Text = selectfile.FileName;
+                outuop.Text = FileDialog.FileName;
             }
         }
 
-        private void Touop(object sender, EventArgs e)
+        private void ToUop(object sender, EventArgs e)
         {
-            if (inmul.Text?.Length == 0 || inmul.Text == null)
+            var selectedFileType = multype?.SelectedValue?.ToString() ?? string.Empty;
+            if (!Enum.TryParse(selectedFileType, out FileType fileType))
+            {
+                MessageBox.Show("You must specify input type");
+                return;
+            }
+
+            if (inmul.Text.Length == 0)
             {
                 MessageBox.Show("You must specify the input mul");
                 return;
             }
 
-            if (inidx.Text?.Length == 0 || inidx.Text == null)
+            if (inidx.Text.Length == 0)
             {
                 MessageBox.Show("You must specify the input idx");
                 return;
             }
 
-            if (outuop.Text?.Length == 0 || outuop.Text == null)
+            if (outuop.Text.Length == 0)
             {
                 MessageBox.Show("You must specify the output uop");
                 return;
@@ -95,7 +108,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
             if (File.Exists(outuop.Text))
             {
-                MessageBox.Show("output file already exists");
+                MessageBox.Show("Output file already exists");
                 return;
             }
 
@@ -104,8 +117,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 multouop.Text = "Converting...";
                 multouop.Enabled = false;
 
-                Enum.TryParse(multype.SelectedValue.ToString(), out FileType status);
-                LegacyMulFileConverter.ToUOP(inmul.Text, inidx.Text, outuop.Text, status, (int)mulmaptype.Value);
+                LegacyMulFileConverter.ToUop(inmul.Text, inidx.Text, outuop.Text, fileType, (int)mulMapIndex.Value);
             }
             catch
             {
@@ -118,45 +130,58 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
         }
 
-        private void Outmulselect(object sender, EventArgs e)
+        private void OutMulSelect(object sender, EventArgs e)
         {
-            if (selectfile.ShowDialog() == DialogResult.OK)
+            FileDialog.FilterIndex = 1;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
             {
-                outmul.Text = selectfile.FileName;
+                outmul.Text = FileDialog.FileName;
             }
         }
 
-        private void Outidxselect(object sender, EventArgs e)
+        private void OutputIdxSelect(object sender, EventArgs e)
         {
-            if (selectfile.ShowDialog() == DialogResult.OK)
+            FileDialog.FilterIndex = 3;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
             {
-                outidx.Text = selectfile.FileName;
+                outidx.Text = FileDialog.FileName;
             }
         }
 
-        private void Inuopselect(object sender, EventArgs e)
+        private void InputUopSelect(object sender, EventArgs e)
         {
-            if (selectfile.ShowDialog() == DialogResult.OK)
+            FileDialog.FilterIndex = 2;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
             {
-                inuop.Text = selectfile.FileName;
+                inuop.Text = FileDialog.FileName;
             }
         }
 
-        private void Tomul(object sender, EventArgs e)
+        private void ToMul(object sender, EventArgs e)
         {
-            if (outmul.Text?.Length == 0 || outmul.Text == null)
+            var selectedFileType = uoptype?.SelectedValue?.ToString() ?? string.Empty;
+            if (!Enum.TryParse(selectedFileType, out FileType fileType))
+            {
+                MessageBox.Show("You must specify input type");
+                return;
+            }
+
+            if (outmul.Text.Length == 0)
             {
                 MessageBox.Show("You must specify the output mul");
                 return;
             }
 
-            if (outidx.Text?.Length == 0 || outidx.Text == null)
+            if (outidx.Text.Length == 0 && fileType != FileType.MapLegacyMul)
             {
                 MessageBox.Show("You must specify the output idx");
                 return;
             }
 
-            if (inuop.Text?.Length == 0 || inuop.Text == null)
+            if (inuop.Text.Length == 0)
             {
                 MessageBox.Show("You must specify the input uop");
                 return;
@@ -168,15 +193,15 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 return;
             }
 
-            if (File.Exists(inmul.Text))
+            if (File.Exists(outmul.Text))
             {
-                MessageBox.Show("input mul already exists");
+                MessageBox.Show("Output mul file already exists");
                 return;
             }
 
-            if (File.Exists(inidx.Text))
+            if (File.Exists(outidx.Text) && fileType != FileType.MapLegacyMul)
             {
-                MessageBox.Show("inidx file already exists");
+                MessageBox.Show("Output index file already exists");
                 return;
             }
 
@@ -185,8 +210,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 uoptomul.Text = "Converting...";
                 uoptomul.Enabled = false;
 
-                Enum.TryParse(uoptype.SelectedValue.ToString(), out FileType status);
-                _conv.FromUOP(inuop.Text, outmul.Text, outidx.Text, status, (int)uopmaptype.Value);
+                _conv.FromUop(inuop.Text, outmul.Text, outidx.Text, fileType, (int)uopMapIndex.Value);
             }
             catch
             {
@@ -199,11 +223,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
         }
 
-        private void Selectfolderbtn_Click(object sender, EventArgs e)
+        private void SelectFolder_Click(object sender, EventArgs e)
         {
-            if (selectfolder.ShowDialog() == DialogResult.OK)
+            if (FolderDialog.ShowDialog() == DialogResult.OK)
             {
-                inputfolder.Text = selectfolder.SelectedPath;
+                inputfolder.Text = FolderDialog.SelectedPath;
             }
         }
 
@@ -233,7 +257,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 outIdx = FixPath(outIdx);
                 ++_total;
 
-                _conv.FromUOP(inFile, outFile, outIdx, type, typeIndex);
+                _conv.FromUop(inFile, outFile, outIdx, type, typeIndex);
 
                 ++_success;
             }
@@ -266,7 +290,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 inIdx = FixPath(inIdx);
                 ++_total;
 
-                LegacyMulFileConverter.ToUOP(inFile, inIdx, outFile, type, typeIndex);
+                LegacyMulFileConverter.ToUop(inFile, inIdx, outFile, type, typeIndex);
 
                 ++_success;
             }
@@ -281,13 +305,14 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             return (file == null) ? null : Path.Combine(inputfolder.Text, file);
         }
 
-        private void Startfolder_Click(object sender, EventArgs e)
+        private void StartFolderButtonClick(object sender, EventArgs e)
         {
-            if (inputfolder.Text?.Length == 0 || inputfolder.Text == null)
+            if (inputfolder.Text.Length == 0)
             {
                 MessageBox.Show("You must specify the input folder");
                 return;
             }
+
             if (extract.Checked)
             {
                 _success = _total = 0;

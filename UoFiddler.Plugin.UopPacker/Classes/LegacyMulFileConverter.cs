@@ -35,7 +35,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
         private static BinaryWriter OpenOutput(string path)
         {
-            return path == null
+            return string.IsNullOrWhiteSpace(path)
                        ? null
                        : new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None));
         }
@@ -43,7 +43,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // MUL -> UOP
         //
-        public static void ToUOP(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex)
+        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex)
         {
             // Same for all UOP files
             const long firstTable = 0x200;
@@ -53,7 +53,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             // Sanity, in case firstTable is customized by you!
             if (firstTable < 0x28)
             {
-                throw new Exception( "At least 0x28 bytes are needed for the header." );
+                throw new Exception("At least 0x28 bytes are needed for the header.");
             }
 #pragma warning restore 162
 
@@ -220,7 +220,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // UOP -> MUL
         //
-        public void FromUOP(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex)
+        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex)
         {
             Dictionary<ulong, int> chunkIds = new Dictionary<ulong, int>();
 
@@ -234,8 +234,8 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             bool[] used = new bool[maxId];
 
             using (BinaryReader reader = OpenInput(inFile))
-            using (BinaryWriter writer = OpenOutput(outFile))
-            using (BinaryWriter writerIdx = OpenOutput(outFileIdx))
+            using (BinaryWriter mulWriter = OpenOutput(outFile))
+            using (BinaryWriter idxWriter = OpenOutput(outFileIdx))
             {
                 if (reader.ReadInt32() != 0x50594D) // MYP
                 {
@@ -246,6 +246,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                 reader.ReadInt32(); // version ?
                 reader.ReadInt32(); // format timestamp? 0xFD23EC43
+
                 long nextTable = reader.ReadInt64();
 
                 do
@@ -292,16 +293,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         if (type == FileType.MapLegacyMul)
                         {
                             // Write this chunk on the right position (no IDX file to point to it)
-                            writer.Seek(chunkId * 0xC4000, SeekOrigin.Begin);
-                            writer.Write(chunkData);
+                            mulWriter.Seek(chunkId * 0xC4000, SeekOrigin.Begin);
+                            mulWriter.Write(chunkData);
                         }
                         else
                         {
                             int dataOffset = 0;
 
                             #region Idx
-                            writerIdx.Seek(chunkId * 12, SeekOrigin.Begin);
-                            writerIdx.Write((uint)writer.BaseStream.Position); // Position
+
+                            idxWriter.Seek(chunkId * 12, SeekOrigin.Begin);
+                            idxWriter.Write((uint)mulWriter.BaseStream.Position); // Position
 
                             switch (type)
                             {
@@ -311,22 +313,22 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                         int width = chunkData[0] | chunkData[1] << 8 | chunkData[2] << 16 | chunkData[3] << 24;
                                         int height = chunkData[4] | chunkData[5] << 8 | chunkData[6] << 16 | chunkData[7] << 24;
 
-                                        writerIdx.Write(chunkData.Length - 8);
-                                        writerIdx.Write(width << 16 | height);
+                                        idxWriter.Write(chunkData.Length - 8);
+                                        idxWriter.Write(width << 16 | height);
                                         dataOffset = 8;
                                         break;
                                     }
                                 case FileType.SoundLegacyMul:
                                     {
                                         // Extra contains the ID of this sound file + 1
-                                        writerIdx.Write(chunkData.Length);
-                                        writerIdx.Write(chunkId + 1);
+                                        idxWriter.Write(chunkData.Length);
+                                        idxWriter.Write(chunkId + 1);
                                         break;
                                     }
                                 default:
                                     {
-                                        writerIdx.Write(chunkData.Length); // Size
-                                        writerIdx.Write(0); // Extra
+                                        idxWriter.Write(chunkData.Length); // Size
+                                        idxWriter.Write(0); // Extra
                                         break;
                                     }
                             }
@@ -334,7 +336,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             used[chunkId] = true;
                             #endregion
 
-                            writer.Write(chunkData, dataOffset, chunkData.Length - dataOffset);
+                            mulWriter.Write(chunkData, dataOffset, chunkData.Length - dataOffset);
                         }
                     }
 
@@ -346,25 +348,71 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 }
                 while (nextTable != 0);
 
-                // Fix idx
-                // TODO: Only go until the last used entry? Does the client mind?
-                if (writerIdx == null)
+                // Fix index
+                if (idxWriter != null)
                 {
-                    return;
-                }
-
-                for (int i = 0; i < used.Length; ++i)
-                {
-                    if (used[i])
+                    for (int i = 0; i < used.Length; ++i)
                     {
-                        continue;
-                    }
+                        if (used[i])
+                        {
+                            continue;
+                        }
 
-                    writerIdx.Seek(i * 12, SeekOrigin.Begin);
-                    writerIdx.Write(-1);
-                    writerIdx.Write((long)0);
+                        idxWriter.Seek(i * 12, SeekOrigin.Begin);
+                        idxWriter.Write(-1);
+                        idxWriter.Write((long)0);
+                    }
                 }
             }
+
+            CheckAndFixMapFiles(outFile, type, typeIndex);
+        }
+
+        /// <summary>
+        /// Cleanup extra blocks at the end of unpacked mul files.
+        /// </summary>
+        /// <remarks>
+        /// For some reason some of the maps have extra 196 and the end after unpacking.
+        /// A lot of tools expect exact mul file size so we remove excessive bytes.
+        /// </remarks>
+        private static void CheckAndFixMapFiles(string outFile, FileType type, int typeIndex)
+        {
+            if (type != FileType.MapLegacyMul)
+            {
+                return;
+            }
+
+            int expectedSize = GetExpectedMapFileSize(typeIndex);
+
+            if (expectedSize == 0)
+            {
+                // do nothing. Map file is wrong or it's some weird size we don't know about
+                return;
+            }
+
+            using (var mapFile = File.Open(outFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var sizeDiff = mapFile.Length - expectedSize;
+
+                if (sizeDiff > 0)
+                {
+                    mapFile.SetLength(mapFile.Length - sizeDiff);
+                }
+            }
+        }
+
+        private static int GetExpectedMapFileSize(int typeIndex)
+        {
+            return typeIndex switch
+            {
+                0 => 89_915_392,
+                1 => 89_915_392,
+                2 => 11_289_600,
+                3 => 16_056_320,
+                4 =>  6_421_156,
+                5 => 16_056_320,
+                _ => 0
+            };
         }
 
         //
