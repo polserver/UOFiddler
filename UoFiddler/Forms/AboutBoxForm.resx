@@ -118,8 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.10.3
-- Fixed art.mul/idx unpacking in UOPacker plugin.
+    <value>Version 4.10.4
+- Updated map file unpacking process in UOP Packer plugin. When unpacking maps plugin will remove extra bytes from end of the mul files as some of the UOP maps contain additional 196 bytes. This extra bytes break some of the tooling.
+
+Version 4.10.3
+- Fixed art.mul/idx unpacking in UOP Packer plugin.
 
 Version 4.10.2
 - Fixed preview coloring in hue editor.
