@@ -481,7 +481,7 @@
 		<None Include="Resources\staticPlayButton.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Serilog" Version="2.12.0" />
+		<PackageReference Include="Serilog" Version="3.0.0" />
 		<PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
 	</ItemGroup>
 </Project>
