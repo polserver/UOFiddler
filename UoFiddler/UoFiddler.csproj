@@ -9,9 +9,9 @@
 		<AssemblyTitle>UoFiddler</AssemblyTitle>
 		<Product>UoFiddler</Product>
 		<Copyright>Copyright © 2023</Copyright>
-		<AssemblyVersion>4.10.4</AssemblyVersion>
-		<FileVersion>4.10.4</FileVersion>
-		<Version>4.10.4</Version>
+		<AssemblyVersion>4.10.5</AssemblyVersion>
+		<FileVersion>4.10.5</FileVersion>
+		<Version>4.10.5</Version>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
 	<PropertyGroup>
