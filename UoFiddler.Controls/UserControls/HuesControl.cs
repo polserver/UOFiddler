@@ -274,7 +274,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnImport(object sender, EventArgs e)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog {Multiselect = false, Title = "Choose txt file to import", CheckFileExists = true, Filter = "txt files (*.txt)|*.txt"})
+            using (OpenFileDialog dialog = new OpenFileDialog { Multiselect = false, Title = "Choose txt file to import", CheckFileExists = true, Filter = "txt files (*.txt)|*.txt" })
             {
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
@@ -380,6 +380,15 @@ namespace UoFiddler.Controls.UserControls
         {
             return Hues.List.FirstOrDefault(hue =>
                 hue.Name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0 && hue.Index > currentIndex);
+        }
+
+        private void ExportAllHueNamesListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fileName = Path.Combine(Options.OutputPath, "Hue names list.txt");
+
+            Hues.ExportHueList(fileName);
+
+            MessageBox.Show($"Hue names list saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
     }
 }

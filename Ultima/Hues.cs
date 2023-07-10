@@ -117,6 +117,22 @@ namespace Ultima
         }
 
         /// <summary>
+        /// Exports list of all hue names and id (as hex)
+        /// </summary>
+        /// <param name="fileName">Output file name</param>
+        public static void ExportHueList(string fileName)
+        {
+            var sb = new StringBuilder(90_0000);
+
+            foreach (var hue in List)
+            {
+                sb.Append("0x").AppendFormat("{0:X}", hue.Index).Append(' ').AppendLine(hue.Name);
+            }
+
+            File.WriteAllText(fileName, sb.ToString());
+        }
+
+        /// <summary>
         /// Returns <see cref="Hue"/>
         /// </summary>
         /// <param name="index"></param>

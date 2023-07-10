@@ -39,201 +39,204 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HuesControl));
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ReplaceText = new System.Windows.Forms.ToolStripTextBox();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-            this.vScrollBar = new System.Windows.Forms.VScrollBar();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.HuesTopMenuToolStrip = new System.Windows.Forms.ToolStrip();
-            this.HueIndexToolStripLabel = new System.Windows.Forms.ToolStripLabel();
-            this.HueIndexToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.HueNameToolStripLabel = new System.Windows.Forms.ToolStripLabel();
-            this.HueNameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.SearchNameToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.contextMenuStrip1.SuspendLayout();
-            this.toolStripContainer.ContentPanel.SuspendLayout();
-            this.toolStripContainer.TopToolStripPanel.SuspendLayout();
-            this.toolStripContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            this.HuesTopMenuToolStrip.SuspendLayout();
-            this.SuspendLayout();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ReplaceText = new System.Windows.Forms.ToolStripTextBox();
+            exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripContainer = new System.Windows.Forms.ToolStripContainer();
+            vScrollBar = new System.Windows.Forms.VScrollBar();
+            pictureBox = new System.Windows.Forms.PictureBox();
+            HuesTopMenuToolStrip = new System.Windows.Forms.ToolStrip();
+            HueIndexToolStripLabel = new System.Windows.Forms.ToolStripLabel();
+            HueIndexToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
+            HueNameToolStripLabel = new System.Windows.Forms.ToolStripLabel();
+            HueNameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
+            SearchNameToolStripButton = new System.Windows.Forms.ToolStripButton();
+            exportAllHueNamesListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            contextMenuStrip1.SuspendLayout();
+            toolStripContainer.ContentPanel.SuspendLayout();
+            toolStripContainer.TopToolStripPanel.SuspendLayout();
+            toolStripContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+            HuesTopMenuToolStrip.SuspendLayout();
+            SuspendLayout();
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
-            this.replaceToolStripMenuItem,
-            this.exportToolStripMenuItem,
-            this.importToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(150, 92);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { saveToolStripMenuItem, replaceToolStripMenuItem, exportToolStripMenuItem, importToolStripMenuItem, toolStripSeparator1, exportAllHueNamesListToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(203, 142);
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnClickSave);
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += OnClickSave;
             // 
             // replaceToolStripMenuItem
             // 
-            this.replaceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ReplaceText});
-            this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.replaceToolStripMenuItem.Text = "Replace With..";
+            replaceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ReplaceText });
+            replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
+            replaceToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            replaceToolStripMenuItem.Text = "Replace With..";
             // 
             // ReplaceText
             // 
-            this.ReplaceText.Name = "ReplaceText";
-            this.ReplaceText.Size = new System.Drawing.Size(100, 23);
-            this.ReplaceText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownReplace);
-            this.ReplaceText.TextChanged += new System.EventHandler(this.OnTextChangedReplace);
+            ReplaceText.Name = "ReplaceText";
+            ReplaceText.Size = new System.Drawing.Size(100, 23);
+            ReplaceText.KeyDown += OnKeyDownReplace;
+            ReplaceText.TextChanged += OnTextChangedReplace;
             // 
             // exportToolStripMenuItem
             // 
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.exportToolStripMenuItem.Text = "Export..";
-            this.exportToolStripMenuItem.Click += new System.EventHandler(this.OnExport);
+            exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            exportToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            exportToolStripMenuItem.Text = "Export..";
+            exportToolStripMenuItem.Click += OnExport;
             // 
             // importToolStripMenuItem
             // 
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.importToolStripMenuItem.Text = "Import..";
-            this.importToolStripMenuItem.Click += new System.EventHandler(this.OnImport);
+            importToolStripMenuItem.Name = "importToolStripMenuItem";
+            importToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            importToolStripMenuItem.Text = "Import..";
+            importToolStripMenuItem.Click += OnImport;
             // 
             // toolStripContainer
             // 
-            this.toolStripContainer.BottomToolStripPanelVisible = false;
+            toolStripContainer.BottomToolStripPanelVisible = false;
             // 
             // toolStripContainer.ContentPanel
             // 
-            this.toolStripContainer.ContentPanel.AutoScroll = true;
-            this.toolStripContainer.ContentPanel.Controls.Add(this.vScrollBar);
-            this.toolStripContainer.ContentPanel.Controls.Add(this.pictureBox);
-            this.toolStripContainer.ContentPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(740, 359);
-            this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer.LeftToolStripPanelVisible = false;
-            this.toolStripContainer.Location = new System.Drawing.Point(1, 1);
-            this.toolStripContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.toolStripContainer.Name = "toolStripContainer";
-            this.toolStripContainer.RightToolStripPanelVisible = false;
-            this.toolStripContainer.Size = new System.Drawing.Size(740, 390);
-            this.toolStripContainer.TabIndex = 9;
-            this.toolStripContainer.Text = "toolStripContainer";
+            toolStripContainer.ContentPanel.AutoScroll = true;
+            toolStripContainer.ContentPanel.Controls.Add(vScrollBar);
+            toolStripContainer.ContentPanel.Controls.Add(pictureBox);
+            toolStripContainer.ContentPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            toolStripContainer.ContentPanel.Size = new System.Drawing.Size(740, 359);
+            toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            toolStripContainer.LeftToolStripPanelVisible = false;
+            toolStripContainer.Location = new System.Drawing.Point(1, 1);
+            toolStripContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            toolStripContainer.Name = "toolStripContainer";
+            toolStripContainer.RightToolStripPanelVisible = false;
+            toolStripContainer.Size = new System.Drawing.Size(740, 390);
+            toolStripContainer.TabIndex = 9;
+            toolStripContainer.Text = "toolStripContainer";
             // 
             // toolStripContainer.TopToolStripPanel
             // 
-            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.HuesTopMenuToolStrip);
+            toolStripContainer.TopToolStripPanel.Controls.Add(HuesTopMenuToolStrip);
             // 
             // vScrollBar
             // 
-            this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.vScrollBar.Location = new System.Drawing.Point(723, 0);
-            this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 359);
-            this.vScrollBar.TabIndex = 4;
-            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
+            vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
+            vScrollBar.Location = new System.Drawing.Point(723, 0);
+            vScrollBar.Name = "vScrollBar";
+            vScrollBar.Size = new System.Drawing.Size(17, 359);
+            vScrollBar.TabIndex = 4;
+            vScrollBar.Scroll += OnScroll;
             // 
             // pictureBox
             // 
-            this.pictureBox.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(740, 359);
-            this.pictureBox.TabIndex = 3;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.SizeChanged += new System.EventHandler(this.OnResize);
-            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            this.pictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseDoubleClick);
+            pictureBox.ContextMenuStrip = contextMenuStrip1;
+            pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBox.Location = new System.Drawing.Point(0, 0);
+            pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBox.Name = "pictureBox";
+            pictureBox.Size = new System.Drawing.Size(740, 359);
+            pictureBox.TabIndex = 3;
+            pictureBox.TabStop = false;
+            pictureBox.SizeChanged += OnResize;
+            pictureBox.Paint += OnPaint;
+            pictureBox.MouseClick += OnMouseClick;
+            pictureBox.MouseDoubleClick += OnMouseDoubleClick;
             // 
             // HuesTopMenuToolStrip
             // 
-            this.HuesTopMenuToolStrip.Dock = System.Windows.Forms.DockStyle.None;
-            this.HuesTopMenuToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.HuesTopMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.HueIndexToolStripLabel,
-            this.HueIndexToolStripTextBox,
-            this.HueNameToolStripLabel,
-            this.HueNameToolStripTextBox,
-            this.SearchNameToolStripButton});
-            this.HuesTopMenuToolStrip.Location = new System.Drawing.Point(0, 0);
-            this.HuesTopMenuToolStrip.Name = "HuesTopMenuToolStrip";
-            this.HuesTopMenuToolStrip.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
-            this.HuesTopMenuToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.HuesTopMenuToolStrip.Size = new System.Drawing.Size(740, 31);
-            this.HuesTopMenuToolStrip.Stretch = true;
-            this.HuesTopMenuToolStrip.TabIndex = 0;
+            HuesTopMenuToolStrip.Dock = System.Windows.Forms.DockStyle.None;
+            HuesTopMenuToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            HuesTopMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { HueIndexToolStripLabel, HueIndexToolStripTextBox, HueNameToolStripLabel, HueNameToolStripTextBox, SearchNameToolStripButton });
+            HuesTopMenuToolStrip.Location = new System.Drawing.Point(0, 0);
+            HuesTopMenuToolStrip.Name = "HuesTopMenuToolStrip";
+            HuesTopMenuToolStrip.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            HuesTopMenuToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            HuesTopMenuToolStrip.Size = new System.Drawing.Size(740, 31);
+            HuesTopMenuToolStrip.Stretch = true;
+            HuesTopMenuToolStrip.TabIndex = 0;
             // 
             // HueIndexToolStripLabel
             // 
-            this.HueIndexToolStripLabel.Name = "HueIndexToolStripLabel";
-            this.HueIndexToolStripLabel.Size = new System.Drawing.Size(64, 20);
-            this.HueIndexToolStripLabel.Text = "Hue Index:";
+            HueIndexToolStripLabel.Name = "HueIndexToolStripLabel";
+            HueIndexToolStripLabel.Size = new System.Drawing.Size(64, 20);
+            HueIndexToolStripLabel.Text = "Hue Index:";
             // 
             // HueIndexToolStripTextBox
             // 
-            this.HueIndexToolStripTextBox.Name = "HueIndexToolStripTextBox";
-            this.HueIndexToolStripTextBox.Size = new System.Drawing.Size(100, 23);
-            this.HueIndexToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HueIndexToolStripTextBox_KeyUp);
+            HueIndexToolStripTextBox.Name = "HueIndexToolStripTextBox";
+            HueIndexToolStripTextBox.Size = new System.Drawing.Size(100, 23);
+            HueIndexToolStripTextBox.KeyUp += HueIndexToolStripTextBox_KeyUp;
             // 
             // HueNameToolStripLabel
             // 
-            this.HueNameToolStripLabel.Name = "HueNameToolStripLabel";
-            this.HueNameToolStripLabel.Size = new System.Drawing.Size(67, 20);
-            this.HueNameToolStripLabel.Text = "Hue Name:";
+            HueNameToolStripLabel.Name = "HueNameToolStripLabel";
+            HueNameToolStripLabel.Size = new System.Drawing.Size(67, 20);
+            HueNameToolStripLabel.Text = "Hue Name:";
             // 
             // HueNameToolStripTextBox
             // 
-            this.HueNameToolStripTextBox.Name = "HueNameToolStripTextBox";
-            this.HueNameToolStripTextBox.Size = new System.Drawing.Size(100, 23);
-            this.HueNameToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HueNameToolStripTextBox_KeyUp);
+            HueNameToolStripTextBox.Name = "HueNameToolStripTextBox";
+            HueNameToolStripTextBox.Size = new System.Drawing.Size(100, 23);
+            HueNameToolStripTextBox.KeyUp += HueNameToolStripTextBox_KeyUp;
             // 
             // SearchNameToolStripButton
             // 
-            this.SearchNameToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.SearchNameToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("SearchNameToolStripButton.Image")));
-            this.SearchNameToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.SearchNameToolStripButton.Name = "SearchNameToolStripButton";
-            this.SearchNameToolStripButton.Size = new System.Drawing.Size(60, 20);
-            this.SearchNameToolStripButton.Text = "Find next";
-            this.SearchNameToolStripButton.Click += new System.EventHandler(this.SearchNameToolStripButton_Click);
+            SearchNameToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            SearchNameToolStripButton.Image = (System.Drawing.Image)resources.GetObject("SearchNameToolStripButton.Image");
+            SearchNameToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            SearchNameToolStripButton.Name = "SearchNameToolStripButton";
+            SearchNameToolStripButton.Size = new System.Drawing.Size(60, 20);
+            SearchNameToolStripButton.Text = "Find next";
+            SearchNameToolStripButton.Click += SearchNameToolStripButton_Click;
+            // 
+            // exportAllHueNamesListToolStripMenuItem
+            // 
+            exportAllHueNamesListToolStripMenuItem.Name = "exportAllHueNamesListToolStripMenuItem";
+            exportAllHueNamesListToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            exportAllHueNamesListToolStripMenuItem.Text = "Export all hue names list";
+            exportAllHueNamesListToolStripMenuItem.Click += ExportAllHueNamesListToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
             // 
             // HuesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.toolStripContainer);
-            this.DoubleBuffered = true;
-            this.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "HuesControl";
-            this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(742, 392);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.toolStripContainer.ContentPanel.ResumeLayout(false);
-            this.toolStripContainer.TopToolStripPanel.ResumeLayout(false);
-            this.toolStripContainer.TopToolStripPanel.PerformLayout();
-            this.toolStripContainer.ResumeLayout(false);
-            this.toolStripContainer.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            this.HuesTopMenuToolStrip.ResumeLayout(false);
-            this.HuesTopMenuToolStrip.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(toolStripContainer);
+            DoubleBuffered = true;
+            ForeColor = System.Drawing.SystemColors.ControlText;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "HuesControl";
+            Padding = new System.Windows.Forms.Padding(1);
+            Size = new System.Drawing.Size(742, 392);
+            Load += OnLoad;
+            contextMenuStrip1.ResumeLayout(false);
+            toolStripContainer.ContentPanel.ResumeLayout(false);
+            toolStripContainer.TopToolStripPanel.ResumeLayout(false);
+            toolStripContainer.TopToolStripPanel.PerformLayout();
+            toolStripContainer.ResumeLayout(false);
+            toolStripContainer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+            HuesTopMenuToolStrip.ResumeLayout(false);
+            HuesTopMenuToolStrip.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -253,5 +256,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripLabel HueNameToolStripLabel;
         private System.Windows.Forms.ToolStripTextBox HueNameToolStripTextBox;
         private System.Windows.Forms.ToolStripButton SearchNameToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem exportAllHueNamesListToolStripMenuItem;
     }
 }
