@@ -47,6 +47,8 @@ namespace UoFiddler.Controls.UserControls
             ReplaceText = new System.Windows.Forms.ToolStripTextBox();
             exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            exportAllHueNamesListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             vScrollBar = new System.Windows.Forms.VScrollBar();
             pictureBox = new System.Windows.Forms.PictureBox();
@@ -56,8 +58,6 @@ namespace UoFiddler.Controls.UserControls
             HueNameToolStripLabel = new System.Windows.Forms.ToolStripLabel();
             HueNameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             SearchNameToolStripButton = new System.Windows.Forms.ToolStripButton();
-            exportAllHueNamesListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             contextMenuStrip1.SuspendLayout();
             toolStripContainer.ContentPanel.SuspendLayout();
             toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -70,7 +70,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { saveToolStripMenuItem, replaceToolStripMenuItem, exportToolStripMenuItem, importToolStripMenuItem, toolStripSeparator1, exportAllHueNamesListToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(203, 142);
+            contextMenuStrip1.Size = new System.Drawing.Size(203, 120);
             // 
             // saveToolStripMenuItem
             // 
@@ -106,6 +106,18 @@ namespace UoFiddler.Controls.UserControls
             importToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             importToolStripMenuItem.Text = "Import..";
             importToolStripMenuItem.Click += OnImport;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
+            // 
+            // exportAllHueNamesListToolStripMenuItem
+            // 
+            exportAllHueNamesListToolStripMenuItem.Name = "exportAllHueNamesListToolStripMenuItem";
+            exportAllHueNamesListToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            exportAllHueNamesListToolStripMenuItem.Text = "Export all hue names list";
+            exportAllHueNamesListToolStripMenuItem.Click += ExportAllHueNamesListToolStripMenuItem_Click;
             // 
             // toolStripContainer
             // 
@@ -158,7 +170,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // HuesTopMenuToolStrip
             // 
-            HuesTopMenuToolStrip.Dock = System.Windows.Forms.DockStyle.None;
             HuesTopMenuToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             HuesTopMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { HueIndexToolStripLabel, HueIndexToolStripTextBox, HueNameToolStripLabel, HueNameToolStripTextBox, SearchNameToolStripButton });
             HuesTopMenuToolStrip.Location = new System.Drawing.Point(0, 0);
@@ -172,8 +183,8 @@ namespace UoFiddler.Controls.UserControls
             // HueIndexToolStripLabel
             // 
             HueIndexToolStripLabel.Name = "HueIndexToolStripLabel";
-            HueIndexToolStripLabel.Size = new System.Drawing.Size(64, 20);
-            HueIndexToolStripLabel.Text = "Hue Index:";
+            HueIndexToolStripLabel.Size = new System.Drawing.Size(39, 20);
+            HueIndexToolStripLabel.Text = "Index:";
             // 
             // HueIndexToolStripTextBox
             // 
@@ -184,8 +195,8 @@ namespace UoFiddler.Controls.UserControls
             // HueNameToolStripLabel
             // 
             HueNameToolStripLabel.Name = "HueNameToolStripLabel";
-            HueNameToolStripLabel.Size = new System.Drawing.Size(67, 20);
-            HueNameToolStripLabel.Text = "Hue Name:";
+            HueNameToolStripLabel.Size = new System.Drawing.Size(42, 20);
+            HueNameToolStripLabel.Text = "Name:";
             // 
             // HueNameToolStripTextBox
             // 
@@ -202,18 +213,6 @@ namespace UoFiddler.Controls.UserControls
             SearchNameToolStripButton.Size = new System.Drawing.Size(60, 20);
             SearchNameToolStripButton.Text = "Find next";
             SearchNameToolStripButton.Click += SearchNameToolStripButton_Click;
-            // 
-            // exportAllHueNamesListToolStripMenuItem
-            // 
-            exportAllHueNamesListToolStripMenuItem.Name = "exportAllHueNamesListToolStripMenuItem";
-            exportAllHueNamesListToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-            exportAllHueNamesListToolStripMenuItem.Text = "Export all hue names list";
-            exportAllHueNamesListToolStripMenuItem.Click += ExportAllHueNamesListToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
             // 
             // HuesControl
             // 
