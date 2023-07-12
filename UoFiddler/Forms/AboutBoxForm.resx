@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.10.5
+    <value>Version 4.10.6
+- Removed search popups for items and land tiles controls. Moved search to the control screen.
+
+Version 4.10.5
 - Added option to export hue names and ids to file - in case you need all hues list for some reason.
 
 Version 4.10.4
