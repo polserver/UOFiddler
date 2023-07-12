@@ -80,14 +80,16 @@ namespace UoFiddler.Controls.UserControls
             asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             SaveButton = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            LandTilesTileView = new TileViewControl();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             NameLabel = new System.Windows.Forms.ToolStripStatusLabel();
             GraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             FlagsLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            panel = new System.Windows.Forms.Panel();
+            LandTilesTileView = new TileViewControl();
             LandTilesContextMenuStrip.SuspendLayout();
             LandTilesToolStrip.SuspendLayout();
             StatusStrip.SuspendLayout();
+            panel.SuspendLayout();
             SuspendLayout();
             // 
             // LandTilesContextMenuStrip
@@ -338,32 +340,6 @@ namespace UoFiddler.Controls.UserControls
             toolStripSeparator4.Name = "toolStripSeparator4";
             toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
-            // LandTilesTileView
-            // 
-            LandTilesTileView.AutoScroll = true;
-            LandTilesTileView.AutoScrollMinSize = new System.Drawing.Size(0, 50);
-            LandTilesTileView.BackColor = System.Drawing.SystemColors.Window;
-            LandTilesTileView.ContextMenuStrip = LandTilesContextMenuStrip;
-            LandTilesTileView.Dock = System.Windows.Forms.DockStyle.Fill;
-            LandTilesTileView.FocusIndex = -1;
-            LandTilesTileView.Location = new System.Drawing.Point(0, 25);
-            LandTilesTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            LandTilesTileView.MultiSelect = false;
-            LandTilesTileView.Name = "LandTilesTileView";
-            LandTilesTileView.Size = new System.Drawing.Size(716, 376);
-            LandTilesTileView.TabIndex = 8;
-            LandTilesTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            LandTilesTileView.TileBorderColor = System.Drawing.Color.Gray;
-            LandTilesTileView.TileBorderWidth = 1F;
-            LandTilesTileView.TileFocusColor = System.Drawing.Color.DarkRed;
-            LandTilesTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
-            LandTilesTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
-            LandTilesTileView.TilePadding = new System.Windows.Forms.Padding(1);
-            LandTilesTileView.TileSize = new System.Drawing.Size(44, 44);
-            LandTilesTileView.VirtualListSize = 1;
-            LandTilesTileView.ItemSelectionChanged += LandTilesTileView_ItemSelectionChanged;
-            LandTilesTileView.DrawItem += LandTilesTileView_DrawItem;
-            // 
             // StatusStrip
             // 
             StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { NameLabel, GraphicLabel, FlagsLabel });
@@ -396,12 +372,47 @@ namespace UoFiddler.Controls.UserControls
             FlagsLabel.Text = "Flags:";
             FlagsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // panel
+            // 
+            panel.Controls.Add(LandTilesTileView);
+            panel.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel.Location = new System.Drawing.Point(0, 25);
+            panel.Name = "panel";
+            panel.Size = new System.Drawing.Size(716, 354);
+            panel.TabIndex = 9;
+            // 
+            // LandTilesTileView
+            // 
+            LandTilesTileView.AutoScroll = true;
+            LandTilesTileView.AutoScrollMinSize = new System.Drawing.Size(0, 50);
+            LandTilesTileView.BackColor = System.Drawing.SystemColors.Window;
+            LandTilesTileView.ContextMenuStrip = LandTilesContextMenuStrip;
+            LandTilesTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            LandTilesTileView.FocusIndex = -1;
+            LandTilesTileView.Location = new System.Drawing.Point(0, 0);
+            LandTilesTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            LandTilesTileView.MultiSelect = false;
+            LandTilesTileView.Name = "LandTilesTileView";
+            LandTilesTileView.Size = new System.Drawing.Size(716, 354);
+            LandTilesTileView.TabIndex = 9;
+            LandTilesTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            LandTilesTileView.TileBorderColor = System.Drawing.Color.Gray;
+            LandTilesTileView.TileBorderWidth = 1F;
+            LandTilesTileView.TileFocusColor = System.Drawing.Color.DarkRed;
+            LandTilesTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            LandTilesTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            LandTilesTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            LandTilesTileView.TileSize = new System.Drawing.Size(44, 44);
+            LandTilesTileView.VirtualListSize = 1;
+            LandTilesTileView.ItemSelectionChanged += LandTilesTileView_ItemSelectionChanged;
+            LandTilesTileView.DrawItem += LandTilesTileView_DrawItem;
+            // 
             // LandTilesControl
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(panel);
             Controls.Add(StatusStrip);
-            Controls.Add(LandTilesTileView);
             Controls.Add(LandTilesToolStrip);
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -413,6 +424,7 @@ namespace UoFiddler.Controls.UserControls
             LandTilesToolStrip.PerformLayout();
             StatusStrip.ResumeLayout(false);
             StatusStrip.PerformLayout();
+            panel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -443,7 +455,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private TileView.TileViewControl LandTilesTileView;
         private System.Windows.Forms.ToolStripMenuItem replaceStartingFromToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox ReplaceStartingFromTb;
         private System.Windows.Forms.ToolStripMenuItem showFreeSlotsToolStripMenuItem;
@@ -460,5 +471,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripTextBox searchByNameToolStripTextBox;
         private System.Windows.Forms.ToolStripButton searchByNameToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.Panel panel;
+        private TileViewControl LandTilesTileView;
     }
 }

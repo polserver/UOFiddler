@@ -1182,9 +1182,9 @@ namespace UoFiddler.Controls.UserControls
                 indexValue = 0;
             }
 
-            if (indexValue >= maximumIndex)
+            if (indexValue > maximumIndex)
             {
-                indexValue = maximumIndex - 1;
+                indexValue = maximumIndex;
             }
 
             // we have to invalidate focus so it will scroll to item

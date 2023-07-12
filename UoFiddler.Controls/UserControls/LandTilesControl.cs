@@ -798,6 +798,7 @@ namespace UoFiddler.Controls.UserControls
         private void ShowFreeSlotsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _showFreeSlots = !_showFreeSlots;
+
             if (_showFreeSlots)
             {
                 for (int j = 0; j < _landTileMax; ++j)
@@ -834,21 +835,21 @@ namespace UoFiddler.Controls.UserControls
 
         private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            const int maximumIndex = 0x3FFF;
-
-            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue, 0, maximumIndex))
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue))
             {
                 return;
             }
+
+            const int maximumIndex = 0x3FFF;
 
             if (indexValue < 0)
             {
                 indexValue = 0;
             }
 
-            if (indexValue >= maximumIndex)
+            if (indexValue > maximumIndex)
             {
-                indexValue = maximumIndex - 1;
+                indexValue = maximumIndex;
             }
 
             // we have to invalidate focus so it will scroll to item
