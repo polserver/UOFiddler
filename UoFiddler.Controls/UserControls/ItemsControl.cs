@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ultima;
@@ -109,7 +108,7 @@ namespace UoFiddler.Controls.UserControls
                 RefMarker.OnLoad(RefMarker, EventArgs.Empty);
             }
 
-            if (RefMarker._itemList.All(t => t != graphic))
+            if (RefMarker._itemList.TrueForAll(t => t != graphic))
             {
                 return false;
             }
@@ -440,22 +439,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private ItemSearchForm _showForm;
         private bool _scrolling;
-
-        private void OnSearchClick(object sender, EventArgs e)
-        {
-            if (_showForm?.IsDisposed == false)
-            {
-                return;
-            }
-
-            _showForm = new ItemSearchForm(SearchGraphic, SearchName)
-            {
-                TopMost = true
-            };
-            _showForm.Show();
-        }
 
         private void OnClickFindFree(object sender, EventArgs e)
         {
@@ -1182,6 +1166,40 @@ namespace UoFiddler.Controls.UserControls
         private static bool IsIndexValid(int index)
         {
             return index >= 0 && index <= Art.GetMaxItemId();
+        }
+
+        private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue))
+            {
+                return;
+            }
+
+            var maximumIndex = Art.GetMaxItemId();
+
+            if (indexValue < 0)
+            {
+                indexValue = 0;
+            }
+
+            if (indexValue >= maximumIndex)
+            {
+                indexValue = maximumIndex - 1;
+            }
+
+            // we have to invalidate focus so it will scroll to item
+            ItemsTileView.FocusIndex = -1;
+            SelectedGraphicId = indexValue;
+        }
+
+        private void SearchByNameToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            SearchName(searchByNameToolStripTextBox.Text, false);
+        }
+
+        private void SearchByNameToolStripButton_Click(object sender, EventArgs e)
+        {
+            SearchName(searchByNameToolStripTextBox.Text, true);
         }
     }
 }

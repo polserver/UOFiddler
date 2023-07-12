@@ -158,12 +158,6 @@
 		<Compile Update="Forms\ItemDetailForm.Designer.cs">
 			<DependentUpon>ItemDetailForm.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Forms\ItemSearchForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\ItemSearchForm.Designer.cs">
-			<DependentUpon>ItemSearchForm.cs</DependentUpon>
-		</Compile>
 		<Compile Update="UserControls\ItemsControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -187,12 +181,6 @@
 		</Compile>
 		<Compile Update="UserControls\LandTilesControl.Designer.cs">
 			<DependentUpon>LandTilesControl.cs</DependentUpon>
-		</Compile>
-		<Compile Update="Forms\LandTileSearchForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\LandTileSearchForm.Designer.cs">
-			<DependentUpon>LandTileSearchForm.cs</DependentUpon>
 		</Compile>
 		<Compile Update="UserControls\LightControl.cs">
 			<SubType>UserControl</SubType>
@@ -387,9 +375,6 @@
 		<EmbeddedResource Update="Forms\ItemDetailForm.resx">
 			<DependentUpon>ItemDetailForm.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\ItemSearchForm.resx">
-			<DependentUpon>ItemSearchForm.cs</DependentUpon>
-		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\ItemsControl.resx">
 			<DependentUpon>ItemsControl.cs</DependentUpon>
 		</EmbeddedResource>
@@ -401,9 +386,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\LandTilesControl.resx">
 			<DependentUpon>LandTilesControl.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\LandTileSearchForm.resx">
-			<DependentUpon>LandTileSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\LightControl.resx">
 			<DependentUpon>LightControl.cs</DependentUpon>

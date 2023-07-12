@@ -14,11 +14,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -66,7 +64,7 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(_refMarker, EventArgs.Empty);
             }
 
-            if (_refMarker._tileList.All(t => t != graphic))
+            if (_refMarker._tileList.TrueForAll(t => t != graphic))
             {
                 return false;
             }
@@ -269,22 +267,6 @@ namespace UoFiddler.Controls.UserControls
 
             LandTilesTileView.VirtualListSize = _tileList.Count;
             LandTilesTileView.Invalidate();
-        }
-
-        private LandTileSearchForm _showForm;
-
-        private void OnClickSearch(object sender, EventArgs e)
-        {
-            if (_showForm?.IsDisposed == false)
-            {
-                return;
-            }
-
-            _showForm = new LandTileSearchForm(SearchGraphic, SearchName)
-            {
-                TopMost = true
-            };
-            _showForm.Show();
         }
 
         private void OnClickFindFree(object sender, EventArgs e)
@@ -848,6 +830,40 @@ namespace UoFiddler.Controls.UserControls
             {
                 Reload();
             }
+        }
+
+        private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            const int maximumIndex = 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue, 0, maximumIndex))
+            {
+                return;
+            }
+
+            if (indexValue < 0)
+            {
+                indexValue = 0;
+            }
+
+            if (indexValue >= maximumIndex)
+            {
+                indexValue = maximumIndex - 1;
+            }
+
+            // we have to invalidate focus so it will scroll to item
+            LandTilesTileView.FocusIndex = -1;
+            SelectedGraphicId = indexValue;
+        }
+
+        private void SearchByNameToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            SearchName(searchByNameToolStripTextBox.Text, false);
+        }
+
+        private void SearchByNameToolStripButton_Click(object sender, EventArgs e)
+        {
+            SearchName(searchByNameToolStripTextBox.Text, true);
         }
     }
 }
