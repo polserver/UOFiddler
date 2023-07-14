@@ -14,11 +14,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -63,20 +61,6 @@ namespace UoFiddler.Controls.UserControls
             _selectedTextureId = -1;
 
             OnLoad(this, EventArgs.Empty);
-        }
-
-        private bool SearchGraphic(int graphic)
-        {
-            if (_textureList.All(id => id != graphic))
-            {
-                return false;
-            }
-
-            // we have to invalidate focus so it will scroll to item
-            TextureTileView.FocusIndex = -1;
-            SelectedTextureId = graphic;
-
-            return true;
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -169,22 +153,6 @@ namespace UoFiddler.Controls.UserControls
         private void OnFilePathChangeEvent()
         {
             Reload();
-        }
-
-        private TextureSearchForm _showForm;
-
-        private void OnClickSearch(object sender, EventArgs e)
-        {
-            if (_showForm?.IsDisposed == false)
-            {
-                return;
-            }
-
-            _showForm = new TextureSearchForm(SearchGraphic)
-            {
-                TopMost = true
-            };
-            _showForm.Show();
         }
 
         private void OnClickFindNext(object sender, EventArgs e)
@@ -335,7 +303,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
+            contextMenuStrip.Close();
 
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -594,7 +562,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
+            contextMenuStrip.Close();
 
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -739,6 +707,30 @@ namespace UoFiddler.Controls.UserControls
             {
                 Reload();
             }
+        }
+
+        private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue))
+            {
+                return;
+            }
+
+            var maximumIndex = Textures.GetIdxLength();
+
+            if (indexValue < 0)
+            {
+                indexValue = 0;
+            }
+
+            if (indexValue > maximumIndex)
+            {
+                indexValue = maximumIndex;
+            }
+
+            // we have to invalidate focus so it will scroll to item
+            TextureTileView.FocusIndex = -1;
+            SelectedTextureId = indexValue;
         }
     }
 }

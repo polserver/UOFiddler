@@ -283,12 +283,6 @@
 		<Compile Update="UserControls\TexturesControl.Designer.cs">
 			<DependentUpon>TexturesControl.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Forms\TextureSearchForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\TextureSearchForm.Designer.cs">
-			<DependentUpon>TextureSearchForm.cs</DependentUpon>
-		</Compile>
 		<Compile Update="Forms\TileDataFilterForm.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -438,9 +432,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\TexturesControl.resx">
 			<DependentUpon>TexturesControl.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\TextureSearchForm.resx">
-			<DependentUpon>TextureSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\TileDataFilterForm.resx">
 			<DependentUpon>TileDataFilterForm.cs</DependentUpon>
