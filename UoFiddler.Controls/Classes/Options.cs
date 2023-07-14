@@ -44,12 +44,6 @@ namespace UoFiddler.Controls.Classes
         public static bool ArtItemClip { get; set; } = true;
 
         /// <summary>
-        /// Defines if the right panel into the Sounds Tab
-        /// should be toggled on
-        /// </summary>
-        public static bool RightPanelInSoundsTab { get; set; } = true;
-
-        /// <summary>
         /// Offsets the sound ids in Sound tab by 1 (POL specific setting)
         /// </summary>
         public static bool PolSoundIdOffset { get; set; }

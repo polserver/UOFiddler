@@ -62,12 +62,6 @@
 		<Compile Update="Forms\GumpSearchForm.Designer.cs">
 			<DependentUpon>GumpSearchForm.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Forms\SoundsSearchForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\SoundsSearchForm.Designer.cs">
-			<DependentUpon>SoundsSearchForm.cs</DependentUpon>
-		</Compile>
 		<Compile Update="Forms\ProgressBarDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -320,9 +314,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\GumpSearchForm.resx">
 			<DependentUpon>GumpSearchForm.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\SoundsSearchForm.resx">
-			<DependentUpon>SoundsSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\ProgressBarDialog.resx">
 			<DependentUpon>ProgressBarDialog.cs</DependentUpon>

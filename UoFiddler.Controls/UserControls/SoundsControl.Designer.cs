@@ -39,790 +39,705 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.treeView = new System.Windows.Forms.TreeView();
-            this.cmStripSounds = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.nameSortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToggleRightPanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.nextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.playSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.itemSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.itemExportSoundlist = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.statusStripSounds = new System.Windows.Forms.StatusStrip();
-            this.seconds = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusSpacer = new System.Windows.Forms.ToolStripStatusLabel();
-            this.playing = new System.Windows.Forms.ToolStripProgressBar();
-            this.stopButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.exportAllSoundsButton = new System.Windows.Forms.Button();
-            this.ExportSoundListCsvButton = new System.Windows.Forms.Button();
-            this.SaveFileButton = new System.Windows.Forms.Button();
-            this.SortByNameCheckbox = new System.Windows.Forms.CheckBox();
-            this.includeSoundIdCheckBox = new System.Windows.Forms.CheckBox();
-            this.SelectedSoundGroup = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.PlaySoundButton = new System.Windows.Forms.Button();
-            this.SoundPlaytimeBar = new System.Windows.Forms.ProgressBar();
-            this.StopSoundButton = new System.Windows.Forms.Button();
-            this.ExtractSoundButton = new System.Windows.Forms.Button();
-            this.RemoveSoundButton = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.GoPrevResultButton = new System.Windows.Forms.Button();
-            this.SearchNameTextbox = new System.Windows.Forms.TextBox();
-            this.GoNextResultButton = new System.Windows.Forms.Button();
-            this.SearchByIdButton = new System.Windows.Forms.Button();
-            this.SearchByNameButton = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.IdInsertTextbox = new System.Windows.Forms.TextBox();
-            this.WavFileInsertTextbox = new System.Windows.Forms.TextBox();
-            this.WavChooseInsertButton = new System.Windows.Forms.Button();
-            this.AddInsertReplaceButton = new System.Windows.Forms.Button();
-            this.cmStripSounds.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.statusStripSounds.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
-            this.SelectedSoundGroup.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.tableLayoutPanel6.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            treeView = new System.Windows.Forms.TreeView();
+            cmStripSounds = new System.Windows.Forms.ContextMenuStrip(components);
+            nameSortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            nextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            playSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            extractSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            removeSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            itemSave = new System.Windows.Forms.ToolStripMenuItem();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            statusStripSounds = new System.Windows.Forms.StatusStrip();
+            seconds = new System.Windows.Forms.ToolStripStatusLabel();
+            toolStripStatusSpacer = new System.Windows.Forms.ToolStripStatusLabel();
+            playing = new System.Windows.Forms.ToolStripProgressBar();
+            stopButton = new System.Windows.Forms.ToolStripDropDownButton();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            exportAllSoundsButton = new System.Windows.Forms.Button();
+            ExportSoundListCsvButton = new System.Windows.Forms.Button();
+            SaveFileButton = new System.Windows.Forms.Button();
+            includeSoundIdCheckBox = new System.Windows.Forms.CheckBox();
+            SortByNameCheckbox = new System.Windows.Forms.CheckBox();
+            SelectedSoundGroup = new System.Windows.Forms.GroupBox();
+            tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            PlaySoundButton = new System.Windows.Forms.Button();
+            SoundPlaytimeBar = new System.Windows.Forms.ProgressBar();
+            StopSoundButton = new System.Windows.Forms.Button();
+            ExtractSoundButton = new System.Windows.Forms.Button();
+            RemoveSoundButton = new System.Windows.Forms.Button();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            GoPrevResultButton = new System.Windows.Forms.Button();
+            SearchNameTextbox = new System.Windows.Forms.TextBox();
+            GoNextResultButton = new System.Windows.Forms.Button();
+            SearchByIdButton = new System.Windows.Forms.Button();
+            SearchByNameButton = new System.Windows.Forms.Button();
+            groupBox3 = new System.Windows.Forms.GroupBox();
+            tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            label1 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            IdInsertTextbox = new System.Windows.Forms.TextBox();
+            WavFileInsertTextbox = new System.Windows.Forms.TextBox();
+            WavChooseInsertButton = new System.Windows.Forms.Button();
+            AddInsertReplaceButton = new System.Windows.Forms.Button();
+            cmStripSounds.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            statusStripSounds.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            groupBox1.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            SelectedSoundGroup.SuspendLayout();
+            tableLayoutPanel4.SuspendLayout();
+            groupBox2.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            groupBox3.SuspendLayout();
+            tableLayoutPanel6.SuspendLayout();
+            SuspendLayout();
             // 
             // treeView
             // 
-            this.treeView.ContextMenuStrip = this.cmStripSounds;
-            this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView.HideSelection = false;
-            this.treeView.Location = new System.Drawing.Point(0, 0);
-            this.treeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(408, 645);
-            this.treeView.TabIndex = 0;
-            this.treeView.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.BeforeSelect);
-            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelect);
-            this.treeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.OnDoubleClick);
-            this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TreeView_KeyDown);
+            treeView.ContextMenuStrip = cmStripSounds;
+            treeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            treeView.HideSelection = false;
+            treeView.Location = new System.Drawing.Point(0, 0);
+            treeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            treeView.Name = "treeView";
+            treeView.Size = new System.Drawing.Size(406, 670);
+            treeView.TabIndex = 0;
+            treeView.BeforeSelect += BeforeSelect;
+            treeView.AfterSelect += AfterSelect;
+            treeView.NodeMouseDoubleClick += OnDoubleClick;
+            treeView.KeyDown += TreeView_KeyDown;
             // 
             // cmStripSounds
             // 
-            this.cmStripSounds.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.nameSortToolStripMenuItem,
-            this.ToggleRightPanelToolStripMenuItem,
-            this.tsSeparator1,
-            this.showFreeSlotsToolStripMenuItem,
-            this.nextFreeSlotToolStripMenuItem,
-            this.tsSeparator2,
-            this.playSoundToolStripMenuItem,
-            this.replaceToolStripMenuItem,
-            this.extractSoundToolStripMenuItem,
-            this.removeSoundToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.itemSave});
-            this.cmStripSounds.Name = "contextMenuStrip1";
-            this.cmStripSounds.Size = new System.Drawing.Size(173, 220);
+            cmStripSounds.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { nameSortToolStripMenuItem, tsSeparator1, showFreeSlotsToolStripMenuItem, nextFreeSlotToolStripMenuItem, tsSeparator2, playSoundToolStripMenuItem, replaceToolStripMenuItem, extractSoundToolStripMenuItem, removeSoundToolStripMenuItem, toolStripMenuItem1, itemSave });
+            cmStripSounds.Name = "contextMenuStrip1";
+            cmStripSounds.Size = new System.Drawing.Size(169, 198);
             // 
             // nameSortToolStripMenuItem
             // 
-            this.nameSortToolStripMenuItem.CheckOnClick = true;
-            this.nameSortToolStripMenuItem.Name = "nameSortToolStripMenuItem";
-            this.nameSortToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.nameSortToolStripMenuItem.Text = "Name Sort";
-            this.nameSortToolStripMenuItem.Click += new System.EventHandler(this.OnChangeSort);
-            // 
-            // ToggleRightPanelToolStripMenuItem
-            // 
-            this.ToggleRightPanelToolStripMenuItem.CheckOnClick = true;
-            this.ToggleRightPanelToolStripMenuItem.Name = "ToggleRightPanelToolStripMenuItem";
-            this.ToggleRightPanelToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.ToggleRightPanelToolStripMenuItem.Text = "Toggle Right Panel";
-            this.ToggleRightPanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.ToggleRightPanelToolStripMenuItem_CheckedChanged);
+            nameSortToolStripMenuItem.CheckOnClick = true;
+            nameSortToolStripMenuItem.Name = "nameSortToolStripMenuItem";
+            nameSortToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            nameSortToolStripMenuItem.Text = "Name Sort";
+            nameSortToolStripMenuItem.Click += OnChangeSort;
             // 
             // tsSeparator1
             // 
-            this.tsSeparator1.Name = "tsSeparator1";
-            this.tsSeparator1.Size = new System.Drawing.Size(169, 6);
+            tsSeparator1.Name = "tsSeparator1";
+            tsSeparator1.Size = new System.Drawing.Size(165, 6);
             // 
             // showFreeSlotsToolStripMenuItem
             // 
-            this.showFreeSlotsToolStripMenuItem.CheckOnClick = true;
-            this.showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
-            this.showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.showFreeSlotsToolStripMenuItem.Text = "Show free slots";
-            this.showFreeSlotsToolStripMenuItem.Click += new System.EventHandler(this.ShowFreeSlotsClick);
+            showFreeSlotsToolStripMenuItem.CheckOnClick = true;
+            showFreeSlotsToolStripMenuItem.Name = "showFreeSlotsToolStripMenuItem";
+            showFreeSlotsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            showFreeSlotsToolStripMenuItem.Text = "Show free slots";
+            showFreeSlotsToolStripMenuItem.Click += ShowFreeSlotsClick;
             // 
             // nextFreeSlotToolStripMenuItem
             // 
-            this.nextFreeSlotToolStripMenuItem.Enabled = false;
-            this.nextFreeSlotToolStripMenuItem.Name = "nextFreeSlotToolStripMenuItem";
-            this.nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.nextFreeSlotToolStripMenuItem.Text = "Find next free slot";
-            this.nextFreeSlotToolStripMenuItem.Click += new System.EventHandler(this.NextFreeSlotToolStripMenuItem_Click);
+            nextFreeSlotToolStripMenuItem.Enabled = false;
+            nextFreeSlotToolStripMenuItem.Name = "nextFreeSlotToolStripMenuItem";
+            nextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            nextFreeSlotToolStripMenuItem.Text = "Find next free slot";
+            nextFreeSlotToolStripMenuItem.Click += NextFreeSlotToolStripMenuItem_Click;
             // 
             // tsSeparator2
             // 
-            this.tsSeparator2.Name = "tsSeparator2";
-            this.tsSeparator2.Size = new System.Drawing.Size(169, 6);
+            tsSeparator2.Name = "tsSeparator2";
+            tsSeparator2.Size = new System.Drawing.Size(165, 6);
             // 
             // playSoundToolStripMenuItem
             // 
-            this.playSoundToolStripMenuItem.Enabled = false;
-            this.playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.playSoundToolStripMenuItem.Name = "playSoundToolStripMenuItem";
-            this.playSoundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.playSoundToolStripMenuItem.Text = "Play";
-            this.playSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickPlay);
+            playSoundToolStripMenuItem.Enabled = false;
+            playSoundToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            playSoundToolStripMenuItem.Name = "playSoundToolStripMenuItem";
+            playSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            playSoundToolStripMenuItem.Text = "Play";
+            playSoundToolStripMenuItem.Click += OnClickPlay;
             // 
             // replaceToolStripMenuItem
             // 
-            this.replaceToolStripMenuItem.Enabled = false;
-            this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.replaceToolStripMenuItem.Text = "Insert/Replace";
-            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.OnClickReplace);
+            replaceToolStripMenuItem.Enabled = false;
+            replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
+            replaceToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            replaceToolStripMenuItem.Text = "Insert/Replace";
+            replaceToolStripMenuItem.Click += OnClickReplace;
             // 
             // extractSoundToolStripMenuItem
             // 
-            this.extractSoundToolStripMenuItem.Enabled = false;
-            this.extractSoundToolStripMenuItem.Name = "extractSoundToolStripMenuItem";
-            this.extractSoundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.extractSoundToolStripMenuItem.Text = "Extract";
-            this.extractSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtract);
+            extractSoundToolStripMenuItem.Enabled = false;
+            extractSoundToolStripMenuItem.Name = "extractSoundToolStripMenuItem";
+            extractSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            extractSoundToolStripMenuItem.Text = "Extract";
+            extractSoundToolStripMenuItem.Click += OnClickExtract;
             // 
             // removeSoundToolStripMenuItem
             // 
-            this.removeSoundToolStripMenuItem.Enabled = false;
-            this.removeSoundToolStripMenuItem.Name = "removeSoundToolStripMenuItem";
-            this.removeSoundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.removeSoundToolStripMenuItem.Text = "Remove";
-            this.removeSoundToolStripMenuItem.Click += new System.EventHandler(this.OnClickRemove);
+            removeSoundToolStripMenuItem.Enabled = false;
+            removeSoundToolStripMenuItem.Name = "removeSoundToolStripMenuItem";
+            removeSoundToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            removeSoundToolStripMenuItem.Text = "Remove";
+            removeSoundToolStripMenuItem.Click += OnClickRemove;
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(169, 6);
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
             // 
             // itemSave
             // 
-            this.itemSave.Name = "itemSave";
-            this.itemSave.Size = new System.Drawing.Size(172, 22);
-            this.itemSave.Text = "Save";
-            this.itemSave.Click += new System.EventHandler(this.OnClickSave);
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton2,
-            this.toolStripDropDownButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(851, 25);
-            this.toolStrip1.TabIndex = 2;
-            this.toolStrip1.Text = "tsSoundsMenu";
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(46, 22);
-            this.toolStripButton2.Text = "Search";
-            this.toolStripButton2.Click += new System.EventHandler(this.SearchClick);
-            // 
-            // toolStripDropDownButton1
-            // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.itemExportSoundlist,
-            this.exportAllSoundsToolStripMenuItem});
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
-            this.toolStripDropDownButton1.Text = "Misc";
-            // 
-            // itemExportSoundlist
-            // 
-            this.itemExportSoundlist.Name = "itemExportSoundlist";
-            this.itemExportSoundlist.Size = new System.Drawing.Size(191, 22);
-            this.itemExportSoundlist.Text = "Export Soundlist (.csv)";
-            this.itemExportSoundlist.Click += new System.EventHandler(this.OnClickExportSoundListCsv);
-            // 
-            // exportAllSoundsToolStripMenuItem
-            // 
-            this.exportAllSoundsToolStripMenuItem.Name = "exportAllSoundsToolStripMenuItem";
-            this.exportAllSoundsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.exportAllSoundsToolStripMenuItem.Text = "Export All Sounds";
-            this.exportAllSoundsToolStripMenuItem.Click += new System.EventHandler(this.ExportAllSoundsToolStripMenuItem_Click);
+            itemSave.Name = "itemSave";
+            itemSave.Size = new System.Drawing.Size(168, 22);
+            itemSave.Text = "Save";
+            itemSave.Click += OnClickSave;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.statusStripSounds, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.toolStrip1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(851, 699);
-            this.tableLayoutPanel1.TabIndex = 1;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(statusStripSounds, 0, 2);
+            tableLayoutPanel1.Controls.Add(splitContainer1, 0, 1);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(851, 699);
+            tableLayoutPanel1.TabIndex = 1;
             // 
             // statusStripSounds
             // 
-            this.statusStripSounds.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.seconds,
-            this.toolStripStatusSpacer,
-            this.playing,
-            this.stopButton});
-            this.statusStripSounds.Location = new System.Drawing.Point(0, 677);
-            this.statusStripSounds.Name = "statusStripSounds";
-            this.statusStripSounds.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStripSounds.Size = new System.Drawing.Size(851, 22);
-            this.statusStripSounds.SizingGrip = false;
-            this.statusStripSounds.TabIndex = 1;
-            this.statusStripSounds.Text = "statusStrip1";
+            statusStripSounds.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { seconds, toolStripStatusSpacer, playing, stopButton });
+            statusStripSounds.Location = new System.Drawing.Point(0, 677);
+            statusStripSounds.Name = "statusStripSounds";
+            statusStripSounds.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            statusStripSounds.Size = new System.Drawing.Size(851, 22);
+            statusStripSounds.SizingGrip = false;
+            statusStripSounds.TabIndex = 1;
+            statusStripSounds.Text = "statusStrip1";
             // 
             // seconds
             // 
-            this.seconds.Name = "seconds";
-            this.seconds.Size = new System.Drawing.Size(0, 17);
+            seconds.Name = "seconds";
+            seconds.Size = new System.Drawing.Size(0, 17);
             // 
             // toolStripStatusSpacer
             // 
-            this.toolStripStatusSpacer.Name = "toolStripStatusSpacer";
-            this.toolStripStatusSpacer.Size = new System.Drawing.Size(834, 17);
-            this.toolStripStatusSpacer.Spring = true;
+            toolStripStatusSpacer.Name = "toolStripStatusSpacer";
+            toolStripStatusSpacer.Size = new System.Drawing.Size(649, 17);
+            toolStripStatusSpacer.Spring = true;
             // 
             // playing
             // 
-            this.playing.Name = "playing";
-            this.playing.Size = new System.Drawing.Size(117, 16);
-            this.playing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.playing.Visible = false;
+            playing.Name = "playing";
+            playing.Size = new System.Drawing.Size(117, 16);
+            playing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            playing.Visible = false;
             // 
             // stopButton
             // 
-            this.stopButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.stopButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.stopButton.Name = "stopButton";
-            this.stopButton.ShowDropDownArrow = false;
-            this.stopButton.Size = new System.Drawing.Size(35, 20);
-            this.stopButton.Text = "Stop";
-            this.stopButton.Visible = false;
-            this.stopButton.Click += new System.EventHandler(this.OnClickStop);
+            stopButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            stopButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            stopButton.Name = "stopButton";
+            stopButton.ShowDropDownArrow = false;
+            stopButton.Size = new System.Drawing.Size(35, 20);
+            stopButton.Text = "Stop";
+            stopButton.Visible = false;
+            stopButton.Click += OnClickStop;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(4, 28);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new System.Drawing.Point(4, 3);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeView);
+            splitContainer1.Panel1.Controls.Add(treeView);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel2);
-            this.splitContainer1.Size = new System.Drawing.Size(843, 645);
-            this.splitContainer1.SplitterDistance = 408;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 3;
+            splitContainer1.Panel2.Controls.Add(tableLayoutPanel2);
+            splitContainer1.Size = new System.Drawing.Size(843, 670);
+            splitContainer1.SplitterDistance = 406;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 3;
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.groupBox1, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.SelectedSoundGroup, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.groupBox2, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.groupBox3, 0, 3);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 4;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 196F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(430, 645);
-            this.tableLayoutPanel2.TabIndex = 0;
+            tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel2.Controls.Add(groupBox1, 0, 0);
+            tableLayoutPanel2.Controls.Add(SelectedSoundGroup, 0, 2);
+            tableLayoutPanel2.Controls.Add(groupBox2, 0, 1);
+            tableLayoutPanel2.Controls.Add(groupBox3, 0, 3);
+            tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 4;
+            tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 196F));
+            tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel2.Size = new System.Drawing.Size(432, 670);
+            tableLayoutPanel2.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.tableLayoutPanel3);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(4, 3);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(422, 92);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Generic";
+            groupBox1.Controls.Add(tableLayoutPanel3);
+            groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            groupBox1.Location = new System.Drawing.Point(4, 3);
+            groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox1.Size = new System.Drawing.Size(424, 92);
+            groupBox1.TabIndex = 0;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Generic";
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.ColumnCount = 3;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.44444F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.22222F));
-            this.tableLayoutPanel3.Controls.Add(this.exportAllSoundsButton, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.ExportSoundListCsvButton, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.SaveFileButton, 2, 0);
-            this.tableLayoutPanel3.Controls.Add(this.SortByNameCheckbox, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.includeSoundIdCheckBox, 1, 1);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 19);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(414, 70);
-            this.tableLayoutPanel3.TabIndex = 0;
+            tableLayoutPanel3.ColumnCount = 3;
+            tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.44444F));
+            tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.22222F));
+            tableLayoutPanel3.Controls.Add(exportAllSoundsButton, 0, 1);
+            tableLayoutPanel3.Controls.Add(ExportSoundListCsvButton, 0, 0);
+            tableLayoutPanel3.Controls.Add(SaveFileButton, 2, 0);
+            tableLayoutPanel3.Controls.Add(includeSoundIdCheckBox, 1, 1);
+            tableLayoutPanel3.Controls.Add(SortByNameCheckbox, 1, 0);
+            tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel3.Location = new System.Drawing.Point(4, 19);
+            tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel3.Size = new System.Drawing.Size(416, 70);
+            tableLayoutPanel3.TabIndex = 0;
             // 
             // exportAllSoundsButton
             // 
-            this.exportAllSoundsButton.Location = new System.Drawing.Point(4, 38);
-            this.exportAllSoundsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.exportAllSoundsButton.Name = "exportAllSoundsButton";
-            this.exportAllSoundsButton.Size = new System.Drawing.Size(144, 24);
-            this.exportAllSoundsButton.TabIndex = 9;
-            this.exportAllSoundsButton.Text = "Export all sounds";
-            this.exportAllSoundsButton.UseVisualStyleBackColor = true;
-            this.exportAllSoundsButton.Click += new System.EventHandler(this.ExportAllSoundsButton_Click);
+            exportAllSoundsButton.Location = new System.Drawing.Point(4, 38);
+            exportAllSoundsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            exportAllSoundsButton.Name = "exportAllSoundsButton";
+            exportAllSoundsButton.Size = new System.Drawing.Size(144, 24);
+            exportAllSoundsButton.TabIndex = 9;
+            exportAllSoundsButton.Text = "Export all sounds";
+            exportAllSoundsButton.UseVisualStyleBackColor = true;
+            exportAllSoundsButton.Click += ExportAllSoundsButton_Click;
             // 
             // ExportSoundListCsvButton
             // 
-            this.ExportSoundListCsvButton.AutoSize = true;
-            this.ExportSoundListCsvButton.Location = new System.Drawing.Point(4, 3);
-            this.ExportSoundListCsvButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ExportSoundListCsvButton.Name = "ExportSoundListCsvButton";
-            this.ExportSoundListCsvButton.Size = new System.Drawing.Size(159, 29);
-            this.ExportSoundListCsvButton.TabIndex = 0;
-            this.ExportSoundListCsvButton.Text = "Export sound list (.csv)";
-            this.ExportSoundListCsvButton.UseVisualStyleBackColor = true;
-            this.ExportSoundListCsvButton.Click += new System.EventHandler(this.OnClickExportSoundListCsv);
+            ExportSoundListCsvButton.AutoSize = true;
+            ExportSoundListCsvButton.Location = new System.Drawing.Point(4, 3);
+            ExportSoundListCsvButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ExportSoundListCsvButton.Name = "ExportSoundListCsvButton";
+            ExportSoundListCsvButton.Size = new System.Drawing.Size(159, 29);
+            ExportSoundListCsvButton.TabIndex = 0;
+            ExportSoundListCsvButton.Text = "Export sound list (.csv)";
+            ExportSoundListCsvButton.UseVisualStyleBackColor = true;
+            ExportSoundListCsvButton.Click += OnClickExportSoundListCsv;
             // 
             // SaveFileButton
             // 
-            this.SaveFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveFileButton.Location = new System.Drawing.Point(325, 3);
-            this.SaveFileButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SaveFileButton.Name = "SaveFileButton";
-            this.SaveFileButton.Size = new System.Drawing.Size(85, 27);
-            this.SaveFileButton.TabIndex = 1;
-            this.SaveFileButton.Text = "Save";
-            this.SaveFileButton.UseVisualStyleBackColor = true;
-            this.SaveFileButton.Click += new System.EventHandler(this.OnClickSave);
-            // 
-            // SortByNameCheckbox
-            // 
-            this.SortByNameCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SortByNameCheckbox.AutoSize = true;
-            this.SortByNameCheckbox.Location = new System.Drawing.Point(198, 3);
-            this.SortByNameCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SortByNameCheckbox.Name = "SortByNameCheckbox";
-            this.SortByNameCheckbox.Size = new System.Drawing.Size(119, 29);
-            this.SortByNameCheckbox.TabIndex = 2;
-            this.SortByNameCheckbox.Text = "Sort tree by name";
-            this.SortByNameCheckbox.UseVisualStyleBackColor = true;
-            this.SortByNameCheckbox.CheckedChanged += new System.EventHandler(this.OnChangeSort);
+            SaveFileButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            SaveFileButton.Location = new System.Drawing.Point(327, 3);
+            SaveFileButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SaveFileButton.Name = "SaveFileButton";
+            SaveFileButton.Size = new System.Drawing.Size(85, 27);
+            SaveFileButton.TabIndex = 1;
+            SaveFileButton.Text = "Save";
+            SaveFileButton.UseVisualStyleBackColor = true;
+            SaveFileButton.Click += OnClickSave;
             // 
             // includeSoundIdCheckBox
             // 
-            this.includeSoundIdCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.includeSoundIdCheckBox.AutoSize = true;
-            this.tableLayoutPanel3.SetColumnSpan(this.includeSoundIdCheckBox, 2);
-            this.includeSoundIdCheckBox.Location = new System.Drawing.Point(188, 38);
-            this.includeSoundIdCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.includeSoundIdCheckBox.Name = "includeSoundIdCheckBox";
-            this.includeSoundIdCheckBox.Size = new System.Drawing.Size(200, 29);
-            this.includeSoundIdCheckBox.TabIndex = 10;
-            this.includeSoundIdCheckBox.Text = "Export with sound id in file name";
-            this.includeSoundIdCheckBox.UseVisualStyleBackColor = true;
+            includeSoundIdCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            includeSoundIdCheckBox.AutoSize = true;
+            tableLayoutPanel3.SetColumnSpan(includeSoundIdCheckBox, 2);
+            includeSoundIdCheckBox.Location = new System.Drawing.Point(188, 38);
+            includeSoundIdCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            includeSoundIdCheckBox.Name = "includeSoundIdCheckBox";
+            includeSoundIdCheckBox.Size = new System.Drawing.Size(200, 29);
+            includeSoundIdCheckBox.TabIndex = 10;
+            includeSoundIdCheckBox.Text = "Export with sound id in file name";
+            includeSoundIdCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // SortByNameCheckbox
+            // 
+            SortByNameCheckbox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            SortByNameCheckbox.AutoSize = true;
+            SortByNameCheckbox.Location = new System.Drawing.Point(188, 3);
+            SortByNameCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SortByNameCheckbox.Name = "SortByNameCheckbox";
+            SortByNameCheckbox.Size = new System.Drawing.Size(119, 29);
+            SortByNameCheckbox.TabIndex = 2;
+            SortByNameCheckbox.Text = "Sort tree by name";
+            SortByNameCheckbox.UseVisualStyleBackColor = true;
+            SortByNameCheckbox.CheckedChanged += OnChangeSort;
             // 
             // SelectedSoundGroup
             // 
-            this.SelectedSoundGroup.Controls.Add(this.tableLayoutPanel4);
-            this.SelectedSoundGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedSoundGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SelectedSoundGroup.Location = new System.Drawing.Point(4, 222);
-            this.SelectedSoundGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SelectedSoundGroup.Name = "SelectedSoundGroup";
-            this.SelectedSoundGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SelectedSoundGroup.Size = new System.Drawing.Size(422, 190);
-            this.SelectedSoundGroup.TabIndex = 1;
-            this.SelectedSoundGroup.TabStop = false;
-            this.SelectedSoundGroup.Text = "Current Sound";
+            SelectedSoundGroup.Controls.Add(tableLayoutPanel4);
+            SelectedSoundGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            SelectedSoundGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            SelectedSoundGroup.Location = new System.Drawing.Point(4, 222);
+            SelectedSoundGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SelectedSoundGroup.Name = "SelectedSoundGroup";
+            SelectedSoundGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SelectedSoundGroup.Size = new System.Drawing.Size(424, 190);
+            SelectedSoundGroup.TabIndex = 1;
+            SelectedSoundGroup.TabStop = false;
+            SelectedSoundGroup.Text = "Current Sound";
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
-            this.tableLayoutPanel4.Controls.Add(this.PlaySoundButton, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.SoundPlaytimeBar, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.StopSoundButton, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.ExtractSoundButton, 0, 3);
-            this.tableLayoutPanel4.Controls.Add(this.RemoveSoundButton, 1, 3);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(4, 16);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 4;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(414, 171);
-            this.tableLayoutPanel4.TabIndex = 0;
+            tableLayoutPanel4.ColumnCount = 2;
+            tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
+            tableLayoutPanel4.Controls.Add(PlaySoundButton, 0, 1);
+            tableLayoutPanel4.Controls.Add(SoundPlaytimeBar, 0, 0);
+            tableLayoutPanel4.Controls.Add(StopSoundButton, 1, 1);
+            tableLayoutPanel4.Controls.Add(ExtractSoundButton, 0, 3);
+            tableLayoutPanel4.Controls.Add(RemoveSoundButton, 1, 3);
+            tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel4.Location = new System.Drawing.Point(4, 16);
+            tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 4;
+            tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel4.Size = new System.Drawing.Size(416, 171);
+            tableLayoutPanel4.TabIndex = 0;
             // 
             // PlaySoundButton
             // 
-            this.PlaySoundButton.AutoSize = true;
-            this.PlaySoundButton.Location = new System.Drawing.Point(4, 32);
-            this.PlaySoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PlaySoundButton.Name = "PlaySoundButton";
-            this.PlaySoundButton.Size = new System.Drawing.Size(95, 29);
-            this.PlaySoundButton.TabIndex = 0;
-            this.PlaySoundButton.Text = "Play";
-            this.PlaySoundButton.UseVisualStyleBackColor = true;
-            this.PlaySoundButton.Click += new System.EventHandler(this.OnClickPlay);
+            PlaySoundButton.AutoSize = true;
+            PlaySoundButton.Location = new System.Drawing.Point(4, 32);
+            PlaySoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PlaySoundButton.Name = "PlaySoundButton";
+            PlaySoundButton.Size = new System.Drawing.Size(95, 29);
+            PlaySoundButton.TabIndex = 0;
+            PlaySoundButton.Text = "Play";
+            PlaySoundButton.UseVisualStyleBackColor = true;
+            PlaySoundButton.Click += OnClickPlay;
             // 
             // SoundPlaytimeBar
             // 
-            this.tableLayoutPanel4.SetColumnSpan(this.SoundPlaytimeBar, 2);
-            this.SoundPlaytimeBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SoundPlaytimeBar.Location = new System.Drawing.Point(4, 3);
-            this.SoundPlaytimeBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SoundPlaytimeBar.Name = "SoundPlaytimeBar";
-            this.SoundPlaytimeBar.Size = new System.Drawing.Size(406, 23);
-            this.SoundPlaytimeBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.SoundPlaytimeBar.TabIndex = 1;
+            tableLayoutPanel4.SetColumnSpan(SoundPlaytimeBar, 2);
+            SoundPlaytimeBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            SoundPlaytimeBar.Location = new System.Drawing.Point(4, 3);
+            SoundPlaytimeBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SoundPlaytimeBar.Name = "SoundPlaytimeBar";
+            SoundPlaytimeBar.Size = new System.Drawing.Size(408, 23);
+            SoundPlaytimeBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            SoundPlaytimeBar.TabIndex = 1;
             // 
             // StopSoundButton
             // 
-            this.StopSoundButton.AutoSize = true;
-            this.StopSoundButton.Enabled = false;
-            this.StopSoundButton.Location = new System.Drawing.Point(107, 32);
-            this.StopSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.StopSoundButton.Name = "StopSoundButton";
-            this.StopSoundButton.Size = new System.Drawing.Size(88, 29);
-            this.StopSoundButton.TabIndex = 2;
-            this.StopSoundButton.Text = "Stop";
-            this.StopSoundButton.UseVisualStyleBackColor = true;
-            this.StopSoundButton.Click += new System.EventHandler(this.OnClickStop);
+            StopSoundButton.AutoSize = true;
+            StopSoundButton.Enabled = false;
+            StopSoundButton.Location = new System.Drawing.Point(108, 32);
+            StopSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            StopSoundButton.Name = "StopSoundButton";
+            StopSoundButton.Size = new System.Drawing.Size(88, 29);
+            StopSoundButton.TabIndex = 2;
+            StopSoundButton.Text = "Stop";
+            StopSoundButton.UseVisualStyleBackColor = true;
+            StopSoundButton.Click += OnClickStop;
             // 
             // ExtractSoundButton
             // 
-            this.ExtractSoundButton.AutoSize = true;
-            this.ExtractSoundButton.Location = new System.Drawing.Point(4, 90);
-            this.ExtractSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ExtractSoundButton.Name = "ExtractSoundButton";
-            this.ExtractSoundButton.Size = new System.Drawing.Size(95, 29);
-            this.ExtractSoundButton.TabIndex = 3;
-            this.ExtractSoundButton.Text = "Extract";
-            this.ExtractSoundButton.UseVisualStyleBackColor = true;
-            this.ExtractSoundButton.Click += new System.EventHandler(this.OnClickExtract);
+            ExtractSoundButton.AutoSize = true;
+            ExtractSoundButton.Location = new System.Drawing.Point(4, 90);
+            ExtractSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ExtractSoundButton.Name = "ExtractSoundButton";
+            ExtractSoundButton.Size = new System.Drawing.Size(95, 29);
+            ExtractSoundButton.TabIndex = 3;
+            ExtractSoundButton.Text = "Extract";
+            ExtractSoundButton.UseVisualStyleBackColor = true;
+            ExtractSoundButton.Click += OnClickExtract;
             // 
             // RemoveSoundButton
             // 
-            this.RemoveSoundButton.AutoSize = true;
-            this.RemoveSoundButton.Location = new System.Drawing.Point(107, 90);
-            this.RemoveSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.RemoveSoundButton.Name = "RemoveSoundButton";
-            this.RemoveSoundButton.Size = new System.Drawing.Size(88, 29);
-            this.RemoveSoundButton.TabIndex = 4;
-            this.RemoveSoundButton.Text = "Remove";
-            this.RemoveSoundButton.UseVisualStyleBackColor = true;
-            this.RemoveSoundButton.Click += new System.EventHandler(this.OnClickRemove);
+            RemoveSoundButton.AutoSize = true;
+            RemoveSoundButton.Location = new System.Drawing.Point(108, 90);
+            RemoveSoundButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            RemoveSoundButton.Name = "RemoveSoundButton";
+            RemoveSoundButton.Size = new System.Drawing.Size(88, 29);
+            RemoveSoundButton.TabIndex = 4;
+            RemoveSoundButton.Text = "Remove";
+            RemoveSoundButton.UseVisualStyleBackColor = true;
+            RemoveSoundButton.Click += OnClickRemove;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.tableLayoutPanel5);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(4, 101);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Size = new System.Drawing.Size(422, 115);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Search";
+            groupBox2.Controls.Add(tableLayoutPanel5);
+            groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            groupBox2.Location = new System.Drawing.Point(4, 101);
+            groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox2.Size = new System.Drawing.Size(424, 115);
+            groupBox2.TabIndex = 2;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Search";
             // 
             // tableLayoutPanel5
             // 
-            this.tableLayoutPanel5.ColumnCount = 4;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.31579F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.57895F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.05263F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.05263F));
-            this.tableLayoutPanel5.Controls.Add(this.GoPrevResultButton, 1, 1);
-            this.tableLayoutPanel5.Controls.Add(this.SearchNameTextbox, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.GoNextResultButton, 3, 1);
-            this.tableLayoutPanel5.Controls.Add(this.SearchByIdButton, 0, 1);
-            this.tableLayoutPanel5.Controls.Add(this.SearchByNameButton, 1, 1);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(4, 16);
-            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 2;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(414, 96);
-            this.tableLayoutPanel5.TabIndex = 0;
+            tableLayoutPanel5.ColumnCount = 4;
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.31579F));
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.57895F));
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.05263F));
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.05263F));
+            tableLayoutPanel5.Controls.Add(GoPrevResultButton, 1, 1);
+            tableLayoutPanel5.Controls.Add(SearchNameTextbox, 0, 0);
+            tableLayoutPanel5.Controls.Add(GoNextResultButton, 3, 1);
+            tableLayoutPanel5.Controls.Add(SearchByIdButton, 0, 1);
+            tableLayoutPanel5.Controls.Add(SearchByNameButton, 1, 1);
+            tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel5.Location = new System.Drawing.Point(4, 16);
+            tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 2;
+            tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel5.Size = new System.Drawing.Size(416, 96);
+            tableLayoutPanel5.TabIndex = 0;
             // 
             // GoPrevResultButton
             // 
-            this.GoPrevResultButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.GoPrevResultButton.AutoSize = true;
-            this.GoPrevResultButton.Location = new System.Drawing.Point(245, 29);
-            this.GoPrevResultButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.GoPrevResultButton.Name = "GoPrevResultButton";
-            this.GoPrevResultButton.Size = new System.Drawing.Size(76, 29);
-            this.GoPrevResultButton.TabIndex = 5;
-            this.GoPrevResultButton.Text = "Prev";
-            this.GoPrevResultButton.UseVisualStyleBackColor = true;
-            this.GoPrevResultButton.Click += new System.EventHandler(this.GoPrevResultButton_Click);
+            GoPrevResultButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            GoPrevResultButton.AutoSize = true;
+            GoPrevResultButton.Location = new System.Drawing.Point(247, 29);
+            GoPrevResultButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GoPrevResultButton.Name = "GoPrevResultButton";
+            GoPrevResultButton.Size = new System.Drawing.Size(76, 29);
+            GoPrevResultButton.TabIndex = 5;
+            GoPrevResultButton.Text = "Prev";
+            GoPrevResultButton.UseVisualStyleBackColor = true;
+            GoPrevResultButton.Click += GoPrevResultButton_Click;
             // 
             // SearchNameTextbox
             // 
-            this.tableLayoutPanel5.SetColumnSpan(this.SearchNameTextbox, 4);
-            this.SearchNameTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SearchNameTextbox.Location = new System.Drawing.Point(4, 3);
-            this.SearchNameTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SearchNameTextbox.Name = "SearchNameTextbox";
-            this.SearchNameTextbox.Size = new System.Drawing.Size(406, 20);
-            this.SearchNameTextbox.TabIndex = 0;
+            tableLayoutPanel5.SetColumnSpan(SearchNameTextbox, 4);
+            SearchNameTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
+            SearchNameTextbox.Location = new System.Drawing.Point(4, 3);
+            SearchNameTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SearchNameTextbox.Name = "SearchNameTextbox";
+            SearchNameTextbox.Size = new System.Drawing.Size(408, 20);
+            SearchNameTextbox.TabIndex = 0;
             // 
             // GoNextResultButton
             // 
-            this.GoNextResultButton.AutoSize = true;
-            this.GoNextResultButton.Location = new System.Drawing.Point(329, 29);
-            this.GoNextResultButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.GoNextResultButton.Name = "GoNextResultButton";
-            this.GoNextResultButton.Size = new System.Drawing.Size(76, 29);
-            this.GoNextResultButton.TabIndex = 3;
-            this.GoNextResultButton.Text = "Next";
-            this.GoNextResultButton.UseVisualStyleBackColor = true;
-            this.GoNextResultButton.Click += new System.EventHandler(this.GoNextResultButton_Click);
+            GoNextResultButton.AutoSize = true;
+            GoNextResultButton.Location = new System.Drawing.Point(331, 29);
+            GoNextResultButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GoNextResultButton.Name = "GoNextResultButton";
+            GoNextResultButton.Size = new System.Drawing.Size(76, 29);
+            GoNextResultButton.TabIndex = 3;
+            GoNextResultButton.Text = "Next";
+            GoNextResultButton.UseVisualStyleBackColor = true;
+            GoNextResultButton.Click += GoNextResultButton_Click;
             // 
             // SearchByIdButton
             // 
-            this.SearchByIdButton.AutoSize = true;
-            this.SearchByIdButton.Location = new System.Drawing.Point(4, 29);
-            this.SearchByIdButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SearchByIdButton.Name = "SearchByIdButton";
-            this.SearchByIdButton.Size = new System.Drawing.Size(94, 29);
-            this.SearchByIdButton.TabIndex = 4;
-            this.SearchByIdButton.Text = "Search by Id";
-            this.SearchByIdButton.UseVisualStyleBackColor = true;
-            this.SearchByIdButton.Click += new System.EventHandler(this.SearchByIdButton_Click);
+            SearchByIdButton.AutoSize = true;
+            SearchByIdButton.Location = new System.Drawing.Point(4, 29);
+            SearchByIdButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SearchByIdButton.Name = "SearchByIdButton";
+            SearchByIdButton.Size = new System.Drawing.Size(94, 29);
+            SearchByIdButton.TabIndex = 4;
+            SearchByIdButton.Text = "Search by Id";
+            SearchByIdButton.UseVisualStyleBackColor = true;
+            SearchByIdButton.Click += SearchByIdButton_Click;
             // 
             // SearchByNameButton
             // 
-            this.SearchByNameButton.AutoSize = true;
-            this.SearchByNameButton.Location = new System.Drawing.Point(112, 29);
-            this.SearchByNameButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SearchByNameButton.Name = "SearchByNameButton";
-            this.SearchByNameButton.Size = new System.Drawing.Size(120, 29);
-            this.SearchByNameButton.TabIndex = 1;
-            this.SearchByNameButton.Text = "Search by Name";
-            this.SearchByNameButton.UseVisualStyleBackColor = true;
-            this.SearchByNameButton.Click += new System.EventHandler(this.SearchByNameButton_Click);
+            SearchByNameButton.AutoSize = true;
+            SearchByNameButton.Location = new System.Drawing.Point(113, 29);
+            SearchByNameButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SearchByNameButton.Name = "SearchByNameButton";
+            SearchByNameButton.Size = new System.Drawing.Size(120, 29);
+            SearchByNameButton.TabIndex = 1;
+            SearchByNameButton.Text = "Search by Name";
+            SearchByNameButton.UseVisualStyleBackColor = true;
+            SearchByNameButton.Click += SearchByNameButton_Click;
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.tableLayoutPanel6);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(4, 418);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Size = new System.Drawing.Size(422, 224);
-            this.groupBox3.TabIndex = 3;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Insert \\ Replace";
+            groupBox3.Controls.Add(tableLayoutPanel6);
+            groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            groupBox3.Location = new System.Drawing.Point(4, 418);
+            groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox3.Size = new System.Drawing.Size(424, 249);
+            groupBox3.TabIndex = 3;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Insert \\ Replace";
             // 
             // tableLayoutPanel6
             // 
-            this.tableLayoutPanel6.ColumnCount = 4;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 42F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel6.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.label3, 0, 1);
-            this.tableLayoutPanel6.Controls.Add(this.IdInsertTextbox, 1, 0);
-            this.tableLayoutPanel6.Controls.Add(this.WavFileInsertTextbox, 1, 1);
-            this.tableLayoutPanel6.Controls.Add(this.WavChooseInsertButton, 2, 1);
-            this.tableLayoutPanel6.Controls.Add(this.AddInsertReplaceButton, 0, 2);
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(4, 19);
-            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 3;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(414, 202);
-            this.tableLayoutPanel6.TabIndex = 0;
+            tableLayoutPanel6.ColumnCount = 4;
+            tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 42F));
+            tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel6.Controls.Add(label1, 0, 0);
+            tableLayoutPanel6.Controls.Add(label3, 0, 1);
+            tableLayoutPanel6.Controls.Add(IdInsertTextbox, 1, 0);
+            tableLayoutPanel6.Controls.Add(WavFileInsertTextbox, 1, 1);
+            tableLayoutPanel6.Controls.Add(WavChooseInsertButton, 2, 1);
+            tableLayoutPanel6.Controls.Add(AddInsertReplaceButton, 0, 2);
+            tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel6.Location = new System.Drawing.Point(4, 19);
+            tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 3;
+            tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            tableLayoutPanel6.Size = new System.Drawing.Size(416, 227);
+            tableLayoutPanel6.TabIndex = 0;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(4, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 29);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ID";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label1.AutoSize = true;
+            label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            label1.Location = new System.Drawing.Point(4, 0);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(32, 29);
+            label1.TabIndex = 0;
+            label1.Text = "ID";
+            label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(4, 29);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(32, 29);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "WAV";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label3.AutoSize = true;
+            label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            label3.Location = new System.Drawing.Point(4, 29);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(32, 29);
+            label3.TabIndex = 2;
+            label3.Text = "WAV";
+            label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // IdInsertTextbox
             // 
-            this.tableLayoutPanel6.SetColumnSpan(this.IdInsertTextbox, 2);
-            this.IdInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.IdInsertTextbox.Location = new System.Drawing.Point(44, 3);
-            this.IdInsertTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.IdInsertTextbox.Name = "IdInsertTextbox";
-            this.IdInsertTextbox.ReadOnly = true;
-            this.IdInsertTextbox.Size = new System.Drawing.Size(343, 23);
-            this.IdInsertTextbox.TabIndex = 3;
+            tableLayoutPanel6.SetColumnSpan(IdInsertTextbox, 2);
+            IdInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
+            IdInsertTextbox.Location = new System.Drawing.Point(44, 3);
+            IdInsertTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            IdInsertTextbox.Name = "IdInsertTextbox";
+            IdInsertTextbox.ReadOnly = true;
+            IdInsertTextbox.Size = new System.Drawing.Size(345, 23);
+            IdInsertTextbox.TabIndex = 3;
             // 
             // WavFileInsertTextbox
             // 
-            this.WavFileInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.WavFileInsertTextbox.Location = new System.Drawing.Point(44, 32);
-            this.WavFileInsertTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.WavFileInsertTextbox.Name = "WavFileInsertTextbox";
-            this.WavFileInsertTextbox.Size = new System.Drawing.Size(301, 23);
-            this.WavFileInsertTextbox.TabIndex = 5;
+            WavFileInsertTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
+            WavFileInsertTextbox.Location = new System.Drawing.Point(44, 32);
+            WavFileInsertTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            WavFileInsertTextbox.Name = "WavFileInsertTextbox";
+            WavFileInsertTextbox.Size = new System.Drawing.Size(303, 23);
+            WavFileInsertTextbox.TabIndex = 5;
             // 
             // WavChooseInsertButton
             // 
-            this.WavChooseInsertButton.Location = new System.Drawing.Point(353, 32);
-            this.WavChooseInsertButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.WavChooseInsertButton.Name = "WavChooseInsertButton";
-            this.WavChooseInsertButton.Size = new System.Drawing.Size(34, 22);
-            this.WavChooseInsertButton.TabIndex = 6;
-            this.WavChooseInsertButton.Text = "...";
-            this.WavChooseInsertButton.UseVisualStyleBackColor = true;
-            this.WavChooseInsertButton.Click += new System.EventHandler(this.WavChooseInsertButton_Click);
+            WavChooseInsertButton.Location = new System.Drawing.Point(355, 32);
+            WavChooseInsertButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            WavChooseInsertButton.Name = "WavChooseInsertButton";
+            WavChooseInsertButton.Size = new System.Drawing.Size(34, 22);
+            WavChooseInsertButton.TabIndex = 6;
+            WavChooseInsertButton.Text = "...";
+            WavChooseInsertButton.UseVisualStyleBackColor = true;
+            WavChooseInsertButton.Click += WavChooseInsertButton_Click;
             // 
             // AddInsertReplaceButton
             // 
-            this.AddInsertReplaceButton.AutoSize = true;
-            this.tableLayoutPanel6.SetColumnSpan(this.AddInsertReplaceButton, 2);
-            this.AddInsertReplaceButton.Location = new System.Drawing.Point(4, 61);
-            this.AddInsertReplaceButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.AddInsertReplaceButton.Name = "AddInsertReplaceButton";
-            this.AddInsertReplaceButton.Size = new System.Drawing.Size(121, 29);
-            this.AddInsertReplaceButton.TabIndex = 7;
-            this.AddInsertReplaceButton.Text = "Add \\ Replace";
-            this.AddInsertReplaceButton.UseVisualStyleBackColor = true;
-            this.AddInsertReplaceButton.Click += new System.EventHandler(this.AddInsertReplaceButton_Click);
+            AddInsertReplaceButton.AutoSize = true;
+            tableLayoutPanel6.SetColumnSpan(AddInsertReplaceButton, 2);
+            AddInsertReplaceButton.Location = new System.Drawing.Point(4, 61);
+            AddInsertReplaceButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            AddInsertReplaceButton.Name = "AddInsertReplaceButton";
+            AddInsertReplaceButton.Size = new System.Drawing.Size(121, 29);
+            AddInsertReplaceButton.TabIndex = 7;
+            AddInsertReplaceButton.Text = "Add \\ Replace";
+            AddInsertReplaceButton.UseVisualStyleBackColor = true;
+            AddInsertReplaceButton.Click += AddInsertReplaceButton_Click;
             // 
             // SoundsControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "SoundsControl";
-            this.Size = new System.Drawing.Size(851, 699);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.cmStripSounds.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.statusStripSounds.ResumeLayout(false);
-            this.statusStripSounds.PerformLayout();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
-            this.SelectedSoundGroup.ResumeLayout(false);
-            this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel4.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel5.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.tableLayoutPanel6.ResumeLayout(false);
-            this.tableLayoutPanel6.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(tableLayoutPanel1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "SoundsControl";
+            Size = new System.Drawing.Size(851, 699);
+            Load += OnLoad;
+            cmStripSounds.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            statusStripSounds.ResumeLayout(false);
+            statusStripSounds.PerformLayout();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
+            SelectedSoundGroup.ResumeLayout(false);
+            tableLayoutPanel4.ResumeLayout(false);
+            tableLayoutPanel4.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            tableLayoutPanel6.ResumeLayout(false);
+            tableLayoutPanel6.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
 
         private System.Windows.Forms.ContextMenuStrip cmStripSounds;
         private System.Windows.Forms.ToolStripMenuItem extractSoundToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem itemExportSoundlist;
         private System.Windows.Forms.ToolStripMenuItem itemSave;
         private System.Windows.Forms.ToolStripMenuItem nameSortToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextFreeSlotToolStripMenuItem;
@@ -835,15 +750,11 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.StatusStrip statusStripSounds;
         private System.Windows.Forms.ToolStripDropDownButton stopButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusSpacer;
         private System.Windows.Forms.TreeView treeView;
         private System.Windows.Forms.ToolStripSeparator tsSeparator1;
         private System.Windows.Forms.ToolStripSeparator tsSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem ToggleRightPanelToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -873,7 +784,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Button ExtractSoundButton;
         private System.Windows.Forms.Button RemoveSoundButton;
         private System.Windows.Forms.Button GoPrevResultButton;
-        private System.Windows.Forms.ToolStripMenuItem exportAllSoundsToolStripMenuItem;
         private System.Windows.Forms.Button exportAllSoundsButton;
         private System.Windows.Forms.CheckBox includeSoundIdCheckBox;
     }

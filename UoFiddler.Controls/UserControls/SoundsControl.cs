@@ -17,7 +17,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -49,12 +48,7 @@ namespace UoFiddler.Controls.UserControls
             treeView.BeforeLabelEdit += TreeView_BeforeLabelEdit;
             treeView.AfterLabelEdit += TreeViewOnAfterLabelEdit;
 
-            splitContainer1.Panel2Collapsed = !Options.RightPanelInSoundsTab;
-
             _soundIdOffset = GetSoundIdOffset();
-
-            statusStripSounds.Visible = splitContainer1.Panel2Collapsed;
-            toolStrip1.Visible = splitContainer1.Panel2Collapsed;
         }
 
         /// <summary>
@@ -180,11 +174,6 @@ namespace UoFiddler.Controls.UserControls
                     StopSoundButton.Enabled = false;
                     _spTimer.Stop();
                 }));
-        }
-
-        private bool SearchName(string text, bool v)
-        {
-            return DoSearchName(text, v, false);
         }
 
         private void OnFilePathChangeEvent()
@@ -341,7 +330,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private bool DoSearchName(string name, bool next, bool prev)
+        private void DoSearchName(string name, bool next, bool prev)
         {
             int index = 0;
 
@@ -369,7 +358,7 @@ namespace UoFiddler.Controls.UserControls
 
                     node.EnsureVisible();
 
-                    return true;
+                    return;
                 }
             }
             else
@@ -399,11 +388,9 @@ namespace UoFiddler.Controls.UserControls
 
                     node.EnsureVisible();
 
-                    return true;
+                    return;
                 }
             }
-
-            return false;
         }
 
         private void OnClickExtract(object sender, EventArgs e)
@@ -488,22 +475,6 @@ namespace UoFiddler.Controls.UserControls
 
             MessageBox.Show($"SoundList saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
-        }
-
-        private SoundsSearchForm _showForm;
-
-        private void SearchClick(object sender, EventArgs e)
-        {
-            if (_showForm?.IsDisposed == false)
-            {
-                return;
-            }
-
-            _showForm = new SoundsSearchForm(SearchId, SearchName)
-            {
-                TopMost = true
-            };
-            _showForm.Show();
         }
 
         public bool SearchId(int id)
@@ -657,6 +628,7 @@ namespace UoFiddler.Controls.UserControls
             if (e.KeyCode == Keys.Escape)
             {
                 StopSound();
+
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
@@ -668,6 +640,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 treeView.SelectedNode.BeginEdit();
+
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
@@ -679,12 +652,14 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 OnClickPlay(this, e);
+
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.F && e.Control)
             {
-                SearchClick(sender, e);
+                SearchNameTextbox.Focus();
+
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }
@@ -738,13 +713,6 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void ToggleRightPanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
-            splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;
-            statusStripSounds.Visible = splitContainer1.Panel2Collapsed;
-            toolStrip1.Visible = splitContainer1.Panel2Collapsed;
-        }
-
         private string _wavChosen;
 
         private void WavChooseInsertButton_Click(object sender, EventArgs e)
@@ -771,7 +739,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void SearchByIdButton_Click(object sender, EventArgs e)
         {
-            if (!int.TryParse(SearchNameTextbox.Text, out int id))
+            if (!Utils.ConvertStringToInt(SearchNameTextbox.Text, out int id))
             {
                 return;
             }

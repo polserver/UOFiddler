@@ -70,7 +70,6 @@ namespace UoFiddler.Forms
             checkBoxCacheData.Checked = Files.CacheData;
             checkBoxNewMapSize.Checked = Map.Felucca.Width == 7168;
             checkBoxuseDiff.Checked = Map.UseDiff;
-            checkBoxPanelSoundsDesign.Checked = Options.RightPanelInSoundsTab;
             checkBoxPolSoundIdOffset.Checked = Options.PolSoundIdOffset;
             numericUpDownItemSizeWidth.Value = Options.ArtItemSizeWidth;
             numericUpDownItemSizeHeight.Value = Options.ArtItemSizeHeight;
@@ -88,8 +87,6 @@ namespace UoFiddler.Forms
 
         private void OnClickApply(object sender, EventArgs e)
         {
-            Options.RightPanelInSoundsTab = checkBoxPanelSoundsDesign.Checked;
-
             if (checkBoxPolSoundIdOffset.Checked != Options.PolSoundIdOffset)
             {
                 Options.PolSoundIdOffset = checkBoxPolSoundIdOffset.Checked;
