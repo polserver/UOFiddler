@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Ultima
 {
-    public sealed class Animations
+    public static class Animations
     {
         public const int _maxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
 
