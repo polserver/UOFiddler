@@ -55,10 +55,7 @@ namespace Ultima
         {
             _cache[index] = bmp;
             _removed[index] = false;
-            if (_patched.ContainsKey(index))
-            {
-                _patched.Remove(index);
-            }
+            _patched.Remove(index);
         }
 
         /// <summary>

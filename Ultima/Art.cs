@@ -109,10 +109,7 @@ namespace Ultima
             _cache[index] = bmp;
             _removed[index] = false;
 
-            if (_patched.ContainsKey(index))
-            {
-                _patched.Remove(index);
-            }
+            _patched.Remove(index);
 
             Modified = true;
         }
@@ -128,10 +125,7 @@ namespace Ultima
             _cache[index] = bmp;
             _removed[index] = false;
 
-            if (_patched.ContainsKey(index))
-            {
-                _patched.Remove(index);
-            }
+            _patched.Remove(index);
 
             Modified = true;
         }
@@ -144,7 +138,6 @@ namespace Ultima
         {
             index = GetLegalItemId(index);
             index += 0x4000;
-
             _removed[index] = true;
             Modified = true;
         }
