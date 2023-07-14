@@ -39,236 +39,201 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpeechControl));
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.IDEntry = new System.Windows.Forms.ToolStripTextBox();
-            this.IDButton = new System.Windows.Forms.ToolStripButton();
-            this.IDNextButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.KeyWordEntry = new System.Windows.Forms.ToolStripTextBox();
-            this.KeyWordButton = new System.Windows.Forms.ToolStripButton();
-            this.KeyWordNextButton = new System.Windows.Forms.ToolStripButton();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.collapsibleSplitter1 = new UoFiddler.Controls.UserControls.CollapsibleSplitter();
-            this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
-            this.SuspendLayout();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            IDEntry = new System.Windows.Forms.ToolStripTextBox();
+            IDButton = new System.Windows.Forms.ToolStripButton();
+            IDNextButton = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            KeyWordEntry = new System.Windows.Forms.ToolStripTextBox();
+            KeyWordButton = new System.Windows.Forms.ToolStripButton();
+            KeyWordNextButton = new System.Windows.Forms.ToolStripButton();
+            toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            dataGridView1 = new System.Windows.Forms.DataGridView();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            contextMenuStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.IDEntry,
-            this.IDButton,
-            this.IDNextButton,
-            this.toolStripSeparator1,
-            this.KeyWordEntry,
-            this.KeyWordButton,
-            this.KeyWordNextButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 33);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(736, 25);
-            this.toolStrip1.TabIndex = 3;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { IDEntry, IDButton, IDNextButton, toolStripSeparator1, KeyWordEntry, KeyWordButton, KeyWordNextButton, toolStripButton1, toolStripSeparator3, toolStripSeparator2, toolStripDropDownButton1 });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            toolStrip1.Size = new System.Drawing.Size(736, 25);
+            toolStrip1.TabIndex = 3;
+            toolStrip1.Text = "toolStrip1";
             // 
             // IDEntry
             // 
-            this.IDEntry.MaxLength = 10;
-            this.IDEntry.Name = "IDEntry";
-            this.IDEntry.Size = new System.Drawing.Size(116, 25);
-            this.IDEntry.Text = "Find ID...";
-            this.IDEntry.Enter += new System.EventHandler(this.IDEntry_Enter);
+            IDEntry.MaxLength = 10;
+            IDEntry.Name = "IDEntry";
+            IDEntry.Size = new System.Drawing.Size(116, 25);
+            IDEntry.Text = "Find ID...";
+            IDEntry.Enter += IDEntry_Enter;
             // 
             // IDButton
             // 
-            this.IDButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.IDButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.IDButton.Name = "IDButton";
-            this.IDButton.Size = new System.Drawing.Size(34, 22);
-            this.IDButton.Text = "Find";
-            this.IDButton.Click += new System.EventHandler(this.OnClickFindID);
+            IDButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            IDButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            IDButton.Name = "IDButton";
+            IDButton.Size = new System.Drawing.Size(34, 22);
+            IDButton.Text = "Find";
+            IDButton.Click += OnClickFindID;
             // 
             // IDNextButton
             // 
-            this.IDNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.IDNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.IDNextButton.Name = "IDNextButton";
-            this.IDNextButton.Size = new System.Drawing.Size(62, 22);
-            this.IDNextButton.Text = "Find Next";
-            this.IDNextButton.Click += new System.EventHandler(this.OnClickNextID);
+            IDNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            IDNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            IDNextButton.Name = "IDNextButton";
+            IDNextButton.Size = new System.Drawing.Size(62, 22);
+            IDNextButton.Text = "Find Next";
+            IDNextButton.Click += OnClickNextID;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // KeyWordEntry
             // 
-            this.KeyWordEntry.Name = "KeyWordEntry";
-            this.KeyWordEntry.Size = new System.Drawing.Size(116, 25);
-            this.KeyWordEntry.Text = "KeyWord...";
-            this.KeyWordEntry.Enter += new System.EventHandler(this.KeyWordEntry_Enter);
+            KeyWordEntry.Name = "KeyWordEntry";
+            KeyWordEntry.Size = new System.Drawing.Size(116, 25);
+            KeyWordEntry.Text = "KeyWord...";
+            KeyWordEntry.Enter += KeyWordEntry_Enter;
             // 
             // KeyWordButton
             // 
-            this.KeyWordButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.KeyWordButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.KeyWordButton.Name = "KeyWordButton";
-            this.KeyWordButton.Size = new System.Drawing.Size(34, 22);
-            this.KeyWordButton.Text = "Find";
-            this.KeyWordButton.Click += new System.EventHandler(this.OnClickFindKeyWord);
+            KeyWordButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            KeyWordButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            KeyWordButton.Name = "KeyWordButton";
+            KeyWordButton.Size = new System.Drawing.Size(34, 22);
+            KeyWordButton.Text = "Find";
+            KeyWordButton.Click += OnClickFindKeyWord;
             // 
             // KeyWordNextButton
             // 
-            this.KeyWordNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.KeyWordNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.KeyWordNextButton.Name = "KeyWordNextButton";
-            this.KeyWordNextButton.Size = new System.Drawing.Size(62, 22);
-            this.KeyWordNextButton.Text = "Find Next";
-            this.KeyWordNextButton.Click += new System.EventHandler(this.OnClickNextKeyWord);
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 58);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(736, 322);
-            this.dataGridView1.TabIndex = 4;
-            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellValueChanged);
-            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClick);
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addEntryToolStripMenuItem,
-            this.deleteEntryToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(138, 48);
-            // 
-            // addEntryToolStripMenuItem
-            // 
-            this.addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
-            this.addEntryToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.addEntryToolStripMenuItem.Text = "Add Entry";
-            this.addEntryToolStripMenuItem.Click += new System.EventHandler(this.OnAddEntry);
-            // 
-            // deleteEntryToolStripMenuItem
-            // 
-            this.deleteEntryToolStripMenuItem.Name = "deleteEntryToolStripMenuItem";
-            this.deleteEntryToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.deleteEntryToolStripMenuItem.Text = "Delete Entry";
-            this.deleteEntryToolStripMenuItem.Click += new System.EventHandler(this.OnDeleteEntry);
-            // 
-            // toolStrip2
-            // 
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripSeparator3,
-            this.toolStripButton2,
-            this.toolStripButton3});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip2.Size = new System.Drawing.Size(736, 25);
-            this.toolStrip2.TabIndex = 6;
-            this.toolStrip2.Text = "toolStrip2";
+            KeyWordNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            KeyWordNextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            KeyWordNextButton.Name = "KeyWordNextButton";
+            KeyWordNextButton.Size = new System.Drawing.Size(62, 22);
+            KeyWordNextButton.Text = "Find Next";
+            KeyWordNextButton.Click += OnClickNextKeyWord;
             // 
             // toolStripButton1
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(35, 22);
-            this.toolStripButton1.Text = "Save";
-            this.toolStripButton1.Click += new System.EventHandler(this.OnClickSave);
+            toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new System.Drawing.Size(35, 22);
+            toolStripButton1.Text = "Save";
+            toolStripButton1.Click += OnClickSave;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton2
+            // dataGridView1
             // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(83, 22);
-            this.toolStripButton2.Text = "Export to CSV";
-            this.toolStripButton2.Click += new System.EventHandler(this.OnClickExport);
+            dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.ContextMenuStrip = contextMenuStrip1;
+            dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dataGridView1.Location = new System.Drawing.Point(0, 25);
+            dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            dataGridView1.MultiSelect = false;
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.Size = new System.Drawing.Size(736, 355);
+            dataGridView1.TabIndex = 4;
+            dataGridView1.CellValueChanged += OnCellValueChanged;
+            dataGridView1.ColumnHeaderMouseClick += OnHeaderClick;
             // 
-            // toolStripButton3
+            // contextMenuStrip1
             // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(100, 22);
-            this.toolStripButton3.Text = "Import from CSV";
-            this.toolStripButton3.Click += new System.EventHandler(this.OnClickImport);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { addEntryToolStripMenuItem, deleteEntryToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(138, 48);
             // 
-            // collapsibleSplitter1
+            // addEntryToolStripMenuItem
             // 
-            this.collapsibleSplitter1.AnimationDelay = 20;
-            this.collapsibleSplitter1.AnimationStep = 20;
-            this.collapsibleSplitter1.BorderStyle3D = System.Windows.Forms.Border3DStyle.Flat;
-            this.collapsibleSplitter1.ControlToHide = this.toolStrip2;
-            this.collapsibleSplitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsibleSplitter1.ExpandParentForm = false;
-            this.collapsibleSplitter1.Location = new System.Drawing.Point(0, 25);
-            this.collapsibleSplitter1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.collapsibleSplitter1.Name = "collapsibleSplitter1";
-            this.collapsibleSplitter1.Size = new System.Drawing.Size(736, 8);
-            this.collapsibleSplitter1.TabIndex = 5;
-            this.collapsibleSplitter1.TabStop = false;
-            this.collapsibleSplitter1.UseAnimations = false;
-            this.collapsibleSplitter1.VisualStyle = UoFiddler.Controls.UserControls.VisualStyles.DoubleDots;
+            addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
+            addEntryToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            addEntryToolStripMenuItem.Text = "Add Entry";
+            addEntryToolStripMenuItem.Click += OnAddEntry;
+            // 
+            // deleteEntryToolStripMenuItem
+            // 
+            deleteEntryToolStripMenuItem.Name = "deleteEntryToolStripMenuItem";
+            deleteEntryToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            deleteEntryToolStripMenuItem.Text = "Delete Entry";
+            deleteEntryToolStripMenuItem.Click += OnDeleteEntry;
+            // 
+            // toolStripDropDownButton1
+            // 
+            toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem2, toolStripMenuItem1 });
+            toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
+            toolStripDropDownButton1.Text = "Misc";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new System.Drawing.Size(163, 22);
+            toolStripMenuItem1.Text = "Import from CSV";
+            toolStripMenuItem1.Click += OnClickImport;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new System.Drawing.Size(163, 22);
+            toolStripMenuItem2.Text = "Export to CSV";
+            toolStripMenuItem2.Click += OnClickExport;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // SpeechControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.collapsibleSplitter1);
-            this.Controls.Add(this.toolStrip2);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "SpeechControl";
-            this.Size = new System.Drawing.Size(736, 380);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(dataGridView1);
+            Controls.Add(toolStrip1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "SpeechControl";
+            Size = new System.Drawing.Size(736, 380);
+            Load += OnLoad;
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            contextMenuStrip1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem addEntryToolStripMenuItem;
-        private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem deleteEntryToolStripMenuItem;
@@ -279,11 +244,12 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripTextBox KeyWordEntry;
         private System.Windows.Forms.ToolStripButton KeyWordNextButton;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
     }
 }

@@ -38,8 +38,6 @@ namespace UoFiddler.Controls.UserControls
 
             IDEntry.Text = _idEntryPlaceholder;
             KeyWordEntry.Text = _keywordEntryPlaceholder;
-
-            toolStrip2.Visible = false;
         }
 
         /// <summary>
@@ -127,10 +125,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnCellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (SpeechList.Entries[e.RowIndex].KeyWord == null)
-            {
-                SpeechList.Entries[e.RowIndex].KeyWord = string.Empty;
-            }
+            SpeechList.Entries[e.RowIndex].KeyWord ??= string.Empty;
 
             Options.ChangedUltimaClass["Speech"] = true;
         }
@@ -157,10 +152,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void FindKeyWord(int index)
         {
-            string find = KeyWordEntry.Text;
+            string toFind = KeyWordEntry.Text;
+
             for (int i = index; i < dataGridView1.Rows.Count; ++i)
             {
-                if (dataGridView1.Rows[i].Cells[1].Value.ToString().IndexOf(find, StringComparison.Ordinal) == -1)
+                if (!dataGridView1.Rows[i].Cells[1].Value.ToString().Contains(toFind))
                 {
                     continue;
                 }
@@ -230,7 +226,7 @@ namespace UoFiddler.Controls.UserControls
             _source.Add(new SpeechEntry(0, "", SpeechList.Entries.Count));
 
             dataGridView1.Invalidate();
-            dataGridView1.Rows[dataGridView1.Rows.Count - 1].Selected = true;
+            dataGridView1.Rows[^1].Selected = true;
             dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.Rows.Count - 1;
 
             Options.ChangedUltimaClass["Speech"] = true;
