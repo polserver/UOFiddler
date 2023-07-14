@@ -56,12 +56,6 @@
 		<Compile Update="UserControls\CollapsibleSplitter.Designer.cs">
 			<DependentUpon>CollapsibleSplitter.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Forms\GumpSearchForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\GumpSearchForm.Designer.cs">
-			<DependentUpon>GumpSearchForm.cs</DependentUpon>
-		</Compile>
 		<Compile Update="Forms\ProgressBarDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -311,9 +305,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\ClilocAddForm.resx">
 			<DependentUpon>ClilocAddForm.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\GumpSearchForm.resx">
-			<DependentUpon>GumpSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Forms\ProgressBarDialog.resx">
 			<DependentUpon>ProgressBarDialog.cs</DependentUpon>

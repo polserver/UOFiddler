@@ -19,7 +19,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -427,7 +426,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
+            contextMenuStrip.Close();
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
@@ -632,7 +631,7 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(EventArgs.Empty);
             }
 
-            _refMarker.Search(gumpId);
+            Search(gumpId);
         }
 
         public static bool HasGumpId(int gumpId)
@@ -658,20 +657,7 @@ namespace UoFiddler.Controls.UserControls
             Select(gumpId);
         }
 
-        private GumpSearchForm _showForm;
-
-        private void Search_Click(object sender, EventArgs e)
-        {
-            if (_showForm?.IsDisposed == false)
-            {
-                return;
-            }
-
-            _showForm = new GumpSearchForm(Search) { TopMost = true };
-            _showForm.Show();
-        }
-
-        public bool Search(int graphic)
+        public static bool Search(int graphic)
         {
             if (!_refMarker._loaded)
             {
@@ -688,6 +674,7 @@ namespace UoFiddler.Controls.UserControls
 
                 _refMarker.listBox.SelectedIndex = i;
                 _refMarker.listBox.TopIndex = i;
+
                 return true;
             }
 
@@ -701,7 +688,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Search_Click(sender, e);
+            searchByIdToolStripTextBox.Focus();
+
             e.SuppressKeyPress = true;
             e.Handled = true;
         }
@@ -718,7 +706,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
+            contextMenuStrip.Close();
+
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = true;
@@ -752,7 +741,7 @@ namespace UoFiddler.Controls.UserControls
         /// <param name="baseIndex">Starting Index</param>
         /// <param name="count">Number of the indexes to check.</param>
         /// <returns></returns>
-        private bool CheckForIndexes(int baseIndex, int count)
+        private static bool CheckForIndexes(int baseIndex, int count)
         {
             for (int i = baseIndex; i < baseIndex + count; i++)
             {
@@ -816,6 +805,17 @@ namespace UoFiddler.Controls.UserControls
                     listBox.SelectedIndex = listBox.Items.Count - 1;
                 }
             }
+        }
+
+        private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            var max = Gumps.GetCount();
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int graphic, 0, max))
+            {
+                return;
+            }
+
+            Search(graphic);
         }
     }
 }
