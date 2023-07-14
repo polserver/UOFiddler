@@ -11,8 +11,6 @@
   <!--UseMapDiff should mapdiff files be used-->
   <UseMapDiff active="True" />
   <!--Make the right panel in sounds tab visible-->
-  <RightPanelInSoundsTab active="True" />
-  <!--Make the right panel in sounds tab visible-->
   <PolSoundIdOffset active="False" />
   <!--Should an Update Check be done on startup?-->
   <UpdateCheck active="False" />
