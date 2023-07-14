@@ -39,575 +39,574 @@ namespace UoFiddler.Controls.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.tabcontrol = new System.Windows.Forms.TabControl();
-            this.tabPageItems = new System.Windows.Forms.TabPage();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.label12 = new System.Windows.Forms.Label();
-            this.textBoxUnk3 = new System.Windows.Forms.TextBox();
-            this.textBoxAnim = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.textBoxUnk2 = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.textBoxUnk1 = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.textBoxHeigth = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.textBoxValue = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.textBoxStackOff = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.textBoxHue = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.textBoxQuantity = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textBoxQuality = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBoxWeight = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxName = new System.Windows.Forms.TextBox();
-            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabPageLand = new System.Windows.Forms.TabPage();
-            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.label23 = new System.Windows.Forms.Label();
-            this.textBoxNameLand = new System.Windows.Forms.TextBox();
-            this.splitContainer7 = new System.Windows.Forms.SplitContainer();
-            this.textBoxTexID = new System.Windows.Forms.TextBox();
-            this.label24 = new System.Windows.Forms.Label();
-            this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.tabcontrol.SuspendLayout();
-            this.tabPageItems.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
-            this.tabPageLand.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
-            this.splitContainer5.Panel1.SuspendLayout();
-            this.splitContainer5.Panel2.SuspendLayout();
-            this.splitContainer5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).BeginInit();
-            this.splitContainer7.Panel1.SuspendLayout();
-            this.splitContainer7.Panel2.SuspendLayout();
-            this.splitContainer7.SuspendLayout();
-            this.SuspendLayout();
+            tabcontrol = new System.Windows.Forms.TabControl();
+            tabPageItems = new System.Windows.Forms.TabPage();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            splitContainer3 = new System.Windows.Forms.SplitContainer();
+            label12 = new System.Windows.Forms.Label();
+            textBoxUnk3 = new System.Windows.Forms.TextBox();
+            textBoxAnim = new System.Windows.Forms.TextBox();
+            label2 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            textBoxUnk2 = new System.Windows.Forms.TextBox();
+            label10 = new System.Windows.Forms.Label();
+            textBoxUnk1 = new System.Windows.Forms.TextBox();
+            label11 = new System.Windows.Forms.Label();
+            textBoxHeigth = new System.Windows.Forms.TextBox();
+            label6 = new System.Windows.Forms.Label();
+            textBoxValue = new System.Windows.Forms.TextBox();
+            label7 = new System.Windows.Forms.Label();
+            textBoxStackOff = new System.Windows.Forms.TextBox();
+            label8 = new System.Windows.Forms.Label();
+            textBoxHue = new System.Windows.Forms.TextBox();
+            label5 = new System.Windows.Forms.Label();
+            textBoxQuantity = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
+            textBoxQuality = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
+            textBoxWeight = new System.Windows.Forms.TextBox();
+            label1 = new System.Windows.Forms.Label();
+            textBoxName = new System.Windows.Forms.TextBox();
+            checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            button2 = new System.Windows.Forms.Button();
+            button1 = new System.Windows.Forms.Button();
+            tabPageLand = new System.Windows.Forms.TabPage();
+            splitContainer5 = new System.Windows.Forms.SplitContainer();
+            label23 = new System.Windows.Forms.Label();
+            textBoxNameLand = new System.Windows.Forms.TextBox();
+            splitContainer7 = new System.Windows.Forms.SplitContainer();
+            textBoxTexID = new System.Windows.Forms.TextBox();
+            label24 = new System.Windows.Forms.Label();
+            checkedListBox2 = new System.Windows.Forms.CheckedListBox();
+            button3 = new System.Windows.Forms.Button();
+            button4 = new System.Windows.Forms.Button();
+            tabcontrol.SuspendLayout();
+            tabPageItems.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
+            splitContainer3.Panel1.SuspendLayout();
+            splitContainer3.Panel2.SuspendLayout();
+            splitContainer3.SuspendLayout();
+            tabPageLand.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
+            splitContainer5.Panel1.SuspendLayout();
+            splitContainer5.Panel2.SuspendLayout();
+            splitContainer5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer7).BeginInit();
+            splitContainer7.Panel1.SuspendLayout();
+            splitContainer7.Panel2.SuspendLayout();
+            splitContainer7.SuspendLayout();
+            SuspendLayout();
             // 
             // tabcontrol
             // 
-            this.tabcontrol.Controls.Add(this.tabPageItems);
-            this.tabcontrol.Controls.Add(this.tabPageLand);
-            this.tabcontrol.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabcontrol.Location = new System.Drawing.Point(0, 0);
-            this.tabcontrol.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabcontrol.Name = "tabcontrol";
-            this.tabcontrol.SelectedIndex = 0;
-            this.tabcontrol.Size = new System.Drawing.Size(414, 421);
-            this.tabcontrol.TabIndex = 1;
+            tabcontrol.Controls.Add(tabPageItems);
+            tabcontrol.Controls.Add(tabPageLand);
+            tabcontrol.Dock = System.Windows.Forms.DockStyle.Fill;
+            tabcontrol.Location = new System.Drawing.Point(0, 0);
+            tabcontrol.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabcontrol.Name = "tabcontrol";
+            tabcontrol.SelectedIndex = 0;
+            tabcontrol.Size = new System.Drawing.Size(418, 421);
+            tabcontrol.TabIndex = 1;
             // 
             // tabPageItems
             // 
-            this.tabPageItems.Controls.Add(this.splitContainer1);
-            this.tabPageItems.Location = new System.Drawing.Point(4, 24);
-            this.tabPageItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPageItems.Name = "tabPageItems";
-            this.tabPageItems.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPageItems.Size = new System.Drawing.Size(406, 393);
-            this.tabPageItems.TabIndex = 0;
-            this.tabPageItems.Text = "Items";
-            this.tabPageItems.UseVisualStyleBackColor = true;
+            tabPageItems.Controls.Add(splitContainer1);
+            tabPageItems.Location = new System.Drawing.Point(4, 24);
+            tabPageItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabPageItems.Name = "tabPageItems";
+            tabPageItems.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabPageItems.Size = new System.Drawing.Size(410, 393);
+            tabPageItems.TabIndex = 0;
+            tabPageItems.Text = "Items";
+            tabPageItems.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(4, 3);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new System.Drawing.Point(4, 3);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer3);
+            splitContainer1.Panel1.Controls.Add(splitContainer3);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.button2);
-            this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(398, 387);
-            this.splitContainer1.SplitterDistance = 342;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 0;
+            splitContainer1.Panel2.Controls.Add(button2);
+            splitContainer1.Panel2.Controls.Add(button1);
+            splitContainer1.Size = new System.Drawing.Size(402, 387);
+            splitContainer1.SplitterDistance = 341;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 0;
             // 
             // splitContainer3
             // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer3.IsSplitterFixed = true;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            splitContainer3.IsSplitterFixed = true;
+            splitContainer3.Location = new System.Drawing.Point(0, 0);
+            splitContainer3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer3.Name = "splitContainer3";
+            splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.label12);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxUnk3);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxAnim);
-            this.splitContainer3.Panel1.Controls.Add(this.label2);
-            this.splitContainer3.Panel1.Controls.Add(this.label9);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxUnk2);
-            this.splitContainer3.Panel1.Controls.Add(this.label10);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxUnk1);
-            this.splitContainer3.Panel1.Controls.Add(this.label11);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxHeigth);
-            this.splitContainer3.Panel1.Controls.Add(this.label6);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxValue);
-            this.splitContainer3.Panel1.Controls.Add(this.label7);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxStackOff);
-            this.splitContainer3.Panel1.Controls.Add(this.label8);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxHue);
-            this.splitContainer3.Panel1.Controls.Add(this.label5);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxQuantity);
-            this.splitContainer3.Panel1.Controls.Add(this.label4);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxQuality);
-            this.splitContainer3.Panel1.Controls.Add(this.label3);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxWeight);
-            this.splitContainer3.Panel1.Controls.Add(this.label1);
-            this.splitContainer3.Panel1.Controls.Add(this.textBoxName);
+            splitContainer3.Panel1.Controls.Add(label12);
+            splitContainer3.Panel1.Controls.Add(textBoxUnk3);
+            splitContainer3.Panel1.Controls.Add(textBoxAnim);
+            splitContainer3.Panel1.Controls.Add(label2);
+            splitContainer3.Panel1.Controls.Add(label9);
+            splitContainer3.Panel1.Controls.Add(textBoxUnk2);
+            splitContainer3.Panel1.Controls.Add(label10);
+            splitContainer3.Panel1.Controls.Add(textBoxUnk1);
+            splitContainer3.Panel1.Controls.Add(label11);
+            splitContainer3.Panel1.Controls.Add(textBoxHeigth);
+            splitContainer3.Panel1.Controls.Add(label6);
+            splitContainer3.Panel1.Controls.Add(textBoxValue);
+            splitContainer3.Panel1.Controls.Add(label7);
+            splitContainer3.Panel1.Controls.Add(textBoxStackOff);
+            splitContainer3.Panel1.Controls.Add(label8);
+            splitContainer3.Panel1.Controls.Add(textBoxHue);
+            splitContainer3.Panel1.Controls.Add(label5);
+            splitContainer3.Panel1.Controls.Add(textBoxQuantity);
+            splitContainer3.Panel1.Controls.Add(label4);
+            splitContainer3.Panel1.Controls.Add(textBoxQuality);
+            splitContainer3.Panel1.Controls.Add(label3);
+            splitContainer3.Panel1.Controls.Add(textBoxWeight);
+            splitContainer3.Panel1.Controls.Add(label1);
+            splitContainer3.Panel1.Controls.Add(textBoxName);
             // 
             // splitContainer3.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.checkedListBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(398, 342);
-            this.splitContainer3.SplitterDistance = 160;
-            this.splitContainer3.SplitterWidth = 2;
-            this.splitContainer3.TabIndex = 25;
+            splitContainer3.Panel2.Controls.Add(checkedListBox1);
+            splitContainer3.Size = new System.Drawing.Size(402, 341);
+            splitContainer3.SplitterDistance = 160;
+            splitContainer3.SplitterWidth = 2;
+            splitContainer3.TabIndex = 25;
             // 
             // label12
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(5, 132);
-            this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(34, 15);
-            this.label12.TabIndex = 23;
-            this.label12.Text = "Unk3";
+            label12.AutoSize = true;
+            label12.Location = new System.Drawing.Point(5, 132);
+            label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(34, 15);
+            label12.TabIndex = 23;
+            label12.Text = "Unk3";
             // 
             // textBoxUnk3
             // 
-            this.textBoxUnk3.Location = new System.Drawing.Point(52, 128);
-            this.textBoxUnk3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxUnk3.Name = "textBoxUnk3";
-            this.textBoxUnk3.Size = new System.Drawing.Size(59, 23);
-            this.textBoxUnk3.TabIndex = 22;
+            textBoxUnk3.Location = new System.Drawing.Point(52, 128);
+            textBoxUnk3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxUnk3.Name = "textBoxUnk3";
+            textBoxUnk3.Size = new System.Drawing.Size(59, 23);
+            textBoxUnk3.TabIndex = 22;
             // 
             // textBoxAnim
             // 
-            this.textBoxAnim.Location = new System.Drawing.Point(258, 8);
-            this.textBoxAnim.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxAnim.Name = "textBoxAnim";
-            this.textBoxAnim.Size = new System.Drawing.Size(116, 23);
-            this.textBoxAnim.TabIndex = 2;
+            textBoxAnim.Location = new System.Drawing.Point(258, 8);
+            textBoxAnim.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxAnim.Name = "textBoxAnim";
+            textBoxAnim.Size = new System.Drawing.Size(116, 23);
+            textBoxAnim.TabIndex = 2;
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(216, 12);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(36, 15);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Anim";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(216, 12);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(36, 15);
+            label2.TabIndex = 3;
+            label2.Text = "Anim";
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(254, 102);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(34, 15);
-            this.label9.TabIndex = 21;
-            this.label9.Text = "Unk2";
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(254, 102);
+            label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(34, 15);
+            label9.TabIndex = 21;
+            label9.Text = "Unk2";
             // 
             // textBoxUnk2
             // 
-            this.textBoxUnk2.Location = new System.Drawing.Point(315, 98);
-            this.textBoxUnk2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxUnk2.Name = "textBoxUnk2";
-            this.textBoxUnk2.Size = new System.Drawing.Size(59, 23);
-            this.textBoxUnk2.TabIndex = 20;
+            textBoxUnk2.Location = new System.Drawing.Point(315, 98);
+            textBoxUnk2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxUnk2.Name = "textBoxUnk2";
+            textBoxUnk2.Size = new System.Drawing.Size(59, 23);
+            textBoxUnk2.TabIndex = 20;
             // 
             // label10
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(124, 102);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(56, 15);
-            this.label10.TabIndex = 19;
-            this.label10.Text = "MiscData";
+            label10.AutoSize = true;
+            label10.Location = new System.Drawing.Point(124, 102);
+            label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(56, 15);
+            label10.TabIndex = 19;
+            label10.Text = "MiscData";
             // 
             // textBoxUnk1
             // 
-            this.textBoxUnk1.Location = new System.Drawing.Point(188, 98);
-            this.textBoxUnk1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxUnk1.Name = "textBoxUnk1";
-            this.textBoxUnk1.Size = new System.Drawing.Size(59, 23);
-            this.textBoxUnk1.TabIndex = 18;
+            textBoxUnk1.Location = new System.Drawing.Point(188, 98);
+            textBoxUnk1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxUnk1.Name = "textBoxUnk1";
+            textBoxUnk1.Size = new System.Drawing.Size(59, 23);
+            textBoxUnk1.TabIndex = 18;
             // 
             // label11
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(5, 102);
-            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(43, 15);
-            this.label11.TabIndex = 17;
-            this.label11.Text = "Heigth";
+            label11.AutoSize = true;
+            label11.Location = new System.Drawing.Point(5, 102);
+            label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(43, 15);
+            label11.TabIndex = 17;
+            label11.Text = "Heigth";
             // 
             // textBoxHeigth
             // 
-            this.textBoxHeigth.Location = new System.Drawing.Point(52, 98);
-            this.textBoxHeigth.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxHeigth.Name = "textBoxHeigth";
-            this.textBoxHeigth.Size = new System.Drawing.Size(59, 23);
-            this.textBoxHeigth.TabIndex = 16;
+            textBoxHeigth.Location = new System.Drawing.Point(52, 98);
+            textBoxHeigth.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxHeigth.Name = "textBoxHeigth";
+            textBoxHeigth.Size = new System.Drawing.Size(59, 23);
+            textBoxHeigth.TabIndex = 16;
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(254, 72);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 15);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "Value";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(254, 72);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(35, 15);
+            label6.TabIndex = 15;
+            label6.Text = "Value";
             // 
             // textBoxValue
             // 
-            this.textBoxValue.Location = new System.Drawing.Point(315, 68);
-            this.textBoxValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxValue.Name = "textBoxValue";
-            this.textBoxValue.Size = new System.Drawing.Size(59, 23);
-            this.textBoxValue.TabIndex = 14;
+            textBoxValue.Location = new System.Drawing.Point(315, 68);
+            textBoxValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxValue.Name = "textBoxValue";
+            textBoxValue.Size = new System.Drawing.Size(59, 23);
+            textBoxValue.TabIndex = 14;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(124, 72);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(52, 15);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "StackOff";
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(124, 72);
+            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(52, 15);
+            label7.TabIndex = 13;
+            label7.Text = "StackOff";
             // 
             // textBoxStackOff
             // 
-            this.textBoxStackOff.Location = new System.Drawing.Point(188, 68);
-            this.textBoxStackOff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxStackOff.Name = "textBoxStackOff";
-            this.textBoxStackOff.Size = new System.Drawing.Size(59, 23);
-            this.textBoxStackOff.TabIndex = 12;
+            textBoxStackOff.Location = new System.Drawing.Point(188, 68);
+            textBoxStackOff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxStackOff.Name = "textBoxStackOff";
+            textBoxStackOff.Size = new System.Drawing.Size(59, 23);
+            textBoxStackOff.TabIndex = 12;
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(5, 72);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(29, 15);
-            this.label8.TabIndex = 11;
-            this.label8.Text = "Hue";
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(5, 72);
+            label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(29, 15);
+            label8.TabIndex = 11;
+            label8.Text = "Hue";
             // 
             // textBoxHue
             // 
-            this.textBoxHue.Location = new System.Drawing.Point(52, 68);
-            this.textBoxHue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxHue.Name = "textBoxHue";
-            this.textBoxHue.Size = new System.Drawing.Size(59, 23);
-            this.textBoxHue.TabIndex = 10;
+            textBoxHue.Location = new System.Drawing.Point(52, 68);
+            textBoxHue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxHue.Name = "textBoxHue";
+            textBoxHue.Size = new System.Drawing.Size(59, 23);
+            textBoxHue.TabIndex = 10;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(254, 42);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(53, 15);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Quantity";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(254, 42);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(53, 15);
+            label5.TabIndex = 9;
+            label5.Text = "Quantity";
             // 
             // textBoxQuantity
             // 
-            this.textBoxQuantity.Location = new System.Drawing.Point(315, 38);
-            this.textBoxQuantity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxQuantity.Name = "textBoxQuantity";
-            this.textBoxQuantity.Size = new System.Drawing.Size(59, 23);
-            this.textBoxQuantity.TabIndex = 8;
+            textBoxQuantity.Location = new System.Drawing.Point(315, 38);
+            textBoxQuantity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxQuantity.Name = "textBoxQuantity";
+            textBoxQuantity.Size = new System.Drawing.Size(59, 23);
+            textBoxQuantity.TabIndex = 8;
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(124, 42);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(45, 15);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Quality";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(124, 42);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(45, 15);
+            label4.TabIndex = 7;
+            label4.Text = "Quality";
             // 
             // textBoxQuality
             // 
-            this.textBoxQuality.Location = new System.Drawing.Point(188, 38);
-            this.textBoxQuality.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxQuality.Name = "textBoxQuality";
-            this.textBoxQuality.Size = new System.Drawing.Size(59, 23);
-            this.textBoxQuality.TabIndex = 6;
+            textBoxQuality.Location = new System.Drawing.Point(188, 38);
+            textBoxQuality.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxQuality.Name = "textBoxQuality";
+            textBoxQuality.Size = new System.Drawing.Size(59, 23);
+            textBoxQuality.TabIndex = 6;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 42);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 15);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Weight";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(5, 42);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(45, 15);
+            label3.TabIndex = 5;
+            label3.Text = "Weight";
             // 
             // textBoxWeight
             // 
-            this.textBoxWeight.Location = new System.Drawing.Point(52, 38);
-            this.textBoxWeight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxWeight.Name = "textBoxWeight";
-            this.textBoxWeight.Size = new System.Drawing.Size(59, 23);
-            this.textBoxWeight.TabIndex = 4;
+            textBoxWeight.Location = new System.Drawing.Point(52, 38);
+            textBoxWeight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxWeight.Name = "textBoxWeight";
+            textBoxWeight.Size = new System.Drawing.Size(59, 23);
+            textBoxWeight.TabIndex = 4;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 12);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Name";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(4, 12);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(39, 15);
+            label1.TabIndex = 1;
+            label1.Text = "Name";
             // 
             // textBoxName
             // 
-            this.textBoxName.Location = new System.Drawing.Point(51, 8);
-            this.textBoxName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxName.MaxLength = 20;
-            this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(157, 23);
-            this.textBoxName.TabIndex = 0;
+            textBoxName.Location = new System.Drawing.Point(51, 8);
+            textBoxName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxName.MaxLength = 20;
+            textBoxName.Name = "textBoxName";
+            textBoxName.Size = new System.Drawing.Size(157, 23);
+            textBoxName.TabIndex = 0;
             // 
             // checkedListBox1
             // 
-            this.checkedListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Location = new System.Drawing.Point(0, 0);
-            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkedListBox1.MultiColumn = true;
-            this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(398, 180);
-            this.checkedListBox1.TabIndex = 0;
+            checkedListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkedListBox1.FormattingEnabled = true;
+            checkedListBox1.Location = new System.Drawing.Point(0, 0);
+            checkedListBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkedListBox1.MultiColumn = true;
+            checkedListBox1.Name = "checkedListBox1";
+            checkedListBox1.Size = new System.Drawing.Size(402, 179);
+            checkedListBox1.TabIndex = 0;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(102, 8);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 27);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Reset Filter";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.OnClickResetFilterItem);
+            button2.Location = new System.Drawing.Point(102, 8);
+            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(88, 27);
+            button2.TabIndex = 1;
+            button2.Text = "Reset Filter";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += OnClickResetFilterItem;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(6, 8);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(88, 27);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Apply Filter";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickApplyFilterItem);
+            button1.Location = new System.Drawing.Point(6, 8);
+            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(88, 27);
+            button1.TabIndex = 0;
+            button1.Text = "Apply Filter";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += OnClickApplyFilterItem;
             // 
             // tabPageLand
             // 
-            this.tabPageLand.Controls.Add(this.splitContainer5);
-            this.tabPageLand.Location = new System.Drawing.Point(4, 24);
-            this.tabPageLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPageLand.Name = "tabPageLand";
-            this.tabPageLand.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPageLand.Size = new System.Drawing.Size(403, 391);
-            this.tabPageLand.TabIndex = 1;
-            this.tabPageLand.Text = "LandTiles";
-            this.tabPageLand.UseVisualStyleBackColor = true;
+            tabPageLand.Controls.Add(splitContainer5);
+            tabPageLand.Location = new System.Drawing.Point(4, 24);
+            tabPageLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabPageLand.Name = "tabPageLand";
+            tabPageLand.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabPageLand.Size = new System.Drawing.Size(406, 393);
+            tabPageLand.TabIndex = 1;
+            tabPageLand.Text = "LandTiles";
+            tabPageLand.UseVisualStyleBackColor = true;
             // 
             // splitContainer5
             // 
-            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer5.IsSplitterFixed = true;
-            this.splitContainer5.Location = new System.Drawing.Point(4, 3);
-            this.splitContainer5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer5.Name = "splitContainer5";
-            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer5.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            splitContainer5.IsSplitterFixed = true;
+            splitContainer5.Location = new System.Drawing.Point(4, 3);
+            splitContainer5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer5.Name = "splitContainer5";
+            splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer5.Panel1
             // 
-            this.splitContainer5.Panel1.Controls.Add(this.label23);
-            this.splitContainer5.Panel1.Controls.Add(this.textBoxNameLand);
-            this.splitContainer5.Panel1.Controls.Add(this.splitContainer7);
+            splitContainer5.Panel1.Controls.Add(label23);
+            splitContainer5.Panel1.Controls.Add(textBoxNameLand);
+            splitContainer5.Panel1.Controls.Add(splitContainer7);
             // 
             // splitContainer5.Panel2
             // 
-            this.splitContainer5.Panel2.Controls.Add(this.button3);
-            this.splitContainer5.Panel2.Controls.Add(this.button4);
-            this.splitContainer5.Size = new System.Drawing.Size(395, 385);
-            this.splitContainer5.SplitterDistance = 340;
-            this.splitContainer5.SplitterWidth = 5;
-            this.splitContainer5.TabIndex = 1;
+            splitContainer5.Panel2.Controls.Add(button3);
+            splitContainer5.Panel2.Controls.Add(button4);
+            splitContainer5.Size = new System.Drawing.Size(398, 387);
+            splitContainer5.SplitterDistance = 341;
+            splitContainer5.SplitterWidth = 5;
+            splitContainer5.TabIndex = 1;
             // 
             // label23
             // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(4, 12);
-            this.label23.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(39, 15);
-            this.label23.TabIndex = 1;
-            this.label23.Text = "Name";
+            label23.AutoSize = true;
+            label23.Location = new System.Drawing.Point(4, 12);
+            label23.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label23.Name = "label23";
+            label23.Size = new System.Drawing.Size(39, 15);
+            label23.TabIndex = 1;
+            label23.Text = "Name";
             // 
             // textBoxNameLand
             // 
-            this.textBoxNameLand.Location = new System.Drawing.Point(51, 8);
-            this.textBoxNameLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxNameLand.MaxLength = 20;
-            this.textBoxNameLand.Name = "textBoxNameLand";
-            this.textBoxNameLand.Size = new System.Drawing.Size(157, 23);
-            this.textBoxNameLand.TabIndex = 0;
+            textBoxNameLand.Location = new System.Drawing.Point(51, 8);
+            textBoxNameLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxNameLand.MaxLength = 20;
+            textBoxNameLand.Name = "textBoxNameLand";
+            textBoxNameLand.Size = new System.Drawing.Size(157, 23);
+            textBoxNameLand.TabIndex = 0;
             // 
             // splitContainer7
             // 
-            this.splitContainer7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer7.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer7.IsSplitterFixed = true;
-            this.splitContainer7.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer7.Name = "splitContainer7";
-            this.splitContainer7.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer7.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer7.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            splitContainer7.IsSplitterFixed = true;
+            splitContainer7.Location = new System.Drawing.Point(0, 0);
+            splitContainer7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer7.Name = "splitContainer7";
+            splitContainer7.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer7.Panel1
             // 
-            this.splitContainer7.Panel1.Controls.Add(this.textBoxTexID);
-            this.splitContainer7.Panel1.Controls.Add(this.label24);
+            splitContainer7.Panel1.Controls.Add(textBoxTexID);
+            splitContainer7.Panel1.Controls.Add(label24);
             // 
             // splitContainer7.Panel2
             // 
-            this.splitContainer7.Panel2.Controls.Add(this.checkedListBox2);
-            this.splitContainer7.Size = new System.Drawing.Size(395, 340);
-            this.splitContainer7.SplitterDistance = 40;
-            this.splitContainer7.SplitterWidth = 2;
-            this.splitContainer7.TabIndex = 25;
+            splitContainer7.Panel2.Controls.Add(checkedListBox2);
+            splitContainer7.Size = new System.Drawing.Size(398, 341);
+            splitContainer7.SplitterDistance = 40;
+            splitContainer7.SplitterWidth = 2;
+            splitContainer7.TabIndex = 25;
             // 
             // textBoxTexID
             // 
-            this.textBoxTexID.Location = new System.Drawing.Point(258, 8);
-            this.textBoxTexID.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxTexID.Name = "textBoxTexID";
-            this.textBoxTexID.Size = new System.Drawing.Size(116, 23);
-            this.textBoxTexID.TabIndex = 2;
+            textBoxTexID.Location = new System.Drawing.Point(258, 8);
+            textBoxTexID.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxTexID.Name = "textBoxTexID";
+            textBoxTexID.Size = new System.Drawing.Size(116, 23);
+            textBoxTexID.TabIndex = 2;
             // 
             // label24
             // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(216, 12);
-            this.label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(35, 15);
-            this.label24.TabIndex = 3;
-            this.label24.Text = "TexID";
+            label24.AutoSize = true;
+            label24.Location = new System.Drawing.Point(216, 12);
+            label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label24.Name = "label24";
+            label24.Size = new System.Drawing.Size(35, 15);
+            label24.TabIndex = 3;
+            label24.Text = "TexID";
             // 
             // checkedListBox2
             // 
-            this.checkedListBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBox2.FormattingEnabled = true;
-            this.checkedListBox2.Location = new System.Drawing.Point(0, 0);
-            this.checkedListBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkedListBox2.MultiColumn = true;
-            this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(395, 298);
-            this.checkedListBox2.TabIndex = 0;
+            checkedListBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkedListBox2.FormattingEnabled = true;
+            checkedListBox2.Location = new System.Drawing.Point(0, 0);
+            checkedListBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkedListBox2.MultiColumn = true;
+            checkedListBox2.Name = "checkedListBox2";
+            checkedListBox2.Size = new System.Drawing.Size(398, 299);
+            checkedListBox2.TabIndex = 0;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(102, 7);
-            this.button3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(88, 27);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Reset Filter";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.OnClickResetFilterLand);
+            button3.Location = new System.Drawing.Point(102, 7);
+            button3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button3.Name = "button3";
+            button3.Size = new System.Drawing.Size(88, 27);
+            button3.TabIndex = 3;
+            button3.Text = "Reset Filter";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += OnClickResetFilterLand;
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(7, 7);
-            this.button4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(88, 27);
-            this.button4.TabIndex = 2;
-            this.button4.Text = "Apply Filter";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.OnClickApplyFilterLand);
+            button4.Location = new System.Drawing.Point(7, 7);
+            button4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button4.Name = "button4";
+            button4.Size = new System.Drawing.Size(88, 27);
+            button4.TabIndex = 2;
+            button4.Text = "Apply Filter";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += OnClickApplyFilterLand;
             // 
             // TileDataFilterForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 421);
-            this.Controls.Add(this.tabcontrol);
-            this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "TileDataFilterForm";
-            this.Text = "TileData Filter";
-            this.tabcontrol.ResumeLayout(false);
-            this.tabPageItems.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel1.PerformLayout();
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
-            this.tabPageLand.ResumeLayout(false);
-            this.splitContainer5.Panel1.ResumeLayout(false);
-            this.splitContainer5.Panel1.PerformLayout();
-            this.splitContainer5.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
-            this.splitContainer5.ResumeLayout(false);
-            this.splitContainer7.Panel1.ResumeLayout(false);
-            this.splitContainer7.Panel1.PerformLayout();
-            this.splitContainer7.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).EndInit();
-            this.splitContainer7.ResumeLayout(false);
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(414, 421);
+            Controls.Add(tabcontrol);
+            DoubleBuffered = true;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "TileDataFilterForm";
+            Text = "TileData Filter";
+            tabcontrol.ResumeLayout(false);
+            tabPageItems.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            splitContainer3.Panel1.ResumeLayout(false);
+            splitContainer3.Panel1.PerformLayout();
+            splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
+            splitContainer3.ResumeLayout(false);
+            tabPageLand.ResumeLayout(false);
+            splitContainer5.Panel1.ResumeLayout(false);
+            splitContainer5.Panel1.PerformLayout();
+            splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
+            splitContainer5.ResumeLayout(false);
+            splitContainer7.Panel1.ResumeLayout(false);
+            splitContainer7.Panel1.PerformLayout();
+            splitContainer7.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer7).EndInit();
+            splitContainer7.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion

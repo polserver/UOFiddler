@@ -159,7 +159,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (next)
                 {
-                    if (_refMarker.treeViewLand.SelectedNode.Index >= 0)
+                    if (_refMarker.treeViewLand.SelectedNode?.Index >= 0)
                     {
                         index = _refMarker.treeViewLand.SelectedNode.Index + 1;
                     }
@@ -410,6 +410,7 @@ namespace UoFiddler.Controls.UserControls
             if (_reselectGraphic != null && _reselectGraphicLand != null)
             {
                 SearchGraphic(_reselectGraphic.Value, _reselectGraphicLand.Value);
+
                 _reselectGraphic = null;
                 _reselectGraphicLand = null;
             }
@@ -425,6 +426,7 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["TileData"] = true;
             Options.LoadedUltimaClass["Art"] = true;
+
             treeViewItem.BeginUpdate();
             treeViewItem.Nodes.Clear();
             if (TileData.ItemTable != null)
@@ -1439,40 +1441,6 @@ namespace UoFiddler.Controls.UserControls
                 MessageBox.Show($"LandData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
-
-        private TileDataSearchForm _showForm1;
-        private TileDataSearchForm _showForm2;
-
-        private void OnClickSearch(object sender, EventArgs e)
-        {
-            if (tabcontrol.SelectedIndex == 0) // items
-            {
-                if (_showForm1?.IsDisposed == false)
-                {
-                    return;
-                }
-
-                _showForm1 = new TileDataSearchForm(false, SearchGraphic, SearchName)
-                {
-                    TopMost = true
-                };
-                _showForm1.Show();
-            }
-            else // land tiles
-            {
-                if (_showForm2?.IsDisposed == false)
-                {
-                    return;
-                }
-
-                _showForm2 = new TileDataSearchForm(true, SearchGraphic, SearchName)
-                {
-                    TopMost = true
-                };
-                _showForm2.Show();
-            }
-        }
-
         private void OnClickSelectItem(object sender, EventArgs e)
         {
             if (treeViewItem.SelectedNode?.Tag == null)
@@ -1527,15 +1495,19 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickImport(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            using (var dialog = new OpenFileDialog
             {
                 Multiselect = false,
                 Title = "Choose csv file to import",
                 CheckFileExists = true,
                 Filter = "csv files (*.csv)|*.csv"
-            };
-            if (dialog.ShowDialog() == DialogResult.OK)
+            })
             {
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
                 Options.ChangedUltimaClass["TileData"] = true;
                 if (tabcontrol.SelectedIndex == 0) // items
                 {
@@ -1548,7 +1520,6 @@ namespace UoFiddler.Controls.UserControls
                     AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
                 }
             }
-            dialog.Dispose();
         }
 
         private TileDataFilterForm _filterFormForm;
@@ -1574,18 +1545,6 @@ namespace UoFiddler.Controls.UserControls
             {
                 treeViewItem.CollapseAll();
             }
-        }
-
-        private void TileData_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.F || !e.Control)
-            {
-                return;
-            }
-
-            OnClickSearch(sender, e);
-            e.SuppressKeyPress = true;
-            e.Handled = true;
         }
 
         private const int _maleGumpOffset = 50_000;
@@ -1712,6 +1671,44 @@ namespace UoFiddler.Controls.UserControls
             }
 
             MessageBox.Show(updated > 0 ? $"Updated {updated} land tile(s)." : "Nothing was updated.", "Set textures");
+        }
+
+        private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue, 0, Art.GetMaxItemId()))
+            {
+                return;
+            }
+
+            var maximumIndex = Art.GetMaxItemId();
+
+            if (indexValue < 0)
+            {
+                indexValue = 0;
+            }
+
+            if (indexValue > maximumIndex)
+            {
+                indexValue = maximumIndex;
+            }
+
+            var landTilesSelected = tabcontrol.SelectedIndex != 0;
+
+            SearchGraphic(indexValue, landTilesSelected);
+        }
+
+        private void SearchByNameToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            var landTilesSelected = tabcontrol.SelectedIndex != 0;
+
+            SearchName(searchByNameToolStripTextBox.Text, false, landTilesSelected);
+        }
+
+        private void SearchByNameToolStripButton_Click(object sender, EventArgs e)
+        {
+            var landTilesSelected = tabcontrol.SelectedIndex != 0;
+
+            SearchName(searchByNameToolStripTextBox.Text, true, landTilesSelected);
         }
     }
 }

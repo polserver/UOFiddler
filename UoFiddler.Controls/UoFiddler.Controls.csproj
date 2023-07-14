@@ -283,12 +283,6 @@
 		<Compile Update="UserControls\TileDataControl.Designer.cs">
 			<DependentUpon>TileDataControl.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Forms\TileDataSearchForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\TileDataSearchForm.Designer.cs">
-			<DependentUpon>TileDataSearchForm.cs</DependentUpon>
-		</Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Ultima\Ultima.csproj" />
@@ -420,9 +414,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\TileDataControl.resx">
 			<DependentUpon>TileDataControl.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Forms\TileDataSearchForm.resx">
-			<DependentUpon>TileDataSearchForm.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\CollapsibleSplitter.resx">
 			<DependentUpon>CollapsibleSplitter.cs</DependentUpon>
