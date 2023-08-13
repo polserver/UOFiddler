@@ -55,10 +55,10 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Light"] = true;
 
-            treeView1.BeginUpdate();
+            treeViewLights.BeginUpdate();
             try
             {
-                treeView1.Nodes.Clear();
+                treeViewLights.Nodes.Clear();
                 for (int i = 0; i < Ultima.Light.GetCount(); ++i)
                 {
                     if (!Ultima.Light.TestLight(i))
@@ -66,21 +66,21 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    TreeNode treeNode = new TreeNode(i.ToString())
+                    var treeNode = new TreeNode(i.ToString())
                     {
                         Tag = i
                     };
-                    treeView1.Nodes.Add(treeNode);
+                    treeViewLights.Nodes.Add(treeNode);
                 }
             }
             finally
             {
-                treeView1.EndUpdate();
+                treeViewLights.EndUpdate();
             }
 
-            if (treeView1.Nodes.Count > 0)
+            if (treeViewLights.Nodes.Count > 0)
             {
-                treeView1.SelectedNode = treeView1.Nodes[0];
+                treeViewLights.SelectedNode = treeViewLights.Nodes[0];
             }
 
             if (!_loaded)
@@ -99,17 +99,17 @@ namespace UoFiddler.Controls.UserControls
 
         private unsafe Bitmap GetImage()
         {
-            if (treeView1.SelectedNode == null)
+            if (treeViewLights.SelectedNode == null)
             {
                 return null;
             }
 
             if (!iGPreviewToolStripMenuItem.Checked)
             {
-                return Ultima.Light.GetLight((int)treeView1.SelectedNode.Tag);
+                return Ultima.Light.GetLight((int)treeViewLights.SelectedNode.Tag);
             }
 
-            Bitmap bit = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            var bit = new Bitmap(pictureBoxPreview.Width, pictureBoxPreview.Height);
             using (Graphics g = Graphics.FromImage(bit))
             {
                 Bitmap background = Ultima.Art.GetLand(_landTile);
@@ -134,7 +134,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            byte[] light = Ultima.Light.GetRawLight((int)treeView1.SelectedNode.Tag, out int lightWidth, out int lightHeight);
+            byte[] light = Ultima.Light.GetRawLight((int)treeViewLights.SelectedNode.Tag, out int lightWidth, out int lightHeight);
 
             if (light == null)
             {
@@ -196,17 +196,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void AfterSelect(object sender, TreeViewEventArgs e)
         {
-            pictureBox1.Image = GetImage();
+            pictureBoxPreview.Image = GetImage();
         }
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (treeViewLights.SelectedNode == null)
             {
                 return;
             }
 
-            int i = (int)treeView1.SelectedNode.Tag;
+            int i = (int)treeViewLights.SelectedNode.Tag;
             DialogResult result = MessageBox.Show(string.Format("Are you sure to remove {0} (0x{0:X})", i), "Remove",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
@@ -215,19 +215,19 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Ultima.Light.Remove(i);
-            treeView1.Nodes.Remove(treeView1.SelectedNode);
-            treeView1.Invalidate();
+            treeViewLights.Nodes.Remove(treeViewLights.SelectedNode);
+            treeViewLights.Invalidate();
             Options.ChangedUltimaClass["Light"] = true;
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (treeViewLights.SelectedNode == null)
             {
                 return;
             }
 
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using (var dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
                 dialog.Title = "Choose image file to replace";
@@ -240,18 +240,18 @@ namespace UoFiddler.Controls.UserControls
 
                 using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    Bitmap bitmap = new Bitmap(bmpTemp);
+                    var bitmap = new Bitmap(bmpTemp);
 
                     if (dialog.FileName.Contains(".bmp"))
                     {
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
-                    int i = (int)treeView1.SelectedNode.Tag;
+                    int i = (int)treeViewLights.SelectedNode.Tag;
 
                     Ultima.Light.Replace(i, bitmap);
 
-                    treeView1.Invalidate();
+                    treeViewLights.Invalidate();
                     AfterSelect(this, null);
 
                     Options.ChangedUltimaClass["Light"] = true;
@@ -288,8 +288,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip1.Close();
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            treeViewContextMenuStrip.Close();
+            using (var dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
                 dialog.Title = string.Format("Choose image file to insert at {0} (0x{0:X})", index);
@@ -300,31 +300,31 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Bitmap bmp = new Bitmap(dialog.FileName);
+                var bmp = new Bitmap(dialog.FileName);
                 Ultima.Light.Replace(index, bmp);
-                TreeNode treeNode = new TreeNode(index.ToString())
+                var treeNode = new TreeNode(index.ToString())
                 {
                     Tag = index
                 };
                 bool done = false;
-                foreach (TreeNode node in treeView1.Nodes)
+                foreach (TreeNode node in treeViewLights.Nodes)
                 {
                     if ((int)node.Tag <= index)
                     {
                         continue;
                     }
 
-                    treeView1.Nodes.Insert(node.Index, treeNode);
+                    treeViewLights.Nodes.Insert(node.Index, treeNode);
                     done = true;
                     break;
                 }
                 if (!done)
                 {
-                    treeView1.Nodes.Add(treeNode);
+                    treeViewLights.Nodes.Add(treeNode);
                 }
 
-                treeView1.Invalidate();
-                treeView1.SelectedNode = treeNode;
+                treeViewLights.Invalidate();
+                treeViewLights.SelectedNode = treeNode;
                 Options.ChangedUltimaClass["Light"] = true;
             }
         }
@@ -339,13 +339,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (treeViewLights.SelectedNode == null)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            int i = (int)treeView1.SelectedNode.Tag;
+            int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {i}.bmp");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
             MessageBox.Show($"Light saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
@@ -354,13 +354,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportTiff(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (treeViewLights.SelectedNode == null)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            int i = (int)treeView1.SelectedNode.Tag;
+            int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {i}.tiff");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Tiff);
             MessageBox.Show($"Light saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
@@ -369,13 +369,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode == null)
+            if (treeViewLights.SelectedNode == null)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            int i = (int)treeView1.SelectedNode.Tag;
+            int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {i}.jpg");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Jpeg);
             MessageBox.Show($"Light saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
@@ -385,12 +385,12 @@ namespace UoFiddler.Controls.UserControls
         private void IgPreviewClicked(object sender, EventArgs e)
         {
             iGPreviewToolStripMenuItem.Checked = !iGPreviewToolStripMenuItem.Checked;
-            pictureBox1.Image = GetImage();
+            pictureBoxPreview.Image = GetImage();
         }
 
         private void OnPictureSizeChanged(object sender, EventArgs e)
         {
-            pictureBox1.Image = GetImage();
+            pictureBoxPreview.Image = GetImage();
         }
 
         private void LandTileTextChanged(object sender, EventArgs e)
@@ -427,9 +427,9 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            contextMenuStrip2.Close();
+            previewContextMenuStrip.Close();
             _landTile = index;
-            pictureBox1.Image = GetImage();
+            pictureBoxPreview.Image = GetImage();
         }
 
         private void LightTileTextChanged(object sender, EventArgs e)
@@ -451,20 +451,19 @@ namespace UoFiddler.Controls.UserControls
 
         private void LightTileKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter ||
+                !Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()) ||
+                !Ultima.Art.IsValidStatic(index)
+                )
             {
-                if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()))
-                {
-                    if (!Ultima.Art.IsValidStatic(index))
-                    {
-                        return;
-                    }
-
-                    contextMenuStrip2.Close();
-                    _lightTile = index;
-                    pictureBox1.Image = GetImage();
-                }
+                return;
             }
+
+            previewContextMenuStrip.Close();
+
+            _lightTile = index;
+
+            pictureBoxPreview.Image = GetImage();
         }
     }
 }

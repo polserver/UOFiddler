@@ -110,7 +110,7 @@ namespace Ultima
             width = (extra & 0xFFFF);
             height = ((extra >> 16) & 0xFFFF);
             var buffer = new byte[length];
-            stream.Read(buffer, 0, length);
+            _ = stream.Read(buffer, 0, length);
             stream.Close();
 
             return buffer;
@@ -147,7 +147,7 @@ namespace Ultima
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            _ = stream.Read(_streamBuffer, 0, length);
 
             var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(
