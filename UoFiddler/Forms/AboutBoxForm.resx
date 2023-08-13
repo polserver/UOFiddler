@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.10.8
+    <value>Version 4.10.9
+- Fixed crash when adding new lights.
+
+Version 4.10.8
 - Removed search popups for gumps, sounds, textures and tiledata. Moved search to the control screen.
 - Removed obsolete setting to collapse right panel in sounds tab.
 
