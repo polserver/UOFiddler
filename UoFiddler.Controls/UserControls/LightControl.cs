@@ -196,7 +196,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void AfterSelect(object sender, TreeViewEventArgs e)
         {
-            pictureBox1.Image?.Dispose();
             pictureBox1.Image = GetImage();
         }
 
