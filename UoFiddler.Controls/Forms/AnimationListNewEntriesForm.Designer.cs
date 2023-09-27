@@ -155,7 +155,7 @@ namespace UoFiddler.Controls.Forms
             // 
             // ComboBoxActionType
             // 
-            ComboBoxActionType.Items.AddRange(new object[] { "Monster", "Sea Monster", "Animal", "Human", "Equipment" });
+            ComboBoxActionType.Items.AddRange(new object[] { "Monster", "Sea Monster", "Animal", "Human/Equipment" });
             ComboBoxActionType.Name = "ComboBoxActionType";
             ComboBoxActionType.Size = new System.Drawing.Size(140, 25);
             ComboBoxActionType.SelectedIndexChanged += OnChangeType;
