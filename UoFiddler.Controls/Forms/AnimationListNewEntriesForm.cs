@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -146,27 +147,26 @@ namespace UoFiddler.Controls.Forms
 
             MobTypes();
 
-            foreach (var key in BodyTable.Entries) //body.def
+            foreach (var newId in BodyTable.Entries.Select(k => k.Value.NewId)) // body.def
             {
-                BodyTableEntry entry = key.Value;
-                if (AlreadyFound(entry.NewId))
+                if (AlreadyFound(newId))
                 {
                     continue;
                 }
 
-                if (_isAlreadyDefinedCallback(entry.NewId))
+                if (_isAlreadyDefinedCallback(newId))
                 {
                     continue;
                 }
 
-                TreeNode node = new TreeNode(entry.NewId.ToString())
+                var node = new TreeNode(newId.ToString())
                 {
-                    Tag = entry.NewId,
-                    ToolTipText = $"Found in body.def {Animations.GetFileName(entry.NewId)}"
+                    Tag = newId,
+                    ToolTipText = $"Found in body.def {Animations.GetFileName(newId)}"
                 };
-                node.Tag = new[] { entry.NewId, 0 };
+                node.Tag = new[] { newId, 0 };
                 tvAnimationList.Nodes.Add(node);
-                SetActionType(node, entry.NewId, 0);
+                SetActionType(node, newId, 0);
             }
 
             if (BodyConverter.Table1 != null)
@@ -212,7 +212,7 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                TreeNode node = new TreeNode(entry.ToString())
+                var node = new TreeNode(entry.ToString())
                 {
                     ToolTipText = $"Found in bodyconv.def {Animations.GetFileName(entry)}",
                     Tag = entry
@@ -245,13 +245,14 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            using (StreamReader def = new StreamReader(filePath))
+            using (var def = new StreamReader(filePath))
             {
                 string line;
 
                 while ((line = def.ReadLine()) != null)
                 {
-                    if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                    string lineTrimmed = line = line.Trim();
+                    if (lineTrimmed.Length == 0 || lineTrimmed.StartsWith('#'))
                     {
                         continue;
                     }
@@ -261,7 +262,7 @@ namespace UoFiddler.Controls.Forms
                         string[] split = line.Split('\t');
                         if (int.TryParse(split[0], out int graphic) && !AlreadyFound(graphic) && !_isAlreadyDefinedCallback(graphic))
                         {
-                            TreeNode node = new TreeNode(graphic.ToString())
+                            var node = new TreeNode(graphic.ToString())
                             {
                                 ToolTipText = $"Found in mobtype.txt {Animations.GetFileName(graphic)}"
                             };
@@ -300,6 +301,7 @@ namespace UoFiddler.Controls.Forms
         private void SetActionType(TreeNode parent, int graphic, int type)
         {
             parent.Nodes.Clear();
+
             if (type == 4) // Equipment == Human
             {
                 type = 3;
@@ -312,7 +314,7 @@ namespace UoFiddler.Controls.Forms
                     continue;
                 }
 
-                TreeNode node = new TreeNode($"{i} {_actionNames[type][i]}")
+                var node = new TreeNode($"{i} {_actionNames[type][i]}")
                 {
                     Tag = i
                 };
@@ -350,7 +352,7 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                Point loc = new Point
+                var loc = new Point
                 {
                     X = (pictureBox1.Width - _animation[_frameIndex].Bitmap.Width) / 2,
                     Y = (pictureBox1.Height - _animation[_frameIndex].Bitmap.Height) / 2
@@ -368,7 +370,7 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                Point loc = new Point
+                var loc = new Point
                 {
                     X = (pictureBox1.Width - frames[0].Bitmap.Width) / 2,
                     Y = (pictureBox1.Height - frames[0].Bitmap.Height) / 2
