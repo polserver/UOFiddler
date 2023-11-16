@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>MultiEditor</AssemblyName>
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>MultiEditor</AssemblyTitle>
@@ -61,6 +61,6 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+	  <PackageReference Include="System.Resources.Extensions" Version="8.0.0-rc.2.23479.6" />
 	</ItemGroup>
 </Project>
