@@ -92,7 +92,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
                     {
                         line = line.Trim();
 
-                        if (line.Length == 0 || line.StartsWith("#"))
+                        if (line.Length == 0 || line.StartsWith('#'))
                         {
                             continue;
                         }

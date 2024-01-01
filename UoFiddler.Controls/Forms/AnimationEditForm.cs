@@ -1067,7 +1067,7 @@ namespace UoFiddler.Controls.Forms
                     int i = 0;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+                        if ((line = line.Trim()).Length == 0 || line.StartsWith('#'))
                         {
                             continue;
                         }
