@@ -148,6 +148,9 @@ namespace Ultima
             public byte FrameInterval { get; set; }
             public byte FrameStart { get; set; }
 
+            // Empty constructor needed for deserialization.
+            public AnimdataEntry() { }
+
             public AnimdataEntry(sbyte[] frame, byte unk, byte frameCount, byte frameInterval, byte frameStart)
             {
                 FrameData = frame;

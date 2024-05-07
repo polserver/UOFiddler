@@ -41,8 +41,8 @@ namespace UoFiddler.Controls.Forms
         {
             components = new System.ComponentModel.Container();
             button2 = new System.Windows.Forms.Button();
-            checkBox1 = new System.Windows.Forms.CheckBox();
-            checkBox2 = new System.Windows.Forms.CheckBox();
+            cbIncludeInvalidTiles = new System.Windows.Forms.CheckBox();
+            cbIncludeMissingAnimation = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             //
             // button2
@@ -54,34 +54,35 @@ namespace UoFiddler.Controls.Forms
             button2.TabIndex = 18;
             button2.Text = "Export";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += OnClickExport;
             //
-            // checkBox1
+            // cbIncludeInvalidTiles
             //
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new System.Drawing.Point(17, 11);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new System.Drawing.Size(278, 19);
-            checkBox1.TabIndex = 19;
-            checkBox1.Text = "Include missing/invalid statics (red-listed items)\r\n";
-            checkBox1.UseVisualStyleBackColor = true;
+            cbIncludeInvalidTiles.AutoSize = true;
+            cbIncludeInvalidTiles.Location = new System.Drawing.Point(17, 11);
+            cbIncludeInvalidTiles.Name = "cbIncludeInvalidTiles";
+            cbIncludeInvalidTiles.Size = new System.Drawing.Size(226, 19);
+            cbIncludeInvalidTiles.TabIndex = 19;
+            cbIncludeInvalidTiles.Text = "Include invalid tiles (red-listed entries)\r\n";
+            cbIncludeInvalidTiles.UseVisualStyleBackColor = true;
             //
-            // checkBox2
+            // cbIncludeMissingAnimation
             //
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new System.Drawing.Point(17, 36);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new System.Drawing.Size(338, 19);
-            checkBox2.TabIndex = 20;
-            checkBox2.Text = "Include tiles with missing animation flag (blue-listed items)";
-            checkBox2.UseVisualStyleBackColor = true;
+            cbIncludeMissingAnimation.AutoSize = true;
+            cbIncludeMissingAnimation.Location = new System.Drawing.Point(17, 36);
+            cbIncludeMissingAnimation.Name = "cbIncludeMissingAnimation";
+            cbIncludeMissingAnimation.Size = new System.Drawing.Size(344, 19);
+            cbIncludeMissingAnimation.TabIndex = 20;
+            cbIncludeMissingAnimation.Text = "Include tiles with missing animation flag (blue-listed entries)";
+            cbIncludeMissingAnimation.UseVisualStyleBackColor = true;
             //
             // AnimDataExportForm
             //
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(415, 112);
-            Controls.Add(checkBox2);
-            Controls.Add(checkBox1);
+            Controls.Add(cbIncludeMissingAnimation);
+            Controls.Add(cbIncludeInvalidTiles);
             Controls.Add(button2);
             DoubleBuffered = true;
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -96,7 +97,7 @@ namespace UoFiddler.Controls.Forms
 
         #endregion
 
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox cbIncludeInvalidTiles;
+        private System.Windows.Forms.CheckBox cbIncludeMissingAnimation;
     }
 }

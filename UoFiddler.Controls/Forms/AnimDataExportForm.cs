@@ -10,13 +10,10 @@
  ***************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml;
-using Ultima;
 using UoFiddler.Controls.Classes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static Ultima.Animdata;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -25,6 +22,22 @@ namespace UoFiddler.Controls.Forms
         public AnimDataExportForm()
         {
             InitializeComponent();
+        }
+
+        private void OnClickExport(object sender, EventArgs e)
+        {
+            string fileName = Path.Combine(Options.OutputPath, $"animdata-{DateTime.Now:yyyyMMddHHmm}.json");
+
+            try
+            {
+                var exported = ExportedAnimData.ToFile(fileName, AnimData, cbIncludeInvalidTiles.Checked, cbIncludeMissingAnimation.Checked);
+
+                MessageBox.Show($"Exported {exported.Data.Count} animdata entries to: {fileName}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error exporting animdata: {ex.Message}", "AnimData Export", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            }
         }
     }
 }

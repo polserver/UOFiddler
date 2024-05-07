@@ -39,89 +39,95 @@ namespace UoFiddler.Controls.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.label5 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.comboBoxUpsertAction = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            label5 = new System.Windows.Forms.Label();
+            button1 = new System.Windows.Forms.Button();
+            textBox1 = new System.Windows.Forms.TextBox();
+            button2 = new System.Windows.Forms.Button();
+            comboBoxUpsertAction = new System.Windows.Forms.ComboBox();
+            label1 = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 9);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 13);
-            this.label5.TabIndex = 17;
-            this.label5.Text = "Import from:";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(10, 10);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(75, 15);
+            label5.TabIndex = 17;
+            label5.Text = "Import from:";
             // 
             // button1
             // 
-            this.button1.AutoSize = true;
-            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Location = new System.Drawing.Point(316, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(26, 23);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
+            button1.AutoSize = true;
+            button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            button1.Location = new System.Drawing.Point(369, 7);
+            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(26, 25);
+            button1.TabIndex = 16;
+            button1.Text = "...";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += OnClickBrowse;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(88, 8);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(222, 20);
-            this.textBox1.TabIndex = 15;
+            textBox1.Location = new System.Drawing.Point(103, 9);
+            textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(258, 23);
+            textBox1.TabIndex = 15;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(144, 81);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
+            button2.Location = new System.Drawing.Point(168, 93);
+            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(88, 27);
+            button2.TabIndex = 18;
+            button2.Text = "Import";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += OnClickImport;
             // 
             // comboBoxUpsertAction
             // 
-            this.comboBoxUpsertAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxUpsertAction.FormattingEnabled = true;
-            this.comboBoxUpsertAction.Items.AddRange(new object[] {
-            "skip",
-            "overwrite"});
-            this.comboBoxUpsertAction.Location = new System.Drawing.Point(88, 42);
-            this.comboBoxUpsertAction.Name = "comboBoxUpsertAction";
-            this.comboBoxUpsertAction.Size = new System.Drawing.Size(121, 21);
-            this.comboBoxUpsertAction.TabIndex = 21;
+            comboBoxUpsertAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxUpsertAction.FormattingEnabled = true;
+            comboBoxUpsertAction.Items.AddRange(new object[] { "skip", "overwrite" });
+            comboBoxUpsertAction.Location = new System.Drawing.Point(103, 48);
+            comboBoxUpsertAction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            comboBoxUpsertAction.Name = "comboBoxUpsertAction";
+            comboBoxUpsertAction.Size = new System.Drawing.Size(140, 23);
+            comboBoxUpsertAction.TabIndex = 21;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 45);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 13);
-            this.label1.TabIndex = 22;
-            this.label1.Text = "On conflict:";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(15, 52);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(69, 15);
+            label1.TabIndex = 22;
+            label1.Text = "On conflict:";
             // 
             // AnimDataImportForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 116);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBoxUpsertAction);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
-            this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "AnimDataImportForm";
-            this.Text = "Import AnimData";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(415, 134);
+            Controls.Add(label1);
+            Controls.Add(comboBoxUpsertAction);
+            Controls.Add(button2);
+            Controls.Add(label5);
+            Controls.Add(button1);
+            Controls.Add(textBox1);
+            DoubleBuffered = true;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "AnimDataImportForm";
+            Text = "Import AnimData";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Button button1;

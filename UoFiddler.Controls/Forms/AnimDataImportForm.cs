@@ -10,13 +10,9 @@
  ***************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
-using System.Xml;
-using Ultima;
 using UoFiddler.Controls.Classes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static Ultima.Animdata;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -26,6 +22,41 @@ namespace UoFiddler.Controls.Forms
         {
             InitializeComponent();
             comboBoxUpsertAction.SelectedItem = "skip";
+        }
+
+        private void OnClickImport(object sender, EventArgs e)
+        {
+            try
+            {
+                var imported = ExportedAnimData.FromFile(textBox1.Text);
+                var overwrite = comboBoxUpsertAction.Items[comboBoxUpsertAction.SelectedIndex].ToString() == "overwrite";
+
+                int count = imported.UpdateAnimdata(AnimData, overwrite);
+
+                MessageBox.Show($"Imported {count} animdata entries from: {textBox1.Text}\n\nDo not forget to save your changes!", "AnimData Import");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error importing animdata: ${ex.Message}", "AnimData Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            }
+        }
+
+        private void OnClickBrowse(object sender, EventArgs e)
+        {
+            var type = "json";
+
+            using OpenFileDialog dialog = new()
+            {
+                Multiselect = false,
+                Title = $"Choose {type} file to import",
+                CheckFileExists = true,
+                Filter = string.Format("{0} file (*.{0})|*.{0}", type)
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox1.Text = dialog.FileName;
+            }
         }
     }
 }
