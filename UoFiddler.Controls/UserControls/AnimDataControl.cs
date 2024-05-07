@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -35,6 +36,9 @@ namespace UoFiddler.Controls.UserControls
         private int _curFrame;
         private Timer _mTimer;
         private int _timerFrame;
+        private AnimDataImportForm _importForm;
+        private AnimDataExportForm _exportForm;
+
 
         [Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -192,6 +196,36 @@ namespace UoFiddler.Controls.UserControls
             }
 
             CurrAnim = CurrAnim;
+        }
+
+        private void OnClickExport(object sender, EventArgs e)
+        {
+            if (_exportForm?.IsDisposed == false)
+            {
+                _exportForm.Focus();
+                return;
+            }
+
+            _exportForm = new AnimDataExportForm
+            {
+                TopMost = true
+            };
+            _exportForm.Show();
+        }
+
+        private void OnClickImport(object sender, EventArgs e)
+        {
+            if (_importForm?.IsDisposed == false)
+            {
+                _importForm.Focus();
+                return;
+            }
+
+            _importForm = new AnimDataImportForm
+            {
+                TopMost = true
+            };
+            _importForm.Show();
         }
 
         private void OnClickStartStop(object sender, EventArgs e)
