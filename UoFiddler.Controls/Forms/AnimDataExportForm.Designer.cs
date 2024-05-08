@@ -1,15 +1,4 @@
-﻿/***************************************************************************
- *
- * $Author: Turley
- *
- * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with
- * this stuff. If we meet some day, and you think this stuff is worth it,
- * you can buy me a beer in return.
- *
- ***************************************************************************/
-
-namespace UoFiddler.Controls.Forms
+﻿namespace UoFiddler.Controls.Forms
 {
     partial class AnimDataExportForm
     {
@@ -39,51 +28,48 @@ namespace UoFiddler.Controls.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            button2 = new System.Windows.Forms.Button();
-            cbIncludeInvalidTiles = new System.Windows.Forms.CheckBox();
-            cbIncludeMissingAnimation = new System.Windows.Forms.CheckBox();
+            btnExport = new System.Windows.Forms.Button();
+            cboExportSelection = new System.Windows.Forms.ComboBox();
+            lblAnimationsToExport = new System.Windows.Forms.Label();
             SuspendLayout();
             //
-            // button2
+            // btnExport
             //
-            button2.Location = new System.Drawing.Point(168, 73);
-            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(88, 27);
-            button2.TabIndex = 18;
-            button2.Text = "Export";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += OnClickExport;
+            btnExport.Location = new System.Drawing.Point(156, 60);
+            btnExport.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new System.Drawing.Size(88, 27);
+            btnExport.TabIndex = 18;
+            btnExport.Text = "Export";
+            btnExport.UseVisualStyleBackColor = true;
+            btnExport.Click += OnClickExport;
             //
-            // cbIncludeInvalidTiles
+            // cboExportSelection
             //
-            cbIncludeInvalidTiles.AutoSize = true;
-            cbIncludeInvalidTiles.Location = new System.Drawing.Point(17, 11);
-            cbIncludeInvalidTiles.Name = "cbIncludeInvalidTiles";
-            cbIncludeInvalidTiles.Size = new System.Drawing.Size(226, 19);
-            cbIncludeInvalidTiles.TabIndex = 19;
-            cbIncludeInvalidTiles.Text = "Include invalid tiles (red-listed entries)\r\n";
-            cbIncludeInvalidTiles.UseVisualStyleBackColor = true;
+            cboExportSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cboExportSelection.FormattingEnabled = true;
+            cboExportSelection.Location = new System.Drawing.Point(12, 27);
+            cboExportSelection.Name = "cboExportSelection";
+            cboExportSelection.Size = new System.Drawing.Size(391, 23);
+            cboExportSelection.TabIndex = 21;
             //
-            // cbIncludeMissingAnimation
+            // lblAnimationsToExport
             //
-            cbIncludeMissingAnimation.AutoSize = true;
-            cbIncludeMissingAnimation.Location = new System.Drawing.Point(17, 36);
-            cbIncludeMissingAnimation.Name = "cbIncludeMissingAnimation";
-            cbIncludeMissingAnimation.Size = new System.Drawing.Size(344, 19);
-            cbIncludeMissingAnimation.TabIndex = 20;
-            cbIncludeMissingAnimation.Text = "Include tiles with missing animation flag (blue-listed entries)";
-            cbIncludeMissingAnimation.UseVisualStyleBackColor = true;
+            lblAnimationsToExport.AutoSize = true;
+            lblAnimationsToExport.Location = new System.Drawing.Point(12, 9);
+            lblAnimationsToExport.Name = "lblAnimationsToExport";
+            lblAnimationsToExport.Size = new System.Drawing.Size(122, 15);
+            lblAnimationsToExport.TabIndex = 22;
+            lblAnimationsToExport.Text = "Animations to export:";
             //
             // AnimDataExportForm
             //
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(415, 112);
-            Controls.Add(cbIncludeMissingAnimation);
-            Controls.Add(cbIncludeInvalidTiles);
-            Controls.Add(button2);
+            ClientSize = new System.Drawing.Size(415, 99);
+            Controls.Add(lblAnimationsToExport);
+            Controls.Add(cboExportSelection);
+            Controls.Add(btnExport);
             DoubleBuffered = true;
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -93,11 +79,10 @@ namespace UoFiddler.Controls.Forms
             PerformLayout();
         }
 
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnExport;
 
-        #endregion
-
-        private System.Windows.Forms.CheckBox cbIncludeInvalidTiles;
-        private System.Windows.Forms.CheckBox cbIncludeMissingAnimation;
+#endregion
+        private System.Windows.Forms.ComboBox cboExportSelection;
+        private System.Windows.Forms.Label lblAnimationsToExport;
     }
 }

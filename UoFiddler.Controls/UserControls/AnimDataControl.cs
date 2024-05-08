@@ -152,6 +152,7 @@ namespace UoFiddler.Controls.UserControls
             if (treeView1.Nodes.Count > 0)
             {
                 treeView1.SelectedNode = treeView1.Nodes[0];
+                _currAnim = (int)treeView1.Nodes[0].Tag;
             }
 
             if (!_loaded)
@@ -223,7 +224,8 @@ namespace UoFiddler.Controls.UserControls
 
             _importForm = new AnimDataImportForm
             {
-                TopMost = true
+                TopMost = true,
+                OnAfterImport = Reload
             };
             _importForm.Show();
         }

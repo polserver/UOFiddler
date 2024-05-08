@@ -1,15 +1,5 @@
-﻿/***************************************************************************
- *
- * $Author: Turley
- *
- * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with
- * this stuff. If we meet some day, and you think this stuff is worth it,
- * you can buy me a beer in return.
- *
- ***************************************************************************/
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
 using static Ultima.Animdata;
@@ -18,26 +8,44 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class AnimDataImportForm : Form
     {
+        public Action OnAfterImport { get; set; }
         public AnimDataImportForm()
         {
             InitializeComponent();
-            comboBoxUpsertAction.SelectedItem = "skip";
+            cboConflictAction.SelectedItem = "skip";
         }
 
         private void OnClickImport(object sender, EventArgs e)
         {
             try
             {
-                var imported = ExportedAnimData.FromFile(textBox1.Text);
-                var overwrite = comboBoxUpsertAction.Items[comboBoxUpsertAction.SelectedIndex].ToString() == "overwrite";
+                var fileName = txtImportFileName.Text;
+                var imported = ExportedAnimData.FromFile(fileName);
+                var overwrite = cboConflictAction.Items[cboConflictAction.SelectedIndex].ToString() == "overwrite";
 
-                int count = imported.UpdateAnimdata(AnimData, overwrite);
+                // Create a new "working copy" AnimData to update, in case there's an exception thrown while processing.
+                // Shallow clone is okay, as UpdateAnimdata does not modify existing entries' members.
+                var workingAnimData = cbErase.Checked ? [] : new Dictionary<int, AnimdataEntry>(AnimData);
+                int importCount = imported.UpdateAnimdata(workingAnimData, overwrite);
 
-                MessageBox.Show($"Imported {count} animdata entries from: {textBox1.Text}\n\nDo not forget to save your changes!", "AnimData Import");
+                // Since everything processed, set AnimData
+                AnimData = workingAnimData;
+                Options.ChangedUltimaClass["Animdata"] = true;
+
+                try
+                {
+                    OnAfterImport?.Invoke();
+                }
+                catch
+                {
+                    // Swallow any error from the OnAfterImport callback
+                }
+
+                MessageBox.Show($"Imported {importCount} animdata entries from: {fileName}\n\nDo not forget to save your changes!", "AnimData Import");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error importing animdata: ${ex.Message}", "AnimData Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"Error importing animdata: {ex.Message}", "AnimData Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
         }
 
@@ -55,7 +63,7 @@ namespace UoFiddler.Controls.Forms
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                textBox1.Text = dialog.FileName;
+                txtImportFileName.Text = dialog.FileName;
             }
         }
     }

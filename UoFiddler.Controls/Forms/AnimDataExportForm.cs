@@ -1,16 +1,5 @@
-﻿/***************************************************************************
- *
- * $Author: Turley
- *
- * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with
- * this stuff. If we meet some day, and you think this stuff is worth it,
- * you can buy me a beer in return.
- *
- ***************************************************************************/
-
-using System;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
 using static Ultima.Animdata;
@@ -22,17 +11,44 @@ namespace UoFiddler.Controls.Forms
         public AnimDataExportForm()
         {
             InitializeComponent();
+            cboExportSelection.DataSource = new List<string> {
+                "All (default-, blue-, and red-colored entries)",
+                "Include missing animation tile flag (default- and blue-colored entries)",
+                "Only valid animations (default-colored entries)"
+            };
         }
 
         private void OnClickExport(object sender, EventArgs e)
         {
-            string fileName = Path.Combine(Options.OutputPath, $"animdata-{DateTime.Now:yyyyMMddHHmm}.json");
+            var type = "json";
+
+            using SaveFileDialog dialog = new()
+            {
+                CheckPathExists = true,
+                Title = "Choose the file to export to",
+                FileName = $"animdata-{DateTime.Now:yyyyMMddHHmm}.json",
+                InitialDirectory = Options.OutputPath,
+                Filter = string.Format("{0} file (*.{0})|*.{0}", type)
+            };
+
+            if (dialog.ShowDialog() != DialogResult.OK || dialog.FileName == "")
+            {
+                return;
+            }
 
             try
             {
-                var exported = ExportedAnimData.ToFile(fileName, AnimData, cbIncludeInvalidTiles.Checked, cbIncludeMissingAnimation.Checked);
+                var selection = cboExportSelection.SelectedIndex switch
+                {
+                    0 => ExportSelection.All,
+                    1 => ExportSelection.IncludeMissingTileFlag,
+                    2 => ExportSelection.OnlyValid,
+                    _ => ExportSelection.All
+                };
 
-                MessageBox.Show($"Exported {exported.Data.Count} animdata entries to: {fileName}");
+                var exported = ExportedAnimData.ToFile(dialog.FileName, AnimData, selection);
+
+                MessageBox.Show($"Exported {exported.Data.Count} animdata entries to: {dialog.FileName}");
             }
             catch (Exception ex)
             {

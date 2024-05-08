@@ -1,15 +1,4 @@
-﻿// /***************************************************************************
-//  *
-//  * $Author: Turley
-//  *
-//  * "THE BEER-WARE LICENSE"
-//  * As long as you retain this notice you can do whatever you want with
-//  * this stuff. If we meet some day, and you think this stuff is worth it,
-//  * you can buy me a beer in return.
-//  *
-//  ***************************************************************************/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,13 +8,20 @@ using static Ultima.Animdata;
 
 namespace UoFiddler.Controls.Classes
 {
-    using AnimdataTable = Dictionary<int, AnimdataEntry>;
+    using AnimDataDict = Dictionary<int, AnimdataEntry>;
+
+    public enum ExportSelection
+    {
+        All = 0,
+        IncludeMissingTileFlag = 1,
+        OnlyValid = 2
+    }
 
     public class ExportedAnimData
     {
         public static readonly int CurrentVersion = 1;
         public int Version { get; set; }
-        public AnimdataTable Data { get; set; }
+        public AnimDataDict Data { get; set; }
 
         public static ExportedAnimData FromFile(string fileName)
         {
@@ -36,26 +32,31 @@ namespace UoFiddler.Controls.Classes
 
             if (imported.Version != CurrentVersion)
             {
-                throw new InvalidOperationException($"Unexpected version {imported.Version}, expected {CurrentVersion}");
+                throw new InvalidOperationException($"Unexpected version {imported.Version}, expected {CurrentVersion}.");
             }
 
             return imported;
         }
 
-        public static ExportedAnimData ToFile(string fileName, AnimdataTable entries, bool includeInvalidTiles, bool includeMissingAnimation)
+        public static ExportedAnimData ToFile(string fileName, AnimDataDict entries, ExportSelection selection)
         {
-            bool Selector(int id)
+            bool ExportSelector(int id)
             {
-                return (Art.IsValidStatic(id) ||
-                        includeInvalidTiles)  // Should export invalid tiles
-                       && (((TileData.ItemTable[id].Flags & TileFlag.Animation) == 0) ||
-                           includeMissingAnimation);  // Should export missing animations
+                if (Art.IsValidStatic(id))
+                {
+                    if (TileData.ItemTable[id].Flags.HasFlag(TileFlag.Animation) || selection == ExportSelection.IncludeMissingTileFlag)
+                    {
+                        return true;
+                    }
+                }
+
+                return selection == ExportSelection.All;
             }
 
             var data = new ExportedAnimData
             {
                 Version = 1,
-                Data = (from entry in AnimData where Selector(entry.Key) select entry).ToDictionary()
+                Data = (from entry in entries where ExportSelector(entry.Key) select entry).ToDictionary()
             };
 
             string jsonString = JsonSerializer.Serialize(data);
@@ -65,7 +66,7 @@ namespace UoFiddler.Controls.Classes
             return data;
         }
 
-        public int UpdateAnimdata(AnimdataTable dst, bool overwrite)
+        public int UpdateAnimdata(AnimDataDict dst, bool overwrite)
         {
             int count = 0;
             foreach (var (id, entry) in Data)
