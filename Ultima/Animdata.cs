@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Ultima
 {
@@ -8,7 +10,7 @@ namespace Ultima
         private static int[] _header;
         private static byte[] _unknown;
 
-        public static Dictionary<int, AnimdataEntry> AnimData { get; private set; }
+        public static Dictionary<int, AnimdataEntry> AnimData { get; set; }
 
         static Animdata()
         {
@@ -98,9 +100,11 @@ namespace Ultima
             {
                 int id = 0;
                 int h = 0;
-                while (id < _header.Length * 8)
+                int maxId = AnimData.Keys.Max();
+                while (id <= maxId)
                 {
-                    bin.Write(_header[h++]);
+                    int headerChunk = h < _header.Length ? _header[h++] : Random.Shared.Next();
+                    bin.Write(headerChunk);
                     for (int i = 0; i < 8; ++i, ++id)
                     {
                         AnimdataEntry animdataEntry = GetAnimData(id);
@@ -147,6 +151,9 @@ namespace Ultima
             public byte FrameCount { get; set; }
             public byte FrameInterval { get; set; }
             public byte FrameStart { get; set; }
+
+            // Empty constructor needed for deserialization.
+            public AnimdataEntry() { }
 
             public AnimdataEntry(sbyte[] frame, byte unk, byte frameCount, byte frameInterval, byte frameStart)
             {
