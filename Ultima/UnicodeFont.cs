@@ -122,9 +122,18 @@ namespace Ultima
         public unsafe void SetBuffer(Bitmap bmp)
         {
             Bytes = new byte[bmp.Height * (((bmp.Width - 1) / 8) + 1)];
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            XOffset = 0;
+            YOffset = 0;
+
+            Width = bmp.Width;
+            Height = bmp.Height;
+
+            var bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
             var line = (ushort*)bd.Scan0;
-            for (int y = 0; y < bmp.Height; ++y)
+            int delta = bd.Stride >> 1;
+
+            for (int y = 0; y < bmp.Height; ++y, line += delta)
             {
                 ushort* cur = line;
                 for (int x = 0; x < bmp.Width; ++x)
