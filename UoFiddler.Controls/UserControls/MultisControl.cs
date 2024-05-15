@@ -874,5 +874,77 @@ namespace UoFiddler.Controls.UserControls
         {
             _useTransparencyForPng = UseTransparencyForPNGToolStripMenuItem.Checked;
         }
+
+        private void OnClick_SaveAllToXML(object sender, EventArgs e)
+        {
+            string path = Options.OutputPath;
+            string fileName = Path.Combine(path, "TilesEntry.xml");
+            string groupFileName = Path.Combine(path, "TilesGroup-Multis.xml");
+
+            using (XmlWriter writer = XmlWriter.Create(fileName, new XmlWriterSettings { Indent = true }))
+            using (XmlWriter groupWriter = XmlWriter.Create(groupFileName, new XmlWriterSettings { Indent = true }))
+            {
+                writer.WriteStartDocument();
+                groupWriter.WriteStartDocument();
+
+                writer.WriteStartElement("TilesEntry");
+                groupWriter.WriteStartElement("TilesGroup");
+
+                groupWriter.WriteStartElement("Group");
+                groupWriter.WriteAttributeString("Name", "Exported Multis");
+
+                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                {
+                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    if (index < 0)
+                    {
+                        continue;
+                    }
+
+                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    if (multi == MultiComponentList.Empty)
+                    {
+                        continue;
+                    }
+
+                    groupWriter.WriteStartElement("Entry");
+                    groupWriter.WriteAttributeString("ID", index.ToString());
+                    groupWriter.WriteAttributeString("Name", _refMarker.TreeViewMulti.Nodes[i].Text.Trim());
+
+                    writer.WriteStartElement("Entry");
+                    writer.WriteAttributeString("ID", index.ToString());
+                    writer.WriteAttributeString("Name", _refMarker.TreeViewMulti.Nodes[i].Text.Trim());
+
+                    for (int x = 0; x < multi.Width; x++)
+                    {
+                        for (int y = 0; y < multi.Height; y++)
+                        {
+                            foreach (var tile in multi.Tiles[x][y])
+                            {
+                                writer.WriteStartElement("Item");
+                                writer.WriteAttributeString("X", x.ToString());
+                                writer.WriteAttributeString("Y", y.ToString());
+                                writer.WriteAttributeString("Z", tile.Z.ToString());
+                                writer.WriteAttributeString("ID", $"0x{tile.Id:X4}");
+                                writer.WriteEndElement(); // Item
+                            }
+                        }
+                    }
+
+                    writer.WriteEndElement(); // Entry
+                    groupWriter.WriteEndElement(); // Entry (group)
+                }
+
+                writer.WriteEndElement(); // TilesEntry
+                groupWriter.WriteEndElement(); // Group
+                groupWriter.WriteEndElement(); // TilesGroup
+
+                writer.WriteEndDocument();
+                groupWriter.WriteEndDocument();
+            }
+
+            MessageBox.Show($"All Multis saved to {fileName}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
     }
 }
