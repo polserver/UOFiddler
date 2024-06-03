@@ -161,33 +161,61 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         private void DoExport(Multis.ImportType type)
         {
+            var designName = textBox_Export.Text;
+
+            if (string.IsNullOrEmpty(designName))
+            {
+                MessageBox.Show(
+                    "Export design name can't be empty.",
+                    "Missing file name",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1);
+
+                return;
+            }
+
             if (_compList == null)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            
+
             MultiComponentList sdkList = _compList.ConvertToSdk();
+
+            var fileName = string.Empty;
 
             switch (type)
             {
                 case Multis.ImportType.TXT:
-                    sdkList.ExportToTextFile(Path.Combine(path, $"{textBox_Export.Text}.txt"));
+                    fileName = Path.Combine(path, $"{designName}.txt");
+                    sdkList.ExportToTextFile(fileName);
                     break;
                 case Multis.ImportType.WSC:
-                    sdkList.ExportToWscFile(Path.Combine(path, $"{textBox_Export.Text}.wsc"));
+                    fileName = Path.Combine(path, $"{designName}.wsc");
+                    sdkList.ExportToWscFile(fileName);
                     break;
                 case Multis.ImportType.UOA:
-                    sdkList.ExportToUOAFile(Path.Combine(path, $"{textBox_Export.Text}.uoa.txt"));
+                    fileName = Path.Combine(path, $"{designName}.uoa.txt");
+                    sdkList.ExportToUOAFile(fileName);
                     break;
                 case Multis.ImportType.CSV:
-                    sdkList.ExportToCsvFile(Path.Combine(path, $"{textBox_Export.Text}.csv"));
+                    fileName = Path.Combine(path, $"{designName}.csv");
+                    sdkList.ExportToCsvFile(fileName);
                     break;
                 case Multis.ImportType.UOX3:
-                    sdkList.ExportToUox3File(Path.Combine(path, $"{textBox_Export.Text}.uox3"));
+                    fileName = Path.Combine(path, $"{designName}.uox3");
+                    sdkList.ExportToUox3File(fileName);
+                    break;
+                case Multis.ImportType.XML:
+                    fileName = Path.Combine(path, $"{designName}.xml");
+                    sdkList.ExportToXmlFile(fileName, designName);
                     break;
             }
+
+            MessageBox.Show($"Multi design saved to {fileName}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void BTN_Export_TXT_OnClick(object sender, EventArgs e)
@@ -213,6 +241,11 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void BTN_Export_UOX3_Click(object sender, EventArgs e)
         {
             DoExport(Multis.ImportType.UOX3);
+        }
+
+        private void BTN_Export_XML_Click(object sender, EventArgs e)
+        {
+            DoExport(Multis.ImportType.XML);
         }
 
         /// <summary>

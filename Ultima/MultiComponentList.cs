@@ -15,6 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using Ultima.Helpers;
 
 namespace Ultima
@@ -890,6 +891,27 @@ namespace Ultima
                 {
                     tex.WriteLine($"0x{SortedTiles[i].ItemId:x4},{SortedTiles[i].OffsetX},{SortedTiles[i].OffsetY},{SortedTiles[i].OffsetZ},0x{SortedTiles[i].Flags:x},");
                 }
+            }
+        }
+
+        public void ExportToXmlFile(string fileName, string entryId)
+        {
+            using (var xmlWriter = XmlWriter.Create(fileName, new XmlWriterSettings { Indent = true }))
+            {
+                xmlWriter.WriteStartElement("Entry");
+                xmlWriter.WriteAttributeString("ID", entryId);
+
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    xmlWriter.WriteStartElement("Item");
+                    xmlWriter.WriteAttributeString("X", SortedTiles[i].OffsetX.ToString());
+                    xmlWriter.WriteAttributeString("Y", SortedTiles[i].OffsetY.ToString());
+                    xmlWriter.WriteAttributeString("Z", SortedTiles[i].OffsetZ.ToString());
+                    xmlWriter.WriteAttributeString("ID", $"0x{SortedTiles[i].ItemId:X4}");
+                    xmlWriter.WriteEndElement(); // Item
+                }
+
+                xmlWriter.WriteEndElement();
             }
         }
     }

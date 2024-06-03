@@ -22,7 +22,8 @@ namespace Ultima
             CSV, // Punt's multi tool csv format
             UOX3,
             MULTICACHE,
-            UOADESIGN
+            UOADESIGN,
+            XML
         }
 
         /// <summary>
