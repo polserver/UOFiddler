@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -38,7 +39,25 @@ namespace UoFiddler.Controls.UserControls
         private int _timerFrame;
         private AnimDataImportForm _importForm;
         private AnimDataExportForm _exportForm;
+        private HuePopUpForm _showForm;
+        private int _customHue = 0;
+        private bool _hueOnlyGray = false;
 
+        // Must be non-null for synchronization. Can contain null values for invalid tiles.
+        private List<Bitmap> _huedFrames = [];
+
+        [Browsable(false),
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        private int CurrFrame
+        {
+            get => _curFrame;
+            set
+            {
+                _curFrame = value;
+                var graphic = _currAnim + (_curFrame == -1 ? 0 : _selAnimdataEntry.FrameData[_curFrame]);
+                toolStripStatusGraphic.Text = $"Graphic: {graphic} (0x{graphic:X})";
+            }
+        }
 
         [Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -65,21 +84,69 @@ namespace UoFiddler.Controls.UserControls
                         treeViewFrames.Nodes.Add(node);
                     }
                     treeViewFrames.EndUpdate();
+
+                    toolStripStatusBaseGraphic.Text = $"Base Graphic: {value} (0x{value:X})";
+
+                    _currAnim = value;
+
+                    if (_customHue > 0)
+                    {
+                        GenerateFramedHues();
+                    }
                 }
-                _currAnim = value;
 
                 if (_mTimer == null)
                 {
-                    int graphic = value;
-                    if (_curFrame > -1)
+                    if (_customHue > 0)
                     {
-                        graphic += _selAnimdataEntry.FrameData[_curFrame];
-                    }
+                        int index = Math.Max(0, _curFrame);
 
-                    pictureBox1.Image = Art.GetStatic(graphic);
+                        // Not in a lock, as event handlers run on main thread, and the value-writing
+                        // to _huedFrames above will not happen simultaneously as this read.
+                        pictureBox1.Image = _huedFrames[index];
+                    }
+                    else
+                    {
+                        int graphic = value;
+                        if (_curFrame > -1)
+                        {
+                            graphic += _selAnimdataEntry.FrameData[_curFrame];
+                        }
+
+                        pictureBox1.Image = Art.GetStatic(graphic);
+                    }
                 }
                 numericUpDownFrameDelay.Value = _selAnimdataEntry.FrameInterval;
                 numericUpDownStartDelay.Value = _selAnimdataEntry.FrameStart;
+            }
+        }
+
+        private void GenerateFramedHues()
+        {
+            if (_selAnimdataEntry != null)
+            {
+                // In a lock, since the Timer may read values from the list
+                lock (_huedFrames)
+                {
+                    foreach (var huedFrame in _huedFrames)
+                    {
+                        huedFrame?.Dispose();
+                    }
+                    _huedFrames.Clear();
+
+                    for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
+                    {
+                        int graphic = _currAnim + _selAnimdataEntry.FrameData[i];
+                        var huedFrame = Art.GetStatic(graphic);
+                        if (huedFrame != null)
+                        {
+                            huedFrame = new Bitmap(huedFrame);
+                            Hue hueObject = Hues.List[_customHue - 1];
+                            hueObject.ApplyTo(huedFrame, _hueOnlyGray);
+                        }
+                        _huedFrames.Add(huedFrame);
+                    }
+                }
             }
         }
 
@@ -178,19 +245,19 @@ namespace UoFiddler.Controls.UserControls
 
             if (treeView1.SelectedNode.Parent == null)
             {
-                _curFrame = -1;
                 CurrAnim = (int)treeView1.SelectedNode.Tag;
+                CurrFrame = -1;
             }
             else
             {
-                _curFrame = treeView1.SelectedNode.Index;
                 CurrAnim = (int)treeView1.SelectedNode.Parent.Tag;
+                CurrFrame = treeView1.SelectedNode.Index;
             }
         }
 
         private void AfterSelectTreeViewFrames(object sender, TreeViewEventArgs e)
         {
-            _curFrame = treeViewFrames.SelectedNode.Index;
+            CurrFrame = treeViewFrames.SelectedNode.Index;
             if (_mTimer != null)
             {
                 StopTimer();
@@ -236,7 +303,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 StopTimer();
             }
-            else
+            else if (_selAnimdataEntry != null)
             {
                 _mTimer = new Timer
                 {
@@ -246,6 +313,8 @@ namespace UoFiddler.Controls.UserControls
                 _timerFrame = 0;
                 _mTimer.Start();
             }
+
+            animateToolStripMenuItem.Checked = _mTimer != null;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -256,7 +325,21 @@ namespace UoFiddler.Controls.UserControls
                 _timerFrame = 0;
             }
 
-            pictureBox1.Image = Art.GetStatic(CurrAnim + _selAnimdataEntry.FrameData[_timerFrame]);
+            var graphic = CurrAnim + _selAnimdataEntry.FrameData[_timerFrame];
+            toolStripStatusGraphic.Text = $"Graphic: {graphic} (0x{graphic:X})";
+
+            if (_customHue == 0)
+            {
+                pictureBox1.Image = Art.GetStatic(graphic);
+            }
+            else
+            {
+                // In a lock, since GenerateHuedFrames() can write to this list.
+                lock (_huedFrames)
+                {
+                    pictureBox1.Image = _huedFrames[_timerFrame];
+                }
+            }
         }
 
         private void OnValueChangedStartDelay(object sender, EventArgs e)
@@ -604,6 +687,66 @@ namespace UoFiddler.Controls.UserControls
 
             removeToolStripMenuItem.Enabled = enabled;
             addToolStripMenuItem.Enabled = enabled;
+        }
+
+        public void ChangeHue(int select)
+        {
+            select += 1;
+            var newHue = select & ~0x8000;
+            var newHueOnlyGray = (select & 0x8000) != 0;
+
+            if (_customHue != newHue || _hueOnlyGray != newHueOnlyGray)
+            {
+                _customHue = newHue;
+                _hueOnlyGray = newHueOnlyGray;
+                toolStripStatusHue.Text = $"Hue: {_customHue}";
+                if (_customHue != 0)
+                {
+                    GenerateFramedHues();
+                }
+                else
+                {
+                    // In a lock, since the Timer may read from this list.
+                    lock (_huedFrames)
+                    {
+                        foreach (var huedFrame in _huedFrames)
+                        {
+                            huedFrame?.Dispose();
+                        }
+                        _huedFrames.Clear();
+                    }
+                }
+
+                if (_selAnimdataEntry != null && _mTimer == null)
+                {
+                    if (_customHue > 0)
+                    {
+                        var frame = Math.Max(0, _curFrame);
+                        pictureBox1.Image = _huedFrames[frame];
+
+                    }
+                    else
+                    {
+                        var graphic = _currAnim + (_curFrame == -1 ? 0 : _selAnimdataEntry.FrameData[_curFrame]);
+                        pictureBox1.Image = Art.GetStatic(graphic);
+                    }
+                }
+            }
+        }
+
+        private void OnClick_Hue(object sender, EventArgs e)
+        {
+            if (_showForm?.IsDisposed == false)
+            {
+                return;
+            }
+
+            _showForm = _customHue == 0
+                ? new HuePopUpForm(ChangeHue, 1)
+                : new HuePopUpForm(ChangeHue, _customHue - 1);
+
+            _showForm.TopMost = true;
+            _showForm.Show();
         }
     }
 
