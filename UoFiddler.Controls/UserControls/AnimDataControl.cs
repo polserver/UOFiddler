@@ -14,7 +14,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using AnimatedGif;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -747,6 +749,40 @@ namespace UoFiddler.Controls.UserControls
 
             _showForm.TopMost = true;
             _showForm.Show();
+        }
+
+        private void OnClick_ExportAsGif(object sender, EventArgs e)
+        {
+            if (_selAnimdataEntry != null)
+            {
+                var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currAnim:X}.gif");
+                var delay = (100 * _selAnimdataEntry.FrameInterval) + 1;
+
+                {
+                    using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay);
+                    if (_customHue > 0)
+                    {
+                        // Not in a lock, since event runs on main thread, which is the only place it can be written.
+                        foreach (var huedFrame in _huedFrames)
+                        {
+                            if (huedFrame != null)
+                            {
+                                gif.AddFrame(huedFrame, delay: -1, quality: GifQuality.Bit8);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
+                        {
+                            int graphic = _currAnim + _selAnimdataEntry.FrameData[i];
+                            gif.AddFrame(Art.GetStatic(graphic), delay: -1, quality: GifQuality.Bit8);
+                        }
+                    }
+                }
+
+                MessageBox.Show($"Saved to {outputFile}");
+            }
         }
     }
 
