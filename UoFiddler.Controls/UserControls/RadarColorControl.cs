@@ -10,10 +10,12 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using Ultima.Helpers;
@@ -36,6 +38,8 @@ namespace UoFiddler.Controls.UserControls
         private ushort _currentColor;
         private static RadarColorControl _refMarker;
         private bool _updating;
+        private readonly Dictionary<int, ushort> _originalItemColors = [];
+        private readonly Dictionary<int, ushort> _originalLandColors = [];
 
         public bool IsLoaded { get; private set; }
 
@@ -190,6 +194,8 @@ namespace UoFiddler.Controls.UserControls
 
         private void AfterSelectTreeViewItem(object sender, TreeViewEventArgs e)
         {
+            SaveColor();
+
             _selectedIndex = (int)e.Node.Tag;
 
             if (Art.IsValidStatic(_selectedIndex))
@@ -210,10 +216,15 @@ namespace UoFiddler.Controls.UserControls
             }
 
             CurrentColor = RadarCol.GetItemColor(_selectedIndex);
+
+            buttonRevert.Enabled = _originalItemColors.ContainsKey(_selectedIndex);
+            buttonRevertAll.Enabled = _originalLandColors.Count > 0 || _originalItemColors.Count > 0;
         }
 
         private void AfterSelectTreeViewLand(object sender, TreeViewEventArgs e)
         {
+            SaveColor();
+
             _selectedIndex = (int)e.Node.Tag;
 
             if (Art.IsValidLand(_selectedIndex))
@@ -234,6 +245,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             CurrentColor = RadarCol.GetLandColor(_selectedIndex);
+
+            buttonRevert.Enabled = _originalLandColors.ContainsKey(_selectedIndex);
+            buttonRevertAll.Enabled = _originalLandColors.Count > 0 || _originalItemColors.Count > 0;
         }
 
         private void OnClickMeanColor(object sender, EventArgs e)
@@ -252,28 +266,202 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "radarcol.mul");
             RadarCol.Save(fileName);
+
+            _originalItemColors.Clear();
+            _originalLandColors.Clear();
+
+            foreach (var node in treeViewItem.Nodes.OfType<TreeNode>())
+            {
+                node.ForeColor = SystemColors.WindowText;
+            }
+
+            foreach (var node in treeViewLand.Nodes.OfType<TreeNode>())
+            {
+                node.ForeColor = SystemColors.WindowText;
+            }
+
             MessageBox.Show($"RadarCol saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["RadarCol"] = false;
         }
 
-        private void OnClickSaveColor(object sender, EventArgs e)
+        private void SaveColor()
         {
-            if (_selectedIndex < 0)
+            SaveColor(_selectedIndex, CurrentColor, tabControl2.SelectedIndex == 0);
+        }
+
+        private void SaveColor(int index, ushort color, bool isItemTile)
+        {
+            if (index < 0)
             {
                 return;
             }
 
-            if (tabControl2.SelectedIndex == 0)
+            if (isItemTile)
             {
-                RadarCol.SetItemColor(_selectedIndex, CurrentColor);
+                var datafileColor = RadarCol.GetItemColor(index);
+                if (color != datafileColor)
+                {
+                    if (_originalItemColors.TryAdd(index, datafileColor))
+                    {
+                        var previousNode = treeViewItem.Nodes.OfType<TreeNode>()
+                                .FirstOrDefault(node => node.Tag.Equals(index));
+
+                        if (previousNode != null)
+                            previousNode.ForeColor = Color.Blue;
+                    }
+                }
+                RadarCol.SetItemColor(index, color);
             }
             else
             {
-                RadarCol.SetLandColor(_selectedIndex, CurrentColor);
+                var datafileColor = RadarCol.GetLandColor(index);
+                if (color != datafileColor)
+                {
+                    if (_originalLandColors.TryAdd(index, datafileColor))
+                    {
+                        var previousNode = treeViewLand.Nodes.OfType<TreeNode>()
+                                .FirstOrDefault(node => node.Tag.Equals(index));
+
+                        if (previousNode != null)
+                            previousNode.ForeColor = Color.Blue;
+                    }
+                }
+                RadarCol.SetLandColor(index, color);
+            }
+        }
+
+        private void OnClickRevertAll(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Do you want to revert all changes to items and land tiles?",
+                "Revert All",
+                MessageBoxButtons.YesNo
+                );
+
+            if (result != DialogResult.Yes)
+            {
+                return;
             }
 
-            Options.ChangedUltimaClass["RadarCol"] = true;
+            foreach (var (index, color) in _originalItemColors)
+            {
+                RadarCol.SetItemColor(index, color);
+                if (index == _selectedIndex && tabControl2.SelectedIndex == 0)
+                {
+                    CurrentColor = color;
+                }
+            }
+
+            foreach (var (index, color) in _originalLandColors)
+            {
+                RadarCol.SetLandColor(index, color);
+                if (index == _selectedIndex && tabControl2.SelectedIndex == 1)
+                {
+                    CurrentColor = color;
+                }
+            }
+
+            Options.ChangedUltimaClass["RadarCol"] = false;
+            buttonRevertAll.Enabled = false;
+            buttonRevert.Enabled = false;
+
+            _originalItemColors.Clear();
+            _originalLandColors.Clear();
+
+            foreach (var node in treeViewItem.Nodes.OfType<TreeNode>())
+            {
+                node.ForeColor = SystemColors.WindowText;
+            }
+
+            foreach (var node in treeViewLand.Nodes.OfType<TreeNode>())
+            {
+                node.ForeColor = SystemColors.WindowText;
+            }
+        }
+
+        private void OnClickRevert(object sender, EventArgs e)
+        {
+            if (_selectedIndex > -1)
+            {
+                if (tabControl2.SelectedIndex == 0)
+                {
+                    if (_originalItemColors.TryGetValue(_selectedIndex, out var color))
+                    {
+                        CurrentColor = color;
+                        RadarCol.SetItemColor(_selectedIndex, color);
+
+                        var node = treeViewItem.Nodes.OfType<TreeNode>()
+                            .FirstOrDefault(node => node.Tag.Equals(_selectedIndex));
+
+                        if (node != null)
+                            node.ForeColor = SystemColors.WindowText;
+
+                        _originalItemColors.Remove(_selectedIndex);
+                    }
+                }
+                else if (_originalLandColors.TryGetValue(_selectedIndex, out var color))
+                {
+                    CurrentColor = color;
+                    RadarCol.SetLandColor(_selectedIndex, color);
+
+                    var node = treeViewLand.Nodes.OfType<TreeNode>()
+                        .FirstOrDefault(node => node.Tag.Equals(_selectedIndex));
+
+                    if (node != null)
+                        node.ForeColor = SystemColors.WindowText;
+
+                    _originalLandColors.Remove(_selectedIndex);
+                }
+            }
+
+            buttonRevert.Enabled = false;
+
+            if (_originalItemColors.Count == 0 && _originalLandColors.Count == 0)
+            {
+                Options.ChangedUltimaClass["RadarCol"] = false;
+                buttonRevertAll.Enabled = false;
+            }
+        }
+
+        private void OnClickSaveColor(object sender, EventArgs e)
+        {
+            SaveColor();
+            if (tabControl2.SelectedIndex == 0)
+            {
+                if (_originalItemColors.ContainsKey(_selectedIndex))
+                {
+                    buttonRevert.Enabled = true;
+                    buttonRevertAll.Enabled = true;
+                    Options.ChangedUltimaClass["RadarCol"] = true;
+                }
+            }
+            else if (_originalLandColors.ContainsKey(_selectedIndex))
+            {
+                buttonRevert.Enabled = true;
+                buttonRevertAll.Enabled = true;
+                Options.ChangedUltimaClass["RadarCol"] = true;
+            }
+        }
+
+        private void OnClickSetRangeFrom(object sender, EventArgs e)
+        {
+            var node = ((TreeView)((ContextMenuStrip)((ToolStripItem)sender).Owner).SourceControl).SelectedNode;
+
+            if (node != null)
+            {
+                textBoxMeanFrom.Text = node.Tag.ToString();
+            }
+        }
+
+        private void OnClickSetRangeTo(object sender, EventArgs e)
+        {
+            var node = ((TreeView)((ContextMenuStrip)((ToolStripItem)sender).Owner).SourceControl).SelectedNode;
+
+            if (node != null)
+            {
+                textBoxMeanTo.Text = node.Tag.ToString();
+            }
         }
 
         private void OnChangeR(object sender, EventArgs e)
@@ -317,26 +505,33 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void OnClickMeanColorFromTo(object sender, EventArgs e)
+        private (int, int)? GetValidRange()
         {
-            if (!Utils.ConvertStringToInt(textBoxMeanFrom.Text, out int from, 0, 0x4000) ||
-                !Utils.ConvertStringToInt(textBoxMeanTo.Text, out int to, 0, 0x4000))
+            var isStatic = tabControl2.SelectedIndex == 0;
+            var maxIndex = isStatic ? Art.GetMaxItemId() : 0x3FFF;
+
+            if (!Utils.ConvertStringToInt(textBoxMeanFrom.Text, out int from, 0, maxIndex) ||
+                !Utils.ConvertStringToInt(textBoxMeanTo.Text, out int to, 0, maxIndex))
             {
-                return;
+                MessageBox.Show($"Invalid parameters. Expected [to, from] between [0, {maxIndex} (0x{maxIndex:X4})]", "Error", MessageBoxButtons.OK);
+                return null;
             }
 
-            if (to < from)
+            if (to > from)
             {
-                int temp = from;
-                from = to;
-                to = temp;
+                return (from, to);
             }
 
+            return (to, from);
+        }
+
+        private ushort GetRangeAverage(int from, int to)
+        {
             int gmeanr = 0;
             int gmeang = 0;
             int gmeanb = 0;
 
-            for (int i = from; i < to; ++i)
+            for (int i = from; i <= to; ++i)
             {
                 Bitmap image = tabControl2.SelectedIndex == 0 ? Art.GetStatic(i) : Art.GetLand(i);
                 if (image == null)
@@ -382,12 +577,121 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            gmeanr /= to - from;
-            gmeang /= to - from;
-            gmeanb /= to - from;
+            var diff = to - from;
+
+            if (diff > 0)
+            {
+
+                gmeanr /= diff;
+                gmeang /= diff;
+                gmeanb /= diff;
+            }
 
             Color col = Color.FromArgb(gmeanr, gmeang, gmeanb);
-            CurrentColor = HueHelpers.ColorToHue(col);
+            return HueHelpers.ColorToHue(col);
+        }
+
+        private void OnClickCurrentToRangeAverage(object sender, EventArgs e)
+        {
+            var range = GetValidRange();
+
+            if (!range.HasValue)
+            {
+                return;
+            }
+
+            var (from, to) = range.Value;
+
+            CurrentColor = GetRangeAverage(from, to);
+            SaveColor();
+
+            var isItemTile = tabControl2.SelectedIndex == 0;
+            var enableRevert = isItemTile ? _originalItemColors.ContainsKey(_selectedIndex) : _originalLandColors.ContainsKey(_selectedIndex);
+
+            buttonRevert.Enabled = enableRevert;
+            buttonRevertAll.Enabled |= enableRevert;
+            Options.ChangedUltimaClass["RadarCol"] |= enableRevert;
+        }
+
+        private void OnClickRangeToRangeAverage(object sender, EventArgs e)
+        {
+            var range = GetValidRange();
+
+            if (!range.HasValue)
+            {
+                return;
+            }
+
+            var (from, to) = range.Value;
+
+            var color = GetRangeAverage(from, to);
+            var isItemTile = tabControl2.SelectedIndex == 0;
+            bool enableRevertAll = false;
+
+            for (int i = from; i <= to; ++i)
+            {
+                SaveColor(i, color, isItemTile);
+
+                var enableRevert = isItemTile ? _originalItemColors.ContainsKey(i) : _originalLandColors.ContainsKey(i);
+
+                if (i == _selectedIndex)
+                {
+                    CurrentColor = color;
+                    buttonRevert.Enabled = enableRevert;
+                }
+
+                enableRevertAll |= enableRevert;
+            }
+
+            if (enableRevertAll)
+            {
+                buttonRevertAll.Enabled = true;
+                Options.ChangedUltimaClass["RadarCol"] = true;
+            }
+        }
+
+        private void OnClickRangeToIndividualAverage(object sender, EventArgs e)
+        {
+            var range = GetValidRange();
+
+            if (!range.HasValue)
+            {
+                return;
+            }
+
+            var (from, to) = range.Value;
+
+            var isItemTile = tabControl2.SelectedIndex == 0;
+            bool enableRevertAll = false;
+
+            for (int i = from; i <= to; ++i)
+            {
+                Bitmap image = isItemTile ? Art.GetStatic(i) : Art.GetLand(i);
+                if (image == null)
+                {
+                    continue;
+                }
+
+                var color = HueHelpers.ColorToHue(AverageColorFrom(image));
+
+                SaveColor(i, color, isItemTile);
+
+                var enableRevert = isItemTile ? _originalItemColors.ContainsKey(i) : _originalLandColors.ContainsKey(i);
+
+                if (i == _selectedIndex)
+                {
+                    CurrentColor = color;
+                    buttonRevert.Enabled = enableRevert;
+                }
+
+                enableRevertAll |= enableRevert;
+            }
+
+            if (enableRevertAll)
+            {
+                buttonRevertAll.Enabled = true;
+                Options.ChangedUltimaClass["RadarCol"] = true;
+            }
         }
 
         private void OnClickSelectItemsTab(object sender, EventArgs e)
