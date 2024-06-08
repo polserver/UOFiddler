@@ -42,8 +42,8 @@ namespace UoFiddler.Controls.UserControls
         private readonly Dictionary<int, ushort> _originalLandColors = [];
         private Timer _debounceTimer;
         private const int _debounceTimeout = 500;
-        private HashSet<int> _selectedItems = [];
-        private HashSet<int> _selectedLand = [];
+        private readonly HashSet<int> _selectedItems = [];
+        private readonly HashSet<int> _selectedLand = [];
 
         public bool IsLoaded { get; private set; }
 
@@ -278,12 +278,12 @@ namespace UoFiddler.Controls.UserControls
             _originalItemColors.Clear();
             _originalLandColors.Clear();
 
-            foreach (var node in treeViewItem.Nodes.OfType<TreeNode>())
+            foreach (TreeNode node in treeViewItem.Nodes)
             {
                 node.ForeColor = SystemColors.WindowText;
             }
 
-            foreach (var node in treeViewLand.Nodes.OfType<TreeNode>())
+            foreach (TreeNode node in treeViewLand.Nodes)
             {
                 node.ForeColor = SystemColors.WindowText;
             }
@@ -377,12 +377,12 @@ namespace UoFiddler.Controls.UserControls
             _originalItemColors.Clear();
             _originalLandColors.Clear();
 
-            foreach (var node in treeViewItem.Nodes.OfType<TreeNode>())
+            foreach (TreeNode node in treeViewItem.Nodes)
             {
                 node.ForeColor = SystemColors.WindowText;
             }
 
-            foreach (var node in treeViewLand.Nodes.OfType<TreeNode>())
+            foreach (TreeNode node in treeViewLand.Nodes)
             {
                 node.ForeColor = SystemColors.WindowText;
             }
@@ -540,7 +540,7 @@ namespace UoFiddler.Controls.UserControls
                 var sequence = isItem ? _selectedItems : _selectedLand;
                 if (sequence.Count == 0)
                 {
-                    MessageBox.Show($"Invalid parameters. No tiles selected/checked.", "Error", MessageBoxButtons.OK);
+                    MessageBox.Show("Invalid parameters. No tiles selected/checked.", "Error", MessageBoxButtons.OK);
                     return null;
                 }
                 return sequence;
@@ -980,38 +980,46 @@ namespace UoFiddler.Controls.UserControls
                 selected = _selectedLand;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             control.BeginUpdate();
             try
             {
-                if (table != null)
+                if (table == null)
                 {
-                    control.Nodes.Clear();
-                    List<TreeNode> nodes = [];
-                    for (int i = 0; i < max; ++i)
-                    {
-                        var name = getName(i);
-                        if (name.ContainsCaseInsensitive(filterText))
-                        {
-                            var node = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, name))
-                            {
-                                Tag = i,
-                                Checked = selected.Contains(i)
-                            };
-
-                            if (originalColors.ContainsKey(i))
-                            {
-                                node.ForeColor = Color.Blue;
-                            }
-
-                            nodes.Add(node);
-                        }
-                    }
-                    control.Nodes.AddRange([.. nodes]);
+                    return;
                 }
+
+                control.Nodes.Clear();
+
+                List<TreeNode> nodes = [];
+                for (int i = 0; i < max; ++i)
+                {
+                    var name = getName(i);
+                    if (!name.ContainsCaseInsensitive(filterText))
+                    {
+                        continue;
+                    }
+
+                    var node = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, name))
+                    {
+                        Tag = i,
+                        Checked = selected.Contains(i)
+                    };
+
+                    if (originalColors.ContainsKey(i))
+                    {
+                        node.ForeColor = Color.Blue;
+                    }
+
+                    nodes.Add(node);
+                }
+
+                control.Nodes.AddRange(nodes.ToArray());
             }
             finally
             {
                 control.EndUpdate();
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -1056,7 +1064,9 @@ namespace UoFiddler.Controls.UserControls
             treeView.BeginUpdate();
             try
             {
-                foreach (var node in treeView.Nodes.OfType<TreeNode>())
+                Cursor.Current = Cursors.WaitCursor;
+
+                foreach (TreeNode node in treeView.Nodes)
                 {
                     node.Checked = isChecked;
                 }
@@ -1064,6 +1074,7 @@ namespace UoFiddler.Controls.UserControls
             finally
             {
                 treeView.EndUpdate();
+                Cursor.Current = Cursors.Default;
             }
         }
 
