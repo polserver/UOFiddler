@@ -118,7 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.13.0
+    <value>Version 4.14.0
+- Various improvements for RadarCol tab (author KevinEady):
+    + save radarcol on treeview selection change
+    + enable revert, revert all for radarcol changes
+    + add "range items to individual average"
+    + add "range items to range average"
+    + add filter and checkbox selections
+
+Version 4.13.0
 - Added ability to set hue for AnimData frames and export animdata to GIF (author KevinEady)
 - Added ability to export design as XML in multi editor plugin (centred+ format) (author Prapilk)
 
