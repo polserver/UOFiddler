@@ -503,7 +503,7 @@ namespace UoFiddler.Controls.UserControls
             radioUseSelection.Location = new System.Drawing.Point(220, 109);
             radioUseSelection.Name = "radioUseSelection";
             radioUseSelection.Size = new System.Drawing.Size(154, 19);
-            radioUseSelection.TabIndex = 29;
+            radioUseSelection.TabIndex = 7;
             radioUseSelection.TabStop = true;
             radioUseSelection.Text = "Selection / Checked tiles";
             radioUseSelection.UseVisualStyleBackColor = true;
@@ -515,7 +515,7 @@ namespace UoFiddler.Controls.UserControls
             radioUseRange.Location = new System.Drawing.Point(220, 135);
             radioUseRange.Name = "radioUseRange";
             radioUseRange.Size = new System.Drawing.Size(61, 19);
-            radioUseRange.TabIndex = 28;
+            radioUseRange.TabIndex = 8;
             radioUseRange.Text = "Range:";
             radioUseRange.UseVisualStyleBackColor = true;
             radioUseRange.CheckedChanged += OnCheckedChangeUseRange;
@@ -534,7 +534,7 @@ namespace UoFiddler.Controls.UserControls
             buttonRangeToRangeAverage.Location = new System.Drawing.Point(220, 233);
             buttonRangeToRangeAverage.Name = "buttonRangeToRangeAverage";
             buttonRangeToRangeAverage.Size = new System.Drawing.Size(220, 26);
-            buttonRangeToRangeAverage.TabIndex = 25;
+            buttonRangeToRangeAverage.TabIndex = 13;
             buttonRangeToRangeAverage.Text = "Selected tiles to selection average";
             buttonRangeToRangeAverage.UseVisualStyleBackColor = true;
             buttonRangeToRangeAverage.Click += OnClickRangeToRangeAverage;
@@ -544,7 +544,7 @@ namespace UoFiddler.Controls.UserControls
             buttonRangeToIndividualAverage.Location = new System.Drawing.Point(220, 198);
             buttonRangeToIndividualAverage.Name = "buttonRangeToIndividualAverage";
             buttonRangeToIndividualAverage.Size = new System.Drawing.Size(220, 26);
-            buttonRangeToIndividualAverage.TabIndex = 24;
+            buttonRangeToIndividualAverage.TabIndex = 12;
             buttonRangeToIndividualAverage.Text = "Selected tiles to individual average";
             buttonRangeToIndividualAverage.UseVisualStyleBackColor = true;
             buttonRangeToIndividualAverage.Click += OnClickRangeToIndividualAverage;
@@ -555,7 +555,7 @@ namespace UoFiddler.Controls.UserControls
             buttonRevertAll.Location = new System.Drawing.Point(4, 294);
             buttonRevertAll.Name = "buttonRevertAll";
             buttonRevertAll.Size = new System.Drawing.Size(88, 26);
-            buttonRevertAll.TabIndex = 23;
+            buttonRevertAll.TabIndex = 14;
             buttonRevertAll.Text = "Revert All";
             buttonRevertAll.UseVisualStyleBackColor = true;
             buttonRevertAll.Click += OnClickRevertAll;
@@ -566,7 +566,7 @@ namespace UoFiddler.Controls.UserControls
             buttonRevert.Location = new System.Drawing.Point(97, 128);
             buttonRevert.Name = "buttonRevert";
             buttonRevert.Size = new System.Drawing.Size(88, 26);
-            buttonRevert.TabIndex = 22;
+            buttonRevert.TabIndex = 1;
             buttonRevert.Text = "Revert";
             buttonRevert.UseVisualStyleBackColor = true;
             buttonRevert.Click += OnClickRevert;
@@ -610,7 +610,8 @@ namespace UoFiddler.Controls.UserControls
             button6.Margin = new System.Windows.Forms.Padding(4);
             button6.Name = "button6";
             button6.Size = new System.Drawing.Size(206, 31);
-            button6.TabIndex = 17;
+            button6.TabIndex = 18;
+            button6.TabStop = false;
             button6.Text = "Average All (Items and Land Tiles)";
             button6.UseVisualStyleBackColor = true;
             button6.Click += OnClickMeanColorAll;
@@ -621,7 +622,7 @@ namespace UoFiddler.Controls.UserControls
             button5.Margin = new System.Windows.Forms.Padding(4);
             button5.Name = "button5";
             button5.Size = new System.Drawing.Size(88, 26);
-            button5.TabIndex = 16;
+            button5.TabIndex = 17;
             button5.Text = "Import..";
             button5.UseVisualStyleBackColor = true;
             button5.Click += OnClickImport;
@@ -632,7 +633,7 @@ namespace UoFiddler.Controls.UserControls
             button4.Margin = new System.Windows.Forms.Padding(4);
             button4.Name = "button4";
             button4.Size = new System.Drawing.Size(88, 26);
-            button4.TabIndex = 15;
+            button4.TabIndex = 16;
             button4.Text = "Export..";
             button4.UseVisualStyleBackColor = true;
             button4.Click += OnClickExport;
@@ -644,7 +645,7 @@ namespace UoFiddler.Controls.UserControls
             numericUpDownShortCol.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
             numericUpDownShortCol.Name = "numericUpDownShortCol";
             numericUpDownShortCol.Size = new System.Drawing.Size(116, 23);
-            numericUpDownShortCol.TabIndex = 14;
+            numericUpDownShortCol.TabIndex = 3;
             numericUpDownShortCol.ValueChanged += OnNumericShortColChanged;
             // 
             // textBoxMeanFrom
@@ -656,7 +657,7 @@ namespace UoFiddler.Controls.UserControls
             textBoxMeanFrom.Name = "textBoxMeanFrom";
             textBoxMeanFrom.PlaceholderText = "from";
             textBoxMeanFrom.Size = new System.Drawing.Size(60, 23);
-            textBoxMeanFrom.TabIndex = 12;
+            textBoxMeanFrom.TabIndex = 9;
             // 
             // textBoxMeanTo
             // 
@@ -667,7 +668,7 @@ namespace UoFiddler.Controls.UserControls
             textBoxMeanTo.Name = "textBoxMeanTo";
             textBoxMeanTo.PlaceholderText = "to";
             textBoxMeanTo.Size = new System.Drawing.Size(60, 23);
-            textBoxMeanTo.TabIndex = 13;
+            textBoxMeanTo.TabIndex = 10;
             // 
             // buttonCurrentToRangeAverage
             // 
@@ -688,7 +689,7 @@ namespace UoFiddler.Controls.UserControls
             numericUpDownB.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             numericUpDownB.Name = "numericUpDownB";
             numericUpDownB.Size = new System.Drawing.Size(55, 23);
-            numericUpDownB.TabIndex = 9;
+            numericUpDownB.TabIndex = 6;
             numericUpDownB.ValueChanged += OnChangeB;
             // 
             // numericUpDownG
@@ -698,7 +699,7 @@ namespace UoFiddler.Controls.UserControls
             numericUpDownG.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             numericUpDownG.Name = "numericUpDownG";
             numericUpDownG.Size = new System.Drawing.Size(55, 23);
-            numericUpDownG.TabIndex = 8;
+            numericUpDownG.TabIndex = 5;
             numericUpDownG.ValueChanged += OnChangeG;
             // 
             // numericUpDownR
@@ -708,7 +709,7 @@ namespace UoFiddler.Controls.UserControls
             numericUpDownR.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             numericUpDownR.Name = "numericUpDownR";
             numericUpDownR.Size = new System.Drawing.Size(55, 23);
-            numericUpDownR.TabIndex = 7;
+            numericUpDownR.TabIndex = 4;
             numericUpDownR.ValueChanged += OnChangeR;
             // 
             // button2
@@ -717,7 +718,7 @@ namespace UoFiddler.Controls.UserControls
             button2.Margin = new System.Windows.Forms.Padding(4);
             button2.Name = "button2";
             button2.Size = new System.Drawing.Size(88, 26);
-            button2.TabIndex = 5;
+            button2.TabIndex = 15;
             button2.Text = "Save File";
             button2.UseVisualStyleBackColor = true;
             button2.Click += OnClickSaveFile;
@@ -728,7 +729,7 @@ namespace UoFiddler.Controls.UserControls
             button1.Margin = new System.Windows.Forms.Padding(4);
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(88, 26);
-            button1.TabIndex = 4;
+            button1.TabIndex = 2;
             button1.Text = "Save Color";
             button1.UseVisualStyleBackColor = true;
             button1.Click += OnClickSaveColor;
@@ -739,7 +740,7 @@ namespace UoFiddler.Controls.UserControls
             buttonMean.Margin = new System.Windows.Forms.Padding(4);
             buttonMean.Name = "buttonMean";
             buttonMean.Size = new System.Drawing.Size(88, 26);
-            buttonMean.TabIndex = 1;
+            buttonMean.TabIndex = 0;
             buttonMean.Text = "Average Color";
             buttonMean.UseVisualStyleBackColor = true;
             buttonMean.Click += OnClickMeanColor;
