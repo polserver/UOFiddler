@@ -69,8 +69,9 @@ namespace UoFiddler.Controls.UserControls
             textFilterLand = new System.Windows.Forms.TextBox();
             buttonSelectAllLand = new System.Windows.Forms.Button();
             buttonSelectNoneLand = new System.Windows.Forms.Button();
+            radioUseSelection = new System.Windows.Forms.RadioButton();
+            radioUseRange = new System.Windows.Forms.RadioButton();
             label4 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
             buttonRangeToRangeAverage = new System.Windows.Forms.Button();
             buttonRangeToIndividualAverage = new System.Windows.Forms.Button();
             buttonRevertAll = new System.Windows.Forms.Button();
@@ -140,6 +141,7 @@ namespace UoFiddler.Controls.UserControls
             treeViewItem.Name = "treeViewItem";
             treeViewItem.Size = new System.Drawing.Size(228, 164);
             treeViewItem.TabIndex = 0;
+            treeViewItem.AfterCheck += AfterCheckTreeViewItem;
             treeViewItem.AfterSelect += AfterSelectTreeViewItem;
             // 
             // contextMenuStrip1
@@ -188,6 +190,7 @@ namespace UoFiddler.Controls.UserControls
             treeViewLand.Name = "treeViewLand";
             treeViewLand.Size = new System.Drawing.Size(228, 164);
             treeViewLand.TabIndex = 0;
+            treeViewLand.AfterCheck += AfterCheckTreeViewLand;
             treeViewLand.AfterSelect += AfterSelectTreeViewLand;
             // 
             // contextMenuStrip2
@@ -257,8 +260,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer5.Panel2
             // 
+            splitContainer5.Panel2.Controls.Add(radioUseSelection);
+            splitContainer5.Panel2.Controls.Add(radioUseRange);
             splitContainer5.Panel2.Controls.Add(label4);
-            splitContainer5.Panel2.Controls.Add(label3);
             splitContainer5.Panel2.Controls.Add(buttonRangeToRangeAverage);
             splitContainer5.Panel2.Controls.Add(buttonRangeToIndividualAverage);
             splitContainer5.Panel2.Controls.Add(buttonRevertAll);
@@ -382,6 +386,7 @@ namespace UoFiddler.Controls.UserControls
             textFilterItems.PlaceholderText = "Filter";
             textFilterItems.Size = new System.Drawing.Size(54, 23);
             textFilterItems.TabIndex = 1;
+            textFilterItems.TextChanged += OnTextChangedFilterItems;
             // 
             // buttonSelectNoneItems
             // 
@@ -392,6 +397,7 @@ namespace UoFiddler.Controls.UserControls
             buttonSelectNoneItems.TabIndex = 3;
             buttonSelectNoneItems.Text = "Select None";
             buttonSelectNoneItems.UseVisualStyleBackColor = true;
+            buttonSelectNoneItems.Click += OnClickSelectNoneItems;
             // 
             // buttonSelectAllItems
             // 
@@ -402,6 +408,7 @@ namespace UoFiddler.Controls.UserControls
             buttonSelectAllItems.TabIndex = 2;
             buttonSelectAllItems.Text = "Select All";
             buttonSelectAllItems.UseVisualStyleBackColor = true;
+            buttonSelectAllItems.Click += OnClickSelectAllItems;
             // 
             // tabPage4
             // 
@@ -465,6 +472,7 @@ namespace UoFiddler.Controls.UserControls
             textFilterLand.PlaceholderText = "Filter";
             textFilterLand.Size = new System.Drawing.Size(54, 23);
             textFilterLand.TabIndex = 0;
+            textFilterLand.TextChanged += OnTextChangedFilterLand;
             // 
             // buttonSelectAllLand
             // 
@@ -475,6 +483,7 @@ namespace UoFiddler.Controls.UserControls
             buttonSelectAllLand.TabIndex = 1;
             buttonSelectAllLand.Text = "Select All";
             buttonSelectAllLand.UseVisualStyleBackColor = true;
+            buttonSelectAllLand.Click += OnClickSelectAllLand;
             // 
             // buttonSelectNoneLand
             // 
@@ -485,24 +494,40 @@ namespace UoFiddler.Controls.UserControls
             buttonSelectNoneLand.TabIndex = 0;
             buttonSelectNoneLand.Text = "Select None";
             buttonSelectNoneLand.UseVisualStyleBackColor = true;
+            buttonSelectNoneLand.Click += OnClickSelectNoneLand;
+            // 
+            // radioUseSelection
+            // 
+            radioUseSelection.AutoSize = true;
+            radioUseSelection.Checked = true;
+            radioUseSelection.Location = new System.Drawing.Point(220, 109);
+            radioUseSelection.Name = "radioUseSelection";
+            radioUseSelection.Size = new System.Drawing.Size(154, 19);
+            radioUseSelection.TabIndex = 29;
+            radioUseSelection.TabStop = true;
+            radioUseSelection.Text = "Selection / Checked tiles";
+            radioUseSelection.UseVisualStyleBackColor = true;
+            radioUseSelection.CheckedChanged += OnCheckedChangeUseSelection;
+            // 
+            // radioUseRange
+            // 
+            radioUseRange.AutoSize = true;
+            radioUseRange.Location = new System.Drawing.Point(220, 135);
+            radioUseRange.Name = "radioUseRange";
+            radioUseRange.Size = new System.Drawing.Size(61, 19);
+            radioUseRange.TabIndex = 28;
+            radioUseRange.Text = "Range:";
+            radioUseRange.UseVisualStyleBackColor = true;
+            radioUseRange.CheckedChanged += OnCheckedChangeUseRange;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(336, 134);
+            label4.Location = new System.Drawing.Point(356, 136);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(16, 15);
             label4.TabIndex = 27;
             label4.Text = "...";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(220, 134);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(43, 15);
-            label3.TabIndex = 26;
-            label3.Text = "Range:";
             // 
             // buttonRangeToRangeAverage
             // 
@@ -510,7 +535,7 @@ namespace UoFiddler.Controls.UserControls
             buttonRangeToRangeAverage.Name = "buttonRangeToRangeAverage";
             buttonRangeToRangeAverage.Size = new System.Drawing.Size(220, 26);
             buttonRangeToRangeAverage.TabIndex = 25;
-            buttonRangeToRangeAverage.Text = "Range tiles to range average";
+            buttonRangeToRangeAverage.Text = "Selected tiles to selection average";
             buttonRangeToRangeAverage.UseVisualStyleBackColor = true;
             buttonRangeToRangeAverage.Click += OnClickRangeToRangeAverage;
             // 
@@ -520,7 +545,7 @@ namespace UoFiddler.Controls.UserControls
             buttonRangeToIndividualAverage.Name = "buttonRangeToIndividualAverage";
             buttonRangeToIndividualAverage.Size = new System.Drawing.Size(220, 26);
             buttonRangeToIndividualAverage.TabIndex = 24;
-            buttonRangeToIndividualAverage.Text = "Range tiles to individual average";
+            buttonRangeToIndividualAverage.Text = "Selected tiles to individual average";
             buttonRangeToIndividualAverage.UseVisualStyleBackColor = true;
             buttonRangeToIndividualAverage.Click += OnClickRangeToIndividualAverage;
             // 
@@ -624,8 +649,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxMeanFrom
             // 
+            textBoxMeanFrom.Enabled = false;
             textBoxMeanFrom.ForeColor = System.Drawing.SystemColors.WindowText;
-            textBoxMeanFrom.Location = new System.Drawing.Point(270, 131);
+            textBoxMeanFrom.Location = new System.Drawing.Point(290, 133);
             textBoxMeanFrom.Margin = new System.Windows.Forms.Padding(4);
             textBoxMeanFrom.Name = "textBoxMeanFrom";
             textBoxMeanFrom.PlaceholderText = "from";
@@ -634,8 +660,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxMeanTo
             // 
+            textBoxMeanTo.Enabled = false;
             textBoxMeanTo.ForeColor = System.Drawing.SystemColors.WindowText;
-            textBoxMeanTo.Location = new System.Drawing.Point(360, 132);
+            textBoxMeanTo.Location = new System.Drawing.Point(380, 134);
             textBoxMeanTo.Margin = new System.Windows.Forms.Padding(4);
             textBoxMeanTo.Name = "textBoxMeanTo";
             textBoxMeanTo.PlaceholderText = "to";
@@ -650,7 +677,7 @@ namespace UoFiddler.Controls.UserControls
             buttonCurrentToRangeAverage.Name = "buttonCurrentToRangeAverage";
             buttonCurrentToRangeAverage.Size = new System.Drawing.Size(220, 26);
             buttonCurrentToRangeAverage.TabIndex = 11;
-            buttonCurrentToRangeAverage.Text = "Current tile to range average";
+            buttonCurrentToRangeAverage.Text = "Current tile to selection average";
             buttonCurrentToRangeAverage.UseVisualStyleBackColor = true;
             buttonCurrentToRangeAverage.Click += OnClickCurrentToRangeAverage;
             // 
@@ -807,7 +834,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Button buttonRangeToRangeAverage;
         private System.Windows.Forms.Button buttonRangeToIndividualAverage;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolStripMenuItem setAsRangeFromToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setAsRangeToToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setAsRangeFromToolStripMenuItem1;
@@ -822,5 +848,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TextBox textFilterLand;
         private System.Windows.Forms.Button buttonSelectNoneLand;
         private System.Windows.Forms.Button buttonSelectAllLand;
+        private System.Windows.Forms.RadioButton radioUseSelection;
+        private System.Windows.Forms.RadioButton radioUseRange;
     }
 }
