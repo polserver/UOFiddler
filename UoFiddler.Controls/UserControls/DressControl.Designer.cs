@@ -39,654 +39,648 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.ItemsSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.SearchItemTextBox = new System.Windows.Forms.TextBox();
-            this.FindNextItemButton = new System.Windows.Forms.Button();
-            this.treeViewItems = new System.Windows.Forms.TreeView();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.checkBoxHuman = new System.Windows.Forms.RadioButton();
-            this.checkBoxGargoyle = new System.Windows.Forms.RadioButton();
-            this.button1 = new System.Windows.Forms.Button();
-            this.LayerSort = new System.Windows.Forms.CheckBox();
-            this.checkBoxElve = new System.Windows.Forms.RadioButton();
-            this.checkBoxfemale = new System.Windows.Forms.CheckBox();
-            this.buttonDress = new System.Windows.Forms.Button();
-            this.pictureBoxDress = new System.Windows.Forms.PictureBox();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.checkedListBoxWear = new System.Windows.Forms.CheckedListBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.unDressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.huToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.unDressAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBoxMount = new System.Windows.Forms.TextBox();
-            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.groupBoxAnimate = new System.Windows.Forms.GroupBox();
-            this.ActionBar = new System.Windows.Forms.TrackBar();
-            this.FacingBar = new System.Windows.Forms.TrackBar();
-            this.DressPic = new System.Windows.Forms.PictureBox();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.showAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.animateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asBmpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.asTiffToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.asJpgToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.TextBox = new System.Windows.Forms.RichTextBox();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ItemsSplitContainer)).BeginInit();
-            this.ItemsSplitContainer.Panel1.SuspendLayout();
-            this.ItemsSplitContainer.Panel2.SuspendLayout();
-            this.ItemsSplitContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDress)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
-            this.splitContainer4.Panel2.SuspendLayout();
-            this.splitContainer4.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
-            this.splitContainer5.Panel1.SuspendLayout();
-            this.splitContainer5.Panel2.SuspendLayout();
-            this.splitContainer5.SuspendLayout();
-            this.groupBoxAnimate.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ActionBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FacingBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DressPic)).BeginInit();
-            this.contextMenuStrip2.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            splitContainer2 = new System.Windows.Forms.SplitContainer();
+            ItemsSplitContainer = new System.Windows.Forms.SplitContainer();
+            SearchItemTextBox = new System.Windows.Forms.TextBox();
+            FindNextItemButton = new System.Windows.Forms.Button();
+            treeViewItems = new System.Windows.Forms.TreeView();
+            splitContainer3 = new System.Windows.Forms.SplitContainer();
+            checkBoxHuman = new System.Windows.Forms.RadioButton();
+            checkBoxGargoyle = new System.Windows.Forms.RadioButton();
+            button1 = new System.Windows.Forms.Button();
+            LayerSort = new System.Windows.Forms.CheckBox();
+            checkBoxElve = new System.Windows.Forms.RadioButton();
+            checkBoxfemale = new System.Windows.Forms.CheckBox();
+            buttonDress = new System.Windows.Forms.Button();
+            pictureBoxDress = new System.Windows.Forms.PictureBox();
+            splitContainer4 = new System.Windows.Forms.SplitContainer();
+            checkedListBoxWear = new System.Windows.Forms.CheckedListBox();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            unDressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            huToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            hueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            unDressAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            textBoxMount = new System.Windows.Forms.TextBox();
+            splitContainer5 = new System.Windows.Forms.SplitContainer();
+            groupBoxAnimate = new System.Windows.Forms.GroupBox();
+            ActionBar = new System.Windows.Forms.TrackBar();
+            FacingBar = new System.Windows.Forms.TrackBar();
+            DressPic = new System.Windows.Forms.PictureBox();
+            contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(components);
+            showAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            animateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            extractImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            extractAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asBmpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            asTiffToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            asJpgToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            asAnimatedGifToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asAnimatedGifnoLoopingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            TextBox = new System.Windows.Forms.RichTextBox();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ItemsSplitContainer).BeginInit();
+            ItemsSplitContainer.Panel1.SuspendLayout();
+            ItemsSplitContainer.Panel2.SuspendLayout();
+            ItemsSplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
+            splitContainer3.Panel1.SuspendLayout();
+            splitContainer3.Panel2.SuspendLayout();
+            splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxDress).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
+            splitContainer4.Panel1.SuspendLayout();
+            splitContainer4.Panel2.SuspendLayout();
+            splitContainer4.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
+            splitContainer5.Panel1.SuspendLayout();
+            splitContainer5.Panel2.SuspendLayout();
+            splitContainer5.SuspendLayout();
+            groupBoxAnimate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ActionBar).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)FacingBar).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)DressPic).BeginInit();
+            contextMenuStrip2.SuspendLayout();
+            SuspendLayout();
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.Location = new System.Drawing.Point(0, 0);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            splitContainer1.Panel1.Controls.Add(splitContainer2);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer1.Size = new System.Drawing.Size(910, 623);
-            this.splitContainer1.SplitterDistance = 491;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 0;
+            splitContainer1.Panel2.Controls.Add(splitContainer4);
+            splitContainer1.Size = new System.Drawing.Size(910, 623);
+            splitContainer1.SplitterDistance = 491;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer2.IsSplitterFixed = true;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer2.Name = "splitContainer2";
+            splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            splitContainer2.IsSplitterFixed = true;
+            splitContainer2.Location = new System.Drawing.Point(0, 0);
+            splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.ItemsSplitContainer);
+            splitContainer2.Panel1.Controls.Add(ItemsSplitContainer);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(491, 623);
-            this.splitContainer2.SplitterDistance = 248;
-            this.splitContainer2.SplitterWidth = 5;
-            this.splitContainer2.TabIndex = 0;
+            splitContainer2.Panel2.Controls.Add(splitContainer3);
+            splitContainer2.Size = new System.Drawing.Size(491, 623);
+            splitContainer2.SplitterDistance = 248;
+            splitContainer2.SplitterWidth = 5;
+            splitContainer2.TabIndex = 0;
             // 
             // ItemsSplitContainer
             // 
-            this.ItemsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ItemsSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.ItemsSplitContainer.IsSplitterFixed = true;
-            this.ItemsSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.ItemsSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ItemsSplitContainer.Name = "ItemsSplitContainer";
-            this.ItemsSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            ItemsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            ItemsSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            ItemsSplitContainer.IsSplitterFixed = true;
+            ItemsSplitContainer.Location = new System.Drawing.Point(0, 0);
+            ItemsSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ItemsSplitContainer.Name = "ItemsSplitContainer";
+            ItemsSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // ItemsSplitContainer.Panel1
             // 
-            this.ItemsSplitContainer.Panel1.Controls.Add(this.SearchItemTextBox);
-            this.ItemsSplitContainer.Panel1.Controls.Add(this.FindNextItemButton);
+            ItemsSplitContainer.Panel1.Controls.Add(SearchItemTextBox);
+            ItemsSplitContainer.Panel1.Controls.Add(FindNextItemButton);
             // 
             // ItemsSplitContainer.Panel2
             // 
-            this.ItemsSplitContainer.Panel2.Controls.Add(this.treeViewItems);
-            this.ItemsSplitContainer.Size = new System.Drawing.Size(248, 623);
-            this.ItemsSplitContainer.SplitterDistance = 40;
-            this.ItemsSplitContainer.SplitterWidth = 5;
-            this.ItemsSplitContainer.TabIndex = 1;
+            ItemsSplitContainer.Panel2.Controls.Add(treeViewItems);
+            ItemsSplitContainer.Size = new System.Drawing.Size(248, 623);
+            ItemsSplitContainer.SplitterDistance = 40;
+            ItemsSplitContainer.SplitterWidth = 5;
+            ItemsSplitContainer.TabIndex = 1;
             // 
             // SearchItemTextBox
             // 
-            this.SearchItemTextBox.Location = new System.Drawing.Point(4, 10);
-            this.SearchItemTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SearchItemTextBox.Name = "SearchItemTextBox";
-            this.SearchItemTextBox.Size = new System.Drawing.Size(145, 23);
-            this.SearchItemTextBox.TabIndex = 0;
-            this.SearchItemTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SearchItemTextBox_KeyUp);
+            SearchItemTextBox.Location = new System.Drawing.Point(4, 10);
+            SearchItemTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SearchItemTextBox.Name = "SearchItemTextBox";
+            SearchItemTextBox.Size = new System.Drawing.Size(145, 23);
+            SearchItemTextBox.TabIndex = 0;
+            SearchItemTextBox.KeyUp += SearchItemTextBox_KeyUp;
             // 
             // FindNextItemButton
             // 
-            this.FindNextItemButton.Location = new System.Drawing.Point(156, 8);
-            this.FindNextItemButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.FindNextItemButton.Name = "FindNextItemButton";
-            this.FindNextItemButton.Size = new System.Drawing.Size(83, 27);
-            this.FindNextItemButton.TabIndex = 1;
-            this.FindNextItemButton.Text = "Find next";
-            this.FindNextItemButton.UseVisualStyleBackColor = true;
-            this.FindNextItemButton.Click += new System.EventHandler(this.FindNextItemButton_Click);
+            FindNextItemButton.Location = new System.Drawing.Point(156, 8);
+            FindNextItemButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            FindNextItemButton.Name = "FindNextItemButton";
+            FindNextItemButton.Size = new System.Drawing.Size(83, 27);
+            FindNextItemButton.TabIndex = 1;
+            FindNextItemButton.Text = "Find next";
+            FindNextItemButton.UseVisualStyleBackColor = true;
+            FindNextItemButton.Click += FindNextItemButton_Click;
             // 
             // treeViewItems
             // 
-            this.treeViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewItems.Location = new System.Drawing.Point(0, 0);
-            this.treeViewItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(248, 578);
-            this.treeViewItems.TabIndex = 1;
-            this.treeViewItems.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AfterSelectTreeView);
-            this.treeViewItems.DoubleClick += new System.EventHandler(this.TreeViewItems_DoubleClick);
+            treeViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            treeViewItems.Location = new System.Drawing.Point(0, 0);
+            treeViewItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            treeViewItems.Name = "treeViewItems";
+            treeViewItems.Size = new System.Drawing.Size(248, 578);
+            treeViewItems.TabIndex = 1;
+            treeViewItems.AfterSelect += AfterSelectTreeView;
+            treeViewItems.DoubleClick += TreeViewItems_DoubleClick;
             // 
             // splitContainer3
             // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer3.IsSplitterFixed = true;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            splitContainer3.IsSplitterFixed = true;
+            splitContainer3.Location = new System.Drawing.Point(0, 0);
+            splitContainer3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer3.Name = "splitContainer3";
+            splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.checkBoxHuman);
-            this.splitContainer3.Panel1.Controls.Add(this.checkBoxGargoyle);
-            this.splitContainer3.Panel1.Controls.Add(this.button1);
-            this.splitContainer3.Panel1.Controls.Add(this.LayerSort);
-            this.splitContainer3.Panel1.Controls.Add(this.checkBoxElve);
-            this.splitContainer3.Panel1.Controls.Add(this.checkBoxfemale);
-            this.splitContainer3.Panel1.Controls.Add(this.buttonDress);
+            splitContainer3.Panel1.Controls.Add(checkBoxHuman);
+            splitContainer3.Panel1.Controls.Add(checkBoxGargoyle);
+            splitContainer3.Panel1.Controls.Add(button1);
+            splitContainer3.Panel1.Controls.Add(LayerSort);
+            splitContainer3.Panel1.Controls.Add(checkBoxElve);
+            splitContainer3.Panel1.Controls.Add(checkBoxfemale);
+            splitContainer3.Panel1.Controls.Add(buttonDress);
             // 
             // splitContainer3.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.pictureBoxDress);
-            this.splitContainer3.Size = new System.Drawing.Size(238, 623);
-            this.splitContainer3.SplitterDistance = 240;
-            this.splitContainer3.SplitterWidth = 5;
-            this.splitContainer3.TabIndex = 0;
+            splitContainer3.Panel2.Controls.Add(pictureBoxDress);
+            splitContainer3.Size = new System.Drawing.Size(238, 623);
+            splitContainer3.SplitterDistance = 240;
+            splitContainer3.SplitterWidth = 5;
+            splitContainer3.TabIndex = 0;
             // 
             // checkBoxHuman
             // 
-            this.checkBoxHuman.AutoSize = true;
-            this.checkBoxHuman.Checked = true;
-            this.checkBoxHuman.Location = new System.Drawing.Point(18, 63);
-            this.checkBoxHuman.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxHuman.Name = "checkBoxHuman";
-            this.checkBoxHuman.Size = new System.Drawing.Size(65, 19);
-            this.checkBoxHuman.TabIndex = 5;
-            this.checkBoxHuman.TabStop = true;
-            this.checkBoxHuman.Text = "Human";
-            this.checkBoxHuman.UseVisualStyleBackColor = true;
-            this.checkBoxHuman.CheckedChanged += new System.EventHandler(this.OnChangeHuman);
+            checkBoxHuman.AutoSize = true;
+            checkBoxHuman.Checked = true;
+            checkBoxHuman.Location = new System.Drawing.Point(18, 63);
+            checkBoxHuman.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxHuman.Name = "checkBoxHuman";
+            checkBoxHuman.Size = new System.Drawing.Size(65, 19);
+            checkBoxHuman.TabIndex = 5;
+            checkBoxHuman.TabStop = true;
+            checkBoxHuman.Text = "Human";
+            checkBoxHuman.UseVisualStyleBackColor = true;
+            checkBoxHuman.CheckedChanged += OnChangeHuman;
             // 
             // checkBoxGargoyle
             // 
-            this.checkBoxGargoyle.AutoSize = true;
-            this.checkBoxGargoyle.Location = new System.Drawing.Point(18, 117);
-            this.checkBoxGargoyle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxGargoyle.Name = "checkBoxGargoyle";
-            this.checkBoxGargoyle.Size = new System.Drawing.Size(72, 19);
-            this.checkBoxGargoyle.TabIndex = 4;
-            this.checkBoxGargoyle.Text = "Gargoyle";
-            this.checkBoxGargoyle.UseVisualStyleBackColor = true;
-            this.checkBoxGargoyle.CheckedChanged += new System.EventHandler(this.OnChangeGargoyle);
+            checkBoxGargoyle.AutoSize = true;
+            checkBoxGargoyle.Location = new System.Drawing.Point(18, 117);
+            checkBoxGargoyle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxGargoyle.Name = "checkBoxGargoyle";
+            checkBoxGargoyle.Size = new System.Drawing.Size(72, 19);
+            checkBoxGargoyle.TabIndex = 4;
+            checkBoxGargoyle.Text = "Gargoyle";
+            checkBoxGargoyle.UseVisualStyleBackColor = true;
+            checkBoxGargoyle.CheckedChanged += OnChangeGargoyle;
             // 
             // button1
             // 
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(18, 194);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 29);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Export Report";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickBuildAnimationList);
+            button1.AutoSize = true;
+            button1.Location = new System.Drawing.Point(18, 194);
+            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(104, 29);
+            button1.TabIndex = 1;
+            button1.Text = "Export Report";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += OnClickBuildAnimationList;
             // 
             // LayerSort
             // 
-            this.LayerSort.AutoSize = true;
-            this.LayerSort.Location = new System.Drawing.Point(18, 10);
-            this.LayerSort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.LayerSort.Name = "LayerSort";
-            this.LayerSort.Size = new System.Drawing.Size(78, 19);
-            this.LayerSort.TabIndex = 3;
-            this.LayerSort.Text = "Layer Sort";
-            this.LayerSort.UseVisualStyleBackColor = true;
-            this.LayerSort.CheckedChanged += new System.EventHandler(this.OnChangeSort);
+            LayerSort.AutoSize = true;
+            LayerSort.Location = new System.Drawing.Point(18, 10);
+            LayerSort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            LayerSort.Name = "LayerSort";
+            LayerSort.Size = new System.Drawing.Size(78, 19);
+            LayerSort.TabIndex = 3;
+            LayerSort.Text = "Layer Sort";
+            LayerSort.UseVisualStyleBackColor = true;
+            LayerSort.CheckedChanged += OnChangeSort;
             // 
             // checkBoxElve
             // 
-            this.checkBoxElve.AutoSize = true;
-            this.checkBoxElve.Location = new System.Drawing.Point(18, 90);
-            this.checkBoxElve.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxElve.Name = "checkBoxElve";
-            this.checkBoxElve.Size = new System.Drawing.Size(38, 19);
-            this.checkBoxElve.TabIndex = 2;
-            this.checkBoxElve.Text = "Elf";
-            this.checkBoxElve.UseVisualStyleBackColor = true;
-            this.checkBoxElve.CheckedChanged += new System.EventHandler(this.OnChangeElve);
+            checkBoxElve.AutoSize = true;
+            checkBoxElve.Location = new System.Drawing.Point(18, 90);
+            checkBoxElve.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxElve.Name = "checkBoxElve";
+            checkBoxElve.Size = new System.Drawing.Size(38, 19);
+            checkBoxElve.TabIndex = 2;
+            checkBoxElve.Text = "Elf";
+            checkBoxElve.UseVisualStyleBackColor = true;
+            checkBoxElve.CheckedChanged += OnChangeElve;
             // 
             // checkBoxfemale
             // 
-            this.checkBoxfemale.AutoSize = true;
-            this.checkBoxfemale.Location = new System.Drawing.Point(18, 37);
-            this.checkBoxfemale.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxfemale.Name = "checkBoxfemale";
-            this.checkBoxfemale.Size = new System.Drawing.Size(64, 19);
-            this.checkBoxfemale.TabIndex = 1;
-            this.checkBoxfemale.Text = "Female";
-            this.checkBoxfemale.UseVisualStyleBackColor = true;
-            this.checkBoxfemale.CheckedChanged += new System.EventHandler(this.OnChangeFemale);
+            checkBoxfemale.AutoSize = true;
+            checkBoxfemale.Location = new System.Drawing.Point(18, 37);
+            checkBoxfemale.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxfemale.Name = "checkBoxfemale";
+            checkBoxfemale.Size = new System.Drawing.Size(64, 19);
+            checkBoxfemale.TabIndex = 1;
+            checkBoxfemale.Text = "Female";
+            checkBoxfemale.UseVisualStyleBackColor = true;
+            checkBoxfemale.CheckedChanged += OnChangeFemale;
             // 
             // buttonDress
             // 
-            this.buttonDress.Location = new System.Drawing.Point(18, 160);
-            this.buttonDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonDress.Name = "buttonDress";
-            this.buttonDress.Size = new System.Drawing.Size(88, 27);
-            this.buttonDress.TabIndex = 0;
-            this.buttonDress.Text = "Dress Item";
-            this.buttonDress.UseVisualStyleBackColor = true;
-            this.buttonDress.Click += new System.EventHandler(this.OnClick_Dress);
+            buttonDress.Location = new System.Drawing.Point(18, 160);
+            buttonDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonDress.Name = "buttonDress";
+            buttonDress.Size = new System.Drawing.Size(88, 27);
+            buttonDress.TabIndex = 0;
+            buttonDress.Text = "Dress Item";
+            buttonDress.UseVisualStyleBackColor = true;
+            buttonDress.Click += OnClick_Dress;
             // 
             // pictureBoxDress
             // 
-            this.pictureBoxDress.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBoxDress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxDress.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBoxDress.Name = "pictureBoxDress";
-            this.pictureBoxDress.Size = new System.Drawing.Size(238, 378);
-            this.pictureBoxDress.TabIndex = 0;
-            this.pictureBoxDress.TabStop = false;
-            this.pictureBoxDress.SizeChanged += new System.EventHandler(this.OnResizePictureDress);
+            pictureBoxDress.BackColor = System.Drawing.SystemColors.Control;
+            pictureBoxDress.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBoxDress.Location = new System.Drawing.Point(0, 0);
+            pictureBoxDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBoxDress.Name = "pictureBoxDress";
+            pictureBoxDress.Size = new System.Drawing.Size(238, 378);
+            pictureBoxDress.TabIndex = 0;
+            pictureBoxDress.TabStop = false;
+            pictureBoxDress.SizeChanged += OnResizePictureDress;
             // 
             // splitContainer4
             // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer4.IsSplitterFixed = true;
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer4.Name = "splitContainer4";
+            splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            splitContainer4.IsSplitterFixed = true;
+            splitContainer4.Location = new System.Drawing.Point(0, 0);
+            splitContainer4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer4.Name = "splitContainer4";
             // 
             // splitContainer4.Panel1
             // 
-            this.splitContainer4.Panel1.Controls.Add(this.checkedListBoxWear);
-            this.splitContainer4.Panel1.Controls.Add(this.groupBox1);
+            splitContainer4.Panel1.Controls.Add(checkedListBoxWear);
+            splitContainer4.Panel1.Controls.Add(groupBox1);
             // 
             // splitContainer4.Panel2
             // 
-            this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(414, 623);
-            this.splitContainer4.SplitterDistance = 160;
-            this.splitContainer4.SplitterWidth = 5;
-            this.splitContainer4.TabIndex = 1;
+            splitContainer4.Panel2.Controls.Add(splitContainer5);
+            splitContainer4.Size = new System.Drawing.Size(414, 623);
+            splitContainer4.SplitterDistance = 160;
+            splitContainer4.SplitterWidth = 5;
+            splitContainer4.TabIndex = 1;
             // 
             // checkedListBoxWear
             // 
-            this.checkedListBoxWear.CheckOnClick = true;
-            this.checkedListBoxWear.ContextMenuStrip = this.contextMenuStrip1;
-            this.checkedListBoxWear.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBoxWear.FormattingEnabled = true;
-            this.checkedListBoxWear.Location = new System.Drawing.Point(0, 0);
-            this.checkedListBoxWear.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkedListBoxWear.Name = "checkedListBoxWear";
-            this.checkedListBoxWear.Size = new System.Drawing.Size(160, 569);
-            this.checkedListBoxWear.TabIndex = 0;
-            this.checkedListBoxWear.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBox_ItemCheck);
-            this.checkedListBoxWear.SelectedIndexChanged += new System.EventHandler(this.CheckedListBox_Change);
+            checkedListBoxWear.CheckOnClick = true;
+            checkedListBoxWear.ContextMenuStrip = contextMenuStrip1;
+            checkedListBoxWear.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkedListBoxWear.FormattingEnabled = true;
+            checkedListBoxWear.Location = new System.Drawing.Point(0, 0);
+            checkedListBoxWear.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkedListBoxWear.Name = "checkedListBoxWear";
+            checkedListBoxWear.Size = new System.Drawing.Size(160, 569);
+            checkedListBoxWear.TabIndex = 0;
+            checkedListBoxWear.ItemCheck += CheckedListBox_ItemCheck;
+            checkedListBoxWear.SelectedIndexChanged += CheckedListBox_Change;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.unDressToolStripMenuItem,
-            this.huToolStripMenuItem,
-            this.hueToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.unDressAllToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(135, 98);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { unDressToolStripMenuItem, huToolStripMenuItem, hueToolStripMenuItem, toolStripSeparator1, unDressAllToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(135, 98);
             // 
             // unDressToolStripMenuItem
             // 
-            this.unDressToolStripMenuItem.Name = "unDressToolStripMenuItem";
-            this.unDressToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.unDressToolStripMenuItem.Text = "UnDress";
-            this.unDressToolStripMenuItem.Click += new System.EventHandler(this.OnClick_UnDress);
+            unDressToolStripMenuItem.Name = "unDressToolStripMenuItem";
+            unDressToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            unDressToolStripMenuItem.Text = "UnDress";
+            unDressToolStripMenuItem.Click += OnClick_UnDress;
             // 
             // huToolStripMenuItem
             // 
-            this.huToolStripMenuItem.Name = "huToolStripMenuItem";
-            this.huToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.huToolStripMenuItem.Text = "Hue";
-            this.huToolStripMenuItem.Click += new System.EventHandler(this.OnClickHue);
+            huToolStripMenuItem.Name = "huToolStripMenuItem";
+            huToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            huToolStripMenuItem.Text = "Hue";
+            huToolStripMenuItem.Click += OnClickHue;
             // 
             // hueToolStripMenuItem
             // 
-            this.hueToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripTextBox1});
-            this.hueToolStripMenuItem.Name = "hueToolStripMenuItem";
-            this.hueToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.hueToolStripMenuItem.Text = "Hue..";
+            hueToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripTextBox1 });
+            hueToolStripMenuItem.Name = "hueToolStripMenuItem";
+            hueToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            hueToolStripMenuItem.Text = "Hue..";
             // 
             // toolStripTextBox1
             // 
-            this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
-            this.toolStripTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownHue);
+            toolStripTextBox1.Name = "toolStripTextBox1";
+            toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
+            toolStripTextBox1.KeyDown += OnKeyDownHue;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
             // 
             // unDressAllToolStripMenuItem
             // 
-            this.unDressAllToolStripMenuItem.Name = "unDressAllToolStripMenuItem";
-            this.unDressAllToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.unDressAllToolStripMenuItem.Text = "UnDress All";
-            this.unDressAllToolStripMenuItem.Click += new System.EventHandler(this.OnClickUndressAll);
+            unDressAllToolStripMenuItem.Name = "unDressAllToolStripMenuItem";
+            unDressAllToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            unDressAllToolStripMenuItem.Text = "UnDress All";
+            unDressAllToolStripMenuItem.Click += OnClickUndressAll;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBoxMount);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox1.Location = new System.Drawing.Point(0, 569);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(160, 54);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Mount";
+            groupBox1.Controls.Add(textBoxMount);
+            groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            groupBox1.Location = new System.Drawing.Point(0, 569);
+            groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox1.Size = new System.Drawing.Size(160, 54);
+            groupBox1.TabIndex = 1;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Mount";
             // 
             // textBoxMount
             // 
-            this.textBoxMount.Location = new System.Drawing.Point(7, 22);
-            this.textBoxMount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxMount.Name = "textBoxMount";
-            this.textBoxMount.Size = new System.Drawing.Size(116, 23);
-            this.textBoxMount.TabIndex = 0;
-            this.textBoxMount.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MountTextBoxOnKeyDown);
+            textBoxMount.Location = new System.Drawing.Point(7, 22);
+            textBoxMount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxMount.Name = "textBoxMount";
+            textBoxMount.Size = new System.Drawing.Size(116, 23);
+            textBoxMount.TabIndex = 0;
+            textBoxMount.KeyDown += MountTextBoxOnKeyDown;
             // 
             // splitContainer5
             // 
-            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer5.Name = "splitContainer5";
-            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer5.Location = new System.Drawing.Point(0, 0);
+            splitContainer5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer5.Name = "splitContainer5";
+            splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer5.Panel1
             // 
-            this.splitContainer5.Panel1.Controls.Add(this.groupBoxAnimate);
-            this.splitContainer5.Panel1.Controls.Add(this.DressPic);
+            splitContainer5.Panel1.Controls.Add(groupBoxAnimate);
+            splitContainer5.Panel1.Controls.Add(DressPic);
             // 
             // splitContainer5.Panel2
             // 
-            this.splitContainer5.Panel2.Controls.Add(this.TextBox);
-            this.splitContainer5.Size = new System.Drawing.Size(249, 623);
-            this.splitContainer5.SplitterDistance = 477;
-            this.splitContainer5.SplitterWidth = 5;
-            this.splitContainer5.TabIndex = 1;
+            splitContainer5.Panel2.Controls.Add(TextBox);
+            splitContainer5.Size = new System.Drawing.Size(249, 623);
+            splitContainer5.SplitterDistance = 477;
+            splitContainer5.SplitterWidth = 5;
+            splitContainer5.TabIndex = 1;
             // 
             // groupBoxAnimate
             // 
-            this.groupBoxAnimate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxAnimate.Controls.Add(this.ActionBar);
-            this.groupBoxAnimate.Controls.Add(this.FacingBar);
-            this.groupBoxAnimate.Location = new System.Drawing.Point(0, 361);
-            this.groupBoxAnimate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBoxAnimate.Name = "groupBoxAnimate";
-            this.groupBoxAnimate.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBoxAnimate.Size = new System.Drawing.Size(245, 112);
-            this.groupBoxAnimate.TabIndex = 1;
-            this.groupBoxAnimate.TabStop = false;
-            this.groupBoxAnimate.Text = "Facing/Action";
+            groupBoxAnimate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            groupBoxAnimate.Controls.Add(ActionBar);
+            groupBoxAnimate.Controls.Add(FacingBar);
+            groupBoxAnimate.Location = new System.Drawing.Point(0, 361);
+            groupBoxAnimate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBoxAnimate.Name = "groupBoxAnimate";
+            groupBoxAnimate.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBoxAnimate.Size = new System.Drawing.Size(245, 112);
+            groupBoxAnimate.TabIndex = 1;
+            groupBoxAnimate.TabStop = false;
+            groupBoxAnimate.Text = "Facing/Action";
             // 
             // ActionBar
             // 
-            this.ActionBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ActionBar.AutoSize = false;
-            this.ActionBar.Location = new System.Drawing.Point(2, 61);
-            this.ActionBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ActionBar.Maximum = 34;
-            this.ActionBar.Name = "ActionBar";
-            this.ActionBar.Size = new System.Drawing.Size(240, 40);
-            this.ActionBar.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.ActionBar, "0 Walk_01");
-            this.ActionBar.Scroll += new System.EventHandler(this.OnScroll_Action);
+            ActionBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            ActionBar.AutoSize = false;
+            ActionBar.Location = new System.Drawing.Point(2, 61);
+            ActionBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ActionBar.Maximum = 34;
+            ActionBar.Name = "ActionBar";
+            ActionBar.Size = new System.Drawing.Size(240, 40);
+            ActionBar.TabIndex = 1;
+            toolTip1.SetToolTip(ActionBar, "0 Walk_01");
+            ActionBar.Scroll += OnScroll_Action;
             // 
             // FacingBar
             // 
-            this.FacingBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.FacingBar.AutoSize = false;
-            this.FacingBar.Location = new System.Drawing.Point(2, 23);
-            this.FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.FacingBar.Maximum = 7;
-            this.FacingBar.Name = "FacingBar";
-            this.FacingBar.Size = new System.Drawing.Size(240, 42);
-            this.FacingBar.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.FacingBar, "1");
-            this.FacingBar.Scroll += new System.EventHandler(this.OnScroll_Facing);
+            FacingBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            FacingBar.AutoSize = false;
+            FacingBar.Location = new System.Drawing.Point(2, 23);
+            FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            FacingBar.Maximum = 7;
+            FacingBar.Name = "FacingBar";
+            FacingBar.Size = new System.Drawing.Size(240, 42);
+            FacingBar.TabIndex = 0;
+            toolTip1.SetToolTip(FacingBar, "1");
+            FacingBar.Scroll += OnScroll_Facing;
             // 
             // DressPic
             // 
-            this.DressPic.ContextMenuStrip = this.contextMenuStrip2;
-            this.DressPic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DressPic.Location = new System.Drawing.Point(0, 0);
-            this.DressPic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.DressPic.Name = "DressPic";
-            this.DressPic.Size = new System.Drawing.Size(249, 477);
-            this.DressPic.TabIndex = 0;
-            this.DressPic.TabStop = false;
-            this.DressPic.SizeChanged += new System.EventHandler(this.OnResizeDressPic);
+            DressPic.ContextMenuStrip = contextMenuStrip2;
+            DressPic.Dock = System.Windows.Forms.DockStyle.Fill;
+            DressPic.Location = new System.Drawing.Point(0, 0);
+            DressPic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            DressPic.Name = "DressPic";
+            DressPic.Size = new System.Drawing.Size(249, 477);
+            DressPic.TabIndex = 0;
+            DressPic.TabStop = false;
+            DressPic.SizeChanged += OnResizeDressPic;
             // 
             // contextMenuStrip2
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showAnimationToolStripMenuItem,
-            this.animateToolStripMenuItem,
-            this.extractImageToolStripMenuItem,
-            this.extractAnimationToolStripMenuItem});
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(174, 92);
+            contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showAnimationToolStripMenuItem, animateToolStripMenuItem, extractImageToolStripMenuItem, extractAnimationToolStripMenuItem });
+            contextMenuStrip2.Name = "contextMenuStrip2";
+            contextMenuStrip2.Size = new System.Drawing.Size(174, 92);
             // 
             // showAnimationToolStripMenuItem
             // 
-            this.showAnimationToolStripMenuItem.Name = "showAnimationToolStripMenuItem";
-            this.showAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.showAnimationToolStripMenuItem.Text = "Show Animation";
-            this.showAnimationToolStripMenuItem.Click += new System.EventHandler(this.OnClick_ChangeDisplay);
+            showAnimationToolStripMenuItem.Name = "showAnimationToolStripMenuItem";
+            showAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            showAnimationToolStripMenuItem.Text = "Show Animation";
+            showAnimationToolStripMenuItem.Click += OnClick_ChangeDisplay;
             // 
             // animateToolStripMenuItem
             // 
-            this.animateToolStripMenuItem.CheckOnClick = true;
-            this.animateToolStripMenuItem.Name = "animateToolStripMenuItem";
-            this.animateToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.animateToolStripMenuItem.Text = "Animate";
-            this.animateToolStripMenuItem.Click += new System.EventHandler(this.OnClick_Animate);
+            animateToolStripMenuItem.CheckOnClick = true;
+            animateToolStripMenuItem.Name = "animateToolStripMenuItem";
+            animateToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            animateToolStripMenuItem.Text = "Animate";
+            animateToolStripMenuItem.Click += OnClick_Animate;
             // 
             // extractImageToolStripMenuItem
             // 
-            this.extractImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.asBmpToolStripMenuItem,
-            this.asTiffToolStripMenuItem,
-            this.asJpgToolStripMenuItem,
-            this.asPngToolStripMenuItem});
-            this.extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
-            this.extractImageToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.extractImageToolStripMenuItem.Text = "Export Image..";
+            extractImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem, asTiffToolStripMenuItem, asJpgToolStripMenuItem, asPngToolStripMenuItem });
+            extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
+            extractImageToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            extractImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBmpToolStripMenuItem
             // 
-            this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImageBmp);
+            asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
+            asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asBmpToolStripMenuItem.Text = "As Bmp";
+            asBmpToolStripMenuItem.Click += OnClickExtractImageBmp;
             // 
             // asTiffToolStripMenuItem
             // 
-            this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImageTiff);
+            asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
+            asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asTiffToolStripMenuItem.Text = "As Tiff";
+            asTiffToolStripMenuItem.Click += OnClickExtractImageTiff;
             // 
             // asJpgToolStripMenuItem
             // 
-            this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asJpgToolStripMenuItem.Text = "As Jpg";
-            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImageJpg);
+            asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
+            asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asJpgToolStripMenuItem.Text = "As Jpg";
+            asJpgToolStripMenuItem.Click += OnClickExtractImageJpg;
             // 
             // asPngToolStripMenuItem
             // 
-            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asPngToolStripMenuItem.Text = "As Png";
-            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.OnClickExtractImagePng);
+            asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asPngToolStripMenuItem.Text = "As Png";
+            asPngToolStripMenuItem.Click += OnClickExtractImagePng;
             // 
             // extractAnimationToolStripMenuItem
             // 
-            this.extractAnimationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.asBmpToolStripMenuItem1,
-            this.asTiffToolStripMenuItem1,
-            this.asJpgToolStripMenuItem1,
-            this.asPngToolStripMenuItem1});
-            this.extractAnimationToolStripMenuItem.Name = "extractAnimationToolStripMenuItem";
-            this.extractAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.extractAnimationToolStripMenuItem.Text = "Export Animation..";
+            extractAnimationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem1, asTiffToolStripMenuItem1, asJpgToolStripMenuItem1, asPngToolStripMenuItem1, asAnimatedGifToolStripMenuItem, asAnimatedGifnoLoopingToolStripMenuItem });
+            extractAnimationToolStripMenuItem.Name = "extractAnimationToolStripMenuItem";
+            extractAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            extractAnimationToolStripMenuItem.Text = "Export Animation..";
             // 
             // asBmpToolStripMenuItem1
             // 
-            this.asBmpToolStripMenuItem1.Name = "asBmpToolStripMenuItem1";
-            this.asBmpToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
-            this.asBmpToolStripMenuItem1.Text = "As Bmp";
-            this.asBmpToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimBmp);
+            asBmpToolStripMenuItem1.Name = "asBmpToolStripMenuItem1";
+            asBmpToolStripMenuItem1.Size = new System.Drawing.Size(227, 22);
+            asBmpToolStripMenuItem1.Text = "As Bmp";
+            asBmpToolStripMenuItem1.Click += OnClickExtractAnimBmp;
             // 
             // asTiffToolStripMenuItem1
             // 
-            this.asTiffToolStripMenuItem1.Name = "asTiffToolStripMenuItem1";
-            this.asTiffToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
-            this.asTiffToolStripMenuItem1.Text = "As Tiff";
-            this.asTiffToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimTiff);
+            asTiffToolStripMenuItem1.Name = "asTiffToolStripMenuItem1";
+            asTiffToolStripMenuItem1.Size = new System.Drawing.Size(227, 22);
+            asTiffToolStripMenuItem1.Text = "As Tiff";
+            asTiffToolStripMenuItem1.Click += OnClickExtractAnimTiff;
             // 
             // asJpgToolStripMenuItem1
             // 
-            this.asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
-            this.asJpgToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
-            this.asJpgToolStripMenuItem1.Text = "As Jpg";
-            this.asJpgToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimJpg);
+            asJpgToolStripMenuItem1.Name = "asJpgToolStripMenuItem1";
+            asJpgToolStripMenuItem1.Size = new System.Drawing.Size(227, 22);
+            asJpgToolStripMenuItem1.Text = "As Jpg";
+            asJpgToolStripMenuItem1.Click += OnClickExtractAnimJpg;
             // 
             // asPngToolStripMenuItem1
             // 
-            this.asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
-            this.asPngToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
-            this.asPngToolStripMenuItem1.Text = "As Png";
-            this.asPngToolStripMenuItem1.Click += new System.EventHandler(this.OnClickExtractAnimPng);
+            asPngToolStripMenuItem1.Name = "asPngToolStripMenuItem1";
+            asPngToolStripMenuItem1.Size = new System.Drawing.Size(227, 22);
+            asPngToolStripMenuItem1.Text = "As Png";
+            asPngToolStripMenuItem1.Click += OnClickExtractAnimPng;
+            // 
+            // asAnimatedGifToolStripMenuItem
+            // 
+            asAnimatedGifToolStripMenuItem.Name = "asAnimatedGifToolStripMenuItem";
+            asAnimatedGifToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            asAnimatedGifToolStripMenuItem.Text = "As animated Gif (looping)";
+            asAnimatedGifToolStripMenuItem.Click += OnClickExtractAnimGifLooping;
+            // 
+            // asAnimatedGifnoLoopingToolStripMenuItem
+            // 
+            asAnimatedGifnoLoopingToolStripMenuItem.Name = "asAnimatedGifnoLoopingToolStripMenuItem";
+            asAnimatedGifnoLoopingToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            asAnimatedGifnoLoopingToolStripMenuItem.Text = "As animated Gif (no looping)";
+            asAnimatedGifnoLoopingToolStripMenuItem.Click += OnClickExtractAnimGifNoLooping;
             // 
             // TextBox
             // 
-            this.TextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TextBox.Location = new System.Drawing.Point(0, 0);
-            this.TextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.TextBox.Name = "TextBox";
-            this.TextBox.ReadOnly = true;
-            this.TextBox.Size = new System.Drawing.Size(249, 141);
-            this.TextBox.TabIndex = 0;
-            this.TextBox.Text = "";
+            TextBox.BackColor = System.Drawing.SystemColors.Control;
+            TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            TextBox.Location = new System.Drawing.Point(0, 0);
+            TextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TextBox.Name = "TextBox";
+            TextBox.ReadOnly = true;
+            TextBox.Size = new System.Drawing.Size(249, 141);
+            TextBox.TabIndex = 0;
+            TextBox.Text = "";
             // 
             // DressControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "DressControl";
-            this.Size = new System.Drawing.Size(910, 623);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
-            this.ItemsSplitContainer.Panel1.ResumeLayout(false);
-            this.ItemsSplitContainer.Panel1.PerformLayout();
-            this.ItemsSplitContainer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ItemsSplitContainer)).EndInit();
-            this.ItemsSplitContainer.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel1.PerformLayout();
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDress)).EndInit();
-            this.splitContainer4.Panel1.ResumeLayout(false);
-            this.splitContainer4.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
-            this.splitContainer4.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.splitContainer5.Panel1.ResumeLayout(false);
-            this.splitContainer5.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
-            this.splitContainer5.ResumeLayout(false);
-            this.groupBoxAnimate.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ActionBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FacingBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DressPic)).EndInit();
-            this.contextMenuStrip2.ResumeLayout(false);
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(splitContainer1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "DressControl";
+            Size = new System.Drawing.Size(910, 623);
+            Load += OnLoad;
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
+            ItemsSplitContainer.Panel1.ResumeLayout(false);
+            ItemsSplitContainer.Panel1.PerformLayout();
+            ItemsSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ItemsSplitContainer).EndInit();
+            ItemsSplitContainer.ResumeLayout(false);
+            splitContainer3.Panel1.ResumeLayout(false);
+            splitContainer3.Panel1.PerformLayout();
+            splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
+            splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBoxDress).EndInit();
+            splitContainer4.Panel1.ResumeLayout(false);
+            splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
+            splitContainer4.ResumeLayout(false);
+            contextMenuStrip1.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            splitContainer5.Panel1.ResumeLayout(false);
+            splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
+            splitContainer5.ResumeLayout(false);
+            groupBoxAnimate.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ActionBar).EndInit();
+            ((System.ComponentModel.ISupportInitialize)FacingBar).EndInit();
+            ((System.ComponentModel.ISupportInitialize)DressPic).EndInit();
+            contextMenuStrip2.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
@@ -737,5 +731,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Button FindNextItemButton;
         private System.Windows.Forms.TreeView treeViewItems;
         private System.Windows.Forms.TextBox SearchItemTextBox;
+        private System.Windows.Forms.ToolStripMenuItem asAnimatedGifToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asAnimatedGifnoLoopingToolStripMenuItem;
     }
 }

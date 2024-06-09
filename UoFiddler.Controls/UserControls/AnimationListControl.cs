@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using AnimatedGif;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -354,7 +355,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void SetPicture()
         {
-            _frames = null;
             _mainPicture?.Dispose();
             if (_currentSelect == 0)
             {
@@ -484,8 +484,8 @@ namespace UoFiddler.Controls.UserControls
             {
                 Point location = Point.Empty;
                 Size size = _mainPicture.Size;
-                location.X = (MainPictureBox.Width - _mainPicture.Width) / 2;
-                location.Y = (MainPictureBox.Height - _mainPicture.Height) / 2;
+                location.X = (MainPictureBox.Width / 2) - _frames[_frameIndex].Center.X;
+                location.Y = (MainPictureBox.Height / 2) - _frames[_frameIndex].Center.Y - _frames[_frameIndex].Bitmap.Height / 2;
 
                 Rectangle destRect = new Rectangle(location, size);
 
@@ -496,8 +496,7 @@ namespace UoFiddler.Controls.UserControls
                 _mainPicture = null;
             }
         }
-
-        private void TreeViewMobs_AfterSelect(object sender, TreeViewEventArgs e)
+    private void TreeViewMobs_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Parent != null)
             {
@@ -1069,6 +1068,59 @@ namespace UoFiddler.Controls.UserControls
 
                 newBitmap.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.{fileExtension}", imageFormat);
             }
+        }
+
+        private void ExportAnimatedGif(bool looping)
+        {
+            if (!Animate || _frames == null)
+            {
+                return;
+            }
+
+            var outputFile = Path.Combine(Options.OutputPath, $"{(_displayType == 1 ? "Equipment" : "Mob")} {_currentSelect}.gif");
+            var maxFrameSize = new Size(0, 0);
+
+            foreach (var frame in _frames)
+            {
+                maxFrameSize.Width = Math.Max(maxFrameSize.Width, frame.Bitmap.Width);
+                maxFrameSize.Height = Math.Max(maxFrameSize.Height, frame.Bitmap.Height);
+            }
+
+            {
+                using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay: 150);
+                foreach (var frame in _frames)
+                {
+                    if (frame == null || frame.Bitmap == null)
+                    {
+                        continue;
+                    }
+
+                    using Bitmap target = new Bitmap(maxFrameSize.Width, maxFrameSize.Height);
+                    using Graphics g = Graphics.FromImage(target);
+                    g.DrawImage(frame.Bitmap, 0, 0);
+                    gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);
+                }
+            }
+
+            if (!looping)
+            {
+                using var stream = new FileStream(outputFile, FileMode.Open, FileAccess.Write);
+                stream.Seek(28, SeekOrigin.Begin);
+                stream.WriteByte(0);
+            }
+
+            MessageBox.Show($"InGame Anim saved to {outputFile}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
+
+        private void OnClickExtractAnimGifLooping(object sender, EventArgs e)
+        {
+            ExportAnimatedGif(true);
+        }
+
+        private void OnClickExtractAnimGifNoLooping(object sender, EventArgs e)
+        {
+            ExportAnimatedGif(false);
         }
     }
 

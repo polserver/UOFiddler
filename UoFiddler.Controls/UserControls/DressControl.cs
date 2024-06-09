@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using AnimatedGif;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -93,6 +94,8 @@ namespace UoFiddler.Controls.UserControls
 
         private readonly Point _drawPoint = new Point(0, 0);
         private Point _drawPointAni = new Point(100, 100);
+        private Size _animSize = new Size(0, 0);
+        private Point _minDrawPointAni = new Point(int.MaxValue, int.MaxValue);
 
         private object[] _layers = new object[25];
         private readonly bool[] _layerVisible = new bool[25];
@@ -496,6 +499,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            _animSize = new Size(0, 0);
+            _minDrawPointAni = new Point(int.MaxValue, int.MaxValue);
             int hue = 0;
             int back = 0;
             if (!_female)
@@ -552,10 +557,10 @@ namespace UoFiddler.Controls.UserControls
 
             for (int i = 0; i < count; ++i)
             {
-                _animation[i] = new Bitmap(DressPic.Width, DressPic.Height);
+                _animation[i] = new Bitmap(DressPic.Width, DressPic.Height,  PixelFormat.Format32bppArgb);
                 using (Graphics graph = Graphics.FromImage(_animation[i]))
                 {
-                    graph.Clear(Color.WhiteSmoke);
+                    graph.Clear(Color.Transparent);
                     if (_mount != 0)
                     {
                         if (_action >= 23 && _action <= 29) //mount animations
@@ -584,6 +589,10 @@ namespace UoFiddler.Controls.UserControls
                                 {
                                     draw.X = _drawPointAni.X - mountFrame[i].Center.X;
                                     draw.Y = _drawPointAni.Y - mountFrame[i].Center.Y - mountFrame[i].Bitmap.Height;
+                                    _minDrawPointAni.X = Math.Min(_minDrawPointAni.X, draw.X);
+                                    _minDrawPointAni.Y = Math.Min(_minDrawPointAni.Y, draw.Y);
+                                    _animSize.Width = Math.Max(_animSize.Width, draw.X + mountFrame[i].Bitmap.Width);
+                                    _animSize.Height = Math.Max(_animSize.Height, draw.Y + mountFrame[i].Bitmap.Height);
                                     graph.DrawImage(mountFrame[i].Bitmap, draw);
                                 }
                             }
@@ -591,6 +600,11 @@ namespace UoFiddler.Controls.UserControls
                     }
                     draw.X = _drawPointAni.X - mobile[i].Center.X;
                     draw.Y = _drawPointAni.Y - mobile[i].Center.Y - mobile[i].Bitmap.Height;
+                    _minDrawPointAni.X = Math.Min(_minDrawPointAni.X, draw.X);
+                    _minDrawPointAni.Y = Math.Min(_minDrawPointAni.Y, draw.Y);
+                    _animSize.Width = Math.Max(_animSize.Width, draw.X + mobile[i].Bitmap.Width);
+                    _animSize.Height = Math.Max(_animSize.Height, draw.Y + mobile[i].Bitmap.Height);
+
                     graph.DrawImage(mobile[i].Bitmap, draw);
                     for (int j = 1; j < animOrder.Length; ++j)
                     {
@@ -626,7 +640,10 @@ namespace UoFiddler.Controls.UserControls
 
                         draw.X = _drawPointAni.X - frames[i].Center.X;
                         draw.Y = _drawPointAni.Y - frames[i].Center.Y - frames[i].Bitmap.Height;
-
+                        _minDrawPointAni.X = Math.Min(_minDrawPointAni.X, draw.X);
+                        _minDrawPointAni.Y = Math.Min(_minDrawPointAni.Y, draw.Y);
+                        _animSize.Width = Math.Max(_animSize.Width, draw.X + frames[i].Bitmap.Width);
+                        _animSize.Height = Math.Max(_animSize.Height, draw.Y + frames[i].Bitmap.Height);
                         graph.DrawImage(frames[i].Bitmap, draw);
                     }
                 }
@@ -656,6 +673,7 @@ namespace UoFiddler.Controls.UserControls
 
             using (Graphics graph = Graphics.FromImage(DressPic.Image))
             {
+                graph.Clear(Color.Transparent);
                 graph.DrawImage(_animation[_mFrameIndex], _drawPoint);
             }
             DressPic.Invalidate();
@@ -1279,6 +1297,51 @@ namespace UoFiddler.Controls.UserControls
 
             MessageBox.Show($"InGame Anim saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
+
+        private void ExportAnimatedGif(bool looping)
+        {
+            var outputFile = Path.Combine(Options.OutputPath, "Dress Anim.gif");
+
+            {
+                using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay: 150);
+                foreach (var animation in _animation)
+                {
+                    if (animation != null)
+                    {
+                        using (Bitmap target = new Bitmap(_animSize.Width - _minDrawPointAni.X, _animSize.Height - _minDrawPointAni.Y))
+                        {
+                            using (Graphics g = Graphics.FromImage(target))
+                            {
+                                g.DrawImage(animation,
+                                    new Rectangle(new Point(0, 0), _animSize),
+                                    new Rectangle(_minDrawPointAni.X, _minDrawPointAni.Y, _animSize.Width, _animSize.Height),
+                                    GraphicsUnit.Pixel);
+                            }
+                            gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);
+                        }
+                    }
+                }
+            }
+
+            if (!looping)
+            {
+                using var stream = new FileStream(outputFile, FileMode.Open, FileAccess.Write);
+                stream.Seek(28, SeekOrigin.Begin);
+                stream.WriteByte(0);
+            }
+
+            MessageBox.Show($"InGame Anim saved to {outputFile}", "Saved", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
+        private void OnClickExtractAnimGifLooping(object sender, EventArgs e)
+        {
+            ExportAnimatedGif(true);
+        }
+
+        private void OnClickExtractAnimGifNoLooping(object sender, EventArgs e)
+        {
+            ExportAnimatedGif(false);
         }
 
         private void OnClickBuildAnimationList(object sender, EventArgs e)
