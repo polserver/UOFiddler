@@ -105,7 +105,7 @@ namespace UoFiddler.Controls.UserControls
 
                         // Not in a lock, as event handlers run on main thread, and the value-writing
                         // to _huedFrames above will not happen simultaneously as this read.
-                        pictureBox1.Image = _huedFrames[index];
+                        MainPictureBox.Image = _huedFrames[index];
                     }
                     else
                     {
@@ -115,7 +115,7 @@ namespace UoFiddler.Controls.UserControls
                             graphic += _selAnimdataEntry.FrameData[_curFrame];
                         }
 
-                        pictureBox1.Image = Art.GetStatic(graphic);
+                        MainPictureBox.Image = Art.GetStatic(graphic);
                     }
                 }
                 numericUpDownFrameDelay.Value = _selAnimdataEntry.FrameInterval;
@@ -332,14 +332,16 @@ namespace UoFiddler.Controls.UserControls
 
             if (_customHue == 0)
             {
-                pictureBox1.Image = Art.GetStatic(graphic);
+                var bit = Art.GetStatic(graphic);
+                Art.Measure(bit, out var xMin, out var yMin, out var xMax, out var yMax);
+                MainPictureBox.Image = bit;
             }
             else
             {
                 // In a lock, since GenerateHuedFrames() can write to this list.
                 lock (_huedFrames)
                 {
-                    pictureBox1.Image = _huedFrames[_timerFrame];
+                    MainPictureBox.Image = _huedFrames[_timerFrame];
                 }
             }
         }
@@ -724,13 +726,13 @@ namespace UoFiddler.Controls.UserControls
                     if (_customHue > 0)
                     {
                         var frame = Math.Max(0, _curFrame);
-                        pictureBox1.Image = _huedFrames[frame];
+                        MainPictureBox.Image = _huedFrames[frame];
 
                     }
                     else
                     {
                         var graphic = _currAnim + (_curFrame == -1 ? 0 : _selAnimdataEntry.FrameData[_curFrame]);
-                        pictureBox1.Image = Art.GetStatic(graphic);
+                        MainPictureBox.Image = Art.GetStatic(graphic);
                     }
                 }
             }
@@ -784,6 +786,156 @@ namespace UoFiddler.Controls.UserControls
                 MessageBox.Show($"Saved to {outputFile}");
             }
         }
+
+        private Bitmap _mainPicture;
+        private bool _imageInvalidated = true;
+        private bool _animate;
+        private bool Animate
+        {
+            get => _animate;
+            set
+            {
+                if (_animate == value)
+                {
+                    return;
+                }
+
+                _animate = value;
+                //extractAnimationToolStripMenuItem.Visible = _animate;
+                //StopAnimation();
+                _imageInvalidated = true;
+                MainPictureBox.Invalidate();
+            }
+        }
+        private void SetPicture()
+        {
+            _mainPicture?.Dispose();
+            if (_currAnim == 0)
+            {
+                return;
+            }
+
+            if (Animate)
+            {
+                _mainPicture = DoAnimation();
+            }
+            else
+            {
+                
+                // if (hue != 0)
+                // {
+                //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, true, false);
+                // }
+                // else
+                // {
+                //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, false, false);
+                //     _defHue = hue;
+                // }
+
+                // if (_frames != null)
+                // {
+                //     if (_frames[0].Bitmap != null)
+                //     {
+                //         _mainPicture = new Bitmap(_frames[0].Bitmap);
+                //         BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
+                //         GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
+                //         HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
+                //     }
+                //     else
+                //     {
+                //         _mainPicture = null;
+                //     }
+                // }
+                // else
+                {
+                    _mainPicture = null;
+                }
+            }
+        }
+
+        private Bitmap DoAnimation()
+        {
+            if (_mTimer != null)
+            {
+                return _huedFrames[_curFrame] != null
+                    ? new Bitmap(_huedFrames[_curFrame])
+                    : null;
+            }
+            return null;
+
+            // int body = _currentSelect;
+            // Animations.Translate(ref body);
+            // int hue = _customHue;
+            // if (hue != 0)
+            // {
+            //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, true, false);
+            // }
+            // else
+            // {
+            //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, false, false);
+            //     _defHue = hue;
+            // }
+
+            // if (_frames == null)
+            // {
+            //     return null;
+            // }
+
+            // BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
+            // GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
+            // HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
+            // int count = _frames.Length;
+            // _animationList = new Bitmap[count];
+
+            // for (int i = 0; i < count; ++i)
+            // {
+            //     _animationList[i] = _frames[i].Bitmap;
+            // }
+
+            // // TODO: avoid division by 0 - needs checking if this is valid logic for count.
+            // if (count <= 0)
+            // {
+            //     count = 1;
+            // }
+
+            // _timer = new Timer
+            // {
+            //     Interval = 1000 / count
+            // };
+            // _timer.Tick += AnimTick;
+            // _timer.Start();
+
+            // _frameIndex = 0;
+
+            // LoadListViewFrames(); // Reload FrameTab
+
+            // return _animationList[0] != null ? new Bitmap(_animationList[0]) : null;
+        }
+
+       private void OnPaint_MainPicture(object sender, PaintEventArgs e)
+        {
+            if (_imageInvalidated)
+            {
+                SetPicture();
+            }
+
+            if (_mainPicture != null)
+            {
+                Point location = Point.Empty;
+                Size size = _mainPicture.Size;
+                // location.X = (MainPictureBox.Width / 2) - _frames[_frameIndex].Center.X;
+                // location.Y = (MainPictureBox.Height / 2) - _frames[_frameIndex].Center.Y - _frames[_frameIndex].Bitmap.Height / 2;
+
+                Rectangle destRect = new Rectangle(location, size);
+
+                e.Graphics.DrawImage(_mainPicture, destRect, 0, 0, _mainPicture.Width, _mainPicture.Height, GraphicsUnit.Pixel);
+            }
+            else
+            {
+                _mainPicture = null;
+            }
+        }
+
     }
 
     public class AnimdataSorter : IComparer

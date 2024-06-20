@@ -47,7 +47,7 @@ namespace UoFiddler.Controls.UserControls
             FacingBar = new System.Windows.Forms.TrackBar();
             tabControl1 = new System.Windows.Forms.TabControl();
             tabPage1 = new System.Windows.Forms.TabPage();
-            MainPictureBox = new System.Windows.Forms.PictureBox();
+            MainPictureBox = new AnimatedPictureBox();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             extractImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             asBMpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -187,16 +187,16 @@ namespace UoFiddler.Controls.UserControls
             // 
             // MainPictureBox
             // 
-            MainPictureBox.BackColor = System.Drawing.Color.White;
+            MainPictureBox.Animate = false;
+            MainPictureBox.BackColor = System.Drawing.Color.Turquoise;
             MainPictureBox.ContextMenuStrip = contextMenuStrip1;
             MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            MainPictureBox.FrameDelay = 150;
             MainPictureBox.Location = new System.Drawing.Point(4, 3);
-            MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MainPictureBox.Name = "MainPictureBox";
             MainPictureBox.Size = new System.Drawing.Size(480, 344);
-            MainPictureBox.TabIndex = 0;
+            MainPictureBox.TabIndex = 1;
             MainPictureBox.TabStop = false;
-            MainPictureBox.Paint += OnPaint_MainPicture;
             // 
             // contextMenuStrip1
             // 
@@ -545,7 +545,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem hueToolStripMenuItem;
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.PictureBox MainPictureBox;
+        private AnimatedPictureBox MainPictureBox;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rewriteXmlToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton SettingsButton;
