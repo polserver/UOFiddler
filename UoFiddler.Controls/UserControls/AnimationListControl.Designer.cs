@@ -60,6 +60,7 @@ namespace UoFiddler.Controls.UserControls
             asJpgToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             asAnimatedGifToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asAnimatedGifnoLoopingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tabPage2 = new System.Windows.Forms.TabPage();
             listView = new System.Windows.Forms.ListView();
             tabPage3 = new System.Windows.Forms.TabPage();
@@ -82,7 +83,6 @@ namespace UoFiddler.Controls.UserControls
             GraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             BaseGraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             HueLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            asAnimatedGifnoLoopingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -152,7 +152,7 @@ namespace UoFiddler.Controls.UserControls
             FacingBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             FacingBar.AutoSize = false;
             FacingBar.LargeChange = 1;
-            FacingBar.Location = new System.Drawing.Point(389, 377);
+            FacingBar.Location = new System.Drawing.Point(388, 377);
             FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             FacingBar.Maximum = 7;
             FacingBar.Name = "FacingBar";
@@ -188,10 +188,10 @@ namespace UoFiddler.Controls.UserControls
             // MainPictureBox
             // 
             MainPictureBox.Animate = false;
-            MainPictureBox.BackColor = System.Drawing.Color.Turquoise;
             MainPictureBox.ContextMenuStrip = contextMenuStrip1;
             MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             MainPictureBox.FrameDelay = 150;
+            MainPictureBox.FrameIndex = 0;
             MainPictureBox.Location = new System.Drawing.Point(4, 3);
             MainPictureBox.Name = "MainPictureBox";
             MainPictureBox.Size = new System.Drawing.Size(480, 344);
@@ -202,13 +202,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { extractImageToolStripMenuItem, extractAnimationToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            contextMenuStrip1.Size = new System.Drawing.Size(174, 48);
             // 
             // extractImageToolStripMenuItem
             // 
             extractImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBMpToolStripMenuItem, asTiffToolStripMenuItem, asJpgToolStripMenuItem, asPngToolStripMenuItem2 });
             extractImageToolStripMenuItem.Name = "extractImageToolStripMenuItem";
-            extractImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            extractImageToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             extractImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBMpToolStripMenuItem
@@ -243,7 +243,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             extractAnimationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem1, asTiffToolStripMenuItem1, asJpgToolStripMenuItem1, asPngToolStripMenuItem1, asAnimatedGifToolStripMenuItem, asAnimatedGifnoLoopingToolStripMenuItem });
             extractAnimationToolStripMenuItem.Name = "extractAnimationToolStripMenuItem";
-            extractAnimationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            extractAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             extractAnimationToolStripMenuItem.Text = "Export Animation..";
             // 
             // asBmpToolStripMenuItem1
@@ -280,6 +280,13 @@ namespace UoFiddler.Controls.UserControls
             asAnimatedGifToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             asAnimatedGifToolStripMenuItem.Text = "As animated Gif (looping)";
             asAnimatedGifToolStripMenuItem.Click += OnClickExtractAnimGifLooping;
+            // 
+            // asAnimatedGifnoLoopingToolStripMenuItem
+            // 
+            asAnimatedGifnoLoopingToolStripMenuItem.Name = "asAnimatedGifnoLoopingToolStripMenuItem";
+            asAnimatedGifnoLoopingToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            asAnimatedGifnoLoopingToolStripMenuItem.Text = "As animated Gif (no looping)";
+            asAnimatedGifnoLoopingToolStripMenuItem.Click += OnClickExtractAnimGifNoLooping;
             // 
             // tabPage2
             // 
@@ -479,13 +486,6 @@ namespace UoFiddler.Controls.UserControls
             HueLabel.Size = new System.Drawing.Size(32, 17);
             HueLabel.Text = "Hue:";
             HueLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // asAnimatedGifnoLoopingToolStripMenuItem
-            // 
-            asAnimatedGifnoLoopingToolStripMenuItem.Name = "asAnimatedGifnoLoopingToolStripMenuItem";
-            asAnimatedGifnoLoopingToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            asAnimatedGifnoLoopingToolStripMenuItem.Text = "As animated Gif (no looping)";
-            asAnimatedGifnoLoopingToolStripMenuItem.Click += OnClickExtractAnimGifNoLooping;
             // 
             // AnimationListControl
             // 

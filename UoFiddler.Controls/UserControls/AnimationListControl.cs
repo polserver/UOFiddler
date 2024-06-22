@@ -835,20 +835,21 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}");
 
-            //for (int i = 0; i < _animationList.Length; ++i)
-            //{
-            //    using (Bitmap newBitmap = new Bitmap(_animationList[i].Width, _animationList[i].Height))
-            //    {
-            //        using (Graphics newGraph = Graphics.FromImage(newBitmap))
-            //        {
-            //            newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-            //            newGraph.DrawImage(_animationList[i], new Point(0, 0));
-            //            newGraph.Save();
-            //        }
+            for (int i = 0; i < MainPictureBox.Frames.Count; ++i)
+            {
+                var frameBitmap = MainPictureBox.Frames[i].Bitmap;
+                using (Bitmap newBitmap = new Bitmap(frameBitmap.Width, frameBitmap.Height))
+                {
+                    using (Graphics newGraph = Graphics.FromImage(newBitmap))
+                    {
+                        newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
+                        newGraph.DrawImage(frameBitmap, new Point(0, 0));
+                        newGraph.Save();
+                    }
 
-            //        newBitmap.Save($"{fileName}-{i}.{fileExtension}", imageFormat);
-            //    }
-            //}
+                    newBitmap.Save($"{fileName}-{i}.{fileExtension}", imageFormat);
+                }
+            }
 
             MessageBox.Show($"{what} saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
@@ -912,26 +913,44 @@ namespace UoFiddler.Controls.UserControls
             }
 
             var outputFile = Path.Combine(Options.OutputPath, $"{(_displayType == 1 ? "Equipment" : "Mob")} {_currentSelect}.gif");
-            var maxFrameSize = new Size(0, 0);
 
+            // Determine the point where to draw each frame's center
+            var drawCenter = new Point(0, 0);
             foreach (var frame in MainPictureBox.Frames)
             {
-                maxFrameSize.Width = Math.Max(maxFrameSize.Width, frame.Bitmap.Width);
-                maxFrameSize.Height = Math.Max(maxFrameSize.Height, frame.Bitmap.Height);
+                drawCenter.X = Math.Max(drawCenter.X, frame.Center.X);
+                drawCenter.Y = Math.Max(drawCenter.Y, frame.Center.Y);
+            }
+
+            // Knowing where to draw each frame, determine the output image size by
+            // "drawing" each frame's center at the draw point.
+            var outputSize = new Size(0, 0);
+            foreach (var frame in MainPictureBox.Frames)
+            {
+                outputSize.Width = Math.Max(outputSize.Width, drawCenter.X - frame.Center.X + frame.Bitmap.Width);
+                outputSize.Height = Math.Max(outputSize.Height, drawCenter.Y - frame.Center.Y + frame.Bitmap.Height);
             }
 
             {
                 using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay: 150);
                 foreach (var frame in MainPictureBox.Frames)
                 {
-                    if (frame == null || frame.Bitmap == null)
+                    if (frame?.Bitmap == null)
                     {
                         continue;
                     }
 
-                    using Bitmap target = new Bitmap(maxFrameSize.Width, maxFrameSize.Height);
+                    // Draw frame centering on (drawCenterX, drawCenterY)
+                    var location = new Point(
+                        drawCenter.X - frame.Center.X,
+                        drawCenter.Y - frame.Center.Y);
+
+                    using Bitmap target = new Bitmap(outputSize.Width, outputSize.Height);
                     using Graphics g = Graphics.FromImage(target);
-                    g.DrawImage(frame.Bitmap, 0, 0);
+                    g.DrawImage(frame.Bitmap, location);
+#if DEBUG
+                    g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+#endif
                     gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);
                 }
             }

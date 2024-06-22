@@ -32,8 +32,8 @@ namespace UoFiddler.Controls.UserControls
         public AnimatedFrame(Bitmap bitmap)
         {
             Bitmap = new Bitmap(bitmap);
-            Art.Measure(bitmap, out int xMin, out int yMin, out int xMax, out int yMax);
-            Center = new Point((xMax - xMin) / 2, (yMax - yMin) / 2);
+            //Art.Measure(bitmap, out int xMin, out int yMin, out int xMax, out int yMax);
+            Center = new Point(0, 0); // new Point(bitmap.Width / 2, bitmap.Height / 2 - (yMax - yMin) / 2); //  (xMax - xMin) / 2, );
         }
 
     }
@@ -42,7 +42,7 @@ namespace UoFiddler.Controls.UserControls
     internal partial class AnimatedPictureBox : PictureBox
     {
         private List<AnimatedFrame> _frames;
-        private int _currentFrame;
+        private int _frameIndex;
         private Timer _timer;
         private bool _animate;
 
@@ -52,8 +52,8 @@ namespace UoFiddler.Controls.UserControls
             get => _frames;
             set
             {
+                _frameIndex = 0;
                 _frames = value;
-                _currentFrame = 0;
 
                 if (_animate && _frames.Count != 0 && !_timer.Enabled)
                 {
@@ -72,7 +72,19 @@ namespace UoFiddler.Controls.UserControls
 
         public AnimatedFrame CurrentFrame
         {
-            get => _frames?[_currentFrame];
+            get => _frames?[_frameIndex];
+        }
+        public int FrameIndex
+        {
+            get => _frameIndex;
+            set
+            {
+                if (_frameIndex != value)
+                {
+                    _frameIndex = value % Math.Max(_frames?.Count ?? 1, 1);
+                    Invalidate();
+                }
+            }
         }
 
         public int FrameDelay
@@ -120,7 +132,7 @@ namespace UoFiddler.Controls.UserControls
         public AnimatedPictureBox()
         {
             _frames = [];
-            _currentFrame = 0;
+            _frameIndex = 0;
             _timer = new Timer
             {
                 Interval = 150,
@@ -135,7 +147,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_frames.Count > 0)
             {
-                _currentFrame = (_currentFrame + 1) % _frames.Count;
+                _frameIndex = (_frameIndex + 1) % _frames.Count;
                 Invalidate(); // Force a repaint
             }
         }
@@ -143,16 +155,17 @@ namespace UoFiddler.Controls.UserControls
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (_frames.Count > 0 && _frames[_currentFrame] != null)
+            AnimatedFrame frame = _frameIndex <_frames?.Count ? _frames[_frameIndex] : null;
+            if (frame != null)
             {
-                Point location = Point.Empty;
-                Size size = _frames[_currentFrame].Bitmap.Size;
-                location.X = (Width / 2) - _frames[_currentFrame].Center.X;
-                location.Y = (Height / 2) - _frames[_currentFrame].Center.Y - _frames[_currentFrame].Bitmap.Height;
+                var location = new Point((Width / 2) - frame.Center.X, (Height / 2) - frame.Center.Y - frame.Bitmap.Height);
 
-                var destRect = new Rectangle(location, size);
+#if DEBUG
+                e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+#endif
 
-                e.Graphics.DrawImage(_frames[_currentFrame].Bitmap, destRect, 0, 0, _frames[_currentFrame].Bitmap.Width, _frames[_currentFrame].Bitmap.Height, GraphicsUnit.Pixel);
+                e.Graphics.DrawImage(frame.Bitmap, location);
+                
             }
         }
 

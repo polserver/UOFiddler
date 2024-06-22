@@ -57,7 +57,7 @@ namespace UoFiddler.Controls.UserControls
             toolStripStatusBaseGraphic = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusGraphic = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusHue = new System.Windows.Forms.ToolStripStatusLabel();
-            MainPictureBox = new System.Windows.Forms.PictureBox();
+            MainPictureBox = new AnimatedPictureBox();
             groupBox3 = new System.Windows.Forms.GroupBox();
             button8 = new System.Windows.Forms.Button();
             button7 = new System.Windows.Forms.Button();
@@ -263,7 +263,6 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.Size = new System.Drawing.Size(322, 565);
             MainPictureBox.TabIndex = 0;
             MainPictureBox.TabStop = false;
-            MainPictureBox.Paint += OnPaint_MainPicture;
             // 
             // groupBox3
             // 
@@ -516,7 +515,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown numericUpDownFrameDelay;
         private System.Windows.Forms.NumericUpDown numericUpDownStartDelay;
-        private System.Windows.Forms.PictureBox MainPictureBox;
+        private AnimatedPictureBox MainPictureBox;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
