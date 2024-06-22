@@ -60,6 +60,7 @@ namespace UoFiddler.Controls.UserControls
                     _timer.Start();
                 }
 
+                FrameChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate(); // Force a repaint
             }
         }
@@ -70,6 +71,7 @@ namespace UoFiddler.Controls.UserControls
             get => _frames?[0];
         }
 
+        public event EventHandler FrameChanged;
         public AnimatedFrame CurrentFrame
         {
             get => _frames?[_frameIndex];
@@ -79,9 +81,11 @@ namespace UoFiddler.Controls.UserControls
             get => _frameIndex;
             set
             {
-                if (_frameIndex != value)
+                var newValue = value % Math.Max(_frames?.Count ?? 1, 1);
+                if (_frameIndex != newValue)
                 {
-                    _frameIndex = value % Math.Max(_frames?.Count ?? 1, 1);
+                    _frameIndex = newValue;
+                    FrameChanged?.Invoke(this, EventArgs.Empty);
                     Invalidate();
                 }
             }
@@ -148,6 +152,7 @@ namespace UoFiddler.Controls.UserControls
             if (_frames.Count > 0)
             {
                 _frameIndex = (_frameIndex + 1) % _frames.Count;
+                FrameChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate(); // Force a repaint
             }
         }

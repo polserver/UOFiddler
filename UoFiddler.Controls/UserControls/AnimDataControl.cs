@@ -31,11 +31,13 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            MainPictureBox.FrameChanged += MainPictureBox_FrameChanged;
         }
 
         private static bool _loaded;
         private Animdata.AnimdataEntry _selAnimdataEntry;
         private int _currentSelect;
+        private int _currentFrame;
         private AnimDataImportForm _importForm;
         private AnimDataExportForm _exportForm;
         private HuePopUpForm _showForm;
@@ -46,8 +48,18 @@ namespace UoFiddler.Controls.UserControls
 DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private int CurrFrame
         {
-            get => MainPictureBox.FrameIndex;
-            set => MainPictureBox.FrameIndex = value;
+            get => _currentFrame;
+            set
+            {
+                if (_currentFrame != value)
+                {
+                    var newGraphic = _currentSelect + value;
+
+                    toolStripStatusGraphic.Text = $"Graphic: {newGraphic} (0x{newGraphic:X})";
+                    MainPictureBox.FrameIndex = value;
+                    _currentFrame = value;
+                }
+            }
         }
 
         [Browsable(false),
@@ -77,6 +89,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
                     treeViewFrames.EndUpdate();
 
                     toolStripStatusBaseGraphic.Text = $"Base Graphic: {value} (0x{value:X})";
+                    toolStripStatusGraphic.Text = $"Graphic: {value} (0x{value:X})";
 
                     _currentSelect = value;
 
@@ -87,6 +100,13 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             }
         }
 
+        private void MainPictureBox_FrameChanged(object sender, EventArgs e)
+        {
+            var newGraphic = _currentSelect + MainPictureBox.FrameIndex;
+
+            toolStripStatusGraphic.Text = $"Graphic: {newGraphic} (0x{newGraphic:X})";
+        }
+
         private void SetPicture()
         {
             if (_selAnimdataEntry == null)
@@ -95,6 +115,18 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             }
 
             List<AnimatedFrame> frames = [];
+            Size maxImageSize = new Size(0, 0);
+
+            // Each frame's lower left corner will be drawn at the same position, taking the size of the largest frame.
+            for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
+            {
+                int graphic = _currentSelect + _selAnimdataEntry.FrameData[i];
+                var frame = Art.GetStatic(graphic);
+                if (frame == null)
+                    continue;
+                maxImageSize.Width = Math.Max(maxImageSize.Width, frame.Width);
+                maxImageSize.Height = Math.Max(maxImageSize.Height, frame.Height);
+            }
 
             for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
             {
@@ -105,18 +137,16 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
                     continue;
                 }
 
+                var center = new Point((frame.Width - maxImageSize.Width) / 2, 0);
+
                 if (_customHue > 0)
                 {
                     frame = new Bitmap(frame);
                     Hue hueObject = Hues.List[_customHue - 1];
                     hueObject.ApplyTo(frame, _hueOnlyGray);
+                }
 
-                    frames.Add(new AnimatedFrame(frame));
-                }
-                else
-                {
-                    frames.Add(new AnimatedFrame(frame));
-                }
+                frames.Add(new AnimatedFrame(frame, center));
             }
 
             MainPictureBox.Frames = frames;
@@ -218,7 +248,6 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             if (treeView1.SelectedNode.Parent == null)
             {
                 CurrentSelect = (int)treeView1.SelectedNode.Tag;
-                //CurrFrame = -1;
             }
             else
             {
@@ -271,33 +300,6 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             animateToolStripMenuItem.Checked = !MainPictureBox.Animate;
         }
 
-        //private void Timer_Tick(object sender, EventArgs e)
-        //{
-        //    ++_timerFrame;
-        //    if (_timerFrame >= _selAnimdataEntry.FrameCount)
-        //    {
-        //        _timerFrame = 0;
-        //    }
-
-        //    var graphic = CurrentSelect + _selAnimdataEntry.FrameData[_timerFrame];
-        //    toolStripStatusGraphic.Text = $"Graphic: {graphic} (0x{graphic:X})";
-
-        //    if (_customHue == 0)
-        //    {
-        //        var bit = Art.GetStatic(graphic);
-        //        Art.Measure(bit, out var xMin, out var yMin, out var xMax, out var yMax);
-        //        MainPictureBox.Image = bit;
-        //    }
-        //    else
-        //    {
-        //        // In a lock, since GenerateHuedFrames() can write to this list.
-        //        lock (_huedFrames)
-        //        {
-        //            MainPictureBox.Image = _huedFrames[_timerFrame];
-        //        }
-        //    }
-        //}
-
         private void OnValueChangedStartDelay(object sender, EventArgs e)
         {
             if (_selAnimdataEntry == null)
@@ -327,10 +329,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             }
 
             _selAnimdataEntry.FrameInterval = (byte)numericUpDownFrameDelay.Value;
-            //if (_mTimer != null)
-            {
-                MainPictureBox.FrameDelay = (100 * _selAnimdataEntry.FrameInterval) + 1;
-            }
+            MainPictureBox.FrameDelay = (100 * _selAnimdataEntry.FrameInterval) + 1;
 
             Options.ChangedUltimaClass["Animdata"] = true;
         }
@@ -668,192 +667,45 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             if (_selAnimdataEntry != null)
             {
                 var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currentSelect:X}.gif");
-                var delay = (100 * _selAnimdataEntry.FrameInterval) + 1;
 
-                var maxFrameSize = new Size(0, 0);
 
+                // Each frame's bottom edge will be drawn at the same position, taking the height of the largest frame in `maxImageSize`.
+                // Determine the point where to draw each frame's left edge in `maxCenterX`.
+                Size maxImageSize = new Size(0, 0);
+                var maxCenterX = 0;
                 foreach (var frame in MainPictureBox.Frames)
                 {
-                    maxFrameSize.Width = Math.Max(maxFrameSize.Width, frame.Bitmap.Width);
-                    maxFrameSize.Height = Math.Max(maxFrameSize.Height, frame.Bitmap.Height);
+                    maxImageSize.Width = Math.Max(maxImageSize.Width, frame.Bitmap.Width);
+                    maxImageSize.Height = Math.Max(maxImageSize.Height, frame.Bitmap.Height);
+                    maxCenterX = Math.Max(maxCenterX, frame.Center.X);
                 }
-
-
 
                 {
                     using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay: 150);
                     foreach (var frame in MainPictureBox.Frames)
                     {
-                        if (frame == null || frame.Bitmap == null)
+                        if (frame?.Bitmap == null)
                         {
                             continue;
                         }
 
-                        //Art.Measure(frame.Bitmap, out int xMin, out int yMin, out int xMax, out int yMax);
-                        Point location = Point.Empty;
-                        Size size = frame.Bitmap.Size;
-                        location.X = maxFrameSize.Width - frame.Bitmap.Width; // (maxFrameSize.Width / 2) - frame.Center.X - xMin;
-                        location.Y = maxFrameSize.Height - frame.Bitmap.Height; //  (maxFrameSize.Height / 2) - frame.Center.Y - frame.Bitmap.Height / 2; //  - frame.Bitmap.Height - yMin;
-                        var destRect = new Rectangle(location, size);
+                        var location = new Point(
+                            maxCenterX - frame.Center.X,
+                            maxImageSize.Height - frame.Bitmap.Height);
 
-                        using Bitmap target = new Bitmap(maxFrameSize.Width, maxFrameSize.Height);
+                        using Bitmap target = new Bitmap(maxImageSize.Width, maxImageSize.Height);
                         using Graphics g = Graphics.FromImage(target);
-                        //
-
-                        //g.DrawImage(frame.Bitmap, maxFrameSize.Width - xMax,  );
-                        //g.DrawImage(frame.Bitmap, 0, yMax - yMin); //  maxFrameSize.Height - yMax);
-
-                        g.DrawRectangle(new Pen(Color.Red), destRect);
-
-                        g.DrawImage(frame.Bitmap, destRect, 0, 0, frame.Bitmap.Width, frame.Bitmap.Height, GraphicsUnit.Pixel);
-
+                        g.DrawImage(frame.Bitmap, location);
+#if DEBUG
+                        g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+#endif
                         gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);
                     }
                 }
 
-                //if (!looping)
-                //{
-                //    using var stream = new FileStream(outputFile, FileMode.Open, FileAccess.Write);
-                //    stream.Seek(28, SeekOrigin.Begin);
-                //    stream.WriteByte(0);
-                //}
-
-                //{
-                //    using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay);
-                //    if (_customHue > 0)
-                //    {
-                //        // Not in a lock, since event runs on main thread, which is the only place it can be written.
-                //        foreach (var huedFrame in MainPictureBox.Frames)
-                //        {
-                //            if (huedFrame != null)
-                //            {
-                //                gif.AddFrame(huedFrame.Bitmap, delay: -1, quality: GifQuality.Bit8);
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
-                //        {
-                //            int graphic = _currentSelect + _selAnimdataEntry.FrameData[i];
-                //            gif.AddFrame(Art.GetStatic(graphic), delay: -1, quality: GifQuality.Bit8);
-                //        }
-                //    }
-                //}
-
                 MessageBox.Show($"Saved to {outputFile}");
             }
         }
-
-        private bool Animate
-        {
-            get => MainPictureBox.Animate;
-            set => MainPictureBox.Animate = value;
-        }
-        //private void SetPicture()
-        //{
-        //    _mainPicture?.Dispose();
-        //    if (_currentSelect == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    if (Animate)
-        //    {
-        //        _mainPicture = DoAnimation();
-        //    }
-        //    else
-        //    {
-
-        //        // if (hue != 0)
-        //        // {
-        //        //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, true, false);
-        //        // }
-        //        // else
-        //        // {
-        //        //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, false, false);
-        //        //     _defHue = hue;
-        //        // }
-
-        //        // if (_frames != null)
-        //        // {
-        //        //     if (_frames[0].Bitmap != null)
-        //        //     {
-        //        //         _mainPicture = new Bitmap(_frames[0].Bitmap);
-        //        //         BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
-        //        //         GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
-        //        //         HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
-        //        //     }
-        //        //     else
-        //        //     {
-        //        //         _mainPicture = null;
-        //        //     }
-        //        // }
-        //        // else
-        //        {
-        //            _mainPicture = null;
-        //        }
-        //    }
-        //}
-
-        //private Bitmap DoAnimation()
-        //{
-        //    if (_mTimer != null)
-        //    {
-        //        return _huedFrames[_curFrame] != null
-        //            ? new Bitmap(_huedFrames[_curFrame])
-        //            : null;
-        //    }
-        //    return null;
-
-        //    // int body = _currentSelect;
-        //    // Animations.Translate(ref body);
-        //    // int hue = _customHue;
-        //    // if (hue != 0)
-        //    // {
-        //    //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, true, false);
-        //    // }
-        //    // else
-        //    // {
-        //    //     _frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, false, false);
-        //    //     _defHue = hue;
-        //    // }
-
-        //    // if (_frames == null)
-        //    // {
-        //    //     return null;
-        //    // }
-
-        //    // BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
-        //    // GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
-        //    // HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
-        //    // int count = _frames.Length;
-        //    // _animationList = new Bitmap[count];
-
-        //    // for (int i = 0; i < count; ++i)
-        //    // {
-        //    //     _animationList[i] = _frames[i].Bitmap;
-        //    // }
-
-        //    // // TODO: avoid division by 0 - needs checking if this is valid logic for count.
-        //    // if (count <= 0)
-        //    // {
-        //    //     count = 1;
-        //    // }
-
-        //    // _timer = new Timer
-        //    // {
-        //    //     Interval = 1000 / count
-        //    // };
-        //    // _timer.Tick += AnimTick;
-        //    // _timer.Start();
-
-        //    // _frameIndex = 0;
-
-        //    // LoadListViewFrames(); // Reload FrameTab
-
-        //    // return _animationList[0] != null ? new Bitmap(_animationList[0]) : null;
-        //}
     }
 
     public class AnimdataSorter : IComparer
