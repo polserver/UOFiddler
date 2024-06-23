@@ -39,7 +39,7 @@ namespace UoFiddler.Controls.UserControls
     }
 
     [Designer(typeof(System.Windows.Forms.Design.ControlDesigner))]
-    internal partial class AnimatedPictureBox : PictureBox
+    public partial class AnimatedPictureBox : PictureBox
     {
         private List<AnimatedFrame> _frames;
         private int _frameIndex;

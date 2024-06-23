@@ -33,6 +33,8 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            // TODO can this be moved into the control itself?
+            listView1.Height += SystemInformation.HorizontalScrollBarHeight;
         }
 
         public string[][] GetActionNames { get; } = {
@@ -612,8 +614,14 @@ namespace UoFiddler.Controls.UserControls
                 height = e.Bounds.Height;
             }
 
+            if (listView1.SelectedItems.Contains(e.Item))
+            {
+                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Highlight), e.Bounds);
+            }
+
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);
             e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
+
             using (var pen = new Pen(Color.Gray))
             {
                 e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
@@ -974,6 +982,12 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickExtractAnimGifNoLooping(object sender, EventArgs e)
         {
             ExportAnimatedGif(false);
+        }
+
+        private void Frames_ListView_Click(object sender, EventArgs e)
+        {
+            var index = listView1.SelectedIndices.Count > 0 ? listView1.SelectedIndices[0] : 0;
+            MainPictureBox.FrameIndex = index;
         }
     }
 
