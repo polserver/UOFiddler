@@ -14,30 +14,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Ultima;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Controls.UserControls
 {
-    public sealed class AnimatedFrame
-    {
-        public Point Center { get; set; }
-        public Bitmap Bitmap { get; set; }
-
-        public AnimatedFrame(Bitmap bitmap, Point center)
-        {
-            Bitmap = bitmap;
-            Center = center;
-        }
-
-        public AnimatedFrame(Bitmap bitmap)
-        {
-            Bitmap = new Bitmap(bitmap);
-            //Art.Measure(bitmap, out int xMin, out int yMin, out int xMax, out int yMax);
-            Center = new Point(0, 0); // new Point(bitmap.Width / 2, bitmap.Height / 2 - (yMax - yMin) / 2); //  (xMax - xMin) / 2, );
-        }
-
-    }
-
     [Designer(typeof(System.Windows.Forms.Design.ControlDesigner))]
     public partial class AnimatedPictureBox : PictureBox
     {
@@ -169,8 +149,6 @@ namespace UoFiddler.Controls.UserControls
 #if DEBUG
                 e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
 #endif
-
-
             }
         }
 
@@ -179,9 +157,12 @@ namespace UoFiddler.Controls.UserControls
             if (disposing)
             {
                 _timer.Dispose();
-                foreach (var frame in _frames)
+                if (_frames != null)
                 {
-                    frame.Bitmap?.Dispose();
+                    foreach (var frame in _frames)
+                    {
+                        frame.Bitmap?.Dispose();
+                    }
                 }
             }
             base.Dispose(disposing);
