@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using System.Xml;
 using AnimatedGif;
 using Ultima;
@@ -923,11 +924,11 @@ namespace UoFiddler.Controls.UserControls
             var outputFile = Path.Combine(Options.OutputPath, $"{(_displayType == 1 ? "Equipment" : "Mob")} {_currentSelect}.gif");
 
             // Determine the point where to draw each frame's center
-            var drawCenter = new Point(0, 0);
+            var drawCenter = new Point(int.MinValue, int.MinValue);
             foreach (var frame in MainPictureBox.Frames)
             {
                 drawCenter.X = Math.Max(drawCenter.X, frame.Center.X);
-                drawCenter.Y = Math.Max(drawCenter.Y, frame.Center.Y);
+                drawCenter.Y = Math.Max(drawCenter.Y, frame.Center.Y + frame.Bitmap.Height);
             }
 
             // Knowing where to draw each frame, determine the output image size by
@@ -935,8 +936,9 @@ namespace UoFiddler.Controls.UserControls
             var outputSize = new Size(0, 0);
             foreach (var frame in MainPictureBox.Frames)
             {
-                outputSize.Width = Math.Max(outputSize.Width, drawCenter.X - frame.Center.X + frame.Bitmap.Width);
-                outputSize.Height = Math.Max(outputSize.Height, drawCenter.Y - frame.Center.Y + frame.Bitmap.Height);
+                var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
+                outputSize.Width = Math.Max(outputSize.Width, location.X + frame.Bitmap.Width);
+                outputSize.Height = Math.Max(outputSize.Height, location.Y + frame.Bitmap.Height);
             }
 
             {
@@ -948,16 +950,14 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    // Draw frame centering on (drawCenterX, drawCenterY)
-                    var location = new Point(
-                        drawCenter.X - frame.Center.X,
-                        drawCenter.Y - frame.Center.Y);
-
-                    using Bitmap target = new Bitmap(outputSize.Width, outputSize.Height);
-                    using Graphics g = Graphics.FromImage(target);
+                    using var target = new Bitmap(outputSize.Width, outputSize.Height);
+                    using var g = Graphics.FromImage(target);
+                    var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
+                    
                     g.DrawImage(frame.Bitmap, location);
 #if DEBUG
-                    g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+                    g.FillRectangle(new SolidBrush(Color.Red), new Rectangle(drawCenter, new Size(3, 3)));
+                    g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, new Size(frame.Bitmap.Width - 1, frame.Bitmap.Height - 1)));
 #endif
                     gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);
                 }

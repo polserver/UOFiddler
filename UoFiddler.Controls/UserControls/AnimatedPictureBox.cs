@@ -160,17 +160,17 @@ namespace UoFiddler.Controls.UserControls
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            AnimatedFrame frame = _frameIndex <_frames?.Count ? _frames[_frameIndex] : null;
+            AnimatedFrame frame = _frameIndex < _frames?.Count ? _frames[_frameIndex] : null;
             if (frame != null)
             {
                 var location = new Point((Width / 2) - frame.Center.X, (Height / 2) - frame.Center.Y - frame.Bitmap.Height);
 
+                e.Graphics.DrawImage(frame.Bitmap, location);
 #if DEBUG
                 e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
 #endif
 
-                e.Graphics.DrawImage(frame.Bitmap, location);
-                
+
             }
         }
 
