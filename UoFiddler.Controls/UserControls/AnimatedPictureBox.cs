@@ -28,6 +28,9 @@ namespace UoFiddler.Controls.UserControls
         private bool _showFrameBounds;
         private Size _animationSize;
         private Point _drawCenter;
+        private Point _draggedOffset = new(0, 0);
+        private Point _mouseDownLocation;
+        private bool _isDragging = false;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<AnimatedFrame> Frames
@@ -140,6 +143,42 @@ namespace UoFiddler.Controls.UserControls
 
             _timer.Tick += Timer_Tick;
             DoubleBuffered = true; // To reduce flicker
+            MouseDown += OnMouseDown;
+            MouseMove += OnMouseMove;
+            MouseUp += OnMouseUp;
+        }
+
+        private void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                _mouseDownLocation = e.Location;
+                _isDragging = true;
+                Cursor = Cursors.SizeAll; // Change cursor to dragging cursor
+            }
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                // Calculate the new center point based on the mouse movement
+                _draggedOffset.X += e.X - _mouseDownLocation.X;
+                _draggedOffset.Y += e.Y - _mouseDownLocation.Y;
+                // Update the mouse down location to the new location
+                _mouseDownLocation = e.Location;
+                // Refresh the PictureBox to trigger the Paint event
+                Invalidate();
+            }
+        }
+
+        private void OnMouseUp(object sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                _isDragging = false;
+                Cursor = Cursors.Default; // Change cursor back to default
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -159,8 +198,9 @@ namespace UoFiddler.Controls.UserControls
             if (frame != null)
             {
                 var location = new Point(
-                    _drawCenter.X - frame.Center.X + (Width - _animationSize.Width) / 2,
-                    _drawCenter.Y - frame.Center.Y - frame.Bitmap.Height + (Height - _animationSize.Height) / 2);
+                    _drawCenter.X - frame.Center.X + (Width - _animationSize.Width) / 2 + _draggedOffset.X,
+                    _drawCenter.Y - frame.Center.Y - frame.Bitmap.Height + (Height - _animationSize.Height) / 2 + _draggedOffset.Y
+                );
 
                 e.Graphics.DrawImage(frame.Bitmap, location);
 
