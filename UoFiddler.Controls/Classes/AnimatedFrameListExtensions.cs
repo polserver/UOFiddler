@@ -19,7 +19,7 @@ namespace UoFiddler.Controls.Classes
 {
     public static class AnimatedFrameListExtensions
     {
-        public static void ToGif(this IEnumerable<AnimatedFrame> frames, string outputFile, bool looping = true, int delay = 150, bool showFrameBounds = false)
+        public static (Point, Size) GetAnimationDetails(this IEnumerable<AnimatedFrame> frames)
         {
             // Determine the point where to draw each frame's center
             var drawCenter = new Point(int.MinValue, int.MinValue);
@@ -38,6 +38,13 @@ namespace UoFiddler.Controls.Classes
                 outputSize.Width = Math.Max(outputSize.Width, location.X + frame.Bitmap.Width);
                 outputSize.Height = Math.Max(outputSize.Height, location.Y + frame.Bitmap.Height);
             }
+            
+            return (drawCenter, outputSize);
+        }
+
+        public static void ToGif(this IEnumerable<AnimatedFrame> frames, string outputFile, bool looping = true, int delay = 150, bool showFrameBounds = false)
+        {
+            var (drawCenter, outputSize) = frames.GetAnimationDetails();
 
             {
                 using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay);

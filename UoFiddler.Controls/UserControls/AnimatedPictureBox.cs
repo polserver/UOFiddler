@@ -26,6 +26,8 @@ namespace UoFiddler.Controls.UserControls
         private Timer _timer;
         private bool _animate;
         private bool _showFrameBounds;
+        private Size _animationSize;
+        private Point _drawCenter;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<AnimatedFrame> Frames
@@ -34,12 +36,14 @@ namespace UoFiddler.Controls.UserControls
             set
             {
                 _frameIndex = 0;
-                _frames = value;
+                _frames = value ?? [];
 
                 if (_animate && _frames.Count != 0 && !_timer.Enabled)
                 {
                     _timer.Start();
                 }
+
+                (_drawCenter, _animationSize) = _frames.GetAnimationDetails();
 
                 FrameChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate(); // Force a repaint
@@ -75,7 +79,8 @@ namespace UoFiddler.Controls.UserControls
         public bool ShowFrameBounds
         {
             get => _showFrameBounds;
-            set {
+            set
+            {
                 _showFrameBounds = value;
                 Invalidate();
             }
@@ -153,9 +158,12 @@ namespace UoFiddler.Controls.UserControls
             AnimatedFrame frame = _frameIndex < _frames?.Count ? _frames[_frameIndex] : null;
             if (frame != null)
             {
-                var location = new Point((Width / 2) - frame.Center.X, (Height / 2) - frame.Center.Y - frame.Bitmap.Height);
+                var location = new Point(
+                    _drawCenter.X - frame.Center.X + (Width - _animationSize.Width) / 2,
+                    _drawCenter.Y - frame.Center.Y - frame.Bitmap.Height + (Height - _animationSize.Height) / 2);
 
                 e.Graphics.DrawImage(frame.Bitmap, location);
+
                 if (_showFrameBounds)
                 {
                     e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
