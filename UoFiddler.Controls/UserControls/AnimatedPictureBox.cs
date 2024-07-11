@@ -25,6 +25,7 @@ namespace UoFiddler.Controls.UserControls
         private int _frameIndex;
         private Timer _timer;
         private bool _animate;
+        private bool _showFrameBounds;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<AnimatedFrame> Frames
@@ -68,6 +69,15 @@ namespace UoFiddler.Controls.UserControls
                     FrameChanged?.Invoke(this, EventArgs.Empty);
                     Invalidate();
                 }
+            }
+        }
+
+        public bool ShowFrameBounds
+        {
+            get => _showFrameBounds;
+            set {
+                _showFrameBounds = value;
+                Invalidate();
             }
         }
 
@@ -146,9 +156,10 @@ namespace UoFiddler.Controls.UserControls
                 var location = new Point((Width / 2) - frame.Center.X, (Height / 2) - frame.Center.Y - frame.Bitmap.Height);
 
                 e.Graphics.DrawImage(frame.Bitmap, location);
-#if DEBUG
-                e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
-#endif
+                if (_showFrameBounds)
+                {
+                    e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+                }
             }
         }
 
@@ -166,6 +177,23 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
             base.Dispose(disposing);
+        }
+
+        public void Reset()
+        {
+            _frameIndex = 0;
+            if (_frames != null)
+            {
+                foreach (var frame in _frames)
+                {
+                    frame.Bitmap?.Dispose();
+                }
+            }
+            _frames = [];
+            _timer.Stop();
+            _animate = false;
+            _showFrameBounds = false;
+            Invalidate();
         }
     }
 }

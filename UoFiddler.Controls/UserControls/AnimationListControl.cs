@@ -17,9 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Media.Imaging;
 using System.Xml;
-using AnimatedGif;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -162,7 +160,10 @@ namespace UoFiddler.Controls.UserControls
             _facing = 1;
             _sortAlpha = false;
             _displayType = 0;
-            Animate = false;
+            MainPictureBox.Reset();
+            animateToolStripMenuItem.Checked = false;
+            showFrameBoundsToolStripMenuItem.Checked = false;
+
             OnLoad(this, EventArgs.Empty);
         }
 
@@ -381,7 +382,8 @@ namespace UoFiddler.Controls.UserControls
 
         private void Animate_Click(object sender, EventArgs e)
         {
-            Animate = !Animate;
+            MainPictureBox.Animate = !MainPictureBox.Animate;
+            animateToolStripMenuItem.Checked = MainPictureBox.Animate;
         }
 
         private bool LoadXml()
@@ -830,11 +832,6 @@ namespace UoFiddler.Controls.UserControls
 
         private void ExportAnimationFrames(ImageFormat imageFormat)
         {
-            if (!Animate)
-            {
-                return;
-            }
-
             string what = "Mob";
             if (_displayType == 1)
             {
@@ -844,7 +841,7 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{what} {_currentSelect}");
 
-            for (int i = 0; i < MainPictureBox.Frames.Count; ++i)
+            for (int i = 0; i < MainPictureBox.Frames?.Count; ++i)
             {
                 var frameBitmap = MainPictureBox.Frames[i].Bitmap;
                 using (Bitmap newBitmap = new Bitmap(frameBitmap.Width, frameBitmap.Height))
@@ -922,7 +919,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             var outputFile = Path.Combine(Options.OutputPath, $"{(_displayType == 1 ? "Equipment" : "Mob")} {_currentSelect}.gif");
-            MainPictureBox.Frames.ToGif(outputFile, looping: looping, delay: 150);
+            MainPictureBox.Frames.ToGif(outputFile, looping: looping, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
             MessageBox.Show($"InGame Anim saved to {outputFile}", "Saved", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
@@ -941,6 +938,12 @@ namespace UoFiddler.Controls.UserControls
         {
             var index = listView1.SelectedIndices.Count > 0 ? listView1.SelectedIndices[0] : 0;
             MainPictureBox.FrameIndex = index;
+        }
+
+        private void OnClickShowFrameBounds(object sender, EventArgs e)
+        {
+            MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
+            showFrameBoundsToolStripMenuItem.Checked = MainPictureBox.ShowFrameBounds;
         }
     }
 

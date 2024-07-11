@@ -83,6 +83,7 @@ namespace UoFiddler.Controls.UserControls
             GraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             BaseGraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             HueLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            showFrameBoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -155,7 +156,7 @@ namespace UoFiddler.Controls.UserControls
             FacingBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             FacingBar.AutoSize = false;
             FacingBar.LargeChange = 1;
-            FacingBar.Location = new System.Drawing.Point(357, 377);
+            FacingBar.Location = new System.Drawing.Point(356, 377);
             FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             FacingBar.Maximum = 7;
             FacingBar.Name = "FacingBar";
@@ -417,7 +418,7 @@ namespace UoFiddler.Controls.UserControls
             // SettingsButton
             // 
             SettingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            SettingsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sortAlphaToolStripMenuItem, hueToolStripMenuItem, animateToolStripMenuItem, toolStripSeparator1, rewriteXmlToolStripMenuItem, tryToFindNewGraphicsToolStripMenuItem, animationEditToolStripMenuItem });
+            SettingsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sortAlphaToolStripMenuItem, hueToolStripMenuItem, animateToolStripMenuItem, showFrameBoundsToolStripMenuItem, toolStripSeparator1, rewriteXmlToolStripMenuItem, tryToFindNewGraphicsToolStripMenuItem, animationEditToolStripMenuItem });
             SettingsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             SettingsButton.Name = "SettingsButton";
             SettingsButton.Size = new System.Drawing.Size(62, 20);
@@ -501,6 +502,13 @@ namespace UoFiddler.Controls.UserControls
             HueLabel.Text = "Hue:";
             HueLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // showFrameBoundsToolStripMenuItem
+            // 
+            showFrameBoundsToolStripMenuItem.Name = "showFrameBoundsToolStripMenuItem";
+            showFrameBoundsToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            showFrameBoundsToolStripMenuItem.Text = "Show frame bounds";
+            showFrameBoundsToolStripMenuItem.Click += OnClickShowFrameBounds;
+            // 
             // AnimationListControl
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -578,5 +586,6 @@ namespace UoFiddler.Controls.UserControls
         private AnimatedPictureBox MainPictureBox;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.ListView listView;
+        private System.Windows.Forms.ToolStripMenuItem showFrameBoundsToolStripMenuItem;
     }
 }

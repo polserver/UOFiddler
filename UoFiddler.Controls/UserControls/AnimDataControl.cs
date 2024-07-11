@@ -16,7 +16,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using AnimatedGif;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -138,7 +137,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
                 }
 
                 // The frame's left edge will be padding with enough space to compensate for the width of the largest frame.
-                var center = new Point((frame.Width - maxImageSize.Width) / 2, 0); 
+                var center = new Point((frame.Width - maxImageSize.Width) / 2, 0);
 
                 if (_customHue > 0)
                 {
@@ -160,6 +159,9 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         {
             if (_loaded)
             {
+                MainPictureBox.Reset();
+                animateToolStripMenuItem.Checked = false;
+                showFrameBoundsToolStripMenuItem.Checked = false;
                 OnLoad(this, EventArgs.Empty);
             }
         }
@@ -298,7 +300,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         {
             MainPictureBox.Animate = !MainPictureBox.Animate;
 
-            animateToolStripMenuItem.Checked = !MainPictureBox.Animate;
+            animateToolStripMenuItem.Checked = MainPictureBox.Animate;
         }
 
         private void OnValueChangedStartDelay(object sender, EventArgs e)
@@ -668,9 +670,15 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             if (_selAnimdataEntry != null)
             {
                 var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currentSelect:X}.gif");
-                MainPictureBox.Frames.ToGif(outputFile, delay: 150);
+                MainPictureBox.Frames.ToGif(outputFile, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
                 MessageBox.Show($"Saved to {outputFile}");
             }
+        }
+
+        private void OnClickShowFrameBounds(object sender, EventArgs e)
+        {
+            MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
+            showFrameBoundsToolStripMenuItem.Checked = MainPictureBox.ShowFrameBounds;
         }
     }
 
