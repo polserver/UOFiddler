@@ -117,7 +117,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             List<AnimatedFrame> frames = [];
             Size maxImageSize = new Size(0, 0);
 
-            // Each frame's lower left corner will be drawn at the same position, taking the size of the largest frame.
+            // Each frame's lower edge will be drawn at the same position, taking the height of the largest frame.
             for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
             {
                 int graphic = _currentSelect + _selAnimdataEntry.FrameData[i];
@@ -137,7 +137,8 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
                     continue;
                 }
 
-                var center = new Point((frame.Width - maxImageSize.Width) / 2, 0);
+                // The frame's left edge will be padding with enough space to compensate for the width of the largest frame.
+                var center = new Point((frame.Width - maxImageSize.Width) / 2, 0); 
 
                 if (_customHue > 0)
                 {
@@ -668,16 +669,22 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             {
                 var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currentSelect:X}.gif");
 
-
-                // Each frame's bottom edge will be drawn at the same position, taking the height of the largest frame in `maxImageSize`.
-                // Determine the point where to draw each frame's left edge in `maxCenterX`.
-                Size maxImageSize = new Size(0, 0);
-                var maxCenterX = 0;
+                // Determine the point where to draw each frame's center
+                var drawCenter = new Point(int.MinValue, int.MinValue);
                 foreach (var frame in MainPictureBox.Frames)
                 {
-                    maxImageSize.Width = Math.Max(maxImageSize.Width, frame.Bitmap.Width);
-                    maxImageSize.Height = Math.Max(maxImageSize.Height, frame.Bitmap.Height);
-                    maxCenterX = Math.Max(maxCenterX, frame.Center.X);
+                    drawCenter.X = Math.Max(drawCenter.X, frame.Center.X);
+                    drawCenter.Y = Math.Max(drawCenter.Y, frame.Center.Y + frame.Bitmap.Height);
+                }
+
+                // Knowing where to draw each frame, determine the output image size by
+                // "drawing" each frame's center at the draw point.
+                var outputSize = new Size(0, 0);
+                foreach (var frame in MainPictureBox.Frames)
+                {
+                    var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
+                    outputSize.Width = Math.Max(outputSize.Width, location.X + frame.Bitmap.Width);
+                    outputSize.Height = Math.Max(outputSize.Height, location.Y + frame.Bitmap.Height);
                 }
 
                 {
@@ -689,18 +696,24 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
                             continue;
                         }
 
-                        var location = new Point(
-                            maxCenterX - frame.Center.X,
-                            maxImageSize.Height - frame.Bitmap.Height);
+                        using var target = new Bitmap(outputSize.Width, outputSize.Height);
+                        using var g = Graphics.FromImage(target);
+                        var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
 
-                        using Bitmap target = new Bitmap(maxImageSize.Width, maxImageSize.Height);
-                        using Graphics g = Graphics.FromImage(target);
                         g.DrawImage(frame.Bitmap, location);
 #if DEBUG
-                        g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+                        g.FillRectangle(new SolidBrush(Color.Red), new Rectangle(drawCenter, new Size(3, 3)));
+                        g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, new Size(frame.Bitmap.Width - 1, frame.Bitmap.Height - 1)));
 #endif
                         gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);
                     }
+                }
+
+                if (false)
+                {
+                    using var stream = new FileStream(outputFile, FileMode.Open, FileAccess.Write);
+                    stream.Seek(28, SeekOrigin.Begin);
+                    stream.WriteByte(0);
                 }
 
                 MessageBox.Show($"Saved to {outputFile}");
