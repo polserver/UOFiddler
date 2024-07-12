@@ -22,7 +22,7 @@ Older versions, 4.9.28 and lower use .Net Framework 4.8
 
 ## Building
 
-You'll need Visual Studio 2022 v17.8, .NET 8.0 and .NET desktop development workload.
+You'll need Visual Studio 2022 v17.10 or newer, .NET 8.0 and .NET desktop development workload.
 
 ## Reporting bugs and issues
 
