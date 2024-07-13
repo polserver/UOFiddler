@@ -11,6 +11,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using UoFiddler.Plugin.UopPacker.Classes;
 
@@ -26,7 +27,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
             _conv = new LegacyMulFileConverter();
 
-            multype.DataSource = uoptype.DataSource = Enum.GetValues(typeof(FileType));
+            var fileTypes = Enum.GetNames(typeof(FileType));
+
+            uoptype.DataSource = fileTypes;
+            multype.DataSource = fileTypes.SkipLast(1).ToArray(); // remove multi collection from ToUOP() conversion (not supported yet)
+
             mulMapIndex.ReadOnly = uopMapIndex.ReadOnly = true;
 
             Dock = DockStyle.Fill;
@@ -234,7 +239,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
         private int _total;
         private int _success;
 
-        private void Extract(string inFile, string outFile, string outIdx, FileType type, int typeIndex)
+        private void Extract(string inFile, string outFile, string outIdx, FileType type, int typeIndex, string housingBinFile = "")
         {
             try
             {
@@ -244,6 +249,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
                 if (!File.Exists(inFile))
                 {
+                    MessageBox.Show($"Input file {inFile} doesn't exist");
                     return;
                 }
 
@@ -251,13 +257,24 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
                 if (File.Exists(outFile))
                 {
+                    MessageBox.Show($"Output file {outFile} already exists");
                     return;
+                }
+
+                if (!string.IsNullOrWhiteSpace(housingBinFile))
+                {
+                    housingBinFile = FixPath(housingBinFile);
+                    if (File.Exists(housingBinFile))
+                    {
+                        MessageBox.Show($"Output file {housingBinFile} already exists");
+                        return;
+                    }
                 }
 
                 outIdx = FixPath(outIdx);
                 ++_total;
 
-                _conv.FromUop(inFile, outFile, outIdx, type, typeIndex);
+                _conv.FromUop(inFile, outFile, outIdx, type, typeIndex, housingBinFile);
 
                 ++_success;
             }
@@ -277,6 +294,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
                 if (!File.Exists(inFile))
                 {
+                    MessageBox.Show($"Input file {inFile} doesn't exist");
                     return;
                 }
 
@@ -284,6 +302,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
                 if (File.Exists(outFile))
                 {
+                    MessageBox.Show($"Output file {outFile} already exists");
                     return;
                 }
 
@@ -320,6 +339,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 Extract("artLegacyMUL.uop", "art.mul", "artidx.mul", FileType.ArtLegacyMul, 0);
                 Extract("gumpartLegacyMUL.uop", "gumpart.mul", "gumpidx.mul", FileType.GumpartLegacyMul, 0);
                 Extract("soundLegacyMUL.uop", "sound.mul", "soundidx.mul", FileType.SoundLegacyMul, 0);
+                Extract("MultiCollection.uop", "multi-unpacked.mul", "multi-unpacked.idx", FileType.MultiCollection, 0, "housing.bin");
 
                 for (int i = 0; i <= 5; ++i)
                 {
