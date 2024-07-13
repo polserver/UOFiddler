@@ -4,6 +4,8 @@
 
 UOFiddler based on Ultima SDK it's a tool to view and alter almost every UO 2D client file. Source code is released under the Beerware license.
 
+We have dedicated channel on POL Discord: https://discord.gg/4JbC8hA
+
 ## Requirements
 
 Starting from version 4.11.0:
