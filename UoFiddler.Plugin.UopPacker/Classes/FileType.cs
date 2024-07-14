@@ -5,6 +5,7 @@
         ArtLegacyMul,
         GumpartLegacyMul,
         MapLegacyMul,
-        SoundLegacyMul
+        SoundLegacyMul,
+        MultiCollection
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 
 namespace UoFiddler.Plugin.UopPacker.Classes
 {
@@ -19,8 +21,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             public long Offset;
             public int HeaderLength;
             public int Size;
+            public int DecompressedSize;
             public ulong Identifier;
             public uint Hash;
+            public bool Compressed;
         }
 
         //
@@ -134,7 +138,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 int tableCount = (int)Math.Ceiling((double)idxEntries.Count / tableSize);
                 TableEntry[] tableEntries = new TableEntry[tableSize];
 
-                string hashFormat = GetHashFormat(type, typeIndex, out int _);
+                string[] hashFormat = GetHashFormat(type, typeIndex, out int _);
 
                 for (int i = 0; i < tableCount; ++i)
                 {
@@ -158,7 +162,18 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                         tableEntries[tableIdx].Offset = writer.BaseStream.Position;
                         tableEntries[tableIdx].Size = data.Length;
-                        tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat, idxEntries[j].Id));
+                        // hash 906142efe9fdb38a, which is file 0009834.tga (and no others, as 7.0.59.5) use a different name format (7 digits instead of 8);
+                        //  if in newer versions more of these files will have adopted that format, someone should update this list of exceptions
+                        //  (even if this seems so much like a typo from someone from the UO development team :P)
+                        if ((type == FileType.GumpartLegacyMul) && (idxEntries[j].Id == 9834))
+                        {
+                            tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[1], idxEntries[j].Id));
+                        }
+                        else
+                        {
+                            tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[0], idxEntries[j].Id));
+                        }
+
                         tableEntries[tableIdx].Hash = HashAdler32(data);
 
                         if (type == FileType.GumpartLegacyMul)
@@ -220,15 +235,24 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // UOP -> MUL
         //
-        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex)
+        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex, string housingBinFile = "")
         {
             Dictionary<ulong, int> chunkIds = new Dictionary<ulong, int>();
+            Dictionary<ulong, int> chunkIds2 = new Dictionary<ulong, int>();
 
-            string format = GetHashFormat(type, typeIndex, out int maxId);
+            string[] formats = GetHashFormat(type, typeIndex, out var maxId);
 
             for (int i = 0; i < maxId; ++i)
             {
-                chunkIds[HashLittle2(string.Format(format, i))] = i;
+                chunkIds[HashLittle2(string.Format(formats[0], i))] = i;
+            }
+
+            if (formats[1] != string.Empty)
+            {
+                for (int i = 0; i < maxId; ++i)
+                {
+                    chunkIds2[HashLittle2(string.Format(formats[1], i))] = i;
+                }
             }
 
             bool[] used = new bool[maxId];
@@ -268,10 +292,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         offsets[i].Offset = reader.ReadInt64();
                         offsets[i].HeaderLength = reader.ReadInt32(); // header length
                         offsets[i].Size = reader.ReadInt32(); // compressed size
-                        reader.ReadInt32(); // decompressed size
+                        offsets[i].DecompressedSize = reader.ReadInt32(); // decompressed size
                         offsets[i].Identifier = reader.ReadUInt64(); // filename hash (HashLittle2)
                         offsets[i].Hash = reader.ReadUInt32(); // data hash (Adler32)
-                        reader.ReadInt16(); // compression method (0 = none, 1 = zlib)
+                        offsets[i].Compressed = reader.ReadInt16() != 0; // compression method (0 = none, 1 = zlib)
                     }
 
                     // Copy chunks
@@ -282,13 +306,60 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             continue; // skip empty entry
                         }
 
-                        if (!chunkIds.TryGetValue(offsets[i].Identifier, out int chunkId))
+                        // extract housing.bin file (not really needed for muls to work but needed later to pack files back to uop)
+                        if ((type == FileType.MultiCollection) && (offsets[i].Identifier == 0x126D1E99DDEDEE0A) && !string.IsNullOrWhiteSpace(housingBinFile))
                         {
-                            throw new Exception("Unknown identifier encountered");
+                            // MultiCollection.uop has the file "build/multicollection/housing.bin", which has to be handled separately
+                            using (BinaryWriter writerBin = OpenOutput(housingBinFile))
+                            {
+                                stream.Seek(offsets[i].Offset + offsets[i].HeaderLength, SeekOrigin.Begin);
+
+                                byte[] binData = reader.ReadBytes(offsets[i].Size);
+                                byte[] binDataToWrite;
+
+                                if (offsets[i].Compressed)
+                                {
+                                    using ZLibStream zlib = new(new MemoryStream(binData), CompressionMode.Decompress);
+
+                                    byte[] decompressed = new byte[offsets[i].DecompressedSize];
+                                    zlib.ReadExactly(decompressed);
+                                    binDataToWrite = decompressed;
+                                }
+                                else
+                                {
+                                    binDataToWrite = binData;
+                                }
+
+                                writerBin.Write(binDataToWrite, 0, binDataToWrite.Length);
+                            }
+
+                            continue;
+                        }
+
+                        if (!chunkIds.TryGetValue( offsets[i].Identifier, out var chunkId))
+                        {
+                            if (!chunkIds2.TryGetValue(offsets[i].Identifier, out int chunkId2))
+                            {
+                                throw new Exception($"Unknown identifier encountered ({offsets[i].Identifier:X})");
+                            }
+                            else
+                            {
+                                // the second collection is used because in some versions GumpartLegacyMul.uop had shorter Identifier
+                                chunkId = chunkId2;
+                            }
                         }
 
                         stream.Seek(offsets[i].Offset + offsets[i].HeaderLength, SeekOrigin.Begin);
+
                         byte[] chunkData = reader.ReadBytes(offsets[i].Size);
+                        if (offsets[i].Compressed)
+                        {
+                            using ZLibStream zlib = new(new MemoryStream(chunkData), CompressionMode.Decompress);
+
+                            byte[] decompressed = new byte[offsets[i].DecompressedSize];
+                            zlib.ReadExactly(decompressed);
+                            chunkData = decompressed;
+                        }
 
                         if (type == FileType.MapLegacyMul)
                         {
@@ -325,6 +396,16 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                         idxWriter.Write(chunkId + 1);
                                         break;
                                     }
+                                case FileType.MultiCollection:
+                                    {
+                                        long startPosition = mulWriter.BaseStream.Position;
+                                        WriteMultiUopEntryToMul(mulWriter, chunkData);
+                                        long endPosition = mulWriter.BaseStream.Position;
+
+                                        idxWriter.Write((int)(endPosition - startPosition)); // Size
+                                        idxWriter.Write(0); // Extra
+                                        break;
+                                    }
                                 default:
                                     {
                                         idxWriter.Write(chunkData.Length); // Size
@@ -336,7 +417,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             used[chunkId] = true;
                             #endregion
 
-                            mulWriter.Write(chunkData, dataOffset, chunkData.Length - dataOffset);
+                            if (type != FileType.MultiCollection)
+                            {
+                                mulWriter.Write(chunkData, dataOffset, chunkData.Length - dataOffset);
+                            }
                         }
                     }
 
@@ -359,8 +443,9 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         }
 
                         idxWriter.Seek(i * 12, SeekOrigin.Begin);
-                        idxWriter.Write(-1);
-                        idxWriter.Write((long)0);
+
+                        idxWriter.Write(-1); // Position (lookup)
+                        idxWriter.Write((long)0); // Size + Extra
                     }
                 }
             }
@@ -393,7 +478,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             using (var mapFile = File.Open(outFile, FileMode.Open, FileAccess.ReadWrite))
             {
                 var sizeDiff = mapFile.Length - expectedSize;
-
                 if (sizeDiff > 0)
                 {
                     mapFile.SetLength(mapFile.Length - sizeDiff);
@@ -409,7 +493,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 1 => 89_915_392,
                 2 => 11_289_600,
                 3 => 16_056_320,
-                4 =>  6_421_156,
+                4 => 6_421_156,
                 5 => 16_056_320,
                 _ => 0
             };
@@ -418,7 +502,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // Hash filename formats (remember: lower case!)
         //
-        private static string GetHashFormat(FileType type, int typeIndex, out int maxId)
+        private static string[] GetHashFormat(FileType type, int typeIndex, out int maxId)
         {
             /*
              * MaxID is only used for constructing a lookup table.
@@ -431,22 +515,27 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 case FileType.ArtLegacyMul:
                     {
                         maxId = 0x13FDC; // UOFiddler requires this exact index length to recognize UOHS art files
-                        return "build/artlegacymul/{0:00000000}.tga";
+                        return ["build/artlegacymul/{0:00000000}.tga", string.Empty];
                     }
                 case FileType.GumpartLegacyMul:
                     {
-                        // MaxID = 0xEF3C on 7.0.8.2
-                        return "build/gumpartlegacymul/{0:00000000}.tga";
+                        // maxId = 0xEF3C on 7.0.8.2
+                        return ["build/gumpartlegacymul/{0:00000000}.tga", "build/gumpartlegacymul/{0:0000000}.tga"];
                     }
                 case FileType.MapLegacyMul:
                     {
-                        // MaxID = 0x71 on 7.0.8.2 for Fel/Tram
-                        return string.Concat("build/map", typeIndex, "legacymul/{0:00000000}.dat");
+                        // maxId = 0x71 on 7.0.8.2 for Fel/Tram
+                        return [string.Concat("build/map", typeIndex, "legacymul/{0:00000000}.dat"), string.Empty];
                     }
                 case FileType.SoundLegacyMul:
                     {
-                        // MaxID = 0x1000 on 7.0.8.2
-                        return "build/soundlegacymul/{0:00000000}.dat";
+                        // maxId = 0x1000 on 7.0.8.2
+                        return ["build/soundlegacymul/{0:00000000}.dat", string.Empty];
+                    }
+                case FileType.MultiCollection:
+                    {
+                        maxId = 0x2200; // seems like this is reasonable limit for multis
+                        return ["build/multicollection/{0:000000}.bin", string.Empty];
                     }
                 default:
                     {
@@ -537,6 +626,35 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
 
             return b << 16 | a;
+        }
+
+        private static void WriteMultiUopEntryToMul(BinaryWriter mulWriter, byte[] chunkData)
+        {
+            Span<byte> span = chunkData.AsSpan();
+            uint count = BinaryPrimitives.ReadUInt32LittleEndian(span[4..]);
+            span = span[8..];
+
+            for (int i = 0; i < count; i++)
+            {
+                ushort itemId = BinaryPrimitives.ReadUInt16LittleEndian(span);
+                short x = BinaryPrimitives.ReadInt16LittleEndian(span[2..]);
+                short y = BinaryPrimitives.ReadInt16LittleEndian(span[4..]);
+                short z = BinaryPrimitives.ReadInt16LittleEndian(span[6..]);
+
+                // this probably is just tiledata but needs further investigation
+                ushort flagValue = BinaryPrimitives.ReadUInt16LittleEndian(span[8..]);
+                uint clilocsCount = BinaryPrimitives.ReadUInt32LittleEndian(span[10..]);
+
+                int skip = (int)Math.Min(clilocsCount, int.MaxValue) * 4; // bypass binary block
+                span = span[(14 + skip)..];
+
+                mulWriter.Write(itemId);
+                mulWriter.Write(x);
+                mulWriter.Write(y);
+                mulWriter.Write(z);
+                mulWriter.Write(flagValue != 0 ? 0 : 1);
+                mulWriter.Write(0);
+            }
         }
     }
 }

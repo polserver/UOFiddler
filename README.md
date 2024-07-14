@@ -4,6 +4,8 @@
 
 UOFiddler based on Ultima SDK it's a tool to view and alter almost every UO 2D client file. Source code is released under the Beerware license.
 
+We have dedicated channel on POL Discord: https://discord.gg/4JbC8hA
+
 ## Requirements
 
 Starting from version 4.11.0:
@@ -22,7 +24,7 @@ Older versions, 4.9.28 and lower use .Net Framework 4.8
 
 ## Building
 
-You'll need Visual Studio 2022 v17.8, .NET 8.0 and .NET desktop development workload.
+You'll need Visual Studio 2022 v17.10 or newer, .NET 8.0 and .NET desktop development workload.
 
 ## Reporting bugs and issues
 

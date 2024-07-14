@@ -16,7 +16,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using AnimatedGif;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -31,41 +30,42 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            MainPictureBox.FrameChanged += MainPictureBox_FrameChanged;
         }
 
         private static bool _loaded;
         private Animdata.AnimdataEntry _selAnimdataEntry;
-        private int _currAnim;
-        private int _curFrame;
-        private Timer _mTimer;
-        private int _timerFrame;
+        private int _currentSelect;
+        private int _currentFrame;
         private AnimDataImportForm _importForm;
         private AnimDataExportForm _exportForm;
         private HuePopUpForm _showForm;
         private int _customHue = 0;
         private bool _hueOnlyGray = false;
 
-        // Must be non-null for synchronization. Can contain null values for invalid tiles.
-        private List<Bitmap> _huedFrames = [];
-
         [Browsable(false),
-        DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private int CurrFrame
         {
-            get => _curFrame;
+            get => _currentFrame;
             set
             {
-                _curFrame = value;
-                var graphic = _currAnim + (_curFrame == -1 ? 0 : _selAnimdataEntry.FrameData[_curFrame]);
-                toolStripStatusGraphic.Text = $"Graphic: {graphic} (0x{graphic:X})";
+                if (_currentFrame != value)
+                {
+                    var newGraphic = _currentSelect + value;
+
+                    toolStripStatusGraphic.Text = $"Graphic: {newGraphic} (0x{newGraphic:X})";
+                    MainPictureBox.FrameIndex = value;
+                    _currentFrame = value;
+                }
             }
         }
 
         [Browsable(false),
-        DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        private int CurrAnim
+                DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        private int CurrentSelect
         {
-            get => _currAnim;
+            get => _currentSelect;
             set
             {
                 if (!_loaded)
@@ -74,7 +74,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 _selAnimdataEntry = Animdata.AnimData[value];
-                if (_currAnim != value)
+                if (_currentSelect != value)
                 {
                     treeViewFrames.BeginUpdate();
                     treeViewFrames.Nodes.Clear();
@@ -88,68 +88,68 @@ namespace UoFiddler.Controls.UserControls
                     treeViewFrames.EndUpdate();
 
                     toolStripStatusBaseGraphic.Text = $"Base Graphic: {value} (0x{value:X})";
+                    toolStripStatusGraphic.Text = $"Graphic: {value} (0x{value:X})";
 
-                    _currAnim = value;
+                    _currentSelect = value;
 
-                    if (_customHue > 0)
-                    {
-                        GenerateFramedHues();
-                    }
-                }
-
-                if (_mTimer == null)
-                {
-                    if (_customHue > 0)
-                    {
-                        int index = Math.Max(0, _curFrame);
-
-                        // Not in a lock, as event handlers run on main thread, and the value-writing
-                        // to _huedFrames above will not happen simultaneously as this read.
-                        pictureBox1.Image = _huedFrames[index];
-                    }
-                    else
-                    {
-                        int graphic = value;
-                        if (_curFrame > -1)
-                        {
-                            graphic += _selAnimdataEntry.FrameData[_curFrame];
-                        }
-
-                        pictureBox1.Image = Art.GetStatic(graphic);
-                    }
+                    SetPicture();
                 }
                 numericUpDownFrameDelay.Value = _selAnimdataEntry.FrameInterval;
                 numericUpDownStartDelay.Value = _selAnimdataEntry.FrameStart;
             }
         }
 
-        private void GenerateFramedHues()
+        private void MainPictureBox_FrameChanged(object sender, EventArgs e)
         {
-            if (_selAnimdataEntry != null)
-            {
-                // In a lock, since the Timer may read values from the list
-                lock (_huedFrames)
-                {
-                    foreach (var huedFrame in _huedFrames)
-                    {
-                        huedFrame?.Dispose();
-                    }
-                    _huedFrames.Clear();
+            var newGraphic = _currentSelect + MainPictureBox.FrameIndex;
 
-                    for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
-                    {
-                        int graphic = _currAnim + _selAnimdataEntry.FrameData[i];
-                        var huedFrame = Art.GetStatic(graphic);
-                        if (huedFrame != null)
-                        {
-                            huedFrame = new Bitmap(huedFrame);
-                            Hue hueObject = Hues.List[_customHue - 1];
-                            hueObject.ApplyTo(huedFrame, _hueOnlyGray);
-                        }
-                        _huedFrames.Add(huedFrame);
-                    }
-                }
+            toolStripStatusGraphic.Text = $"Graphic: {newGraphic} (0x{newGraphic:X})";
+        }
+
+        private void SetPicture()
+        {
+            if (_selAnimdataEntry == null)
+            {
+                return;
             }
+
+            List<AnimatedFrame> frames = [];
+            Size maxImageSize = new Size(0, 0);
+
+            // Each frame's lower edge will be drawn at the same position, taking the height of the largest frame.
+            for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
+            {
+                int graphic = _currentSelect + _selAnimdataEntry.FrameData[i];
+                var frame = Art.GetStatic(graphic);
+                if (frame == null)
+                    continue;
+                maxImageSize.Width = Math.Max(maxImageSize.Width, frame.Width);
+                maxImageSize.Height = Math.Max(maxImageSize.Height, frame.Height);
+            }
+
+            for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
+            {
+                int graphic = _currentSelect + _selAnimdataEntry.FrameData[i];
+                var frame = Art.GetStatic(graphic);
+                if (frame == null)
+                {
+                    continue;
+                }
+
+                // The frame's left edge will be padding with enough space to compensate for the width of the largest frame.
+                var center = new Point((frame.Width - maxImageSize.Width) / 2, 0);
+
+                if (_customHue > 0)
+                {
+                    frame = new Bitmap(frame);
+                    Hue hueObject = Hues.List[_customHue - 1];
+                    hueObject.ApplyTo(frame, _hueOnlyGray);
+                }
+
+                frames.Add(new AnimatedFrame(frame, center));
+            }
+
+            MainPictureBox.Frames = frames;
         }
 
         /// <summary>
@@ -159,6 +159,9 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_loaded)
             {
+                MainPictureBox.Reset();
+                animateToolStripMenuItem.Checked = false;
+                showFrameBoundsToolStripMenuItem.Checked = false;
                 OnLoad(this, EventArgs.Empty);
             }
         }
@@ -221,7 +224,7 @@ namespace UoFiddler.Controls.UserControls
             if (treeView1.Nodes.Count > 0)
             {
                 treeView1.SelectedNode = treeView1.Nodes[0];
-                _currAnim = (int)treeView1.Nodes[0].Tag;
+                _currentSelect = (int)treeView1.Nodes[0].Tag;
             }
 
             if (!_loaded)
@@ -247,12 +250,11 @@ namespace UoFiddler.Controls.UserControls
 
             if (treeView1.SelectedNode.Parent == null)
             {
-                CurrAnim = (int)treeView1.SelectedNode.Tag;
-                CurrFrame = -1;
+                CurrentSelect = (int)treeView1.SelectedNode.Tag;
             }
             else
             {
-                CurrAnim = (int)treeView1.SelectedNode.Parent.Tag;
+                CurrentSelect = (int)treeView1.SelectedNode.Parent.Tag;
                 CurrFrame = treeView1.SelectedNode.Index;
             }
         }
@@ -260,12 +262,7 @@ namespace UoFiddler.Controls.UserControls
         private void AfterSelectTreeViewFrames(object sender, TreeViewEventArgs e)
         {
             CurrFrame = treeViewFrames.SelectedNode.Index;
-            if (_mTimer != null)
-            {
-                StopTimer();
-            }
-
-            CurrAnim = CurrAnim;
+            CurrentSelect = CurrentSelect;
         }
 
         private void OnClickExport(object sender, EventArgs e)
@@ -301,47 +298,9 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickStartStop(object sender, EventArgs e)
         {
-            if (_mTimer != null)
-            {
-                StopTimer();
-            }
-            else if (_selAnimdataEntry != null)
-            {
-                _mTimer = new Timer
-                {
-                    Interval = (100 * _selAnimdataEntry.FrameInterval) + 1
-                };
-                _mTimer.Tick += Timer_Tick;
-                _timerFrame = 0;
-                _mTimer.Start();
-            }
+            MainPictureBox.Animate = !MainPictureBox.Animate;
 
-            animateToolStripMenuItem.Checked = _mTimer != null;
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            ++_timerFrame;
-            if (_timerFrame >= _selAnimdataEntry.FrameCount)
-            {
-                _timerFrame = 0;
-            }
-
-            var graphic = CurrAnim + _selAnimdataEntry.FrameData[_timerFrame];
-            toolStripStatusGraphic.Text = $"Graphic: {graphic} (0x{graphic:X})";
-
-            if (_customHue == 0)
-            {
-                pictureBox1.Image = Art.GetStatic(graphic);
-            }
-            else
-            {
-                // In a lock, since GenerateHuedFrames() can write to this list.
-                lock (_huedFrames)
-                {
-                    pictureBox1.Image = _huedFrames[_timerFrame];
-                }
-            }
+            animateToolStripMenuItem.Checked = MainPictureBox.Animate;
         }
 
         private void OnValueChangedStartDelay(object sender, EventArgs e)
@@ -373,10 +332,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _selAnimdataEntry.FrameInterval = (byte)numericUpDownFrameDelay.Value;
-            if (_mTimer != null)
-            {
-                _mTimer.Interval = (100 * _selAnimdataEntry.FrameInterval) + 1;
-            }
+            MainPictureBox.FrameDelay = (100 * _selAnimdataEntry.FrameInterval) + 1;
 
             Options.ChangedUltimaClass["Animdata"] = true;
         }
@@ -409,11 +365,11 @@ namespace UoFiddler.Controls.UserControls
             _selAnimdataEntry.FrameData[index + 1] = temp;
 
             TreeNode listNode = treeView1.SelectedNode.Parent ?? treeView1.SelectedNode;
-            int frame = CurrAnim + _selAnimdataEntry.FrameData[index];
+            int frame = CurrentSelect + _selAnimdataEntry.FrameData[index];
             treeViewFrames.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
 
-            frame = CurrAnim + _selAnimdataEntry.FrameData[index + 1];
+            frame = CurrentSelect + _selAnimdataEntry.FrameData[index + 1];
             treeViewFrames.Nodes[index + 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index + 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
 
@@ -449,11 +405,11 @@ namespace UoFiddler.Controls.UserControls
             _selAnimdataEntry.FrameData[index - 1] = temp;
 
             TreeNode listNode = treeView1.SelectedNode.Parent ?? treeView1.SelectedNode;
-            int frame = CurrAnim + _selAnimdataEntry.FrameData[index];
+            int frame = CurrentSelect + _selAnimdataEntry.FrameData[index];
             treeViewFrames.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
 
-            frame = CurrAnim + _selAnimdataEntry.FrameData[index - 1];
+            frame = CurrentSelect + _selAnimdataEntry.FrameData[index - 1];
             treeViewFrames.Nodes[index - 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             listNode.Nodes[index - 1].Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}";
             treeViewFrames.SelectedNode = treeViewFrames.Nodes[index - 1];
@@ -466,7 +422,7 @@ namespace UoFiddler.Controls.UserControls
             bool canDone = Utils.ConvertStringToInt(textBoxAddFrame.Text, out int index);
             if (checkBoxRelative.Checked)
             {
-                index += CurrAnim;
+                index += CurrentSelect;
             }
 
             if (index > Art.GetMaxItemId() || index < 0)
@@ -499,7 +455,7 @@ namespace UoFiddler.Controls.UserControls
             bool canDone = Utils.ConvertStringToInt(textBoxAddFrame.Text, out int index);
             if (checkBoxRelative.Checked)
             {
-                index += CurrAnim;
+                index += CurrentSelect;
             }
 
             if (index > Art.GetMaxItemId() || index < 0)
@@ -512,7 +468,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _selAnimdataEntry.FrameData[_selAnimdataEntry.FrameCount] = (sbyte)(index - CurrAnim);
+            _selAnimdataEntry.FrameData[_selAnimdataEntry.FrameCount] = (sbyte)(index - CurrentSelect);
             _selAnimdataEntry.FrameCount++;
 
             TreeNode node = new TreeNode
@@ -566,7 +522,7 @@ namespace UoFiddler.Controls.UserControls
             node.Nodes.Clear();
             for (i = 0; i < _selAnimdataEntry.FrameCount; ++i)
             {
-                int frame = CurrAnim + _selAnimdataEntry.FrameData[i];
+                int frame = CurrentSelect + _selAnimdataEntry.FrameData[i];
                 if (Art.IsValidStatic(frame))
                 {
                     TreeNode subNode = new TreeNode
@@ -606,7 +562,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Animdata.AnimData.Remove(CurrAnim);
+            Animdata.AnimData.Remove(CurrentSelect);
             Options.ChangedUltimaClass["Animdata"] = true;
             treeView1.SelectedNode.Remove();
         }
@@ -671,18 +627,6 @@ namespace UoFiddler.Controls.UserControls
             Options.ChangedUltimaClass["Animdata"] = true;
         }
 
-        private void StopTimer()
-        {
-            if (_mTimer.Enabled)
-            {
-                _mTimer.Stop();
-            }
-
-            _mTimer.Dispose();
-            _mTimer = null;
-            _timerFrame = 0;
-        }
-
         private void ContextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             var enabled = treeView1.SelectedNode.Parent == null;
@@ -702,37 +646,7 @@ namespace UoFiddler.Controls.UserControls
                 _customHue = newHue;
                 _hueOnlyGray = newHueOnlyGray;
                 toolStripStatusHue.Text = $"Hue: {_customHue}";
-                if (_customHue != 0)
-                {
-                    GenerateFramedHues();
-                }
-                else
-                {
-                    // In a lock, since the Timer may read from this list.
-                    lock (_huedFrames)
-                    {
-                        foreach (var huedFrame in _huedFrames)
-                        {
-                            huedFrame?.Dispose();
-                        }
-                        _huedFrames.Clear();
-                    }
-                }
-
-                if (_selAnimdataEntry != null && _mTimer == null)
-                {
-                    if (_customHue > 0)
-                    {
-                        var frame = Math.Max(0, _curFrame);
-                        pictureBox1.Image = _huedFrames[frame];
-
-                    }
-                    else
-                    {
-                        var graphic = _currAnim + (_curFrame == -1 ? 0 : _selAnimdataEntry.FrameData[_curFrame]);
-                        pictureBox1.Image = Art.GetStatic(graphic);
-                    }
-                }
+                SetPicture();
             }
         }
 
@@ -755,34 +669,16 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_selAnimdataEntry != null)
             {
-                var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currAnim:X}.gif");
-                var delay = (100 * _selAnimdataEntry.FrameInterval) + 1;
-
-                {
-                    using var gif = AnimatedGif.AnimatedGif.Create(outputFile, delay);
-                    if (_customHue > 0)
-                    {
-                        // Not in a lock, since event runs on main thread, which is the only place it can be written.
-                        foreach (var huedFrame in _huedFrames)
-                        {
-                            if (huedFrame != null)
-                            {
-                                gif.AddFrame(huedFrame, delay: -1, quality: GifQuality.Bit8);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < _selAnimdataEntry.FrameCount; ++i)
-                        {
-                            int graphic = _currAnim + _selAnimdataEntry.FrameData[i];
-                            gif.AddFrame(Art.GetStatic(graphic), delay: -1, quality: GifQuality.Bit8);
-                        }
-                    }
-                }
-
+                var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currentSelect:X}.gif");
+                MainPictureBox.Frames.ToGif(outputFile, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
                 MessageBox.Show($"Saved to {outputFile}");
             }
+        }
+
+        private void OnClickShowFrameBounds(object sender, EventArgs e)
+        {
+            MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
+            showFrameBoundsToolStripMenuItem.Checked = MainPictureBox.ShowFrameBounds;
         }
     }
 
