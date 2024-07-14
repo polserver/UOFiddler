@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -28,6 +29,7 @@ namespace UoFiddler.Controls.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            AssignToolTipsToLabels();
 
             _refMarker = this;
 
@@ -1709,6 +1711,125 @@ namespace UoFiddler.Controls.UserControls
             var landTilesSelected = tabcontrol.SelectedIndex != 0;
 
             SearchName(searchByNameToolStripTextBox.Text, true, landTilesSelected);
+        }
+
+        private void AssignToolTipsToLabels()
+        {
+            // Statics
+            toolTipComponent.SetToolTip(nameLabel, GetDescription(nameLabel));
+            toolTipComponent.SetToolTip(animLabel, GetDescription(animLabel));
+            toolTipComponent.SetToolTip(weightLabel, GetDescription(weightLabel));
+            toolTipComponent.SetToolTip(layerLabel, GetDescription(layerLabel));
+            toolTipComponent.SetToolTip(quantityLabel, GetDescription(quantityLabel));
+            toolTipComponent.SetToolTip(valueLabel, GetDescription(valueLabel));
+            toolTipComponent.SetToolTip(stackOffLabel, GetDescription(stackOffLabel));
+            toolTipComponent.SetToolTip(hueLabel, GetDescription(hueLabel));
+            toolTipComponent.SetToolTip(unknown2Label, GetDescription(unknown2Label));
+            toolTipComponent.SetToolTip(miscDataLabel, GetDescription(miscDataLabel));
+            toolTipComponent.SetToolTip(heightLabel, GetDescription(heightLabel));
+            toolTipComponent.SetToolTip(unknown3Label, GetDescription(unknown3Label));
+
+            // Land Tiles
+            toolTipComponent.SetToolTip(landNameLabel, GetDescription(landNameLabel));
+            toolTipComponent.SetToolTip(landTexIdLabel, GetDescription(landTexIdLabel));
+        }
+
+        private string GetDescription(object sender)
+        {
+            string description = string.Empty;
+
+            if (sender == nameLabel)
+            {
+                description = "This field is for the name of the item, which can be a maximum of 20 characters.";
+            }
+            else if (sender == animLabel)
+            {
+                description = "This field is for the animation ID associated with the item.";
+            }
+            else if (sender == weightLabel)
+            {
+                description = "This field is for the weight of the item.";
+            }
+            else if (sender == layerLabel)
+            {
+                description = new StringBuilder()
+                    .AppendLine("This field is for the layer of the item:")
+                    .AppendLine("")
+                    .AppendLine("1 One handed weapon")
+                    .AppendLine("2 Two handed weapon, shield, or misc.")
+                    .AppendLine("3 Shoes")
+                    .AppendLine("4 Pants")
+                    .AppendLine("5 Shirt")
+                    .AppendLine("6 Helm / Line")
+                    .AppendLine("7 Gloves")
+                    .AppendLine("8 Ring")
+                    .AppendLine("9 Talisman")
+                    .AppendLine("10 Neck")
+                    .AppendLine("11 Hair")
+                    .AppendLine("12 Waist (half apron)")
+                    .AppendLine("13 Torso (inner) (chest armor)")
+                    .AppendLine("14 Bracelet")
+                    .AppendLine("15 Unused (but backpackers for backpackers go to 21)")
+                    .AppendLine("16 Facial Hair")
+                    .AppendLine("17 Torso (middle) (surcoat, tunic, full apron, sash)")
+                    .AppendLine("18 Earrings")
+                    .AppendLine("19 Arms")
+                    .AppendLine("20 Back (cloak)")
+                    .AppendLine("21 Backpack")
+                    .AppendLine("22 Torso (outer) (robe)")
+                    .AppendLine("23 Legs (outer) (skirt / kilt)")
+                    .AppendLine("24 Legs (inner) (leg armor)")
+                    .AppendLine("25 Mount (horse, ostard, etc)")
+                    .AppendLine("26 NPC Buy Restock container")
+                    .AppendLine("27 NPC Buy no restock container")
+                    .AppendLine("28 NPC Sell container")
+                    .ToString();
+            }
+            else if (sender == quantityLabel)
+            {
+                description = "This field is for the quantity of the item.";
+            }
+            else if (sender == valueLabel)
+            {
+                description = "This field is for the value of the item.";
+            }
+            else if (sender == stackOffLabel)
+            {
+                description = new StringBuilder()
+                    .AppendLine("StackOff refers to the stacking offset in pixels when multiple items are stacked.")
+                    .AppendLine("A higher StackOff value means the items will appear further apart from each other within the stack.")
+                    .ToString();
+            }
+            else if (sender == hueLabel)
+            {
+                description = "This field is for the hue (color) of the item.";
+            }
+            else if (sender == unknown2Label)
+            {
+                description = "This field is for the second unknown value.";
+            }
+            else if (sender == miscDataLabel)
+            {
+                description = "Old UO Demo weapon template definition";
+            }
+            else if (sender == heightLabel)
+            {
+                description = "This field is for the height of the item.";
+            }
+            else if (sender == unknown3Label)
+            {
+                description = "This field is for the third unknown value.";
+            }
+            else if (sender == landNameLabel)
+            {
+                description = "This field is for the name of the land tile, which can be a maximum of 20 characters.";
+            }
+            else if (sender == landTexIdLabel)
+            {
+                description = "This field is for the texture ID associated with the land tile.";
+            }
+
+            return description;
         }
     }
 }

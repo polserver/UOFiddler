@@ -54,6 +54,18 @@ namespace UoFiddler.Controls.UserControls
             selectInGumpsTabFemaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pictureBoxItem = new System.Windows.Forms.PictureBox();
             splitContainer3 = new System.Windows.Forms.SplitContainer();
+            nameLabel = new System.Windows.Forms.Label();
+            miscDataLabel = new System.Windows.Forms.Label();
+            stackOffLabel = new System.Windows.Forms.Label();
+            layerLabel = new System.Windows.Forms.Label();
+            unknown2Label = new System.Windows.Forms.Label();
+            valueLabel = new System.Windows.Forms.Label();
+            animLabel = new System.Windows.Forms.Label();
+            quantityLabel = new System.Windows.Forms.Label();
+            weightLabel = new System.Windows.Forms.Label();
+            hueLabel = new System.Windows.Forms.Label();
+            heightLabel = new System.Windows.Forms.Label();
+            unknown3Label = new System.Windows.Forms.Label();
             textBoxName = new System.Windows.Forms.TextBox();
             label9 = new System.Windows.Forms.Label();
             textBoxUnk2 = new System.Windows.Forms.TextBox();
@@ -90,6 +102,8 @@ namespace UoFiddler.Controls.UserControls
             label23 = new System.Windows.Forms.Label();
             textBoxNameLand = new System.Windows.Forms.TextBox();
             splitContainer7 = new System.Windows.Forms.SplitContainer();
+            landNameLabel = new System.Windows.Forms.Label();
+            landTexIdLabel = new System.Windows.Forms.Label();
             textBoxTexID = new System.Windows.Forms.TextBox();
             label24 = new System.Windows.Forms.Label();
             checkedListBox2 = new System.Windows.Forms.CheckedListBox();
@@ -113,6 +127,7 @@ namespace UoFiddler.Controls.UserControls
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            toolTipComponent = new System.Windows.Forms.ToolTip(components);
             tabcontrol.SuspendLayout();
             tabPageItems.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -285,6 +300,18 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer3.Panel1
             // 
+            splitContainer3.Panel1.Controls.Add(nameLabel);
+            splitContainer3.Panel1.Controls.Add(miscDataLabel);
+            splitContainer3.Panel1.Controls.Add(stackOffLabel);
+            splitContainer3.Panel1.Controls.Add(layerLabel);
+            splitContainer3.Panel1.Controls.Add(unknown2Label);
+            splitContainer3.Panel1.Controls.Add(valueLabel);
+            splitContainer3.Panel1.Controls.Add(animLabel);
+            splitContainer3.Panel1.Controls.Add(quantityLabel);
+            splitContainer3.Panel1.Controls.Add(weightLabel);
+            splitContainer3.Panel1.Controls.Add(hueLabel);
+            splitContainer3.Panel1.Controls.Add(heightLabel);
+            splitContainer3.Panel1.Controls.Add(unknown3Label);
             splitContainer3.Panel1.Controls.Add(textBoxName);
             splitContainer3.Panel1.Controls.Add(label9);
             splitContainer3.Panel1.Controls.Add(textBoxUnk2);
@@ -318,6 +345,126 @@ namespace UoFiddler.Controls.UserControls
             splitContainer3.SplitterWidth = 2;
             splitContainer3.TabIndex = 25;
             // 
+            // nameLabel
+            // 
+            nameLabel.AutoSize = true;
+            nameLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            nameLabel.Location = new System.Drawing.Point(215, 7);
+            nameLabel.Name = "nameLabel";
+            nameLabel.Size = new System.Drawing.Size(12, 15);
+            nameLabel.TabIndex = 43;
+            nameLabel.Text = "?";
+            // 
+            // miscDataLabel
+            // 
+            miscDataLabel.AutoSize = true;
+            miscDataLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            miscDataLabel.Location = new System.Drawing.Point(270, 96);
+            miscDataLabel.Name = "miscDataLabel";
+            miscDataLabel.Size = new System.Drawing.Size(12, 15);
+            miscDataLabel.TabIndex = 42;
+            miscDataLabel.Text = "?";
+            // 
+            // stackOffLabel
+            // 
+            stackOffLabel.AutoSize = true;
+            stackOffLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            stackOffLabel.Location = new System.Drawing.Point(270, 67);
+            stackOffLabel.Name = "stackOffLabel";
+            stackOffLabel.Size = new System.Drawing.Size(12, 15);
+            stackOffLabel.TabIndex = 41;
+            stackOffLabel.Text = "?";
+            // 
+            // layerLabel
+            // 
+            layerLabel.AutoSize = true;
+            layerLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            layerLabel.Location = new System.Drawing.Point(270, 37);
+            layerLabel.Name = "layerLabel";
+            layerLabel.Size = new System.Drawing.Size(12, 15);
+            layerLabel.TabIndex = 40;
+            layerLabel.Text = "?";
+            // 
+            // unknown2Label
+            // 
+            unknown2Label.AutoSize = true;
+            unknown2Label.Cursor = System.Windows.Forms.Cursors.Help;
+            unknown2Label.Location = new System.Drawing.Point(418, 96);
+            unknown2Label.Name = "unknown2Label";
+            unknown2Label.Size = new System.Drawing.Size(12, 15);
+            unknown2Label.TabIndex = 39;
+            unknown2Label.Text = "?";
+            // 
+            // valueLabel
+            // 
+            valueLabel.AutoSize = true;
+            valueLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            valueLabel.Location = new System.Drawing.Point(418, 67);
+            valueLabel.Name = "valueLabel";
+            valueLabel.Size = new System.Drawing.Size(12, 15);
+            valueLabel.TabIndex = 38;
+            valueLabel.Text = "?";
+            // 
+            // animLabel
+            // 
+            animLabel.AutoSize = true;
+            animLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            animLabel.Location = new System.Drawing.Point(418, 7);
+            animLabel.Name = "animLabel";
+            animLabel.Size = new System.Drawing.Size(12, 15);
+            animLabel.TabIndex = 37;
+            animLabel.Text = "?";
+            // 
+            // quantityLabel
+            // 
+            quantityLabel.AutoSize = true;
+            quantityLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            quantityLabel.Location = new System.Drawing.Point(418, 37);
+            quantityLabel.Name = "quantityLabel";
+            quantityLabel.Size = new System.Drawing.Size(12, 15);
+            quantityLabel.TabIndex = 36;
+            quantityLabel.Text = "?";
+            // 
+            // weightLabel
+            // 
+            weightLabel.AutoSize = true;
+            weightLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            weightLabel.Location = new System.Drawing.Point(118, 36);
+            weightLabel.Name = "weightLabel";
+            weightLabel.Size = new System.Drawing.Size(12, 15);
+            weightLabel.TabIndex = 35;
+            weightLabel.Text = "?";
+            // 
+            // hueLabel
+            // 
+            hueLabel.AutoSize = true;
+            hueLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            hueLabel.Location = new System.Drawing.Point(118, 67);
+            hueLabel.Name = "hueLabel";
+            hueLabel.Size = new System.Drawing.Size(12, 15);
+            hueLabel.TabIndex = 34;
+            hueLabel.Text = "?";
+            // 
+            // heightLabel
+            // 
+            heightLabel.AutoSize = true;
+            heightLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            heightLabel.Location = new System.Drawing.Point(118, 96);
+            heightLabel.Name = "heightLabel";
+            heightLabel.Size = new System.Drawing.Size(12, 15);
+            heightLabel.TabIndex = 33;
+            heightLabel.Text = "?";
+            // 
+            // unknown3Label
+            // 
+            unknown3Label.AutoSize = true;
+            unknown3Label.Cursor = System.Windows.Forms.Cursors.Help;
+            unknown3Label.Location = new System.Drawing.Point(118, 126);
+            unknown3Label.Name = "unknown3Label";
+            unknown3Label.Size = new System.Drawing.Size(12, 15);
+            unknown3Label.TabIndex = 32;
+            unknown3Label.Text = "?";
+            // 
             // textBoxName
             // 
             textBoxName.Location = new System.Drawing.Point(51, 3);
@@ -331,7 +478,7 @@ namespace UoFiddler.Controls.UserControls
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(254, 97);
+            label9.Location = new System.Drawing.Point(291, 97);
             label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(34, 15);
@@ -340,7 +487,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxUnk2
             // 
-            textBoxUnk2.Location = new System.Drawing.Point(315, 93);
+            textBoxUnk2.Location = new System.Drawing.Point(352, 93);
             textBoxUnk2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxUnk2.Name = "textBoxUnk2";
             textBoxUnk2.Size = new System.Drawing.Size(59, 23);
@@ -349,7 +496,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxUnk1
             // 
-            textBoxUnk1.Location = new System.Drawing.Point(188, 93);
+            textBoxUnk1.Location = new System.Drawing.Point(204, 93);
             textBoxUnk1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxUnk1.Name = "textBoxUnk1";
             textBoxUnk1.Size = new System.Drawing.Size(59, 23);
@@ -359,7 +506,7 @@ namespace UoFiddler.Controls.UserControls
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new System.Drawing.Point(124, 97);
+            label10.Location = new System.Drawing.Point(140, 97);
             label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label10.Name = "label10";
             label10.Size = new System.Drawing.Size(56, 15);
@@ -387,7 +534,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxValue
             // 
-            textBoxValue.Location = new System.Drawing.Point(315, 63);
+            textBoxValue.Location = new System.Drawing.Point(352, 63);
             textBoxValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxValue.Name = "textBoxValue";
             textBoxValue.Size = new System.Drawing.Size(59, 23);
@@ -397,7 +544,7 @@ namespace UoFiddler.Controls.UserControls
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(254, 67);
+            label6.Location = new System.Drawing.Point(291, 67);
             label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(35, 15);
@@ -407,7 +554,7 @@ namespace UoFiddler.Controls.UserControls
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(124, 67);
+            label7.Location = new System.Drawing.Point(140, 67);
             label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(52, 15);
@@ -416,7 +563,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxStackOff
             // 
-            textBoxStackOff.Location = new System.Drawing.Point(188, 63);
+            textBoxStackOff.Location = new System.Drawing.Point(204, 63);
             textBoxStackOff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxStackOff.Name = "textBoxStackOff";
             textBoxStackOff.Size = new System.Drawing.Size(59, 23);
@@ -454,7 +601,7 @@ namespace UoFiddler.Controls.UserControls
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(254, 37);
+            label5.Location = new System.Drawing.Point(291, 37);
             label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(53, 15);
@@ -463,7 +610,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxQuantity
             // 
-            textBoxQuantity.Location = new System.Drawing.Point(315, 33);
+            textBoxQuantity.Location = new System.Drawing.Point(352, 33);
             textBoxQuantity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxQuantity.Name = "textBoxQuantity";
             textBoxQuantity.Size = new System.Drawing.Size(59, 23);
@@ -472,7 +619,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxQuality
             // 
-            textBoxQuality.Location = new System.Drawing.Point(188, 33);
+            textBoxQuality.Location = new System.Drawing.Point(204, 33);
             textBoxQuality.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxQuality.Name = "textBoxQuality";
             textBoxQuality.Size = new System.Drawing.Size(59, 23);
@@ -482,7 +629,7 @@ namespace UoFiddler.Controls.UserControls
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(124, 37);
+            label4.Location = new System.Drawing.Point(140, 37);
             label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(35, 15);
@@ -530,7 +677,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // textBoxAnim
             // 
-            textBoxAnim.Location = new System.Drawing.Point(258, 3);
+            textBoxAnim.Location = new System.Drawing.Point(295, 3);
             textBoxAnim.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxAnim.Name = "textBoxAnim";
             textBoxAnim.Size = new System.Drawing.Size(116, 23);
@@ -540,7 +687,7 @@ namespace UoFiddler.Controls.UserControls
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(216, 7);
+            label2.Location = new System.Drawing.Point(251, 7);
             label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(36, 15);
@@ -566,7 +713,7 @@ namespace UoFiddler.Controls.UserControls
             tabPageLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPageLand.Name = "tabPageLand";
             tabPageLand.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabPageLand.Size = new System.Drawing.Size(760, 331);
+            tabPageLand.Size = new System.Drawing.Size(762, 347);
             tabPageLand.TabIndex = 1;
             tabPageLand.Text = "Land Tiles";
             tabPageLand.UseVisualStyleBackColor = true;
@@ -587,7 +734,7 @@ namespace UoFiddler.Controls.UserControls
             splitContainer5.Panel2.Controls.Add(label23);
             splitContainer5.Panel2.Controls.Add(textBoxNameLand);
             splitContainer5.Panel2.Controls.Add(splitContainer7);
-            splitContainer5.Size = new System.Drawing.Size(752, 325);
+            splitContainer5.Size = new System.Drawing.Size(754, 341);
             splitContainer5.SplitterDistance = 245;
             splitContainer5.SplitterWidth = 5;
             splitContainer5.TabIndex = 1;
@@ -607,8 +754,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer6.Panel2
             // 
             splitContainer6.Panel2.Controls.Add(pictureBoxLand);
-            splitContainer6.Size = new System.Drawing.Size(245, 325);
-            splitContainer6.SplitterDistance = 196;
+            splitContainer6.Size = new System.Drawing.Size(245, 341);
+            splitContainer6.SplitterDistance = 205;
             splitContainer6.SplitterWidth = 5;
             splitContainer6.TabIndex = 0;
             // 
@@ -620,7 +767,7 @@ namespace UoFiddler.Controls.UserControls
             treeViewLand.Location = new System.Drawing.Point(0, 0);
             treeViewLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             treeViewLand.Name = "treeViewLand";
-            treeViewLand.Size = new System.Drawing.Size(245, 196);
+            treeViewLand.Size = new System.Drawing.Size(245, 205);
             treeViewLand.TabIndex = 0;
             treeViewLand.AfterSelect += AfterSelectTreeViewLand;
             // 
@@ -650,7 +797,7 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxLand.Location = new System.Drawing.Point(0, 0);
             pictureBoxLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             pictureBoxLand.Name = "pictureBoxLand";
-            pictureBoxLand.Size = new System.Drawing.Size(245, 124);
+            pictureBoxLand.Size = new System.Drawing.Size(245, 131);
             pictureBoxLand.TabIndex = 0;
             pictureBoxLand.TabStop = false;
             // 
@@ -686,20 +833,42 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer7.Panel1
             // 
+            splitContainer7.Panel1.Controls.Add(landNameLabel);
+            splitContainer7.Panel1.Controls.Add(landTexIdLabel);
             splitContainer7.Panel1.Controls.Add(textBoxTexID);
             splitContainer7.Panel1.Controls.Add(label24);
             // 
             // splitContainer7.Panel2
             // 
             splitContainer7.Panel2.Controls.Add(checkedListBox2);
-            splitContainer7.Size = new System.Drawing.Size(502, 325);
+            splitContainer7.Size = new System.Drawing.Size(504, 341);
             splitContainer7.SplitterDistance = 27;
             splitContainer7.SplitterWidth = 2;
             splitContainer7.TabIndex = 25;
             // 
+            // landNameLabel
+            // 
+            landNameLabel.AutoSize = true;
+            landNameLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            landNameLabel.Location = new System.Drawing.Point(201, 7);
+            landNameLabel.Name = "landNameLabel";
+            landNameLabel.Size = new System.Drawing.Size(12, 15);
+            landNameLabel.TabIndex = 39;
+            landNameLabel.Text = "?";
+            // 
+            // landTexIdLabel
+            // 
+            landTexIdLabel.AutoSize = true;
+            landTexIdLabel.Cursor = System.Windows.Forms.Cursors.Help;
+            landTexIdLabel.Location = new System.Drawing.Point(343, 6);
+            landTexIdLabel.Name = "landTexIdLabel";
+            landTexIdLabel.Size = new System.Drawing.Size(12, 15);
+            landTexIdLabel.TabIndex = 38;
+            landTexIdLabel.Text = "?";
+            // 
             // textBoxTexID
             // 
-            textBoxTexID.Location = new System.Drawing.Point(251, 3);
+            textBoxTexID.Location = new System.Drawing.Point(269, 2);
             textBoxTexID.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxTexID.Name = "textBoxTexID";
             textBoxTexID.Size = new System.Drawing.Size(67, 23);
@@ -710,7 +879,7 @@ namespace UoFiddler.Controls.UserControls
             // label24
             // 
             label24.AutoSize = true;
-            label24.Location = new System.Drawing.Point(202, 7);
+            label24.Location = new System.Drawing.Point(220, 6);
             label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label24.Name = "label24";
             label24.Size = new System.Drawing.Size(35, 15);
@@ -725,7 +894,7 @@ namespace UoFiddler.Controls.UserControls
             checkedListBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkedListBox2.MultiColumn = true;
             checkedListBox2.Name = "checkedListBox2";
-            checkedListBox2.Size = new System.Drawing.Size(502, 296);
+            checkedListBox2.Size = new System.Drawing.Size(504, 312);
             checkedListBox2.TabIndex = 0;
             checkedListBox2.ItemCheck += OnFlagItemCheckLandTiles;
             // 
@@ -1001,5 +1170,20 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripTextBox searchByNameToolStripTextBox;
         private System.Windows.Forms.ToolStripButton searchByNameToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.Label unknown2Label;
+        private System.Windows.Forms.Label valueLabel;
+        private System.Windows.Forms.Label animLabel;
+        private System.Windows.Forms.Label quantityLabel;
+        private System.Windows.Forms.Label weightLabel;
+        private System.Windows.Forms.Label hueLabel;
+        private System.Windows.Forms.Label heightLabel;
+        private System.Windows.Forms.Label unknown3Label;
+        private System.Windows.Forms.ToolTip toolTipComponent;
+        private System.Windows.Forms.Label landNameLabel;
+        private System.Windows.Forms.Label landTexIdLabel;
+        private System.Windows.Forms.Label nameLabel;
+        private System.Windows.Forms.Label miscDataLabel;
+        private System.Windows.Forms.Label stackOffLabel;
+        private System.Windows.Forms.Label layerLabel;
     }
 }
