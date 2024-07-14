@@ -110,7 +110,7 @@ namespace UoFiddler.Controls.Forms
             tabcontrol.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabcontrol.Name = "tabcontrol";
             tabcontrol.SelectedIndex = 0;
-            tabcontrol.Size = new System.Drawing.Size(418, 421);
+            tabcontrol.Size = new System.Drawing.Size(414, 421);
             tabcontrol.TabIndex = 1;
             // 
             // tabPageItems
@@ -120,7 +120,7 @@ namespace UoFiddler.Controls.Forms
             tabPageItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPageItems.Name = "tabPageItems";
             tabPageItems.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabPageItems.Size = new System.Drawing.Size(410, 393);
+            tabPageItems.Size = new System.Drawing.Size(406, 393);
             tabPageItems.TabIndex = 0;
             tabPageItems.Text = "Items";
             tabPageItems.UseVisualStyleBackColor = true;
@@ -143,8 +143,8 @@ namespace UoFiddler.Controls.Forms
             // 
             splitContainer1.Panel2.Controls.Add(button2);
             splitContainer1.Panel2.Controls.Add(button1);
-            splitContainer1.Size = new System.Drawing.Size(402, 387);
-            splitContainer1.SplitterDistance = 341;
+            splitContainer1.Size = new System.Drawing.Size(398, 387);
+            splitContainer1.SplitterDistance = 340;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -188,7 +188,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer3.Panel2
             // 
             splitContainer3.Panel2.Controls.Add(checkedListBox1);
-            splitContainer3.Size = new System.Drawing.Size(402, 341);
+            splitContainer3.Size = new System.Drawing.Size(398, 340);
             splitContainer3.SplitterDistance = 160;
             splitContainer3.SplitterWidth = 2;
             splitContainer3.TabIndex = 25;
@@ -418,7 +418,7 @@ namespace UoFiddler.Controls.Forms
             checkedListBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkedListBox1.MultiColumn = true;
             checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new System.Drawing.Size(402, 179);
+            checkedListBox1.Size = new System.Drawing.Size(398, 178);
             checkedListBox1.TabIndex = 0;
             // 
             // button2
@@ -450,7 +450,7 @@ namespace UoFiddler.Controls.Forms
             tabPageLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPageLand.Name = "tabPageLand";
             tabPageLand.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabPageLand.Size = new System.Drawing.Size(406, 393);
+            tabPageLand.Size = new System.Drawing.Size(410, 393);
             tabPageLand.TabIndex = 1;
             tabPageLand.Text = "LandTiles";
             tabPageLand.UseVisualStyleBackColor = true;
@@ -475,8 +475,8 @@ namespace UoFiddler.Controls.Forms
             // 
             splitContainer5.Panel2.Controls.Add(button3);
             splitContainer5.Panel2.Controls.Add(button4);
-            splitContainer5.Size = new System.Drawing.Size(398, 387);
-            splitContainer5.SplitterDistance = 341;
+            splitContainer5.Size = new System.Drawing.Size(402, 387);
+            splitContainer5.SplitterDistance = 340;
             splitContainer5.SplitterWidth = 5;
             splitContainer5.TabIndex = 1;
             // 
@@ -517,7 +517,7 @@ namespace UoFiddler.Controls.Forms
             // splitContainer7.Panel2
             // 
             splitContainer7.Panel2.Controls.Add(checkedListBox2);
-            splitContainer7.Size = new System.Drawing.Size(398, 341);
+            splitContainer7.Size = new System.Drawing.Size(402, 340);
             splitContainer7.SplitterDistance = 40;
             splitContainer7.SplitterWidth = 2;
             splitContainer7.TabIndex = 25;
@@ -548,7 +548,7 @@ namespace UoFiddler.Controls.Forms
             checkedListBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkedListBox2.MultiColumn = true;
             checkedListBox2.Name = "checkedListBox2";
-            checkedListBox2.Size = new System.Drawing.Size(398, 299);
+            checkedListBox2.Size = new System.Drawing.Size(402, 298);
             checkedListBox2.TabIndex = 0;
             // 
             // button3

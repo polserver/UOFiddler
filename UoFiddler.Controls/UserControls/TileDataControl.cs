@@ -1720,60 +1720,60 @@ namespace UoFiddler.Controls.UserControls
         private void InfoLabel_Click(object sender, EventArgs e)
         {
             string message = string.Empty;
-            if (sender == label1Info)
+            if (sender == namelabel)
             {
                 message = "This field is for the name of the item, which can be a maximum of 20 characters.";
             }
-            else if (sender == label2Info)
+            else if (sender == animlabel)
             {
                 message = "This field is for the animation ID associated with the item.";
             }
-            else if (sender == label3Info)
+            else if (sender == weightlabel)
             {
                 message = "This field is for the weight of the item.";
             }
-            else if (sender == label4Info)
+            else if (sender == layerlabel)
             {
                 message = "This field is for the layer of the item." +
                     "\r\n1 One handed weapon\r\n2 Two handed weapon, shield, or misc.\r\n3 Shoes\r\n4 Pants\r\n5 Shirt\r\n6 Helm / Line\r\n7 Gloves\r\n8 Ring\r\n9 Talisman\r\n10 Neck\r\n11 Haier\r\n12 Waist (half apron)\r\n13 Torso (inner) (chest armor)\r\n14 Bracelet\r\n15 Unused (but backpackers for backpackers go to 21)\r\n16 Facial Hair\r\n17 Torso (middle) (sircoat, tunic, full apron, sash)\r\n18 Earrings\r\n19 Arms\r\n20 Back (cloak)\r\n21 Backpack\r\n22 Torso (outer) (robe)\r\n23 Legs (outer) (skirt / kilt)\r\n24 Legs (inner) (leg armor)\r\n25 Mount (horse, ostard, etc)\r\n26 NPC Buy Restock container\r\n27 NPC Buy no restock container\r\n28 NPC Sell container";
             }
-            else if (sender == label5Info)
+            else if (sender == quantitylabel)
             {
                 message = "This field is for the quantity of the item.";
             }
-            else if (sender == label6Info)
+            else if (sender == valuelabel)
             {
                 message = "This field is for the value of the item.";
             }
-            else if (sender == label7Info)
+            else if (sender == offsetlabel)
             {
                 message = "StackOff refers to the stacking offset in pixels when multiple items are stacked. A higher StackOff value means the items will appear further apart from each other within the stack. This offset controls the visual spacing between items, making them look more separated as the value increases.";
             }
-            else if (sender == label8Info)
+            else if (sender == huelabel)
             {
                 message = "This field is for the hue (color) of the item.";
             }
-            else if (sender == label9Info)
+            else if (sender == unknownlabel2)
             {
                 message = "This field is for the second unknown value.";
             }
-            else if (sender == label10Info)
+            else if (sender == miscdata)
             {
                 message = "old UO Demo weapon template def";
             }
-            else if (sender == label11Info)
+            else if (sender == heightlabel)
             {
                 message = "This field is for the height of the item.";
             }
-            else if (sender == label12Info)
+            else if (sender == unknownlabel3)
             {
                 message = "This field is for the third unknown value.";
             }
-            else if (sender == label23Info)
+            else if (sender == namelandlabael)
             {
                 message = "This field is for the name of the land tile, which can be a maximum of 20 characters.";
             }
-            else if (sender == label24Info)
+            else if (sender == textIDlabal)
             {
                 message = "This field is for the texture ID associated with the land tile.";
             }
