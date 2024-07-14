@@ -9,9 +9,9 @@
 		<AssemblyTitle>UoFiddler</AssemblyTitle>
 		<Product>UoFiddler</Product>
 		<Copyright>Copyright © 2024</Copyright>
-		<AssemblyVersion>4.14.0</AssemblyVersion>
-		<FileVersion>4.14.0</FileVersion>
-		<Version>4.14.0</Version>
+		<AssemblyVersion>4.15.0</AssemblyVersion>
+		<FileVersion>4.15.0</FileVersion>
+		<Version>4.15.0</Version>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -154,5 +154,10 @@
 		<PackageReference Include="Serilog" Version="4.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="old-changelog.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 </Project>
