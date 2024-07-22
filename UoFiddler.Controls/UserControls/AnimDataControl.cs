@@ -43,8 +43,7 @@ namespace UoFiddler.Controls.UserControls
         private int _customHue = 0;
         private bool _hueOnlyGray = false;
 
-        [Browsable(false),
-DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private int CurrFrame
         {
             get => _currentFrame;
@@ -61,8 +60,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             }
         }
 
-        [Browsable(false),
-                DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private int CurrentSelect
         {
             get => _currentSelect;
@@ -177,6 +175,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             Options.LoadedUltimaClass["Animdata"] = true;
             Options.LoadedUltimaClass["TileData"] = true;
             Options.LoadedUltimaClass["Art"] = true;
+
             treeView1.BeginUpdate();
             treeView1.Nodes.Clear();
 
@@ -185,6 +184,7 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             foreach (int id in Animdata.AnimData.Keys)
             {
                 Animdata.AnimdataEntry animdataEntry = Animdata.AnimData[id];
+                
                 TreeNode node = new TreeNode
                 {
                     Tag = id,
@@ -200,7 +200,16 @@ DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
                     node.ForeColor = Color.Blue;
                 }
 
+                // TODO: find a better approach to this
+                // we need to fix invalid entries as there cannot be more than 64 frames
+                if (animdataEntry.FrameCount > 64)
+                {
+                    animdataEntry.FrameCount = 64;
+                    Options.ChangedUltimaClass["Animdata"] = true;
+                }
+
                 treeView1.Nodes.Add(node);
+
                 for (int i = 0; i < animdataEntry.FrameCount; ++i)
                 {
                     int frame = id + animdataEntry.FrameData[i];
