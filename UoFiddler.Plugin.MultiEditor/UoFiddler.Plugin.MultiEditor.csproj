@@ -62,6 +62,7 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
 	  <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
 	</ItemGroup>
 </Project>
