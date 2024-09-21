@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Ultima
@@ -16,21 +18,12 @@ namespace Ultima
         private Dictionary<int, StringEntry> _entryTable;
         private static byte[] _buffer = new byte[1024];
 
-        /// <summary>
-        /// Initialize <see cref="StringList"/> of Language
-        /// </summary>
-        /// <param name="language"></param>
         public StringList(string language)
         {
             Language = language;
             LoadEntry(Files.GetFilePath($"cliloc.{language}"));
         }
 
-        /// <summary>
-        /// Initialize <see cref="StringList"/> of Language from path
-        /// </summary>
-        /// <param name="language"></param>
-        /// <param name="path"></param>
         public StringList(string language, string path)
         {
             Language = language;
@@ -48,12 +41,55 @@ namespace Ultima
             _stringTable = new Dictionary<int, string>();
             _entryTable = new Dictionary<int, StringEntry>();
 
-            using (var bin = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            byte[] fileData = File.ReadAllBytes(path);
+
+            try
+            {
+                ProcessCompressedFile(fileData);
+            }
+            catch
+            {
+                ProcessUncompressedFile(fileData);
+            }
+        }
+
+        private void ProcessCompressedFile(byte[] compressedData)
+        {
+            byte[] decompressedData = Decoder.Decompress(compressedData);
+
+            using (var ms = new MemoryStream(decompressedData))
+            using (var bin = new BinaryReader(ms))
+            {
+                bin.BaseStream.Seek(6, SeekOrigin.Begin);
+
+                while (bin.BaseStream.Position < bin.BaseStream.Length)
+                {
+                    int number = bin.ReadInt32();
+                    byte flag = bin.ReadByte();
+                    ushort length = bin.ReadUInt16();
+
+                    if (length > _buffer.Length)
+                    {
+                        _buffer = new byte[(length + 1023) & ~1023];
+                    }
+
+                    bin.Read(_buffer, 0, length);
+                    string text = Encoding.UTF8.GetString(_buffer, 0, length);
+
+                    AddEntry(number, text, flag);
+                }
+            }
+        }
+
+        private void ProcessUncompressedFile(byte[] data)
+        {
+            using (var ms = new MemoryStream(data))
+            using (var bin = new BinaryReader(ms))
             {
                 _header1 = bin.ReadInt32();
                 _header2 = bin.ReadInt16();
 
-                while (bin.BaseStream.Length != bin.BaseStream.Position)
+                while (bin.BaseStream.Position < bin.BaseStream.Length)
                 {
                     int number = bin.ReadInt32();
                     byte flag = bin.ReadByte();
@@ -67,19 +103,20 @@ namespace Ultima
                     bin.Read(_buffer, 0, length);
                     string text = Encoding.UTF8.GetString(_buffer, 0, length);
 
-                    var se = new StringEntry(number, text, flag);
-                    Entries.Add(se);
-
-                    _stringTable[number] = text;
-                    _entryTable[number] = se;
+                    AddEntry(number, text, flag);
                 }
             }
         }
 
-        /// <summary>
-        /// Saves <see cref="SaveStringList"/> to fileName
-        /// </summary>
-        /// <param name="fileName"></param>
+        private void AddEntry(int number, string text, byte flag)
+        {
+            var se = new StringEntry(number, text, flag);
+            Entries.Add(se);
+
+            _stringTable[number] = text;
+            _entryTable[number] = se;
+        }
+
         public void SaveStringList(string fileName)
         {
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -194,6 +231,6 @@ namespace Ultima
                     ? string.CompareOrdinal(y.Text, x.Text)
                     : string.CompareOrdinal(x.Text, y.Text);
             }
-        }
+        }        
     }
 }
