@@ -48,6 +48,7 @@ namespace UoFiddler.Controls.UserControls
             this.CoordsLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ClientLocLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ZoomLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.MessageLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.zoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -125,7 +126,8 @@ namespace UoFiddler.Controls.UserControls
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CoordsLabel,
             this.ClientLocLabel,
-            this.ZoomLabel});
+            this.ZoomLabel,
+            this.MessageLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 356);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -153,9 +155,18 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.ZoomLabel.AutoSize = false;
             this.ZoomLabel.Name = "ZoomLabel";
-            this.ZoomLabel.Size = new System.Drawing.Size(100, 28);
+            this.ZoomLabel.Size = new System.Drawing.Size(200, 28);
             this.ZoomLabel.Text = "Zoom: ";
             this.ZoomLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // MessageLabel
+            // 
+            this.MessageLabel.AutoSize = false;
+            this.MessageLabel.Name = "MessageLabel";
+            this.MessageLabel.Size = new System.Drawing.Size(200, 28);
+            this.MessageLabel.Text = "";
+            this.MessageLabel.ForeColor = System.Drawing.Color.Red;
+            this.MessageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // pictureBox
             // 
@@ -769,6 +780,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem insertMarkerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem malasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem meltStaticsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel MessageLabel;
         private System.Windows.Forms.TreeView OverlayObjectTree;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox;
