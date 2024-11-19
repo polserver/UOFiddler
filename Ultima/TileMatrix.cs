@@ -44,6 +44,11 @@ namespace Ultima
             _statics?.Close();
         }
 
+        public bool AllFilesExist()
+        {
+            return _mapPath != null && _indexPath != null && _staticsPath != null;
+        }
+
         public TileMatrix(int fileIndex, int mapId, int width, int height, string path)
         {
             Width = width;

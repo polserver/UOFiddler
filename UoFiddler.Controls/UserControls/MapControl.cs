@@ -629,6 +629,7 @@ namespace UoFiddler.Controls.UserControls
             _map = CurrentMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
                 (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
                 showStaticsToolStripMenuItem1.Checked);
+            MessageLabel.Text = CurrentMap.Tiles.AllFilesExist() ? "" : "One of map files is missing!";
             ZoomMap(ref _map);
             e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
 
