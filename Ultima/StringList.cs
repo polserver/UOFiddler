@@ -58,7 +58,7 @@ namespace Ultima
                 fileStream.Read(buf, 0, buf.Length);
 
                 //Check if the file is BWT compressed and decompress if necessary
-                bool _compression = buf[3] == 0x8E;
+                _compression = buf[3] == 0x8E;
                 byte[] output = _compression ? BwtDecompress.Decompress(buf) : buf;
 
                 using (var reader = new BinaryReader(new MemoryStream(output)))
