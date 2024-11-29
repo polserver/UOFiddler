@@ -9,7 +9,7 @@ namespace Ultima
     {
         private int _header1;
         private short _header2;
-        private bool _compression;//Tecmo: Store compression status of opened file
+        private bool _compression;//Store compression status of opened file
 
         public List<StringEntry> Entries { get; private set; }
         public string Language { get; }
@@ -119,7 +119,9 @@ namespace Ultima
                 byte[] data = memoryStream.ToArray();
 
                 if (_compression)
+                {
                     data = BwtCompress.Compress(data);
+                }
 
                 // Write the final output to the file
                 using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
