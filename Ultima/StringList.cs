@@ -57,10 +57,9 @@ namespace Ultima
                 byte[] buf = new byte[fileStream.Length];
                 fileStream.Read(buf, 0, buf.Length);
 
-                #region Tecmo: Check if the file is BWT compressed and decompress if necessary
+                //Check if the file is BWT compressed and decompress if necessary
                 bool _compression = buf[3] == 0x8E;
                 byte[] output = _compression ? BwtDecompress.Decompress(buf) : buf;
-                #endregion
 
                 using (var reader = new BinaryReader(new MemoryStream(output)))
                 {
@@ -119,10 +118,8 @@ namespace Ultima
                 // Get the data buffer
                 byte[] data = memoryStream.ToArray();
 
-                #region Tecmo: Compression based on Opened File
                 if (_compression)
                     data = BwtCompress.Compress(data);
-                #endregion
 
                 // Write the final output to the file
                 using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
