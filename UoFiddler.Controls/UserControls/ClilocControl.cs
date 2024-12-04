@@ -53,18 +53,18 @@ namespace UoFiddler.Controls.UserControls
                 switch (value)
                 {
                     case 0:
-                        _cliloc = new StringList("enu");
+                        _cliloc = new StringList("enu", Options.NewClilocFormat);
                         break;
                     case 1:
-                        _cliloc = new StringList("deu");
+                        _cliloc = new StringList("deu", Options.NewClilocFormat);
                         break;
                     case 2:
                         TestCustomLang("cliloc.custom1");
-                        _cliloc = new StringList("custom1");
+                        _cliloc = new StringList("custom1", Options.NewClilocFormat);
                         break;
                     case 3:
                         TestCustomLang("cliloc.custom2");
-                        _cliloc = new StringList("custom2");
+                        _cliloc = new StringList("custom2", Options.NewClilocFormat);
                         break;
                 }
             }

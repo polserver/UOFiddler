@@ -82,6 +82,7 @@ namespace UoFiddler.Forms
             TileSelectionColorComboBox = new System.Windows.Forms.ComboBox();
             TileFocusColorComboBox = new System.Windows.Forms.ComboBox();
             buttonClose = new System.Windows.Forms.Button();
+            checkBoxNewClilocFormat = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownItemSizeHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownItemSizeWidth).BeginInit();
@@ -178,6 +179,7 @@ namespace UoFiddler.Forms
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(checkBoxNewClilocFormat);
             groupBox2.Controls.Add(checkBoxPolSoundIdOffset);
             groupBox2.Controls.Add(checkBoxuseDiff);
             groupBox2.Controls.Add(checkBoxNewMapSize);
@@ -550,6 +552,18 @@ namespace UoFiddler.Forms
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += OnClickClose;
             // 
+            // checkBoxNewClilocFormat
+            // 
+            checkBoxNewClilocFormat.AutoSize = true;
+            checkBoxNewClilocFormat.Location = new System.Drawing.Point(7, 123);
+            checkBoxNewClilocFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxNewClilocFormat.Name = "checkBoxNewClilocFormat";
+            checkBoxNewClilocFormat.Size = new System.Drawing.Size(120, 19);
+            checkBoxNewClilocFormat.TabIndex = 8;
+            checkBoxNewClilocFormat.Text = "New cliloc format";
+            toolTip1.SetToolTip(checkBoxNewClilocFormat, "For client version 7.0.104 and newer this needs to be checked. It allows reading of new cliloc format. This option has only partial support so saving file will only produce old cliloc format.");
+            checkBoxNewClilocFormat.UseVisualStyleBackColor = true;
+            // 
             // OptionsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -628,5 +642,6 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.CheckBox checkboxRemoveTileBorder;
         private System.Windows.Forms.CheckBox checkBoxOverrideBackgroundColorFromTile;
+        private System.Windows.Forms.CheckBox checkBoxNewClilocFormat;
     }
 }

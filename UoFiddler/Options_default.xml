@@ -4,6 +4,8 @@
   <ItemSize width="48" height="48" />
   <!--ItemClip images in items tab shrinked or clipped-->
   <ItemClip active="True" />
+  <!--NewClilocFormat should cliloc be decompressed before reading-->
+  <NewClilocFormat active="False" />
   <!--CacheData should mul entries be cached for faster load-->
   <CacheData active="True" />
   <!--NewMapSize Felucca/Trammel width 7168?-->

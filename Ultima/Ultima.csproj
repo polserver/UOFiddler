@@ -23,7 +23,4 @@
 		<DebugType>none</DebugType>
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
-	<ItemGroup>
-	  <Folder Include="Helpers\bw2\" />
-	</ItemGroup>
 </Project>

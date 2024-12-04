@@ -29,6 +29,11 @@ namespace UoFiddler.Controls.Classes
         }
 
         /// <summary>
+        /// Should UOFiddler decompress cliloc files. For client version 7.104.0 or newer
+        /// </summary>
+        public static bool NewClilocFormat { get; set; }
+
+        /// <summary>
         /// Defines Element Width in ItemShow
         /// </summary>
         public static int ArtItemSizeWidth { get; set; } = 48;

@@ -128,6 +128,11 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("ItemClip");
             elem.SetAttribute("active", Options.ArtItemClip.ToString());
             sr.AppendChild(elem);
+            comment = dom.CreateComment("NewClilocFormat should cliloc be decompressed before reading");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("NewClilocFormat");
+            elem.SetAttribute("active", Options.NewClilocFormat.ToString());
+            sr.AppendChild(elem);
             comment = dom.CreateComment("CacheData should mul entries be cached for faster load");
             sr.AppendChild(comment);
             elem = dom.CreateElement("CacheData");
@@ -318,6 +323,12 @@ namespace UoFiddler.Classes
             {
                 Options.ArtItemSizeWidth = int.Parse(elem.GetAttribute("width"));
                 Options.ArtItemSizeHeight = int.Parse(elem.GetAttribute("height"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("NewClilocFormat");
+            if (elem != null)
+            {
+                Options.NewClilocFormat = bool.Parse(elem.GetAttribute("active"));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("ItemClip");

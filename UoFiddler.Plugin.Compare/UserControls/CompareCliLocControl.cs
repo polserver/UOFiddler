@@ -51,7 +51,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            _cliloc1 = new StringList("1", path);
+            _cliloc1 = new StringList("1", path, decompressFileOneCheckBox.Checked);
             _cliloc1.Entries.Sort(new StringList.NumberComparer(false));
 
             if (_cliloc2 != null)
@@ -73,7 +73,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            _cliloc2 = new StringList("2", path);
+            _cliloc2 = new StringList("2", path, decompressFileTwoCheckBox.Checked);
             _cliloc2.Entries.Sort(new StringList.NumberComparer(false));
 
             if (_cliloc1 != null)

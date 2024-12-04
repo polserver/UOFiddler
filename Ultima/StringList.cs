@@ -7,6 +7,7 @@ namespace Ultima
 {
     public sealed class StringList
     {
+        private readonly bool _decompress;
         private int _header1;
         private short _header2;
 
@@ -21,8 +22,10 @@ namespace Ultima
         /// Initialize <see cref="StringList"/> of Language
         /// </summary>
         /// <param name="language"></param>
-        public StringList(string language)
+        /// <param name="decompress"></param>
+        public StringList(string language, bool decompress)
         {
+            _decompress = decompress;
             Language = language;
             LoadEntry(Files.GetFilePath($"cliloc.{language}"));
         }
@@ -32,8 +35,10 @@ namespace Ultima
         /// </summary>
         /// <param name="language"></param>
         /// <param name="path"></param>
-        public StringList(string language, string path)
+        /// <param name="decompress"></param>
+        public StringList(string language, string path, bool decompress)
         {
+            _decompress = decompress;
             Language = language;
             LoadEntry(path);
         }
@@ -52,18 +57,14 @@ namespace Ultima
 
             using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                byte[] buf = new byte[fileStream.Length];
-                _ = fileStream.Read(buf, 0, buf.Length);
+                byte[] buffer = new byte[fileStream.Length];
+                _ = fileStream.Read(buffer, 0, buffer.Length);
 
-                // Check if the file is BWT compressed and decompress if necessary
-                // TODO: this probably needs a setting
-                var compressed = buf[3] == 0x8E;
+                byte[] clilocData = _decompress
+                    ? BwtDecompress.Decompress(buffer)
+                    : buffer;
 
-                byte[] output = compressed
-                    ? BwtDecompress.Decompress(buf)
-                    : buf;
-
-                using (var reader = new BinaryReader(new MemoryStream(output)))
+                using (var reader = new BinaryReader(new MemoryStream(clilocData)))
                 {
                     _header1 = reader.ReadInt32();
                     _header2 = reader.ReadInt16();
