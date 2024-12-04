@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.15.1
+    <value>Version 4.15.2
+- Added reading of compressed cliloc files introduced in version 7.0.104 (authors ClassicUO team; added by Tecmo)
+  + support is only partial so it can only read the files and decompress
+  + saving will still produce old file type
+  + to read newer clilocs you need to enable "New cliloc format" in Options
+
+Version 4.15.1
 - Fixed crash when animdata frame count entry is higher than the maximum value of 64
 
 Version 4.15.0
