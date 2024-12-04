@@ -9,7 +9,6 @@ namespace Ultima
     {
         private int _header1;
         private short _header2;
-        private bool _compression;//Store compression status of opened file
 
         public List<StringEntry> Entries { get; private set; }
         public string Language { get; }
@@ -53,13 +52,16 @@ namespace Ultima
 
             using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                // Read the entire file into a buffer
                 byte[] buf = new byte[fileStream.Length];
-                fileStream.Read(buf, 0, buf.Length);
+                _ = fileStream.Read(buf, 0, buf.Length);
 
-                //Check if the file is BWT compressed and decompress if necessary
-                _compression = buf[3] == 0x8E;
-                byte[] output = _compression ? BwtDecompress.Decompress(buf) : buf;
+                // Check if the file is BWT compressed and decompress if necessary
+                // TODO: this probably needs a setting
+                var compressed = buf[3] == 0x8E;
+
+                byte[] output = compressed
+                    ? BwtDecompress.Decompress(buf)
+                    : buf;
 
                 using (var reader = new BinaryReader(new MemoryStream(output)))
                 {
@@ -115,13 +117,7 @@ namespace Ultima
                     }
                 }
 
-                // Get the data buffer
                 byte[] data = memoryStream.ToArray();
-
-                if (_compression)
-                {
-                    data = BwtCompress.Compress(data);
-                }
 
                 // Write the final output to the file
                 using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -135,7 +131,6 @@ namespace Ultima
                 }
             }
         }
-
 
         public string GetString(int number)
         {
