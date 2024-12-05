@@ -30,12 +30,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
       - name: Install .NET Core
-        uses: actions/setup-dotnet@v4.0.1
+        uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: 8.0.x
 
@@ -45,7 +45,7 @@ jobs:
           Configuration: ${{ matrix.configuration }}
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: ${{ env.Asset_Name }}.zip
           path: ./UOFiddler/bin/Release/
@@ -74,7 +74,7 @@ jobs:
         run: 7z a -tzip ${{ env.Asset_Name }}.zip './${{ env.Asset_Name }}'
 
       - name: Create release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.1.0
         with:
           name: UOFiddler ${{ github.ref_name }}
           generate_release_notes: true
