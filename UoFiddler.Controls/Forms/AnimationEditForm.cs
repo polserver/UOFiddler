@@ -2353,8 +2353,10 @@ namespace UoFiddler.Controls.Forms
                                 if (dialog.FileName.Contains(".gif"))
                                 {
                                     using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
+                                    using (MemoryStream ms = new MemoryStream())
                                     {
-                                        Bitmap bitmap = new Bitmap(bmpTemp);
+                                        bmpTemp.Save(ms, ImageFormat.Gif);
+                                        Bitmap bitmap = new Bitmap(ms);
 
                                         FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
 
@@ -3075,10 +3077,10 @@ namespace UoFiddler.Controls.Forms
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
                             Color customConvert = Color.FromArgb(255, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                            
+
                             DirectionTrackBar.Enabled = false;
                             DirectionTrackBar.Value = 0;
-                            
+
                             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
 
                             if (edit != null)
@@ -3087,8 +3089,10 @@ namespace UoFiddler.Controls.Forms
                                 if (dialog.FileName.Contains(".gif"))
                                 {
                                     using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
+                                    using (MemoryStream ms = new MemoryStream())
                                     {
-                                        Bitmap bitmap = new Bitmap(bmpTemp);
+                                        bmpTemp.Save(ms, ImageFormat.Gif);
+                                        Bitmap bitmap = new Bitmap(ms);
 
                                         FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
 
