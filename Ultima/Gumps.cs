@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
+using Ultima.Helpers;
 
 namespace Ultima
 {
@@ -154,6 +156,7 @@ namespace Ultima
             stream.Read(buffer, 0, length);
             stream.Close();
 
+            buffer = BwtDecompress.Decompress(buffer);
             return buffer;
         }
 
@@ -361,40 +364,62 @@ namespace Ultima
                 return _cache[index];
             }
 
-            Stream stream = _fileIndex.Seek(index, out int length, out int extra, out patched);
+            Stream stream = _fileIndex.Seek(index, out Entry3D entry);
             if (stream == null)
             {
                 return null;
             }
 
-            if (extra == -1)
+            if (entry.Extra1 == -1)
             {
                 stream.Close();
                 return null;
             }
+
             if (patched)
             {
                 _patched[index] = true;
             }
 
-            int width = (extra >> 16) & 0xFFFF;
-            int height = extra & 0xFFFF;
+            if (_streamBuffer == null || _streamBuffer.Length < entry.Length)
+            {
+                _streamBuffer = new byte[entry.Length];
+            }
+            long pos = stream.Position;
+            stream.Read(_streamBuffer, 0, entry.Length);
+
+            uint width = (uint)entry.Extra1;
+            uint height = (uint)entry.Extra2;
+            if (entry.Flag >= 1)
+            {
+                stream.Position = pos;
+                _streamBuffer = new byte[entry.DecompressedLength];
+                ZLibStream zlibStream = new ZLibStream(stream, CompressionMode.Decompress, true);
+                zlibStream.Read(_streamBuffer, 0, _streamBuffer.Length);
+
+                if (entry.Flag == 3)
+                {
+                    _streamBuffer = BwtDecompress.Decompress(_streamBuffer);
+                }
+                using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
+                {
+                    byte[] extra = reader.ReadBytes(8);
+                    width = (uint)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
+                    height = (uint)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
+                }
+
+                entry.Extra1 = (int)width;
+                entry.Extra2 = (int)height;
+            }
 
             if (width <= 0 || height <= 0)
             {
                 return null;
             }
 
-            var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
+            var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(
-                new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-            if (_streamBuffer == null || _streamBuffer.Length < length)
-            {
-                _streamBuffer = new byte[length];
-            }
-
-            stream.Read(_streamBuffer, 0, length);
+                new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
 
             fixed (byte* data = _streamBuffer)
             {

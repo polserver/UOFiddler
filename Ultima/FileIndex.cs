@@ -159,10 +159,10 @@ namespace Ultima
                             int compressedLength = br.ReadInt32();
                             int decompressedLength = br.ReadInt32();
                             ulong hash = br.ReadUInt64();
-                            br.ReadUInt32(); // Adler32
+                            uint data_hash = br.ReadUInt32();
                             short flag = br.ReadInt16();
 
-                            int entryLength = flag == 1 ? compressedLength : decompressedLength;
+                            int entryLength = flag >= 1 ? compressedLength : decompressedLength;
 
                             if (offset == 0)
                             {
@@ -178,28 +178,33 @@ namespace Ultima
                             {
                                 throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
                             }
-
-                            Index[idx].Lookup = (int)(offset + headerLength);
+                            offset += headerLength;
+                            Index[idx].Lookup = (int)(offset);
                             Index[idx].Length = entryLength;
+                            Index[idx].DecompressedLength = decompressedLength;
+                            Index[idx].Flag = flag;
 
-                            if (!hasExtra)
+                            if (!hasExtra || flag >= 1)
                             {
                                 continue;
                             }
 
                             long curPos = br.BaseStream.Position;
 
-                            br.BaseStream.Seek(offset + headerLength, SeekOrigin.Begin);
+                            br.BaseStream.Seek(offset, SeekOrigin.Begin);
 
                             byte[] extra = br.ReadBytes(8);
 
                             var extra1 = (short)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
                             var extra2 = (short)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
-
                             Index[idx].Lookup += 8;
+                            Index[idx].Length -= 8;
+
                             // changed from int b = extra1 << 16 | extra2;
                             // int cast removes compiler warning
                             Index[idx].Extra = extra1 << 16 | (int)extra2;
+                            Index[idx].Extra1 = extra1;
+                            Index[idx].Extra2 = extra2;
 
                             br.BaseStream.Seek(curPos, SeekOrigin.Begin);
                         }
@@ -400,6 +405,59 @@ namespace Ultima
             _stream.Seek(e.Lookup, SeekOrigin.Begin);
             return _stream;
         }
+        public Stream Seek(int index, out Entry3D entry)
+        {
+            if (index < 0 || index >= Index.Length)
+            {
+                entry = Entry3D.Invalid;
+                return null;
+            }
+
+            Entry3D e = Index[index];
+
+            if (e.Lookup < 0)
+            {
+                entry = Entry3D.Invalid;
+
+                return null;
+            }
+
+            entry = e;
+
+
+            if ((e.Length & (1 << 31)) != 0)
+            {
+                Verdata.Seek(e.Lookup);
+                return Verdata.Stream;
+            }
+
+            if (e.Length < 0)
+            {
+                entry = Entry3D.Invalid;
+                return null;
+            }
+
+            if ((_stream?.CanRead != true) || (!_stream.CanSeek))
+            {
+                _stream = _mulPath == null ? null : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (_stream == null)
+            {
+                entry = Entry3D.Invalid;
+                return null;
+            }
+
+            if (_stream.Length < e.Lookup)
+            {
+                entry = Entry3D.Invalid;
+                return null;
+            }
+
+
+            _stream.Seek(e.Lookup, SeekOrigin.Begin);
+            return _stream;
+        }
 
         public bool Valid(int index, out int length, out int extra, out bool patched)
         {
@@ -465,6 +523,12 @@ namespace Ultima
     {
         public int Lookup;
         public int Length;
+        public int DecompressedLength;
         public int Extra;
+        public int Extra1;
+        public int Extra2;
+        public int Flag;
+
+        public static Entry3D Invalid { get =>  new Entry3D(); }
     }
 }
