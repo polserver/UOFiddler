@@ -428,8 +428,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.2.0" />
-		<PackageReference Include="System.Drawing.Common" Version="8.0.11" />
-		<PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+		<PackageReference Include="System.Resources.Extensions" Version="9.0.0" />
 		<PackageReference Include="AnimatedGif" Version="1.0.5" />
 	</ItemGroup>
 </Project>
