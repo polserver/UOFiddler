@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection.Metadata.Ecma335;
 using Ultima.Helpers;
 
 namespace Ultima
@@ -390,24 +391,29 @@ namespace Ultima
 
             uint width = (uint)entry.Extra1;
             uint height = (uint)entry.Extra2;
+            
+            //Compressed UOPs
             if (entry.Flag >= 1)
             {
-                stream.Position = pos;
-                _streamBuffer = new byte[entry.DecompressedLength];
-                ZLibStream zlibStream = new ZLibStream(stream, CompressionMode.Decompress, true);
-                zlibStream.Read(_streamBuffer, 0, _streamBuffer.Length);
+                byte[] dbuf = new byte[entry.DecompressedLength];
+                var result = ZLib.Decompress(_streamBuffer, dbuf);
+                if (result != ZLib.ZLibError.Ok)
+                {
+                    return default;
+                }
 
                 if (entry.Flag == 3)
                 {
-                    _streamBuffer = BwtDecompress.Decompress(_streamBuffer);
+                    _streamBuffer = BwtDecompress.Decompress(dbuf);
                 }
                 using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
                 {
                     byte[] extra = reader.ReadBytes(8);
                     width = (uint)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
                     height = (uint)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
+                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8);
                 }
-
+                
                 entry.Extra1 = (int)width;
                 entry.Extra2 = (int)height;
             }
@@ -416,53 +422,60 @@ namespace Ultima
             {
                 return null;
             }
-
-            var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format16bppArgb1555);
-            BitmapData bd = bmp.LockBits(
-                new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-            fixed (byte* data = _streamBuffer)
+            try
             {
-                var lookup = (int*)data;
-                var dat = (ushort*)data;
+                var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format16bppArgb1555);
+                BitmapData bd = bmp.LockBits(
+                    new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
 
-                var line = (ushort*)bd.Scan0;
-                int delta = bd.Stride >> 1;
-                for (int y = 0; y < height; ++y, line += delta)
+                fixed (byte* data = _streamBuffer)
                 {
-                    int count = (*lookup++ * 2);
+                    var lookup = (int*)data;
+                    var dat = (ushort*)data;
 
-                    ushort* cur = line;
-                    ushort* end = line + bd.Width;
-
-                    while (cur < end)
+                    var line = (ushort*)bd.Scan0;
+                    int delta = bd.Stride >> 1;
+                    for (int y = 0; y < height; ++y, line += delta)
                     {
-                        ushort color = dat[count++];
-                        ushort* next = cur + dat[count++];
+                        int count = (*lookup++ * 2);
 
-                        if (color == 0)
+                        ushort* cur = line;
+                        ushort* end = line + bd.Width;
+
+                        while (cur < end)
                         {
-                            cur = next;
-                        }
-                        else
-                        {
-                            color ^= 0x8000;
-                            while (cur < next)
+                            ushort color = dat[count++];
+                            ushort* next = cur + dat[count++];
+
+                            if (color == 0)
                             {
-                                *cur++ = color;
+                                cur = next;
+                            }
+                            else
+                            {
+                                color ^= 0x8000;
+                                while (cur < next)
+                                {
+                                    *cur++ = color;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            bmp.UnlockBits(bd);
-            if (Files.CacheData)
+                bmp.UnlockBits(bd);
+
+                if (Files.CacheData)
+                {
+                    return _cache[index] = bmp;
+                }
+
+                return bmp;
+            }
+            catch (Exception ex)
             {
-                return _cache[index] = bmp;
+                return null;
             }
-
-            return bmp;
         }
 
         public static unsafe void Save(string path)

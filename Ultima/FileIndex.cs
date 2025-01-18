@@ -116,10 +116,11 @@ namespace Ultima
                         throw new ArgumentException("Bad UOP file.");
                     }
 
-                    br.ReadInt64(); // version + signature
+                    var version = br.ReadUInt32(); // version
+                    var signature = br.ReadUInt32(); // signature
                     long nextBlock = br.ReadInt64();
-                    br.ReadInt32(); // block capacity
-                    _ = br.ReadInt32(); // TODO: check if we need value from here
+                    var block_size = br.ReadUInt32(); // block capacity
+                    var count = br.ReadInt32(); // TODO: check if we need value from here
 
                     if (idxLength > 0)
                     {
@@ -162,8 +163,6 @@ namespace Ultima
                             uint data_hash = br.ReadUInt32();
                             short flag = br.ReadInt16();
 
-                            int entryLength = flag >= 1 ? compressedLength : decompressedLength;
-
                             if (offset == 0)
                             {
                                 continue;
@@ -178,35 +177,38 @@ namespace Ultima
                             {
                                 throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
                             }
+
                             offset += headerLength;
-                            Index[idx].Lookup = (int)(offset);
-                            Index[idx].Length = entryLength;
-                            Index[idx].DecompressedLength = decompressedLength;
-                            Index[idx].Flag = flag;
-
-                            if (!hasExtra || flag >= 1)
+                           
+                            if (hasExtra && flag != 3)
                             {
-                                continue;
+                                long curPos = br.BaseStream.Position;
+
+                                br.BaseStream.Seek(offset, SeekOrigin.Begin);
+
+                                var extra1 = br.ReadInt32();
+                                var extra2 = br.ReadInt32();
+                                Index[idx].Lookup = (int)(offset + 8);
+                                Index[idx].Length = compressedLength - 8;
+                                Index[idx].DecompressedLength = decompressedLength;
+                                Index[idx].Flag = flag;
+
+                                // changed from int b = extra1 << 16 | extra2;
+                                // int cast removes compiler warning
+                                Index[idx].Extra = extra1 << 16 | (int)extra2;
+                                Index[idx].Extra1 = extra1;
+                                Index[idx].Extra2 = extra2;
+
+                                br.BaseStream.Seek(curPos, SeekOrigin.Begin);
                             }
-
-                            long curPos = br.BaseStream.Position;
-
-                            br.BaseStream.Seek(offset, SeekOrigin.Begin);
-
-                            byte[] extra = br.ReadBytes(8);
-
-                            var extra1 = (short)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
-                            var extra2 = (short)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
-                            Index[idx].Lookup += 8;
-                            Index[idx].Length -= 8;
-
-                            // changed from int b = extra1 << 16 | extra2;
-                            // int cast removes compiler warning
-                            Index[idx].Extra = extra1 << 16 | (int)extra2;
-                            Index[idx].Extra1 = extra1;
-                            Index[idx].Extra2 = extra2;
-
-                            br.BaseStream.Seek(curPos, SeekOrigin.Begin);
+                            else
+                            {
+                                Index[idx].Lookup = (int)(offset);
+                                Index[idx].Length = compressedLength;
+                                Index[idx].DecompressedLength = decompressedLength;
+                                Index[idx].Flag = flag;
+                                Index[idx].Extra = 0x0FFFFFFF; //we cant read it right now, but -1 and 0 makes this entry invalid
+                            }
                         }
                     }
                     while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
