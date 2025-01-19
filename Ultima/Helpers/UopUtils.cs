@@ -1,3 +1,7 @@
+using System.IO.Compression;
+using System.IO;
+using System;
+
 namespace Ultima.Helpers
 {
     static internal class UopUtils
@@ -91,6 +95,34 @@ namespace Ultima.Helpers
             }
 
             return ((ulong)esi << 32) | eax;
+        }
+
+        /// <summary>
+        /// Method for decompressing zlib byte arrays inside .uop
+        /// </summary>
+        /// <param name="compressedData">Input compressed array of bytes</param>
+        /// <returns>decompressed byte[] data</returns>
+        public static (bool success, byte[] data) Decompress(byte[] compressedData)
+        {
+            if (compressedData == null || compressedData.Length == 0)
+            {
+                return (false, Array.Empty<byte>());
+            }
+
+            try
+            {
+                using (var compressedStream = new MemoryStream(compressedData))
+                using (var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress))
+                using (var resultStream = new MemoryStream())
+                {
+                    zlibStream.CopyTo(resultStream);
+                    return (true, resultStream.ToArray());
+                }
+            }
+            catch (Exception)
+            {
+                return (false, Array.Empty<byte>());
+            }
         }
     }
 }

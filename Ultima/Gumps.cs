@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
-using System.Reflection.Metadata.Ecma335;
 using Ultima.Helpers;
 
 namespace Ultima
@@ -26,8 +24,8 @@ namespace Ultima
         {
             if (_fileIndex != null)
             {
-                _cache = new Bitmap[_fileIndex.Index.Length];
-                _removed = new bool[_fileIndex.Index.Length];
+                _cache = new Bitmap[_fileIndex.IndexLength];
+                _removed = new bool[_fileIndex.IndexLength];
             }
             else
             {
@@ -44,8 +42,8 @@ namespace Ultima
             try
             {
                 _fileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, 12, ".tga", -1, true);
-                _cache = new Bitmap[_fileIndex.Index.Length];
-                _removed = new bool[_fileIndex.Index.Length];
+                _cache = new Bitmap[_fileIndex.IndexLength];
+                _removed = new bool[_fileIndex.IndexLength];
             }
             catch
             {
@@ -364,9 +362,10 @@ namespace Ultima
             {
                 return _cache[index];
             }
+            IEntry entry = null;
 
-            Stream stream = _fileIndex.Seek(index, out Entry3D entry);
-            if (stream == null)
+            Stream stream = _fileIndex.Seek(index, ref entry);
+            if (stream == null || entry == null)
             {
                 return null;
             }
@@ -392,15 +391,15 @@ namespace Ultima
             uint width = (uint)entry.Extra1;
             uint height = (uint)entry.Extra2;
             
-            //Compressed UOPs
+            // Compressed UOPs
             if (entry.Flag >= 1)
             {
-                byte[] dbuf = new byte[entry.DecompressedLength];
-                var result = ZLib.Decompress(_streamBuffer, dbuf);
-                if (result != ZLib.ZLibError.Ok)
+                var result = UopUtils.Decompress(_streamBuffer);
+                if (result.success is false)
                 {
-                    return default;
+                    return null;
                 }
+                byte[] dbuf = result.data;
 
                 if (entry.Flag == 3)
                 {
@@ -411,7 +410,8 @@ namespace Ultima
                     byte[] extra = reader.ReadBytes(8);
                     width = (uint)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
                     height = (uint)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
-                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8);
+                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8); // Tbh, whole code needs to be reworked with readers,
+                                                                                // as we doing useless work here just rereading everyting but 8 first bytes
                 }
                 
                 entry.Extra1 = (int)width;

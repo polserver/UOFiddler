@@ -610,7 +610,7 @@ namespace UoFiddler.Controls.UserControls
             for (int i = 0; i < Gumps.GetCount(); ++i)
             {
                 Gumps.GetGump(i);
-                PreLoader.ReportProgress(i);
+                PreLoader.ReportProgress(1);
             }
         }
 
