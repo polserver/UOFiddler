@@ -8,7 +8,7 @@ namespace Ultima
 {
     public sealed class FileIndex
     {
-        IFileAccessor FileAccessor { get; set; }
+        public IFileAccessor FileAccessor { get; }
 
         public long IndexLength { get => FileAccessor.IndexLength; }
         public long IdxLength { get => FileAccessor.IdxLength; }
@@ -184,8 +184,6 @@ namespace Ultima
             }
             else
             {
-               // _stream = null;
-             //   Index = new Entry3D[1];
                 return;
             }
 
