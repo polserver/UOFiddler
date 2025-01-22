@@ -20,7 +20,7 @@ namespace Ultima
                 }
 
                 _skillEntries = new List<SkillInfo>();
-                for (int i = 0; i < _fileIndex.Index.Length; ++i)
+                for (int i = 0; i < _fileIndex.IndexLength; ++i)
                 {
                     SkillInfo info = GetSkill(i);
                     if (info == null)
@@ -42,7 +42,7 @@ namespace Ultima
         {
             _fileIndex = new FileIndex("skills.idx", "skills.mul", 16);
             _skillEntries = new List<SkillInfo>();
-            for (int i = 0; i < _fileIndex.Index.Length; ++i)
+            for (int i = 0; i < _fileIndex.IndexLength; ++i)
             {
                 SkillInfo info = GetSkill(i);
                 if (info == null)
@@ -105,7 +105,7 @@ namespace Ultima
             using (var binidx = new BinaryWriter(fsidx))
             using (var binmul = new BinaryWriter(fsmul))
             {
-                for (int i = 0; i < _fileIndex.Index.Length; ++i)
+                for (int i = 0; i < _fileIndex.IndexLength; ++i)
                 {
                     SkillInfo skill = (i < _skillEntries.Count) ? _skillEntries[i] : null;
                     if (skill == null)
