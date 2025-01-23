@@ -10,9 +10,13 @@ namespace Ultima
     {
         public IFileAccessor FileAccessor { get; }
 
-        public long IndexLength { get => FileAccessor.IndexLength; }
-        public long IdxLength { get => FileAccessor.IdxLength; }
-        public IEntry this[int index] { get => FileAccessor[index]; set => FileAccessor[index] = (Entry6D)value; }
+        public long IndexLength { get => FileAccessor?.IndexLength ?? 0; }
+        public long IdxLength { get => FileAccessor?.IdxLength ?? 0; }
+        public IEntry this[int index]
+        {
+            get => FileAccessor[index];
+            set => FileAccessor[index] = (Entry6D)value;
+        }
 
         private readonly string _mulPath;
 
@@ -24,7 +28,6 @@ namespace Ultima
         public FileIndex(string idxFile, string mulFile, string uopFile, int length, int file, string uopEntryExtension,
             int idxLength, bool hasExtra)
         {
-
             string idxPath = null;
             string uopPath = null;
 
@@ -125,6 +128,7 @@ namespace Ultima
                 {
                     continue;
                 }
+
                 FileAccessor.ApplyPatch(patch);
             }
         }
@@ -198,12 +202,20 @@ namespace Ultima
                 {
                     continue;
                 }
+
                 FileAccessor.ApplyPatch(patch);
             }
         }
 
         public Stream Seek(int index, out int length, out int extra, out bool patched)
         {
+            if (FileAccessor is null)
+            {
+                length = extra = 0;
+                patched = false;
+                return null;
+            }
+
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
                 length = extra = 0;
@@ -264,6 +276,11 @@ namespace Ultima
 
         public Stream Seek(int index, ref IEntry entry)
         {
+            if (FileAccessor is null)
+            {
+                return null;
+            }
+
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
                 return null;
@@ -273,10 +290,9 @@ namespace Ultima
 
             if (e.Lookup < 0)
             {
-                //entry = e.Invalid;
-
                 return null;
             }
+
             entry = e;
 
             if ((e.Length & (1 << 31)) != 0)
@@ -287,7 +303,6 @@ namespace Ultima
 
             if (e.Length < 0)
             {
-                //entry = e.Invalid;
                 return null;
             }
 
@@ -298,13 +313,11 @@ namespace Ultima
 
             if (FileAccessor.Stream == null)
             {
-                //entry = e.Invalid;
                 return null;
             }
 
             if (FileAccessor.Stream.Length < e.Lookup)
             {
-                //entry = e.Invalid;
                 return null;
             }
 
@@ -314,6 +327,13 @@ namespace Ultima
 
         public bool Valid(int index, out int length, out int extra, out bool patched)
         {
+            if (FileAccessor is null)
+            {
+                length = extra = 0;
+                patched = false;
+                return false;
+            }
+
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
                 length = extra = 0;
