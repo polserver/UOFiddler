@@ -118,7 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.15.3
+    <value>Version 4.16.0
+- Added reading of compressed gump file introduced in version 7.0.104 (contributor Krubster based on ClassicUO team work)
+  + support is only partial so it can only read the files and decompress them
+  + saving will still produce old file type and there is no way to generate compressed UOP yet
+
+Version 4.15.3
 - Fixed importing animation frames from gif files
 
 Version 4.15.2
