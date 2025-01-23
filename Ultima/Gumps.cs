@@ -362,8 +362,8 @@ namespace Ultima
             {
                 return _cache[index];
             }
-            IEntry entry = null;
 
+            IEntry entry = null;
             Stream stream = _fileIndex.Seek(index, ref entry);
             if (stream == null || entry == null)
             {
@@ -385,12 +385,13 @@ namespace Ultima
             {
                 _streamBuffer = new byte[entry.Length];
             }
+
             long pos = stream.Position;
             stream.Read(_streamBuffer, 0, entry.Length);
 
             uint width = (uint)entry.Extra1;
             uint height = (uint)entry.Extra2;
-            
+
             // Compressed UOPs
             if (entry.Flag >= 1)
             {
@@ -399,21 +400,23 @@ namespace Ultima
                 {
                     return null;
                 }
-                byte[] dbuf = result.data;
 
                 if (entry.Flag == 3)
                 {
-                    _streamBuffer = BwtDecompress.Decompress(dbuf);
+                    _streamBuffer = BwtDecompress.Decompress(result.data);
                 }
+
                 using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
                 {
                     byte[] extra = reader.ReadBytes(8);
+
                     width = (uint)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
                     height = (uint)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
-                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8); // Tbh, whole code needs to be reworked with readers,
-                                                                                // as we doing useless work here just rereading everyting but 8 first bytes
+
+                    // TODO: Tbh, whole code needs to be reworked with readers, as we're doing useless work here just re-reading everything but 8 first bytes
+                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8);
                 }
-                
+
                 entry.Extra1 = (int)width;
                 entry.Extra2 = (int)height;
             }
@@ -422,6 +425,7 @@ namespace Ultima
             {
                 return null;
             }
+
             try
             {
                 var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format16bppArgb1555);
@@ -435,7 +439,8 @@ namespace Ultima
 
                     var line = (ushort*)bd.Scan0;
                     int delta = bd.Stride >> 1;
-                    for (int y = 0; y < height; ++y, line += delta)
+
+                    for (int y = 0; y < (int)height; ++y, line += delta)
                     {
                         int count = (*lookup++ * 2);
 
@@ -472,8 +477,9 @@ namespace Ultima
 
                 return bmp;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
                 return null;
             }
         }
@@ -490,6 +496,7 @@ namespace Ultima
             {
                 for (int index = 0; index < _cache.Length; index++)
                 {
+                    Files.FireFileSaveEvent();
                     if (_cache[index] == null)
                     {
                         _cache[index] = GetGump(index);
@@ -507,10 +514,11 @@ namespace Ultima
                         BitmapData bd = bmp.LockBits(
                             new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
                             PixelFormat.Format16bppArgb1555);
+
                         var line = (ushort*)bd.Scan0;
                         int delta = bd.Stride >> 1;
 
-                        binidx.Write((int)fsmul.Position); //lookup
+                        binidx.Write((int)fsmul.Position); // lookup
                         var length = (int)fsmul.Position;
                         const int fill = 0;
                         for (int i = 0; i < bmp.Height; ++i)
@@ -560,6 +568,7 @@ namespace Ultima
                         length = (int)fsmul.Position - length;
                         binidx.Write(length);
                         binidx.Write((bmp.Width << 16) + bmp.Height);
+
                         bmp.UnlockBits(bd);
                     }
                 }
