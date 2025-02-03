@@ -4,7 +4,7 @@ using System;
 
 namespace Ultima.Helpers
 {
-    static internal class UopUtils
+    static public class UopUtils
     {
         /// <summary>
         /// Method for calculating entry hash by it's name.
@@ -112,10 +112,40 @@ namespace Ultima.Helpers
             try
             {
                 using (var compressedStream = new MemoryStream(compressedData))
-                using (var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress))
+                using (var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, false))
                 using (var resultStream = new MemoryStream())
                 {
                     zlibStream.CopyTo(resultStream);
+                    resultStream.Flush();
+                    return (true, resultStream.ToArray());
+                }
+            }
+            catch (Exception)
+            {
+                return (false, Array.Empty<byte>());
+            }
+        }
+
+        /// <summary>
+        /// Method for compressing zlib byte arrays inside .uop
+        /// </summary>
+        /// <param name="compressedData">Input compressed array of bytes</param>
+        /// <returns>compressed byte[] data</returns>
+        public static (bool success, byte[] compressedData) Compress(byte[] rawData)
+        {
+            if (rawData == null || rawData.Length == 0)
+            {
+                return (false, Array.Empty<byte>());
+            }
+
+            try
+            {
+                using (var dataStream = new MemoryStream(rawData))
+                using (var resultStream = new MemoryStream())
+                using (var zlibStream = new ZLibStream(resultStream, CompressionMode.Compress, false))
+                {
+                    dataStream.CopyTo(zlibStream);
+                    zlibStream.Flush();
                     return (true, resultStream.ToArray());
                 }
             }

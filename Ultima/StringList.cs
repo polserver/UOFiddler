@@ -61,7 +61,7 @@ namespace Ultima
                 _ = fileStream.Read(buffer, 0, buffer.Length);
 
                 byte[] clilocData = _decompress
-                    ? BwtDecompress.Decompress(buffer)
+                    ? MythicDecompress.Decompress(buffer)
                     : buffer;
 
                 using (var reader = new BinaryReader(new MemoryStream(clilocData)))

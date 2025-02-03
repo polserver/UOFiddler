@@ -82,6 +82,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             inputfolder = new System.Windows.Forms.TextBox();
             SelectFolderButton = new System.Windows.Forms.Button();
             ExtractSingleFileTabPage = new System.Windows.Forms.TabPage();
+            compressionBox = new System.Windows.Forms.ComboBox();
             MainStatusStrip = new System.Windows.Forms.StatusStrip();
             toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             guilabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -466,7 +467,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // 
             statustext.ForeColor = System.Drawing.Color.DarkRed;
             statustext.Name = "statustext";
-            statustext.Size = new System.Drawing.Size(299, 17);
+            statustext.Size = new System.Drawing.Size(330, 17);
             statustext.Spring = true;
             statustext.Text = "Status";
             statustext.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -533,6 +534,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // 
             // ExtractSingleFileTabPage
             // 
+            ExtractSingleFileTabPage.Controls.Add(compressionBox);
             ExtractSingleFileTabPage.Controls.Add(label1);
             ExtractSingleFileTabPage.Controls.Add(label2);
             ExtractSingleFileTabPage.Controls.Add(inmul);
@@ -571,6 +573,17 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             ExtractSingleFileTabPage.TabIndex = 0;
             ExtractSingleFileTabPage.Text = "One file";
             ExtractSingleFileTabPage.UseVisualStyleBackColor = true;
+            // 
+            // compressionBox
+            // 
+            compressionBox.BackColor = System.Drawing.Color.White;
+            compressionBox.Items.AddRange(new object[] { "None", "Zlib", "Bwt" });
+            compressionBox.Location = new System.Drawing.Point(168, 134);
+            compressionBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            compressionBox.Name = "compressionBox";
+            compressionBox.Size = new System.Drawing.Size(191, 23);
+            compressionBox.TabIndex = 40;
+            compressionBox.Text = "None";
             // 
             // MainStatusStrip
             // 
@@ -704,5 +717,6 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
         private System.Windows.Forms.Button uoptomul;
         private System.Windows.Forms.ComboBox uoptype;
         private System.Windows.Forms.ToolStripStatusLabel VersionLabel;
+        private System.Windows.Forms.ComboBox compressionBox;
     }
 }

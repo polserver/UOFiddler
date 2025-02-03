@@ -386,7 +386,7 @@ namespace Ultima
         public int DecompressedLength { get => length; set => length = value; }
         public int Extra1 { get => extra & 0x0000FFFF; set => extra = (int)((extra & 0xFFFF0000) | value); }
         public int Extra2 { get => (int)((extra & 0xFFFF0000) >> 16); set => extra = extra & 0x0000FFFF | (value << 16); }
-        public int Flag { get => 0; set { } } // No compression, means that we have only three first fields
+        public CompressionFlag Flag { get => CompressionFlag.None; set { } } // No compression, means that we have only three first fields
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -397,7 +397,7 @@ namespace Ultima
         public int decompressedLength;
         public int extra1;
         public int extra2;
-        public int flag;
+        public CompressionFlag flag;
 
         public IEntry Invalid { get => new Entry6D(); }
         public int Lookup { get => lookup; set => lookup = value; }
@@ -414,7 +414,14 @@ namespace Ultima
         public int DecompressedLength { get => decompressedLength; set => decompressedLength = value; }
         public int Extra1 { get => extra1; set => extra1 = value; }
         public int Extra2 { get => extra2; set => extra2 = value; }
-        public int Flag { get => flag; set => flag = value; }
+        public CompressionFlag Flag { get => flag; set => flag = value; }
+    }
+
+    public enum CompressionFlag : ushort
+    { 
+        None = 0,
+        Zlib = 1,
+        Bwt = 3,
     }
 
     // Dumb access to all possible fields of entries
@@ -426,7 +433,7 @@ namespace Ultima
         public int DecompressedLength { get; set; }
         public int Extra1 { get; set; }
         public int Extra2 { get; set; }
-        public int Flag { get; set; }
+        public CompressionFlag Flag { get; set; }
         public IEntry Invalid { get; }
     }
 
@@ -619,7 +626,7 @@ namespace Ultima
                             Index[idx].Lookup = (int)(offset + 8);
                             Index[idx].Length = compressedLength - 8;
                             Index[idx].DecompressedLength = decompressedLength;
-                            Index[idx].Flag = flag;
+                            Index[idx].Flag = (CompressionFlag)flag;
 
                             // changed from int b = extra1 << 16 | extra2;
                             // int cast removes compiler warning
@@ -634,7 +641,7 @@ namespace Ultima
                             Index[idx].Lookup = (int)(offset);
                             Index[idx].Length = compressedLength;
                             Index[idx].DecompressedLength = decompressedLength;
-                            Index[idx].Flag = flag;
+                            Index[idx].Flag = (CompressionFlag)flag;
                             Index[idx].Extra = 0x0FFFFFFF; //we cant read it right now, but -1 and 0 makes this entry invalid
                         }
                     }
