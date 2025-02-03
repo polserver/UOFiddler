@@ -19,6 +19,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -343,11 +344,13 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Cursor.Current = Cursors.WaitCursor;
+            ProgressBarDialog barDialog = new ProgressBarDialog(Gumps.GetCount(), "Save");
             Gumps.Save(Options.OutputPath);
+            barDialog.Dispose();
             Cursor.Current = Cursors.Default;
+            Options.ChangedUltimaClass["Gumps"] = false;
             MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
-            Options.ChangedUltimaClass["Gumps"] = false;
         }
 
         private void OnClickRemove(object sender, EventArgs e)

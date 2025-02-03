@@ -196,7 +196,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 tableEntries[tableIdx].DecompressedSize += 8;
                                 tableEntries[tableIdx].Size = tableEntries[tableIdx].DecompressedSize;
                             }
-                            if (compressionFlag == CompressionFlag.Bwt)
+                            if (compressionFlag == CompressionFlag.Mythic)
                             { 
                                 gumpArtData = MythicDecompress.Transform(gumpArtData);
                                 byte[] gumpArtData2 = new byte[gumpArtData.Length + 4];

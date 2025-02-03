@@ -10,9 +10,13 @@ namespace Ultima
     {
         public IFileAccessor FileAccessor { get; }
 
-        public long IndexLength { get => FileAccessor.IndexLength; }
-        public long IdxLength { get => FileAccessor.IdxLength; }
-        public IEntry this[int index] { get => FileAccessor[index]; set => FileAccessor[index] = (Entry6D)value; }
+        public long IndexLength { get => FileAccessor?.IndexLength ?? 0; }
+        public long IdxLength { get => FileAccessor?.IdxLength ?? 0; }
+        public IEntry this[int index]
+        {
+            get => FileAccessor[index];
+            set => FileAccessor[index] = (Entry6D)value;
+        }
 
         private readonly string _mulPath;
 
@@ -24,7 +28,6 @@ namespace Ultima
         public FileIndex(string idxFile, string mulFile, string uopFile, int length, int file, string uopEntryExtension,
             int idxLength, bool hasExtra)
         {
-
             string idxPath = null;
             string uopPath = null;
 
@@ -102,11 +105,11 @@ namespace Ultima
              */
             if (_mulPath?.EndsWith(".uop") == true)
             {
-                FileAccessor = new UOPFileAccessor(_mulPath, uopEntryExtension, length, idxLength, hasExtra);
+                FileAccessor = new UopFileAccessor(_mulPath, uopEntryExtension, length, idxLength, hasExtra);
             }
             else if ((idxPath != null) && (_mulPath != null))
             {
-                FileAccessor = new MULFileAccessor(idxPath, _mulPath, length);
+                FileAccessor = new MulFileAccessor(idxPath, _mulPath, length);
             }
             else
             {
@@ -125,6 +128,7 @@ namespace Ultima
                 {
                     continue;
                 }
+
                 FileAccessor.ApplyPatch(patch);
             }
         }
@@ -180,7 +184,7 @@ namespace Ultima
 
             if ((idxPath != null) && (_mulPath != null))
             {
-                FileAccessor = new MULFileAccessor(idxPath, _mulPath);
+                FileAccessor = new MulFileAccessor(idxPath, _mulPath);
             }
             else
             {
@@ -198,12 +202,20 @@ namespace Ultima
                 {
                     continue;
                 }
+
                 FileAccessor.ApplyPatch(patch);
             }
         }
 
         public Stream Seek(int index, out int length, out int extra, out bool patched)
         {
+            if (FileAccessor is null)
+            {
+                length = extra = 0;
+                patched = false;
+                return null;
+            }
+
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
                 length = extra = 0;
@@ -261,9 +273,14 @@ namespace Ultima
             FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
             return FileAccessor.Stream;
         }
-      
+
         public Stream Seek(int index, ref IEntry entry)
         {
+            if (FileAccessor is null)
+            {
+                return null;
+            }
+
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
                 return null;
@@ -273,10 +290,9 @@ namespace Ultima
 
             if (e.Lookup < 0)
             {
-                entry = e.Invalid;
-
                 return null;
             }
+
             entry = e;
 
             if ((e.Length & (1 << 31)) != 0)
@@ -287,7 +303,6 @@ namespace Ultima
 
             if (e.Length < 0)
             {
-                entry = e.Invalid;
                 return null;
             }
 
@@ -298,16 +313,13 @@ namespace Ultima
 
             if (FileAccessor.Stream == null)
             {
-                entry = e.Invalid;
                 return null;
             }
 
             if (FileAccessor.Stream.Length < e.Lookup)
             {
-                entry = e.Invalid;
                 return null;
             }
-
 
             FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
             return FileAccessor.Stream;
@@ -315,6 +327,13 @@ namespace Ultima
 
         public bool Valid(int index, out int length, out int extra, out bool patched)
         {
+            if (FileAccessor is null)
+            {
+                length = extra = 0;
+                patched = false;
+                return false;
+            }
+
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
                 length = extra = 0;
@@ -372,56 +391,76 @@ namespace Ultima
         }
     }
 
+    public enum CompressionFlag
+    {
+        None = 0,
+        Zlib = 1,
+        Mythic = 3
+    }
+
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Entry3D : IEntry
     {
+        // do not mess with the fields struct layout in memory is important because of how we read the index files.
         public int lookup;
         public int length;
         public int extra;
 
-        public IEntry Invalid { get => new Entry3D(); }
+#pragma warning disable S2292
         public int Lookup { get => lookup; set => lookup = value; }
+
         public int Length { get => length; set => length = value; }
+
         public int Extra { get => extra; set => extra = value; }
+
         public int DecompressedLength { get => length; set => length = value; }
-        public int Extra1 { get => extra & 0x0000FFFF; set => extra = (int)((extra & 0xFFFF0000) | value); }
-        public int Extra2 { get => (int)((extra & 0xFFFF0000) >> 16); set => extra = extra & 0x0000FFFF | (value << 16); }
+#pragma warning restore S2292
+
+        public int Extra1
+        {
+            get => (int)((Extra & 0xFFFF0000) >> 16);
+            set => Extra = Extra & 0x0000FFFF | (value << 16);
+        }
+
+        public int Extra2
+        {
+            get => Extra & 0x0000FFFF;
+            set => Extra = (int)((Extra & 0xFFFF0000) | (uint)value);
+        }
+
         public CompressionFlag Flag { get => CompressionFlag.None; set { } } // No compression, means that we have only three first fields
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Entry6D : IEntry
     {
-        public int lookup;
-        public int length;
-        public int decompressedLength;
-        public int extra1;
-        public int extra2;
-        public CompressionFlag flag;
-
         public IEntry Invalid { get => new Entry6D(); }
-        public int Lookup { get => lookup; set => lookup = value; }
-        public int Length { get => length; set => length = value; }
+
+        public int Lookup { get; set; }
+
+        public int Length { get; set; }
+
+        private int extra1;
+        private int extra2;
+
         public int Extra
         {
-            get => extra1 << 16 | (int)extra2;
+            get => extra1 << 16 | extra2;
             set
             {
                 extra1 = value & 0x0000FFFF;
                 extra2 = (int)((value & 0xFFFF0000) >> 16);
             }
         }
-        public int DecompressedLength { get => decompressedLength; set => decompressedLength = value; }
-        public int Extra1 { get => extra1; set => extra1 = value; }
-        public int Extra2 { get => extra2; set => extra2 = value; }
-        public CompressionFlag Flag { get => flag; set => flag = value; }
-    }
 
-    public enum CompressionFlag : ushort
-    { 
-        None = 0,
-        Zlib = 1,
-        Bwt = 3,
+        public int DecompressedLength { get; set; }
+
+        public int Extra1 { get; set; }
+
+        public int Extra2 { get; set; }
+
+        public CompressionFlag Flag { get; set; }
     }
 
     // Dumb access to all possible fields of entries
@@ -434,7 +473,6 @@ namespace Ultima
         public int Extra1 { get; set; }
         public int Extra2 { get; set; }
         public CompressionFlag Flag { get; set; }
-        public IEntry Invalid { get; }
     }
 
     public interface IFileAccessor
@@ -447,19 +485,22 @@ namespace Ultima
         public IEntry this[int index] { get; set; }
     }
 
-    public class MULFileAccessor : IFileAccessor
+    public class MulFileAccessor : IFileAccessor
     {
         public Entry3D[] Index { get; }
 
-        public long IdxLength { get; private set; }
+        public long IdxLength { get; }
+
         public FileStream Stream { get; set; }
+
         public int IndexLength { get => Index.Length; }
 
         public IEntry this[int index] { get => Index[index]; set => Index[index] = (Entry3D)value; }
 
-        public MULFileAccessor(string idxPath, string path, int length)
+        public MulFileAccessor(string idxPath, string path, int length)
         {
             Index = new Entry3D[length];
+
             using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -467,7 +508,7 @@ namespace Ultima
                 IdxLength = index.Length;
                 GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
                 var buffer = new byte[index.Length];
-                index.Read(buffer, 0, (int)index.Length);
+                index.ReadExactly(buffer, 0, (int)index.Length);
                 Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(IdxLength, Index.Length * 12));
                 gc.Free();
                 for (int i = count; i < Index.Length; ++i)
@@ -479,7 +520,7 @@ namespace Ultima
             }
         }
 
-        public MULFileAccessor(string idxPath, string path)
+        public MulFileAccessor(string idxPath, string path)
         {
             using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
@@ -489,7 +530,7 @@ namespace Ultima
                 Index = new Entry3D[count];
                 GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
                 var buffer = new byte[index.Length];
-                index.Read(buffer, 0, (int)index.Length);
+                index.ReadExactly(buffer, 0, (int)index.Length);
                 Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)index.Length);
                 gc.Free();
             }
@@ -509,42 +550,39 @@ namespace Ultima
                 return new Entry3D();
             }
 
-            Entry3D e = Index[index];
-
-            if (e.Lookup < 0)
-            {
-                return new Entry3D();
-            }
-            return e;
+            return Index[index];
         }
     }
 
-    public class UOPFileAccessor : IFileAccessor
+    public class UopFileAccessor : IFileAccessor
     {
         public Entry6D[] Index { get; }
+
         public FileStream Stream { get; set; }
+
         public long IdxLength { get; }
+
         public int IndexLength { get => Index.Length; }
-        public IEntry this[int index] { get => Index[index]; set => Index[index] = (Entry6D)value; }
 
-        private bool _hasExtra;
-        private int _length;
-        private string _uopEntryExtension;
+        public IEntry this[int index]
+        {
+            get => Index[index];
+            set => Index[index] = (Entry6D)value;
+        }
 
-        public UOPFileAccessor(string path, string uopEntryExtension, int length, int idxLength, bool hasextra)
+        public UopFileAccessor(string path, string uopEntryExtension, int length, int idxLength, bool hasextra)
         {
             Index = new Entry6D[length];
-            _hasExtra = hasextra;
-            _length = length;
-            _uopEntryExtension = uopEntryExtension;
+
             if (idxLength > 0)
             {
                 IdxLength = idxLength * 12;
             }
+
             Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-            var fi = new FileInfo(path);
-            string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
+            var fileInfo = new FileInfo(path);
+            string uopPattern = fileInfo.Name.Replace(fileInfo.Extension, "").ToLowerInvariant();
 
             using (var br = new BinaryReader(Stream))
             {
@@ -555,18 +593,17 @@ namespace Ultima
                     throw new ArgumentException("Bad UOP file.");
                 }
 
-                var version = br.ReadUInt32(); // version
-                var signature = br.ReadUInt32(); // signature
+                _ = br.ReadUInt32(); // version
+                _ = br.ReadUInt32(); // signature
                 long nextBlock = br.ReadInt64();
-                var block_size = br.ReadUInt32(); // block capacity
-                var count = br.ReadInt32(); // TODO: check if we need value from here
-
+                _ = br.ReadUInt32(); // block size (capacity?)
+                _ = br.ReadInt32(); // count 
 
                 var hashes = new Dictionary<ulong, int>();
 
-                for (int i = 0; i < _length; i++)
+                for (int i = 0; i < length; i++)
                 {
-                    string entryName = $"build/{uopPattern}/{i:D8}{_uopEntryExtension}";
+                    string entryName = $"build/{uopPattern}/{i:D8}{uopEntryExtension}";
                     ulong hash = UopUtils.HashFileName(entryName);
 
                     hashes.TryAdd(hash, i);
@@ -595,7 +632,7 @@ namespace Ultima
                         int compressedLength = br.ReadInt32();
                         int decompressedLength = br.ReadInt32();
                         ulong hash = br.ReadUInt64();
-                        uint data_hash = br.ReadUInt32();
+                        _ = br.ReadUInt32(); // data_hash
                         short flag = br.ReadInt16();
 
                         if (offset == 0)
@@ -615,7 +652,7 @@ namespace Ultima
 
                         offset += headerLength;
 
-                        if (_hasExtra && flag != 3)
+                        if (hasextra && flag != 3)
                         {
                             long curPos = br.BaseStream.Position;
 
@@ -627,10 +664,7 @@ namespace Ultima
                             Index[idx].Length = compressedLength - 8;
                             Index[idx].DecompressedLength = decompressedLength;
                             Index[idx].Flag = (CompressionFlag)flag;
-
-                            // changed from int b = extra1 << 16 | extra2;
-                            // int cast removes compiler warning
-                            Index[idx].Extra = extra1 << 16 | (int)extra2;
+                            Index[idx].Extra = extra1 << 16 | extra2;
                             Index[idx].Extra1 = extra1;
                             Index[idx].Extra2 = extra2;
 
@@ -642,7 +676,7 @@ namespace Ultima
                             Index[idx].Length = compressedLength;
                             Index[idx].DecompressedLength = decompressedLength;
                             Index[idx].Flag = (CompressionFlag)flag;
-                            Index[idx].Extra = 0x0FFFFFFF; //we cant read it right now, but -1 and 0 makes this entry invalid
+                            Index[idx].Extra = 0x0FFFFFFF; // we cant read it right now, but -1 and 0 makes this entry invalid
                         }
                     }
                 }
@@ -664,14 +698,7 @@ namespace Ultima
                 return new Entry6D();
             }
 
-            Entry6D e = Index[index];
-
-            if (e.Lookup < 0)
-            {
-                return new Entry6D();
-            }
-            return e;
+            return Index[index];
         }
-
     }
 }
