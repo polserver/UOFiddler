@@ -117,6 +117,7 @@ namespace Ultima.Helpers
                 {
                     zlibStream.CopyTo(resultStream);
                     resultStream.Flush();
+                    zlibStream.Close();
                     return (true, resultStream.ToArray());
                 }
             }
@@ -146,6 +147,7 @@ namespace Ultima.Helpers
                 {
                     dataStream.CopyTo(zlibStream);
                     zlibStream.Flush();
+                    zlibStream.Close();
                     return (true, resultStream.ToArray());
                 }
             }

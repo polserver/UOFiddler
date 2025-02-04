@@ -13,6 +13,11 @@ namespace Ultima.Helpers
             return MoveToFrontCoding.Encode(InternalCompress(buffer));
         }
 
+        public static byte[] Detransform(byte[] buffer)
+        {
+            return InternalDecompress(MoveToFrontCoding.Decode(buffer));
+        }
+
         public static byte[] Decompress(byte[] buffer)
         {
             byte[] output;
@@ -29,7 +34,7 @@ namespace Ultima.Helpers
             return output;
         }
 
-        static byte[] InternalDecompress(Span<byte> input)
+        public static byte[] InternalDecompress(Span<byte> input)
         {
             try
             {
@@ -164,7 +169,7 @@ namespace Ultima.Helpers
             }
         }
 
-        static byte[] InternalCompress(Span<byte> input)
+        public static byte[] InternalCompress(Span<byte> input)
         {
             Span<byte> symbolTable = stackalloc byte[256];
             Span<byte> frequency = stackalloc byte[256];
@@ -196,13 +201,15 @@ namespace Ultima.Helpers
                 partialInput[freqIndex + 256] = m + 1;
                 m += partialInput[freqIndex];
                 partialInput[freqIndex + 512] = m;
+            }
 
+            for(int i = 0; i < 256; ++i)
+            {
                 byte[] bytes = BitConverter.GetBytes(partialInput[i]);
                 output[i * 4] = bytes[0];
                 output[i * 4 + 1] = bytes[1];
                 output[i * 4 + 2] = bytes[2];
                 output[i * 4 + 3] = bytes[3];
-
             }
 
             count = input.Length - 1;
@@ -219,7 +226,7 @@ namespace Ultima.Helpers
                     ShiftRight(symbolTable, addedSymbols.Count);
                     symbolTable[0] = val;
                     addedSymbols.Add(val);
-                    output[outputAddress] = (byte)(addedSymbols.Count - 1);
+                    output[outputAddress] = (byte)0;
                 }
                 else if (firstValRef >= partialInput[val + 256]) // we're already have symbol in table, so getting it idx
                                                                  // and putting it in output stream

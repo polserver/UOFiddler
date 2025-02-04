@@ -577,7 +577,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // compressionBox
             // 
             compressionBox.BackColor = System.Drawing.Color.White;
-            compressionBox.Items.AddRange(new object[] { "None", "Zlib", "Bwt" });
+            compressionBox.Items.AddRange(new object[] { "None", "Zlib", "Mythic" });
             compressionBox.Location = new System.Drawing.Point(168, 134);
             compressionBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             compressionBox.Name = "compressionBox";

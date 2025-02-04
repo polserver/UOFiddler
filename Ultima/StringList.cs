@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipes;
 using System.Text;
 using Ultima.Helpers;
 
@@ -119,16 +120,46 @@ namespace Ultima
                 }
 
                 byte[] data = memoryStream.ToArray();
-
-                // Write the final output to the file
-                using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
-                using (var bin = new BinaryWriter(fileStream))
+                if (_decompress)
                 {
-                    // Write the headers at the beginning
-                    bin.Write(_header1);
-                    bin.Write(_header2);
+                    byte[] data2 = new byte[data.Length + 6];
+                    using (MemoryStream ms = new MemoryStream(data2))
+                    {
+                        using (var bin = new BinaryWriter(ms))
+                        {
+                            bin.Write(_header1);
+                            bin.Write(_header2);
 
-                    bin.Write(data);
+                            bin.Write(data);
+                        }
+                    }
+                    data2 = MythicDecompress.Transform(data2);
+                    byte[] data3 = new byte[data2.Length + 4];
+
+                    using (MemoryStream ms = new MemoryStream(data3))
+                    using (var bin = new BinaryWriter(ms))
+                    {
+                        bin.Write((uint)0); // some timestamp header
+                        bin.Write(data2);
+                    }
+                    using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (var bin = new BinaryWriter(fileStream))
+                    {
+                        bin.Write(data3);
+                    }
+                }
+                else
+                {
+                    // Write the final output to the file
+                    using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (var bin = new BinaryWriter(fileStream))
+                    {
+                        // Write the headers at the beginning
+                        bin.Write(_header1);
+                        bin.Write(_header2);
+
+                        bin.Write(data);
+                    }
                 }
             }
         }
