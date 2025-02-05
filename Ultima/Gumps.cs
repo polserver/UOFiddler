@@ -391,13 +391,7 @@ namespace Ultima
 
             uint width = (uint)entry.Extra1;
             uint height = (uint)entry.Extra2;
-            if(index == 7) // dumping compressed and encrypted file
-            {
-                using (BinaryWriter writer = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\index_7.bin", FileMode.Create)))
-                {
-                    writer.Write(_streamBuffer, 0, entry.Length);
-                }
-            }
+
             // Compressed UOPs
             if (entry.Flag >= CompressionFlag.Zlib)
             {
@@ -406,42 +400,10 @@ namespace Ultima
                 {
                     return null;
                 }
-             /*   if (index == 7) // dumping decompressed and encrypted file
-                {
-                    using (BinaryWriter writer = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\index_7D.bin", FileMode.Create)))
-                    {
-                        writer.Write(result.data, 0, result.data.Length);
-                    }
-                }*/
                 if (entry.Flag == CompressionFlag.Mythic)
                 {
-                    //      _streamBuffer = MythicDecompress.Decompress(result.data);
-
-                    using (var reader = new BinaryReader(new MemoryStream(result.data)))
-                    {
-                        var header = reader.ReadUInt32();
-
-                        // MoveToFront decoding
-                        var list = reader.ReadBytes((int)(reader.BaseStream.Length - 4));
-                        list = MoveToFrontCoding.Decode(list);
-                        /*  if (index == 7) // dumping decompressed and encrypted (MTF removed) file
-                          {
-                              using (BinaryWriter writer = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\index_7DNoMTF.bin", FileMode.Create)))
-                              {
-                                  writer.Write(list, 0, list.Length);
-                              }
-                          }*/
-
-                        _streamBuffer = MythicDecompress.InternalDecompress(list);
-                    }
+                    _streamBuffer = MythicDecompress.Decompress(result.data);
                 }
-              /*  if (index == 7) // dumping decompressed and decrypted file
-                {
-                    using (BinaryWriter writer = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\index_7DD.bin", FileMode.Create)))
-                    {
-                        writer.Write(_streamBuffer, 0, _streamBuffer.Length);
-                    }
-                }*/
                 using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
                 {
                     byte[] extra = reader.ReadBytes(8);

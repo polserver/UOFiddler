@@ -143,7 +143,7 @@ namespace Ultima.Helpers
             {
                 using (var dataStream = new MemoryStream(rawData))
                 using (var resultStream = new MemoryStream())
-                using (var zlibStream = new ZLibStream(resultStream, CompressionMode.Compress, false))
+                using (var zlibStream = new ZLibStream(resultStream, CompressionLevel.Optimal))
                 {
                     dataStream.CopyTo(zlibStream);
                     zlibStream.Flush();

@@ -25,6 +25,7 @@ namespace Ultima.Helpers
             using (var reader = new BinaryReader(new MemoryStream(buffer)))
             {
                 var header = reader.ReadUInt32();
+                uint dataLength = header ^ 0x8E2C9A3D; // Must be equal to output length, error otherwise
 
                 // MoveToFront decoding
                 var list = reader.ReadBytes((int)(reader.BaseStream.Length - 4));

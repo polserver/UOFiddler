@@ -3,10 +3,6 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using System.Windows.Documents;
-using System.Windows.Forms;
 using Ultima;
 using Ultima.Helpers;
 
@@ -127,19 +123,22 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                 // File header
                 writer.Write(0x50594D); // MYP
-                writer.Write(5); // version
+                writer.Write(type == FileType.GumpartLegacyMul ? 4 : 5); // version
                 writer.Write(0xFD23EC43); // format timestamp?
-                writer.Write(firstTable); // first table
+                writer.Write(type == FileType.GumpartLegacyMul ? (long)0x28 : firstTable); // first table
                 writer.Write(tableSize); // table size
                 writer.Write(idxEntries.Count); // file count
-                writer.Write(1); // modified count?
-                writer.Write(1); // ?
+                writer.Write(0); // modified count?
+                writer.Write(0); // ?
                 writer.Write(0); // ?
 
                 // Padding
-                for (int i = 0x28; i < firstTable; ++i)
+                if (type != FileType.GumpartLegacyMul)
                 {
-                    writer.Write((byte)0);
+                    for (int i = 0x28; i < firstTable; ++i)
+                    {
+                        writer.Write((byte)0);
+                    }
                 }
 
                 int tableCount = (int)Math.Ceiling((double)idxEntries.Count / tableSize);
@@ -182,10 +181,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[0], idxEntries[j].Id));
                         }
 
-                        
+
                         if (type == FileType.GumpartLegacyMul)
                         {
-                            
+
                             byte[] gumpArtData = new byte[data.Length + 8];
                             using (MemoryStream ms = new MemoryStream(gumpArtData))
                             using (BinaryWriter gumpArtWriter = new BinaryWriter(ms))
@@ -200,47 +199,23 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 tableEntries[tableIdx].DecompressedSize += 8;
                                 tableEntries[tableIdx].Size = tableEntries[tableIdx].DecompressedSize;
                             }
-                            
-                         //   if (WrongTransform(gumpArtData, data, idxEntries[j].Extra >> 16 & 0xFFFF, idxEntries[j].Extra & 0xFFFF))
-                            {
 
-                            }
-                            if (j == 7) // dumping decompressed and decrypted file
-                            {
-                                using (BinaryWriter writerF = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\our_index_7DD.bin", FileMode.Create)))
-                                {
-                                    writerF.Write(gumpArtData, 0, gumpArtData.Length);
-                                }
-                            }
                             if (compressionFlag == CompressionFlag.Mythic)
                             {
-                                //gumpArtData = MythicDecompress.Transform(gumpArtData);
-                                gumpArtData = MythicDecompress.InternalCompress(gumpArtData);
-                                if (j == 7) // dumping decompressed and encrypted (MTF removed) file
-                                {
-                                    using (BinaryWriter writer34 = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\our_index_7DNoMTF.bin", FileMode.Create)))
-                                    {
-                                        writer34.Write(gumpArtData, 0, gumpArtData.Length);
-                                    }
-                                }
-                                gumpArtData = MoveToFrontCoding.Encode(gumpArtData);
+                                uint length = (uint)gumpArtData.Length;
+                                gumpArtData = MythicDecompress.Transform(gumpArtData);
                                 byte[] gumpArtData2 = new byte[gumpArtData.Length + 4];
                                 using (MemoryStream ms2 = new MemoryStream(gumpArtData2))
                                 {
                                     using (BinaryWriter writer2 = new BinaryWriter(ms2))
                                     {
-                                        writer2.Write((int)0);
+                                        writer2.Write((uint)length ^ 0x8E2C9A3D);
                                         writer2.Write(gumpArtData);
                                     }
                                 }
                                 gumpArtData = gumpArtData2;
-                                if (j == 7) // dumping decompressed and encrypted file
-                                {
-                                    using (BinaryWriter writerF = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\our_index_7D.bin", FileMode.Create)))
-                                    {
-                                        writerF.Write(gumpArtData, 0, gumpArtData.Length);
-                                    }
-                                }
+                                tableEntries[tableIdx].DecompressedSize = (int)gumpArtData.Length;
+                                tableEntries[tableIdx].Size = tableEntries[tableIdx].DecompressedSize;
                             }
                             if (compressionFlag >= CompressionFlag.Zlib)
                             {
@@ -253,13 +228,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                                 tableEntries[tableIdx].Size = result.compressedData.Length;
                                 gumpArtData = result.compressedData;
-                                if (j == 7) // dumping compressed and encrypted file
-                                {
-                                    using (BinaryWriter writerF = new BinaryWriter(new FileStream($"{AppContext.BaseDirectory}\\our_index_7.bin", FileMode.Create)))
-                                    {
-                                        writerF.Write(gumpArtData, 0, gumpArtData.Length);
-                                    }
-                                }
                             }
                             tableEntries[tableIdx].Hash = HashAdler32(gumpArtData);
                             writer.Write(gumpArtData);
@@ -308,18 +276,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     writer.BaseStream.Seek(nextTable, SeekOrigin.Begin);
                 }
             }
-        }
-
-        private static bool WrongTransform(byte[] trdata, byte[] data, int width, int height)
-        {
-            byte[] test1 = MythicDecompress.Transform(trdata);
-            test1 = MythicDecompress.Detransform(test1);
-            for (int i = 0; i < data.Length; ++i)
-            {
-                if (test1[i + 8] != data[i])
-                    return true;
-            }
-            return false;
         }
 
         private static readonly byte[] _emptyTableEntry = new byte[8 + 4 + 4 + 4 + 8 + 4 + 2];

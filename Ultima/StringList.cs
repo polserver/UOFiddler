@@ -133,13 +133,14 @@ namespace Ultima
                             bin.Write(data);
                         }
                     }
+                    uint length = (uint)data2.Length;
                     data2 = MythicDecompress.Transform(data2);
                     byte[] data3 = new byte[data2.Length + 4];
 
                     using (MemoryStream ms = new MemoryStream(data3))
                     using (var bin = new BinaryWriter(ms))
                     {
-                        bin.Write((uint)0); // some timestamp header
+                        bin.Write((uint)length ^ 0x8E2C9A3D); // xored decrypted data length
                         bin.Write(data2);
                     }
                     using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
