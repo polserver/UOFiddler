@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Ultima.Helpers
@@ -62,9 +61,11 @@ namespace Ultima.Helpers
                 {
                     return Array.Empty<byte>();
                 }
+
                 var output = new byte[sum];
                 var count = 0;
                 var nonZeroCount = 0;
+
                 for (var i = 0; i < 256; i++)
                 {
                     if (partialInput[i] != 0)
@@ -77,15 +78,17 @@ namespace Ultima.Helpers
 
                 for (int i = 0, m = 0; i < nonZeroCount; ++i)
                 {
-                    var freq = frequency[i]; 
-                    symbolTable[input[m + 1024]] = freq; 
+                    var freq = frequency[i];
+                    symbolTable[input[m + 1024]] = freq;
                     partialInput[freq + 256] = m + 1;
+                    // TODO: check how safe is updating m counter inside a loop
                     m += partialInput[freq];
                     partialInput[freq + 512] = m;
                 }
 
-                var val = (byte)symbolTable[0];
+                var val = symbolTable[0];
 
+                // TODO: expression is always false?
                 if (sum == 0)
                 {
                     return output;
@@ -95,7 +98,7 @@ namespace Ultima.Helpers
                 {
                     ref var firstValRef = ref partialInput[val + 256];
                     output[count] = val;
-                   
+
                     if (firstValRef < partialInput[val + 512])
                     {
                         var idx = input[firstValRef + 1024];
@@ -104,17 +107,16 @@ namespace Ultima.Helpers
                         if (idx != 0)
                         {
                             ShiftLeft(symbolTable, idx);
+
                             symbolTable[idx] = val;
                             val = symbolTable[0];
                         }
                     }
-                    else
+                    else if (nonZeroCount-- > 0)
                     {
-                        if (nonZeroCount-- > 0)
-                        {
-                            ShiftLeft(symbolTable, nonZeroCount);
-                            val = symbolTable[0];
-                        }
+                        ShiftLeft(symbolTable, nonZeroCount);
+
+                        val = symbolTable[0];
                     }
 
                     count++;
@@ -156,7 +158,7 @@ namespace Ultima.Helpers
                     break;
                 }
 
-                output[i] = (byte)index;
+                output[i] = index;
                 tmp[index] = 0;
             }
         }
@@ -184,7 +186,6 @@ namespace Ultima.Helpers
 
             Frequency(partialInput, frequency);
 
-            var count = 0;
             var nonZeroCount = 0;
             for (var i = 0; i < 256; i++)
             {
@@ -204,7 +205,7 @@ namespace Ultima.Helpers
                 partialInput[freqIndex + 512] = m;
             }
 
-            for(int i = 0; i < 256; ++i)
+            for (int i = 0; i < 256; ++i)
             {
                 byte[] bytes = BitConverter.GetBytes(partialInput[i]);
                 output[i * 4] = bytes[0];
@@ -213,24 +214,27 @@ namespace Ultima.Helpers
                 output[i * 4 + 3] = bytes[3];
             }
 
-            count = input.Length - 1;
+            int count = input.Length - 1;
+
             List<byte> addedSymbols = new List<byte>(256); // keeping track for added symbols
+
             do
             {
-                var val = (byte)input[count];
+                var val = input[count];
 
                 ref var firstValRef = ref partialInput[val + 512];
                 var outputAddress = firstValRef + 1024;
 
-                if (!addedSymbols.Contains(val)) // first add, just put it in symbolTable from the left and assign 0 idx
+                // first add, just put it in symbolTable from the left and assign 0 idx
+                if (!addedSymbols.Contains(val))
                 {
                     ShiftRight(symbolTable, addedSymbols.Count);
                     symbolTable[0] = val;
                     addedSymbols.Add(val);
-                    output[outputAddress] = (byte)0;
+                    output[outputAddress] = 0;
                 }
-                else if (firstValRef >= partialInput[val + 256]) // we're already have symbol in table, so getting it idx
-                                                                 // and putting it in output stream
+                // we're already have symbol in table, so getting it idx and putting it in output stream
+                else if (firstValRef >= partialInput[val + 256]) 
                 {
                     var idx = GetIdx(symbolTable, val, addedSymbols.Count);
                     ShiftRight(symbolTable, idx);
@@ -250,7 +254,6 @@ namespace Ultima.Helpers
             }
 
             return output;
-
         }
 
         private static byte GetIdx(Span<byte> input, byte val, int nonZeroCount)
@@ -258,9 +261,12 @@ namespace Ultima.Helpers
             for (byte i = 0; i < input.Length && i < nonZeroCount; ++i)
             {
                 if (input[i] == val)
+                {
                     return i;
+                }
             }
-            return (byte)0;
+
+            return 0;
         }
 
         static void ShiftRight(Span<byte> input, int element)

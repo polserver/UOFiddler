@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipes;
 using System.Text;
 using Ultima.Helpers;
 
