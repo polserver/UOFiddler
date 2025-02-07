@@ -155,7 +155,7 @@ namespace Ultima
             stream.Read(buffer, 0, length);
             stream.Close();
 
-            buffer = BwtDecompress.Decompress(buffer);
+            buffer = MythicDecompress.Decompress(buffer);
             return buffer;
         }
 
@@ -393,19 +393,17 @@ namespace Ultima
             uint height = (uint)entry.Extra2;
 
             // Compressed UOPs
-            if (entry.Flag >= 1)
+            if (entry.Flag >= CompressionFlag.Zlib)
             {
                 var result = UopUtils.Decompress(_streamBuffer);
                 if (result.success is false)
                 {
                     return null;
                 }
-
-                if (entry.Flag == 3)
+                if (entry.Flag == CompressionFlag.Mythic)
                 {
-                    _streamBuffer = BwtDecompress.Decompress(result.data);
+                    _streamBuffer = MythicDecompress.Decompress(result.data);
                 }
-
                 using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
                 {
                     byte[] extra = reader.ReadBytes(8);

@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Ultima;
 using UoFiddler.Plugin.UopPacker.Classes;
 
 namespace UoFiddler.Plugin.UopPacker.UserControls
@@ -116,13 +117,13 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 MessageBox.Show("Output file already exists");
                 return;
             }
-
+            CompressionFlag selectedCompressionMethod = Enum.Parse<CompressionFlag>(compressionBox.SelectedItem.ToString());
             try
             {
                 multouop.Text = "Converting...";
                 multouop.Enabled = false;
 
-                LegacyMulFileConverter.ToUop(inmul.Text, inidx.Text, outuop.Text, fileType, (int)mulMapIndex.Value);
+                LegacyMulFileConverter.ToUop(inmul.Text, inidx.Text, outuop.Text, fileType, (int)mulMapIndex.Value, selectedCompressionMethod);
             }
             catch
             {
@@ -308,8 +309,9 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
                 inIdx = FixPath(inIdx);
                 ++_total;
+                CompressionFlag selectedCompressionMethod = Enum.Parse<CompressionFlag>(compressionBox.SelectedItem.ToString());
 
-                LegacyMulFileConverter.ToUop(inFile, inIdx, outFile, type, typeIndex);
+                LegacyMulFileConverter.ToUop(inFile, inIdx, outFile, type, typeIndex, selectedCompressionMethod);
 
                 ++_success;
             }

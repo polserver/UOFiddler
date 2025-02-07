@@ -391,6 +391,12 @@ namespace Ultima
         }
     }
 
+    public enum CompressionFlag
+    {
+        None = 0,
+        Zlib = 1,
+        Mythic = 3
+    }
 
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -423,7 +429,7 @@ namespace Ultima
             set => Extra = (int)((Extra & 0xFFFF0000) | (uint)value);
         }
 
-        public int Flag { get => 0; set { } } // No compression, means that we have only three first fields
+        public CompressionFlag Flag { get => CompressionFlag.None; set { } } // No compression, means that we have only three first fields
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -454,7 +460,7 @@ namespace Ultima
 
         public int Extra2 { get; set; }
 
-        public int Flag { get; set; }
+        public CompressionFlag Flag { get; set; }
     }
 
     // Dumb access to all possible fields of entries
@@ -466,8 +472,7 @@ namespace Ultima
         public int DecompressedLength { get; set; }
         public int Extra1 { get; set; }
         public int Extra2 { get; set; }
-        public int Flag { get; set; }
-        //public IEntry Invalid { get; }
+        public CompressionFlag Flag { get; set; }
     }
 
     public interface IFileAccessor
@@ -658,7 +663,7 @@ namespace Ultima
                             Index[idx].Lookup = (int)(offset + 8);
                             Index[idx].Length = compressedLength - 8;
                             Index[idx].DecompressedLength = decompressedLength;
-                            Index[idx].Flag = flag;
+                            Index[idx].Flag = (CompressionFlag)flag;
                             Index[idx].Extra = extra1 << 16 | extra2;
                             Index[idx].Extra1 = extra1;
                             Index[idx].Extra2 = extra2;
@@ -670,7 +675,7 @@ namespace Ultima
                             Index[idx].Lookup = (int)(offset);
                             Index[idx].Length = compressedLength;
                             Index[idx].DecompressedLength = decompressedLength;
-                            Index[idx].Flag = flag;
+                            Index[idx].Flag = (CompressionFlag)flag;
                             Index[idx].Extra = 0x0FFFFFFF; // we cant read it right now, but -1 and 0 makes this entry invalid
                         }
                     }
