@@ -355,6 +355,8 @@ namespace Ultima
 
     public sealed class AnimIdx
     {
+        public readonly int PaletteCapacity = 0x100;
+
         private readonly int _idxExtra;
 
         public ushort[] Palette { get; private set; }
@@ -362,7 +364,8 @@ namespace Ultima
 
         public AnimIdx(int index, FileIndex fileIndex)
         {
-            Palette = new ushort[0x100];
+            Palette = new ushort[PaletteCapacity];
+
             Stream stream = fileIndex.Seek(index, out int length, out int extra, out bool _);
             if ((stream == null) || (length < 1))
             {
@@ -370,9 +373,10 @@ namespace Ultima
             }
 
             _idxExtra = extra;
+
             using (var bin = new BinaryReader(stream))
             {
-                for (int i = 0; i < 0x100; ++i)
+                for (int i = 0; i < PaletteCapacity; ++i)
                 {
                     Palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
                 }
@@ -395,15 +399,16 @@ namespace Ultima
                     Frames.Add(new FrameEdit(bin));
                 }
             }
+
             stream.Close();
         }
 
         public AnimIdx(BinaryReader bin, int extra)
         {
-            Palette = new ushort[0x100];
             _idxExtra = extra;
 
-            for (int i = 0; i < 0x100; ++i)
+            Palette = new ushort[PaletteCapacity];
+            for (int i = 0; i < PaletteCapacity; ++i)
             {
                 Palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
             }
@@ -529,7 +534,7 @@ namespace Ultima
                 case 0:
                     using (var tex = new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite)))
                     {
-                        for (int i = 0; i < 0x100; ++i)
+                        for (int i = 0; i < PaletteCapacity; ++i)
                         {
                             tex.WriteLine(Palette[i]);
                         }
@@ -546,17 +551,17 @@ namespace Ultima
 
         private unsafe void SavePaletteImage(string filename, ImageFormat imageFormat)
         {
-            using (var bmp = new Bitmap(0x100, 20, PixelFormat.Format16bppArgb1555))
+            using (var bmp = new Bitmap(PaletteCapacity, 20, PixelFormat.Format16bppArgb1555))
             {
                 BitmapData bd = bmp.LockBits(
-                    new Rectangle(0, 0, 0x100, 20), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                    new Rectangle(0, 0, PaletteCapacity, 20), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
                 var line = (ushort*) bd.Scan0;
                 int delta = bd.Stride >> 1;
 
                 for (int y = 0; y < bd.Height; ++y, line += delta)
                 {
                     ushort* cur = line;
-                    for (int i = 0; i < 0x100; ++i)
+                    for (int i = 0; i < PaletteCapacity; ++i)
                     {
                         *cur++ = Palette[i];
                     }
@@ -582,20 +587,24 @@ namespace Ultima
                 idx.Write(-1);
                 idx.Write(-1);
                 idx.Write(-1);
+
                 return;
             }
+
             long start = bin.BaseStream.Position;
             idx.Write((int)start);
 
-            for (int i = 0; i < 0x100; ++i)
+            for (int i = 0; i < PaletteCapacity; ++i)
             {
                 bin.Write((ushort)(Palette[i] ^ 0x8000));
             }
 
             long startPosition = bin.BaseStream.Position;
             bin.Write(Frames.Count);
+
             long seek = bin.BaseStream.Position;
             long curr = bin.BaseStream.Position + (4 * Frames.Count);
+
             foreach (FrameEdit frame in Frames)
             {
                 bin.BaseStream.Seek(seek, SeekOrigin.Begin);
@@ -622,11 +631,12 @@ namespace Ultima
                 indexpos = bin.BaseStream.Position;
                 return;
             }
+
             bin.Write((int)animpos);
             indexpos = bin.BaseStream.Position;
             bin.BaseStream.Seek(animpos, SeekOrigin.Begin);
 
-            for (int i = 0; i < 0x100; ++i)
+            for (int i = 0; i < PaletteCapacity; ++i)
             {
                 bin.Write((ushort)(Palette[i] ^ 0x8000));
             }

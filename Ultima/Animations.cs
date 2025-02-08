@@ -7,6 +7,7 @@ namespace Ultima
     public static class Animations
     {
         public const int _maxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
+        public static readonly int PaletteCapacity = 0x100;
 
         private static FileIndex _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
         private static FileIndex _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
@@ -77,9 +78,9 @@ namespace Ultima
             AnimationFrame[] frames;
             using (var bin = new BinaryReader(memoryStream))
             {
-                var palette = new ushort[0x100];
+                var palette = new ushort[PaletteCapacity];
 
-                for (int i = 0; i < 0x100; ++i)
+                for (int i = 0; i < PaletteCapacity; ++i)
                 {
                     palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
                 }
@@ -147,9 +148,9 @@ namespace Ultima
 
             using (var bin = new BinaryReader(stream))
             {
-                var palette = new ushort[0x100];
+                var palette = new ushort[PaletteCapacity];
 
-                for (int i = 0; i < 0x100; ++i)
+                for (int i = 0; i < PaletteCapacity; ++i)
                 {
                     palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
                 }
