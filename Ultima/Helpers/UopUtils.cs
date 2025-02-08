@@ -7,7 +7,7 @@ namespace Ultima.Helpers
     static public class UopUtils
     {
         /// <summary>
-        /// Method for calculating entry hash by it's name.
+        /// Method for calculating entry hash by its name.
         /// Taken from Mythic.Package.dll
         /// </summary>
         /// <param name="s"></param>
