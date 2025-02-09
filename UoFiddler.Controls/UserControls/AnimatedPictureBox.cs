@@ -56,7 +56,7 @@ namespace UoFiddler.Controls.UserControls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public AnimatedFrame FirstFrame
         {
-            get => _frames?[0];
+            get => _frames?.FirstOrDefault();
         }
 
         public event EventHandler FrameChanged;
