@@ -144,6 +144,42 @@ namespace Ultima
                 return null;
             }
 
+            // Compressed UOPs
+            if (entry.Flag >= CompressionFlag.Zlib)
+            {
+                if (_streamBuffer == null || _streamBuffer.Length < entry.Length)
+                {
+                    _streamBuffer = new byte[entry.Length];
+                }
+
+                stream.Read(_streamBuffer, 0, entry.Length);
+
+                var result = UopUtils.Decompress(_streamBuffer);
+                if (result.success is false)
+                {
+                    return null;
+                }
+
+                if (entry.Flag == CompressionFlag.Mythic)
+                {
+                    _streamBuffer = MythicDecompress.Decompress(result.data);
+                }
+
+                using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
+                {
+                    byte[] extra = reader.ReadBytes(8);
+
+                    width = (extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0];
+                    height = (extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4];
+
+                    // TODO: Tbh, whole code needs to be reworked with readers, as we're doing useless work here just re-reading everything but 8 first bytes
+                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8);
+                }
+
+                entry.Extra1 = width;
+                entry.Extra2 = height;
+            }
+
             width = entry.Extra1;
             height = entry.Extra2;
 
@@ -152,14 +188,14 @@ namespace Ultima
                 return null;
             }
 
+            if (entry.Flag == CompressionFlag.Mythic)
+            {
+                return _streamBuffer;
+            }
+
             var buffer = new byte[entry.Length];
             stream.Read(buffer, 0, entry.Length);
             stream.Close();
-
-            if (entry.Flag == CompressionFlag.Mythic)
-            {
-                buffer = MythicDecompress.Decompress(buffer);
-            }
 
             return buffer;
         }
@@ -391,7 +427,6 @@ namespace Ultima
                 _streamBuffer = new byte[entry.Length];
             }
 
-            long pos = stream.Position;
             stream.Read(_streamBuffer, 0, entry.Length);
 
             uint width = (uint)entry.Extra1;
