@@ -30,7 +30,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
-        private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
+        private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly SHA256 _sha256 = SHA256.Create();
 
         private bool _loaded;
@@ -231,7 +231,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void LoadSecond()
         {
-            _mCompare.Clear();
+            _compare.Clear();
             listBox2.BeginUpdate();
             listBox2.Items.Clear();
             List<object> cache = new List<object>();
@@ -246,9 +246,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private bool Compare(int index)
         {
-            if (_mCompare.ContainsKey(index))
+            if (_compare.TryGetValue(index, out bool value))
             {
-                return _mCompare[index];
+                return value;
             }
 
             byte[] org = Gumps.GetRawGump(index, out int width1, out int height1);
@@ -277,13 +277,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     res = true;
                 }
             }
-            _mCompare[index] = res;
+            _compare[index] = res;
             return res;
         }
 
         private void ShowDiff_OnClick(object sender, EventArgs e)
         {
-            if (_mCompare.Count < 1)
+            if (_compare.Count < 1)
             {
                 if (checkBox1.Checked)
                 {
@@ -387,7 +387,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Gumps.ReplaceGump(i, copy);
             Options.ChangedUltimaClass["Gumps"] = true;
             ControlEvents.FireGumpChangeEvent(this, i);
-            _mCompare[i] = true;
+            _compare[i] = true;
             listBox1.BeginUpdate();
             bool done = false;
             for (int id = 0; id < 0x10000; id++)
