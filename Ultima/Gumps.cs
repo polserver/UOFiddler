@@ -132,30 +132,35 @@ namespace Ultima
             width = -1;
             height = -1;
 
-            Stream stream = _fileIndex.Seek(index, out int length, out int extra, out bool _);
-
-            if (stream == null)
+            IEntry entry = null;
+            Stream stream = _fileIndex.Seek(index, ref entry);
+            if (stream == null || entry == null)
             {
                 return null;
             }
 
-            if (extra == -1)
+            if (entry.Extra1 == -1)
             {
                 return null;
             }
 
-            width = (extra >> 16) & 0xFFFF;
-            height = extra & 0xFFFF;
+            width = entry.Extra1;
+            height = entry.Extra2;
+
             if (width <= 0 || height <= 0)
             {
                 return null;
             }
 
-            var buffer = new byte[length];
-            stream.Read(buffer, 0, length);
+            var buffer = new byte[entry.Length];
+            stream.Read(buffer, 0, entry.Length);
             stream.Close();
 
-            buffer = MythicDecompress.Decompress(buffer);
+            if (entry.Flag == CompressionFlag.Mythic)
+            {
+                buffer = MythicDecompress.Decompress(buffer);
+            }
+
             return buffer;
         }
 

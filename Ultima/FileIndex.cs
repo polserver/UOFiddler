@@ -293,6 +293,11 @@ namespace Ultima
                 return null;
             }
 
+            if (e.Length < 0)
+            {
+                return null;
+            }
+
             entry = e;
 
             if ((e.Length & (1 << 31)) != 0)
