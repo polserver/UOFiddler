@@ -119,6 +119,9 @@
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Version 4.17.2
+- Fixed gump related crash in compare plugin.
+
+Version 4.17.2
 - Fixed crash in animation thumbnail list. 
 
 Version 4.17.1
