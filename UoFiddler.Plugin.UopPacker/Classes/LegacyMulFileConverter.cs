@@ -169,6 +169,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         tableEntries[tableIdx].Offset = writer.BaseStream.Position;
                         tableEntries[tableIdx].DecompressedSize = data.Length;
                         tableEntries[tableIdx].CompressionFlag = (short)compressionFlag;
+
                         // hash 906142efe9fdb38a, which is file 0009834.tga (and no others, as 7.0.59.5) use a different name format (7 digits instead of 8);
                         //  if in newer versions more of these files will have adopted that format, someone should update this list of exceptions
                         //  (even if this seems so much like a typo from someone from the UO development team :P)
@@ -181,10 +182,8 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[0], idxEntries[j].Id));
                         }
 
-
                         if (type == FileType.GumpartLegacyMul)
                         {
-
                             byte[] gumpArtData = new byte[data.Length + 8];
                             using (MemoryStream ms = new MemoryStream(gumpArtData))
                             using (BinaryWriter gumpArtWriter = new BinaryWriter(ms))
@@ -234,6 +233,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         }
                         else
                         {
+                            tableEntries[tableIdx].Size = data.Length;
                             tableEntries[tableIdx].Hash = HashAdler32(data);
                             writer.Write(data);
                         }
@@ -519,7 +519,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
             if (expectedSize == 0)
             {
-                // do nothing. Map file is wrong or it's some weird size we don't know about
+                // do nothing. Map file is wrong, or it's some weird size we don't know about
                 return;
             }
 
