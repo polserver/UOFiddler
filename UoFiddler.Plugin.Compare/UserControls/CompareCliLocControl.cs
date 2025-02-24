@@ -324,11 +324,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
     public class NumberComparer : IComparer<CompareEntry>
     {
-        private readonly bool _mDesc;
+        private readonly bool _sortDescending;
 
-        public NumberComparer(bool desc)
+        public NumberComparer(bool sortDescending)
         {
-            _mDesc = desc;
+            _sortDescending = sortDescending;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
@@ -338,7 +338,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return 0;
             }
 
-            if (_mDesc)
+            if (_sortDescending)
             {
                 return objA.Number < objB.Number ? 1 : -1;
             }
@@ -351,11 +351,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
     public class FlagComparer : IComparer<CompareEntry>
     {
-        private readonly bool _mDesc;
+        private readonly bool _sortDescending;
 
-        public FlagComparer(bool desc)
+        public FlagComparer(bool sortDescending)
         {
-            _mDesc = desc;
+            _sortDescending = sortDescending;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
@@ -367,7 +367,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     return 0;
                 }
 
-                if (_mDesc)
+                if (_sortDescending)
                 {
                     return objA.Number < objB.Number ? 1 : -1;
                 }
@@ -375,7 +375,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return objA.Number < objB.Number ? -1 : 1;
             }
 
-            if (_mDesc)
+            if (_sortDescending)
             {
                 return (byte)objA.CompareResult < (byte)objB.CompareResult ? 1 : -1;
             }
@@ -388,16 +388,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
     public class TextComparer1 : IComparer<CompareEntry>
     {
-        private readonly bool _desc;
+        private readonly bool _sortDescending;
 
-        public TextComparer1(bool desc)
+        public TextComparer1(bool sortDescending)
         {
-            _desc = desc;
+            _sortDescending = sortDescending;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
         {
-            return _desc
+            return _sortDescending
                 ? string.CompareOrdinal(objB.Text1, objA.Text1)
                 : string.CompareOrdinal(objA.Text1, objB.Text1);
         }
@@ -405,16 +405,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
     public class TextComparer2 : IComparer<CompareEntry>
     {
-        private readonly bool _desc;
+        private readonly bool _sortDescending;
 
-        public TextComparer2(bool desc)
+        public TextComparer2(bool sortDescending)
         {
-            _desc = desc;
+            _sortDescending = sortDescending;
         }
 
         public int Compare(CompareEntry objA, CompareEntry objB)
         {
-            return _desc
+            return _sortDescending
                 ? string.CompareOrdinal(objB.Text2, objA.Text2)
                 : string.CompareOrdinal(objA.Text2, objB.Text2);
         }

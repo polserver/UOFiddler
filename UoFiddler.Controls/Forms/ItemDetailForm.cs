@@ -35,7 +35,7 @@ namespace UoFiddler.Controls.Forms
         private readonly int _index;
         private bool _partialHue;
         private bool _animate;
-        private Timer _mTimer;
+        private Timer _animationTimer;
         private int _frame;
         private Animdata.AnimdataEntry _info;
 
@@ -177,21 +177,21 @@ namespace UoFiddler.Controls.Forms
             _animate = !_animate;
             if (_animate)
             {
-                _mTimer = new Timer();
+                _animationTimer = new Timer();
                 _frame = -1;
-                _mTimer.Interval = 100 * _info.FrameInterval;
-                _mTimer.Tick += AnimTick;
-                _mTimer.Start();
+                _animationTimer.Interval = 100 * _info.FrameInterval;
+                _animationTimer.Tick += AnimTick;
+                _animationTimer.Start();
             }
             else
             {
-                if (_mTimer.Enabled)
+                if (_animationTimer.Enabled)
                 {
-                    _mTimer.Stop();
+                    _animationTimer.Stop();
                 }
 
-                _mTimer.Dispose();
-                _mTimer = null;
+                _animationTimer.Dispose();
+                _animationTimer = null;
                 Graphic.Tag = Art.GetStatic(_index);
                 Graphic.Invalidate();
             }
@@ -199,15 +199,15 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClose(object sender, FormClosingEventArgs e)
         {
-            if (_mTimer != null)
+            if (_animationTimer != null)
             {
-                if (_mTimer.Enabled)
+                if (_animationTimer.Enabled)
                 {
-                    _mTimer.Stop();
+                    _animationTimer.Stop();
                 }
 
-                _mTimer.Dispose();
-                _mTimer = null;
+                _animationTimer.Dispose();
+                _animationTimer = null;
             }
 
             if (_showForm?.IsDisposed == false)

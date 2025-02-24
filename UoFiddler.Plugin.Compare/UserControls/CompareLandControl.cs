@@ -29,7 +29,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             InitializeComponent();
         }
 
-        private readonly Dictionary<int, bool> _mCompare = new Dictionary<int, bool>();
+        private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly SHA256 _sha256 = SHA256.Create();
         private readonly ImageConverter _ic = new ImageConverter();
 
@@ -123,7 +123,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void LoadSecond()
         {
-            _mCompare.Clear();
+            _compare.Clear();
             listBoxSec.BeginUpdate();
             listBoxSec.Items.Clear();
             List<object> cache = new List<object>();
@@ -186,22 +186,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private bool Compare(int index)
         {
-            if (_mCompare.ContainsKey(index))
+            if (_compare.ContainsKey(index))
             {
-                return _mCompare[index];
+                return _compare[index];
             }
 
             Bitmap bitorg = Art.GetLand(index);
             Bitmap bitsec = SecondArt.GetLand(index);
             if (bitorg == null && bitsec == null)
             {
-                _mCompare[index] = true;
+                _compare[index] = true;
                 return true;
             }
             if (bitorg == null || bitsec == null
                                || bitorg.Size != bitsec.Size)
             {
-                _mCompare[index] = false;
+                _compare[index] = false;
                 return false;
             }
 
@@ -214,14 +214,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string hash2String = BitConverter.ToString(_sha256.ComputeHash(btImage2));
 
             bool res = hash1String == hash2String;
-            _mCompare[index] = res;
+            _compare[index] = res;
 
             return res;
         }
 
         private void OnChangeShowDiff(object sender, EventArgs e)
         {
-            if (_mCompare.Count < 1)
+            if (_compare.Count < 1)
             {
                 if (!checkBox1.Checked)
                 {
@@ -339,7 +339,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Art.ReplaceLand(i, copy);
             Options.ChangedUltimaClass["Art"] = true;
             ControlEvents.FireLandTileChangeEvent(this, i);
-            _mCompare[i] = true;
+            _compare[i] = true;
             listBoxOrg.BeginUpdate();
             bool done = false;
             for (int id = 0; id < 0x4000; id++)
