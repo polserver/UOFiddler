@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.17.5
+    <value>Version 4.17.6
+- Updated layout for animation list and editor.
+
+Version 4.17.5
 - Added PNG format when inserting or replacing graphics.
 
 Version 4.17.4
