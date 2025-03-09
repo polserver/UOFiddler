@@ -133,7 +133,7 @@ namespace Ultima
             height = -1;
 
             IEntry entry = null;
-            Stream stream = _fileIndex.Seek(index, ref entry);
+            Stream stream = _fileIndex.Seek(index, ref entry, out bool patched);
             if (stream == null || entry == null)
             {
                 return null;
@@ -147,6 +147,11 @@ namespace Ultima
             // Compressed UOPs
             if (entry.Flag >= CompressionFlag.Zlib)
             {
+                if (patched)
+                {
+                    throw new InvalidOperationException("Verdata.mul is not supported for compressed UOP");
+                }
+
                 if (_streamBuffer == null || _streamBuffer.Length < entry.Length)
                 {
                     _streamBuffer = new byte[entry.Length];
@@ -193,8 +198,14 @@ namespace Ultima
                 return _streamBuffer;
             }
 
-            var buffer = new byte[entry.Length];
-            stream.Read(buffer, 0, entry.Length);
+            var length = entry.Length;
+            if (patched)
+            {
+                length = entry.Length & 0x7FFFFFFF;
+            }
+
+            var buffer = new byte[length];
+            stream.ReadExactly(buffer, 0, length);
             stream.Close();
 
             return buffer;
@@ -208,6 +219,7 @@ namespace Ultima
         /// <param name="onlyHueGrayPixels"></param>
         /// <param name="patched"></param>
         /// <returns></returns>
+        // TODO: Currently unused and may be broken because of recent UOP changes. Needs verdata `patched` checks and compression handling
         public static unsafe Bitmap GetGump(int index, Hue hue, bool onlyHueGrayPixels, out bool patched)
         {
             Stream stream = _fileIndex.Seek(index, out int length, out int extra, out patched);
@@ -405,7 +417,7 @@ namespace Ultima
             }
 
             IEntry entry = null;
-            Stream stream = _fileIndex.Seek(index, ref entry);
+            Stream stream = _fileIndex.Seek(index, ref entry, out patched);
             if (stream == null || entry == null)
             {
                 return null;
@@ -422,12 +434,18 @@ namespace Ultima
                 _patched[index] = true;
             }
 
-            if (_streamBuffer == null || _streamBuffer.Length < entry.Length)
+            var length = entry.Length;
+            if (patched)
             {
-                _streamBuffer = new byte[entry.Length];
+                length = entry.Length & 0x7FFFFFFF;
             }
 
-            stream.Read(_streamBuffer, 0, entry.Length);
+            if (_streamBuffer == null || _streamBuffer.Length < length)
+            {
+                _streamBuffer = new byte[length];
+            }
+
+            stream.Read(_streamBuffer, 0, length);
 
             uint width = (uint)entry.Extra1;
             uint height = (uint)entry.Extra2;
@@ -544,8 +562,8 @@ namespace Ultima
                     if ((bmp == null) || (_removed[index]))
                     {
                         binidx.Write(-1); // lookup
-                        binidx.Write(-1); // length
-                        binidx.Write(-1); // extra
+                        binidx.Write(0); // length
+                        binidx.Write(0); // extra
                     }
                     else
                     {

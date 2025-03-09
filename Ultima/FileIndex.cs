@@ -274,15 +274,17 @@ namespace Ultima
             return FileAccessor.Stream;
         }
 
-        public Stream Seek(int index, ref IEntry entry)
+        public Stream Seek(int index, ref IEntry entry, out bool patched)
         {
             if (FileAccessor is null)
             {
+                patched = false;
                 return null;
             }
 
             if (index < 0 || index >= FileAccessor.IndexLength)
             {
+                patched = false;
                 return null;
             }
 
@@ -290,11 +292,14 @@ namespace Ultima
 
             if (e.Lookup < 0)
             {
+                patched = false;
                 return null;
             }
 
-            if (e.Length < 0)
+            var length = e.Length & 0x7FFFFFFF;
+            if (length < 0)
             {
+                patched = false;
                 return null;
             }
 
@@ -302,12 +307,14 @@ namespace Ultima
 
             if ((e.Length & (1 << 31)) != 0)
             {
+                patched = true;
                 Verdata.Seek(e.Lookup);
                 return Verdata.Stream;
             }
 
             if (e.Length < 0)
             {
+                patched = false;
                 return null;
             }
 
@@ -318,13 +325,17 @@ namespace Ultima
 
             if (FileAccessor.Stream == null)
             {
+                patched = false;
                 return null;
             }
 
             if (FileAccessor.Stream.Length < e.Lookup)
             {
+                patched = false;
                 return null;
             }
+
+            patched = false;
 
             FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
             return FileAccessor.Stream;
