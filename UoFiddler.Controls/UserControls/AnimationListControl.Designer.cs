@@ -44,9 +44,9 @@ namespace UoFiddler.Controls.UserControls
             TreeViewMobs = new System.Windows.Forms.TreeView();
             contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(components);
             removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            FacingBar = new System.Windows.Forms.TrackBar();
             tabControl1 = new System.Windows.Forms.TabControl();
             tabPage1 = new System.Windows.Forms.TabPage();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             splitContainer2 = new System.Windows.Forms.SplitContainer();
             MainPictureBox = new AnimatedPictureBox();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
@@ -69,13 +69,17 @@ namespace UoFiddler.Controls.UserControls
             asTiffToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             asJpgToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            groupBoxSettings = new System.Windows.Forms.GroupBox();
+            directionLabel = new System.Windows.Forms.Label();
+            ShowFrameBoundsCheckBox = new System.Windows.Forms.CheckBox();
+            AnimateCheckBox = new System.Windows.Forms.CheckBox();
+            FacingBar = new System.Windows.Forms.TrackBar();
             tabPage2 = new System.Windows.Forms.TabPage();
             listView = new System.Windows.Forms.ListView();
             statusStrip1 = new System.Windows.Forms.StatusStrip();
             SettingsButton = new System.Windows.Forms.ToolStripDropDownButton();
             sortAlphaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             hueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            animateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             rewriteXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tryToFindNewGraphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,15 +87,14 @@ namespace UoFiddler.Controls.UserControls
             GraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             BaseGraphicLabel = new System.Windows.Forms.ToolStripStatusLabel();
             HueLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            showFrameBoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)FacingBar).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
             splitContainer2.Panel2.SuspendLayout();
@@ -99,6 +102,8 @@ namespace UoFiddler.Controls.UserControls
             ((System.ComponentModel.ISupportInitialize)MainPictureBox).BeginInit();
             contextMenuStrip1.SuspendLayout();
             contextMenuStrip3.SuspendLayout();
+            groupBoxSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)FacingBar).BeginInit();
             tabPage2.SuspendLayout();
             statusStrip1.SuspendLayout();
             SuspendLayout();
@@ -116,7 +121,6 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(FacingBar);
             splitContainer1.Panel2.Controls.Add(tabControl1);
             splitContainer1.Panel2.Controls.Add(statusStrip1);
             splitContainer1.Size = new System.Drawing.Size(740, 400);
@@ -151,19 +155,6 @@ namespace UoFiddler.Controls.UserControls
             removeToolStripMenuItem.Text = "Remove";
             removeToolStripMenuItem.Click += OnClickRemove;
             // 
-            // FacingBar
-            // 
-            FacingBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            FacingBar.AutoSize = false;
-            FacingBar.LargeChange = 1;
-            FacingBar.Location = new System.Drawing.Point(356, 377);
-            FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            FacingBar.Maximum = 7;
-            FacingBar.Name = "FacingBar";
-            FacingBar.Size = new System.Drawing.Size(103, 23);
-            FacingBar.TabIndex = 2;
-            FacingBar.Scroll += OnScrollFacing;
-            // 
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
@@ -178,7 +169,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(splitContainer2);
+            tabPage1.Controls.Add(tableLayoutPanel1);
             tabPage1.Location = new System.Drawing.Point(4, 24);
             tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPage1.Name = "tabPage1";
@@ -188,12 +179,27 @@ namespace UoFiddler.Controls.UserControls
             tabPage1.Text = "Animation";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
+            tableLayoutPanel1.Controls.Add(splitContainer2, 0, 0);
+            tableLayoutPanel1.Controls.Add(groupBoxSettings, 1, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(4, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(480, 344);
+            tableLayoutPanel1.TabIndex = 3;
+            // 
             // splitContainer2
             // 
             splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             splitContainer2.IsSplitterFixed = true;
-            splitContainer2.Location = new System.Drawing.Point(4, 3);
+            splitContainer2.Location = new System.Drawing.Point(3, 3);
             splitContainer2.Name = "splitContainer2";
             splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -206,9 +212,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             splitContainer2.Panel2.Controls.Add(listView1);
             splitContainer2.Panel2MinSize = 150;
-            splitContainer2.Size = new System.Drawing.Size(480, 344);
-            splitContainer2.SplitterDistance = 150;
-            splitContainer2.TabIndex = 2;
+            splitContainer2.Size = new System.Drawing.Size(314, 338);
+            splitContainer2.SplitterDistance = 184;
+            splitContainer2.TabIndex = 3;
             // 
             // MainPictureBox
             // 
@@ -219,7 +225,8 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.FrameIndex = 0;
             MainPictureBox.Location = new System.Drawing.Point(0, 0);
             MainPictureBox.Name = "MainPictureBox";
-            MainPictureBox.Size = new System.Drawing.Size(480, 150);
+            MainPictureBox.ShowFrameBounds = false;
+            MainPictureBox.Size = new System.Drawing.Size(314, 184);
             MainPictureBox.TabIndex = 1;
             MainPictureBox.TabStop = false;
             // 
@@ -318,12 +325,12 @@ namespace UoFiddler.Controls.UserControls
             listView1.Alignment = System.Windows.Forms.ListViewAlignment.Left;
             listView1.ContextMenuStrip = contextMenuStrip3;
             listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            listView1.Location = new System.Drawing.Point(0, 72);
+            listView1.Location = new System.Drawing.Point(0, 32);
             listView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listView1.MultiSelect = false;
             listView1.Name = "listView1";
             listView1.OwnerDraw = true;
-            listView1.Size = new System.Drawing.Size(480, 118);
+            listView1.Size = new System.Drawing.Size(314, 118);
             listView1.TabIndex = 0;
             listView1.TileSize = new System.Drawing.Size(81, 110);
             listView1.UseCompatibleStateImageBehavior = false;
@@ -372,6 +379,63 @@ namespace UoFiddler.Controls.UserControls
             asPngToolStripMenuItem.Text = "As Png";
             asPngToolStripMenuItem.Click += OnClickExportFramePng;
             // 
+            // groupBoxSettings
+            // 
+            groupBoxSettings.Controls.Add(directionLabel);
+            groupBoxSettings.Controls.Add(ShowFrameBoundsCheckBox);
+            groupBoxSettings.Controls.Add(AnimateCheckBox);
+            groupBoxSettings.Controls.Add(FacingBar);
+            groupBoxSettings.Dock = System.Windows.Forms.DockStyle.Bottom;
+            groupBoxSettings.Location = new System.Drawing.Point(323, 218);
+            groupBoxSettings.Name = "groupBoxSettings";
+            groupBoxSettings.Size = new System.Drawing.Size(154, 123);
+            groupBoxSettings.TabIndex = 4;
+            groupBoxSettings.TabStop = false;
+            groupBoxSettings.Text = "Frames";
+            // 
+            // directionLabel
+            // 
+            directionLabel.AutoSize = true;
+            directionLabel.Location = new System.Drawing.Point(7, 69);
+            directionLabel.Name = "directionLabel";
+            directionLabel.Size = new System.Drawing.Size(55, 15);
+            directionLabel.TabIndex = 8;
+            directionLabel.Text = "Direction";
+            // 
+            // ShowFrameBoundsCheckBox
+            // 
+            ShowFrameBoundsCheckBox.AutoSize = true;
+            ShowFrameBoundsCheckBox.Location = new System.Drawing.Point(7, 47);
+            ShowFrameBoundsCheckBox.Name = "ShowFrameBoundsCheckBox";
+            ShowFrameBoundsCheckBox.Size = new System.Drawing.Size(132, 19);
+            ShowFrameBoundsCheckBox.TabIndex = 7;
+            ShowFrameBoundsCheckBox.Text = "Show frame bounds";
+            ShowFrameBoundsCheckBox.UseVisualStyleBackColor = true;
+            ShowFrameBoundsCheckBox.Click += ShowFrameBoundsCheckBox_Click;
+            // 
+            // AnimateCheckBox
+            // 
+            AnimateCheckBox.AutoSize = true;
+            AnimateCheckBox.Location = new System.Drawing.Point(7, 22);
+            AnimateCheckBox.Name = "AnimateCheckBox";
+            AnimateCheckBox.Size = new System.Drawing.Size(71, 19);
+            AnimateCheckBox.TabIndex = 6;
+            AnimateCheckBox.Text = "Animate";
+            AnimateCheckBox.UseVisualStyleBackColor = true;
+            AnimateCheckBox.Click += AnimateCheckBox_Click;
+            // 
+            // FacingBar
+            // 
+            FacingBar.AutoSize = false;
+            FacingBar.LargeChange = 1;
+            FacingBar.Location = new System.Drawing.Point(7, 87);
+            FacingBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            FacingBar.Maximum = 7;
+            FacingBar.Name = "FacingBar";
+            FacingBar.Size = new System.Drawing.Size(140, 23);
+            FacingBar.TabIndex = 5;
+            FacingBar.Scroll += OnScrollFacing;
+            // 
             // tabPage2
             // 
             tabPage2.Controls.Add(listView);
@@ -418,7 +482,7 @@ namespace UoFiddler.Controls.UserControls
             // SettingsButton
             // 
             SettingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            SettingsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sortAlphaToolStripMenuItem, hueToolStripMenuItem, animateToolStripMenuItem, showFrameBoundsToolStripMenuItem, toolStripSeparator1, rewriteXmlToolStripMenuItem, tryToFindNewGraphicsToolStripMenuItem, animationEditToolStripMenuItem });
+            SettingsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sortAlphaToolStripMenuItem, hueToolStripMenuItem, toolStripSeparator1, rewriteXmlToolStripMenuItem, tryToFindNewGraphicsToolStripMenuItem, animationEditToolStripMenuItem });
             SettingsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             SettingsButton.Name = "SettingsButton";
             SettingsButton.Size = new System.Drawing.Size(62, 20);
@@ -439,14 +503,6 @@ namespace UoFiddler.Controls.UserControls
             hueToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             hueToolStripMenuItem.Text = "Hue";
             hueToolStripMenuItem.Click += OnClick_Hue;
-            // 
-            // animateToolStripMenuItem
-            // 
-            animateToolStripMenuItem.CheckOnClick = true;
-            animateToolStripMenuItem.Name = "animateToolStripMenuItem";
-            animateToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            animateToolStripMenuItem.Text = "Animate";
-            animateToolStripMenuItem.Click += Animate_Click;
             // 
             // toolStripSeparator1
             // 
@@ -502,13 +558,6 @@ namespace UoFiddler.Controls.UserControls
             HueLabel.Text = "Hue:";
             HueLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // showFrameBoundsToolStripMenuItem
-            // 
-            showFrameBoundsToolStripMenuItem.Name = "showFrameBoundsToolStripMenuItem";
-            showFrameBoundsToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            showFrameBoundsToolStripMenuItem.Text = "Show frame bounds";
-            showFrameBoundsToolStripMenuItem.Click += OnClickShowFrameBounds;
-            // 
             // AnimationListControl
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -525,9 +574,9 @@ namespace UoFiddler.Controls.UserControls
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             contextMenuStrip2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)FacingBar).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
             splitContainer2.Panel1.ResumeLayout(false);
             splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
@@ -535,6 +584,9 @@ namespace UoFiddler.Controls.UserControls
             ((System.ComponentModel.ISupportInitialize)MainPictureBox).EndInit();
             contextMenuStrip1.ResumeLayout(false);
             contextMenuStrip3.ResumeLayout(false);
+            groupBoxSettings.ResumeLayout(false);
+            groupBoxSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)FacingBar).EndInit();
             tabPage2.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
@@ -542,8 +594,6 @@ namespace UoFiddler.Controls.UserControls
         }
 
         #endregion
-
-        private System.Windows.Forms.ToolStripMenuItem animateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem animationEditToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBMpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem1;
@@ -564,7 +614,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem exportFrameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractAnimationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;
-        private System.Windows.Forms.TrackBar FacingBar;
         private System.Windows.Forms.ToolStripStatusLabel GraphicLabel;
         private System.Windows.Forms.ToolStripStatusLabel HueLabel;
         private System.Windows.Forms.ToolStripMenuItem hueToolStripMenuItem;
@@ -581,11 +630,16 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifnoLoopingToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private ListViewWithScrollbar listView1;
-        private AnimatedPictureBox MainPictureBox;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.ListView listView;
-        private System.Windows.Forms.ToolStripMenuItem showFrameBoundsToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private AnimatedPictureBox MainPictureBox;
+        private ListViewWithScrollbar listView1;
+        private System.Windows.Forms.GroupBox groupBoxSettings;
+        private System.Windows.Forms.TrackBar FacingBar;
+        private System.Windows.Forms.CheckBox AnimateCheckBox;
+        private System.Windows.Forms.CheckBox ShowFrameBoundsCheckBox;
+        private System.Windows.Forms.Label directionLabel;
     }
 }

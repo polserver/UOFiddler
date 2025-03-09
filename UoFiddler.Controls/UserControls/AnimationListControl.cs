@@ -161,8 +161,8 @@ namespace UoFiddler.Controls.UserControls
             _sortAlpha = false;
             _displayType = 0;
             MainPictureBox.Reset();
-            animateToolStripMenuItem.Checked = false;
-            showFrameBoundsToolStripMenuItem.Checked = false;
+            AnimateCheckBox.Checked = false;
+            ShowFrameBoundsCheckBox.Checked = false;
 
             OnLoad(this, EventArgs.Empty);
         }
@@ -378,12 +378,6 @@ namespace UoFiddler.Controls.UserControls
                 }
                 TreeViewMobs.SelectedNode = e.Node.Nodes[0];
             }
-        }
-
-        private void Animate_Click(object sender, EventArgs e)
-        {
-            MainPictureBox.Animate = !MainPictureBox.Animate;
-            animateToolStripMenuItem.Checked = MainPictureBox.Animate;
         }
 
         private bool LoadXml()
@@ -940,10 +934,16 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.FrameIndex = index;
         }
 
-        private void OnClickShowFrameBounds(object sender, EventArgs e)
+        private void AnimateCheckBox_Click(object sender, EventArgs e)
+        {
+            MainPictureBox.Animate = !MainPictureBox.Animate;
+            AnimateCheckBox.Checked = MainPictureBox.Animate;
+        }
+
+        private void ShowFrameBoundsCheckBox_Click(object sender, EventArgs e)
         {
             MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
-            showFrameBoundsToolStripMenuItem.Checked = MainPictureBox.ShowFrameBounds;
+            ShowFrameBoundsCheckBox.Checked = MainPictureBox.ShowFrameBounds;
         }
     }
 
