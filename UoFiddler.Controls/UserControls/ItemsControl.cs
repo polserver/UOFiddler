@@ -805,7 +805,13 @@ namespace UoFiddler.Controls.UserControls
                         }
 
                         string fileName = Path.Combine(dialog.SelectedPath, $"Item 0x{index:X4}.{fileExtension}");
-                        using (Bitmap bit = new Bitmap(Art.GetStatic(index)))
+                        var artBitmap = Art.GetStatic(index);
+                        if (artBitmap is null)
+                        {
+                            continue;
+                        }
+
+                        using (Bitmap bit = new Bitmap(artBitmap))
                         {
                             bit.Save(fileName, imageFormat);
                         }

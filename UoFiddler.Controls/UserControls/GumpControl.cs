@@ -519,7 +519,7 @@ namespace UoFiddler.Controls.UserControls
         private static void ExportGumpImage(int index, ImageFormat imageFormat)
         {
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"Gump {index}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Gump 0x{index:X4}.{fileExtension}");
 
             using (Bitmap bit = new Bitmap(Gumps.GetGump(index)))
             {
@@ -567,6 +567,8 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
+                Cursor.Current = Cursors.WaitCursor;
+
                 for (int i = 0; i < listBox.Items.Count; ++i)
                 {
                     int index = int.Parse(listBox.Items[i].ToString());
@@ -575,12 +577,20 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Gump {index}.{fileExtension}");
-                    using (Bitmap bit = new Bitmap(Gumps.GetGump(index)))
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Gump 0x{index:X4}.{fileExtension}");
+                    var gump = Gumps.GetGump(index);
+                    if (gump is null)
+                    {
+                        continue;
+                    }
+
+                    using (Bitmap bit = new Bitmap(gump))
                     {
                         bit.Save(fileName, imageFormat);
                     }
                 }
+
+                Cursor.Current = Cursors.Default;
 
                 MessageBox.Show($"All Gumps saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);

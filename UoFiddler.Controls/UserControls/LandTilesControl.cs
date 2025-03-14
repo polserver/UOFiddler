@@ -605,7 +605,13 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     string fileName = Path.Combine(dialog.SelectedPath, $"Landtile 0x{index:X4}.{fileExtension}");
-                    using (Bitmap bit = new Bitmap(Art.GetLand(index)))
+                    var landTile = Art.GetLand(index);
+                    if (landTile is null)
+                    {
+                        continue;
+                    }
+
+                    using (Bitmap bit = new Bitmap(landTile))
                     {
                         bit.Save(fileName, imageFormat);
                     }

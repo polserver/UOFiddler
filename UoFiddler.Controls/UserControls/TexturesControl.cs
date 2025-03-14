@@ -534,7 +534,13 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     string fileName = Path.Combine(dialog.SelectedPath, $"Texture 0x{index:X4}.{fileExtension}");
-                    using (Bitmap bit = new Bitmap(Textures.GetTexture(index)))
+                    var texture = Textures.GetTexture(index);
+                    if (texture is null)
+                    {
+                        continue;
+                    }
+
+                    using (Bitmap bit = new Bitmap(texture))
                     {
                         bit.Save(fileName, imageFormat);
                     }
