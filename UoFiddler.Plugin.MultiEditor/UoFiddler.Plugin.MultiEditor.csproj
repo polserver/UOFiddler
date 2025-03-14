@@ -63,6 +63,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Serilog" Version="4.2.0" />
-	  <PackageReference Include="System.Resources.Extensions" Version="9.0.2" />
+	  <PackageReference Include="System.Resources.Extensions" Version="9.0.3" />
 	</ItemGroup>
 </Project>

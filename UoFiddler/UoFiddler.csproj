@@ -153,7 +153,7 @@
 		<PackageReference Include="Octokit" Version="14.0.0" />
 		<PackageReference Include="Serilog" Version="4.2.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-		<PackageReference Include="System.Resources.Extensions" Version="9.0.2" />
+		<PackageReference Include="System.Resources.Extensions" Version="9.0.3" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="old-changelog.txt">
