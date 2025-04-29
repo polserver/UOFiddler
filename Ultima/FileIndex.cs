@@ -225,7 +225,7 @@ namespace Ultima
 
             IEntry e = FileAccessor.GetEntry(index);
 
-            if (e.Lookup < 0)
+            if (e.Lookup < 0 || (e.Lookup > 0 && e.Length == -1))
             {
                 length = extra = 0;
                 patched = false;

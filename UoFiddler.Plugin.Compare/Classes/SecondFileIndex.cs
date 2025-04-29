@@ -22,7 +22,7 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             Entry3D e = Index[index];
 
-            if (e.Lookup < 0)
+            if (e.Lookup < 0 || (e.Lookup > 0 && e.Length == -1))
             {
                 length = extra = 0;
                 return null;
