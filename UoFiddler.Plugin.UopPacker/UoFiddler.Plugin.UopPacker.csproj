@@ -6,7 +6,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>UOP Packer</AssemblyTitle>
 		<Product>LegacyMUL Converter</Product>
-		<Copyright>Copyright © 2024</Copyright>
+		<Copyright>Copyright © 2025</Copyright>
 		<AssemblyVersion>1.1.1</AssemblyVersion>
 		<FileVersion>1.1.1</FileVersion>
 	</PropertyGroup>
