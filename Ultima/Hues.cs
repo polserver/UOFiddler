@@ -134,7 +134,7 @@ namespace Ultima
         }
 
         /// <summary> 
-        /// Exports list of all hue names and id (as hex) 
+        /// Exports list of all hue values as json for easy processing
         /// </summary> 
         /// <param name="fileName">Output file name</param> 
         public static void ExportHueListForShader(string fileName)
