@@ -390,5 +390,14 @@ namespace UoFiddler.Controls.UserControls
 
             MessageBox.Show($"Hue names list saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
+
+        private void exportAllHueNamesListForShaderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fileName = Path.Combine(Options.OutputPath, "HuesForShaders.json");
+
+            Hues.ExportHueListForShader(fileName);
+
+            MessageBox.Show($"Hue names list saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
     }
 }

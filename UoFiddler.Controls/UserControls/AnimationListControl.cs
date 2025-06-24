@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -653,6 +654,80 @@ namespace UoFiddler.Controls.UserControls
             }
 
             LoadListView();
+        }
+
+        private void OnClickExtractAnimations(object sender, EventArgs e)
+        {
+
+            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+
+            ImageFormat format;
+            format = ImageFormat.Png;
+            string path = Options.OutputPath + "\\" + _currentSelect.ToString();
+
+            int body;
+            int action;
+            int hue = 0;
+
+            body = _currentSelect;
+            action = -1;
+
+            // _{...}_{}_
+            int _fileType = BodyConverter.Convert(ref body);
+
+            // create output dir
+            if (Directory.Exists(path))
+            {
+                Debug.WriteLine("Output folder already exists");
+                return;
+            }
+
+            Directory.CreateDirectory(path);
+
+
+            if (action == -1)
+            {
+                // Keep track of the total frames to make organization easier
+                int fCounter = 0;
+                // Loops through all the animations for this type 
+                for (int a = 0; a < Animations.GetAnimLength(_currentSelect, _fileType); ++a)
+                {
+                    // No animations exist, so dont try to go further
+
+                    // Loop through each direction
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        if (!Animations.IsActionDefined(_currentSelect, a, i)) continue;
+
+                        // Grab the frames for our thing
+                        List<AnimatedFrame> actionFrames = Animations.GetAnimation(_currentSelect, a, i, ref hue, true, false)
+                            ?.Select(animation => new AnimatedFrame(animation.Bitmap, animation.Center)).ToList();
+
+                        if (actionFrames.Count == 0) continue;
+
+                        // Loop through the frames and create files for them
+                        for (int j = 0; j < actionFrames.Count; j++)
+                        {
+                            // Output some file even if there is not bitmap so that we count the frames correctly and stuff like this
+                            if (actionFrames[j].Bitmap is null)
+                            {
+                                actionFrames[j].Bitmap = new Bitmap(1, 1);
+                            }
+
+                            //string filename = string.Format("{8}_{0}_{1}_{2}_{3}_{6}_{7}{4}", body, a, i, j, menu.Tag, _fileType, (-1) * edit.Frames[j].Center.X, (-1) * edit.Frames[j].Center.Y, fCounter++);
+                            string filename = string.Format("{0}_{1}_{2}_{3}_{4}_{5}{6}", fCounter++, _currentSelect, a, i, actionFrames[j].Center.X, actionFrames[j].Center.Y, ".png");
+
+                            //Debug.Write($"CenterX: {edit.Frames[j].Center.X}, width:{edit.Frames[j].Width}\n");
+                            string file = Path.Combine(path, filename);
+
+                            using (actionFrames[j].Bitmap)
+                            {
+                                actionFrames[j].Bitmap.Save(file, format);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void OnClickRemove(object sender, EventArgs e)

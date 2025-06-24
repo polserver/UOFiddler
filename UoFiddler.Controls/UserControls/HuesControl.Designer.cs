@@ -49,6 +49,7 @@ namespace UoFiddler.Controls.UserControls
             importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             exportAllHueNamesListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportAllHueNamesListForShaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             vScrollBar = new System.Windows.Forms.VScrollBar();
             pictureBox = new System.Windows.Forms.PictureBox();
@@ -68,7 +69,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { saveToolStripMenuItem, replaceToolStripMenuItem, exportToolStripMenuItem, importToolStripMenuItem, toolStripSeparator1, exportAllHueNamesListToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { saveToolStripMenuItem, replaceToolStripMenuItem, exportToolStripMenuItem, importToolStripMenuItem, toolStripSeparator1, exportAllHueNamesListToolStripMenuItem, exportAllHueNamesListForShaderToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new System.Drawing.Size(203, 120);
             // 
@@ -118,6 +119,14 @@ namespace UoFiddler.Controls.UserControls
             exportAllHueNamesListToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             exportAllHueNamesListToolStripMenuItem.Text = "Export all hue names list";
             exportAllHueNamesListToolStripMenuItem.Click += ExportAllHueNamesListToolStripMenuItem_Click;
+            //
+            // exportAllHueNamesListForShaderToolStripMenuItem
+            //
+            exportAllHueNamesListForShaderToolStripMenuItem.Name = "exportAllHueNamesListForShaderToolStripMenuItem";
+            exportAllHueNamesListForShaderToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            exportAllHueNamesListForShaderToolStripMenuItem.Text = "Export all hue names list as json ";
+            exportAllHueNamesListForShaderToolStripMenuItem.Click += exportAllHueNamesListForShaderToolStripMenuItem_Click;
+
             // 
             // toolStripContainer
             // 
@@ -257,5 +266,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripButton SearchNameToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exportAllHueNamesListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAllHueNamesListForShaderToolStripMenuItem;
     }
 }

@@ -25,6 +25,7 @@ namespace UoFiddler.Controls.Classes
             var drawCenter = new Point(int.MinValue, int.MinValue);
             foreach (var frame in frames)
             {
+                if (frame.Bitmap is null) continue;
                 drawCenter.X = Math.Max(drawCenter.X, frame.Center.X);
                 drawCenter.Y = Math.Max(drawCenter.Y, frame.Center.Y + frame.Bitmap.Height);
             }
@@ -34,6 +35,7 @@ namespace UoFiddler.Controls.Classes
             var outputSize = new Size(0, 0);
             foreach (var frame in frames)
             {
+                if (frame.Bitmap is null) continue;
                 var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
                 outputSize.Width = Math.Max(outputSize.Width, location.X + frame.Bitmap.Width);
                 outputSize.Height = Math.Max(outputSize.Height, location.Y + frame.Bitmap.Height);
