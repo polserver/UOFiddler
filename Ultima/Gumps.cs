@@ -157,7 +157,7 @@ namespace Ultima
                     _streamBuffer = new byte[entry.Length];
                 }
 
-                stream.Read(_streamBuffer, 0, entry.Length);
+                stream.ReadExactly(_streamBuffer, 0, entry.Length);
 
                 var result = UopUtils.Decompress(_streamBuffer);
                 if (result.success is false)
@@ -272,7 +272,7 @@ namespace Ultima
                 _colorTable = colorTable = new byte[128];
             }
 
-            stream.Read(streamBuffer, 0, length);
+            stream.ReadExactly(streamBuffer, 0, length);
 
             fixed (ushort* psHueColors = hue.Colors)
             {
@@ -445,7 +445,7 @@ namespace Ultima
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            stream.ReadExactly(_streamBuffer, 0, length);
 
             uint width = (uint)entry.Extra1;
             uint height = (uint)entry.Extra2;

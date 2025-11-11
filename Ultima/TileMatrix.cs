@@ -241,7 +241,7 @@ namespace Ultima
 
                 GCHandle gc = GCHandle.Alloc(_staticIndex, GCHandleType.Pinned);
                 var buffer = new byte[index.Length];
-                index.Read(buffer, 0, (int)index.Length);
+                index.ReadExactly(buffer, 0, (int)index.Length);
                 Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(index.Length, BlockHeight * BlockWidth * 12));
                 gc.Free();
                 for (var i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
@@ -297,7 +297,7 @@ namespace Ultima
             GCHandle gc = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
             try
             {
-                _statics.Read(_buffer, 0, length);
+                _statics.ReadExactly(_buffer, 0, length);
 
                 if (_lists == null)
                 {
@@ -496,7 +496,7 @@ namespace Ultima
                     _buffer = new byte[192];
                 }
 
-                _map.Read(_buffer, 0, 192);
+                _map.ReadExactly(_buffer, 0, 192);
 
                 Marshal.Copy(_buffer, 0, gc.AddrOfPinnedObject(), 192);
             }
