@@ -42,6 +42,7 @@ namespace UoFiddler.Controls.UserControls
 
         private int _selectedGraphicId = -1;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedGraphicId
         {
             get => _selectedGraphicId;

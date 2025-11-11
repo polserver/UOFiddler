@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -75,6 +76,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// <summary>
         /// Current Hovered Tile (set inside MultiComponentList)
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MultiTile HoverTile
         {
             get => _hoverTile;

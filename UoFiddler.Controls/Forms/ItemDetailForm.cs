@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -44,6 +45,7 @@ namespace UoFiddler.Controls.Forms
         /// <summary>
         /// Sets Hue
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Hue
         {
             get => _hue;

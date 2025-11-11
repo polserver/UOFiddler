@@ -67,6 +67,7 @@ namespace UoFiddler.Controls.UserControls
             get => _frames?[_frameIndex];
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int FrameIndex
         {
             get => _frameIndex;
@@ -84,6 +85,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool ShowFrameBounds
         {
             get => _showFrameBounds;
@@ -94,6 +96,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int FrameDelay
         {
             get => _timer.Interval;
@@ -118,6 +121,7 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool Animate
         {
             get => _animate;

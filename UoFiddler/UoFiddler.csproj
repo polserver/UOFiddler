@@ -3,7 +3,7 @@
 		<OutputType>WinExe</OutputType>
 		<ApplicationIcon>Resources\UOFiddlerIcon.ico</ApplicationIcon>
 		<StartupObject>UoFiddler.Program</StartupObject>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>UoFiddler</AssemblyTitle>
@@ -153,7 +153,6 @@
 		<PackageReference Include="Octokit" Version="14.0.0" />
 		<PackageReference Include="Serilog" Version="4.3.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-		<PackageReference Include="System.Resources.Extensions" Version="9.0.5" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="old-changelog.txt">
