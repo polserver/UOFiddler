@@ -325,7 +325,7 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.Location = new System.Drawing.Point(0, 0);
             pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             pictureBox.Name = "pictureBox";
-            pictureBox.Size = new System.Drawing.Size(592, 405);
+            pictureBox.Size = new System.Drawing.Size(592, 395);
             pictureBox.TabIndex = 1;
             pictureBox.TabStop = false;
             // 
@@ -335,10 +335,10 @@ namespace UoFiddler.Controls.UserControls
             bottomMenuToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             bottomMenuToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             bottomMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { IDLabel, SizeLabel, ProgressBar, Preload, toolStripSeparator3 });
-            bottomMenuToolStrip.Location = new System.Drawing.Point(0, 405);
+            bottomMenuToolStrip.Location = new System.Drawing.Point(0, 395);
             bottomMenuToolStrip.Name = "bottomMenuToolStrip";
             bottomMenuToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            bottomMenuToolStrip.Size = new System.Drawing.Size(592, 25);
+            bottomMenuToolStrip.Size = new System.Drawing.Size(592, 35);
             bottomMenuToolStrip.TabIndex = 2;
             bottomMenuToolStrip.Text = "toolStrip1";
             // 
@@ -346,7 +346,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             IDLabel.AutoSize = false;
             IDLabel.Name = "IDLabel";
-            IDLabel.Size = new System.Drawing.Size(110, 17);
+            IDLabel.Size = new System.Drawing.Size(240, 27);
             IDLabel.Text = "ID:";
             IDLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -354,7 +354,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             SizeLabel.AutoSize = false;
             SizeLabel.Name = "SizeLabel";
-            SizeLabel.Size = new System.Drawing.Size(100, 17);
+            SizeLabel.Size = new System.Drawing.Size(240, 27);
             SizeLabel.Text = "Size:";
             SizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 

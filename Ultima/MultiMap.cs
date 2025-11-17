@@ -156,8 +156,8 @@ namespace Ultima
             Bitmap bmp;
             using (var reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
-                int width = reader.ReadInt16();
-                int height = reader.ReadInt16();
+                int width = reader.ReadUInt16();
+                int height = reader.ReadUInt16();
 
                 bmp = new Bitmap(width, height);
                 BitmapData bd = bmp.LockBits(
@@ -173,7 +173,7 @@ namespace Ultima
                     for (int c = 0; c < colorsCount; c++)
                     {
                         byte count = reader.ReadByte();
-                        short color = reader.ReadInt16();
+                        ushort color = reader.ReadUInt16();
                         ushort* end = cur + count;
                         while (cur < end)
                         {

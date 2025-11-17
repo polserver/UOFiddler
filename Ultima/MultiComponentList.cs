@@ -371,7 +371,7 @@ namespace Ultima
                             _min.Y = 10000;
                             for (; itemCount < count; ++itemCount)
                             {
-                                SortedTiles[itemCount].ItemId = (ushort)reader.ReadInt16();
+                                SortedTiles[itemCount].ItemId = reader.ReadUInt16();
                                 SortedTiles[itemCount].OffsetX = reader.ReadInt16();
                                 SortedTiles[itemCount].OffsetY = reader.ReadInt16();
                                 SortedTiles[itemCount].OffsetZ = reader.ReadInt16();

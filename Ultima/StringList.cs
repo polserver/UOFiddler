@@ -10,6 +10,7 @@ namespace Ultima
         private readonly bool _decompress;
         private int _header1;
         private short _header2;
+        private readonly Encoding _encoding;
 
         public List<StringEntry> Entries { get; private set; }
         public string Language { get; }
@@ -71,9 +72,21 @@ namespace Ultima
 
                     while (reader.BaseStream.Length != reader.BaseStream.Position)
                     {
+                        // 检查是否有足够的字节来读取条目头部（4字节number + 1字节flag + 2字节length = 7字节）
+                        if (reader.BaseStream.Length - reader.BaseStream.Position < 7)
+                        {
+                            break;
+                        }
+
                         int number = reader.ReadInt32();
                         byte flag = reader.ReadByte();
-                        int length = reader.ReadInt16();
+                        int length = reader.ReadUInt16();
+
+                        // 检查是否有足够的字节来读取文本内容
+                        if (reader.BaseStream.Length - reader.BaseStream.Position < length)
+                        {
+                            break;
+                        }
 
                         if (length > _buffer.Length)
                         {

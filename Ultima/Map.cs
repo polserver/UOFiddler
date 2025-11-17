@@ -851,10 +851,10 @@ namespace Ultima
                                 binaryWriter.Write(header);
                                 for (int i = 0; i < 64; ++i)
                                 {
-                                    short tileId = mapReader.ReadInt16();
+                                    ushort tileId = mapReader.ReadUInt16();
                                     sbyte z = mapReader.ReadSByte();
 
-                                    if (tileId is < 0 or >= 0x4000)
+                                    if (tileId >= 0x4000)
                                     {
                                         tileId = 0;
                                     }
