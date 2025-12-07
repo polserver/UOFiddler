@@ -3,177 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UOFiddler - A powerful tool for viewing and modifying Ultima Online 2D client files.">
+    <meta name="keywords" content="UOFiddler, Ultima Online, UO, client editor, POL">
+    <meta name="author" content="POL Development Team">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="UOFiddler - Ultima Online Client Editor">
+    <meta property="og:description" content="A powerful tool for viewing and modifying Ultima Online 2D client files.">
+    <meta property="og:url" content="https://polserver.github.io/UOFiddler/">
+    
     <title>UOFiddler - Ultima Online Client Editor</title>
+
+    <link rel="preload" href="styles.min.css" as="style">
+
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.min.css">
 </head>
 <body>
-
-    <div id="header">
+    <header id="header">
         <div class="container">
             <div id="logo">
                 <h1>UOFiddler</h1>
                 <span>Ultima Online Client Editor</span>
             </div>
-            <div id="navigation">
+            <nav id="navigation" aria-label="Main navigation">
                 <ul>
                     <li><a href="#about">About</a></li>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#requirements">Requirements</a></li>
-                    <li><a href="https://github.com/polserver/UOFiddler/wiki">Wiki</a></li>
-                    <li><a href="https://github.com/polserver/UOFiddler/issues">Bugs</a></li>
-                    <li><a href="https://github.com/polserver/UOFiddler">Source</a></li>
-                    <li><a href="https://www.polserver.com">POL Home</a></li>
+                    <li><a href="https://github.com/polserver/UOFiddler/wiki" rel="noopener">Wiki</a></li>
+                    <li><a href="https://github.com/polserver/UOFiddler/issues" rel="noopener">Bugs</a></li>
+                    <li><a href="https://github.com/polserver/UOFiddler" rel="noopener">Source</a></li>
+                    <li><a href="https://www.polserver.com" rel="noopener">POL Home</a></li>
                 </ul>
-            </div>
+            </nav>
         </div>
-    </div>
+    </header>
 
     <div id="mini-header">
         <div class="container">
-            <div id="mini-nav">
-                Welcome to UOFiddler. <a href="https://github.com/polserver/UOFiddler/releases/latest">Download the latest release</a> or <a href="https://github.com/polserver/UOFiddler">view the source code</a>.
-            </div>
+            <p id="mini-nav">
+                Welcome to UOFiddler. <a href="https://github.com/polserver/UOFiddler/releases/latest" rel="noopener">Download the latest release</a> or <a href="https://github.com/polserver/UOFiddler" rel="noopener">view the source code</a>.
+            </p>
         </div>
     </div>
 
-    <div id="main">
+    <main id="main">
         <div class="container">
-
-            <div class="mainbox download-section">
-                <h1>Downloads</h1>
-                <div style="text-align: center; padding: 15px;">
-                    <a href="https://github.com/polserver/UOFiddler/releases/latest" class="download-btn">⬇ Download Latest Release</a>
-                    <a href="https://github.com/polserver/UOFiddler" class="download-btn">View on GitHub</a>
+            <section class="mainbox download-section" aria-labelledby="downloads-heading">
+                <h1 id="downloads-heading">Downloads</h1>
+                <div class="download-buttons">
+                    <a href="https://github.com/polserver/UOFiddler/releases/latest" class="download-btn" rel="noopener">
+                        <span aria-hidden="true">&#x2B07;</span> Download Latest Release
+                    </a>
+                    <a href="https://github.com/polserver/UOFiddler" class="download-btn" rel="noopener">View on GitHub</a>
                 </div>
-            </div>
+            </section>
 
             <div class="row">
                 <div class="col-left">
-
-                    <div id="about" class="mainbox-gold">
-                        <h1>About UOFiddler</h1>
+                    <section id="about" class="mainbox-gold" aria-labelledby="about-heading">
+                        <h1 id="about-heading">About UOFiddler</h1>
                         <p>Welcome to UOFiddler, a powerful tool based on the Ultima SDK for viewing and modifying almost every Ultima Online 2D client file.</p>
                         <p>UOFiddler has been an essential tool for UO developers and private shard administrators for many years. Whether you're creating custom content, debugging client issues, or building an entirely new world, UOFiddler provides the tools you need.</p>
                         <p>Source code is released under the <strong>Beerware License</strong>.</p>
-                    </div>
+                    </section>
 
-                    <div id="features" class="mainbox">
-                        <h1>Features</h1>
-                        <table class="features-table">
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Art &amp; Gumps</strong> - Browse, export, and import static art, items, gumps, and textures with full transparency support.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Map Editor</strong> - View and edit terrain, statics, and map data across all facets of the game world.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Animations</strong> - Preview and modify creature and character animations frame by frame.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Multi Editor</strong> - Design and construct custom multi-tile structures like houses and boats.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>TileData Editor</strong> - Edit item and land tile properties including flags, weights, and names.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Sound &amp; Speech</strong> - Browse and export game sounds and speech files.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Hues</strong> - View and edit the color palette used for dyeable items.</td>
-                            </tr>
-                            <tr>
-                                <td class="feature-icon">►</td>
-                                <td><strong>Plugin System</strong> - Extend functionality with plugins including UOP Packer, Mass Import, Compare Tool, and more.</td>
-                            </tr>
-                        </table>
-                    </div>
+                    <section id="features" class="mainbox" aria-labelledby="features-heading">
+                        <h1 id="features-heading">Features</h1>
+                        <dl class="features-list">
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Art &amp; Gumps</dt>
+                                <dd>Browse, export, and import static art, items, gumps, and textures with full transparency support.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Map Editor</dt>
+                                <dd>View and edit terrain, statics, and map data across all facets of the game world.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Animations</dt>
+                                <dd>Preview and modify creature and character animations frame by frame.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Multi Editor</dt>
+                                <dd>Design and construct custom multi-tile structures like houses and boats.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> TileData Editor</dt>
+                                <dd>Edit item and land tile properties including flags, weights, and names.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Sound &amp; Speech</dt>
+                                <dd>Browse and export game sounds and speech files.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Hues</dt>
+                                <dd>View and edit the color palette used for dyeable items.</dd>
+                            </div>
+                            <div class="feature-item">
+                                <dt><span class="feature-icon" aria-hidden="true">&#x25BA;</span> Plugin System</dt>
+                                <dd>Extend functionality with plugins including UOP Packer, Mass Import, Compare Tool, and more.</dd>
+                            </div>
+                        </dl>
+                    </section>
 
-                    <div id="requirements" class="mainbox">
-                        <h1>Requirements</h1>
+                    <section id="requirements" class="mainbox" aria-labelledby="requirements-heading">
+                        <h1 id="requirements-heading">Requirements</h1>
                         <h2>Version 4.11.0 and newer:</h2>
-                        <div class="req-list">
-                            <span class="req-item">.NET Desktop Runtime 8.0.x</span>
-                            <span class="req-item">Windows 10 or newer</span>
-                        </div>
-                        
+                        <ul class="req-list">
+                            <li class="req-item">.NET Desktop Runtime 8.0.x</li>
+                            <li class="req-item">Windows 10 or newer</li>
+                        </ul>
                         <h2>For building from source:</h2>
-                        <div class="req-list">
-                            <span class="req-item">Visual Studio 2022 v17.10+</span>
-                            <span class="req-item">.NET 8.0 SDK</span>
-                            <span class="req-item">.NET desktop development workload</span>
-                        </div>
-                        
-                        <p>Download .NET 8.0 at: <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">dotnet.microsoft.com</a></p>
-                    </div>
-
+                        <ul class="req-list">
+                            <li class="req-item">Visual Studio 2022 v17.10+</li>
+                            <li class="req-item">.NET 8.0 SDK</li>
+                            <li class="req-item">.NET desktop development workload</li>
+                        </ul>
+                        <p>Download .NET 8.0 at: <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0" rel="noopener">dotnet.microsoft.com</a></p>
+                    </section>
                 </div>
 
-                <div class="col-right">
-
-                    <div class="smallbox discord-box">
-                        <h1>Join the Community</h1>
+                <aside class="col-right">
+                    <section class="smallbox discord-box" aria-labelledby="community-heading">
+                        <h1 id="community-heading">Join the Community</h1>
                         <p>We have a dedicated channel on POL Discord for UOFiddler discussion and support.</p>
-                        <p><a href="https://discord.gg/4JbC8hA">► Join POL Discord</a></p>
-                    </div>
+                        <p><a href="https://discord.gg/4JbC8hA" rel="noopener"><span aria-hidden="true">&#x25BA;</span> Join POL Discord</a></p>
+                    </section>
 
-                    <div class="smallbox">
-                        <h1>Quick Links</h1>
-                        <table>
-                            <tr>
-                                <td><a href="https://github.com/polserver/UOFiddler/releases/latest">Latest Release</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="https://github.com/polserver/UOFiddler">Source Code</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="https://github.com/polserver/UOFiddler/wiki">Documentation</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="https://github.com/polserver/UOFiddler/issues">Report a Bug</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="https://forums.polserver.com/viewforum.php?f=32">Forum</a></td>
-                            </tr>
-                        </table>
-                    </div>
+                    <section class="smallbox" aria-labelledby="quicklinks-heading">
+                        <h1 id="quicklinks-heading">Quick Links</h1>
+                        <ul class="quick-links">
+                            <li><a href="https://github.com/polserver/UOFiddler/releases/latest" rel="noopener">Latest Release</a></li>
+                            <li><a href="https://github.com/polserver/UOFiddler" rel="noopener">Source Code</a></li>
+                            <li><a href="https://github.com/polserver/UOFiddler/wiki" rel="noopener">Documentation</a></li>
+                            <li><a href="https://github.com/polserver/UOFiddler/issues" rel="noopener">Report a Bug</a></li>
+                            <li><a href="https://forums.polserver.com/viewforum.php?f=32" rel="noopener">Forum</a></li>
+                        </ul>
+                    </section>
 
-                    <div class="smallbox-gold">
-                        <h1>Reporting Bugs</h1>
-                        <p style="padding: 8px;">Please report any bugs or issues on our GitHub repository:</p>
-                        <p style="padding: 0 8px 8px 8px;"><a href="https://github.com/polserver/UOFiddler/issues">github.com/polserver/UOFiddler/issues</a></p>
-                    </div>
+                    <section class="smallbox-gold" aria-labelledby="bugs-heading">
+                        <h1 id="bugs-heading">Reporting Bugs</h1>
+                        <p>Please report any bugs or issues on our GitHub repository:</p>
+                        <p><a href="https://github.com/polserver/UOFiddler/issues" rel="noopener">github.com/polserver/UOFiddler/issues</a></p>
+                    </section>
 
-                    <div class="smallbox">
-                        <h1>Older Versions</h1>
-                        <table>
-                            <tr>
-                                <td><strong>4.10.x</strong></td>
-                                <td>.NET 7.0</td>
-                            </tr>
-                            <tr>
-                                <td><strong>4.9.28 and older</strong></td>
-                                <td>.NET Framework 4.8</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                </div>
+                    <section class="smallbox" aria-labelledby="versions-heading">
+                        <h1 id="versions-heading">Older Versions</h1>
+                        <dl class="versions-list">
+                            <dt>4.10.x</dt>
+                            <dd>.NET 7.0</dd>
+                            <dt>4.9.28 and older</dt>
+                            <dd>.NET Framework 4.8</dd>
+                        </dl>
+                    </section>
+                </aside>
             </div>
-
         </div>
-    </div>
+    </main>
 
-    <div id="footer">
-        Copyright &copy; 2008-2025 POL Development Team. Part of the <a href="https://www.polserver.com">PenUltima Online Server Project</a>.
-    </div>
-
+    <footer id="footer">
+        <p>Copyright &copy; 2008-2025 POL Development Team. Part of the <a href="https://www.polserver.com" rel="noopener">PenUltima Online Server Project</a>.</p>
+    </footer>
 </body>
 </html>
