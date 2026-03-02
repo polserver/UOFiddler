@@ -317,6 +317,11 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            if (IndexOffsetButton.Checked)
+            {
+                indexValue--;
+            }
+
             if (indexValue < 0)
             {
                 indexValue = 0;
