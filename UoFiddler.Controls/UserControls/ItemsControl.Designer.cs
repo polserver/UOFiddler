@@ -95,6 +95,8 @@ namespace UoFiddler.Controls.UserControls
             asTiffToolStripMenuItem = new ToolStripMenuItem();
             asJpgToolStripMenuItem = new ToolStripMenuItem();
             asPngToolStripMenuItem = new ToolStripMenuItem();
+            exportItemsToolStripMenuItem = new ToolStripMenuItem();
+            importItemsToolStripMenuItem = new ToolStripMenuItem();
             colorDialog = new ColorDialog();
             collapsibleSplitter1 = new CollapsibleSplitter();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
@@ -498,7 +500,7 @@ namespace UoFiddler.Controls.UserControls
             // MiscToolStripDropDownButton
             // 
             MiscToolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            MiscToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { ExportAllToolStripMenuItem });
+            MiscToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { ExportAllToolStripMenuItem, exportItemsToolStripMenuItem, importItemsToolStripMenuItem });
             MiscToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             MiscToolStripDropDownButton.Name = "MiscToolStripDropDownButton";
             MiscToolStripDropDownButton.Size = new System.Drawing.Size(45, 25);
@@ -510,6 +512,20 @@ namespace UoFiddler.Controls.UserControls
             ExportAllToolStripMenuItem.Name = "ExportAllToolStripMenuItem";
             ExportAllToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             ExportAllToolStripMenuItem.Text = "Export all..";
+            // 
+            // exportItemsToolStripMenuItem
+            // 
+            exportItemsToolStripMenuItem.Name = "exportItemsToolStripMenuItem";
+            exportItemsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            exportItemsToolStripMenuItem.Text = "Export Items..";
+            exportItemsToolStripMenuItem.Click += OnExportItemsClick;
+            // 
+            // importItemsToolStripMenuItem
+            // 
+            importItemsToolStripMenuItem.Name = "importItemsToolStripMenuItem";
+            importItemsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            importItemsToolStripMenuItem.Text = "Import Items..";
+            importItemsToolStripMenuItem.Click += OnImportItemsClick;
             // 
             // asBmpToolStripMenuItem
             // 
@@ -601,6 +617,8 @@ namespace UoFiddler.Controls.UserControls
         private ContextMenuStrip TileViewContextMenuStrip;
         private PictureBox DetailPictureBox;
         private ToolStripMenuItem ExportAllToolStripMenuItem;
+        private ToolStripMenuItem exportItemsToolStripMenuItem;
+        private ToolStripMenuItem importItemsToolStripMenuItem;
         private ToolStripMenuItem extractToolStripMenuItem;
         private ToolStripMenuItem findNextFreeSlotToolStripMenuItem;
         private ToolStripStatusLabel GraphicLabel;

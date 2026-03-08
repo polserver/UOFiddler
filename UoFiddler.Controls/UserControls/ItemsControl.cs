@@ -22,7 +22,6 @@ using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 using UoFiddler.Controls.UserControls.TileView;
-
 namespace UoFiddler.Controls.UserControls
 {
     public partial class ItemsControl : UserControl
@@ -822,6 +821,235 @@ namespace UoFiddler.Controls.UserControls
 
                 MessageBox.Show($"All items saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
+        }
+
+        private void OnExportItemsClick(object sender, EventArgs e)
+        {
+            using (var form = new ItemRangeInputForm())
+            {
+                if (form.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                int start = form.StartIndex;
+                int end = form.EndIndex;
+
+                using (var dlg = new FolderBrowserDialog())
+                {
+                    dlg.Description = "Select folder to save packed items";
+                    dlg.ShowNewFolderButton = true;
+                    if (dlg.ShowDialog() != DialogResult.OK)
+                    {
+                        return;
+                    }
+
+                    string outDir = dlg.SelectedPath;
+                    PackItems(start, end, outDir);
+                }
+            }
+        }
+
+        private void PackItems(int start, int end, string outDir)
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                var packedItems = new List<PackedItemEntry>();
+                var images = new List<Bitmap>();
+                int spacing = 2;
+                int currentX = spacing;
+                int currentY = spacing;
+                int rowHeight = 0;
+                int canvasWidth = 0;
+                int canvasHeight = 0;
+                int maxWidth = 1024; // Arbitrary max width for the sheet
+
+                for (int i = start; i <= end; i++)
+                {
+                    if (!Art.IsValidStatic(i))
+                    {
+                        continue;
+                    }
+
+                    Bitmap bmp = Art.GetStatic(i);
+                    if (bmp == null)
+                    {
+                        continue;
+                    }
+
+                    int w = bmp.Width;
+                    int h = bmp.Height;
+
+                    if (currentX + w > maxWidth)
+                    {
+                        currentY += rowHeight + spacing;
+                        currentX = spacing;
+                        rowHeight = 0;
+                    }
+
+                    if (currentX == spacing)
+                        rowHeight = h;
+                    else
+                        rowHeight = Math.Max(rowHeight, h);
+
+                    var entry = new PackedItemEntry
+                    {
+                        Index = i,
+                        Frame = new Rect { X = currentX, Y = currentY, W = w, H = h },
+                        Center = new PointStruct { X = w / 2, Y = h / 2 } // Default center
+                    };
+
+                    packedItems.Add(entry);
+                    images.Add(new Bitmap(bmp));
+
+                    canvasWidth = Math.Max(canvasWidth, currentX + w + spacing);
+                    canvasHeight = Math.Max(canvasHeight, currentY + rowHeight + spacing);
+                    currentX += w + spacing;
+                }
+
+                if (images.Count == 0)
+                {
+                    MessageBox.Show("No valid items found in the specified range.", "Export Items", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Create sprite sheet
+                using (var sprite = new Bitmap(Math.Max(1, canvasWidth), Math.Max(1, canvasHeight)))
+                using (var g = Graphics.FromImage(sprite))
+                {
+                    g.Clear(Color.Transparent);
+
+                    for (int i = 0; i < images.Count; i++)
+                    {
+                        var img = images[i];
+                        var rect = packedItems[i].Frame;
+                        g.DrawImage(img, rect.X, rect.Y, rect.W, rect.H);
+                        img.Dispose();
+                    }
+
+                    string baseName = $"items_{start}-{end}";
+                    string imageFile = Path.Combine(outDir, baseName + ".png");
+                    sprite.Save(imageFile, ImageFormat.Png);
+
+                    // JSON
+                    var outObj = new PackedItemOutput
+                    {
+                        Meta = new PackedMeta { Image = Path.GetFileName(imageFile), Size = new SizeStruct { W = sprite.Width, H = sprite.Height }, Format = "RGBA8888" },
+                        Items = packedItems
+                    };
+
+                    string jsonFile = Path.Combine(outDir, baseName + ".json");
+                    var jsOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+                    string json = System.Text.Json.JsonSerializer.Serialize(outObj, jsOptions);
+                    File.WriteAllText(jsonFile, json);
+
+                    // Guide Image
+                    string guideFile = Path.Combine(outDir, $"{baseName}_guide.png");
+                    CreateGuideImage(guideFile, sprite, packedItems);
+
+                    MessageBox.Show($"Exported {packedItems.Count} items to {outDir}", "Export Items", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to export items: {ex.Message}", "Export Items", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void CreateGuideImage(string filename, Bitmap sprite, List<PackedItemEntry> items)
+        {
+            using (var guide = new Bitmap(sprite))
+            using (var g = Graphics.FromImage(guide))
+            {
+                using (var pen = new Pen(Color.Red, 1))
+                using (var brush = new SolidBrush(Color.FromArgb(128, 0, 0, 255))) // Semi-transparent blue
+                {
+                    foreach (var item in items)
+                    {
+                        var r = item.Frame;
+                        g.DrawRectangle(pen, r.X, r.Y, r.W - 1, r.H - 1);
+
+                        // Draw center cross
+                        int cx = r.X + item.Center.X;
+                        int cy = r.Y + item.Center.Y;
+                        g.DrawLine(pen, cx - 3, cy, cx + 3, cy);
+                        g.DrawLine(pen, cx, cy - 3, cx, cy + 3);
+
+                        // Draw Index
+                        g.DrawString(item.Index.ToString(), this.Font, Brushes.Black, r.X + 1, r.Y + 1);
+                    }
+                }
+                guide.Save(filename, ImageFormat.Png);
+            }
+        }
+
+        private void OnImportItemsClick(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                ofd.Title = "Select items packing JSON file";
+                if (ofd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                try
+                {
+                    UnpackItems(ofd.FileName);
+                    MessageBox.Show("Import finished.", "Import Items", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to import items: {ex.Message}", "Import Items", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void UnpackItems(string jsonFile)
+        {
+            string json = File.ReadAllText(jsonFile);
+            var doc = System.Text.Json.JsonSerializer.Deserialize<PackedItemOutput>(json);
+            if (doc == null)
+            {
+                throw new Exception("Invalid JSON file.");
+            }
+
+            string spritePath = Path.Combine(Path.GetDirectoryName(jsonFile) ?? string.Empty, doc.Meta.Image);
+            if (!File.Exists(spritePath))
+            {
+                throw new FileNotFoundException($"Sprite sheet not found: {spritePath}");
+            }
+
+            using (var sprite = new Bitmap(spritePath))
+            {
+                foreach (var item in doc.Items)
+                {
+                    var r = item.Frame;
+                    if (r.W <= 0 || r.H <= 0) continue;
+
+                    // Extract image
+                    // Extract image
+                    var bmp = new Bitmap(r.W, r.H);
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.Clear(Color.Transparent);
+                        g.DrawImage(sprite, new Rectangle(0, 0, r.W, r.H), new Rectangle(r.X, r.Y, r.W, r.H), GraphicsUnit.Pixel);
+                    }
+
+                    // Update Art
+                    Art.ReplaceStatic(item.Index, bmp);
+                }
+
+                ItemsTileView.Invalidate();
+                Options.ChangedUltimaClass["Art"] = true;
             }
         }
 
