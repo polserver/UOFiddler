@@ -181,7 +181,7 @@ namespace Ultima
             }
 
             stream.Seek(4, SeekOrigin.Current);
-            stream.Read(_validBuffer, 0, 4);
+            stream.ReadExactly(_validBuffer, 0, 4);
 
             short width = (short)(_validBuffer[0] | (_validBuffer[1] << 8));
             short height = (short)(_validBuffer[2] | (_validBuffer[3] << 8));
@@ -272,7 +272,7 @@ namespace Ultima
             }
 
             var buffer = new byte[length];
-            stream.Read(buffer, 0, length);
+            stream.ReadExactly(buffer, 0, length);
             stream.Close();
             return buffer;
         }
@@ -344,7 +344,7 @@ namespace Ultima
             }
 
             var buffer = new byte[length];
-            stream.Read(buffer, 0, length);
+            stream.ReadExactly(buffer, 0, length);
             stream.Close();
             return buffer;
         }
@@ -429,7 +429,7 @@ namespace Ultima
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            stream.ReadExactly(_streamBuffer, 0, length);
             stream.Close();
 
             Bitmap bmp;
@@ -504,7 +504,7 @@ namespace Ultima
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            stream.ReadExactly(_streamBuffer, 0, length);
             stream.Close();
             fixed (byte* binData = _streamBuffer)
             {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>Controls</AssemblyName>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>Controls</AssemblyTitle>
@@ -428,8 +428,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.3.0" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.5" />
-		<PackageReference Include="System.Resources.Extensions" Version="9.0.5" />
 		<PackageReference Include="AnimatedGif" Version="1.0.5" />
 	</ItemGroup>
 </Project>

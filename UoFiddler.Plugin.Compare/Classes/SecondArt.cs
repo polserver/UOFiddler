@@ -81,7 +81,7 @@ namespace UoFiddler.Plugin.Compare.Classes
             }
 
             stream.Seek(4, SeekOrigin.Current);
-            stream.Read(_validBuffer, 0, 4);
+            stream.ReadExactly(_validBuffer, 0, 4);
 
             short width = (short)(_validBuffer[0] | (_validBuffer[1] << 8));
             short height = (short)(_validBuffer[2] | (_validBuffer[3] << 8));
@@ -140,7 +140,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            stream.ReadExactly(_streamBuffer, 0, length);
             stream.Close();
 
             fixed (byte* data = _streamBuffer)
@@ -255,7 +255,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            stream.ReadExactly(_streamBuffer, 0, length);
             stream.Close();
             fixed (byte* binData = _streamBuffer)
             {

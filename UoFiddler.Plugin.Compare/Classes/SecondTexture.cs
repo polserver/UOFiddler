@@ -83,7 +83,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 _streamBuffer = new byte[max];
             }
 
-            stream.Read(_streamBuffer, 0, max);
+            stream.ReadExactly(_streamBuffer, 0, max);
 
             fixed (byte* data = _streamBuffer)
             {

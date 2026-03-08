@@ -74,7 +74,7 @@ namespace UoFiddler.Plugin.Compare.Classes
             }
 
             byte[] buffer = new byte[length];
-            stream.Read(buffer, 0, length);
+            stream.ReadExactly(buffer, 0, length);
             return buffer;
         }
 
@@ -111,7 +111,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 _streamBuffer = new byte[length];
             }
 
-            stream.Read(_streamBuffer, 0, length);
+            stream.ReadExactly(_streamBuffer, 0, length);
 
             fixed (byte* data = _streamBuffer)
             {
