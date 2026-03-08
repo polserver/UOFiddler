@@ -58,6 +58,8 @@ namespace UoFiddler.Controls.UserControls
             HueNameToolStripLabel = new System.Windows.Forms.ToolStripLabel();
             HueNameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             SearchNameToolStripButton = new System.Windows.Forms.ToolStripButton();
+            ToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            IndexOffsetButton = new System.Windows.Forms.ToolStripButton();
             contextMenuStrip1.SuspendLayout();
             toolStripContainer.ContentPanel.SuspendLayout();
             toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -170,8 +172,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // HuesTopMenuToolStrip
             // 
+            HuesTopMenuToolStrip.Dock = System.Windows.Forms.DockStyle.None;
             HuesTopMenuToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            HuesTopMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { HueIndexToolStripLabel, HueIndexToolStripTextBox, HueNameToolStripLabel, HueNameToolStripTextBox, SearchNameToolStripButton });
+            HuesTopMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { HueIndexToolStripLabel, HueIndexToolStripTextBox, HueNameToolStripLabel, HueNameToolStripTextBox, SearchNameToolStripButton, ToolStripSeparator, IndexOffsetButton });
             HuesTopMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             HuesTopMenuToolStrip.Name = "HuesTopMenuToolStrip";
             HuesTopMenuToolStrip.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
@@ -213,6 +216,24 @@ namespace UoFiddler.Controls.UserControls
             SearchNameToolStripButton.Size = new System.Drawing.Size(60, 20);
             SearchNameToolStripButton.Text = "Find next";
             SearchNameToolStripButton.Click += SearchNameToolStripButton_Click;
+            // 
+            // ToolStripSeparator
+            // 
+            ToolStripSeparator.Name = "ToolStripSeparator";
+            ToolStripSeparator.Size = new System.Drawing.Size(6, 23);
+            // 
+            // IndexOffsetButton
+            // 
+            IndexOffsetButton.Checked = true;
+            IndexOffsetButton.CheckOnClick = true;
+            IndexOffsetButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            IndexOffsetButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            IndexOffsetButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            IndexOffsetButton.Name = "IndexOffsetButton";
+            IndexOffsetButton.Size = new System.Drawing.Size(133, 20);
+            IndexOffsetButton.Text = "Show ingame numbers";
+            IndexOffsetButton.ToolTipText = "Show the index as it is seen ingame or as it is in the file";
+            IndexOffsetButton.CheckedChanged += IndexOffsetButton_CheckedChanged;
             // 
             // HuesControl
             // 
@@ -257,5 +278,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripButton SearchNameToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exportAllHueNamesListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator ToolStripSeparator;
+        private System.Windows.Forms.ToolStripButton IndexOffsetButton;
     }
 }

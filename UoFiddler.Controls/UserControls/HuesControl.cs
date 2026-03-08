@@ -158,8 +158,11 @@ namespace UoFiddler.Controls.UserControls
                 float size = (float)(pictureBox.Width - 200) / 32;
                 Hue hue = Hues.List[index];
                 Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox.Width, _itemHeight);
+
+                int hueDisplayIndex = hue.Index + (IndexOffsetButton.Checked ? 1 : 0);
+
                 e.Graphics.DrawString(
-                    $"{hue.Index,-5} {$"(0x{hue.Index:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                    $"{hueDisplayIndex,-5} {$"(0x{hueDisplayIndex:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
 
                 for (int i = 0; i < hue.Colors.Length; ++i)
                 {
@@ -314,6 +317,11 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            if (IndexOffsetButton.Checked)
+            {
+                indexValue--;
+            }
+
             if (indexValue < 0)
             {
                 indexValue = 0;
@@ -389,6 +397,11 @@ namespace UoFiddler.Controls.UserControls
             Hues.ExportHueList(fileName);
 
             MessageBox.Show($"Hue names list saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
+
+        private void IndexOffsetButton_CheckedChanged(object sender, EventArgs e)
+        {
+            pictureBox.Invalidate();
         }
     }
 }
