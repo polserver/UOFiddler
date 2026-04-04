@@ -362,6 +362,21 @@ namespace UoFiddler.Controls.UserControls
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
+                    // Validate image size (land tiles should be 44x44 but check anyway)
+                    if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                    {
+                        MessageBox.Show(
+                            $"Image is too large for MUL format!\n\n" +
+                            $"Image dimensions: {bitmap.Width}x{bitmap.Height}\n" +
+                            $"Estimated encoded size: {estimatedSize:N0} ushorts\n" +
+                            $"Maximum allowed: 65,535 ushorts\n\n" +
+                            $"Note: Land tiles should typically be 44x44 pixels.",
+                            "Image Too Large",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     Art.ReplaceLand(_selectedGraphicId, bitmap);
 
                     ControlEvents.FireLandTileChangeEvent(this, _selectedGraphicId);
