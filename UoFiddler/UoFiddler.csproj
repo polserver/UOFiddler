@@ -8,10 +8,10 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>UoFiddler</AssemblyTitle>
 		<Product>UoFiddler</Product>
-		<Copyright>Copyright © 2025</Copyright>
-		<AssemblyVersion>4.17.8</AssemblyVersion>
-		<FileVersion>4.17.8</FileVersion>
-		<Version>4.17.8</Version>
+		<Copyright>Copyright © 2026</Copyright>
+		<AssemblyVersion>4.17.9</AssemblyVersion>
+		<FileVersion>4.17.9</FileVersion>
+		<Version>4.17.9</Version>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
 	<PropertyGroup>
