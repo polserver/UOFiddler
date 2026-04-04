@@ -514,6 +514,23 @@ namespace UoFiddler.Controls.UserControls
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
+                    // Validate image size before replacing
+                    if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                    {
+                        MessageBox.Show(
+                            $"Image is too large for MUL format!\n\n" +
+                            $"Image dimensions: {bitmap.Width}x{bitmap.Height}\n" +
+                            $"Estimated encoded size: {estimatedSize:N0} ushorts\n" +
+                            $"Maximum allowed: 65,535 ushorts\n\n" +
+                            $"Recommended maximum for solid color images: ~254x254 pixels\n" +
+                            $"Images with transparency can be larger.\n\n" +
+                            $"Please use a smaller image.",
+                            "Image Too Large",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     Art.ReplaceStatic(_selectedGraphicId, bitmap);
 
                     ControlEvents.FireItemChangeEvent(this, _selectedGraphicId);
