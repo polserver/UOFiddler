@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -666,13 +667,119 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSaveTiledata(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, "tiledata.mul");
+            string fileName = Path.Combine(Options.OutputPath, "tiledata.mul");
             TileData.SaveTileData(fileName);
-            MessageBox.Show($"TileData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            ShowSavedTileDataDialog(fileName);
             Options.ChangedUltimaClass["TileData"] = false;
         }
+
+        private void ShowSavedTileDataDialog(string fileName)
+        {
+            using (Form dialog = new Form())
+            {
+                dialog.Text = "Saved";
+                dialog.AutoScaleMode = AutoScaleMode.Dpi;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.MinimizeBox = false;
+                dialog.MaximizeBox = false;
+                dialog.ShowInTaskbar = false;
+                dialog.AutoSize = true;
+                dialog.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                dialog.Padding = new Padding(12);
+                dialog.Font = SystemFonts.MessageBoxFont;
+
+                var layout = new TableLayoutPanel
+                {
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    ColumnCount = 1,
+                    Dock = DockStyle.Fill,
+                    RowCount = 3
+                };
+                layout.RowStyles.Add(new RowStyle());
+                layout.RowStyles.Add(new RowStyle());
+                layout.RowStyles.Add(new RowStyle());
+
+                var statusLabel = new Label
+                {
+                    AutoSize = true,
+                    Margin = new Padding(0, 0, 0, 8),
+                    Text = "TileData saved successfully."
+                };
+
+                var pathLabel = new Label
+                {
+                    AutoSize = true,
+                    Margin = new Padding(0, 0, 0, 12),
+                    MaximumSize = new Size(560, 0),
+                    Text = fileName,
+                    UseMnemonic = false
+                };
+
+                var buttonsPanel = new TableLayoutPanel
+                {
+                    Anchor = AnchorStyles.Right,
+                    AutoSize = true,
+                    ColumnCount = 2,
+                    Margin = new Padding(0)
+                };
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                buttonsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+
+                var buttonOk = new Button
+                {
+                    AutoSize = false,
+                    DialogResult = DialogResult.OK,
+                    Margin = new Padding(8, 0, 0, 0),
+                    Size = new Size(120, 32),
+                    Text = "OK"
+                };
+
+                var buttonOpenFolder = new Button
+                {
+                    AutoSize = false,
+                    Margin = new Padding(0),
+                    Size = new Size(120, 32),
+                    Text = "Open Folder"
+                };
+                buttonOpenFolder.Click += (_, __) =>
+                {
+                    string folderPath = Path.GetDirectoryName(fileName);
+                    if (!string.IsNullOrEmpty(folderPath) && Directory.Exists(folderPath))
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = folderPath,
+                            UseShellExecute = true
+                        });
+                    }
+                };
+
+                buttonsPanel.Controls.Add(buttonOpenFolder, 0, 0);
+                buttonsPanel.Controls.Add(buttonOk, 1, 0);
+
+                layout.Controls.Add(statusLabel, 0, 0);
+                layout.Controls.Add(pathLabel, 0, 1);
+                layout.Controls.Add(buttonsPanel, 0, 2);
+                dialog.Controls.Add(layout);
+
+                dialog.AcceptButton = buttonOk;
+                dialog.CancelButton = buttonOk;
+                dialog.ActiveControl = buttonOk;
+
+                Form owner = FindForm();
+                if (owner != null)
+                {
+                    dialog.ShowDialog(owner);
+                }
+                else
+                {
+                    dialog.ShowDialog();
+                }
+            }
+        }
+
 
         private void OnClickSaveChanges(object sender, EventArgs e)
         {
