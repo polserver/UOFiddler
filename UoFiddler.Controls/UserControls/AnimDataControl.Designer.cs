@@ -52,6 +52,7 @@ namespace UoFiddler.Controls.UserControls
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             hueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             animateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            showFrameBoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripStatusBaseGraphic = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusGraphic = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusHue = new System.Windows.Forms.ToolStripStatusLabel();
@@ -75,7 +76,6 @@ namespace UoFiddler.Controls.UserControls
             numericUpDownFrameDelay = new System.Windows.Forms.NumericUpDown();
             label1 = new System.Windows.Forms.Label();
             numericUpDownStartDelay = new System.Windows.Forms.NumericUpDown();
-            showFrameBoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -111,7 +111,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             splitContainer1.Panel2.Controls.Add(splitContainer2);
             splitContainer1.Size = new System.Drawing.Size(857, 587);
-            splitContainer1.SplitterDistance = 246;
+            splitContainer1.SplitterDistance = 235;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -123,7 +123,7 @@ namespace UoFiddler.Controls.UserControls
             treeView1.Location = new System.Drawing.Point(0, 0);
             treeView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             treeView1.Name = "treeView1";
-            treeView1.Size = new System.Drawing.Size(246, 587);
+            treeView1.Size = new System.Drawing.Size(235, 587);
             treeView1.TabIndex = 0;
             treeView1.AfterSelect += AfterNodeSelect;
             treeView1.NodeMouseClick += OnClickNode;
@@ -174,8 +174,8 @@ namespace UoFiddler.Controls.UserControls
             splitContainer2.Panel2.Controls.Add(groupBox3);
             splitContainer2.Panel2.Controls.Add(groupBox4);
             splitContainer2.Panel2.Controls.Add(groupBox2);
-            splitContainer2.Size = new System.Drawing.Size(606, 587);
-            splitContainer2.SplitterDistance = 328;
+            splitContainer2.Size = new System.Drawing.Size(617, 587);
+            splitContainer2.SplitterDistance = 284;
             splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 6;
             // 
@@ -188,7 +188,7 @@ namespace UoFiddler.Controls.UserControls
             groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox1.Size = new System.Drawing.Size(328, 587);
+            groupBox1.Size = new System.Drawing.Size(284, 587);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Preview";
@@ -198,7 +198,7 @@ namespace UoFiddler.Controls.UserControls
             statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton1, toolStripStatusBaseGraphic, toolStripStatusGraphic, toolStripStatusHue });
             statusStrip1.Location = new System.Drawing.Point(4, 562);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new System.Drawing.Size(320, 22);
+            statusStrip1.Size = new System.Drawing.Size(276, 22);
             statusStrip1.TabIndex = 2;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -226,6 +226,13 @@ namespace UoFiddler.Controls.UserControls
             animateToolStripMenuItem.Text = "Animate";
             animateToolStripMenuItem.Click += OnClickStartStop;
             // 
+            // showFrameBoundsToolStripMenuItem
+            // 
+            showFrameBoundsToolStripMenuItem.Name = "showFrameBoundsToolStripMenuItem";
+            showFrameBoundsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            showFrameBoundsToolStripMenuItem.Text = "Show frame bounds";
+            showFrameBoundsToolStripMenuItem.Click += OnClickShowFrameBounds;
+            // 
             // toolStripStatusBaseGraphic
             // 
             toolStripStatusBaseGraphic.Name = "toolStripStatusBaseGraphic";
@@ -235,13 +242,13 @@ namespace UoFiddler.Controls.UserControls
             // toolStripStatusGraphic
             // 
             toolStripStatusGraphic.Name = "toolStripStatusGraphic";
-            toolStripStatusGraphic.Size = new System.Drawing.Size(89, 17);
+            toolStripStatusGraphic.Size = new System.Drawing.Size(89, 15);
             toolStripStatusGraphic.Text = "Graphic: 0 (0x0)";
             // 
             // toolStripStatusHue
             // 
             toolStripStatusHue.Name = "toolStripStatusHue";
-            toolStripStatusHue.Size = new System.Drawing.Size(41, 17);
+            toolStripStatusHue.Size = new System.Drawing.Size(41, 15);
             toolStripStatusHue.Text = "Hue: 0";
             // 
             // MainPictureBox
@@ -255,7 +262,7 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MainPictureBox.Name = "MainPictureBox";
             MainPictureBox.ShowFrameBounds = false;
-            MainPictureBox.Size = new System.Drawing.Size(320, 565);
+            MainPictureBox.Size = new System.Drawing.Size(276, 565);
             MainPictureBox.TabIndex = 0;
             MainPictureBox.TabStop = false;
             // 
@@ -282,14 +289,14 @@ namespace UoFiddler.Controls.UserControls
             groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox3.Size = new System.Drawing.Size(273, 61);
+            groupBox3.Size = new System.Drawing.Size(328, 61);
             groupBox3.TabIndex = 6;
             groupBox3.TabStop = false;
             // 
             // button8
             // 
             button8.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            button8.Location = new System.Drawing.Point(28, 22);
+            button8.Location = new System.Drawing.Point(16, 22);
             button8.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button8.Name = "button8";
             button8.Size = new System.Drawing.Size(66, 27);
@@ -301,7 +308,7 @@ namespace UoFiddler.Controls.UserControls
             // button7
             // 
             button7.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            button7.Location = new System.Drawing.Point(104, 22);
+            button7.Location = new System.Drawing.Point(92, 22);
             button7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button7.Name = "button7";
             button7.Size = new System.Drawing.Size(66, 27);
@@ -313,7 +320,7 @@ namespace UoFiddler.Controls.UserControls
             // button6
             // 
             button6.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            button6.Location = new System.Drawing.Point(180, 22);
+            button6.Location = new System.Drawing.Point(168, 22);
             button6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button6.Name = "button6";
             button6.Size = new System.Drawing.Size(66, 27);
@@ -336,7 +343,7 @@ namespace UoFiddler.Controls.UserControls
             groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox4.Size = new System.Drawing.Size(273, 423);
+            groupBox4.Size = new System.Drawing.Size(328, 423);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Frames";
@@ -366,10 +373,10 @@ namespace UoFiddler.Controls.UserControls
             // button4
             // 
             button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
-            button4.Location = new System.Drawing.Point(227, 178);
+            button4.Location = new System.Drawing.Point(242, 165);
             button4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(26, 25);
+            button4.Size = new System.Drawing.Size(26, 36);
             button4.TabIndex = 3;
             button4.Text = "▼";
             button4.UseVisualStyleBackColor = true;
@@ -390,10 +397,10 @@ namespace UoFiddler.Controls.UserControls
             // button3
             // 
             button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
-            button3.Location = new System.Drawing.Point(227, 147);
+            button3.Location = new System.Drawing.Point(242, 123);
             button3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(26, 25);
+            button3.Size = new System.Drawing.Size(26, 36);
             button3.TabIndex = 2;
             button3.Text = "▲";
             button3.UseVisualStyleBackColor = true;
@@ -410,12 +417,11 @@ namespace UoFiddler.Controls.UserControls
             // 
             // treeViewFrames
             // 
-            treeViewFrames.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             treeViewFrames.HideSelection = false;
             treeViewFrames.Location = new System.Drawing.Point(14, 22);
             treeViewFrames.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             treeViewFrames.Name = "treeViewFrames";
-            treeViewFrames.Size = new System.Drawing.Size(217, 326);
+            treeViewFrames.Size = new System.Drawing.Size(220, 326);
             treeViewFrames.TabIndex = 1;
             treeViewFrames.AfterSelect += AfterSelectTreeViewFrames;
             // 
@@ -430,7 +436,7 @@ namespace UoFiddler.Controls.UserControls
             groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox2.Size = new System.Drawing.Size(273, 95);
+            groupBox2.Size = new System.Drawing.Size(328, 95);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Data";
@@ -474,13 +480,6 @@ namespace UoFiddler.Controls.UserControls
             numericUpDownStartDelay.Size = new System.Drawing.Size(74, 23);
             numericUpDownStartDelay.TabIndex = 0;
             numericUpDownStartDelay.ValueChanged += OnValueChangedStartDelay;
-            // 
-            // showFrameBoundsToolStripMenuItem
-            // 
-            showFrameBoundsToolStripMenuItem.Name = "showFrameBoundsToolStripMenuItem";
-            showFrameBoundsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            showFrameBoundsToolStripMenuItem.Text = "Show frame bounds";
-            showFrameBoundsToolStripMenuItem.Click += OnClickShowFrameBounds;
             // 
             // AnimDataControl
             // 
@@ -531,7 +530,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown numericUpDownFrameDelay;
         private System.Windows.Forms.NumericUpDown numericUpDownStartDelay;
-        private AnimatedPictureBox MainPictureBox;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
@@ -555,5 +553,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ContextMenuStrip contextMenuStripMainPictureBox;
         private System.Windows.Forms.ToolStripMenuItem exportAsAnimatedGifToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showFrameBoundsToolStripMenuItem;
+        private AnimatedPictureBox MainPictureBox;
     }
 }
