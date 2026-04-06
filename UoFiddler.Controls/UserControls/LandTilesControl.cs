@@ -17,6 +17,7 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -495,11 +496,8 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Art.Save(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(
-                $"Saved to {Options.OutputPath}",
-                "Save",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Art"] = false;
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickExportBmp(object sender, EventArgs e)
@@ -575,6 +573,28 @@ namespace UoFiddler.Controls.UserControls
             {
                 RadarColorControl.Select(_selectedGraphicId, true);
             }
+        }
+
+        private void OnClickSelectTexture(object sender, EventArgs e)
+        {
+            if (_selectedGraphicId < 0)
+            {
+                return;
+            }
+
+            int textureId = TileData.LandTable[_selectedGraphicId].TextureId;
+            if (!TexturesControl.Select(textureId))
+            {
+                MessageBox.Show("You need to load the Textures tab first.", "Information");
+            }
+        }
+
+        private void LandTilesContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            bool hasTexture = _selectedGraphicId >= 0
+                && TileData.LandTable[_selectedGraphicId].TextureId != 0
+                && Textures.TestTexture(TileData.LandTable[_selectedGraphicId].TextureId);
+            selectInTexturesTabToolStripMenuItem.Enabled = hasTexture;
         }
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)

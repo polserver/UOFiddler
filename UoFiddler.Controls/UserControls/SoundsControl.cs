@@ -17,6 +17,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -429,9 +430,9 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             Sounds.Save(path);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Saved to {path}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Sound"] = false;
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickRemove(object sender, EventArgs e)

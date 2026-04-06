@@ -302,8 +302,16 @@ namespace UoFiddler.Plugin.MassImport.Forms
                     continue;
                 }
 
-                OutputBox.AppendText(".");
-                entry.Import(checkBoxDirectSave.Checked, ref changedUltimaClass);
+                try
+                {
+                    OutputBox.AppendText(".");
+                    entry.Import(checkBoxDirectSave.Checked, ref changedUltimaClass);
+                }
+                catch (Exception ex)
+                {
+                    OutputBox.AppendText(
+                        $"{Environment.NewLine}Error importing {entry.Name} (index {entry.Index}): {ex.Message}{Environment.NewLine}");
+                }
             }
 
             OutputBox.AppendText($"Done{Environment.NewLine}");

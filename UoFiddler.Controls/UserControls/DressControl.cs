@@ -1243,8 +1243,8 @@ namespace UoFiddler.Controls.UserControls
             {
                 string fileName = Path.Combine(outputPath, $"Dress PD.{fileExtension}");
                 DressPic.Image.Save(fileName, imageFormat);
-                MessageBox.Show($"Paperdoll saved to {fileName}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), fileName, "Paperdoll saved successfully.");
             }
             else
             {
@@ -1258,8 +1258,8 @@ namespace UoFiddler.Controls.UserControls
                     DressPic.Image.Save(fileName, imageFormat);
                 }
 
-                MessageBox.Show($"InGame saved to {fileName}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), fileName, "InGame saved successfully.");
             }
         }
 
@@ -1295,8 +1295,7 @@ namespace UoFiddler.Controls.UserControls
                 _animation[i].Save(Path.Combine(path, $"{fileName}-{i}.{fileExtension}"), imageFormat);
             }
 
-            MessageBox.Show($"InGame Anim saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), path, "InGame Anim saved successfully.");
         }
 
         private void ExportAnimatedGif(bool looping)
@@ -1331,8 +1330,7 @@ namespace UoFiddler.Controls.UserControls
                 stream.WriteByte(0);
             }
 
-            MessageBox.Show($"InGame Anim saved to {outputFile}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), outputFile, "InGame Anim saved successfully.");
         }
         private void OnClickExtractAnimGifLooping(object sender, EventArgs e)
         {
@@ -1606,8 +1604,7 @@ namespace UoFiddler.Controls.UserControls
                 tex.WriteLine("</table> </body> </html>");
             }
 
-            MessageBox.Show($"Report saved to '{fileName}'", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Report saved successfully.");
         }
 
         private void MountTextBoxOnKeyDown(object sender, KeyEventArgs e)

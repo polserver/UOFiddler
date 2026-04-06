@@ -666,12 +666,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSaveTiledata(object sender, EventArgs e)
         {
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, "tiledata.mul");
+            string fileName = Path.Combine(Options.OutputPath, "tiledata.mul");
             TileData.SaveTileData(fileName);
-            MessageBox.Show($"TileData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["TileData"] = false;
+            FileSavedDialog.Show(FindForm(), fileName, "TileData saved successfully.");
         }
 
         private void OnClickSaveChanges(object sender, EventArgs e)
@@ -1434,13 +1432,15 @@ namespace UoFiddler.Controls.UserControls
             {
                 string fileName = Path.Combine(path, "ItemData.csv");
                 TileData.ExportItemDataToCsv(fileName);
-                MessageBox.Show($"ItemData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), fileName, "ItemData saved successfully.");
             }
             else
             {
                 string fileName = Path.Combine(path, "LandData.csv");
                 TileData.ExportLandDataToCsv(fileName);
-                MessageBox.Show($"LandData saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), fileName, "LandData saved successfully.");
             }
         }
         private void OnClickSelectItem(object sender, EventArgs e)

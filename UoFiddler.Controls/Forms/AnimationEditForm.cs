@@ -661,8 +661,7 @@ namespace UoFiddler.Controls.Forms
                 }
             }
 
-            MessageBox.Show($"Frames saved to {path}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), path, "Frames saved successfully.");
         }
 
         private void OnClickRemoveAction(object sender, EventArgs e)
@@ -1192,8 +1191,7 @@ namespace UoFiddler.Controls.Forms
             string fileName = Path.Combine(path, $"anim{_fileType}_0x{_currentBody:X}.vd");
             AnimationEdit.ExportToVD(_fileType, _currentBody, fileName);
 
-            MessageBox.Show($"Animation saved to {Options.OutputPath}", "Export", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
         }
 
         private void OnClickShowOnlyValid(object sender, EventArgs e)

@@ -266,8 +266,7 @@ namespace UoFiddler.Controls.Forms
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show($"Item saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Item image saved successfully.");
         }
 
         private void OnSizeChange(object sender, EventArgs e)

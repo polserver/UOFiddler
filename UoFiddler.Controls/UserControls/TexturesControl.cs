@@ -17,6 +17,7 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -28,8 +29,11 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+
+            _refMarker = this;
         }
 
+        private static TexturesControl _refMarker;
         private List<int> _textureList = new List<int>();
         private bool _showFreeSlots;
         private bool _loaded;
@@ -44,6 +48,24 @@ namespace UoFiddler.Controls.UserControls
                 UpdateLabels(_selectedTextureId);
                 TextureTileView.FocusIndex = _textureList.IndexOf(_selectedTextureId);
             }
+        }
+
+        public static bool Select(int textureId)
+        {
+            if (!_refMarker._loaded)
+            {
+                _refMarker.OnLoad(_refMarker, EventArgs.Empty);
+            }
+
+            if (!_refMarker._textureList.Contains(textureId))
+            {
+                return false;
+            }
+
+            // Reset focus index to ensure the view scrolls to the selected texture
+            _refMarker.TextureTileView.FocusIndex = -1;
+            _refMarker.SelectedTextureId = textureId;
+            return true;
         }
 
         private void Reload()
@@ -370,9 +392,9 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Textures.Save(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Texture"] = false;
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickExportBmp(object sender, EventArgs e)
@@ -713,6 +735,27 @@ namespace UoFiddler.Controls.UserControls
             {
                 Reload();
             }
+        }
+
+        private void OnClickSelectInLandTiles(object sender, EventArgs e)
+        {
+            if (_selectedTextureId < 0)
+            {
+                return;
+            }
+
+            if (!LandTilesControl.SearchGraphic(_selectedTextureId))
+            {
+                MessageBox.Show("You need to load the Land Tiles tab first.", "Information");
+            }
+        }
+
+        private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            bool hasLandTile = _selectedTextureId >= 0
+                && _selectedTextureId < 0x4000
+                && Art.IsValidLand(_selectedTextureId);
+            selectInLandTilesTabToolStripMenuItem.Enabled = hasLandTile;
         }
 
         private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)

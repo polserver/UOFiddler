@@ -556,12 +556,9 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Animdata.Save(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Saved to {Options.OutputPath}",
-                "Save",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Animdata"] = false;
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "File saved successfully.");
         }
 
         private void OnClickRemoveAnim(object sender, EventArgs e)

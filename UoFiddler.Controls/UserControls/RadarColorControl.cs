@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using Ultima;
 using Ultima.Helpers;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -288,9 +289,9 @@ namespace UoFiddler.Controls.UserControls
                 node.ForeColor = SystemColors.WindowText;
             }
 
-            MessageBox.Show($"RadarCol saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["RadarCol"] = false;
+
+            FileSavedDialog.Show(FindForm(), fileName, "RadarCol saved successfully.");
         }
 
         private void SaveColor()

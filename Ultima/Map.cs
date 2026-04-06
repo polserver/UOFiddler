@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -5,12 +6,123 @@ using System.Text;
 
 namespace Ultima
 {
+    /// <summary>
+    /// Altitude rendering mode for map preview generation
+    /// </summary>
+    public enum MapAltitudeMode
+    {
+        /// <summary>
+        /// Normal flat rendering without altitude effects
+        /// </summary>
+        Normal,
+        /// <summary>
+        /// Normal rendering with altitude-based shading
+        /// </summary>
+        NormalWithAltitude,
+        /// <summary>
+        /// Pure altitude map (grayscale based on height)
+        /// </summary>
+        Altitude
+    }
+
+    /// <summary>
+    /// Altitude shading preset configuration
+    /// </summary>
+    public enum AltitudeShadingPreset
+    {
+        /// <summary>
+        /// Dramatic, high-contrast shading with sharp edges
+        /// </summary>
+        Sharp,
+        /// <summary>
+        /// More pronounced shading with higher contrast
+        /// </summary>
+        Normal,
+        /// <summary>
+        /// Very subtle, smooth shading (matches UO client closely)
+        /// </summary>
+        Soft,
+        /// <summary>
+        /// Custom settings (uses manual configuration)
+        /// </summary>
+        Custom
+    }
+
+    /// <summary>
+    /// Configuration for altitude-based shading effects
+    /// </summary>
+    public class AltitudeShadingSettings
+    {
+        /// <summary>
+        /// Surface normal Z-component (higher = softer shading)
+        /// Sharp: 2.0, Normal: 4.0, Soft: 8.0+
+        /// </summary>
+        public float NormalZ { get; set; } = 8.0f;
+
+        /// <summary>
+        /// Brightness variation range (0.0 to 0.5)
+        /// Sharp: 0.40 (±40%), Normal: 0.30 (±30%), Soft: 0.15 (±15%)
+        /// </summary>
+        public float BrightnessRange { get; set; } = 0.15f;
+
+        /// <summary>
+        /// Altitude gradient smoothing factor
+        /// Sharp: 0.75, Normal: 0.50, Soft: 0.25
+        /// </summary>
+        public float GradientSmoothing { get; set; } = 0.25f;
+
+        /// <summary>
+        /// Gets preset configuration
+        /// </summary>
+        public static AltitudeShadingSettings GetPreset(AltitudeShadingPreset preset)
+        {
+            return preset switch
+            {
+                AltitudeShadingPreset.Sharp => new AltitudeShadingSettings
+                {
+                    NormalZ = 2.0f,
+                    BrightnessRange = 0.40f,
+                    GradientSmoothing = 0.75f
+                },
+                AltitudeShadingPreset.Normal => new AltitudeShadingSettings
+                {
+                    NormalZ = 4.0f,
+                    BrightnessRange = 0.30f,
+                    GradientSmoothing = 0.50f
+                },
+                AltitudeShadingPreset.Soft => new AltitudeShadingSettings
+                {
+                    NormalZ = 8.0f,
+                    BrightnessRange = 0.15f,
+                    GradientSmoothing = 0.25f
+                },
+                _ => new AltitudeShadingSettings() // Default to Soft
+            };
+        }
+    }
+
     public sealed class Map
     {
         private TileMatrix _tiles;
         private readonly int _mapId;
         private readonly string _path;
         private static bool _useDiff;
+
+        /// <summary>
+        /// Controls the intensity of altitude-based shading (1-20, lower = more contrast)
+        /// Default is 15 for subtle effect
+        /// </summary>
+        public static int AltitudeIntensity { get; set; } = 15;
+
+        /// <summary>
+        /// Current altitude shading preset
+        /// </summary>
+        public static AltitudeShadingPreset ShadingPreset { get; set; } = AltitudeShadingPreset.Normal;
+
+        /// <summary>
+        /// Custom altitude shading settings (used when ShadingPreset is Custom)
+        /// </summary>
+        public static AltitudeShadingSettings CustomShadingSettings { get; set; } = AltitudeShadingSettings.GetPreset(AltitudeShadingPreset.Soft);
 
         public static bool UseDiff
         {
@@ -947,5 +1059,363 @@ namespace Ultima
                 }
             }
         }
+
+        #region Altitude Map Rendering
+
+        /// <summary>
+        /// Returns Bitmap with altitude rendering mode support
+        /// </summary>
+        /// <param name="x">8x8 Block X</param>
+        /// <param name="y">8x8 Block Y</param>
+        /// <param name="width">Width in 8x8 Blocks</param>
+        /// <param name="height">Height in 8x8 Blocks</param>
+        /// <param name="statics">Include statics in rendering</param>
+        /// <param name="altitudeMode">Altitude rendering mode</param>
+        /// <returns>Rendered bitmap</returns>
+        public Bitmap GetImageWithAltitude(int x, int y, int width, int height, bool statics, MapAltitudeMode altitudeMode)
+        {
+            PixelFormat format = altitudeMode == MapAltitudeMode.Altitude 
+                ? PixelFormat.Format8bppIndexed 
+                : PixelFormat.Format16bppRgb555;
+
+            var bmp = new Bitmap(width << 3, height << 3, format);
+
+            if (altitudeMode == MapAltitudeMode.Altitude)
+            {
+                // Create grayscale palette for altitude map
+                ColorPalette palette = bmp.Palette;
+                for (int i = 0; i < 256; i++)
+                {
+                    palette.Entries[i] = Color.FromArgb(i, i, i);
+                }
+                bmp.Palette = palette;
+            }
+
+            GetImageWithAltitude(x, y, width, height, bmp, statics, altitudeMode);
+
+            return bmp;
+        }
+
+        /// <summary>
+        /// Draws in given Bitmap with altitude rendering mode support
+        /// </summary>
+        /// <param name="x">8x8 Block X</param>
+        /// <param name="y">8x8 Block Y</param>
+        /// <param name="width">Width in 8x8 Blocks</param>
+        /// <param name="height">Height in 8x8 Blocks</param>
+        /// <param name="bmp">Target bitmap</param>
+        /// <param name="statics">Include statics in rendering</param>
+        /// <param name="altitudeMode">Altitude rendering mode</param>
+        public unsafe void GetImageWithAltitude(int x, int y, int width, int height, Bitmap bmp, bool statics, MapAltitudeMode altitudeMode)
+        {
+            PixelFormat format = altitudeMode == MapAltitudeMode.Altitude 
+                ? PixelFormat.Format8bppIndexed 
+                : PixelFormat.Format16bppRgb555;
+
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, width << 3, height << 3), ImageLockMode.WriteOnly, format);
+            int stride = bd.Stride;
+            int blockStride = stride << 3;
+
+            var pStart = (byte*)bd.Scan0;
+
+            if (altitudeMode == MapAltitudeMode.Altitude)
+            {
+                // 8-bit altitude mode
+                for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
+                {
+                    var pRow0 = (byte*)(pStart + (0 * stride));
+                    var pRow1 = (byte*)(pStart + (1 * stride));
+                    var pRow2 = (byte*)(pStart + (2 * stride));
+                    var pRow3 = (byte*)(pStart + (3 * stride));
+                    var pRow4 = (byte*)(pStart + (4 * stride));
+                    var pRow5 = (byte*)(pStart + (5 * stride));
+                    var pRow6 = (byte*)(pStart + (6 * stride));
+                    var pRow7 = (byte*)(pStart + (7 * stride));
+
+                    for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
+                    {
+                        sbyte[] altitudeData = GetAltitudeBlock(bx, by, statics);
+
+                        for (int i = 0; i < 64; i++)
+                        {
+                            byte altValue = (byte)Math.Clamp(altitudeData[i] + 128, 0, 255);
+                            int rowIndex = i / 8;
+                            int colIndex = i % 8;
+
+                            switch (rowIndex)
+                            {
+                                case 0: pRow0[ox * 8 + colIndex] = altValue; break;
+                                case 1: pRow1[ox * 8 + colIndex] = altValue; break;
+                                case 2: pRow2[ox * 8 + colIndex] = altValue; break;
+                                case 3: pRow3[ox * 8 + colIndex] = altValue; break;
+                                case 4: pRow4[ox * 8 + colIndex] = altValue; break;
+                                case 5: pRow5[ox * 8 + colIndex] = altValue; break;
+                                case 6: pRow6[ox * 8 + colIndex] = altValue; break;
+                                case 7: pRow7[ox * 8 + colIndex] = altValue; break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // 16-bit color modes (Normal and NormalWithAltitude)
+                for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
+                {
+                    var pRow0 = (ushort*)(pStart + (0 * stride));
+                    var pRow1 = (ushort*)(pStart + (1 * stride));
+                    var pRow2 = (ushort*)(pStart + (2 * stride));
+                    var pRow3 = (ushort*)(pStart + (3 * stride));
+                    var pRow4 = (ushort*)(pStart + (4 * stride));
+                    var pRow5 = (ushort*)(pStart + (5 * stride));
+                    var pRow6 = (ushort*)(pStart + (6 * stride));
+                    var pRow7 = (ushort*)(pStart + (7 * stride));
+
+                    for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
+                    {
+                        ushort[] colorData = GetRenderedBlock(bx, by, statics);
+
+                        if (altitudeMode == MapAltitudeMode.NormalWithAltitude)
+                        {
+                            sbyte[] altitudeData = GetAltitudeBlock(bx, by, statics);
+                            colorData = ProcessBlockWithAltitude(colorData, altitudeData);
+                        }
+
+                        for (int i = 0; i < 64; i++)
+                        {
+                            int rowIndex = i / 8;
+                            int colIndex = i % 8;
+
+                            switch (rowIndex)
+                            {
+                                case 0: pRow0[ox * 8 + colIndex] = colorData[i]; break;
+                                case 1: pRow1[ox * 8 + colIndex] = colorData[i]; break;
+                                case 2: pRow2[ox * 8 + colIndex] = colorData[i]; break;
+                                case 3: pRow3[ox * 8 + colIndex] = colorData[i]; break;
+                                case 4: pRow4[ox * 8 + colIndex] = colorData[i]; break;
+                                case 5: pRow5[ox * 8 + colIndex] = colorData[i]; break;
+                                case 6: pRow6[ox * 8 + colIndex] = colorData[i]; break;
+                                case 7: pRow7[ox * 8 + colIndex] = colorData[i]; break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            bmp.UnlockBits(bd);
+            _tiles.CloseStreams();
+        }
+
+        /// <summary>
+        /// Gets altitude data for an 8x8 block
+        /// </summary>
+        private sbyte[] GetAltitudeBlock(int x, int y, bool drawStatics)
+        {
+            var altitudeData = new sbyte[64];
+            TileMatrix matrix = Tiles;
+
+            if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
+            {
+                return altitudeData;
+            }
+
+            Tile[] tiles = _tiles.GetLandBlock(x, y, UseDiff);
+
+            unsafe
+            {
+                fixed (int* pHeight = TileData.HeightTable)
+                {
+                    fixed (Tile* ptTiles = tiles)
+                    {
+                        Tile* pTiles = ptTiles;
+
+                        for (int k = 0; k < 8; ++k)
+                        {
+                            for (int p = 0; p < 8; ++p)
+                            {
+                                int idx = k * 8 + p;
+                                int highTop = -255;
+                                int highZ = -255;
+                                int highId = 0;
+
+                                if (drawStatics)
+                                {
+                                    HuedTile[][][] statics = _tiles.GetStaticBlock(x, y, UseDiff);
+                                    HuedTile[] curStatics = statics[p][k];
+
+                                    if (curStatics.Length > 0)
+                                    {
+                                        fixed (HuedTile* phtStatics = curStatics)
+                                        {
+                                            HuedTile* pStatics = phtStatics;
+                                            HuedTile* pStaticsEnd = pStatics + curStatics.Length;
+
+                                            while (pStatics < pStaticsEnd)
+                                            {
+                                                int z = pStatics->Z;
+                                                int top = z + pHeight[pStatics->Id];
+
+                                                if (top > highTop || (z > highZ && top >= highTop))
+                                                {
+                                                    highTop = top;
+                                                    highZ = z;
+                                                    highId = pStatics->Id;
+                                                }
+
+                                                ++pStatics;
+                                            }
+                                        }
+                                    }
+
+                                    StaticTile[] pending = _tiles.GetPendingStatics(x, y);
+                                    if (pending != null)
+                                    {
+                                        foreach (StaticTile penS in pending)
+                                        {
+                                            if (penS.X != p || penS.Y != k)
+                                            {
+                                                continue;
+                                            }
+
+                                            int z = penS.Z;
+                                            int top = z + pHeight[penS.Id];
+
+                                            if (top > highTop || (z > highZ && top >= highTop))
+                                            {
+                                                highTop = top;
+                                                highZ = z;
+                                                highId = penS.Id;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                int landTop = pTiles->Z;
+                                if (landTop > highTop || !drawStatics)
+                                {
+                                    highZ = landTop;
+                                }
+
+                                altitudeData[idx] = (sbyte)Math.Clamp(highZ, -128, 127);
+                                ++pTiles;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return altitudeData;
+        }
+
+        /// <summary>
+        /// Process colors with altitude-based shading (translates Pascal ProcessBlock/ProcessQuad/ProcessColor)
+        /// </summary>
+        private static ushort[] ProcessBlockWithAltitude(ushort[] colors, sbyte[] altitudes)
+        {
+            // Get current shading settings based on preset
+            AltitudeShadingSettings settings = ShadingPreset == AltitudeShadingPreset.Custom 
+                ? CustomShadingSettings 
+                : AltitudeShadingSettings.GetPreset(ShadingPreset);
+
+            // Use configurable intensity (lower = more contrast, higher = softer)
+            int maxSlope = Math.Clamp(AltitudeIntensity, 1, 20);
+
+            ushort[] processed = new ushort[64];
+            Array.Copy(colors, processed, 64);
+
+            // Light source comes from northwest (negative X, negative Y direction)
+            const float lightX = -0.577f; // Northwest direction (normalized)
+            const float lightY = -0.577f;
+            const float lightZ = 0.577f;  // Equal components for 45-degree angle
+
+            // Calculate lighting for each pixel using its surrounding pixels
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    int idx = y * 8 + x;
+
+                    // Get altitude differences using configurable smoothing
+                    float dx = GetAltitudeDifference(altitudes, x, y, 1, 0, settings.GradientSmoothing);
+                    float dy = GetAltitudeDifference(altitudes, x, y, 0, 1, settings.GradientSmoothing);
+
+                    // Calculate surface normal with configurable nz
+                    float nx = -dx;
+                    float ny = -dy;
+                    float nz = settings.NormalZ + (maxSlope - 10) * 0.5f; // Adjust based on intensity
+
+                    // Normalize the normal vector
+                    float length = (float)Math.Sqrt(nx * nx + ny * ny + nz * nz);
+                    if (length > 0)
+                    {
+                        nx /= length;
+                        ny /= length;
+                        nz /= length;
+                    }
+
+                    // Calculate dot product with light direction (lambertian lighting)
+                    float dotProduct = nx * lightX + ny * lightY + nz * lightZ;
+                    dotProduct = Math.Clamp(dotProduct, 0.0f, 1.0f);
+
+                    // Apply configurable brightness range
+                    float baseIntensity = 20.0f / maxSlope; // Higher maxSlope = less intense
+                    float range = settings.BrightnessRange * baseIntensity;
+                    float multiplier = 1.0f + (dotProduct - 0.5f) * 2.0f * range;
+
+                    // Clamp to safe range based on brightness range
+                    float minMult = 1.0f - range;
+                    float maxMult = 1.0f + range;
+                    multiplier = Math.Clamp(multiplier, minMult, maxMult);
+
+                    // Apply lighting to the color
+                    processed[idx] = ApplyLighting(processed[idx], multiplier);
+                }
+            }
+
+            return processed;
+        }
+
+        /// <summary>
+        /// Get altitude difference in a specific direction, with bounds checking and averaging
+        /// </summary>
+        private static float GetAltitudeDifference(sbyte[] altitudes, int x, int y, int dx, int dy, float smoothing)
+        {
+            int x1 = Math.Max(0, Math.Min(7, x - dx));
+            int y1 = Math.Max(0, Math.Min(7, y - dy));
+            int x2 = Math.Max(0, Math.Min(7, x + dx));
+            int y2 = Math.Max(0, Math.Min(7, y + dy));
+
+            int idx1 = y1 * 8 + x1;
+            int idx2 = y2 * 8 + x2;
+
+            return (altitudes[idx2] - altitudes[idx1]) * smoothing;
+        }
+
+        /// <summary>
+        /// Apply lighting multiplier to a color
+        /// </summary>
+        private static ushort ApplyLighting(ushort color, float multiplier)
+        {
+            // Extract RGB components from 15-bit color (RGB555)
+            int red = (color >> 10) & 0x1F;
+            int green = (color >> 5) & 0x1F;
+            int blue = color & 0x1F;
+
+            // Apply multiplier
+            red = (int)(red * multiplier);
+            green = (int)(green * multiplier);
+            blue = (int)(blue * multiplier);
+
+            // Clamp to 5-bit range
+            red = Math.Clamp(red, 0, 31);
+            green = Math.Clamp(green, 0, 31);
+            blue = Math.Clamp(blue, 0, 31);
+
+            // Recombine into RGB555 format
+            return (ushort)((red << 10) | (green << 5) | blue);
+        }
+
+        #endregion
     }
 }

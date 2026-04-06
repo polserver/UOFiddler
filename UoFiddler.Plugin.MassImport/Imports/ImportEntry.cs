@@ -104,7 +104,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
                         string[] split = line.Split(';');
 
-                        if (split.Length < 36)
+                        if (split.Length < 35)
                         {
                             continue;
                         }

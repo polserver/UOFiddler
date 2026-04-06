@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -141,9 +142,9 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
             SkillGroups.Save(Options.OutputPath);
-            MessageBox.Show($"SkillGrp saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["SkillGrp"] = false;
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "SkillGrp saved successfully.");
         }
 
         private void OnItemDrag(object sender, ItemDragEventArgs e)

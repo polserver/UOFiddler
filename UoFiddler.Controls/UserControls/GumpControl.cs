@@ -349,8 +349,7 @@ namespace UoFiddler.Controls.UserControls
             barDialog.Dispose();
             Cursor.Current = Cursors.Default;
             Options.ChangedUltimaClass["Gumps"] = false;
-            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickRemove(object sender, EventArgs e)

@@ -479,7 +479,7 @@ namespace UoFiddler.Controls.Forms
                 mStaticsReaderCopy.Close();
             }
 
-            MessageBox.Show($"Files saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private class SupportedMaps
