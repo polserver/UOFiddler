@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -36,6 +37,43 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private readonly MultiTile _drawTile;
         private MultiTile _hoverTile;
         private MultiTile _selectedTile;
+
+        // Multi-selection
+        private readonly HashSet<MultiTile> _selectedTiles = new HashSet<MultiTile>();
+        private bool _isMarqueeDragging;
+        private Point _marqueeStart;
+        private Point _marqueeEnd;
+
+        // Copy/Paste
+        private List<(ushort id, int dx, int dy, int dz)> _clipboard;
+        private bool _isPasteMode;
+
+        // Zoom
+        private float _zoomFactor = 1.0f;
+
+        // Minimap
+        private bool _minimapDirty = true;
+        private Bitmap _minimapTilesBmp;   // cached tile-dot layer, regenerated only when tiles change
+
+        // Recently used tiles
+        private readonly List<int> _recentTiles = new List<int>();
+        private FlowLayoutPanel _recentPanel;
+        private readonly List<PictureBox> _recentSlots = new List<PictureBox>();
+
+        // Rectangle fill tool
+        private bool _isRectFillDragging;
+        private int _rectFillStartX, _rectFillStartY;
+        private int _rectFillEndX, _rectFillEndY;
+
+        // Line draw tool
+        private bool _isLineDragging;
+        private int _lineStartX, _lineStartY;
+        private int _lineEndX, _lineEndY;
+
+        // Bulk remove tool (multi-space coords, mirrors rect fill)
+        private bool _isRemoveDragging;
+        private int _removeStartX, _removeStartY;
+        private int _removeEndX, _removeEndY;
 
         /// <summary>
         /// Current MouseLoc + Scrollbar values (for hover effect)
@@ -64,7 +102,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Select.Checked = true;
 
             pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
+            pictureBoxMulti.MouseWheel += PictureBoxMulti_OnMouseWheel;
             pictureBoxMulti.ContextMenuStrip = null;
+
         }
 
         /// <summary>
@@ -86,7 +126,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         }
 
         /// <summary>
-        /// Current Selected Tile (set OnMouseUp)
+        /// Current Selected Tile (set OnMouseUp). Setting this also syncs the single-tile selection panel.
         /// </summary>
         public MultiTile SelectedTile
         {
@@ -96,21 +136,30 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 _selectedTile = value;
                 if (value != null)
                 {
+                    Selectedpanel.Visible = true;
                     SelectedTileLabel.Text = $"ID: 0x{value.Id:X} Z: {value.Z}";
                     numericUpDown_Selected_X.Value = value.X;
                     numericUpDown_Selected_Y.Value = value.Y;
                     numericUpDown_Selected_Z.Value = value.Z;
                     DynamiccheckBox.Checked = value.Invisible;
                 }
+                else if (_selectedTiles.Count == 0)
+                {
+                    Selectedpanel.Visible = false;
+                    SelectedTileLabel.Text = "ID:";
+                }
                 else
                 {
-                    SelectedTileLabel.Text = "ID:";
+                    // Multiple tiles selected — show count in label, keep panel visible for Z operations
+                    Selectedpanel.Visible = true;
+                    SelectedTileLabel.Text = $"{_selectedTiles.Count} tiles selected";
                 }
             }
         }
 
         public bool ShowWalkables => showWalkablesToolStripMenuItem.Checked;
         public bool ShowDoubleSurface => showDoubleSurfaceMenuItem.Checked;
+        public HashSet<MultiTile> SelectedTiles => _selectedTiles;
 
         // Private Methods (35) 
 
@@ -155,6 +204,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = false;
 
             pictureBoxMulti.Invalidate();
         }
@@ -271,6 +322,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = true;
             BTN_Trans.Checked = false;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = false;
 
             pictureBoxMulti.Invalidate();
         }
@@ -286,6 +339,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = false;
 
             pictureBoxMulti.Invalidate();
         }
@@ -339,6 +394,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = false;
 
             pictureBoxMulti.Invalidate();
         }
@@ -370,6 +427,12 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 case "BTN_Trans":
                     thisBox.ImageKey = thisBox.Checked ? "TransButton_Selected.bmp" : "TransButton.bmp";
                     break;
+                case "BTN_RectFill":
+                    thisBox.ImageKey = thisBox.Checked ? "RectFillButton_Selected.bmp" : "RectFillButton.bmp";
+                    break;
+                case "BTN_LineDraw":
+                    thisBox.ImageKey = thisBox.Checked ? "LineDrawButton_Selected.bmp" : "LineDrawButton.bmp";
+                    break;
             }
         }
 
@@ -384,6 +447,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = true;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = false;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = false;
 
             pictureBoxMulti.Invalidate();
         }
@@ -396,9 +461,42 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Checked = false;
             BTN_Pipette.Checked = false;
             BTN_Trans.Checked = true;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = false;
 
             pictureBoxMulti.Invalidate();
         }
+
+        private void BTN_RectFill_Click(object sender, EventArgs e)
+        {
+            BTN_Select.Checked = false;
+            BTN_Draw.Checked = false;
+            BTN_Remove.Checked = false;
+            BTN_Z.Checked = false;
+            BTN_Pipette.Checked = false;
+            BTN_Trans.Checked = false;
+            BTN_LineDraw.Checked = false;
+            BTN_RectFill.Checked = true;
+
+            pictureBoxMulti.Invalidate();
+        }
+
+        private void BTN_LineDraw_Click(object sender, EventArgs e)
+        {
+            BTN_Select.Checked = false;
+            BTN_Draw.Checked = false;
+            BTN_Remove.Checked = false;
+            BTN_Z.Checked = false;
+            BTN_Pipette.Checked = false;
+            BTN_Trans.Checked = false;
+            BTN_RectFill.Checked = false;
+            BTN_LineDraw.Checked = true;
+
+            pictureBoxMulti.Invalidate();
+        }
+
+
+        private int BrushSize => RB_Brush_M.Checked ? 3 : RB_Brush_L.Checked ? 4 : 1;
 
         /// <summary>
         /// Converts pictureBox coords to Multi coords
@@ -414,6 +512,11 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     x = HoverTile.X;
                     y = HoverTile.Y;
                     z = HoverTile.Z + HoverTile.Height;
+                    // Cap placement Z to MaxHeightTrackBar when height filter is active
+                    if (MaxHeightTrackBar.Value < MaxHeightTrackBar.Maximum)
+                    {
+                        z = Math.Min(z, MaxHeightTrackBar.Value);
+                    }
                     return;
                 }
             }
@@ -516,12 +619,29 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void NumericUpDown_Selected_Z_Changed(object sender, EventArgs e)
         {
-            if (_compList == null || SelectedTile == null || (int)numericUpDown_Selected_Z.Value == SelectedTile.Z)
+            if (_compList == null)
             {
                 return;
             }
 
-            _compList.TileZSet(SelectedTile, (int)numericUpDown_Selected_Z.Value);
+            int newZ = (int)numericUpDown_Selected_Z.Value;
+
+            if (_selectedTiles.Count > 1)
+            {
+                // Apply absolute Z to the whole group
+                _compList.TileZSet(_selectedTiles, newZ);
+                MaxHeightTrackBar.Minimum = _compList.ZMin;
+                MaxHeightTrackBar.Maximum = _compList.ZMax;
+                pictureBoxMulti.Invalidate();
+                return;
+            }
+
+            if (SelectedTile == null || newZ == SelectedTile.Z)
+            {
+                return;
+            }
+
+            _compList.TileZSet(SelectedTile, newZ);
 
             MaxHeightTrackBar.Minimum = _compList.ZMin;
             MaxHeightTrackBar.Maximum = _compList.ZMax;
@@ -556,6 +676,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             Options.LoadedUltimaClass["Hues"] = true;
 
             XML_InitializeToolBox();
+
+            if (!_loaded)
+            {
+                _recentTiles.Clear();
+                _recentTiles.AddRange(TileRecentlyUsed.Load());
+                InitializeRecentTab();
+            }
+
+            RefreshRecentPanel();
 
             string path = Options.AppDataPath;
             string fileName = Path.Combine(path, "Multilist.xml");
@@ -704,9 +833,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void PictureBoxMultiOnMouseMove(object sender, MouseEventArgs e)
         {
-            _mouseLoc = e.Location;
-            _mouseLoc.X += hScrollBar.Value;
-            _mouseLoc.Y += vScrollBar.Value;
+            _mouseLoc = ToScrolledSpace(e.Location);
 
             if (_moving)
             {
@@ -718,6 +845,28 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
                 vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
             }
+            else if (_isMarqueeDragging)
+            {
+                _marqueeEnd = new Point(e.X + hScrollBar.Value, e.Y + vScrollBar.Value);
+            }
+            else if (_isRectFillDragging && _compList != null)
+            {
+                ConvertCoords(_mouseLoc, out int x, out int y, out int _);
+                _rectFillEndX = x;
+                _rectFillEndY = y;
+            }
+            else if (_isLineDragging && _compList != null)
+            {
+                ConvertCoords(_mouseLoc, out int x, out int y, out int _);
+                _lineEndX = x;
+                _lineEndY = y;
+            }
+            else if (_isRemoveDragging && _compList != null)
+            {
+                ConvertCoords(_mouseLoc, out int rx, out int ry, out int _);
+                _removeEndX = rx;
+                _removeEndY = ry;
+            }
 
             pictureBoxMulti.Invalidate();
         }
@@ -727,15 +876,50 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (e.Button == MouseButtons.Right)
             {
                 _moving = true;
-
                 _movingLoc = e.Location;
-
                 Cursor = Cursors.Hand;
+            }
+            else if (e.Button == MouseButtons.Left && BTN_Select.Checked && _compList != null)
+            {
+                bool ctrlHeld = (ModifierKeys & Keys.Control) != 0;
+                if (_hoverTile == null && !ctrlHeld)
+                {
+                    // Start marquee drag over empty space
+                    _isMarqueeDragging = true;
+                    _marqueeStart = new Point(e.X + hScrollBar.Value, e.Y + vScrollBar.Value);
+                    _marqueeEnd = _marqueeStart;
+                }
+            }
+            else if (e.Button == MouseButtons.Left && BTN_RectFill.Checked && _compList != null)
+            {
+                ConvertCoords(_mouseLoc, out int x, out int y, out int _);
+                _isRectFillDragging = true;
+                _rectFillStartX = x;
+                _rectFillStartY = y;
+                _rectFillEndX = x;
+                _rectFillEndY = y;
+            }
+            else if (e.Button == MouseButtons.Left && BTN_LineDraw.Checked && _compList != null)
+            {
+                ConvertCoords(_mouseLoc, out int x, out int y, out int _);
+                _isLineDragging = true;
+                _lineStartX = x;
+                _lineStartY = y;
+                _lineEndX = x;
+                _lineEndY = y;
+            }
+            else if (e.Button == MouseButtons.Left && BTN_Remove.Checked && _compList != null)
+            {
+                ConvertCoords(_mouseLoc, out int rx, out int ry, out int _);
+                _isRemoveDragging = true;
+                _removeStartX = rx;
+                _removeStartY = ry;
+                _removeEndX = rx;
+                _removeEndY = ry;
             }
             else
             {
                 _moving = false;
-
                 Cursor = Cursors.Default;
             }
         }
@@ -751,11 +935,43 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             if (e.Button == MouseButtons.Right)
             {
+                if (_isMarqueeDragging)
+                {
+                    _isMarqueeDragging = false;
+                    pictureBoxMulti.Invalidate();
+                }
+
+                if (_isRemoveDragging)
+                {
+                    _isRemoveDragging = false;
+                    pictureBoxMulti.Invalidate();
+                    return;
+                }
+
+                if (_isPasteMode)
+                {
+                    _isPasteMode = false;
+                    pictureBoxMulti.Invalidate();
+                }
+
                 return;
             }
 
             if (_compList == null)
             {
+                return;
+            }
+
+            // Paste commit
+            if (_isPasteMode && e.Button == MouseButtons.Left && _clipboard != null)
+            {
+                ConvertCoords(_mouseLoc, out int px, out int py, out int pz);
+                var batch = _clipboard.Select(c => (c.id, px + c.dx, py + c.dy, pz + c.dz)).ToList();
+                _compList.TileAddBatch(batch);
+                _isPasteMode = false;
+                MaxHeightTrackBar.Minimum = _compList.ZMin;
+                MaxHeightTrackBar.Maximum = _compList.ZMax;
+                pictureBoxMulti.Invalidate();
                 return;
             }
 
@@ -781,7 +997,73 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (BTN_Select.Checked)
             {
-                SelectedTile = _hoverTile;
+                bool ctrlHeld = (ModifierKeys & Keys.Control) != 0;
+
+                if (_isMarqueeDragging)
+                {
+                    _isMarqueeDragging = false;
+                    int sx = Math.Min(_marqueeStart.X, _marqueeEnd.X) - hScrollBar.Value;
+                    int sy = Math.Min(_marqueeStart.Y, _marqueeEnd.Y) - vScrollBar.Value;
+                    int sw = Math.Abs(_marqueeEnd.X - _marqueeStart.X);
+                    int sh = Math.Abs(_marqueeEnd.Y - _marqueeStart.Y);
+
+                    if (sw > 3 && sh > 3)
+                    {
+                        var rect = new Rectangle(sx, sy, sw, sh);
+                        var tiles = _compList.GetTilesInScreenRect(
+                            rect, hScrollBar.Value, vScrollBar.Value,
+                            MaxHeightTrackBar.Value, BTN_Floor.Checked);
+                        if (!ctrlHeld)
+                        {
+                            _selectedTiles.Clear();
+                        }
+
+                        foreach (var t in tiles)
+                        {
+                            _selectedTiles.Add(t);
+                        }
+
+                        SelectedTile = _selectedTiles.Count == 1 ? _selectedTiles.First() : null;
+                    }
+                    else
+                    {
+                        // Tiny drag — treat as plain click
+                        if (!ctrlHeld)
+                        {
+                            _selectedTiles.Clear();
+                        }
+
+                        if (_hoverTile != null)
+                        {
+                            _selectedTiles.Add(_hoverTile);
+                        }
+
+                        SelectedTile = _hoverTile;
+                    }
+                }
+                else if (ctrlHeld && _hoverTile != null)
+                {
+                    if (_selectedTiles.Contains(_hoverTile))
+                    {
+                        _selectedTiles.Remove(_hoverTile);
+                    }
+                    else
+                    {
+                        _selectedTiles.Add(_hoverTile);
+                    }
+
+                    SelectedTile = _selectedTiles.Count == 1 ? _selectedTiles.First() : null;
+                }
+                else
+                {
+                    _selectedTiles.Clear();
+                    if (_hoverTile != null)
+                    {
+                        _selectedTiles.Add(_hoverTile);
+                    }
+
+                    SelectedTile = _hoverTile;
+                }
             }
             else if (BTN_Draw.Checked)
             {
@@ -789,7 +1071,17 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
                 if (x >= 0 && x < _compList.Width && y >= 0 && y < _compList.Height)
                 {
-                    _compList.TileAdd(x, y, z, _drawTile.Id);
+                    int brushSize = BrushSize;
+                    if (brushSize <= 1)
+                    {
+                        _compList.TileAdd(x, y, z, _drawTile.Id);
+                    }
+                    else
+                    {
+                        _compList.TileAddBrush(x, y, z, _drawTile.Id, brushSize);
+                    }
+
+                    RecordRecentTile(_drawTile.Id);
                     MaxHeightTrackBar.Minimum = _compList.ZMin;
                     MaxHeightTrackBar.Maximum = _compList.ZMax;
                     if (MaxHeightTrackBar.Value < z)
@@ -798,9 +1090,52 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     }
                 }
             }
+            else if (BTN_RectFill.Checked && _isRectFillDragging)
+            {
+                _isRectFillDragging = false;
+                ConvertCoords(_mouseLoc, out int ex, out int ey, out int z);
+                int x0 = Math.Min(_rectFillStartX, ex);
+                int x1 = Math.Max(_rectFillStartX, ex);
+                int y0 = Math.Min(_rectFillStartY, ey);
+                int y1 = Math.Max(_rectFillStartY, ey);
+                _compList.TileAddRect(x0, y0, x1, y1, z, _drawTile.Id);
+                RecordRecentTile(_drawTile.Id);
+                MaxHeightTrackBar.Minimum = _compList.ZMin;
+                MaxHeightTrackBar.Maximum = _compList.ZMax;
+                if (MaxHeightTrackBar.Value < z)
+                {
+                    MaxHeightTrackBar.Value = z;
+                }
+            }
+            else if (BTN_LineDraw.Checked && _isLineDragging)
+            {
+                _isLineDragging = false;
+                ConvertCoords(_mouseLoc, out int ex, out int ey, out int z);
+                (ex, ey) = GetLineEnd(ex, ey);
+                _compList.TileAddLine(_lineStartX, _lineStartY, ex, ey, z, _drawTile.Id);
+                RecordRecentTile(_drawTile.Id);
+                MaxHeightTrackBar.Minimum = _compList.ZMin;
+                MaxHeightTrackBar.Maximum = _compList.ZMax;
+                if (MaxHeightTrackBar.Value < z)
+                {
+                    MaxHeightTrackBar.Value = z;
+                }
+            }
             else if (BTN_Remove.Checked)
             {
-                if (_hoverTile != null)
+                bool wasDrag = _isRemoveDragging &&
+                    (_removeEndX != _removeStartX || _removeEndY != _removeStartY);
+                _isRemoveDragging = false;
+
+                if (wasDrag)
+                {
+                    int x0 = Math.Min(_removeStartX, _removeEndX);
+                    int x1 = Math.Max(_removeStartX, _removeEndX);
+                    int y0 = Math.Min(_removeStartY, _removeEndY);
+                    int y1 = Math.Max(_removeStartY, _removeEndY);
+                    _compList.TileRemoveRect(x0, y0, x1, y1, DrawFloorZ, MaxHeightTrackBar.Value);
+                }
+                else if (_hoverTile != null)
                 {
                     _compList.TileRemove(_hoverTile);
                 }
@@ -839,9 +1174,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (BTN_Z.Checked)
             {
-                if (_hoverTile != null)
+                int z = (int)numericUpDown_Z.Value;
+                if (_selectedTiles.Count > 1)
                 {
-                    int z = (int)numericUpDown_Z.Value;
+                    _compList.TileZMod(_selectedTiles, z);
+                    MaxHeightTrackBar.Minimum = _compList.ZMin;
+                    MaxHeightTrackBar.Maximum = _compList.ZMax;
+                }
+                else if (_hoverTile != null)
+                {
                     _compList.TileZMod(_hoverTile, z);
                     MaxHeightTrackBar.Minimum = _compList.ZMin;
                     MaxHeightTrackBar.Maximum = _compList.ZMax;
@@ -858,6 +1199,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     _drawTile.Set(_hoverTile.Id, 0);
                     PictureBoxDrawTiles_Select();
                     DrawTileLabel.Text = $"Draw ID: 0x{_hoverTile.Id:X}";
+                    UpdateRecentSelection();
                 }
             }
             else if (BTN_Trans.Checked)
@@ -877,6 +1219,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 _overlayList.Clear();
             }
 
+            _minimapDirty = true;
             pictureBoxMulti.Invalidate();
         }
 
@@ -900,7 +1243,17 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
+            if (_zoomFactor != 1.0f)
+            {
+                float cx = pictureBoxMulti.Width / 2f;
+                float cy = pictureBoxMulti.Height / 2f;
+                e.Graphics.TranslateTransform(cx, cy);
+                e.Graphics.ScaleTransform(_zoomFactor, _zoomFactor);
+                e.Graphics.TranslateTransform(-cx, -cy);
+            }
+
             _compList.GetImage(e.Graphics, hScrollBar.Value, vScrollBar.Value, MaxHeightTrackBar.Value, _mouseLoc, BTN_Floor.Checked);
+
 
             if (ShowWalkables)
             {
@@ -919,6 +1272,72 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 Invoke(new ADelegate(SetToolStripText), $"{x},{y},{z}");
             }
 
+            // Draw marquee selection rectangle
+            if (_isMarqueeDragging)
+            {
+                int sx = Math.Min(_marqueeStart.X, _marqueeEnd.X) - hScrollBar.Value;
+                int sy = Math.Min(_marqueeStart.Y, _marqueeEnd.Y) - vScrollBar.Value;
+                int sw = Math.Abs(_marqueeEnd.X - _marqueeStart.X);
+                int sh = Math.Abs(_marqueeEnd.Y - _marqueeStart.Y);
+                using (var pen = new System.Drawing.Pen(Color.DodgerBlue, 1))
+                {
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawRectangle(pen, sx, sy, sw, sh);
+                }
+
+                using (var brush = new SolidBrush(Color.FromArgb(30, Color.DodgerBlue)))
+                {
+                    e.Graphics.FillRectangle(brush, sx, sy, sw, sh);
+                }
+            }
+
+            // Bulk remove drag preview — highlight existing tiles in the multi-space rect
+            if (_isRemoveDragging)
+            {
+                int rx0 = Math.Min(_removeStartX, _removeEndX);
+                int rx1 = Math.Max(_removeStartX, _removeEndX);
+                int ry0 = Math.Min(_removeStartY, _removeEndY);
+                int ry1 = Math.Max(_removeStartY, _removeEndY);
+                foreach (MultiTile ht in _compList.Tiles)
+                {
+                    if (ht.IsVirtualFloor || ht.Z < DrawFloorZ || ht.Z > MaxHeightTrackBar.Value || ht.X < rx0 || ht.X > rx1 || ht.Y < ry0 || ht.Y > ry1)
+                    {
+                        continue;
+                    }
+
+                    Bitmap htBmp = ht.GetBitmap();
+                    if (htBmp == null)
+                    {
+                        continue;
+                    }
+
+                    int hpx = ht.XMod - _compList.XMin - hScrollBar.Value;
+                    int hpy = ht.YMod - _compList.YMin - vScrollBar.Value;
+                    e.Graphics.DrawImage(htBmp, new Rectangle(hpx, hpy, htBmp.Width, htBmp.Height),
+                        0, 0, htBmp.Width, htBmp.Height, GraphicsUnit.Pixel, MultiTile.RemoveHighlightColor);
+                }
+            }
+
+            // Paste ghost preview
+            if (_isPasteMode && _clipboard != null)
+            {
+                ConvertCoords(_mouseLoc, out int px, out int py, out int pz);
+                foreach (var (id, dx, dy, dz) in _clipboard)
+                {
+                    var ghost = new MultiTile(id, px + dx, py + dy, pz + dz, 1);
+                    Bitmap ghostBmp = ghost.GetBitmap();
+                    if (ghostBmp == null)
+                    {
+                        continue;
+                    }
+
+                    int gpx = (ghost.X - ghost.Y) * 22 - ghostBmp.Width / 2 - _compList.XMin + MultiEditorComponentList.GapXMod - hScrollBar.Value;
+                    int gpy = (ghost.X + ghost.Y) * 22 - ghost.Z * 4 - ghostBmp.Height - _compList.YMin + MultiEditorComponentList.GapYMod - vScrollBar.Value;
+                    e.Graphics.DrawImage(ghostBmp, new Rectangle(gpx, gpy, ghostBmp.Width, ghostBmp.Height),
+                        0, 0, ghostBmp.Width, ghostBmp.Height, GraphicsUnit.Pixel, MultiTile.DrawColor);
+                }
+            }
+
             if (BTN_Draw.Checked)
             {
                 if (x < 0 || x >= _compList.Width || y < 0 || y >= _compList.Height)
@@ -928,28 +1347,37 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
                 Invoke(new ADelegate(SetToolStripText), $"{x},{y},{z}");
 
-                Bitmap bmp = _drawTile.GetBitmap();
-
-                if (bmp == null)
+                int brushSize = BrushSize;
+                int half = brushSize / 2;
+                for (int dx = -half; dx <= half; dx++)
                 {
-                    return;
+                    for (int dy = -half; dy <= half; dy++)
+                    {
+                        DrawTilePreviewAt(e.Graphics, x + dx, y + dy, z);
+                    }
                 }
-
-                int px = (x - y) * 22;
-                int py = (x + y) * 22;
-
-                px -= bmp.Width / 2;
-                py -= z * 4;
-                py -= bmp.Height;
-                px -= _compList.XMin;
-                py -= _compList.YMin;
-                py += MultiEditorComponentList.GapYMod; // Mod for a bit of gap
-                px += MultiEditorComponentList.GapXMod;
-                px -= hScrollBar.Value;
-                py -= vScrollBar.Value;
-
-                e.Graphics.DrawImage(bmp, new Rectangle(px, py, bmp.Width, bmp.Height), 0, 0, bmp.Width, bmp.Height,
-                    GraphicsUnit.Pixel, MultiTile.DrawColor);
+            }
+            else if (BTN_RectFill.Checked && _isRectFillDragging)
+            {
+                int x0 = Math.Min(_rectFillStartX, _rectFillEndX);
+                int x1 = Math.Max(_rectFillStartX, _rectFillEndX);
+                int y0 = Math.Min(_rectFillStartY, _rectFillEndY);
+                int y1 = Math.Max(_rectFillStartY, _rectFillEndY);
+                for (int rx = x0; rx <= x1; rx++)
+                {
+                    for (int ry = y0; ry <= y1; ry++)
+                    {
+                        DrawTilePreviewAt(e.Graphics, rx, ry, z);
+                    }
+                }
+            }
+            else if (BTN_LineDraw.Checked && _isLineDragging)
+            {
+                var (cex, cey) = GetLineEnd(_lineEndX, _lineEndY);
+                foreach (var (lx, ly) in MultiEditorComponentList.BresenhamLinePublic(_lineStartX, _lineStartY, cex, cey))
+                {
+                    DrawTilePreviewAt(e.Graphics, lx, ly, z);
+                }
             }
             else if (_overlayList.Count > 0)
             {
@@ -968,6 +1396,55 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     overX += bmp.Width + 10;
                 }
             }
+
+            UpdateMinimap();
+        }
+
+        private void PictureBoxMulti_OnMouseWheel(object sender, MouseEventArgs e)
+        {
+            if ((ModifierKeys & Keys.Control) != 0)
+            {
+                float delta = e.Delta > 0 ? 0.1f : -0.1f;
+                SetZoom(_zoomFactor + delta);
+                if (e is HandledMouseEventArgs hme)
+                {
+                    hme.Handled = true;
+                }
+
+                return;
+            }
+
+            // Normal scroll: pan vertically
+            int scrollDelta = e.Delta > 0 ? -22 : 22;
+            vScrollBar.Value = Math.Clamp(vScrollBar.Value + scrollDelta, 0, vScrollBar.Maximum);
+        }
+
+        private Point ToScrolledSpace(Point screenPt)
+        {
+            float cx = pictureBoxMulti.Width / 2f;
+            float cy = pictureBoxMulti.Height / 2f;
+            float sx = (screenPt.X - cx) / _zoomFactor + cx + hScrollBar.Value;
+            float sy = (screenPt.Y - cy) / _zoomFactor + cy + vScrollBar.Value;
+            return new Point((int)sx, (int)sy);
+        }
+
+        private void DrawTilePreviewAt(Graphics gfx, int tx, int ty, int z)
+        {
+            if (tx < 0 || tx >= _compList.Width || ty < 0 || ty >= _compList.Height)
+            {
+                return;
+            }
+
+            Bitmap bmp = _drawTile.GetBitmap();
+            if (bmp == null)
+            {
+                return;
+            }
+
+            int px = (tx - ty) * 22 - bmp.Width / 2 - _compList.XMin + MultiEditorComponentList.GapXMod - hScrollBar.Value;
+            int py = (tx + ty) * 22 - z * 4 - bmp.Height - _compList.YMin + MultiEditorComponentList.GapYMod - vScrollBar.Value;
+            gfx.DrawImage(bmp, new Rectangle(px, py, bmp.Width, bmp.Height), 0, 0, bmp.Width, bmp.Height,
+                GraphicsUnit.Pixel, MultiTile.DrawColor);
         }
 
         /// <summary>
@@ -1311,23 +1788,30 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
-            foreach (ToolStripItem item in UndoItems.DropDownItems)
+            UndoItems.DropDownItems.Clear();
+            for (int i = 0; i < _compList.UndoList.Count; i++)
             {
-                int index = (int)item.Tag;
-                item.Text = _compList.UndoList[index].Tiles != null
-                    ? _compList.UndoList[index].Action
-                    : "---";
+                var item = new ToolStripMenuItem(_compList.UndoList[i].Action ?? "---")
+                {
+                    Tag = i
+                };
+                item.Click += Undo_onClick;
+                UndoItems.DropDownItems.Add(item);
+            }
+
+            if (UndoItems.DropDownItems.Count == 0)
+            {
+                UndoItems.DropDownItems.Add(new ToolStripMenuItem("---") { Enabled = false });
             }
         }
 
         private void UndoList_Clear()
         {
             _compList?.UndoClear();
-
-            foreach (ToolStripItem item in UndoItems.DropDownItems)
-            {
-                item.Text = "---";
-            }
+            UndoItems.DropDownItems.Clear();
+            _minimapTilesBmp?.Dispose();
+            _minimapTilesBmp = null;
+            _minimapDirty = true;
         }
 
         private static void XML_AddChildren(TreeNode node, XmlElement mainNode)
@@ -1397,6 +1881,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             _drawTile.Set(id, 0);
             PictureBoxDrawTiles_Select();
             DrawTileLabel.Text = $"Draw ID: 0x{id:X}";
+            UpdateRecentSelection();
         }
 
         private int GetIndex(int x, int y)
@@ -1434,6 +1919,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             DrawTileLabel.Text = $"Draw ID: 0x{index:X}";
 
             pictureBoxDrawTiles.Invalidate();
+            UpdateRecentSelection();
         }
 
         private void PictureBoxDrawTilesMouseMove(object sender, MouseEventArgs e)
@@ -1599,6 +2085,163 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (_compList != null)
+            {
+                // Undo / Redo
+                if (keyData == (Keys.Control | Keys.Z))
+                {
+                    if (_compList.UndoStep())
+                    {
+                        UpdateTrackBarAfterZChange();
+                        _selectedTiles.Clear();
+                        pictureBoxMulti.Invalidate();
+                    }
+
+                    return true;
+                }
+
+                if (keyData == (Keys.Control | Keys.Y) || keyData == (Keys.Control | Keys.Shift | Keys.Z))
+                {
+                    if (_compList.RedoStep())
+                    {
+                        UpdateTrackBarAfterZChange();
+                        _selectedTiles.Clear();
+                        pictureBoxMulti.Invalidate();
+                    }
+
+                    return true;
+                }
+
+                // Z up/down for selection: [ = -1, ] = +1
+                IEnumerable<MultiTile> zTargets = _selectedTiles.Count > 0
+                    ? (IEnumerable<MultiTile>)_selectedTiles
+                    : (SelectedTile != null ? new[] { SelectedTile } : null);
+
+                if (keyData == Keys.OemOpenBrackets && zTargets != null)
+                {
+                    _compList.TileZMod(zTargets, -1);
+                    UpdateTrackBarAfterZChange();
+                    pictureBoxMulti.Invalidate();
+                    return true;
+                }
+
+                if (keyData == Keys.OemCloseBrackets && zTargets != null)
+                {
+                    _compList.TileZMod(zTargets, 1);
+                    UpdateTrackBarAfterZChange();
+                    pictureBoxMulti.Invalidate();
+                    return true;
+                }
+
+                // Copy / Paste
+                if (keyData == (Keys.Control | Keys.C) && _selectedTiles.Count > 0)
+                {
+                    int ox = _selectedTiles.Min(t => t.X);
+                    int oy = _selectedTiles.Min(t => t.Y);
+                    int oz = _selectedTiles.Min(t => t.Z);
+                    _clipboard = _selectedTiles.Select(t => (t.Id, t.X - ox, t.Y - oy, t.Z - oz)).ToList();
+                    return true;
+                }
+
+                if (keyData == (Keys.Control | Keys.V) && _clipboard != null)
+                {
+                    _isPasteMode = true;
+                    pictureBoxMulti.Invalidate();
+                    return true;
+                }
+
+                if (keyData == Keys.Escape && _isPasteMode)
+                {
+                    _isPasteMode = false;
+                    pictureBoxMulti.Invalidate();
+                    return true;
+                }
+
+                // Navigation: arrow keys pan, PgUp/PgDn step floor
+                const int PanStep = 22;
+                if (keyData == Keys.Left)  { hScrollBar.Value = Math.Max(0, hScrollBar.Value - PanStep); return true; }
+                if (keyData == Keys.Right) { hScrollBar.Value = Math.Min(hScrollBar.Maximum, hScrollBar.Value + PanStep); return true; }
+                if (keyData == Keys.Up)    { vScrollBar.Value = Math.Max(0, vScrollBar.Value - PanStep); return true; }
+                if (keyData == Keys.Down)  { vScrollBar.Value = Math.Min(vScrollBar.Maximum, vScrollBar.Value + PanStep); return true; }
+
+                if (keyData == Keys.PageUp)
+                {
+                    numericUpDown_Floor.Value = Math.Min(numericUpDown_Floor.Maximum, numericUpDown_Floor.Value + 5);
+                    return true;
+                }
+
+                if (keyData == Keys.PageDown)
+                {
+                    numericUpDown_Floor.Value = Math.Max(numericUpDown_Floor.Minimum, numericUpDown_Floor.Value - 5);
+                    return true;
+                }
+
+                // Zoom
+                if (keyData == Keys.Add || keyData == (Keys.Shift | Keys.Oemplus))
+                {
+                    SetZoom(_zoomFactor + 0.1f);
+                    return true;
+                }
+
+                if (keyData == Keys.Subtract || keyData == Keys.OemMinus)
+                {
+                    SetZoom(_zoomFactor - 0.1f);
+                    return true;
+                }
+
+                if (keyData == (Keys.Control | Keys.D0) || keyData == (Keys.Control | Keys.NumPad0))
+                {
+                    SetZoom(1.0f);
+                    return true;
+                }
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        /// <summary>
+        /// Returns the line end constrained to the dominant axis when Shift is held.
+        /// </summary>
+        private (int ex, int ey) GetLineEnd(int rawEx, int rawEy)
+        {
+            if ((ModifierKeys & Keys.Shift) == 0)
+            {
+                return (rawEx, rawEy);
+            }
+
+            int dx = Math.Abs(rawEx - _lineStartX);
+            int dy = Math.Abs(rawEy - _lineStartY);
+            return dx >= dy
+                ? (rawEx, _lineStartY)   // horizontal axis
+                : (_lineStartX, rawEy);  // vertical axis
+        }
+
+        private void SetZoom(float factor)
+        {
+            _zoomFactor = Math.Clamp(factor, 0.25f, 4.0f);
+            toolStripBtnZoom.Text = $"{(int)Math.Round(_zoomFactor * 100)}%";
+            pictureBoxMulti.Invalidate();
+        }
+
+        private void ToolStripBtnZoom_Click(object sender, EventArgs e)
+        {
+            SetZoom(1.0f);
+        }
+
+        private void UpdateTrackBarAfterZChange()
+        {
+            MaxHeightTrackBar.Minimum = _compList.ZMin;
+            MaxHeightTrackBar.Maximum = _compList.ZMax;
+            if (MaxHeightTrackBar.Value < _compList.ZMax)
+            {
+                MaxHeightTrackBar.Value = _compList.ZMax;
+            }
+
+            _minimapDirty = true;
+        }
+
         private void BTN_DynamicCheckBox_Changed(object sender, EventArgs e)
         {
             if (_compList == null || SelectedTile == null)
@@ -1657,6 +2300,193 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void OnDummyContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
+        }
+
+        private void InitializeRecentTab()
+        {
+            var recentTab = new TabPage { Text = "Recent" };
+
+            _recentPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                Padding = new Padding(2)
+            };
+
+            for (int i = 0; i < TileRecentlyUsed.MaxRecentTiles; i++)
+            {
+                var slot = new PictureBox
+                {
+                    Size = new Size(44, 44),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Tag = -1,
+                    BackColor = Color.Transparent
+                };
+                slot.Click += RecentSlot_Click;
+
+                _recentSlots.Add(slot);
+                _recentPanel.Controls.Add(slot);
+            }
+
+            recentTab.Controls.Add(_recentPanel);
+            TC_MultiEditorToolbox.TabPages.Add(recentTab);
+        }
+
+        private void RefreshRecentPanel()
+        {
+            for (int i = 0; i < _recentSlots.Count; i++)
+            {
+                var slot = _recentSlots[i];
+                if (i < _recentTiles.Count)
+                {
+                    slot.Tag = _recentTiles[i];
+                    slot.Image = Ultima.Art.GetStatic(_recentTiles[i]);
+                    toolTip1.SetToolTip(slot, $"0x{_recentTiles[i]:X}");
+                }
+                else
+                {
+                    slot.Tag = -1;
+                    slot.Image = null;
+                    toolTip1.SetToolTip(slot, string.Empty);
+                }
+            }
+
+            UpdateRecentSelection();
+        }
+
+        private void UpdateRecentSelection()
+        {
+            foreach (var slot in _recentSlots)
+            {
+                slot.BackColor = slot.Tag is int id && id == _drawTile.Id
+                    ? Color.LightBlue
+                    : Color.Transparent;
+            }
+        }
+
+        private void RecentSlot_Click(object sender, EventArgs e)
+        {
+            if (sender is PictureBox pb && pb.Tag is int id && id >= 0)
+            {
+                _drawTile.Set((ushort)id, 0);
+                DrawTileLabel.Text = $"Draw ID: 0x{id:X}";
+                PictureBoxDrawTiles_Select();
+                pictureBoxDrawTiles.Invalidate();
+                UpdateRecentSelection();
+            }
+        }
+
+        private void RecordRecentTile(int tileId)
+        {
+            if (tileId < 0)
+            {
+                return;
+            }
+
+            _recentTiles.Remove(tileId);
+            _recentTiles.Insert(0, tileId);
+            if (_recentTiles.Count > TileRecentlyUsed.MaxRecentTiles)
+            {
+                _recentTiles.RemoveAt(_recentTiles.Count - 1);
+            }
+
+            TileRecentlyUsed.Save(_recentTiles);
+            RefreshRecentPanel();
+        }
+
+        private void UpdateMinimap()
+        {
+            if (_compList == null || pictureBoxMinimap.Width <= 0 || pictureBoxMinimap.Height <= 0)
+            {
+                return;
+            }
+
+            int multiW = _compList.XMax - _compList.XMin + MultiEditorComponentList.GapXMod * 2;
+            int multiH = _compList.YMaxOrg - _compList.YMin + MultiEditorComponentList.GapYMod * 3;
+            if (multiW <= 0 || multiH <= 0)
+            {
+                return;
+            }
+
+            float scaleX = (float)pictureBoxMinimap.Width / multiW;
+            float scaleY = (float)pictureBoxMinimap.Height / multiH;
+            float scale = Math.Min(scaleX, scaleY);
+            if (scale <= 0)
+            {
+                return;
+            }
+
+            // Regenerate tile-dot layer only when tiles changed
+            if (_minimapDirty || _minimapTilesBmp == null)
+            {
+                _minimapDirty = false;
+                _minimapTilesBmp?.Dispose();
+                _minimapTilesBmp = new Bitmap(pictureBoxMinimap.Width, pictureBoxMinimap.Height);
+                using (var gfx = Graphics.FromImage(_minimapTilesBmp))
+                {
+                    gfx.Clear(Color.DimGray);
+                    int dotSize = Math.Max(1, (int)(2 * scale));
+                    using (var brush = new SolidBrush(Color.LightGray))
+                    {
+                        foreach (MultiTile tile in _compList.Tiles)
+                        {
+                            if (tile.IsVirtualFloor)
+                            {
+                                continue;
+                            }
+
+                            int px = (int)((tile.XMod - _compList.XMin) * scale);
+                            int py = (int)((tile.YMod - _compList.YMin) * scale);
+                            gfx.FillRectangle(brush, px, py, dotSize, dotSize);
+                        }
+                    }
+                }
+            }
+
+            // Composite: tile dots + fresh viewport rect every frame
+            var bmp = new Bitmap(pictureBoxMinimap.Width, pictureBoxMinimap.Height);
+            using (var gfx = Graphics.FromImage(bmp))
+            {
+                gfx.DrawImageUnscaled(_minimapTilesBmp, 0, 0);
+
+                float vx = hScrollBar.Value * scale;
+                float vy = vScrollBar.Value * scale;
+                float vw = pictureBoxMulti.Width * scale;
+                float vh = pictureBoxMulti.Height * scale;
+                gfx.DrawRectangle(Pens.Red, vx, vy, Math.Max(1, vw), Math.Max(1, vh));
+            }
+
+            pictureBoxMinimap.Image?.Dispose();
+            pictureBoxMinimap.Image = bmp;
+        }
+
+        private void PictureBoxMinimap_OnMouseClick(object sender, MouseEventArgs e)
+        {
+            if (_compList == null)
+            {
+                return;
+            }
+
+            int multiW = _compList.XMax - _compList.XMin + MultiEditorComponentList.GapXMod * 2;
+            int multiH = _compList.YMaxOrg - _compList.YMin + MultiEditorComponentList.GapYMod * 3;
+            if (multiW <= 0 || multiH <= 0)
+            {
+                return;
+            }
+
+            float scaleX = (float)pictureBoxMinimap.Width / multiW;
+            float scaleY = (float)pictureBoxMinimap.Height / multiH;
+            float scale = Math.Min(scaleX, scaleY);
+            if (scale <= 0)
+            {
+                return;
+            }
+
+            int newHScroll = Math.Clamp((int)(e.X / scale) - pictureBoxMulti.Width / 2, 0, hScrollBar.Maximum);
+            int newVScroll = Math.Clamp((int)(e.Y / scale) - pictureBoxMulti.Height / 2, 0, vScrollBar.Maximum);
+            hScrollBar.Value = newHScroll;
+            vScrollBar.Value = newVScroll;
         }
     }
 }

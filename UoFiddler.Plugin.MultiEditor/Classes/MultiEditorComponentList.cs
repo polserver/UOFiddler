@@ -21,7 +21,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 {
     internal class MultiEditorComponentList
     {
-        private const int _undoListMaxSize = 10;
+        public const int DefaultUndoStackSize = 50;
+        private int _undoListMaxSize = DefaultUndoStackSize;
 
         private bool _modified;
         private static MultiEditorControl _parent;
@@ -50,7 +51,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
-            UndoList = new UndoStruct[_undoListMaxSize];
+            UndoList = new List<UndoStruct>();
             _modified = true;
             RecalculateMinMax();
         }
@@ -84,7 +85,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             CalcSolver();
             Tiles.Sort();
-            UndoList = new UndoStruct[_undoListMaxSize];
+            UndoList = new List<UndoStruct>();
             _modified = true;
             RecalculateMinMax();
         }
@@ -93,7 +94,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public List<MultiTile> Tiles { get; private set; }
 
-        public UndoStruct[] UndoList { get; }
+        public List<UndoStruct> UndoList { get; private set; }
+
+        public List<UndoStruct> RedoList { get; private set; } = new List<UndoStruct>();
 
         public int Width { get; private set; }
 
@@ -234,6 +237,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     {
                         gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
                             _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.SelectedColor);
+                    }
+                    else if (_parent.SelectedTiles.Count > 1 && _parent.SelectedTiles.Contains(tile))
+                    {
+                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
+                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.MultiSelectedColor);
                     }
                     else if (tile.Transparent)
                     {
@@ -424,6 +432,45 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         /// <summary>
+        /// Removes all tiles within the given multi-space rectangle at or above minZ in a single undo entry.
+        /// </summary>
+        public void TileRemoveRect(int x0, int y0, int x1, int y1, int minZ, int maxZ = int.MaxValue)
+        {
+            if (Width == 0 || Height == 0)
+            {
+                return;
+            }
+
+            AddToUndoList("Remove Rect");
+
+            Tiles.RemoveAll(t => !t.IsVirtualFloor && t.X >= x0 && t.X <= x1 && t.Y >= y0 && t.Y <= y1 && t.Z >= minZ && t.Z <= maxZ);
+
+            _modified = true;
+            RecalculateMinMax();
+        }
+
+        /// <summary>
+        /// Removes multiple tiles in a single undo entry
+        /// </summary>
+        public void TileRemoveBatch(IEnumerable<MultiTile> tiles)
+        {
+            if (Width == 0 || Height == 0)
+            {
+                return;
+            }
+
+            AddToUndoList("Remove Tiles");
+
+            foreach (MultiTile tile in tiles)
+            {
+                Tiles.Remove(tile);
+            }
+
+            _modified = true;
+            RecalculateMinMax();
+        }
+
+        /// <summary>
         /// Removes specific <see cref="MultiTile"/>
         /// </summary>
         public void TileRemove(MultiTile tile)
@@ -491,17 +538,178 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             RecalculateMinMax(tile);
         }
 
-        public void Undo(int index)
+        /// <summary>
+        /// Adjusts Z for a group of tiles in a single undo step.
+        /// </summary>
+        public void TileZMod(IEnumerable<MultiTile> tiles, int modZ)
         {
-            if (UndoList[index].Tiles == null)
+            AddToUndoList("Group Modify Z");
+            foreach (MultiTile tile in tiles)
             {
-                return;
+                tile.Z = Math.Clamp(tile.Z + modZ, -128, 127);
+                CalcSolver(tile.X, tile.Y);
             }
 
-            Width = UndoList[index].Width;
-            Height = UndoList[index].Height;
+            _modified = true;
+            Tiles.Sort();
+            RecalculateMinMax();
+        }
+
+        /// <summary>
+        /// Sets Z for a group of tiles in a single undo step.
+        /// </summary>
+        public void TileZSet(IEnumerable<MultiTile> tiles, int setZ)
+        {
+            AddToUndoList("Group Set Z");
+            int clampedZ = Math.Clamp(setZ, -128, 127);
+            foreach (MultiTile tile in tiles)
+            {
+                tile.Z = clampedZ;
+                CalcSolver(tile.X, tile.Y);
+            }
+
+            _modified = true;
+            Tiles.Sort();
+            RecalculateMinMax();
+        }
+
+        /// <summary>
+        /// Fills a rectangular area with a tile at the given Z level.
+        /// </summary>
+        public void TileAddRect(int x0, int y0, int x1, int y1, int z, ushort id)
+        {
+            AddToUndoList("Rectangle Fill");
+            for (int x = x0; x <= x1; x++)
+            {
+                for (int y = y0; y <= y1; y++)
+                {
+                    if (x < 0 || x >= Width || y < 0 || y >= Height)
+                    {
+                        continue;
+                    }
+
+                    Tiles.Add(new MultiTile(id, x, y, z, 1));
+                    CalcSolver(x, y);
+                }
+            }
+
+            _modified = true;
+            Tiles.Sort();
+            RecalculateMinMax();
+        }
+
+        /// <summary>
+        /// Places tiles along a Bresenham line at the given Z level.
+        /// </summary>
+        public void TileAddLine(int x0, int y0, int x1, int y1, int z, ushort id)
+        {
+            AddToUndoList("Line Draw");
+            foreach (var (x, y) in BresenhamLine(x0, y0, x1, y1))
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                {
+                    continue;
+                }
+
+                Tiles.Add(new MultiTile(id, x, y, z, 1));
+                CalcSolver(x, y);
+            }
+
+            _modified = true;
+            Tiles.Sort();
+            RecalculateMinMax();
+        }
+
+        public static IEnumerable<(int x, int y)> BresenhamLinePublic(int x0, int y0, int x1, int y1)
+            => BresenhamLine(x0, y0, x1, y1);
+
+        private static IEnumerable<(int x, int y)> BresenhamLine(int x0, int y0, int x1, int y1)
+        {
+            int dx = Math.Abs(x1 - x0);
+            int sx = x0 < x1 ? 1 : -1;
+            int dy = -Math.Abs(y1 - y0);
+            int sy = y0 < y1 ? 1 : -1;
+            int err = dx + dy;
+
+            while (true)
+            {
+                yield return (x0, y0);
+                if (x0 == x1 && y0 == y1)
+                {
+                    break;
+                }
+
+                int e2 = 2 * err;
+                if (e2 >= dy)
+                {
+                    err += dy;
+                    x0 += sx;
+                }
+
+                if (e2 <= dx)
+                {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Places an NxN brush of tiles centered on (cx, cy) at the given Z level.
+        /// </summary>
+        public void TileAddBrush(int cx, int cy, int z, ushort id, int brushSize)
+        {
+            AddToUndoList("Draw Brush");
+            int half = brushSize / 2;
+            for (int dx = -half; dx <= half; dx++)
+            {
+                for (int dy = -half; dy <= half; dy++)
+                {
+                    int x = cx + dx;
+                    int y = cy + dy;
+                    if (x < 0 || x >= Width || y < 0 || y >= Height)
+                    {
+                        continue;
+                    }
+
+                    Tiles.Add(new MultiTile(id, x, y, z, 1));
+                    CalcSolver(x, y);
+                }
+            }
+
+            _modified = true;
+            Tiles.Sort();
+            RecalculateMinMax();
+        }
+
+        /// <summary>
+        /// Adds a batch of tiles in a single undo step (used by copy/paste).
+        /// </summary>
+        public void TileAddBatch(List<(ushort id, int x, int y, int z)> tiles)
+        {
+            AddToUndoList("Paste");
+            foreach (var (id, x, y, z) in tiles)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                {
+                    continue;
+                }
+
+                Tiles.Add(new MultiTile(id, x, y, z, 1));
+                CalcSolver(x, y);
+            }
+
+            _modified = true;
+            Tiles.Sort();
+            RecalculateMinMax();
+        }
+
+        private void RestoreSnapshot(UndoStruct entry)
+        {
+            Width = entry.Width;
+            Height = entry.Height;
             Tiles = new List<MultiTile>();
-            foreach (MultiTile tile in UndoList[index].Tiles)
+            foreach (MultiTile tile in entry.Tiles)
             {
                 Tiles.Add(tile.IsVirtualFloor
                     ? new FloorTile(tile.X, tile.Y, tile.Z)
@@ -512,13 +720,59 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             RecalculateMinMax();
         }
 
+        public void Undo(int index)
+        {
+            if (index < 0 || index >= UndoList.Count)
+            {
+                return;
+            }
+
+            RestoreSnapshot(UndoList[index]);
+            RedoList.Clear();
+        }
+
+        /// <summary>Single-step undo (Ctrl+Z). Pushes current state to redo stack.</summary>
+        public bool UndoStep()
+        {
+            if (UndoList.Count == 0)
+            {
+                return false;
+            }
+
+            RedoList.Insert(0, SnapshotCurrent(UndoList[0].Action));
+            if (RedoList.Count > _undoListMaxSize)
+            {
+                RedoList.RemoveAt(RedoList.Count - 1);
+            }
+
+            RestoreSnapshot(UndoList[0]);
+            UndoList.RemoveAt(0);
+            return true;
+        }
+
+        /// <summary>Single-step redo (Ctrl+Y). Pushes current state back onto undo stack.</summary>
+        public bool RedoStep()
+        {
+            if (RedoList.Count == 0)
+            {
+                return false;
+            }
+
+            UndoList.Insert(0, SnapshotCurrent(RedoList[0].Action));
+            if (UndoList.Count > _undoListMaxSize)
+            {
+                UndoList.RemoveAt(UndoList.Count - 1);
+            }
+
+            RestoreSnapshot(RedoList[0]);
+            RedoList.RemoveAt(0);
+            return true;
+        }
+
         public void UndoClear()
         {
-            for (int i = 0; i < _undoListMaxSize; ++i)
-            {
-                UndoList[i].Action = null;
-                UndoList[i].Tiles = null;
-            }
+            UndoList.Clear();
+            RedoList.Clear();
         }
 
         public void CalcWalkable()
@@ -631,24 +885,77 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             return multiTiles;
         }
 
-        private void AddToUndoList(string action)
+        /// <summary>
+        /// Returns all tiles whose bitmaps overlap the given screen-space rectangle.
+        /// xOff/yOff are the current scrollbar values.
+        /// </summary>
+        public List<MultiTile> GetTilesInScreenRect(Rectangle screenRect, int xOff, int yOff, int maxHeight, bool drawFloor)
         {
-            for (int i = _undoListMaxSize - 2; i >= 0; --i)
+            var result = new List<MultiTile>();
+            foreach (MultiTile tile in Tiles)
             {
-                UndoList[i + 1] = UndoList[i];
+                if (tile.IsVirtualFloor)
+                {
+                    continue;
+                }
+
+                if (tile.Z > maxHeight)
+                {
+                    continue;
+                }
+
+                if (drawFloor && _parent.DrawFloorZ > tile.Z)
+                {
+                    continue;
+                }
+
+                Bitmap bmp = tile.GetBitmap();
+                if (bmp == null)
+                {
+                    continue;
+                }
+
+                int px = tile.XMod - XMin - xOff;
+                int py = tile.YMod - YMin - yOff;
+                var tileBounds = new Rectangle(px, py, bmp.Width, bmp.Height);
+                if (tileBounds.IntersectsWith(screenRect))
+                {
+                    result.Add(tile);
+                }
             }
 
-            UndoList[0].Action = action;
-            UndoList[0].Tiles = new List<MultiTile>();
-            UndoList[0].Width = Width;
-            UndoList[0].Height = Height;
+            return result;
+        }
+
+        private UndoStruct SnapshotCurrent(string action)
+        {
+            var entry = new UndoStruct
+            {
+                Action = action,
+                Tiles = new List<MultiTile>(),
+                Width = Width,
+                Height = Height
+            };
 
             foreach (MultiTile tile in Tiles)
             {
-                UndoList[0].Tiles.Add(tile.IsVirtualFloor
-                    ? new FloorTile(tile.X, tile.Y, tile.Y)
+                entry.Tiles.Add(tile.IsVirtualFloor
+                    ? new FloorTile(tile.X, tile.Y, tile.Z)
                     : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible));
             }
+
+            return entry;
+        }
+
+        private void AddToUndoList(string action)
+        {
+            UndoList.Insert(0, SnapshotCurrent(action));
+            if (UndoList.Count > _undoListMaxSize)
+            {
+                UndoList.RemoveAt(UndoList.Count - 1);
+            }
+
+            RedoList.Clear();
         }
 
         /// <summary>
@@ -841,6 +1148,24 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
     public class MultiTile : IComparable
     {
+        private static readonly ColorMatrix _removeHighlightMatrix = new ColorMatrix(new float[][]
+        {
+            new float[] {1, 0, 0, 0, 0},
+            new float[] {0, 0, 0, 0, 0},
+            new float[] {0, 0, 0, 0, 0},
+            new float[] {0, 0, 0, .7f, 0},
+            new float[] {.4f, 0, 0, 0, 1}
+        });
+
+        private static readonly ColorMatrix _multiSelectedMatrix = new ColorMatrix(new float[][]
+        {
+            new float[] {0, 0, 1, 0, 0},
+            new float[] {0, 1, 0, 0, 0},
+            new float[] {1, 0, 0, 0, 0},
+            new float[] {0, 0, 0, 1, 0},
+            new float[] {0, .4f, .4f, 0, 1}
+        });
+
         private static readonly ColorMatrix _drawMatrix = new ColorMatrix(new float[][]
         {
             new float[] {0, 0, 0, 0, 0},
@@ -929,6 +1254,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 SelectedColor.SetColorMatrix(_selectedMatrix);
             }
 
+            if (MultiSelectedColor == null)
+            {
+                MultiSelectedColor = new ImageAttributes();
+                MultiSelectedColor.SetColorMatrix(_multiSelectedMatrix);
+            }
+
             if (DrawColor == null)
             {
                 DrawColor = new ImageAttributes();
@@ -941,6 +1272,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 TransColor.SetColorMatrix(_transMatrix);
             }
 
+            if (RemoveHighlightColor == null)
+            {
+                RemoveHighlightColor = new ImageAttributes();
+                RemoveHighlightColor.SetColorMatrix(_removeHighlightMatrix);
+            }
+
             if (StandableColor == null)
             {
                 StandableColor = new ImageAttributes();
@@ -948,7 +1285,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
         }
 
+        public static ImageAttributes RemoveHighlightColor { get; private set; }
+
         public static ImageAttributes DrawColor { get; }
+
+        public static ImageAttributes MultiSelectedColor { get; }
 
         public int Height => TileData.ItemTable[Id].Height;
 
