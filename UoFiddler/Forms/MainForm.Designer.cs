@@ -87,6 +87,8 @@ namespace UoFiddler.Forms
             this.radarColControl = new UoFiddler.Controls.UserControls.RadarColorControl();
             this.SkillGrpTab = new System.Windows.Forms.TabPage();
             this.skillGroupControl = new UoFiddler.Controls.UserControls.SkillGroupControl();
+            this.VerdataTab = new System.Windows.Forms.TabPage();
+            this.verdataControl = new UoFiddler.Controls.UserControls.VerdataControl();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tsMainMenu = new System.Windows.Forms.ToolStrip();
             this.SettingsMenu = new System.Windows.Forms.ToolStripDropDownButton();
@@ -117,6 +119,7 @@ namespace UoFiddler.Forms
             this.ToggleViewTileData = new System.Windows.Forms.ToolStripMenuItem();
             this.ToggleViewRadarColor = new System.Windows.Forms.ToolStripMenuItem();
             this.ToggleViewSkillGrp = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToggleViewVerdata = new System.Windows.Forms.ToolStripMenuItem();
             this.ExternToolsDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.manageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButtonPlugins = new System.Windows.Forms.ToolStripDropDownButton();
@@ -149,6 +152,7 @@ namespace UoFiddler.Forms
             this.TileDataTab.SuspendLayout();
             this.RadarColTab.SuspendLayout();
             this.SkillGrpTab.SuspendLayout();
+            this.VerdataTab.SuspendLayout();
             this.tsMainMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -176,6 +180,7 @@ namespace UoFiddler.Forms
             this.TabPanel.Controls.Add(this.TileDataTab);
             this.TabPanel.Controls.Add(this.RadarColTab);
             this.TabPanel.Controls.Add(this.SkillGrpTab);
+            this.TabPanel.Controls.Add(this.VerdataTab);
             this.TabPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabPanel.Location = new System.Drawing.Point(0, 25);
             this.TabPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -666,9 +671,31 @@ namespace UoFiddler.Forms
             this.skillGroupControl.Name = "skillGroupControl";
             this.skillGroupControl.Size = new System.Drawing.Size(899, 584);
             this.skillGroupControl.TabIndex = 0;
-            // 
+            //
+            // VerdataTab
+            //
+            this.VerdataTab.Controls.Add(this.verdataControl);
+            this.VerdataTab.Location = new System.Drawing.Point(4, 24);
+            this.VerdataTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.VerdataTab.Name = "VerdataTab";
+            this.VerdataTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.VerdataTab.Size = new System.Drawing.Size(907, 590);
+            this.VerdataTab.TabIndex = 21;
+            this.VerdataTab.Tag = 21;
+            this.VerdataTab.Text = "Verdata";
+            this.VerdataTab.UseVisualStyleBackColor = true;
+            //
+            // verdataControl
+            //
+            this.verdataControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.verdataControl.Location = new System.Drawing.Point(4, 3);
+            this.verdataControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            this.verdataControl.Name = "verdataControl";
+            this.verdataControl.Size = new System.Drawing.Size(899, 584);
+            this.verdataControl.TabIndex = 0;
+            //
             // tsMainMenu
-            // 
+            //
             this.tsMainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SettingsMenu,
             this.toolStripDropDownButtonView,
@@ -755,7 +782,8 @@ namespace UoFiddler.Forms
             this.ToggleViewDress,
             this.ToggleViewTileData,
             this.ToggleViewRadarColor,
-            this.ToggleViewSkillGrp});
+            this.ToggleViewSkillGrp,
+            this.ToggleViewVerdata});
             this.toolStripDropDownButtonView.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButtonView.Name = "toolStripDropDownButtonView";
             this.toolStripDropDownButtonView.Size = new System.Drawing.Size(45, 22);
@@ -970,7 +998,17 @@ namespace UoFiddler.Forms
             this.ToggleViewSkillGrp.Tag = 20;
             this.ToggleViewSkillGrp.Text = "SkillGrp";
             this.ToggleViewSkillGrp.Click += new System.EventHandler(this.ToggleView);
-            // 
+            //
+            // ToggleViewVerdata
+            //
+            this.ToggleViewVerdata.Checked = true;
+            this.ToggleViewVerdata.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ToggleViewVerdata.Name = "ToggleViewVerdata";
+            this.ToggleViewVerdata.Size = new System.Drawing.Size(164, 22);
+            this.ToggleViewVerdata.Tag = 21;
+            this.ToggleViewVerdata.Text = "Verdata";
+            this.ToggleViewVerdata.Click += new System.EventHandler(this.ToggleView);
+            //
             // ExternToolsDropDown
             // 
             this.ExternToolsDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -1080,6 +1118,7 @@ namespace UoFiddler.Forms
             this.TileDataTab.ResumeLayout(false);
             this.RadarColTab.ResumeLayout(false);
             this.SkillGrpTab.ResumeLayout(false);
+            this.VerdataTab.ResumeLayout(false);
             this.tsMainMenu.ResumeLayout(false);
             this.tsMainMenu.PerformLayout();
             this.ResumeLayout(false);
@@ -1169,6 +1208,9 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TabPage SkillGrpTab;
         private SkillGroupControl skillGroupControl;
         private System.Windows.Forms.ToolStripMenuItem ToggleViewSkillGrp;
+        private System.Windows.Forms.TabPage VerdataTab;
+        private UoFiddler.Controls.UserControls.VerdataControl verdataControl;
+        private System.Windows.Forms.ToolStripMenuItem ToggleViewVerdata;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonHelp;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

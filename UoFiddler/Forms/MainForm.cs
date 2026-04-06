@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Ultima;
 using Ultima.Helpers;
@@ -24,6 +25,22 @@ namespace UoFiddler.Forms
 {
     public partial class MainForm : Form
     {
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+
+        [DllImport("user32.dll")]
+        private static extern bool GetClientRect(IntPtr hWnd, out NativeRect lpRect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct NativeRect { public int Left, Top, Right, Bottom; }
+
+        private const int WM_LBUTTONDOWN = 0x0201;
+        private const int WM_LBUTTONUP   = 0x0202;
+        private const int MK_LBUTTON     = 0x0001;
+
         public MainForm()
         {
             InitializeComponent();
@@ -46,6 +63,8 @@ namespace UoFiddler.Forms
                     }
                 }
             }
+
+            TabPanel.MouseWheel += TabPanel_MouseWheel;
 
             Icon = Options.GetFiddlerIcon();
 
@@ -594,6 +613,7 @@ namespace UoFiddler.Forms
                 case 18: return TileDataTab;
                 case 19: return RadarColTab;
                 case 20: return SkillGrpTab;
+                case 21: return VerdataTab;
                 default: return StartTab;
             }
         }
@@ -623,8 +643,53 @@ namespace UoFiddler.Forms
                 case 18: return ToggleViewTileData;
                 case 19: return ToggleViewRadarColor;
                 case 20: return ToggleViewSkillGrp;
+                case 21: return ToggleViewVerdata;
                 default: return ToggleViewStart;
             }
+        }
+
+        private IntPtr _tabScrollUpDown = IntPtr.Zero;
+
+        private void TabPanel_MouseWheel(object sender, MouseEventArgs e)
+        {
+            // Only scroll tabs if the mouse is over the tab headers, not the tab content
+            bool isOverTabHeader = false;
+            for (int i = 0; i < TabPanel.TabCount; i++)
+            {
+                Rectangle tabRect = TabPanel.GetTabRect(i);
+                if (tabRect.Contains(e.Location))
+                {
+                    isOverTabHeader = true;
+                    break;
+                }
+            }
+
+            if (!isOverTabHeader)
+            {
+                return; // Mouse is over tab content, let the content handle scrolling
+            }
+
+            // Cache the handle — it doesn't change while the form is open
+            if (_tabScrollUpDown == IntPtr.Zero)
+            {
+                _tabScrollUpDown = FindWindowEx(TabPanel.Handle, IntPtr.Zero, "msctls_updown32", null);
+            }
+
+            if (_tabScrollUpDown == IntPtr.Zero)
+            {
+                return; // Scroll arrows not present — all tabs fit
+            }
+
+            GetClientRect(_tabScrollUpDown, out NativeRect rect);
+            int midY = (rect.Bottom - rect.Top) / 2;
+            // Left half = left arrow (scroll left), right half = right arrow (scroll right)
+            int clickX = e.Delta < 0
+                ? (rect.Right - rect.Left) * 3 / 4   // right button → scroll right
+                : (rect.Right - rect.Left) / 4;       // left button → scroll left
+
+            IntPtr lParam = new IntPtr((midY << 16) | (clickX & 0xFFFF));
+            SendMessage(_tabScrollUpDown, WM_LBUTTONDOWN, new IntPtr(MK_LBUTTON), lParam);
+            SendMessage(_tabScrollUpDown, WM_LBUTTONUP, IntPtr.Zero, lParam);
         }
 
         private void ToolStripMenuItemHelp_Click(object sender, EventArgs e)
