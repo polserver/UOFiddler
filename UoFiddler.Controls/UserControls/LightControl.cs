@@ -14,7 +14,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
+using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -331,10 +333,9 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            Ultima.Light.Save(Options.OutputPath);
-            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            Light.Save(Options.OutputPath);
             Options.ChangedUltimaClass["Light"] = false;
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickExportBmp(object sender, EventArgs e)

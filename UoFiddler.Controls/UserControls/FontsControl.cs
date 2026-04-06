@@ -283,17 +283,15 @@ namespace UoFiddler.Controls.UserControls
             if ((int)treeView.SelectedNode.Parent.Tag == 1)
             {
                 string fileName = UnicodeFonts.Save(path, (int)treeView.SelectedNode.Tag);
-                MessageBox.Show($"Unicode saved to {fileName}", "Save", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                 Options.ChangedUltimaClass["UnicodeFont"] = false;
+                FileSavedDialog.Show(FindForm(), fileName, "Unicode fonts saved successfully.");
             }
             else
             {
                 string fileName = Path.Combine(path, "fonts.mul");
                 AsciiText.Save(fileName);
-                MessageBox.Show($"Fonts saved to {fileName}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
                 Options.ChangedUltimaClass["ASCIIFont"] = false;
+                FileSavedDialog.Show(FindForm(), fileName, "Fonts saved successfully.");
             }
         }
 

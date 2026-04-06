@@ -41,7 +41,45 @@ namespace UoFiddler.Controls.UserControls
             panel1.Visible = false;
 
             pictureBox.MouseWheel += OnMouseWheel;
+
+            // Add intensity submenu items to the Normal + Altitude menu
+            AddAltitudeIntensityMenuItems();
         }
+
+        private void AddAltitudeIntensityMenuItems()
+        {
+            // Create preset menu items at the top
+            var sharpPresetItem = new ToolStripMenuItem("Sharp (High Contrast)") { Tag = "preset_sharp" };
+            sharpPresetItem.Click += OnAltitudePresetChanged;
+
+            var normalPresetItem = new ToolStripMenuItem("Normal (More Contrast)") { Tag = "preset_normal", Checked = true };
+            normalPresetItem.Click += OnAltitudePresetChanged;
+
+            var softPresetItem = new ToolStripMenuItem("Soft (Subtle)") { Tag = "preset_soft" };
+            softPresetItem.Click += OnAltitudePresetChanged;
+
+            // Separator between presets and intensity controls
+            var presetSeparator = new ToolStripSeparator();
+
+            // Create intensity preset menu items
+            var subtleItem = new ToolStripMenuItem("    • Subtle Intensity") { Tag = 15, Checked = true };
+            subtleItem.Click += OnAltitudeIntensityChanged;
+
+            var normalItem = new ToolStripMenuItem("    • Normal Intensity") { Tag = 10 };
+            normalItem.Click += OnAltitudeIntensityChanged;
+
+            var strongItem = new ToolStripMenuItem("    • Strong Intensity") { Tag = 5 };
+            strongItem.Click += OnAltitudeIntensityChanged;
+
+                        // Add all items to Normal + Altitude menu
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(sharpPresetItem);
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(normalPresetItem);
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(softPresetItem);
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(presetSeparator);
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(subtleItem);
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(normalItem);
+            altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(strongItem);
+                    }
 
         private static MapControl _refMarker;
         public static double Zoom = 1;
@@ -57,6 +95,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _moving;
         private Point _movingPoint;
         private bool _renderingZoom;
+        private MapAltitudeMode _altitudeMode = MapAltitudeMode.Normal;
 
         private int HScrollBar => hScrollBar.Value;
         private int VScrollBar => vScrollBar.Value;
@@ -626,9 +665,20 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _map = CurrentMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
-                showStaticsToolStripMenuItem1.Checked);
+            // Use altitude-aware rendering if mode is not Normal
+            if (_altitudeMode != MapAltitudeMode.Normal)
+            {
+                _map = CurrentMap.GetImageWithAltitude(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
+                    (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
+                    showStaticsToolStripMenuItem1.Checked, _altitudeMode);
+            }
+            else
+            {
+                _map = CurrentMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
+                    (int)((e.ClipRectangle.Width / Zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / Zoom) + 8) >> 3,
+                    showStaticsToolStripMenuItem1.Checked);
+            }
+
             MessageLabel.Text = CurrentMap.Tiles.AllFilesExist() ? "" : "One of map files is missing!";
             ZoomMap(ref _map);
             e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
@@ -770,7 +820,19 @@ namespace UoFiddler.Controls.UserControls
 
             try
             {
-                Bitmap extract = CurrentMap.GetImage(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3, showStaticsToolStripMenuItem1.Checked);
+                Bitmap extract;
+
+                // Use altitude-aware rendering if mode is not Normal
+                if (_altitudeMode != MapAltitudeMode.Normal)
+                {
+                    extract = CurrentMap.GetImageWithAltitude(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
+                        showStaticsToolStripMenuItem1.Checked, _altitudeMode);
+                }
+                else
+                {
+                    extract = CurrentMap.GetImage(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
+                        showStaticsToolStripMenuItem1.Checked);
+                }
 
                 if (showMarkersToolStripMenuItem.Checked)
                 {
@@ -1080,8 +1142,7 @@ namespace UoFiddler.Controls.UserControls
             Map.RewriteMap(Options.OutputPath,
                 _currentMapId, CurrentMap.Width, CurrentMap.Height);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Map saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickReportInvisStatics(object sender, EventArgs e)
@@ -1089,8 +1150,7 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             CurrentMap.ReportInvisibleStatics(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
         }
 
         private void OnClickReportInvalidMapIDs(object sender, EventArgs e)
@@ -1296,6 +1356,102 @@ namespace UoFiddler.Controls.UserControls
                 TopMost = true
             };
             _showMapReplaceTilesForm.Show();
+        }
+
+        private void OnAltitudeModeNormal(object sender, EventArgs e)
+        {
+            _altitudeMode = MapAltitudeMode.Normal;
+
+            // Update checkmarks to show only this mode is selected
+            altitudeModeNormalToolStripMenuItem.Checked = true;
+            altitudeModeNormalWithAltitudeToolStripMenuItem.Checked = false;
+            altitudeModeAltitudeToolStripMenuItem.Checked = false;
+
+            pictureBox.Invalidate();
+        }
+
+        private void OnAltitudeModeNormalWithAltitude(object sender, EventArgs e)
+        {
+            _altitudeMode = MapAltitudeMode.NormalWithAltitude;
+
+            // Update checkmarks to show only this mode is selected
+            altitudeModeNormalToolStripMenuItem.Checked = false;
+            altitudeModeNormalWithAltitudeToolStripMenuItem.Checked = true;
+            altitudeModeAltitudeToolStripMenuItem.Checked = false;
+
+            pictureBox.Invalidate();
+        }
+
+        private void OnAltitudeModeAltitude(object sender, EventArgs e)
+        {
+            _altitudeMode = MapAltitudeMode.Altitude;
+
+            // Update checkmarks to show only this mode is selected
+            altitudeModeNormalToolStripMenuItem.Checked = false;
+            altitudeModeNormalWithAltitudeToolStripMenuItem.Checked = false;
+            altitudeModeAltitudeToolStripMenuItem.Checked = true;
+
+            pictureBox.Invalidate();
+        }
+
+        private void OnAltitudeIntensityChanged(object sender, EventArgs e)
+        {
+            if (sender is not ToolStripMenuItem clickedItem || clickedItem.Tag is not int intensity)
+            {
+                return;
+            }
+
+            // Update the intensity setting
+            Map.AltitudeIntensity = intensity;
+
+            // Update checkmarks on all intensity items (skip preset items and separators)
+            foreach (ToolStripItem item in altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems)
+            {
+                if (item is ToolStripMenuItem menuItem && menuItem.Tag is int)
+                {
+                    menuItem.Checked = (int)menuItem.Tag == intensity;
+                }
+            }
+
+            // Refresh the map if we're in altitude mode
+            if (_altitudeMode == MapAltitudeMode.NormalWithAltitude)
+            {
+                pictureBox.Invalidate();
+            }
+        }
+
+        private void OnAltitudePresetChanged(object sender, EventArgs e)
+        {
+            if (sender is not ToolStripMenuItem clickedItem || clickedItem.Tag is not string presetTag)
+            {
+                return;
+            }
+
+            // Update the preset setting
+            AltitudeShadingPreset newPreset = presetTag switch
+            {
+                "preset_sharp" => AltitudeShadingPreset.Sharp,
+                "preset_normal" => AltitudeShadingPreset.Normal,
+                "preset_soft" => AltitudeShadingPreset.Soft,
+                _ => AltitudeShadingPreset.Soft
+            };
+
+            Map.ShadingPreset = newPreset;
+
+            // Update checkmarks on preset items
+            foreach (ToolStripItem item in altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems)
+            {
+                if (item is ToolStripMenuItem menuItem && menuItem.Tag is string tag && tag.StartsWith("preset_"))
+                {
+                    menuItem.Checked = tag == presetTag;
+                }
+            }
+
+            // Refresh the map if we're in altitude mode
+            if (_altitudeMode == MapAltitudeMode.NormalWithAltitude)
+            {
+                pictureBox.Invalidate();
+            }
         }
     }
 

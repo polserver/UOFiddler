@@ -240,9 +240,9 @@ namespace UoFiddler.Controls.UserControls
         {
             string path = Options.OutputPath;
             Hues.Save(path);
-            MessageBox.Show($"Hue saved to {path}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Hues"] = false;
+
+            FileSavedDialog.Show(FindForm(), path, "Files saved successfully.");
         }
 
         private void OnTextChangedReplace(object sender, EventArgs e)

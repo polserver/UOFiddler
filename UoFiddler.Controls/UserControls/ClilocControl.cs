@@ -17,6 +17,7 @@ using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -277,13 +278,9 @@ namespace UoFiddler.Controls.UserControls
             _sortColumn = 0;
             _sortOrder = SortOrder.Ascending;
             dataGridView1.Invalidate();
-            MessageBox.Show(
-                $"CliLoc saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["CliLoc"] = false;
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "CliLoc saved successfully.");
         }
 
         private void OnCell_dbClick(object sender, DataGridViewCellEventArgs e)
@@ -444,7 +441,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            MessageBox.Show($"CliLoc saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "CliLoc saved successfully.");
         }
 
         private void OnClickImportCSV(object sender, EventArgs e)

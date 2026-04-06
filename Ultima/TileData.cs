@@ -249,6 +249,13 @@ namespace Ultima
                 return;
             }
 
+            // CSV may have been exported from an older client version that did not include extended HSA flags.
+            // Any missing flags default to 0, which is already set above.
+            if (i >= split.Length)
+            {
+                return;
+            }
+
             temp = Convert.ToByte(split[i++]);
             if (temp != 0)
             {
@@ -816,6 +823,13 @@ namespace Ultima
 
             // Read new flags if file format support them
             if (!Art.IsUOAHS())
+            {
+                return;
+            }
+
+            // CSV may have been exported from an older client version that did not include extended HSA flags.
+            // Any missing flags default to 0, which is already set above.
+            if (i >= split.Length)
             {
                 return;
             }

@@ -22,6 +22,10 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
         public override string Name => "TileDataItem";
 
+        // Minimum column counts: 44 for pre-HSA clients (1 ID + 11 fields + 32 flags),
+        // 75 for HSA clients (1 ID + 11 fields + 63 flags).
+        private const int _itemDataColumnsHsa = 75;
+
         protected override void TestFile(ref string message)
         {
             if (!File.Contains(".csv"))
@@ -32,6 +36,10 @@ namespace UoFiddler.Plugin.MassImport.Imports
             else
             {
                 Valid = GetTileDataInfo(File, ref message, ref _tiledata);
+                if (Valid && Ultima.Art.IsUOAHS() && _tiledata.Length < _itemDataColumnsHsa)
+                {
+                    message += " (old-format CSV: missing extended HSA flags will default to 0)";
+                }
             }
         }
 

@@ -88,6 +88,10 @@ namespace UoFiddler.Controls.UserControls
             this.showCenterCrossToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.showMarkersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showClientCrossToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.altitudeModeNormalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.altitudeModeNormalWithAltitudeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.altitudeModeAltitudeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.showClientLocToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -461,7 +465,11 @@ namespace UoFiddler.Controls.UserControls
             this.showStaticsToolStripMenuItem1,
             this.showCenterCrossToolStripMenuItem1,
             this.showMarkersToolStripMenuItem,
-            this.showClientCrossToolStripMenuItem});
+            this.showClientCrossToolStripMenuItem,
+            this.toolStripSeparator8,
+            this.altitudeModeNormalToolStripMenuItem,
+            this.altitudeModeNormalWithAltitudeToolStripMenuItem,
+            this.altitudeModeAltitudeToolStripMenuItem});
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 25);
@@ -504,8 +512,36 @@ namespace UoFiddler.Controls.UserControls
             this.showClientCrossToolStripMenuItem.CheckOnClick = true;
             this.showClientCrossToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showClientCrossToolStripMenuItem.Name = "showClientCrossToolStripMenuItem";
-            this.showClientCrossToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.showClientCrossToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.showClientCrossToolStripMenuItem.Text = "Show Client Cross";
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(217, 6);
+            // 
+            // altitudeModeNormalToolStripMenuItem
+            // 
+            this.altitudeModeNormalToolStripMenuItem.Checked = true;
+            this.altitudeModeNormalToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.altitudeModeNormalToolStripMenuItem.Name = "altitudeModeNormalToolStripMenuItem";
+            this.altitudeModeNormalToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.altitudeModeNormalToolStripMenuItem.Text = "Normal";
+            this.altitudeModeNormalToolStripMenuItem.Click += new System.EventHandler(this.OnAltitudeModeNormal);
+            // 
+            // altitudeModeNormalWithAltitudeToolStripMenuItem
+            // 
+            this.altitudeModeNormalWithAltitudeToolStripMenuItem.Name = "altitudeModeNormalWithAltitudeToolStripMenuItem";
+            this.altitudeModeNormalWithAltitudeToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.altitudeModeNormalWithAltitudeToolStripMenuItem.Text = "Normal + Altitude";
+            this.altitudeModeNormalWithAltitudeToolStripMenuItem.Click += new System.EventHandler(this.OnAltitudeModeNormalWithAltitude);
+            // 
+            // altitudeModeAltitudeToolStripMenuItem
+            // 
+            this.altitudeModeAltitudeToolStripMenuItem.Name = "altitudeModeAltitudeToolStripMenuItem";
+            this.altitudeModeAltitudeToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.altitudeModeAltitudeToolStripMenuItem.Text = "Altitude Map";
+            this.altitudeModeAltitudeToolStripMenuItem.Click += new System.EventHandler(this.OnAltitudeModeAltitude);
             // 
             // toolStripDropDownButton2
             // 
@@ -757,6 +793,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem altitudeModeAltitudeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem altitudeModeNormalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem altitudeModeNormalWithAltitudeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearStaticsinMemoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel ClientLocLabel;
         private UoFiddler.Controls.UserControls.CollapsibleSplitter collapsibleSplitter1;
@@ -816,6 +855,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem trammelToolStripMenuItem;
         private System.Windows.Forms.VScrollBar vScrollBar;

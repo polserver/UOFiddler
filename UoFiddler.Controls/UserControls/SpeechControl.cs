@@ -15,6 +15,7 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -215,10 +216,9 @@ namespace UoFiddler.Controls.UserControls
 
             dataGridView1.Invalidate();
 
-            MessageBox.Show($"Speech saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
-
             Options.ChangedUltimaClass["Speech"] = false;
+
+            FileSavedDialog.Show(FindForm(), fileName, "Speech saved successfully.");
         }
 
         private void OnAddEntry(object sender, EventArgs e)

@@ -16,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
 
 namespace UoFiddler.Controls.UserControls
@@ -328,8 +329,7 @@ namespace UoFiddler.Controls.UserControls
 
                     Cursor.Current = Cursors.Default;
 
-                    MessageBox.Show($"MultiMap saved to {fileName}", "Convert",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    FileSavedDialog.Show(FindForm(), fileName, "MultiMap saved successfully.");
                 }
                 catch (FileNotFoundException)
                 {
@@ -364,8 +364,7 @@ namespace UoFiddler.Controls.UserControls
 
                     Cursor.Current = Cursors.Default;
 
-                    MessageBox.Show($"Facet saved to {fileName}", "Convert", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    FileSavedDialog.Show(FindForm(), fileName, "Facet saved successfully.");
                 }
                 catch (FileNotFoundException)
                 {

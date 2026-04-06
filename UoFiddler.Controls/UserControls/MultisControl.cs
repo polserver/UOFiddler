@@ -384,8 +384,7 @@ namespace UoFiddler.Controls.UserControls
 
                 SaveImage(multiBitmap, fileName, imageFormat, backgroundColor);
 
-                MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1);
+                FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
             }
         }
 
@@ -489,8 +488,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.txt");
             multi.ExportToTextFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
 
         private void OnExportWscFile(object sender, EventArgs e)
@@ -511,8 +510,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.wsc");
             multi.ExportToWscFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
 
         private void OnExportUOAFile(object sender, EventArgs e)
@@ -533,16 +532,16 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X}.uoa");
             multi.ExportToUOAFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
 
         private void OnClickSave(object sender, EventArgs e)
         {
             Multis.Save(Options.OutputPath);
-            MessageBox.Show($"Saved to {Options.OutputPath}", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
             Options.ChangedUltimaClass["Multis"] = false;
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickRemove(object sender, EventArgs e)

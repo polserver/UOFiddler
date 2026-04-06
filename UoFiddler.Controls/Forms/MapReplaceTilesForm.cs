@@ -71,8 +71,7 @@ namespace UoFiddler.Controls.Forms
 
                 richTextBox1.AppendText("Done.");
 
-                MessageBox.Show($"Files saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
             }
             finally
             {
