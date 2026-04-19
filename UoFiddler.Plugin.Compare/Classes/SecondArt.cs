@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Ultima;
@@ -13,10 +14,13 @@ namespace UoFiddler.Plugin.Compare.Classes
         private static byte[] _streamBuffer;
         private static byte[] _validBuffer;
 
+        internal static event Action FileIndexChanged;
+
         public static void SetFileIndex(string idxPath, string mulPath)
         {
             _fileIndex = new SecondFileIndex(idxPath, mulPath, 0x14000);
             _cache = new Bitmap[0x14000];
+            FileIndexChanged?.Invoke();
         }
 
         public static int GetMaxItemId()
@@ -56,6 +60,11 @@ namespace UoFiddler.Plugin.Compare.Classes
         private static int GetIdxLength()
         {
             return (int)(_fileIndex.IdxLength / 12);
+        }
+
+        public static bool IsUOAHS()
+        {
+            return GetIdxLength() >= 0x13FDC;
         }
 
         public static bool IsValidStatic(int index)

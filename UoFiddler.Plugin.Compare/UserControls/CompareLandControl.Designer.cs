@@ -40,13 +40,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listBoxOrg = new System.Windows.Forms.ListBox();
+            this.tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            this.btnCopyAllDiff = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBoxSec = new System.Windows.Forms.PictureBox();
             this.pictureBoxOrg = new System.Windows.Forms.PictureBox();
             this.textBoxSecondDir = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.listBoxSec = new System.Windows.Forms.ListBox();
+            this.tileViewSec = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,21 +67,23 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // listBoxOrg
-            // 
-            this.listBoxOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxOrg.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxOrg.FormattingEnabled = true;
-            this.listBoxOrg.IntegralHeight = false;
-            this.listBoxOrg.Location = new System.Drawing.Point(4, 3);
-            this.listBoxOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.listBoxOrg.Name = "listBoxOrg";
-            this.listBoxOrg.Size = new System.Drawing.Size(188, 364);
-            this.listBoxOrg.TabIndex = 0;
-            this.listBoxOrg.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.DrawitemOrg);
-            this.listBoxOrg.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.MeasureOrg);
-            this.listBoxOrg.SelectedIndexChanged += new System.EventHandler(this.OnIndexChangedOrg);
+            //
+            // tileViewOrg
+            //
+            this.tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tileViewOrg.Location = new System.Drawing.Point(4, 3);
+            this.tileViewOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tileViewOrg.Name = "tileViewOrg";
+            this.tileViewOrg.Size = new System.Drawing.Size(188, 364);
+            this.tileViewOrg.TabIndex = 0;
+            this.tileViewOrg.TileSize = new System.Drawing.Size(188, 13);
+            this.tileViewOrg.TileMargin = new System.Windows.Forms.Padding(0);
+            this.tileViewOrg.TilePadding = new System.Windows.Forms.Padding(0);
+            this.tileViewOrg.TileBorderWidth = 0f;
+            this.tileViewOrg.TileHighLightOpacity = 0.0;
+            this.tileViewOrg.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItemOrg);
+            this.tileViewOrg.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChangedOrg);
+            this.tileViewOrg.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -135,8 +138,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45.45454F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.tableLayoutPanel2.Controls.Add(this.listBoxOrg, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.listBoxSec, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.tileViewOrg, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.tileViewSec, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel1, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
@@ -146,22 +149,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(719, 370);
             this.tableLayoutPanel2.TabIndex = 8;
-            // 
-            // listBoxSec
-            // 
-            this.listBoxSec.ContextMenuStrip = this.contextMenuStrip1;
-            this.listBoxSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxSec.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxSec.FormattingEnabled = true;
-            this.listBoxSec.IntegralHeight = false;
-            this.listBoxSec.Location = new System.Drawing.Point(526, 3);
-            this.listBoxSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.listBoxSec.Name = "listBoxSec";
-            this.listBoxSec.Size = new System.Drawing.Size(189, 364);
-            this.listBoxSec.TabIndex = 1;
-            this.listBoxSec.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.DrawItemSec);
-            this.listBoxSec.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.MeasureSec);
-            this.listBoxSec.SelectedIndexChanged += new System.EventHandler(this.OnIndexChangedSec);
+            //
+            // tileViewSec
+            //
+            this.tileViewSec.ContextMenuStrip = this.contextMenuStrip1;
+            this.tileViewSec.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tileViewSec.Location = new System.Drawing.Point(526, 3);
+            this.tileViewSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tileViewSec.Name = "tileViewSec";
+            this.tileViewSec.Size = new System.Drawing.Size(189, 364);
+            this.tileViewSec.TabIndex = 1;
+            this.tileViewSec.TileSize = new System.Drawing.Size(189, 13);
+            this.tileViewSec.TileMargin = new System.Windows.Forms.Padding(0);
+            this.tileViewSec.TilePadding = new System.Windows.Forms.Padding(0);
+            this.tileViewSec.TileBorderWidth = 0f;
+            this.tileViewSec.TileHighLightOpacity = 0.0;
+            this.tileViewSec.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItemSec);
+            this.tileViewSec.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChangedSec);
+            this.tileViewSec.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnDoubleClickSec);
+            this.tileViewSec.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
             // 
             // contextMenuStrip1
             // 
@@ -200,9 +206,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile 2 to 1";
             this.copyLandTile2To1ToolStripMenuItem.Click += new System.EventHandler(this.OnClickCopy);
-            // 
+            //
+            // btnCopyAllDiff
+            //
+            this.btnCopyAllDiff.AutoSize = true;
+            this.btnCopyAllDiff.Location = new System.Drawing.Point(594, 11);
+            this.btnCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnCopyAllDiff.Name = "btnCopyAllDiff";
+            this.btnCopyAllDiff.Size = new System.Drawing.Size(99, 29);
+            this.btnCopyAllDiff.TabIndex = 9;
+            this.btnCopyAllDiff.Text = "Copy All Diff";
+            this.btnCopyAllDiff.UseVisualStyleBackColor = true;
+            this.btnCopyAllDiff.Click += new System.EventHandler(this.OnClickCopyAllDiff);
+            //
             // checkBox1
-            // 
+            //
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(439, 15);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -242,6 +260,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnCopyAllDiff);
             this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.textBoxSecondDir);
             this.splitContainer1.Panel2.Controls.Add(this.checkBox1);
@@ -292,14 +311,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
+        private System.Windows.Forms.Button btnCopyAllDiff;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyLandTile2To1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
-        private System.Windows.Forms.ListBox listBoxOrg;
-        private System.Windows.Forms.ListBox listBoxSec;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewOrg;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewSec;
         private System.Windows.Forms.PictureBox pictureBoxOrg;
         private System.Windows.Forms.PictureBox pictureBoxSec;
         private System.Windows.Forms.SplitContainer splitContainer1;

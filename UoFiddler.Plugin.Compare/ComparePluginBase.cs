@@ -34,7 +34,9 @@ namespace UoFiddler.Plugin.Compare
             + "Compares 2 Map files\r\n"
             + "Compares 2 Gump files\r\n"
             + "Compares 2 Texture files\r\n"
-            + "(Adds 7 new Tabs)";
+            + "Compares 2 AnimData files\r\n"
+            + "Compares 2 RadarCol files\r\n"
+            + "(Adds 9 new Tabs)";
 
         /// <summary>
         /// Author of the plugin
@@ -133,6 +135,7 @@ namespace UoFiddler.Plugin.Compare
             };
             page6.Controls.Add(compM);
             tabControl.TabPages.Add(page6);
+
             TabPage page7 = new TabPage
             {
                 Tag = tabControl.TabCount + 1,
@@ -144,6 +147,42 @@ namespace UoFiddler.Plugin.Compare
             };
             page7.Controls.Add(compTextureControl);
             tabControl.TabPages.Add(page7);
+
+            TabPage page8 = new TabPage
+            {
+                Tag = tabControl.TabCount + 1,
+                Text = "Compare AnimData"
+            };
+            CompareAnimDataControl compAnimData = new CompareAnimDataControl
+            {
+                Dock = DockStyle.Fill
+            };
+            page8.Controls.Add(compAnimData);
+            tabControl.TabPages.Add(page8);
+
+            TabPage page9 = new TabPage
+            {
+                Tag = tabControl.TabCount + 1,
+                Text = "Compare RadarCol"
+            };
+            CompareRadarColControl compRadarCol = new CompareRadarColControl
+            {
+                Dock = DockStyle.Fill
+            };
+            page9.Controls.Add(compRadarCol);
+            tabControl.TabPages.Add(page9);
+
+            TabPage page10 = new TabPage
+            {
+                Tag = tabControl.TabCount + 1,
+                Text = "Compare TileData"
+            };
+            CompareTileDataControl compTileDataControl = new CompareTileDataControl
+            {
+                Dock = DockStyle.Fill
+            };
+            page10.Controls.Add(compTileDataControl);
+            tabControl.TabPages.Add(page10);
         }
 
         public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)

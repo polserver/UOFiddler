@@ -1,9 +1,9 @@
-﻿/***************************************************************************
+/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -18,6 +18,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.Compare.Classes;
 
 namespace UoFiddler.Plugin.Compare.UserControls
@@ -27,12 +28,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
         public CompareGumpControl()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly SHA256 _sha256 = SHA256.Create();
-
+        private readonly List<int> _displayIndices = new List<int>();
+        private bool _syncingSelection;
         private bool _loaded;
 
         private void OnLoad(object sender, EventArgs e)
@@ -40,19 +41,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Gumps"] = true;
 
-            listBox1.BeginUpdate();
-            listBox1.Items.Clear();
-            List<object> cache = new List<object>();
+            _displayIndices.Clear();
             for (int i = 0; i < 0x10000; i++)
             {
-                cache.Add(i);
+                _displayIndices.Add(i);
             }
-            listBox1.Items.AddRange(cache.ToArray());
-            listBox1.EndUpdate();
-            listBox2.Items.Clear();
-            if (listBox1.Items.Count > 0)
+
+            tileView1.VirtualListSize = _displayIndices.Count;
+            tileView2.VirtualListSize = 0;
+
+            if (_displayIndices.Count > 0)
             {
-                listBox1.SelectedIndex = 0;
+                tileView1.FocusIndex = 0;
             }
 
             if (!_loaded)
@@ -73,45 +73,56 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             if (_loaded)
             {
-                OnLoad(EventArgs.Empty);
+                OnLoad(this, EventArgs.Empty);
             }
         }
 
-        private void Listbox1_DrawItem(object sender, DrawItemEventArgs e)
+        private void OnTileViewSizeChanged(object sender, EventArgs e)
         {
-            ListBox listBox = (ListBox)sender;
-            if (e.Index < 0)
+            var tv = (TileViewControl)sender;
+            int w = tv.DisplayRectangle.Width;
+            if (w > 0 && tv.TileSize.Width != w)
             {
-                return;
+                tv.TileSize = new Size(w, tv.TileSize.Height);
+            }
+        }
+
+        private void OnDrawItem1(object sender, TileViewControl.DrawTileListItemEventArgs e)
+        {
+            DrawGumpItem(e, _displayIndices[e.Index], isSecondary: false);
+        }
+
+        private void OnDrawItem2(object sender, TileViewControl.DrawTileListItemEventArgs e)
+        {
+            DrawGumpItem(e, _displayIndices[e.Index], isSecondary: true);
+        }
+
+        private void DrawGumpItem(DrawItemEventArgs e, int i, bool isSecondary)
+        {
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
             }
 
+            bool valid = isSecondary ? SecondGump.IsValidIndex(i) : Gumps.IsValidIndex(i);
             Brush fontBrush = Brushes.Gray;
-
-            int i = (int)listBox.Items[e.Index];
-
-            if (listBox.SelectedIndex == e.Index)
-            {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-
-            bool valid = (int)listBox.Tag == 1 ? Gumps.IsValidIndex(i) : SecondGump.IsValidIndex(i);
 
             if (valid)
             {
-                Bitmap bmp = (int)listBox.Tag == 1 ? Gumps.GetGump(i) : SecondGump.GetGump(i);
-
+                Bitmap bmp = isSecondary ? SecondGump.GetGump(i) : Gumps.GetGump(i);
                 if (bmp != null)
                 {
-                    if (listBox2.Items.Count > 0)
+                    if (tileView2.VirtualListSize > 0 && !Compare(i))
                     {
-                        if (!Compare(i))
-                        {
-                            fontBrush = Brushes.Blue;
-                        }
+                        fontBrush = Brushes.Blue;
                     }
-                    int width = bmp.Width > 80 ? 80 : bmp.Width;
-                    int height = bmp.Height > 54 ? 54 : bmp.Height;
 
+                    int width  = bmp.Width  > 80 ? 80 : bmp.Width;
+                    int height = bmp.Height > 54 ? 54 : bmp.Height;
                     e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 3, width, height));
                 }
                 else
@@ -124,79 +135,70 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 fontBrush = Brushes.Red;
             }
 
-            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
-                new PointF(85,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2))));
+            string label = $"0x{i:X}";
+            float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, Font).Height) / 2f;
+            e.Graphics.DrawString(label, Font, fontBrush, new PointF(85, y));
         }
 
-        private void Listbox_measureItem(object sender, MeasureItemEventArgs e)
+        private void OnFocusChanged1(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
         {
-            e.ItemHeight = 60;
-        }
-
-        private void Listbox_SelectedChange(object sender, EventArgs e)
-        {
-            ListBox listBox = (ListBox)sender;
-            if (listBox.SelectedIndex == -1)
+            if (e.FocusedItemIndex < 0)
             {
                 return;
             }
 
-            int i = (int)listBox.Items[listBox.SelectedIndex];
-            bool valid;
-            if ((int)listBox.Tag == 1)
+            int i = _displayIndices[e.FocusedItemIndex];
+
+            if (tileView2.VirtualListSize > 0)
             {
-                valid = Gumps.IsValidIndex(i);
-                if (listBox2.Items.Count > 0)
+                if (_syncingSelection)
                 {
-                    listBox2.SelectedIndex = listBox2.Items.IndexOf(i);
+                    return;
                 }
+
+                _syncingSelection = true;
+                try { tileView2.FocusIndex = e.FocusedItemIndex; }
+                finally { _syncingSelection = false; }
             }
-            else
+
+            UpdatePictureBox(pictureBox1, i, isSecondary: false);
+            UpdatePictureBox(pictureBox2, i, isSecondary: true);
+        }
+
+        private void OnFocusChanged2(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
+        {
+            if (e.FocusedItemIndex < 0)
             {
-                valid = SecondGump.IsValidIndex(i);
-                listBox1.SelectedIndex = listBox1.Items.IndexOf(i);
+                return;
             }
+
+            int i = _displayIndices[e.FocusedItemIndex];
+
+            if (_syncingSelection)
+            {
+                return;
+            }
+
+            _syncingSelection = true;
+            try { tileView1.FocusIndex = e.FocusedItemIndex; }
+            finally { _syncingSelection = false; }
+
+            UpdatePictureBox(pictureBox1, i, isSecondary: false);
+            UpdatePictureBox(pictureBox2, i, isSecondary: true);
+        }
+
+        private void UpdatePictureBox(PictureBox box, int i, bool isSecondary)
+        {
+            bool valid = isSecondary ? SecondGump.IsValidIndex(i) : Gumps.IsValidIndex(i);
             if (valid)
             {
-                Bitmap bmp = (int)listBox.Tag == 1 ? Gumps.GetGump(i) : SecondGump.GetGump(i);
-
-                if (bmp != null)
-                {
-                    if ((int)listBox.Tag == 1)
-                    {
-                        pictureBox1.BackgroundImage = bmp;
-                    }
-                    else
-                    {
-                        pictureBox2.BackgroundImage = bmp;
-                    }
-                }
-                else
-                {
-                    if ((int)listBox.Tag == 1)
-                    {
-                        pictureBox1.BackgroundImage = null;
-                    }
-                    else
-                    {
-                        pictureBox2.BackgroundImage = null;
-                    }
-                }
+                Bitmap bmp = isSecondary ? SecondGump.GetGump(i) : Gumps.GetGump(i);
+                box.BackgroundImage = bmp;
             }
             else
             {
-                if ((int)listBox.Tag == 1)
-                {
-                    pictureBox1.BackgroundImage = null;
-                }
-                else
-                {
-                    pictureBox2.BackgroundImage = null;
-                }
+                box.BackgroundImage = null;
             }
-            listBox.Invalidate();
         }
 
         private void Browse_OnClick(object sender, EventArgs e)
@@ -219,8 +221,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            string path = textBoxSecondDir.Text;
-            string file = Path.Combine(path, "gumpart.mul");
+            string path  = textBoxSecondDir.Text;
+            string file  = Path.Combine(path, "gumpart.mul");
             string file2 = Path.Combine(path, "gumpidx.mul");
             if (File.Exists(file) && File.Exists(file2))
             {
@@ -232,16 +234,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void LoadSecond()
         {
             _compare.Clear();
-            listBox2.BeginUpdate();
-            listBox2.Items.Clear();
-            List<object> cache = new List<object>();
-            for (int i = 0; i < 0x10000; i++)
-            {
-                cache.Add(i);
-            }
-            listBox2.Items.AddRange(cache.ToArray());
-            listBox2.EndUpdate();
-            listBox1.Invalidate();
+            tileView2.VirtualListSize = _displayIndices.Count;
+            tileView1.Invalidate();
         }
 
         private bool Compare(int index)
@@ -253,14 +247,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             byte[] org = Gumps.GetRawGump(index, out int width1, out int height1);
             byte[] sec = SecondGump.GetRawGump(index, out int width2, out int height2);
-            bool res = false;
+            bool res;
 
             if (org == null && sec == null)
             {
                 res = true;
             }
-            else if (org == null || sec == null
-                                || org.Length != sec.Length)
+            else if (org == null || sec == null || org.Length != sec.Length)
             {
                 res = false;
             }
@@ -270,20 +263,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             else
             {
-                string hash1String = BitConverter.ToString(_sha256.ComputeHash(org));
-                string hash2String = BitConverter.ToString(_sha256.ComputeHash(sec));
-                if (hash1String == hash2String)
-                {
-                    res = true;
-                }
+                string hash1 = BitConverter.ToString(_sha256.ComputeHash(org));
+                string hash2 = BitConverter.ToString(_sha256.ComputeHash(sec));
+                res = hash1 == hash2;
             }
+
             _compare[index] = res;
             return res;
         }
 
         private void ShowDiff_OnClick(object sender, EventArgs e)
         {
-            if (_compare.Count < 1)
+            if (tileView2.VirtualListSize == 0)
             {
                 if (checkBox1.Checked)
                 {
@@ -292,19 +283,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
                 return;
             }
+
             Cursor.Current = Cursors.WaitCursor;
-            listBox1.BeginUpdate();
-            listBox2.BeginUpdate();
-            listBox1.Items.Clear();
-            listBox2.Items.Clear();
-            List<object> cache = new List<object>();
+            _displayIndices.Clear();
             if (checkBox1.Checked)
             {
                 for (int i = 0; i < 0x10000; i++)
                 {
                     if (!Compare(i))
                     {
-                        cache.Add(i);
+                        _displayIndices.Add(i);
                     }
                 }
             }
@@ -312,72 +300,66 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 for (int i = 0; i < 0x10000; i++)
                 {
-                    cache.Add(i);
+                    _displayIndices.Add(i);
                 }
             }
-            listBox1.Items.AddRange(cache.ToArray());
-            listBox2.Items.AddRange(cache.ToArray());
-            listBox1.EndUpdate();
-            listBox2.EndUpdate();
+
+            tileView1.VirtualListSize = _displayIndices.Count;
+            tileView2.VirtualListSize = _displayIndices.Count;
             Cursor.Current = Cursors.Default;
         }
 
         private void Export_Bmp(object sender, EventArgs e)
         {
-            if (listBox2.SelectedIndex == -1)
+            int focusIdx = tileView2.FocusIndex;
+            if (focusIdx < 0)
             {
                 return;
             }
 
-            int i = int.Parse(listBox2.Items[listBox2.SelectedIndex].ToString());
+            int i = _displayIndices[focusIdx];
             if (!SecondGump.IsValidIndex(i))
             {
                 return;
             }
 
-            string path = Options.OutputPath;
+            string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.bmp");
             SecondGump.GetGump(i).Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show(
-                $"Gump saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Gump saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void Export_Tiff(object sender, EventArgs e)
         {
-            if (listBox2.SelectedIndex == -1)
+            int focusIdx = tileView2.FocusIndex;
+            if (focusIdx < 0)
             {
                 return;
             }
 
-            int i = int.Parse(listBox2.Items[listBox2.SelectedIndex].ToString());
+            int i = _displayIndices[focusIdx];
             if (!SecondGump.IsValidIndex(i))
             {
                 return;
             }
 
-            string path = Options.OutputPath;
+            string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.tiff");
             SecondGump.GetGump(i).Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show(
-                $"Gump saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Gump saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickCopy(object sender, EventArgs e)
         {
-            if (listBox2.SelectedIndex == -1)
+            int focusIdx = tileView2.FocusIndex;
+            if (focusIdx < 0)
             {
                 return;
             }
 
-            int i = (int)listBox2.Items[listBox2.SelectedIndex];
+            int i = _displayIndices[focusIdx];
             if (!SecondGump.IsValidIndex(i))
             {
                 return;
@@ -388,31 +370,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Options.ChangedUltimaClass["Gumps"] = true;
             ControlEvents.FireGumpChangeEvent(this, i);
             _compare[i] = true;
-            listBox1.BeginUpdate();
-            bool done = false;
-            for (int id = 0; id < 0x10000; id++)
-            {
-                if (id > i)
-                {
-                    listBox1.Items.Insert(id, i);
-                    done = true;
-                    break;
-                }
-                if (id == i)
-                {
-                    done = true;
-                    break;
-                }
-            }
-            if (!done)
-            {
-                listBox1.Items.Add(i);
-            }
 
-            listBox1.EndUpdate();
-            listBox1.Invalidate();
-            listBox2.Invalidate();
-            Listbox_SelectedChange(listBox1, null);
+            tileView1.Invalidate();
+            tileView2.Invalidate();
+
+            UpdatePictureBox(pictureBox1, i, isSecondary: false);
         }
     }
 }
