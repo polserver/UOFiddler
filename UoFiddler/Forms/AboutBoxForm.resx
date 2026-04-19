@@ -118,7 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.17.9
+    <value>Version 4.18.0
+- Small fix for animdata control layout
+- Verdata preview tab added to browse contents of verdata.mul (if present). It's still work in progress.
+- Main windows tabs can now be scrolled with mouse wheel.
+- New save file confirmation dialog with open output folder button (thank you SilkySnow_ for the idea and initial PR)
+- Multi editor has some new options: line draw, rectangle fill, undo/redo, brush size S/M/L and delete that allows selecting range (needs to be used with virtual floor for best effect).
+- Updated compare plugins. Added compare animdata, radarcol and tiledata.
+- Added Gumplist.xml that allows to add descriptions and tags to gump list.
+
+Version 4.17.9
 - Added the option to display the hue index as it is ingame in every client and server (author Lichtblitz)
 
 Version 4.17.8
