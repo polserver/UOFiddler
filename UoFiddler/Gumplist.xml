@@ -1,0 +1,942 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Gumps>
+  <!-- id: gump index (decimal or 0x hex prefix accepted) -->
+  <!-- name: display name shown in the listbox -->
+  <!-- tags: comma-separated filter tags -->
+  <!-- Example: <Gump id="0" name="Player Paperdoll" tags="player,paperdoll,character" /> -->
+  <!-- <Gump id="" name="" tags="" /> -->
+  <Gump id="60" name="backpack" tags="container" />
+  <Gump id="61" name="bag" tags="container" />
+  <Gump id="62" name="barrel" tags="container" />
+  <Gump id="63" name="basket" tags="container" />
+  <Gump id="64" name="pouch" tags="container" />
+  <Gump id="65" name="basket" tags="container" />
+  <Gump id="66" name="chest" tags="container" />
+  <Gump id="67" name="small chest" tags="container" />
+  <Gump id="68" name="crate" tags="container" />
+  <Gump id="71" name="cloth?" tags="container" />
+  <Gump id="72" name="drawer" tags="container" />
+  <Gump id="73" name="wooden chest" tags="container" />
+  <Gump id="74" name="silver chest" tags="container" />
+  <Gump id="75" name="strong box" tags="container" />
+  <Gump id="76" name="hold" tags="container" />
+  <Gump id="77" name="bookshelf" tags="container" />
+  <Gump id="78" name="armoire" tags="container" />
+  <Gump id="79" name="armoire" tags="container" />
+  <Gump id="80" name="backpack icon" tags="container" />
+  <Gump id="81" name="drawer" tags="container" />
+  <Gump id="120" name="[F] savage" tags="paperdoll" />
+  <Gump id="121" name="[M] savage" tags="paperdoll" />
+  <Gump id="258" name="present box" tags="container" />
+  <Gump id="259" name="xmas sock" tags="container" />
+  <Gump id="260" name="drawer" tags="container" />
+  <Gump id="261" name="drawer" tags="container" />
+  <Gump id="262" name="drawer" tags="container" />
+  <Gump id="263" name="drawer" tags="container" />
+  <Gump id="264" name="basket" tags="container" />
+  <Gump id="265" name="drawer" tags="container" />
+  <Gump id="266" name="drawer" tags="container" />
+  <Gump id="267" name="drawer" tags="container" />
+  <Gump id="268" name="drawer" tags="container" />
+  <Gump id="269" name="drawer" tags="container" />
+  <Gump id="270" name="drawer" tags="container" />
+  <Gump id="50335" name="[M] Gargish Kite Shield" tags="equipment,male,two-hand" />
+  <Gump id="50336" name="[M] Gargish Wooden Shiel" tags="equipment,male,two-hand" />
+  <Gump id="50337" name="[M] Large Plate Shield" tags="equipment,male,two-hand" />
+  <Gump id="50338" name="[M] Medium Plate Shield" tags="equipment,male,two-hand" />
+  <Gump id="50339" name="[M] Small Plate Shield" tags="equipment,male,two-hand" />
+  <Gump id="50340" name="[M] Large Stone Shield" tags="equipment,male,two-hand" />
+  <Gump id="50341" name="[M] Gargish Fancy Robe" tags="equipment,male,robe" />
+  <Gump id="50342" name="[M] Gargish Robe" tags="equipment,male,robe" />
+  <Gump id="50343" name="[M] Gargish Chaos Shield" tags="equipment,male,two-hand" />
+  <Gump id="50344" name="[M] Gargish Order Shield" tags="equipment,male,two-hand" />
+  <Gump id="50404" name="[M] floppy hat" tags="equipment,male,helmet" />
+  <Gump id="50405" name="[M] wide-brim hat" tags="equipment,male,helmet" />
+  <Gump id="50406" name="[M] cap" tags="equipment,male,helmet" />
+  <Gump id="50407" name="[M] tall straw hat" tags="equipment,male,helmet" />
+  <Gump id="50408" name="[M] straw hat" tags="equipment,male,helmet" />
+  <Gump id="50409" name="[M] wizard's hat" tags="equipment,male,helmet" />
+  <Gump id="50410" name="[M] bonnet" tags="equipment,male,helmet" />
+  <Gump id="50411" name="[M] feathered hat" tags="equipment,male,helmet" />
+  <Gump id="50412" name="[M] tricorne hat" tags="equipment,male,helmet" />
+  <Gump id="50413" name="[M] jester hat" tags="equipment,male,helmet" />
+  <Gump id="50414" name="[M] bear mask" tags="equipment,male,helmet" />
+  <Gump id="50415" name="[M] deer mask" tags="equipment,male,helmet" />
+  <Gump id="50416" name="[M] orc mask" tags="equipment,male,helmet" />
+  <Gump id="50417" name="[M] tribal mask" tags="equipment,male,helmet" />
+  <Gump id="50418" name="[M] tribal mask" tags="equipment,male,helmet" />
+  <Gump id="50419" name="[M] skullcap" tags="equipment,male,helmet" />
+  <Gump id="50422" name="[M] backpack" tags="equipment,male,backpack" />
+  <Gump id="50423" name="[M] Leather Ninja Pants" tags="equipment,male,pants" />
+  <Gump id="50424" name="[M] Leather Ninja Mitts" tags="equipment,male,gloves" />
+  <Gump id="50425" name="[M] Leather Ninja Hood" tags="equipment,male,helmet" />
+  <Gump id="50426" name="[M] Leather Ninja Jacket" tags="equipment,male,chest-armor" />
+  <Gump id="50427" name="[M] MysticSpellBook East" tags="equipment,male,one-hand" />
+  <Gump id="50430" name="[M] short pants" tags="equipment,male,pants" />
+  <Gump id="50431" name="[M] long pants" tags="equipment,male,pants" />
+  <Gump id="50433" name="[M] Halloween Mask" tags="equipment,male,one-hand" />
+  <Gump id="50434" name="[M] shirt" tags="equipment,male,shirt" />
+  <Gump id="50435" name="[M] fancy shirt" tags="equipment,male,shirt" />
+  <Gump id="50436" name="[M] Gargish Bracelet" tags="equipment,male,bracelet" />
+  <Gump id="50437" name="[M] Gargish Earrings" tags="equipment,male,earring" />
+  <Gump id="50438" name="[M] Gargish Ring" tags="equipment,male,ring" />
+  <Gump id="50439" name="[M] Gargish Necklace" tags="equipment,male,gorget" />
+  <Gump id="50442" name="[M] Mail Hatsuburi" tags="equipment,male,helmet" />
+  <Gump id="50443" name="[M] Plate Hatsuburi" tags="equipment,male,helmet" />
+  <Gump id="50444" name="[M] Leather Jingasa" tags="equipment,male,helmet" />
+  <Gump id="50445" name="[M] Plate Jingasa" tags="equipment,male,helmet" />
+  <Gump id="50446" name="[M] Plate Jingasa" tags="equipment,male,helmet" />
+  <Gump id="50447" name="[M] plain dress" tags="equipment,male,robe" />
+  <Gump id="50448" name="[M] fancy dress" tags="equipment,male,robe" />
+  <Gump id="50449" name="[M] skirt" tags="equipment,male,skirt" />
+  <Gump id="50450" name="[M] Plate Jingasa" tags="equipment,male,helmet" />
+  <Gump id="50451" name="[M] Plate Kabuto" tags="equipment,male,helmet" />
+  <Gump id="50455" name="[M] kilt" tags="equipment,male,skirt" />
+  <Gump id="50456" name="[M] Plate Mempo" tags="equipment,male,gorget" />
+  <Gump id="50457" name="[M] Leather Do" tags="equipment,male,chest-armor" />
+  <Gump id="50458" name="[M] Studded Do" tags="equipment,male,chest-armor" />
+  <Gump id="50459" name="[M] Plate Do" tags="equipment,male,chest-armor" />
+  <Gump id="50462" name="[M] Plate Kabuto" tags="equipment,male,helmet" />
+  <Gump id="50463" name="[M] Plate Kabuto" tags="equipment,male,helmet" />
+  <Gump id="50464" name="[M] Wakizashi" tags="equipment,male,one-hand" />
+  <Gump id="50465" name="[M] full apron" tags="equipment,male,tunic" />
+  <Gump id="50466" name="[M] half apron" tags="equipment,male,waist" />
+  <Gump id="50467" name="[M] Bokuto" tags="equipment,male,one-hand" />
+  <Gump id="50468" name="[M] cloak" tags="equipment,male,cloak" />
+  <Gump id="50469" name="[M] robe" tags="equipment,male,robe" />
+  <Gump id="50470" name="[M] Daisho" tags="equipment,male,two-hand" />
+  <Gump id="50471" name="[M] Leather Mempo" tags="equipment,male,gorget" />
+  <Gump id="50472" name="[M] Studded Mempo" tags="equipment,male,gorget" />
+  <Gump id="50473" name="[M] Samurai Armor Arms" tags="equipment,male,sleeves" />
+  <Gump id="50474" name="[M] Samurai Armor Arms" tags="equipment,male,sleeves" />
+  <Gump id="50475" name="[M] Female Gargoyle Horn" tags="equipment,male,hair" />
+  <Gump id="50476" name="[M] thigh boots" tags="equipment,male,boots" />
+  <Gump id="50477" name="[M] boots" tags="equipment,male,boots" />
+  <Gump id="50478" name="[M] Samurai Armor Arms" tags="equipment,male,sleeves" />
+  <Gump id="50479" name="[M] sandals" tags="equipment,male,boots" />
+  <Gump id="50480" name="[M] shoes" tags="equipment,male,boots" />
+  <Gump id="50483" name="[M] Male Gargoyle Horns" tags="equipment,male,hair" />
+  <Gump id="50484" name="[M] fur surong" tags="equipment,male,skirt" />
+  <Gump id="50485" name="[M] Male Gargoyle Horns" tags="equipment,male,hair" />
+  <Gump id="50487" name="[M] Leather Suneate" tags="equipment,male,pants" />
+  <Gump id="50488" name="[M] Studded Suneate" tags="equipment,male,pants" />
+  <Gump id="50489" name="[M] Plate Suneate" tags="equipment,male,pants" />
+  <Gump id="50490" name="[M] body sash" tags="equipment,male,tunic" />
+  <Gump id="50491" name="[M] Leather Haidate" tags="equipment,male,pants" />
+  <Gump id="50492" name="[M] bandana" tags="equipment,male,helmet" />
+  <Gump id="50493" name="[M] necklace" tags="equipment,male,gorget" />
+  <Gump id="50494" name="[M] necklace" tags="equipment,male,gorget" />
+  <Gump id="50495" name="[M] bracelet" tags="equipment,male,bracelet" />
+  <Gump id="50496" name="[M] earrings" tags="equipment,male,earring" />
+  <Gump id="50497" name="[M] necklace" tags="equipment,male,gorget" />
+  <Gump id="50498" name="[M] ring" tags="equipment,male,ring" />
+  <Gump id="50499" name="[M] Male Gargoyle Head H" tags="equipment,male,hair" />
+  <Gump id="50500" name="[M] lantern" tags="equipment,male,two-hand" />
+  <Gump id="50501" name="[M] torch" tags="equipment,male,two-hand" />
+  <Gump id="50502" name="[M] candle" tags="equipment,male,two-hand" />
+  <Gump id="50503" name="[M] lantern" tags="equipment,male,two-hand" />
+  <Gump id="50504" name="[M] torch%es%" tags="equipment,male,two-hand" />
+  <Gump id="50505" name="[M] Candle" tags="equipment,male,two-hand" />
+  <Gump id="50506" name="[M] Plate Haidate" tags="equipment,male,pants" />
+  <Gump id="50507" name="[M] silver necklace" tags="equipment,male,gorget" />
+  <Gump id="50508" name="[M] bracelet" tags="equipment,male,bracelet" />
+  <Gump id="50510" name="[M] necklace" tags="equipment,male,gorget" />
+  <Gump id="50511" name="[M] ring" tags="equipment,male,ring" />
+  <Gump id="50512" name="[M] Studded Haidate" tags="equipment,male,pants" />
+  <Gump id="50513" name="[M] Leather Ninja Hood" tags="equipment,male,helmet" />
+  <Gump id="50514" name="[M] Leather Ninja Belt" tags="equipment,male,waist" />
+  <Gump id="50516" name="[M] Kasa" tags="equipment,male,helmet" />
+  <Gump id="50517" name="[M] Kamishimo " tags="equipment,male,robe" />
+  <Gump id="50518" name="[M] Hakama" tags="equipment,male,skirt" />
+  <Gump id="50519" name="[M] No-Dachi" tags="equipment,male,two-hand" />
+  <Gump id="50520" name="[M] Tessen" tags="equipment,male,two-hand" />
+  <Gump id="50521" name="[M] studded tunic" tags="equipment,male,chest-armor" />
+  <Gump id="50522" name="[M] studded leggings" tags="equipment,male,pants" />
+  <Gump id="50523" name="[M] studded sleeves" tags="equipment,male,sleeves" />
+  <Gump id="50524" name="[M] studded gloves" tags="equipment,male,gloves" />
+  <Gump id="50525" name="[M] studded gorget" tags="equipment,male,gorget" />
+  <Gump id="50526" name="[M] Lajatang" tags="equipment,male,two-hand" />
+  <Gump id="50527" name="[M] platemail" tags="equipment,male,chest-armor" />
+  <Gump id="50528" name="[M] platemail arms" tags="equipment,male,sleeves" />
+  <Gump id="50529" name="[M] platemail legs" tags="equipment,male,pants" />
+  <Gump id="50530" name="[M] platemail gloves" tags="equipment,male,gloves" />
+  <Gump id="50531" name="[M] platemail gorget" tags="equipment,male,gorget" />
+  <Gump id="50532" name="[M] Fukiya" tags="equipment,male,one-hand" />
+  <Gump id="50533" name="[M] Tekagi" tags="equipment,male,two-hand" />
+  <Gump id="50534" name="[M] Horns Facial Gargoyl" tags="equipment,male,hair" />
+  <Gump id="50535" name="[M] Kama" tags="equipment,male,two-hand" />
+  <Gump id="50536" name="[M] Nunchaku" tags="equipment,male,two-hand" />
+  <Gump id="50537" name="[M] Sai" tags="equipment,male,two-hand" />
+  <Gump id="50538" name="[M] chainmail tunic" tags="equipment,male,chest-armor" />
+  <Gump id="50540" name="[M] chainmail leggings" tags="equipment,male,pants" />
+  <Gump id="50542" name="[M] leather tunic" tags="equipment,male,chest-armor" />
+  <Gump id="50543" name="[M] leather leggings" tags="equipment,male,pants" />
+  <Gump id="50544" name="[M] leather sleeves" tags="equipment,male,sleeves" />
+  <Gump id="50545" name="[M] Leather Gloves" tags="equipment,male,gloves" />
+  <Gump id="50546" name="[M] leather gorget" tags="equipment,male,gorget" />
+  <Gump id="50548" name="[M] ringmail tunic" tags="equipment,male,chest-armor" />
+  <Gump id="50549" name="[M] ringmail leggings" tags="equipment,male,pants" />
+  <Gump id="50550" name="[M] ringmail sleeves" tags="equipment,male,sleeves" />
+  <Gump id="50552" name="[M] Tattsuke-Hakama" tags="equipment,male,pants" />
+  <Gump id="50553" name="[M] Hakama-Shita" tags="equipment,male,robe" />
+  <Gump id="50554" name="[M] bone armor" tags="equipment,male,chest-armor" />
+  <Gump id="50555" name="[M] bone leggings" tags="equipment,male,pants" />
+  <Gump id="50556" name="[M] bone arms" tags="equipment,male,sleeves" />
+  <Gump id="50557" name="[M] bone gloves" tags="equipment,male,gloves" />
+  <Gump id="50558" name="[M] Male Kimono" tags="equipment,male,robe" />
+  <Gump id="50559" name="[M] Female Kimono" tags="equipment,male,robe" />
+  <Gump id="50560" name="[M] leather cap" tags="equipment,male,helmet" />
+  <Gump id="50561" name="[M] chainmail  coif" tags="equipment,male,helmet" />
+  <Gump id="50562" name="[M] bone helmet" tags="equipment,male,helmet" />
+  <Gump id="50563" name="[M] plate helm" tags="equipment,male,helmet" />
+  <Gump id="50564" name="[M] bascinet" tags="equipment,male,helmet" />
+  <Gump id="50565" name="[M] helmet" tags="equipment,male,helmet" />
+  <Gump id="50566" name="[M] kabuto" tags="equipment,male,helmet" />
+  <Gump id="50567" name="[M] Obi " tags="equipment,male,waist" />
+  <Gump id="50568" name="[M] Jin-Baori" tags="equipment,male,tunic" />
+  <Gump id="50569" name="[M] Samurai Sandal/Tabi" tags="equipment,male,boots" />
+  <Gump id="50571" name="[M] Cloth Ninja Jacket" tags="equipment,male,chest-armor" />
+  <Gump id="50572" name="[M] Ninja Tall Tabi" tags="equipment,male,boots" />
+  <Gump id="50575" name="[M] Yumi" tags="equipment,male,two-hand" />
+  <Gump id="50576" name="[M] metal shield" tags="equipment,male,two-hand" />
+  <Gump id="50577" name="[M] bronze shield" tags="equipment,male,two-hand" />
+  <Gump id="50578" name="[M] wooden shield" tags="equipment,male,two-hand" />
+  <Gump id="50579" name="[M] buckler " tags="equipment,male,two-hand" />
+  <Gump id="50580" name="[M] kite shield" tags="equipment,male,two-hand" />
+  <Gump id="50581" name="[M] kite shield" tags="equipment,male,two-hand" />
+  <Gump id="50582" name="[M] heater shield" tags="equipment,male,two-hand" />
+  <Gump id="50583" name="[M] Tetsubo" tags="equipment,male,two-hand" />
+  <Gump id="50585" name="[M] gargoyle_leather_arm" tags="equipment,male,sleeves" />
+  <Gump id="50586" name="[M] gargoyle_leather_arm" tags="equipment,male,sleeves" />
+  <Gump id="50587" name="[M] gargoyle_leather_che" tags="equipment,male,chest-armor" />
+  <Gump id="50588" name="[M] gargoyle_leather_che" tags="equipment,male,chest-armor" />
+  <Gump id="50589" name="[M] gargoyle_leather_leg" tags="equipment,male,pants" />
+  <Gump id="50590" name="[M] gargoyle_leather_leg" tags="equipment,male,pants" />
+  <Gump id="50591" name="[M] gargoyle_plate_arms_" tags="equipment,male,sleeves" />
+  <Gump id="50592" name="[M] gargoyle_plate_arms_" tags="equipment,male,sleeves" />
+  <Gump id="50593" name="[M] gargoyle_plate_chest" tags="equipment,male,chest-armor" />
+  <Gump id="50594" name="[M] gargoyle_plate_chest" tags="equipment,male,chest-armor" />
+  <Gump id="50595" name="[M] gargoyle_plate_kilt_" tags="equipment,male,gloves" />
+  <Gump id="50596" name="[M] gargoyle_plate_kilt_" tags="equipment,male,gloves" />
+  <Gump id="50597" name="[M] gargoyle_plate_legs_" tags="equipment,male,pants" />
+  <Gump id="50598" name="[M] gargoyle_plate_legs_" tags="equipment,male,pants" />
+  <Gump id="50599" name="[M] gargoyle_stone_arms_" tags="equipment,male,sleeves" />
+  <Gump id="50600" name="[M] gargoyle_stone_arms_" tags="equipment,male,sleeves" />
+  <Gump id="50601" name="[M] gargoyle_stone_chest" tags="equipment,male,chest-armor" />
+  <Gump id="50602" name="[M] gargoyle_stone_chest" tags="equipment,male,chest-armor" />
+  <Gump id="50603" name="[M] gargoyle_stone_kilt_" tags="equipment,male,gloves" />
+  <Gump id="50604" name="[M] gargoyle_stone_kilt_" tags="equipment,male,gloves" />
+  <Gump id="50605" name="[M] scale shield" tags="equipment,male,two-hand" />
+  <Gump id="50609" name="[M] gargoyle_stone_legs_" tags="equipment,male,pants" />
+  <Gump id="50610" name="[M] gargoyle_stone_legs_" tags="equipment,male,pants" />
+  <Gump id="50611" name="[M] large battle axe" tags="equipment,male,two-hand" />
+  <Gump id="50612" name="[M] two handed axe" tags="equipment,male,two-hand" />
+  <Gump id="50613" name="[M] executioner's axe" tags="equipment,male,two-hand" />
+  <Gump id="50614" name="[M] bardiche" tags="equipment,male,two-hand" />
+  <Gump id="50615" name="[M] hatchet" tags="equipment,male,two-hand" />
+  <Gump id="50616" name="[M] heavy crossbow" tags="equipment,male,one-hand" />
+  <Gump id="50617" name="[M] black staff" tags="equipment,male,two-hand" />
+  <Gump id="50618" name="[M] broadsword" tags="equipment,male,one-hand" />
+  <Gump id="50619" name="[M] cleaver" tags="equipment,male,one-hand" />
+  <Gump id="50620" name="[M] club" tags="equipment,male,one-hand" />
+  <Gump id="50621" name="[M] shepherd's crook" tags="equipment,male,two-hand" />
+  <Gump id="50622" name="[M] dagger" tags="equipment,male,one-hand" />
+  <Gump id="50623" name="[M] cutlass" tags="equipment,male,one-hand" />
+  <Gump id="50624" name="[M] halberd" tags="equipment,male,two-hand" />
+  <Gump id="50625" name="[M] hammer pick" tags="equipment,male,one-hand" />
+  <Gump id="50626" name="[M] javelin" tags="equipment,male,two-hand" />
+  <Gump id="50627" name="[M] katana" tags="equipment,male,one-hand" />
+  <Gump id="50628" name="[M] gnarled staff" tags="equipment,male,two-hand" />
+  <Gump id="50629" name="[M] butcher knife" tags="equipment,male,one-hand" />
+  <Gump id="50630" name="[M] kryss" tags="equipment,male,one-hand" />
+  <Gump id="50631" name="[M] mace" tags="equipment,male,one-hand" />
+  <Gump id="50632" name="[M] Female Gargoyle Horn" tags="equipment,male,hair" />
+  <Gump id="50633" name="[M] maul" tags="equipment,male,one-hand" />
+  <Gump id="50634" name="[M] double axe" tags="equipment,male,two-hand" />
+  <Gump id="50635" name="[M] pickaxe" tags="equipment,male,one-hand" />
+  <Gump id="50636" name="[M] pitchfork" tags="equipment,male,two-hand" />
+  <Gump id="50637" name="[M] scimitar" tags="equipment,male,one-hand" />
+  <Gump id="50638" name="[M] skinning knife" tags="equipment,male,one-hand" />
+  <Gump id="50639" name="[M] short spear" tags="equipment,male,two-hand" />
+  <Gump id="50640" name="[M] sledge hammer" tags="equipment,male,one-hand" />
+  <Gump id="50641" name="[M] Long Spear" tags="equipment,male,two-hand" />
+  <Gump id="50642" name="[M] war mace" tags="equipment,male,one-hand" />
+  <Gump id="50643" name="[M] viking sword" tags="equipment,male,one-hand" />
+  <Gump id="50644" name="[M] war axe" tags="equipment,male,one-hand" />
+  <Gump id="50645" name="[M] war fork" tags="equipment,male,one-hand" />
+  <Gump id="50646" name="[M] war hammer" tags="equipment,male,one-hand" />
+  <Gump id="50647" name="[M] Horns Facial Gargoyl" tags="equipment,male,hair" />
+  <Gump id="50648" name="[M] quarter staff" tags="equipment,male,two-hand" />
+  <Gump id="50649" name="[M] bow" tags="equipment,male,one-hand" />
+  <Gump id="50650" name="[M] Horns Facial Gargoyl" tags="equipment,male,hair" />
+  <Gump id="50651" name="[M] crossbow" tags="equipment,male,one-hand" />
+  <Gump id="50652" name="[M] Horns Facial Gargoyl" tags="equipment,male,hair" />
+  <Gump id="50653" name="[M] axe" tags="equipment,male,two-hand" />
+  <Gump id="50655" name="[M] gargoyle_clothing_ar" tags="equipment,male,sleeves" />
+  <Gump id="50657" name="[M] gargoyle_clothing_ch" tags="equipment,male,chest-armor" />
+  <Gump id="50659" name="[M] gargoyle_clothing_ki" tags="equipment,male,gloves" />
+  <Gump id="50661" name="[M] gargoyle_clothing_le" tags="equipment,male,pants" />
+  <Gump id="50662" name="[M] Dual Short Axes" tags="equipment,male,two-hand" />
+  <Gump id="50663" name="[M] gargoyle_leather_kil" tags="equipment,male,gloves" />
+  <Gump id="50664" name="[M] gargoyle_leather_kil" tags="equipment,male,gloves" />
+  <Gump id="50665" name="[M] Horns Facial Gargoyl" tags="equipment,male,hair" />
+  <Gump id="50668" name="[M] Bloodblade" tags="equipment,male,one-hand" />
+  <Gump id="50669" name="[M] Boomerang" tags="equipment,male,one-hand" />
+  <Gump id="50670" name="[M] Stone War Sword" tags="equipment,male,one-hand" />
+  <Gump id="50671" name="[M] Dread Sword" tags="equipment,male,one-hand" />
+  <Gump id="50672" name="[M] Cyclone" tags="equipment,male,one-hand" />
+  <Gump id="50673" name="[M] Gargish Dagger" tags="equipment,male,one-hand" />
+  <Gump id="50674" name="[M] Disc Mace" tags="equipment,male,one-hand" />
+  <Gump id="50675" name="[M] Dual Pointed Spear" tags="equipment,male,two-hand" />
+  <Gump id="50676" name="[M] Glass Staff" tags="equipment,male,two-hand" />
+  <Gump id="50677" name="[M] Serpentstone Staff" tags="equipment,male,two-hand" />
+  <Gump id="50678" name="[M] Shortblade" tags="equipment,male,one-hand" />
+  <Gump id="50679" name="[M] dragon sleeves" tags="equipment,male,sleeves" />
+  <Gump id="50680" name="[M] dragon breastplate" tags="equipment,male,chest-armor" />
+  <Gump id="50681" name="[M] dragon gloves" tags="equipment,male,gloves" />
+  <Gump id="50682" name="[M] dragon helm" tags="equipment,male,helmet" />
+  <Gump id="50683" name="[M] dragon leggings" tags="equipment,male,pants" />
+  <Gump id="50684" name="[M] amazon armor" tags="equipment,male,shirt" />
+  <Gump id="50690" name="[M] Gargish Talwar" tags="equipment,male,two-hand" />
+  <Gump id="50691" name="[M] Glass Sword" tags="equipment,male,one-hand" />
+  <Gump id="50693" name="[M] Soul Glaive" tags="equipment,male,one-hand" />
+  <Gump id="50696" name="[M] Gargoyle Horns" tags="equipment,male,hair" />
+  <Gump id="50697" name="[M] gargoyle male Horns" tags="equipment,male,hair" />
+  <Gump id="50698" name="[M] Male gargoyle Horns" tags="equipment,male,hair" />
+  <Gump id="50699" name="[M] Gargoyle Head Horns" tags="equipment,male,hair" />
+  <Gump id="50701" name="[M] Long Hair" tags="equipment,male,hair" />
+  <Gump id="50702" name="[M] Ponytail" tags="equipment,male,hair" />
+  <Gump id="50713" name="[M] feathered mask" tags="equipment,male,helmet" />
+  <Gump id="50715" name="[M] jester pants" tags="equipment,male,pants" />
+  <Gump id="50800" name="[M] goatee" tags="equipment,male,facial-hair" />
+  <Gump id="50801" name="[M] long beard" tags="equipment,male,facial-hair" />
+  <Gump id="50802" name="[M] short beard" tags="equipment,male,facial-hair" />
+  <Gump id="50803" name="[M] mustache" tags="equipment,male,facial-hair" />
+  <Gump id="50843" name="[M] Horns Gargoyle Male" tags="equipment,male,hair" />
+  <Gump id="50866" name="[M] winged helmet" tags="equipment,male,helmet" />
+  <Gump id="50877" name="[M] Spell weaving book" tags="equipment,male,one-hand" />
+  <Gump id="50878" name="[M] book of ninjitsu" tags="equipment,male,one-hand" />
+  <Gump id="50879" name="[M] book of bushido" tags="equipment,male,one-hand" />
+  <Gump id="50880" name="[M] spellbook" tags="equipment,male,one-hand" />
+  <Gump id="50882" name="[M] necromancer book" tags="equipment,male,one-hand" />
+  <Gump id="50883" name="[M] book of arms" tags="equipment,male,one-hand" />
+  <Gump id="50884" name="[M] paladin spellbook" tags="equipment,male,one-hand" />
+  <Gump id="50886" name="[M] Lt_Armor_Gorget" tags="equipment,male,gorget" />
+  <Gump id="50890" name="[M] Elven_Hair" tags="equipment,male,hair" />
+  <Gump id="50891" name="[M] Elven_Hair" tags="equipment,male,hair" />
+  <Gump id="50892" name="[M] Elven_Hair" tags="equipment,male,hair" />
+  <Gump id="50893" name="[M] Elven_Hair" tags="equipment,male,hair" />
+  <Gump id="50894" name="[M] Elven_Hair" tags="equipment,male,hair" />
+  <Gump id="50895" name="[M] Elven_Hair" tags="equipment,male,hair" />
+  <Gump id="50896" name="[M] elven quiver" tags="equipment,male,cloak" />
+  <Gump id="50897" name="[M] elven glasses" tags="equipment,male,helmet" />
+  <Gump id="50898" name="[M] elven robe" tags="equipment,male,robe" />
+  <Gump id="50899" name="[M] elven robe" tags="equipment,male,robe" />
+  <Gump id="50907" name="[M] elven shirt Male" tags="equipment,male,shirt" />
+  <Gump id="50908" name="[M] elven shirt Male" tags="equipment,male,shirt" />
+  <Gump id="50909" name="[M] tunic" tags="equipment,male,tunic" />
+  <Gump id="50910" name="[M] surcoat" tags="equipment,male,tunic" />
+  <Gump id="50911" name="[M] checkered shirt" tags="equipment,male,shirt" />
+  <Gump id="50912" name="[M] jester suit" tags="equipment,male,tunic" />
+  <Gump id="50913" name="[M] doublet" tags="equipment,male,tunic" />
+  <Gump id="50914" name="[M] elven shirt" tags="equipment,male,shirt" />
+  <Gump id="50915" name="[M] elven shirt" tags="equipment,male,shirt" />
+  <Gump id="50916" name="[M] Elven_Hair01_BL_Mu" tags="equipment,male,hair" />
+  <Gump id="50917" name="[M] hair" tags="equipment,male,hair" />
+  <Gump id="50918" name="[M] hair" tags="equipment,male,hair" />
+  <Gump id="50919" name="[M] Elven_Hair04_BR_Mu" tags="equipment,male,hair" />
+  <Gump id="50920" name="[M] Elven_Pants" tags="equipment,male,pants" />
+  <Gump id="50921" name="[M] studded armor" tags="equipment,male,chest-armor" />
+  <Gump id="50922" name="[M] plate armor" tags="equipment,male,chest-armor" />
+  <Gump id="50923" name="[M] leather armor" tags="equipment,male,chest-armor" />
+  <Gump id="50924" name="[M] leather bustier" tags="equipment,male,chest-armor" />
+  <Gump id="50925" name="[M] studded bustier" tags="equipment,male,chest-armor" />
+  <Gump id="50926" name="[M] leather skirt" tags="equipment,male,pants" />
+  <Gump id="50927" name="[M] leather shorts" tags="equipment,male,pants" />
+  <Gump id="50928" name="[M] close helmet" tags="equipment,male,helmet" />
+  <Gump id="50929" name="[M] norse helm" tags="equipment,male,helmet" />
+  <Gump id="50930" name="[M] scythe" tags="equipment,male,two-hand" />
+  <Gump id="50931" name="[M] bone harvester" tags="equipment,male,one-hand" />
+  <Gump id="50932" name="[M] scepter" tags="equipment,male,one-hand" />
+  <Gump id="50933" name="[M] bladed staff" tags="equipment,male,two-hand" />
+  <Gump id="50934" name="[M] pike" tags="equipment,male,two-hand" />
+  <Gump id="50935" name="[M] double bladed staff" tags="equipment,male,two-hand" />
+  <Gump id="50936" name="[M] lance" tags="equipment,male,one-hand" />
+  <Gump id="50937" name="[M] crescent blade" tags="equipment,male,two-hand" />
+  <Gump id="50938" name="[M] composite bow" tags="equipment,male,two-hand" />
+  <Gump id="50939" name="[M] repeating crossbow" tags="equipment,male,two-hand" />
+  <Gump id="50940" name="[M] paladin sword" tags="equipment,male,one-hand" />
+  <Gump id="50941" name="[M] Elven_Boot" tags="equipment,male,boots" />
+  <Gump id="50942" name="[M] Elven Plate" tags="equipment,male,chest-armor" />
+  <Gump id="50943" name="[M] Elven Plate Belt" tags="equipment,male,waist" />
+  <Gump id="50944" name="[M] Elven Plate Gorget" tags="equipment,male,gorget" />
+  <Gump id="50945" name="[M] Elven Plate Gloves" tags="equipment,male,gloves" />
+  <Gump id="50946" name="[M] Elven Plate Legs" tags="equipment,male,pants" />
+  <Gump id="50947" name="[M] Elven Arm Plate" tags="equipment,male,sleeves" />
+  <Gump id="50948" name="[M] Elven Plate" tags="equipment,male,chest-armor" />
+  <Gump id="50950" name="[M] Elven Composite Lo" tags="equipment,male,two-hand" />
+  <Gump id="50951" name="[M] Magical Shortbow" tags="equipment,male,two-hand" />
+  <Gump id="50952" name="[M] Elven Spellblade" tags="equipment,male,two-hand" />
+  <Gump id="50953" name="[M] Assassin Spike" tags="equipment,male,one-hand" />
+  <Gump id="50954" name="[M] Leafblade" tags="equipment,male,one-hand" />
+  <Gump id="50955" name="[M] War Cleaver" tags="equipment,male,one-hand" />
+  <Gump id="50956" name="[M] Diamond Mace" tags="equipment,male,one-hand" />
+  <Gump id="50957" name="[M] Wild Staff" tags="equipment,male,one-hand" />
+  <Gump id="50958" name="[M] Rune Blade" tags="equipment,male,two-hand" />
+  <Gump id="50959" name="[M] Radiant Scimitar" tags="equipment,male,one-hand" />
+  <Gump id="50960" name="[M] Ornate Axe" tags="equipment,male,two-hand" />
+  <Gump id="50961" name="[M] Elven Machete" tags="equipment,male,one-hand" />
+  <Gump id="50962" name="[M] circlet" tags="equipment,male,helmet" />
+  <Gump id="50963" name="[M] royal circlet" tags="equipment,male,helmet" />
+  <Gump id="50964" name="[M] gemmed circlet" tags="equipment,male,helmet" />
+  <Gump id="50965" name="[M] Raven Helm" tags="equipment,male,helmet" />
+  <Gump id="50966" name="[M] Vulture Helm" tags="equipment,male,helmet" />
+  <Gump id="50967" name="[M] Winged Helm" tags="equipment,male,helmet" />
+  <Gump id="50968" name="[M] Hide Chest" tags="equipment,male,chest-armor" />
+  <Gump id="50969" name="[M] Hide Gloves" tags="equipment,male,gloves" />
+  <Gump id="50970" name="[M] death shroud" tags="equipment,male,robe" />
+  <Gump id="50972" name="[M] fishing pole" tags="equipment,male,two-hand" />
+  <Gump id="50973" name="[M] orc helm" tags="equipment,male,helmet" />
+  <Gump id="50974" name="[M] Hide Gorget" tags="equipment,male,gorget" />
+  <Gump id="50975" name="[M] Hide Paldrons" tags="equipment,male,sleeves" />
+  <Gump id="50976" name="[M] Hide Pants" tags="equipment,male,pants" />
+  <Gump id="50977" name="[M] Hide Female Chest" tags="equipment,male,chest-armor" />
+  <Gump id="50978" name="[M] Lt_Armor_Chest" tags="equipment,male,chest-armor" />
+  <Gump id="50979" name="[M] Lt_Armor_Gloves" tags="equipment,male,gloves" />
+  <Gump id="50980" name="[M]  wand" tags="equipment,male,one-hand" />
+  <Gump id="50981" name="[M]  wand" tags="equipment,male,one-hand" />
+  <Gump id="50982" name="[M] wand" tags="equipment,male,one-hand" />
+  <Gump id="50983" name="[M] wand" tags="equipment,male,one-hand" />
+  <Gump id="50984" name="[M] spellbook" tags="equipment,male,one-hand" />
+  <Gump id="50987" name="[M] GM Robe" tags="equipment,male,robe" />
+  <Gump id="50989" name="[M] Lt_Armor_Paldrons" tags="equipment,male,sleeves" />
+  <Gump id="50992" name="[M] Order shield" tags="equipment,male,two-hand" />
+  <Gump id="50993" name="[M] Chaos shield" tags="equipment,male,two-hand" />
+  <Gump id="50995" name="[M] Lt_Armor_Pants" tags="equipment,male,pants" />
+  <Gump id="50996" name="[M] Lt_Armor_Kilt" tags="equipment,male,pants" />
+  <Gump id="50997" name="[M] LtF_Chest" tags="equipment,male,chest-armor" />
+  <Gump id="51027" name="[M] Gargoyle Bardich EAS" tags="equipment,male,two-hand" />
+  <Gump id="51028" name="[M] Gargoyle BattleAxe E" tags="equipment,male,two-hand" />
+  <Gump id="51029" name="[M] Gargoyle Scythe SOUT" tags="equipment,male,one-hand" />
+  <Gump id="51030" name="[M] Gargoyle ButchersKni" tags="equipment,male,one-hand" />
+  <Gump id="51032" name="[M] GargoyleAxe East" tags="equipment,male,one-hand" />
+  <Gump id="51033" name="[M] Gargoyle Daisho EAST" tags="equipment,male,two-hand" />
+  <Gump id="51034" name="[M] Gargoyle Katana EAST" tags="equipment,male,one-hand" />
+  <Gump id="51035" name="[M] Gargoyle KrissKnife " tags="equipment,male,one-hand" />
+  <Gump id="51036" name="[M] Gargoyle Pike SOUTH" tags="equipment,male,one-hand" />
+  <Gump id="51037" name="[M] Gargoyle Maul EAST" tags="equipment,male,one-hand" />
+  <Gump id="51040" name="[M] Gargoyle Pike EAST" tags="equipment,male,two-hand" />
+  <Gump id="51041" name="[M] Gargoyle Scythe EAST" tags="equipment,male,two-hand" />
+  <Gump id="51042" name="[M] Gargoyle Staff Gnarl" tags="equipment,male,two-hand" />
+  <Gump id="51043" name="[M] Gargoyle Tekagi EAST" tags="equipment,male,two-hand" />
+  <Gump id="51044" name="[M] Gargoyle Tessen EAST" tags="equipment,male,two-hand" />
+  <Gump id="51045" name="[M] Gargoyle WarFork EAS" tags="equipment,male,one-hand" />
+  <Gump id="51046" name="[M] Gargoyle WarHammer E" tags="equipment,male,one-hand" />
+  <Gump id="51047" name="[M] GargoyleAxe East" tags="equipment,male,two-hand" />
+  <Gump id="51049" name="[M] Talons Leather SOUTH" tags="equipment,male,boots" />
+  <Gump id="51051" name="[M] PlateTalons South" tags="equipment,male,boots" />
+  <Gump id="51053" name="[M] Gargoyle Belt SOUTH" tags="equipment,male,waist" />
+  <Gump id="51054" name="[M] GargoyleHalfApron SO" tags="equipment,male,waist" />
+  <Gump id="51056" name="[M] WingArmor Cloth SOUT" tags="equipment,male,cloak" />
+  <Gump id="51058" name="[M] WingArmor Leather SO" tags="equipment,male,cloak" />
+  <Gump id="51062" name="[M] Bard Spell Book" tags="equipment,male,one-hand" />
+  <Gump id="51064" name="[M] GargoyleGlasses SOUT" tags="equipment,male,earring" />
+  <Gump id="51066" name="[M] Gargoyle SashMale SO" tags="equipment,male,tunic" />
+  <Gump id="51072" name="[M] Gargish Necklace" tags="equipment,male,gorget" />
+  <Gump id="51073" name="[M] Gargish Necklace" tags="equipment,male,gorget" />
+  <Gump id="51234" name="[M] Talisman" tags="equipment,male,talisman" />
+  <Gump id="51235" name="[M] Talisman" tags="equipment,male,talisman" />
+  <Gump id="51236" name="[M] Talisman" tags="equipment,male,talisman" />
+  <Gump id="51237" name="[M] Talisman" tags="equipment,male,talisman" />
+  <Gump id="51238" name="[M] Talisman" tags="equipment,male,talisman" />
+  <Gump id="51249" name="[M] 15AnnRobe SOUTH" tags="equipment,male,robe" />
+  <Gump id="51251" name="[M] 15AnnRobeGargoyle SO" tags="equipment,male,helmet" />
+  <Gump id="51257" name="[M] Epaulets Gargoyle SO" tags="equipment,male,robe" />
+  <Gump id="51259" name="[M] Epaulets Human SOUTH" tags="equipment,male,robe" />
+  <Gump id="51261" name="[M] Robe_BG SOUTH" tags="equipment,male,robe" />
+  <Gump id="51263" name="[M] Shield_Vice" tags="equipment,male,two-hand" />
+  <Gump id="51265" name="[M] Shield_Virtue" tags="equipment,male,two-hand" />
+  <Gump id="51267" name="[M] Shoes_Jester" tags="equipment,male,boots" />
+  <Gump id="51269" name="[M] Hat_Chef" tags="equipment,male,helmet" />
+  <Gump id="51271" name="[M] Kilt01" tags="equipment,male,skirt" />
+  <Gump id="51273" name="[M] Kilt02" tags="equipment,male,skirt" />
+  <Gump id="51275" name="[M] Kilt03" tags="equipment,male,skirt" />
+  <Gump id="51278" name="[M] Dress_Red_Human_Fema" tags="equipment,male,robe" />
+  <Gump id="51284" name="[M] Dress_Wed_Human_Fema" tags="equipment,male,robe" />
+  <Gump id="51295" name="[M] Chest_Tiger_H_M" tags="equipment,male,chest-armor" />
+  <Gump id="51296" name="[M] Chest_Tiger_H_F" tags="equipment,male,chest-armor" />
+  <Gump id="51297" name="[M] Pants_Long_Tiger_H" tags="equipment,male,pants" />
+  <Gump id="51298" name="[M] Pants_Short_Tiger_H" tags="equipment,male,pants" />
+  <Gump id="51299" name="[M] Skirt_Long_Tiger_H" tags="equipment,male,pants" />
+  <Gump id="51300" name="[M] Skirt_Short_Tiger_H" tags="equipment,male,pants" />
+  <Gump id="51301" name="[M] Helm_Tiger_H" tags="equipment,male,helmet" />
+  <Gump id="51302" name="[M] Collar_Tiger_H" tags="equipment,male,gorget" />
+  <Gump id="51303" name="[M] Chest_Turtle_H_M" tags="equipment,male,chest-armor" />
+  <Gump id="51304" name="[M] Chest_Turtle_H_F" tags="equipment,male,chest-armor" />
+  <Gump id="51305" name="[M] Pants_Long_Turtle_H" tags="equipment,male,pants" />
+  <Gump id="51306" name="[M] Helm_Turtle_H" tags="equipment,male,helmet" />
+  <Gump id="51307" name="[M] Bracers_Turtle_H" tags="equipment,male,sleeves" />
+  <Gump id="51310" name="[M] talisman_tailoring" tags="equipment,male,talisman" />
+  <Gump id="51311" name="[M] talisman_alchemy" tags="equipment,male,talisman" />
+  <Gump id="51312" name="[M] talisman_cooking" tags="equipment,male,talisman" />
+  <Gump id="51313" name="[M] talisman_inscription" tags="equipment,male,talisman" />
+  <Gump id="51314" name="[M] talisman_fletching" tags="equipment,male,talisman" />
+  <Gump id="51315" name="[M] talisman_blacksmithi" tags="equipment,male,talisman" />
+  <Gump id="51316" name="[M] talisman_tinkering" tags="equipment,male,talisman" />
+  <Gump id="51317" name="[M] talisman_carpentry" tags="equipment,male,talisman" />
+  <Gump id="51411" name="[M] Dress_Wedding_Human_" tags="equipment,male,robe" />
+  <Gump id="51412" name="[M] Hat_Wedding_TopHat_s" tags="equipment,male,helmet" />
+  <Gump id="51413" name="[M] Shirt_Tux_south" tags="equipment,male,shirt" />
+  <Gump id="51414" name="[M] Pants_Wedding_south" tags="equipment,male,pants" />
+  <Gump id="51429" name="[M] Vale_Haunted_South" tags="equipment,male,helmet" />
+  <Gump id="51430" name="[M] Hat_Wedding_Haunted_" tags="equipment,male,helmet" />
+  <Gump id="51435" name="[M] Robe_Store_01" tags="equipment,male,robe" />
+  <Gump id="51437" name="[M] Robe_Store_02" tags="equipment,male,robe" />
+  <Gump id="51439" name="[M] Robe_Store_03" tags="equipment,male,robe" />
+  <Gump id="51443" name="[M] Robe_Store_04" tags="equipment,male,robe" />
+  <Gump id="51445" name="[M] Robe_Store_05" tags="equipment,male,robe" />
+  <Gump id="51447" name="[M] Male_H_Hair_01" tags="equipment,male,hair" />
+  <Gump id="51448" name="[M] Male_H_Hair_02" tags="equipment,male,hair" />
+  <Gump id="51449" name="[M] Male_H_Hair_03" tags="equipment,male,hair" />
+  <Gump id="51450" name="[M] Male_H_Hair_04" tags="equipment,male,hair" />
+  <Gump id="51451" name="[M] Male_H_Beard_Hair_01" tags="equipment,male,facial-hair" />
+  <Gump id="51452" name="[M] Male_H_Beard_Hair_02" tags="equipment,male,facial-hair" />
+  <Gump id="51453" name="[M] Male_H_Beard_Hair_03" tags="equipment,male,facial-hair" />
+  <Gump id="51454" name="[M] Male_H_Beard_Hair_04" tags="equipment,male,facial-hair" />
+  <Gump id="51459" name="[M] Male_E_Hair_01" tags="equipment,male,hair" />
+  <Gump id="51460" name="[M] Male_E_Hair_02" tags="equipment,male,hair" />
+  <Gump id="51461" name="[M] Male_E_Hair_03" tags="equipment,male,hair" />
+  <Gump id="51462" name="[M] Male_E_Hair_04" tags="equipment,male,hair" />
+  <Gump id="51467" name="[M] Male_G_Horn_01" tags="equipment,male,hair" />
+  <Gump id="51468" name="[M] Male_G_Horn_02" tags="equipment,male,hair" />
+  <Gump id="51469" name="[M] Male_G_Horn_03" tags="equipment,male,hair" />
+  <Gump id="51470" name="[M] Male_G_Horn_04" tags="equipment,male,hair" />
+  <Gump id="51471" name="[M] Male_G_Beard_Horn_01" tags="equipment,male,facial-hair" />
+  <Gump id="51472" name="[M] Male_G_Beard_Horn_02" tags="equipment,male,facial-hair" />
+  <Gump id="51473" name="[M] Male_G_Beard_Horn_03" tags="equipment,male,facial-hair" />
+  <Gump id="51474" name="[M] Male_G_Beard_Horn_04" tags="equipment,male,facial-hair" />
+  <Gump id="51480" name="[M] Khal_Ankur_Mask_east" tags="equipment,male,helmet" />
+  <Gump id="51482" name="[M] Khal Ankur Gargish N" tags="equipment,male,gorget" />
+  <Gump id="51486" name="[M] Barbed Whip" tags="equipment,male,one-hand" />
+  <Gump id="51498" name="[M] Holiday_Boots_South" tags="equipment,male,boots" />
+  <Gump id="51500" name="[M] Holiday_Hat_south" tags="equipment,male,helmet" />
+  <Gump id="51502" name="[M] Holiday_Gargoyle_Tal" tags="equipment,male,boots" />
+  <Gump id="51504" name="[M] Holiday_Gargoyle_ear" tags="equipment,male,earring" />
+  <Gump id="51506" name="[M] Parrot_Epaulets_Sout" tags="equipment,male,robe" />
+  <Gump id="51513" name="[M] Helm_Pumkin" tags="equipment,male,helmet" />
+  <Gump id="51515" name="[M] Weapon_Bottle" tags="equipment,male,two-hand" />
+  <Gump id="51516" name="[M] Neck_Mempo" tags="equipment,male,gorget" />
+  <Gump id="51517" name="[M] Belt_Mace" tags="equipment,male,waist" />
+  <Gump id="51518" name="[M] Hood_Assassin" tags="equipment,male,helmet" />
+  <Gump id="51519" name="[M] Belt_Sword" tags="equipment,male,waist" />
+  <Gump id="51520" name="[M] Hood_Mage" tags="equipment,male,helmet" />
+  <Gump id="51521" name="[M] Belt_Dagger" tags="equipment,male,waist" />
+  <Gump id="51522" name="[M] tabard" tags="equipment,male,robe" />
+  <Gump id="51523" name="[M] elegant quarter cloa" tags="equipment,male,cloak" />
+  <Gump id="51524" name="[M] Hat_Bake Kitsune_Sou" tags="equipment,male,helmet" />
+  <Gump id="51529" name="[M] Shield_Pirate" tags="equipment,male,two-hand" />
+  <Gump id="51533" name="[M] Sash_Award_Empty" tags="equipment,male,tunic" />
+  <Gump id="51534" name="[M] Sash_Award_1thirdful" tags="equipment,male,tunic" />
+  <Gump id="51535" name="[M] Sash_Award_2thirdful" tags="equipment,male,tunic" />
+  <Gump id="51536" name="[M] Sash_Award_Full" tags="equipment,male,tunic" />
+  <Gump id="51543" name="[M] wand" tags="equipment,male,two-hand" />
+  <Gump id="51544" name="[M] Lantern_on" tags="equipment,male,two-hand" />
+  <Gump id="51545" name="[M] Lantern_off" tags="equipment,male,two-hand" />
+  <Gump id="51550" name="[M] Orb" tags="equipment,male,two-hand" />
+  <Gump id="51554" name="[M] candycane_staff" tags="equipment,male,two-hand" />
+  <Gump id="51555" name="[M] candycane_staff" tags="equipment,male,two-hand" />
+  <Gump id="51556" name="[M] Gloves_Leather_Arcan" tags="equipment,male,gloves" />
+  <Gump id="51557" name="[M] Arms_Leather_Arcane" tags="equipment,male,sleeves" />
+  <Gump id="51558" name="[M] Legs_Leather_Arcane" tags="equipment,male,pants" />
+  <Gump id="51559" name="[M] Jacket_Leather_Arcan" tags="equipment,male,chest-armor" />
+  <Gump id="51560" name="[M] Jacket_Leather_Arcan" tags="equipment,male,chest-armor" />
+  <Gump id="51561" name="[M] Helmet_Ringmail" tags="equipment,male,helmet" />
+  <Gump id="51562" name="[M] Helmet_Leather_Studd" tags="equipment,male,helmet" />
+  <Gump id="51563" name="[M] Gloves_Chainmail" tags="equipment,male,gloves" />
+  <Gump id="51564" name="[M] Arms_Chainmail" tags="equipment,male,sleeves" />
+  <Gump id="51565" name="[M] Demon_Belt" tags="equipment,male,waist" />
+  <Gump id="51571" name="[M] Shield_Hildebrandt" tags="equipment,male,two-hand" />
+  <Gump id="51577" name="[M] Close_Helmet_Air" tags="equipment,male,helmet" />
+  <Gump id="51578" name="[M] Platemail_Gorget_Air" tags="equipment,male,gorget" />
+  <Gump id="51579" name="[M] Platemail_Arms_Air" tags="equipment,male,sleeves" />
+  <Gump id="51580" name="[M] Platemail_Gloves_Air" tags="equipment,male,gloves" />
+  <Gump id="51581" name="[M] Platemail_Chest_Air" tags="equipment,male,chest-armor" />
+  <Gump id="51582" name="[M] Platemail_Legs_Air" tags="equipment,male,pants" />
+  <Gump id="51583" name="[M] Cloak_Air" tags="equipment,male,cloak" />
+  <Gump id="51586" name="[M] Kite_Shield_Air" tags="equipment,male,two-hand" />
+  <Gump id="51588" name="[M] Chest_G_Air" tags="equipment,male,chest-armor" />
+  <Gump id="51589" name="[M] Legs_G_Air" tags="equipment,male,pants" />
+  <Gump id="51590" name="[M] Kilt_G_Air" tags="equipment,male,gloves" />
+  <Gump id="51591" name="[M] Arms_G_Air" tags="equipment,male,sleeves" />
+  <Gump id="51592" name="[M] Close_Helmet_Water" tags="equipment,male,helmet" />
+  <Gump id="51598" name="[M] Cloak_Water" tags="equipment,male,cloak" />
+  <Gump id="51601" name="[M] Kite_Shield_Water" tags="equipment,male,two-hand" />
+  <Gump id="51613" name="[M] Cloak_Earth" tags="equipment,male,cloak" />
+  <Gump id="51616" name="[M] Kite_Shield_Earth" tags="equipment,male,two-hand" />
+  <Gump id="51628" name="[M] Cloak_Fire" tags="equipment,male,cloak" />
+  <Gump id="51631" name="[M] Kite_Shield_Fire" tags="equipment,male,two-hand" />
+  <Gump id="51639" name="[M] Backpack" tags="equipment,male,cloak" />
+  <Gump id="51669" name="[M] Shamrock Medallion" tags="equipment,male,gorget" />
+  <Gump id="51671" name="[M] Robe_Dragon_H" tags="equipment,male,robe" />
+  <Gump id="51672" name="[M] Robe_Dragon_G" tags="equipment,male,robe" />
+  <Gump id="51673" name="[M] Dress_Dragon_H" tags="equipment,male,robe" />
+  <Gump id="51674" name="[M] Dress_Dragon_G" tags="equipment,male,robe" />
+  <Gump id="51675" name="[M] Dragon_Helm_H" tags="equipment,male,helmet" />
+  <Gump id="51676" name="[M] Dragon_Chest_H" tags="equipment,male,chest-armor" />
+  <Gump id="51677" name="[M] Dragon_Arms_H" tags="equipment,male,sleeves" />
+  <Gump id="51678" name="[M] Dragon_Legs_H" tags="equipment,male,pants" />
+  <Gump id="51679" name="[M] Dragon_Hands_H" tags="equipment,male,gloves" />
+  <Gump id="51680" name="[M] Dragon_Neck_H" tags="equipment,male,gorget" />
+  <Gump id="51681" name="[M] Mushroom_Hat" tags="equipment,male,helmet" />
+  <Gump id="51683" name="[M] Raptor Claw Necklace" tags="equipment,male,gorget" />
+  <Gump id="51685" name="[M] Animal Teeth Necklac" tags="equipment,male,gorget" />
+  <Gump id="51687" name="[M] Seashell Necklace" tags="equipment,male,gorget" />
+  <Gump id="51689" name="[M] Skull Necklace" tags="equipment,male,gorget" />
+  <Gump id="51691" name="[M] Anchor Necklace" tags="equipment,male,gorget" />
+  <Gump id="59972" name="[M] fellowship_medallion" tags="equipment,male,gorget" />
+  <Gump id="59974" name="[M] fellowship_medallion" tags="equipment,male,gorget" />
+  <Gump id="59976" name="[M] octopus_necklace_gar" tags="equipment,male,gorget" />
+  <Gump id="59978" name="[M] octopus_necklace_hum" tags="equipment,male,gorget" />
+  <Gump id="60335" name="[F] Gargish Kite Shield" tags="equipment,female,two-hand" />
+  <Gump id="60336" name="[F] Gargish Wooden Shiel" tags="equipment,female,two-hand" />
+  <Gump id="60337" name="[F] Large Plate Shield" tags="equipment,female,two-hand" />
+  <Gump id="60338" name="[F] Medium Plate Shield" tags="equipment,female,two-hand" />
+  <Gump id="60339" name="[F] Small Plate Shield" tags="equipment,female,two-hand" />
+  <Gump id="60340" name="[F] Large Stone Shield" tags="equipment,female,two-hand" />
+  <Gump id="60341" name="[F] Gargish Fancy Robe" tags="equipment,female,robe" />
+  <Gump id="60342" name="[F] Gargish Robe" tags="equipment,female,robe" />
+  <Gump id="60343" name="[F] Gargish Chaos Shield" tags="equipment,female,two-hand" />
+  <Gump id="60344" name="[F] Gargish Order Shield" tags="equipment,female,two-hand" />
+  <Gump id="60404" name="[F] floppy hat" tags="equipment,female,helmet" />
+  <Gump id="60405" name="[F] wide-brim hat" tags="equipment,female,helmet" />
+  <Gump id="60406" name="[F] cap" tags="equipment,female,helmet" />
+  <Gump id="60407" name="[F] tall straw hat" tags="equipment,female,helmet" />
+  <Gump id="60408" name="[F] straw hat" tags="equipment,female,helmet" />
+  <Gump id="60409" name="[F] wizard's hat" tags="equipment,female,helmet" />
+  <Gump id="60410" name="[F] bonnet" tags="equipment,female,helmet" />
+  <Gump id="60411" name="[F] feathered hat" tags="equipment,female,helmet" />
+  <Gump id="60412" name="[F] tricorne hat" tags="equipment,female,helmet" />
+  <Gump id="60413" name="[F] jester hat" tags="equipment,female,helmet" />
+  <Gump id="60414" name="[F] bear mask" tags="equipment,female,helmet" />
+  <Gump id="60415" name="[F] deer mask" tags="equipment,female,helmet" />
+  <Gump id="60416" name="[F] orc mask" tags="equipment,female,helmet" />
+  <Gump id="60417" name="[F] tribal mask" tags="equipment,female,helmet" />
+  <Gump id="60418" name="[F] tribal mask" tags="equipment,female,helmet" />
+  <Gump id="60419" name="[F] skullcap" tags="equipment,female,helmet" />
+  <Gump id="60423" name="[F] Leather Ninja Pants" tags="equipment,female,pants" />
+  <Gump id="60425" name="[F] Leather Ninja Hood" tags="equipment,female,helmet" />
+  <Gump id="60426" name="[F] Leather Ninja Jacket" tags="equipment,female,chest-armor" />
+  <Gump id="60427" name="[F] MysticSpellBook East" tags="equipment,female,one-hand" />
+  <Gump id="60430" name="[F] short pants" tags="equipment,female,pants" />
+  <Gump id="60431" name="[F] long pants" tags="equipment,female,pants" />
+  <Gump id="60433" name="[F] Halloween Mask" tags="equipment,female,one-hand" />
+  <Gump id="60434" name="[F] shirt" tags="equipment,female,shirt" />
+  <Gump id="60435" name="[F] fancy shirt" tags="equipment,female,shirt" />
+  <Gump id="60436" name="[F] Gargish Bracelet" tags="equipment,female,bracelet" />
+  <Gump id="60437" name="[F] Gargish Earrings" tags="equipment,female,earring" />
+  <Gump id="60438" name="[F] Gargish Ring" tags="equipment,female,ring" />
+  <Gump id="60439" name="[F] Gargish Necklace" tags="equipment,female,gorget" />
+  <Gump id="60442" name="[F] Mail Hatsuburi" tags="equipment,female,helmet" />
+  <Gump id="60443" name="[F] Plate Hatsuburi" tags="equipment,female,helmet" />
+  <Gump id="60447" name="[F] plain dress" tags="equipment,female,robe" />
+  <Gump id="60448" name="[F] fancy dress" tags="equipment,female,robe" />
+  <Gump id="60449" name="[F] skirt" tags="equipment,female,skirt" />
+  <Gump id="60450" name="[F] Plate Jingasa" tags="equipment,female,helmet" />
+  <Gump id="60451" name="[F] Plate Kabuto" tags="equipment,female,helmet" />
+  <Gump id="60455" name="[F] kilt" tags="equipment,female,skirt" />
+  <Gump id="60456" name="[F] Plate Mempo" tags="equipment,female,gorget" />
+  <Gump id="60457" name="[F] Leather Do" tags="equipment,female,chest-armor" />
+  <Gump id="60458" name="[F] Studded Do" tags="equipment,female,chest-armor" />
+  <Gump id="60459" name="[F] Plate Do" tags="equipment,female,chest-armor" />
+  <Gump id="60462" name="[F] Plate Kabuto" tags="equipment,female,helmet" />
+  <Gump id="60463" name="[F] Plate Kabuto" tags="equipment,female,helmet" />
+  <Gump id="60465" name="[F] full apron" tags="equipment,female,tunic" />
+  <Gump id="60466" name="[F] half apron" tags="equipment,female,waist" />
+  <Gump id="60468" name="[F] cloak" tags="equipment,female,cloak" />
+  <Gump id="60469" name="[F] robe" tags="equipment,female,robe" />
+  <Gump id="60471" name="[F] Leather Mempo" tags="equipment,female,gorget" />
+  <Gump id="60472" name="[F] Studded Mempo" tags="equipment,female,gorget" />
+  <Gump id="60473" name="[F] Samurai Armor Arms" tags="equipment,female,sleeves" />
+  <Gump id="60474" name="[F] Samurai Armor Arms" tags="equipment,female,sleeves" />
+  <Gump id="60475" name="[F] Female Gargoyle Horn" tags="equipment,female,hair" />
+  <Gump id="60476" name="[F] thigh boots" tags="equipment,female,boots" />
+  <Gump id="60477" name="[F] boots" tags="equipment,female,boots" />
+  <Gump id="60478" name="[F] Samurai Armor Arms" tags="equipment,female,sleeves" />
+  <Gump id="60479" name="[F] sandals" tags="equipment,female,boots" />
+  <Gump id="60480" name="[F] shoes" tags="equipment,female,boots" />
+  <Gump id="60484" name="[F] fur surong" tags="equipment,female,skirt" />
+  <Gump id="60487" name="[F] Leather Suneate" tags="equipment,female,pants" />
+  <Gump id="60488" name="[F] Studded Suneate" tags="equipment,female,pants" />
+  <Gump id="60489" name="[F] Plate Suneate" tags="equipment,female,pants" />
+  <Gump id="60490" name="[F] body sash" tags="equipment,female,tunic" />
+  <Gump id="60491" name="[F] Leather Haidate" tags="equipment,female,pants" />
+  <Gump id="60492" name="[F] bandana" tags="equipment,female,helmet" />
+  <Gump id="60493" name="[F] necklace" tags="equipment,female,gorget" />
+  <Gump id="60494" name="[F] necklace" tags="equipment,female,gorget" />
+  <Gump id="60495" name="[F] bracelet" tags="equipment,female,bracelet" />
+  <Gump id="60496" name="[F] earrings" tags="equipment,female,earring" />
+  <Gump id="60497" name="[F] necklace" tags="equipment,female,gorget" />
+  <Gump id="60498" name="[F] ring" tags="equipment,female,ring" />
+  <Gump id="60506" name="[F] Plate Haidate" tags="equipment,female,pants" />
+  <Gump id="60507" name="[F] silver necklace" tags="equipment,female,gorget" />
+  <Gump id="60508" name="[F] bracelet" tags="equipment,female,bracelet" />
+  <Gump id="60511" name="[F] ring" tags="equipment,female,ring" />
+  <Gump id="60512" name="[F] Studded Haidate" tags="equipment,female,pants" />
+  <Gump id="60513" name="[F] Leather Ninja Hood" tags="equipment,female,helmet" />
+  <Gump id="60514" name="[F] Leather Ninja Belt" tags="equipment,female,waist" />
+  <Gump id="60517" name="[F] Kamishimo " tags="equipment,female,robe" />
+  <Gump id="60518" name="[F] Hakama" tags="equipment,female,skirt" />
+  <Gump id="60521" name="[F] studded tunic" tags="equipment,female,chest-armor" />
+  <Gump id="60522" name="[F] studded leggings" tags="equipment,female,pants" />
+  <Gump id="60523" name="[F] studded sleeves" tags="equipment,female,sleeves" />
+  <Gump id="60524" name="[F] studded gloves" tags="equipment,female,gloves" />
+  <Gump id="60525" name="[F] studded gorget" tags="equipment,female,gorget" />
+  <Gump id="60527" name="[F] platemail" tags="equipment,female,chest-armor" />
+  <Gump id="60528" name="[F] platemail arms" tags="equipment,female,sleeves" />
+  <Gump id="60529" name="[F] platemail legs" tags="equipment,female,pants" />
+  <Gump id="60530" name="[F] platemail gloves" tags="equipment,female,gloves" />
+  <Gump id="60531" name="[F] platemail gorget" tags="equipment,female,gorget" />
+  <Gump id="60534" name="[F] Horns Facial Gargoyl" tags="equipment,female,hair" />
+  <Gump id="60538" name="[F] chainmail tunic" tags="equipment,female,chest-armor" />
+  <Gump id="60540" name="[F] chainmail leggings" tags="equipment,female,pants" />
+  <Gump id="60541" name="[F] Female Horns" tags="equipment,female,hair" />
+  <Gump id="60542" name="[F] leather tunic" tags="equipment,female,chest-armor" />
+  <Gump id="60543" name="[F] leather leggings" tags="equipment,female,pants" />
+  <Gump id="60544" name="[F] leather sleeves" tags="equipment,female,sleeves" />
+  <Gump id="60545" name="[F] Leather Gloves" tags="equipment,female,gloves" />
+  <Gump id="60546" name="[F] leather gorget" tags="equipment,female,gorget" />
+  <Gump id="60548" name="[F] ringmail tunic" tags="equipment,female,chest-armor" />
+  <Gump id="60549" name="[F] ringmail leggings" tags="equipment,female,pants" />
+  <Gump id="60550" name="[F] ringmail sleeves" tags="equipment,female,sleeves" />
+  <Gump id="60552" name="[F] Tattsuke-Hakama" tags="equipment,female,pants" />
+  <Gump id="60553" name="[F] Hakama-Shita" tags="equipment,female,robe" />
+  <Gump id="60554" name="[F] bone armor" tags="equipment,female,chest-armor" />
+  <Gump id="60555" name="[F] bone leggings" tags="equipment,female,pants" />
+  <Gump id="60556" name="[F] bone arms" tags="equipment,female,sleeves" />
+  <Gump id="60557" name="[F] bone gloves" tags="equipment,female,gloves" />
+  <Gump id="60560" name="[F] leather cap" tags="equipment,female,helmet" />
+  <Gump id="60561" name="[F] chainmail  coif" tags="equipment,female,helmet" />
+  <Gump id="60562" name="[F] bone helmet" tags="equipment,female,helmet" />
+  <Gump id="60563" name="[F] plate helm" tags="equipment,female,helmet" />
+  <Gump id="60564" name="[F] bascinet" tags="equipment,female,helmet" />
+  <Gump id="60567" name="[F] Obi " tags="equipment,female,waist" />
+  <Gump id="60568" name="[F] Jin-Baori" tags="equipment,female,tunic" />
+  <Gump id="60569" name="[F] Samurai Sandal/Tabi" tags="equipment,female,boots" />
+  <Gump id="60571" name="[F] Cloth Ninja Jacket" tags="equipment,female,chest-armor" />
+  <Gump id="60572" name="[F] Ninja Tall Tabi" tags="equipment,female,boots" />
+  <Gump id="60579" name="[F] buckler " tags="equipment,female,two-hand" />
+  <Gump id="60581" name="[F] kite shield" tags="equipment,female,two-hand" />
+  <Gump id="60582" name="[F] heater shield" tags="equipment,female,two-hand" />
+  <Gump id="60605" name="[F] scale shield" tags="equipment,female,two-hand" />
+  <Gump id="60632" name="[F] Female Gargoyle Horn" tags="equipment,female,hair" />
+  <Gump id="60653" name="[F] axe" tags="equipment,female,two-hand" />
+  <Gump id="60654" name="[F] gargoyle_clothing_ar" tags="equipment,female,sleeves" />
+  <Gump id="60656" name="[F] gargoyle_clothing_ch" tags="equipment,female,chest-armor" />
+  <Gump id="60658" name="[F] gargoyle_clothing_ki" tags="equipment,female,gloves" />
+  <Gump id="60660" name="[F] gargoyle_clothing_le" tags="equipment,female,pants" />
+  <Gump id="60662" name="[F] Dual Short Axes" tags="equipment,female,two-hand" />
+  <Gump id="60668" name="[F] Bloodblade" tags="equipment,female,one-hand" />
+  <Gump id="60669" name="[F] Boomerang" tags="equipment,female,one-hand" />
+  <Gump id="60670" name="[F] Stone War Sword" tags="equipment,female,one-hand" />
+  <Gump id="60671" name="[F] Dread Sword" tags="equipment,female,one-hand" />
+  <Gump id="60672" name="[F] Cyclone" tags="equipment,female,one-hand" />
+  <Gump id="60673" name="[F] Gargish Dagger" tags="equipment,female,one-hand" />
+  <Gump id="60674" name="[F] Disc Mace" tags="equipment,female,one-hand" />
+  <Gump id="60675" name="[F] Dual Pointed Spear" tags="equipment,female,two-hand" />
+  <Gump id="60676" name="[F] Glass Staff" tags="equipment,female,two-hand" />
+  <Gump id="60677" name="[F] Serpentstone Staff" tags="equipment,female,two-hand" />
+  <Gump id="60678" name="[F] Shortblade" tags="equipment,female,one-hand" />
+  <Gump id="60679" name="[F] dragon sleeves" tags="equipment,female,sleeves" />
+  <Gump id="60680" name="[F] dragon breastplate" tags="equipment,female,chest-armor" />
+  <Gump id="60681" name="[F] dragon gloves" tags="equipment,female,gloves" />
+  <Gump id="60682" name="[F] dragon helm" tags="equipment,female,helmet" />
+  <Gump id="60683" name="[F] dragon leggings" tags="equipment,female,pants" />
+  <Gump id="60684" name="[F] amazon armor" tags="equipment,female,shirt" />
+  <Gump id="60685" name="[F] amazon armor" tags="equipment,female,shirt" />
+  <Gump id="60686" name="[F] amazon armor" tags="equipment,female,shirt" />
+  <Gump id="60690" name="[F] Gargish Talwar" tags="equipment,female,two-hand" />
+  <Gump id="60691" name="[F] Glass Sword" tags="equipment,female,one-hand" />
+  <Gump id="60693" name="[F] Soul Glaive" tags="equipment,female,one-hand" />
+  <Gump id="60701" name="[F] Long Hair" tags="equipment,female,hair" />
+  <Gump id="60702" name="[F] Ponytail" tags="equipment,female,hair" />
+  <Gump id="60707" name="[F] Female Gargoyle Horn" tags="equipment,female,hair" />
+  <Gump id="60708" name="[F] Female Gargoyle Horn" tags="equipment,female,hair" />
+  <Gump id="60713" name="[F] feathered mask" tags="equipment,female,helmet" />
+  <Gump id="60715" name="[F] jester pants" tags="equipment,female,pants" />
+  <Gump id="60769" name="[F] Female Gargoyle Horn" tags="equipment,female,hair" />
+  <Gump id="60795" name="[F] Female Gargoyle Horn" tags="equipment,female,hair" />
+  <Gump id="60890" name="[F] Elven_Hair" tags="equipment,female,hair" />
+  <Gump id="60891" name="[F] Elven_Hair" tags="equipment,female,hair" />
+  <Gump id="60892" name="[F] Elven_Hair" tags="equipment,female,hair" />
+  <Gump id="60893" name="[F] Elven_Hair" tags="equipment,female,hair" />
+  <Gump id="60894" name="[F] Elven_Hair" tags="equipment,female,hair" />
+  <Gump id="60895" name="[F] Elven_Hair" tags="equipment,female,hair" />
+  <Gump id="60897" name="[F] elven glasses" tags="equipment,female,helmet" />
+  <Gump id="60898" name="[F] elven robe" tags="equipment,female,robe" />
+  <Gump id="60907" name="[F] elven shirt Male" tags="equipment,female,shirt" />
+  <Gump id="60908" name="[F] elven shirt Male" tags="equipment,female,shirt" />
+  <Gump id="60909" name="[F] tunic" tags="equipment,female,tunic" />
+  <Gump id="60910" name="[F] surcoat" tags="equipment,female,tunic" />
+  <Gump id="60911" name="[F] checkered shirt" tags="equipment,female,shirt" />
+  <Gump id="60912" name="[F] jester suit" tags="equipment,female,tunic" />
+  <Gump id="60913" name="[F] doublet" tags="equipment,female,tunic" />
+  <Gump id="60914" name="[F] elven shirt" tags="equipment,female,shirt" />
+  <Gump id="60915" name="[F] elven shirt" tags="equipment,female,shirt" />
+  <Gump id="60916" name="[F] Elven_Hair01_BL_Mu" tags="equipment,female,hair" />
+  <Gump id="60917" name="[F] hair" tags="equipment,female,hair" />
+  <Gump id="60918" name="[F] hair" tags="equipment,female,hair" />
+  <Gump id="60919" name="[F] Elven_Hair04_BR_Mu" tags="equipment,female,hair" />
+  <Gump id="60920" name="[F] Elven_Pants" tags="equipment,female,pants" />
+  <Gump id="60921" name="[F] studded armor" tags="equipment,female,chest-armor" />
+  <Gump id="60922" name="[F] plate armor" tags="equipment,female,chest-armor" />
+  <Gump id="60923" name="[F] leather armor" tags="equipment,female,chest-armor" />
+  <Gump id="60924" name="[F] leather bustier" tags="equipment,female,chest-armor" />
+  <Gump id="60925" name="[F] studded bustier" tags="equipment,female,chest-armor" />
+  <Gump id="60926" name="[F] leather skirt" tags="equipment,female,pants" />
+  <Gump id="60927" name="[F] leather shorts" tags="equipment,female,pants" />
+  <Gump id="60928" name="[F] close helmet" tags="equipment,female,helmet" />
+  <Gump id="60929" name="[F] norse helm" tags="equipment,female,helmet" />
+  <Gump id="60942" name="[F] Elven Plate" tags="equipment,female,chest-armor" />
+  <Gump id="60943" name="[F] Elven Plate Belt" tags="equipment,female,waist" />
+  <Gump id="60946" name="[F] Elven Plate Legs" tags="equipment,female,pants" />
+  <Gump id="60947" name="[F] Elven Arm Plate" tags="equipment,female,sleeves" />
+  <Gump id="60948" name="[F] Elven Plate" tags="equipment,female,chest-armor" />
+  <Gump id="60962" name="[F] circlet" tags="equipment,female,helmet" />
+  <Gump id="60963" name="[F] royal circlet" tags="equipment,female,helmet" />
+  <Gump id="60964" name="[F] gemmed circlet" tags="equipment,female,helmet" />
+  <Gump id="60965" name="[F] Raven Helm" tags="equipment,female,helmet" />
+  <Gump id="60966" name="[F] Vulture Helm" tags="equipment,female,helmet" />
+  <Gump id="60967" name="[F] Winged Helm" tags="equipment,female,helmet" />
+  <Gump id="60968" name="[F] Hide Chest" tags="equipment,female,chest-armor" />
+  <Gump id="60970" name="[F] death shroud" tags="equipment,female,robe" />
+  <Gump id="60972" name="[F] fishing pole" tags="equipment,female,two-hand" />
+  <Gump id="60973" name="[F] orc helm" tags="equipment,female,helmet" />
+  <Gump id="60975" name="[F] Hide Paldrons" tags="equipment,female,sleeves" />
+  <Gump id="60976" name="[F] Hide Pants" tags="equipment,female,pants" />
+  <Gump id="60977" name="[F] Hide Female Chest" tags="equipment,female,chest-armor" />
+  <Gump id="60978" name="[F] Lt_Armor_Chest" tags="equipment,female,chest-armor" />
+  <Gump id="60980" name="[F]  wand" tags="equipment,female,one-hand" />
+  <Gump id="60981" name="[F]  wand" tags="equipment,female,one-hand" />
+  <Gump id="60982" name="[F] wand" tags="equipment,female,one-hand" />
+  <Gump id="60983" name="[F] wand" tags="equipment,female,one-hand" />
+  <Gump id="60984" name="[F] spellbook" tags="equipment,female,one-hand" />
+  <Gump id="60987" name="[F] GM Robe" tags="equipment,female,robe" />
+  <Gump id="60992" name="[F] Order shield" tags="equipment,female,two-hand" />
+  <Gump id="60993" name="[F] Chaos shield" tags="equipment,female,two-hand" />
+  <Gump id="61027" name="[F] Gargoyle Bardich EAS" tags="equipment,female,two-hand" />
+  <Gump id="61028" name="[F] Gargoyle BattleAxe E" tags="equipment,female,two-hand" />
+  <Gump id="61029" name="[F] Gargoyle Scythe SOUT" tags="equipment,female,one-hand" />
+  <Gump id="61030" name="[F] Gargoyle ButchersKni" tags="equipment,female,one-hand" />
+  <Gump id="61032" name="[F] GargoyleAxe East" tags="equipment,female,one-hand" />
+  <Gump id="61033" name="[F] Gargoyle Daisho EAST" tags="equipment,female,two-hand" />
+  <Gump id="61034" name="[F] Gargoyle Katana EAST" tags="equipment,female,one-hand" />
+  <Gump id="61035" name="[F] Gargoyle KrissKnife " tags="equipment,female,one-hand" />
+  <Gump id="61036" name="[F] Gargoyle Pike SOUTH" tags="equipment,female,one-hand" />
+  <Gump id="61037" name="[F] Gargoyle Maul EAST" tags="equipment,female,one-hand" />
+  <Gump id="61040" name="[F] Gargoyle Pike EAST" tags="equipment,female,two-hand" />
+  <Gump id="61041" name="[F] Gargoyle Scythe EAST" tags="equipment,female,two-hand" />
+  <Gump id="61042" name="[F] Gargoyle Staff Gnarl" tags="equipment,female,two-hand" />
+  <Gump id="61043" name="[F] Gargoyle Tekagi EAST" tags="equipment,female,two-hand" />
+  <Gump id="61044" name="[F] Gargoyle Tessen EAST" tags="equipment,female,two-hand" />
+  <Gump id="61045" name="[F] Gargoyle WarFork EAS" tags="equipment,female,one-hand" />
+  <Gump id="61046" name="[F] Gargoyle WarHammer E" tags="equipment,female,one-hand" />
+  <Gump id="61047" name="[F] GargoyleAxe East" tags="equipment,female,two-hand" />
+  <Gump id="61053" name="[F] Gargoyle Belt SOUTH" tags="equipment,female,waist" />
+  <Gump id="61054" name="[F] GargoyleHalfApron SO" tags="equipment,female,waist" />
+  <Gump id="61062" name="[F] Bard Spell Book" tags="equipment,female,one-hand" />
+  <Gump id="61063" name="[F] GargoyleGlasses Fema" tags="equipment,female,earring" />
+  <Gump id="61065" name="[F] Gargoyle SashFemale " tags="equipment,female,tunic" />
+  <Gump id="61072" name="[F] Gargish Necklace" tags="equipment,female,gorget" />
+  <Gump id="61073" name="[F] Gargish Necklace" tags="equipment,female,gorget" />
+  <Gump id="61263" name="[F] Shield_Vice" tags="equipment,female,two-hand" />
+  <Gump id="61265" name="[F] Shield_Virtue" tags="equipment,female,two-hand" />
+  <Gump id="61278" name="[F] Dress_Red_Human_Fema" tags="equipment,female,robe" />
+  <Gump id="61284" name="[F] Dress_Wed_Human_Fema" tags="equipment,female,robe" />
+  <Gump id="61295" name="[F] Chest_Tiger_H_M" tags="equipment,female,chest-armor" />
+  <Gump id="61296" name="[F] Chest_Tiger_H_F" tags="equipment,female,chest-armor" />
+  <Gump id="61297" name="[F] Pants_Long_Tiger_H" tags="equipment,female,pants" />
+  <Gump id="61298" name="[F] Pants_Short_Tiger_H" tags="equipment,female,pants" />
+  <Gump id="61299" name="[F] Skirt_Long_Tiger_H" tags="equipment,female,pants" />
+  <Gump id="61300" name="[F] Skirt_Short_Tiger_H" tags="equipment,female,pants" />
+  <Gump id="61303" name="[F] Chest_Turtle_H_M" tags="equipment,female,chest-armor" />
+  <Gump id="61304" name="[F] Chest_Turtle_H_F" tags="equipment,female,chest-armor" />
+  <Gump id="61305" name="[F] Pants_Long_Turtle_H" tags="equipment,female,pants" />
+  <Gump id="61307" name="[F] Bracers_Turtle_H" tags="equipment,female,sleeves" />
+  <Gump id="61411" name="[F] Dress_Wedding_Human_" tags="equipment,female,robe" />
+  <Gump id="61412" name="[F] Hat_Wedding_TopHat_s" tags="equipment,female,helmet" />
+  <Gump id="61413" name="[F] Shirt_Tux_south" tags="equipment,female,shirt" />
+  <Gump id="61414" name="[F] Pants_Wedding_south" tags="equipment,female,pants" />
+  <Gump id="61429" name="[F] Vale_Haunted_South" tags="equipment,female,helmet" />
+  <Gump id="61430" name="[F] Hat_Wedding_Haunted_" tags="equipment,female,helmet" />
+  <Gump id="61455" name="[F] Female_H_Hair_01" tags="equipment,female,hair" />
+  <Gump id="61456" name="[F] Female_H_Hair_02" tags="equipment,female,hair" />
+  <Gump id="61457" name="[F] Female_H_Hair_03" tags="equipment,female,hair" />
+  <Gump id="61458" name="[F] Female_H_Hair_04" tags="equipment,female,hair" />
+  <Gump id="61463" name="[F] Female_E_Hair_01" tags="equipment,female,hair" />
+  <Gump id="61464" name="[F] Female_E_Hair_02" tags="equipment,female,hair" />
+  <Gump id="61465" name="[F] Female_E_Hair_03" tags="equipment,female,hair" />
+  <Gump id="61466" name="[F] Female_E_Hair_04" tags="equipment,female,hair" />
+  <Gump id="61475" name="[F] Female_G_Horn_01" tags="equipment,female,hair" />
+  <Gump id="61476" name="[F] Female_G_Horn_02" tags="equipment,female,hair" />
+  <Gump id="61477" name="[F] Female_G_Horn_03" tags="equipment,female,hair" />
+  <Gump id="61478" name="[F] Female_G_Horn_04" tags="equipment,female,hair" />
+  <Gump id="61516" name="[F] Neck_Mempo" tags="equipment,female,gorget" />
+  <Gump id="61529" name="[F] Shield_Pirate" tags="equipment,female,two-hand" />
+  <Gump id="61533" name="[F] Sash_Award_Empty" tags="equipment,female,tunic" />
+  <Gump id="61534" name="[F] Sash_Award_1thirdful" tags="equipment,female,tunic" />
+  <Gump id="61535" name="[F] Sash_Award_2thirdful" tags="equipment,female,tunic" />
+  <Gump id="61536" name="[F] Sash_Award_Full" tags="equipment,female,tunic" />
+  <Gump id="61543" name="[F] wand" tags="equipment,female,two-hand" />
+  <Gump id="61544" name="[F] Lantern_on" tags="equipment,female,two-hand" />
+  <Gump id="61545" name="[F] Lantern_off" tags="equipment,female,two-hand" />
+  <Gump id="61550" name="[F] Orb" tags="equipment,female,two-hand" />
+  <Gump id="61554" name="[F] candycane_staff" tags="equipment,female,two-hand" />
+  <Gump id="61555" name="[F] candycane_staff" tags="equipment,female,two-hand" />
+  <Gump id="61556" name="[F] Gloves_Leather_Arcan" tags="equipment,female,gloves" />
+  <Gump id="61557" name="[F] Arms_Leather_Arcane" tags="equipment,female,sleeves" />
+  <Gump id="61558" name="[F] Legs_Leather_Arcane" tags="equipment,female,pants" />
+  <Gump id="61560" name="[F] Jacket_Leather_Arcan" tags="equipment,female,chest-armor" />
+  <Gump id="61561" name="[F] Helmet_Ringmail" tags="equipment,female,helmet" />
+  <Gump id="61562" name="[F] Helmet_Leather_Studd" tags="equipment,female,helmet" />
+  <Gump id="61563" name="[F] Gloves_Chainmail" tags="equipment,female,gloves" />
+  <Gump id="61564" name="[F] Arms_Chainmail" tags="equipment,female,sleeves" />
+  <Gump id="61565" name="[F] Demon_Belt" tags="equipment,female,waist" />
+  <Gump id="61571" name="[F] Shield_Hildebrandt" tags="equipment,female,two-hand" />
+  <Gump id="61577" name="[F] Close_Helmet_Air" tags="equipment,female,helmet" />
+  <Gump id="61578" name="[F] Platemail_Gorget_Air" tags="equipment,female,gorget" />
+  <Gump id="61579" name="[F] Platemail_Arms_Air" tags="equipment,female,sleeves" />
+  <Gump id="61580" name="[F] Platemail_Gloves_Air" tags="equipment,female,gloves" />
+  <Gump id="61581" name="[F] Platemail_Chest_Air" tags="equipment,female,chest-armor" />
+  <Gump id="61582" name="[F] Platemail_Legs_Air" tags="equipment,female,pants" />
+  <Gump id="61583" name="[F] Cloak_Air" tags="equipment,female,cloak" />
+  <Gump id="61586" name="[F] Kite_Shield_Air" tags="equipment,female,two-hand" />
+  <Gump id="61588" name="[F] Chest_G_Air" tags="equipment,female,chest-armor" />
+  <Gump id="61589" name="[F] Legs_G_Air" tags="equipment,female,pants" />
+  <Gump id="61590" name="[F] Kilt_G_Air" tags="equipment,female,gloves" />
+  <Gump id="61591" name="[F] Arms_G_Air" tags="equipment,female,sleeves" />
+  <Gump id="61592" name="[F] Close_Helmet_Water" tags="equipment,female,helmet" />
+  <Gump id="61598" name="[F] Cloak_Water" tags="equipment,female,cloak" />
+  <Gump id="61601" name="[F] Kite_Shield_Water" tags="equipment,female,two-hand" />
+  <Gump id="61613" name="[F] Cloak_Earth" tags="equipment,female,cloak" />
+  <Gump id="61616" name="[F] Kite_Shield_Earth" tags="equipment,female,two-hand" />
+  <Gump id="61628" name="[F] Cloak_Fire" tags="equipment,female,cloak" />
+  <Gump id="61631" name="[F] Kite_Shield_Fire" tags="equipment,female,two-hand" />
+  <Gump id="61639" name="[F] Backpack" tags="equipment,female,cloak" />
+  <Gump id="61669" name="[F] Shamrock Medallion" tags="equipment,female,gorget" />
+  <Gump id="61671" name="[F] Robe_Dragon_H" tags="equipment,female,robe" />
+  <Gump id="61672" name="[F] Robe_Dragon_G" tags="equipment,female,robe" />
+  <Gump id="61673" name="[F] Dress_Dragon_H" tags="equipment,female,robe" />
+  <Gump id="61674" name="[F] Dress_Dragon_G" tags="equipment,female,robe" />
+  <Gump id="61675" name="[F] Dragon_Helm_H" tags="equipment,female,helmet" />
+  <Gump id="61676" name="[F] Dragon_Chest_H" tags="equipment,female,chest-armor" />
+  <Gump id="61677" name="[F] Dragon_Arms_H" tags="equipment,female,sleeves" />
+  <Gump id="61678" name="[F] Dragon_Legs_H" tags="equipment,female,pants" />
+  <Gump id="61679" name="[F] Dragon_Hands_H" tags="equipment,female,gloves" />
+  <Gump id="61680" name="[F] Dragon_Neck_H" tags="equipment,female,gorget" />
+  <Gump id="61681" name="[F] Mushroom_Hat" tags="equipment,female,helmet" />
+  <Gump id="61683" name="[F] Raptor Claw Necklace" tags="equipment,female,gorget" />
+  <Gump id="61685" name="[F] Animal Teeth Necklac" tags="equipment,female,gorget" />
+  <Gump id="61687" name="[F] Seashell Necklace" tags="equipment,female,gorget" />
+  <Gump id="61689" name="[F] Skull Necklace" tags="equipment,female,gorget" />
+  <Gump id="61691" name="[F] Anchor Necklace" tags="equipment,female,gorget" />
+</Gumps>
