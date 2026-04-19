@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>TestPlugin</AssemblyName>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>FiddlerPlugin</AssemblyTitle>

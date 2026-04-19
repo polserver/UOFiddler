@@ -8,6 +8,12 @@ We have dedicated channel on POL Discord: https://discord.gg/4JbC8hA
 
 ## Requirements
 
+Starting from version 4.18.0:
+
+- Requires .NET Desktop Runtime 10.0.x (or SDK) installed to run the application.
+- You can download .NET 10.0 at: <https://dotnet.microsoft.com/en-us/download/dotnet/10.0>
+- Minimum supported Windows version is Windows 10.
+
 Starting from version 4.11.0:
 
 - Requires .NET Desktop Runtime 8.0.x (or SDK) installed to run the application.

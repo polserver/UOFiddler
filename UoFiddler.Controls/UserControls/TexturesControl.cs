@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -39,6 +40,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private int _selectedTextureId = -1;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedTextureId
         {
             get => _selectedTextureId;

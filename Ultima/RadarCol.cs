@@ -44,7 +44,7 @@ namespace Ultima
                     Colors = new ushort[fs.Length / 2];
                     GCHandle gc = GCHandle.Alloc(Colors, GCHandleType.Pinned);
                     var buffer = new byte[(int)fs.Length];
-                    fs.Read(buffer, 0, (int)fs.Length);
+                    fs.ReadExactly(buffer, 0, (int)fs.Length);
                     Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)fs.Length);
                     gc.Free();
                 }

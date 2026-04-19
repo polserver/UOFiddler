@@ -37,7 +37,7 @@ jobs:
       - name: Install .NET Core
         uses: actions/setup-dotnet@v5.2.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
 
       - name: Restore & build the application
         run: dotnet build $env:Solution_Name --configuration $env:Configuration

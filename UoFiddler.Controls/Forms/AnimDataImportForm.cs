@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
 using static Ultima.Animdata;
@@ -8,7 +9,9 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class AnimDataImportForm : Form
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Action OnAfterImport { get; set; }
+
         public AnimDataImportForm()
         {
             InitializeComponent();

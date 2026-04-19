@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>MultiEditor</AssemblyName>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>MultiEditor</AssemblyTitle>
@@ -69,8 +69,5 @@
 		<Content Include="multieditor.xml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Include="System.Resources.Extensions" Version="10.0.7" />
 	</ItemGroup>
 </Project>

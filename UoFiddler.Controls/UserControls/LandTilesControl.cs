@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -46,6 +47,7 @@ namespace UoFiddler.Controls.UserControls
         private readonly List<int> _tileList = new List<int>();
         private bool _showFreeSlots;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedGraphicId
         {
             get => _selectedGraphicId;

@@ -26,6 +26,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// <summary>
         /// Get or Set SelectedIndex, setting this property to -1 will remove selection, -2 is reserved for "do nothing".
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int FocusIndex
         {
             get => _focusIndex;
@@ -100,6 +101,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         private bool _multiSelect;
 
         [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool MultiSelect
         {
             get => _multiSelect;
@@ -115,6 +117,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// <summary>
         /// Get or Set amount of Items to be displayed.
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int VirtualListSize
         {
             get => _virtualListSize;
@@ -184,6 +187,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Size _tileSize = new Size(256, 256);
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Size TileSize
         {
             get => _tileSize;
@@ -196,6 +200,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Padding _tileMargin = new Padding(2, 2, 2, 2); // external
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Padding TileMargin
         {
             get => _tileMargin;
@@ -208,6 +213,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Padding _tilePadding = new Padding(2, 2, 2, 2);
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Padding TilePadding
         {
             get => _tilePadding;
@@ -220,6 +226,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private readonly Pen _tileBorder = new Pen(Brushes.Black, 1.0f);
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public float TileBorderWidth
         {
             get => _tileBorder.Width;
@@ -231,6 +238,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         }
 
         [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color TileBorderColor
         {
             get => _tileBorder.Color;
@@ -271,6 +279,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// Focused tile border and highlight color
         /// </summary>
         [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color TileFocusColor
         {
             get => _tileFocusColor;
@@ -287,6 +296,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// Selected tile highlight color
         /// </summary>
         [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color TileHighlightColor
         {
             get => _tileHighlightColor;
@@ -306,6 +316,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// Color of tile background
         /// </summary>
         [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color TileBackgroundColor
         {
             get => _tileBackgroundColor;
