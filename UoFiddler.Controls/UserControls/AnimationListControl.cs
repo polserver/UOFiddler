@@ -388,6 +388,8 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
+            var skipped = new List<string>();
+
             TreeViewMobs.BeginUpdate();
             try
             {
@@ -413,6 +415,12 @@ namespace UoFiddler.Controls.UserControls
                     string name = xMob.GetAttribute("name");
                     int value = int.Parse(xMob.GetAttribute("body"));
                     int type = int.Parse(xMob.GetAttribute("type"));
+                    if (type < 0 || type >= GetActionNames.Length)
+                    {
+                        skipped.Add($"Mob \"{name}\" (body=0x{value:X}) — invalid type {type}");
+                        continue;
+                    }
+
                     node = new TreeNode($"{name} (0x{value:X})")
                     {
                         Tag = new[] { value, type },
@@ -447,6 +455,12 @@ namespace UoFiddler.Controls.UserControls
                     string name = xMob.GetAttribute("name");
                     int value = int.Parse(xMob.GetAttribute("body"));
                     int type = int.Parse(xMob.GetAttribute("type"));
+                    if (type < 0 || type >= GetActionNames.Length)
+                    {
+                        skipped.Add($"Equip \"{name}\" (body=0x{value:X}) — invalid type {type}");
+                        continue;
+                    }
+
                     node = new TreeNode(name)
                     {
                         Tag = new[] { value, type },
@@ -474,6 +488,16 @@ namespace UoFiddler.Controls.UserControls
             finally
             {
                 TreeViewMobs.EndUpdate();
+            }
+
+            if (skipped.Count > 0)
+            {
+                string list = string.Join(Environment.NewLine, skipped);
+                MessageBox.Show(
+                    $"The following entries were skipped due to an invalid type value (valid range: 0–{GetActionNames.Length - 1}):{Environment.NewLine}{Environment.NewLine}{list}{Environment.NewLine}{Environment.NewLine}File: {fileName}",
+                    "Animationlist.xml — Skipped Entries",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
 
             return true;
