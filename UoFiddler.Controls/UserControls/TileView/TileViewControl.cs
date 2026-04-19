@@ -149,9 +149,11 @@ namespace UoFiddler.Controls.UserControls.TileView
                 return;
             }
 
-            _itemsPerRow = DisplayRectangle.Width / TotalTileSize.Width;
-
-            //if (m_ItemsPerRow < 1) m_ItemsPerRow = 1; // bug from line above, but could not reproduce
+            _itemsPerRow = TotalTileSize.Width > 0 ? DisplayRectangle.Width / TotalTileSize.Width : 1;
+            if (_itemsPerRow < 1)
+            {
+                _itemsPerRow = 1;
+            }
 
             // for now we are supporting only Vertical scrolling.
             AutoScrollMinSize = new Size(0, DivUp(_virtualListSize, _itemsPerRow) * TotalTileSize.Height);

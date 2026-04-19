@@ -40,8 +40,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
+            this.tileView1 = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            this.tileView2 = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.extractAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,41 +64,41 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // listBox1
-            // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.listBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.IntegralHeight = false;
-            this.listBox1.ItemHeight = 60;
-            this.listBox1.Location = new System.Drawing.Point(0, 0);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(174, 320);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.Tag = 1;
-            this.listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Listbox1_DrawItem);
-            this.listBox1.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.Listbox_measureItem);
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.Listbox_SelectedChange);
-            // 
-            // listBox2
-            // 
-            this.listBox2.ContextMenuStrip = this.contextMenuStrip1;
-            this.listBox2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.listBox2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.IntegralHeight = false;
-            this.listBox2.ItemHeight = 60;
-            this.listBox2.Location = new System.Drawing.Point(556, 0);
-            this.listBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(174, 320);
-            this.listBox2.TabIndex = 1;
-            this.listBox2.Tag = 2;
-            this.listBox2.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Listbox1_DrawItem);
-            this.listBox2.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.Listbox_measureItem);
-            this.listBox2.SelectedIndexChanged += new System.EventHandler(this.Listbox_SelectedChange);
+            //
+            // tileView1
+            //
+            this.tileView1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tileView1.Location = new System.Drawing.Point(0, 0);
+            this.tileView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tileView1.Name = "tileView1";
+            this.tileView1.Size = new System.Drawing.Size(174, 320);
+            this.tileView1.TabIndex = 0;
+            this.tileView1.TileSize = new System.Drawing.Size(174, 60);
+            this.tileView1.TileMargin = new System.Windows.Forms.Padding(0);
+            this.tileView1.TilePadding = new System.Windows.Forms.Padding(0);
+            this.tileView1.TileBorderWidth = 0f;
+            this.tileView1.TileHighLightOpacity = 0.0;
+            this.tileView1.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItem1);
+            this.tileView1.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChanged1);
+            this.tileView1.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
+            //
+            // tileView2
+            //
+            this.tileView2.ContextMenuStrip = this.contextMenuStrip1;
+            this.tileView2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.tileView2.Location = new System.Drawing.Point(556, 0);
+            this.tileView2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tileView2.Name = "tileView2";
+            this.tileView2.Size = new System.Drawing.Size(174, 320);
+            this.tileView2.TabIndex = 1;
+            this.tileView2.TileSize = new System.Drawing.Size(174, 60);
+            this.tileView2.TileMargin = new System.Windows.Forms.Padding(0);
+            this.tileView2.TilePadding = new System.Windows.Forms.Padding(0);
+            this.tileView2.TileBorderWidth = 0f;
+            this.tileView2.TileHighLightOpacity = 0.0;
+            this.tileView2.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItem2);
+            this.tileView2.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChanged2);
+            this.tileView2.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
             // 
             // contextMenuStrip1
             // 
@@ -188,8 +188,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer1.Panel1.Controls.Add(this.listBox2);
-            this.splitContainer1.Panel1.Controls.Add(this.listBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.tileView2);
+            this.splitContainer1.Panel1.Controls.Add(this.tileView1);
             // 
             // splitContainer1.Panel2
             // 
@@ -278,8 +278,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyGump2To1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractAsToolStripMenuItem;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ListBox listBox2;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl tileView1;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl tileView2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.SplitContainer splitContainer1;

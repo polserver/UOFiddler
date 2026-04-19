@@ -24,7 +24,13 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static bool IsValidTexture(int index)
         {
+            if (_cache == null)
+            {
+                return false;
+            }
+
             index &= 0x3FFF;
+
             if (_cache[index] != null)
             {
                 return true;
@@ -37,6 +43,11 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static Bitmap GetTexture(int index)
         {
+            if (_cache == null)
+            {
+                return null;
+            }
+
             index &= 0x3FFF;
 
             if (_cache[index] != null)

@@ -1,9 +1,9 @@
-﻿/***************************************************************************
+/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -18,6 +18,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.Compare.Classes;
 
 namespace UoFiddler.Plugin.Compare.UserControls
@@ -32,76 +33,137 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly SHA256 _sha256 = SHA256.Create();
         private readonly ImageConverter _ic = new ImageConverter();
+        private readonly List<int> _displayIndices = new List<int>();
+        private bool _syncingSelection;
+        private bool _secondLoaded;
 
         private void OnLoad(object sender, EventArgs e)
         {
-            listBoxOrg.BeginUpdate();
-            listBoxOrg.Items.Clear();
-            List<object> cache = new List<object>();
+            _displayIndices.Clear();
             for (int i = 0; i < 0x4000; i++)
             {
-                cache.Add(i);
+                _displayIndices.Add(i);
             }
-            listBoxOrg.Items.AddRange(cache.ToArray());
-            listBoxOrg.EndUpdate();
+
+            tileViewOrg.VirtualListSize = _displayIndices.Count;
+            tileViewSec.VirtualListSize = 0;
+
+            SecondArt.FileIndexChanged += OnSecondArtChanged;
+            ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
         }
 
-        private void OnIndexChangedOrg(object sender, EventArgs e)
+        private void OnFilePathChangeEvent()
         {
-            if (listBoxOrg.SelectedIndex == -1 || listBoxOrg.Items.Count < 1)
+            _compare.Clear();
+            tileViewOrg.Invalidate();
+            tileViewSec.Invalidate();
+        }
+
+        private void OnSecondArtChanged()
+        {
+            if (!_secondLoaded)
             {
                 return;
             }
 
-            int i = int.Parse(listBoxOrg.Items[listBoxOrg.SelectedIndex].ToString());
-            if (listBoxSec.Items.Count > 0)
-            {
-                listBoxSec.SelectedIndex = listBoxSec.Items.IndexOf(i);
-            }
-
-            pictureBoxOrg.BackgroundImage = Art.IsValidLand(i)
-                ? Art.GetLand(i)
-                : null;
-
-            listBoxOrg.Invalidate();
+            _compare.Clear();
+            tileViewOrg.Invalidate();
+            tileViewSec.Invalidate();
         }
 
-        private void DrawitemOrg(object sender, DrawItemEventArgs e)
+        private void OnTileViewSizeChanged(object sender, EventArgs e)
         {
-            if (e.Index == -1)
+            var tv = (TileViewControl)sender;
+            int w = tv.DisplayRectangle.Width;
+            if (w > 0 && tv.TileSize.Width != w)
             {
-                return;
+                tv.TileSize = new Size(w, tv.TileSize.Height);
+            }
+        }
+
+        private void OnDrawItemOrg(object sender, TileViewControl.DrawTileListItemEventArgs e)
+        {
+            DrawListItem(e, _displayIndices[e.Index], isSecondary: false);
+        }
+
+        private void OnDrawItemSec(object sender, TileViewControl.DrawTileListItemEventArgs e)
+        {
+            DrawListItem(e, _displayIndices[e.Index], isSecondary: true);
+        }
+
+        private void DrawListItem(DrawItemEventArgs e, int i, bool isSecondary)
+        {
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
             }
 
             Brush fontBrush = Brushes.Gray;
+            bool valid = isSecondary ? SecondArt.IsValidLand(i) : Art.IsValidLand(i);
 
-            int i = int.Parse(listBoxOrg.Items[e.Index].ToString());
-            if (listBoxOrg.SelectedIndex == e.Index)
-            {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-
-            if (!Art.IsValidLand(i))
+            if (!valid)
             {
                 fontBrush = Brushes.Red;
             }
-            else if (listBoxSec.Items.Count > 0)
+            else if (tileViewSec.VirtualListSize > 0 && !Compare(i))
             {
-                if (!Compare(i))
-                {
-                    fontBrush = Brushes.Blue;
-                }
+                fontBrush = Brushes.Blue;
             }
 
-            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
-                new PointF(5,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2))));
+            string label = $"0x{i:X}";
+            float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, Font).Height) / 2f;
+            e.Graphics.DrawString(label, Font, fontBrush, new PointF(5, y));
         }
 
-        private void MeasureOrg(object sender, MeasureItemEventArgs e)
+        private void OnFocusChangedOrg(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
         {
-            e.ItemHeight = 13;
+            if (e.FocusedItemIndex < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[e.FocusedItemIndex];
+
+            if (tileViewSec.VirtualListSize > 0)
+            {
+                if (_syncingSelection)
+                {
+                    return;
+                }
+
+                _syncingSelection = true;
+                try { tileViewSec.FocusIndex = e.FocusedItemIndex; }
+                finally { _syncingSelection = false; }
+            }
+
+            pictureBoxOrg.BackgroundImage = Art.IsValidLand(i) ? Art.GetLand(i) : null;
+            tileViewOrg.Invalidate();
+        }
+
+        private void OnFocusChangedSec(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
+        {
+            if (e.FocusedItemIndex < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[e.FocusedItemIndex];
+
+            if (_syncingSelection)
+            {
+                return;
+            }
+
+            _syncingSelection = true;
+            try { tileViewOrg.FocusIndex = e.FocusedItemIndex; }
+            finally { _syncingSelection = false; }
+
+            pictureBoxSec.BackgroundImage = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
+            tileViewSec.Invalidate();
         }
 
         private void OnClickLoadSecond(object sender, EventArgs e)
@@ -111,8 +173,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            string path = textBoxSecondDir.Text;
-            string file = Path.Combine(path, "art.mul");
+            string path  = textBoxSecondDir.Text;
+            string file  = Path.Combine(path, "art.mul");
             string file2 = Path.Combine(path, "artidx.mul");
             if (File.Exists(file) && File.Exists(file2))
             {
@@ -123,65 +185,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void LoadSecond()
         {
+            _secondLoaded = true;
             _compare.Clear();
-            listBoxSec.BeginUpdate();
-            listBoxSec.Items.Clear();
-            List<object> cache = new List<object>();
-            for (int i = 0; i < 0x4000; i++)
-            {
-                cache.Add(i);
-            }
-            listBoxSec.Items.AddRange(cache.ToArray());
-            listBoxSec.EndUpdate();
-        }
-
-        private void DrawItemSec(object sender, DrawItemEventArgs e)
-        {
-            if (e.Index == -1)
-            {
-                return;
-            }
-
-            Brush fontBrush = Brushes.Gray;
-
-            int i = int.Parse(listBoxOrg.Items[e.Index].ToString());
-            if (listBoxSec.SelectedIndex == e.Index)
-            {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-            }
-
-            if (!SecondArt.IsValidLand(i))
-            {
-                fontBrush = Brushes.Red;
-            }
-            else if (!Compare(i))
-            {
-                fontBrush = Brushes.Blue;
-            }
-
-            e.Graphics.DrawString($"0x{i:X}", Font, fontBrush,
-                new PointF(5,
-                e.Bounds.Y + ((e.Bounds.Height / 2) -
-                (e.Graphics.MeasureString($"0x{i:X}", Font).Height / 2))));
-        }
-
-        private void MeasureSec(object sender, MeasureItemEventArgs e)
-        {
-            e.ItemHeight = 13;
-        }
-
-        private void OnIndexChangedSec(object sender, EventArgs e)
-        {
-            if (listBoxSec.SelectedIndex == -1 || listBoxSec.Items.Count < 1)
-            {
-                return;
-            }
-
-            int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
-            listBoxOrg.SelectedIndex = listBoxOrg.Items.IndexOf(i);
-            pictureBoxSec.BackgroundImage = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
-
-            listBoxSec.Invalidate();
+            tileViewSec.VirtualListSize = _displayIndices.Count;
+            tileViewOrg.Invalidate();
         }
 
         private bool Compare(int index)
@@ -193,35 +200,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             Bitmap bitorg = Art.GetLand(index);
             Bitmap bitsec = SecondArt.GetLand(index);
-            if (bitorg == null && bitsec == null)
-            {
-                _compare[index] = true;
-                return true;
-            }
-            if (bitorg == null || bitsec == null
-                               || bitorg.Size != bitsec.Size)
-            {
-                _compare[index] = false;
-                return false;
-            }
+            if (bitorg == null && bitsec == null) { _compare[index] = true;  return true; }
+            if (bitorg == null || bitsec == null || bitorg.Size != bitsec.Size) { _compare[index] = false; return false; }
 
-            byte[] btImage1 = new byte[1];
-            btImage1 = (byte[])_ic.ConvertTo(bitorg, btImage1.GetType());
-            byte[] btImage2 = new byte[1];
-            btImage2 = (byte[])_ic.ConvertTo(bitsec, btImage2.GetType());
-
-            string hash1String = BitConverter.ToString(_sha256.ComputeHash(btImage1));
-            string hash2String = BitConverter.ToString(_sha256.ComputeHash(btImage2));
-
-            bool res = hash1String == hash2String;
+            byte[] b1 = (byte[])_ic.ConvertTo(bitorg, typeof(byte[]));
+            byte[] b2 = (byte[])_ic.ConvertTo(bitsec, typeof(byte[]));
+            bool res = BitConverter.ToString(_sha256.ComputeHash(b1)) == BitConverter.ToString(_sha256.ComputeHash(b2));
             _compare[index] = res;
-
             return res;
         }
 
         private void OnChangeShowDiff(object sender, EventArgs e)
         {
-            if (_compare.Count < 1)
+            if (!_secondLoaded)
             {
                 if (!checkBox1.Checked)
                 {
@@ -233,18 +224,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            listBoxOrg.BeginUpdate();
-            listBoxSec.BeginUpdate();
-            listBoxOrg.Items.Clear();
-            listBoxSec.Items.Clear();
-            List<object> cache = new List<object>();
+            _displayIndices.Clear();
             if (checkBox1.Checked)
             {
                 for (int i = 0; i < 0x4000; i++)
                 {
                     if (!Compare(i))
                     {
-                        cache.Add(i);
+                        _displayIndices.Add(i);
                     }
                 }
             }
@@ -252,61 +239,52 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 for (int i = 0; i < 0x4000; i++)
                 {
-                    cache.Add(i);
+                    _displayIndices.Add(i);
                 }
             }
-            listBoxOrg.Items.AddRange(cache.ToArray());
-            listBoxSec.Items.AddRange(cache.ToArray());
-            listBoxOrg.EndUpdate();
-            listBoxSec.EndUpdate();
+
+            tileViewOrg.VirtualListSize = _displayIndices.Count;
+            tileViewSec.VirtualListSize = _displayIndices.Count;
         }
 
         private void ExportAsBmp(object sender, EventArgs e)
         {
-            if (listBoxSec.SelectedIndex == -1)
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
             {
                 return;
             }
 
-            int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
+            int i = _displayIndices[focusIdx];
             if (!SecondArt.IsValidLand(i))
             {
                 return;
             }
 
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Landtile(Sec) 0x{i:X}.bmp");
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) 0x{i:X}.bmp");
             SecondArt.GetLand(i).Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show(
-                $"Landtile saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void ExportAsTiff(object sender, EventArgs e)
         {
-            if (listBoxSec.SelectedIndex == -1)
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
             {
                 return;
             }
 
-            int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
+            int i = _displayIndices[focusIdx];
             if (!SecondArt.IsValidLand(i))
             {
                 return;
             }
 
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Landtile(Sec) 0x{i:X}.tiff");
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) 0x{i:X}.tiff");
             SecondArt.GetLand(i).Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show(
-                $"Landtile saved to {fileName}",
-                "Saved",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
+                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void BrowseOnClick(object sender, EventArgs e)
@@ -324,12 +302,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickCopy(object sender, EventArgs e)
         {
-            if (listBoxSec.SelectedIndex == -1)
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
             {
                 return;
             }
 
-            int i = int.Parse(listBoxSec.Items[listBoxSec.SelectedIndex].ToString());
+            int i = _displayIndices[focusIdx];
             if (!SecondArt.IsValidLand(i))
             {
                 return;
@@ -340,31 +319,64 @@ namespace UoFiddler.Plugin.Compare.UserControls
             Options.ChangedUltimaClass["Art"] = true;
             ControlEvents.FireLandTileChangeEvent(this, i);
             _compare[i] = true;
-            listBoxOrg.BeginUpdate();
-            bool done = false;
-            for (int id = 0; id < 0x4000; id++)
+
+            if (checkBox1.Checked)
             {
-                if (id > i)
-                {
-                    listBoxOrg.Items.Insert(id, i);
-                    done = true;
-                    break;
-                }
-                if (id == i)
-                {
-                    done = true;
-                    break;
-                }
-            }
-            if (!done)
-            {
-                listBoxOrg.Items.Add(i);
+                _displayIndices.RemoveAt(focusIdx);
+                tileViewOrg.VirtualListSize = _displayIndices.Count;
+                tileViewSec.VirtualListSize = _displayIndices.Count;
             }
 
-            listBoxOrg.EndUpdate();
-            listBoxOrg.Invalidate();
-            listBoxSec.Invalidate();
-            OnIndexChangedOrg(this, null);
+            tileViewOrg.Invalidate();
+            tileViewSec.Invalidate();
+            pictureBoxOrg.BackgroundImage = Art.IsValidLand(i) ? Art.GetLand(i) : null;
+        }
+
+        private void OnDoubleClickSec(object sender, MouseEventArgs e)
+        {
+            OnClickCopy(sender, e);
+        }
+
+        private void OnClickCopyAllDiff(object sender, EventArgs e)
+        {
+            if (!_secondLoaded)
+            {
+                return;
+            }
+
+            Cursor.Current = Cursors.WaitCursor;
+            for (int i = 0; i < 0x4000; i++)
+            {
+                if (!SecondArt.IsValidLand(i) || Compare(i))
+                {
+                    continue;
+                }
+
+                Bitmap copy = new Bitmap(SecondArt.GetLand(i));
+                Art.ReplaceLand(i, copy);
+                ControlEvents.FireLandTileChangeEvent(this, i);
+                _compare[i] = true;
+            }
+
+            Options.ChangedUltimaClass["Art"] = true;
+
+            if (checkBox1.Checked)
+            {
+                _displayIndices.Clear();
+                for (int i = 0; i < 0x4000; i++)
+                {
+                    if (!Compare(i))
+                    {
+                        _displayIndices.Add(i);
+                    }
+                }
+                tileViewOrg.VirtualListSize = _displayIndices.Count;
+                tileViewSec.VirtualListSize = _displayIndices.Count;
+            }
+
+            tileViewOrg.Invalidate();
+            tileViewSec.Invalidate();
+            Cursor.Current = Cursors.Default;
         }
     }
 }
