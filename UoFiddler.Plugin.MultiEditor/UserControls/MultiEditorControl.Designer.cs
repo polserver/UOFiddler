@@ -70,6 +70,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Save = new System.Windows.Forms.Button();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             splitContainer3 = new System.Windows.Forms.SplitContainer();
+            brushSizeLabel = new System.Windows.Forms.Label();
             BTN_RectFill = new System.Windows.Forms.CheckBox();
             imageListTools = new System.Windows.Forms.ImageList(components);
             BTN_LineDraw = new System.Windows.Forms.CheckBox();
@@ -111,9 +112,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             SelectedTileLabel = new System.Windows.Forms.ToolStripLabel();
             toolStripLabelCoord = new System.Windows.Forms.ToolStripLabel();
             toolStripBtnZoom = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparatorHelp = new System.Windows.Forms.ToolStripSeparator();
+            toolStripBtnHelp = new System.Windows.Forms.ToolStripButton();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
             FloatingPreviewPanel = new System.Windows.Forms.Panel();
-            brushSizeLabel = new System.Windows.Forms.Label();
             TC_MultiEditorToolbox.SuspendLayout();
             tileTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
@@ -540,6 +542,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             splitContainer3.SplitterWidth = 2;
             splitContainer3.TabIndex = 1;
             // 
+            // brushSizeLabel
+            // 
+            brushSizeLabel.AutoSize = true;
+            brushSizeLabel.Location = new System.Drawing.Point(68, 62);
+            brushSizeLabel.Name = "brushSizeLabel";
+            brushSizeLabel.Size = new System.Drawing.Size(62, 15);
+            brushSizeLabel.TabIndex = 22;
+            brushSizeLabel.Text = "Brush size:";
+            // 
             // BTN_RectFill
             // 
             BTN_RectFill.Appearance = System.Windows.Forms.Appearance.Button;
@@ -551,7 +562,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_RectFill.Name = "BTN_RectFill";
             BTN_RectFill.Size = new System.Drawing.Size(24, 24);
             BTN_RectFill.TabIndex = 17;
-            toolTip1.SetToolTip(BTN_RectFill, "Rectangle Fill");
+            toolTip1.SetToolTip(BTN_RectFill, "Rectangle Fill [B]");
             BTN_RectFill.UseVisualStyleBackColor = true;
             BTN_RectFill.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_RectFill.Click += BTN_RectFill_Click;
@@ -591,7 +602,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_LineDraw.Name = "BTN_LineDraw";
             BTN_LineDraw.Size = new System.Drawing.Size(24, 24);
             BTN_LineDraw.TabIndex = 18;
-            toolTip1.SetToolTip(BTN_LineDraw, "Line Draw");
+            toolTip1.SetToolTip(BTN_LineDraw, "Line Draw [L]");
             BTN_LineDraw.UseVisualStyleBackColor = true;
             BTN_LineDraw.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_LineDraw.Click += BTN_LineDraw_Click;
@@ -651,7 +662,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Trans.Name = "BTN_Trans";
             BTN_Trans.Size = new System.Drawing.Size(24, 24);
             BTN_Trans.TabIndex = 15;
-            toolTip1.SetToolTip(BTN_Trans, "Switch Transparent");
+            toolTip1.SetToolTip(BTN_Trans, "Switch Transparent [T]");
             BTN_Trans.UseVisualStyleBackColor = true;
             BTN_Trans.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Trans.Click += BTN_Trans_Clicked;
@@ -667,7 +678,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Pipette.Name = "BTN_Pipette";
             BTN_Pipette.Size = new System.Drawing.Size(24, 24);
             BTN_Pipette.TabIndex = 14;
-            toolTip1.SetToolTip(BTN_Pipette, "Pick A Tile");
+            toolTip1.SetToolTip(BTN_Pipette, "Pick A Tile [P]");
             BTN_Pipette.UseVisualStyleBackColor = true;
             BTN_Pipette.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Pipette.Click += BTN_Pipette_Click;
@@ -683,7 +694,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Floor.Name = "BTN_Floor";
             BTN_Floor.Size = new System.Drawing.Size(24, 24);
             BTN_Floor.TabIndex = 13;
-            toolTip1.SetToolTip(BTN_Floor, "Draw Virtual Floor");
+            toolTip1.SetToolTip(BTN_Floor, "Draw Virtual Floor [F]");
             BTN_Floor.UseVisualStyleBackColor = true;
             BTN_Floor.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Floor.Click += BTN_Floor_Clicked;
@@ -699,7 +710,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Z.Name = "BTN_Z";
             BTN_Z.Size = new System.Drawing.Size(24, 24);
             BTN_Z.TabIndex = 12;
-            toolTip1.SetToolTip(BTN_Z, "Apply Z Level");
+            toolTip1.SetToolTip(BTN_Z, "Apply Z Level [E]");
             BTN_Z.UseVisualStyleBackColor = true;
             BTN_Z.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Z.Click += BTN_Z_Click;
@@ -715,7 +726,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Remove.Name = "BTN_Remove";
             BTN_Remove.Size = new System.Drawing.Size(24, 24);
             BTN_Remove.TabIndex = 11;
-            toolTip1.SetToolTip(BTN_Remove, "Remove A Tile");
+            toolTip1.SetToolTip(BTN_Remove, "Remove A Tile [R]");
             BTN_Remove.UseVisualStyleBackColor = true;
             BTN_Remove.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Remove.Click += BTN_Remove_Click;
@@ -731,7 +742,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Draw.Name = "BTN_Draw";
             BTN_Draw.Size = new System.Drawing.Size(24, 24);
             BTN_Draw.TabIndex = 10;
-            toolTip1.SetToolTip(BTN_Draw, "Draw A Tile");
+            toolTip1.SetToolTip(BTN_Draw, "Draw A Tile [D]");
             BTN_Draw.UseVisualStyleBackColor = true;
             BTN_Draw.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Draw.Click += BTN_Draw_Click;
@@ -749,7 +760,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             BTN_Select.Name = "BTN_Select";
             BTN_Select.Size = new System.Drawing.Size(24, 24);
             BTN_Select.TabIndex = 9;
-            toolTip1.SetToolTip(BTN_Select, "Select A Tile");
+            toolTip1.SetToolTip(BTN_Select, "Select A Tile [S]");
             BTN_Select.UseVisualStyleBackColor = true;
             BTN_Select.CheckStateChanged += BTN_Toolbox_CheckedChanged;
             BTN_Select.Click += BTN_Select_Click;
@@ -910,7 +921,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             pictureBoxMinimap.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             pictureBoxMinimap.BackColor = System.Drawing.Color.DimGray;
             pictureBoxMinimap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            pictureBoxMinimap.Location = new System.Drawing.Point(342, 280);
+            pictureBoxMinimap.Location = new System.Drawing.Point(342, 277);
             pictureBoxMinimap.Name = "pictureBoxMinimap";
             pictureBoxMinimap.Size = new System.Drawing.Size(155, 100);
             pictureBoxMinimap.TabIndex = 10;
@@ -957,7 +968,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
             toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton1, toolStripSeparator2, DrawTileLabel, toolStripSeparator1, SelectedTileLabel, toolStripLabelCoord, toolStripBtnZoom });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton1, toolStripSeparator2, DrawTileLabel, toolStripSeparator1, SelectedTileLabel, toolStripLabelCoord, toolStripBtnZoom, toolStripSeparatorHelp, toolStripBtnHelp });
             toolStrip1.Location = new System.Drawing.Point(0, 455);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -1046,6 +1057,22 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             toolStripBtnZoom.ToolTipText = "Zoom — click or Ctrl+0 to reset to 100%";
             toolStripBtnZoom.Click += ToolStripBtnZoom_Click;
             // 
+            // toolStripSeparatorHelp
+            // 
+            toolStripSeparatorHelp.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            toolStripSeparatorHelp.Name = "toolStripSeparatorHelp";
+            toolStripSeparatorHelp.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripBtnHelp
+            // 
+            toolStripBtnHelp.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            toolStripBtnHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripBtnHelp.Image = (System.Drawing.Image)resources.GetObject("toolStripBtnHelp.Image");
+            toolStripBtnHelp.Name = "toolStripBtnHelp";
+            toolStripBtnHelp.Size = new System.Drawing.Size(23, 22);
+            toolStripBtnHelp.ToolTipText = "Keyboard Shortcuts";
+            toolStripBtnHelp.Click += ToolStripBtnHelp_Click;
+            // 
             // FloatingPreviewPanel
             // 
             FloatingPreviewPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
@@ -1055,15 +1082,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             FloatingPreviewPanel.Name = "FloatingPreviewPanel";
             FloatingPreviewPanel.Size = new System.Drawing.Size(233, 115);
             FloatingPreviewPanel.TabIndex = 4;
-            // 
-            // brushSizeLabel
-            // 
-            brushSizeLabel.AutoSize = true;
-            brushSizeLabel.Location = new System.Drawing.Point(68, 62);
-            brushSizeLabel.Name = "brushSizeLabel";
-            brushSizeLabel.Size = new System.Drawing.Size(62, 15);
-            brushSizeLabel.TabIndex = 22;
-            brushSizeLabel.Text = "Brush size:";
             // 
             // MultiEditorControl
             // 
@@ -1200,5 +1218,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private System.Windows.Forms.Button BTN_Export_UOX3;
         private System.Windows.Forms.Button BTN_Export_XML;
         private System.Windows.Forms.Label brushSizeLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorHelp;
+        private System.Windows.Forms.ToolStripButton toolStripBtnHelp;
     }
 }

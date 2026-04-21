@@ -25,6 +25,12 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
+		<Compile Update="Forms\ShortcutsHelpForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Forms\ShortcutsHelpForm.Designer.cs">
+			<DependentUpon>ShortcutsHelpForm.cs</DependentUpon>
+		</Compile>
 		<Compile Update="UserControls\MultiEditorControl.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -48,6 +54,9 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Update="Forms\ShortcutsHelpForm.resx">
+			<DependentUpon>ShortcutsHelpForm.cs</DependentUpon>
+		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\MultiEditorControl.resx">
 			<DependentUpon>MultiEditorControl.cs</DependentUpon>
 		</EmbeddedResource>
