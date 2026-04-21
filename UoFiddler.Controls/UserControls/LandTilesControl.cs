@@ -898,8 +898,82 @@ namespace UoFiddler.Controls.UserControls
             SelectedGraphicId = indexValue;
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
+            {
+                if (searchByNameToolStripTextBox.TextBox.Focused)
+                {
+                    return false;
+                }
+
+                if (!string.IsNullOrEmpty(searchByNameToolStripTextBox.Text))
+                {
+                    if (keyData == Keys.F3)
+                    {
+                        SearchName(searchByNameToolStripTextBox.Text, true);
+                    }
+                    else
+                    {
+                        SearchNamePrevious(searchByNameToolStripTextBox.Text);
+                    }
+                }
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        public static bool SearchNamePrevious(string name)
+        {
+            var searchMethod = SearchHelper.GetSearchMethod();
+
+            int index = _refMarker._tileList.Count - 1;
+            if (_refMarker._selectedGraphicId >= 0)
+            {
+                index = _refMarker._tileList.IndexOf(_refMarker._selectedGraphicId) - 1;
+                if (index < 0)
+                {
+                    index = _refMarker._tileList.Count - 1;
+                }
+            }
+
+            for (int i = index; i >= 0; --i)
+            {
+                var searchResult = searchMethod(name, TileData.LandTable[_refMarker._tileList[i]].Name);
+                if (searchResult.HasErrors)
+                {
+                    break;
+                }
+
+                if (!searchResult.EntryFound)
+                {
+                    continue;
+                }
+
+                _refMarker.LandTilesTileView.FocusIndex = -1;
+                _refMarker.SelectedGraphicId = _refMarker._tileList[i];
+                return true;
+            }
+
+            return false;
+        }
+
         private void SearchByNameToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.F3)
+            {
+                if (e.Shift)
+                {
+                    SearchNamePrevious(searchByNameToolStripTextBox.Text);
+                }
+                else
+                {
+                    SearchName(searchByNameToolStripTextBox.Text, true);
+                }
+                return;
+            }
+
             SearchName(searchByNameToolStripTextBox.Text, false);
         }
 

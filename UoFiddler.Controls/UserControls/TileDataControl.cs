@@ -151,6 +151,32 @@ namespace UoFiddler.Controls.UserControls
             return false;
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
+            {
+                if (searchByNameToolStripTextBox.TextBox.Focused)
+                {
+                    return false;
+                }
+
+                if (!string.IsNullOrEmpty(searchByNameToolStripTextBox.Text))
+                {
+                    if (keyData == Keys.F3)
+                    {
+                        SearchName(searchByNameToolStripTextBox.Text, true, tabcontrol.SelectedIndex != 0);
+                    }
+                    else
+                    {
+                        SearchNamePrevious(searchByNameToolStripTextBox.Text, tabcontrol.SelectedIndex != 0);
+                    }
+                }
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         public static bool SearchName(string name, bool next, bool land)
         {
             int index = 0;
@@ -232,6 +258,92 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     sIndex = 0;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool SearchNamePrevious(string name, bool land)
+        {
+            var searchMethod = SearchHelper.GetSearchMethod();
+
+            if (land)
+            {
+                int index = _refMarker.treeViewLand.Nodes.Count - 1;
+                if (_refMarker.treeViewLand.SelectedNode?.Index >= 0)
+                {
+                    index = _refMarker.treeViewLand.SelectedNode.Index - 1;
+                    if (index < 0)
+                    {
+                        index = _refMarker.treeViewLand.Nodes.Count - 1;
+                    }
+                }
+
+                for (int i = index; i >= 0; --i)
+                {
+                    TreeNode node = _refMarker.treeViewLand.Nodes[i];
+                    if (node.Tag == null)
+                    {
+                        continue;
+                    }
+
+                    var searchResult = searchMethod(name, TileData.LandTable[(int)node.Tag].Name);
+                    if (!searchResult.EntryFound)
+                    {
+                        continue;
+                    }
+
+                    _refMarker.tabcontrol.SelectTab(1);
+                    _refMarker.treeViewLand.SelectedNode = node;
+                    node.EnsureVisible();
+                    return true;
+                }
+            }
+            else
+            {
+                int parentIndex = _refMarker.treeViewItem.Nodes.Count - 1;
+                int sIndex = -1;
+
+                if (_refMarker.treeViewItem.SelectedNode != null)
+                {
+                    if (_refMarker.treeViewItem.SelectedNode.Parent != null)
+                    {
+                        parentIndex = _refMarker.treeViewItem.SelectedNode.Parent.Index;
+                        sIndex = _refMarker.treeViewItem.SelectedNode.Index - 1;
+                    }
+                    else
+                    {
+                        parentIndex = _refMarker.treeViewItem.SelectedNode.Index;
+                    }
+                }
+
+                for (int i = parentIndex; i >= 0; --i)
+                {
+                    var parentNode = _refMarker.treeViewItem.Nodes[i];
+                    int startChild = sIndex >= 0 ? sIndex : parentNode.Nodes.Count - 1;
+
+                    for (int j = startChild; j >= 0; --j)
+                    {
+                        TreeNode node = parentNode.Nodes[j];
+                        if (node.Tag == null)
+                        {
+                            continue;
+                        }
+
+                        var searchResult = searchMethod(name, TileData.ItemTable[(int)node.Tag].Name);
+                        if (!searchResult.EntryFound)
+                        {
+                            continue;
+                        }
+
+                        _refMarker.tabcontrol.SelectTab(0);
+                        _refMarker.treeViewItem.SelectedNode = node;
+                        node.EnsureVisible();
+                        return true;
+                    }
+
+                    sIndex = -1;
                 }
             }
 
@@ -1702,6 +1814,19 @@ namespace UoFiddler.Controls.UserControls
         private void SearchByNameToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var landTilesSelected = tabcontrol.SelectedIndex != 0;
+
+            if (e.KeyCode == Keys.F3)
+            {
+                if (e.Shift)
+                {
+                    SearchNamePrevious(searchByNameToolStripTextBox.Text, landTilesSelected);
+                }
+                else
+                {
+                    SearchName(searchByNameToolStripTextBox.Text, true, landTilesSelected);
+                }
+                return;
+            }
 
             SearchName(searchByNameToolStripTextBox.Text, false, landTilesSelected);
         }

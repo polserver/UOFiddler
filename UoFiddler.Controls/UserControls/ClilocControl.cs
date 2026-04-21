@@ -254,6 +254,68 @@ namespace UoFiddler.Controls.UserControls
                 MessageBoxDefaultButton.Button1);
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3)
+            {
+                FindEntryClick(null, EventArgs.Empty);
+                return true;
+            }
+
+            if (keyData == (Keys.F3 | Keys.Shift))
+            {
+                FindPreviousEntry();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void FindPreviousEntry()
+        {
+            if (string.IsNullOrEmpty(FindEntry.Text) || FindEntry.Text == _searchTextPlaceholder)
+            {
+                MessageBox.Show("Please provide search text", "Find Entry", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1);
+
+                return;
+            }
+
+            var searchMethod = SearchHelper.GetSearchMethod(RegexToolStripButton.Checked);
+
+            bool hasErrors = false;
+
+            int startRow = dataGridView1.Rows.GetFirstRow(DataGridViewElementStates.Selected) - 1;
+            if (startRow < 0)
+            {
+                startRow = dataGridView1.Rows.Count - 1;
+            }
+
+            for (int i = startRow; i >= 0; --i)
+            {
+                var searchResult = searchMethod(FindEntry.Text, dataGridView1.Rows[i].Cells[1].Value.ToString());
+                if (searchResult.HasErrors)
+                {
+                    hasErrors = true;
+                    break;
+                }
+
+                if (!searchResult.EntryFound)
+                {
+                    continue;
+                }
+
+                dataGridView1.ClearSelection();
+                dataGridView1.Rows[i].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = i;
+                return;
+            }
+
+            MessageBox.Show(hasErrors ? "Invalid regular expression." : "Entry not found.", "Find Entry",
+                MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+        }
+
         private void OnClickSave(object sender, EventArgs e)
         {
             dataGridView1.CancelEdit();
