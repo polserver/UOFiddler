@@ -104,7 +104,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
             pictureBoxMulti.MouseWheel += PictureBoxMulti_OnMouseWheel;
-            pictureBoxMulti.ContextMenuStrip = null;
 
         }
 
@@ -758,6 +757,45 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             fileNode.Nodes.Add(csvNode);
 
             treeViewMultiList.Nodes.Add(fileNode);
+
+            TreeNode uopNode = new TreeNode("multicollection.uop") { Name = "uop" };
+            if (!Multis.HasUopFile)
+            {
+                uopNode.Nodes.Add(new TreeNode("File not found"));
+            }
+            else
+            {
+                for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
+                {
+                    if (Multis.GetUopComponents(i) == MultiComponentList.Empty)
+                    {
+                        continue;
+                    }
+
+                    TreeNode node;
+                    if (dom == null)
+                    {
+                        node = new TreeNode(string.Format("{0,5} (0x{0:X})", i));
+                    }
+                    else
+                    {
+                        XmlNodeList xMultiNodeList = xMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
+                        string j = "";
+                        foreach (XmlNode xMultiNode in xMultiNodeList)
+                        {
+                            j = xMultiNode.Attributes["name"].Value;
+                        }
+
+                        node = new TreeNode(string.Format("{0,5} (0x{0:X}) {1}", i, j));
+                    }
+
+                    node.Tag = i;
+                    node.Name = i.ToString();
+                    uopNode.Nodes.Add(node);
+                }
+            }
+
+            treeViewMultiList.Nodes.Add(uopNode);
             treeViewMultiList.EndUpdate();
 
             if (!_loaded)
@@ -1695,7 +1733,11 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else
             {
-                _compList = new MultiEditorComponentList(Multis.GetComponents((int)e.Node.Tag), this);
+                MultiComponentList multi = e.Node.Parent?.Name == "uop"
+                    ? Multis.GetUopComponents((int)e.Node.Tag)
+                    : Multis.GetComponents((int)e.Node.Tag);
+
+                _compList = new MultiEditorComponentList(multi, this);
 
                 textBox_SaveToID.Text = e.Node.Tag.ToString();
             }
@@ -1726,7 +1768,9 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             {
                 case int nodeTag:
                     {
-                        MultiComponentList list = Multis.GetComponents(nodeTag);
+                        MultiComponentList list = e.Node.Parent?.Name == "uop"
+                            ? Multis.GetUopComponents(nodeTag)
+                            : Multis.GetComponents(nodeTag);
                         toolTip1.SetToolTip(treeViewMultiList, $"{list.Width}x{list.Height} {list.SortedTiles.Length}");
                         break;
                     }

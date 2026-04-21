@@ -13,6 +13,9 @@ namespace Ultima
         private static MultiComponentList[] _components = new MultiComponentList[MaximumMultiIndex];
         private static FileIndex _fileIndex = new FileIndex("Multi.idx", "Multi.mul", MaximumMultiIndex, 14);
 
+        private static MultiComponentList[] _uopComponents = new MultiComponentList[MaximumMultiIndex];
+        private static bool _uopLoaded;
+
         public enum ImportType
         {
             TXT,
@@ -33,6 +36,7 @@ namespace Ultima
         {
             _fileIndex = new FileIndex("Multi.idx", "Multi.mul", MaximumMultiIndex, 14);
             _components = new MultiComponentList[MaximumMultiIndex];
+            ReloadUop();
         }
 
         /// <summary>
@@ -233,6 +237,167 @@ namespace Ultima
                 }
 
                 return multiList;
+            }
+        }
+
+        public static bool HasUopFile => !string.IsNullOrEmpty(Files.GetFilePath("multicollection.uop"));
+
+        public static void ReloadUop()
+        {
+            _uopComponents = new MultiComponentList[MaximumMultiIndex];
+            _uopLoaded = false;
+        }
+
+        public static MultiComponentList GetUopComponents(int index)
+        {
+            if (!_uopLoaded)
+            {
+                LoadUop();
+            }
+
+            if (index >= 0 && index < _uopComponents.Length)
+            {
+                return _uopComponents[index] ?? MultiComponentList.Empty;
+            }
+
+            return MultiComponentList.Empty;
+        }
+
+        private static void LoadUop()
+        {
+            _uopLoaded = true;
+
+            string path = Files.GetFilePath("multicollection.uop");
+            if (path == null)
+            {
+                return;
+            }
+
+            try
+            {
+                using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using var reader = new BinaryReader(fileStream);
+
+                uint magic = reader.ReadUInt32();
+                if (magic != 0x0050594D)
+                {
+                    return;
+                }
+
+                uint version = reader.ReadUInt32();
+                if (version > 5)
+                {
+                    return;
+                }
+
+                reader.ReadUInt32(); // signature
+                ulong nextTableOffset = reader.ReadUInt64();
+                reader.ReadUInt32(); // block capacity
+                reader.ReadUInt32(); // file count
+                reader.ReadUInt32(); // reserved
+                reader.ReadUInt32(); // reserved
+                reader.ReadUInt32(); // reserved
+
+                var entries = new List<(long dataOffset, uint compressedSize, uint decompressedSize)>();
+
+                ulong next = nextTableOffset;
+                while (next != 0)
+                {
+                    fileStream.Seek((long)next, SeekOrigin.Begin);
+                    int count = reader.ReadInt32();
+                    next = reader.ReadUInt64();
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        ulong dataOffset = reader.ReadUInt64();
+                        uint headerSize = reader.ReadUInt32();
+                        uint compressedSize = reader.ReadUInt32();
+                        uint decompressedSize = reader.ReadUInt32();
+                        reader.ReadUInt64(); // hash
+                        reader.ReadUInt32(); // unknown
+                        ushort flag = reader.ReadUInt16();
+
+                        if (dataOffset == 0 || decompressedSize == 0)
+                        {
+                            continue;
+                        }
+
+                        if (flag == 0)
+                        {
+                            compressedSize = 0;
+                        }
+
+                        entries.Add(((long)(dataOffset + headerSize), compressedSize, decompressedSize));
+                    }
+                }
+
+                foreach (var (dataOffset, compressedSize, decompressedSize) in entries)
+                {
+                    fileStream.Seek(dataOffset, SeekOrigin.Begin);
+
+                    byte[] raw;
+                    if (compressedSize > 0)
+                    {
+                        byte[] compressed = reader.ReadBytes((int)compressedSize);
+                        (bool ok, byte[] decompressed) = UopUtils.Decompress(compressed);
+                        if (!ok)
+                        {
+                            continue;
+                        }
+
+                        raw = decompressed;
+                    }
+                    else
+                    {
+                        raw = reader.ReadBytes((int)decompressedSize);
+                    }
+
+                    using var memoryStream = new MemoryStream(raw);
+                    using var binaryReader = new BinaryReader(memoryStream);
+
+                    uint multiId = binaryReader.ReadUInt32();
+                    int componentCount = binaryReader.ReadInt32();
+
+                    if (multiId >= MaximumMultiIndex || componentCount <= 0)
+                    {
+                        continue;
+                    }
+
+                    var tiles = new List<MultiComponentList.MultiTileEntry>(componentCount);
+                    for (int j = 0; j < componentCount; j++)
+                    {
+                        ushort graphic = binaryReader.ReadUInt16();
+                        ushort ux = binaryReader.ReadUInt16();
+                        ushort uy = binaryReader.ReadUInt16();
+                        ushort uz = binaryReader.ReadUInt16();
+                        ushort uflags = binaryReader.ReadUInt16();
+                        int clilocsCount = binaryReader.ReadInt32();
+
+                        if (clilocsCount > 0)
+                        {
+                            binaryReader.BaseStream.Seek(clilocsCount * 4L, SeekOrigin.Current);
+                        }
+
+                        tiles.Add(new MultiComponentList.MultiTileEntry
+                        {
+                            ItemId = graphic,
+                            OffsetX = (short)ux,
+                            OffsetY = (short)uy,
+                            OffsetZ = (short)uz,
+                            Flags = uflags != 0 ? 0 : 1,
+                            Unk1 = 0
+                        });
+                    }
+
+                    if (tiles.Count > 0)
+                    {
+                        _uopComponents[multiId] = new MultiComponentList(tiles);
+                    }
+                }
+            }
+            catch
+            {
+                // leave array in its current partially-populated state
             }
         }
 
