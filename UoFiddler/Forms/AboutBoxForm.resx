@@ -118,7 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.18.0
+    <value>Version 4.18.1
+- Mass import plugin now allows importing PNG and JPEG.
+- Invalid entries in Animationlist.xml will now be skipped nad will result in a message about the problem.
+- Multi editor now has additional form with shortcut list.
+- Tiledata control now has additional form with some descriptions for fields and flags (data needs further updates).
+- Option to change background color for some controls is now consolidated under options and is saved in profile file. You can still make adjustments from respective controls.
+- Fix: added Gumplist.xml to UOFiddler main folder (missed in previous version).
+- You can use F3 and Shift F3 to search next/previous in: Clilocs, Speech, Dress, Items, Land tiles, Sounds and Tiledata tabs.
+- Map preview has new options to generate preview with altitude (little bit slow but works).
+
+Version 4.18.0
 - Small fix for animdata control layout
 - Verdata preview tab added to browse contents of verdata.mul (if present). It's still work in progress.
 - Main windows tabs can now be scrolled with mouse wheel.
