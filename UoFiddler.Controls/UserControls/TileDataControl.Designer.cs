@@ -127,6 +127,8 @@ namespace UoFiddler.Controls.UserControls
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            helpToolStripButton = new System.Windows.Forms.ToolStripButton();
             toolTipComponent = new System.Windows.Forms.ToolTip(components);
             tabcontrol.SuspendLayout();
             tabPageItems.SuspendLayout();
@@ -901,7 +903,7 @@ namespace UoFiddler.Controls.UserControls
             // MainToolStrip
             // 
             MainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            MainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripLabel1, searchByIdToolStripTextBox, toolStripLabel2, searchByNameToolStripTextBox, searchByNameToolStripButton, toolStripSeparator5, toolStripDropDownButton1, toolStripSeparator1, toolStripButton1, toolStripButton5, toolStripSeparator2, toolStripButton4, toolStripButton3 });
+            MainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripLabel1, searchByIdToolStripTextBox, toolStripLabel2, searchByNameToolStripTextBox, searchByNameToolStripButton, toolStripSeparator5, toolStripDropDownButton1, toolStripSeparator1, toolStripButton1, toolStripButton5, toolStripSeparator2, toolStripButton4, toolStripButton3, toolStripSeparator6, helpToolStripButton });
             MainToolStrip.Location = new System.Drawing.Point(0, 0);
             MainToolStrip.Name = "MainToolStrip";
             MainToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -1044,7 +1046,21 @@ namespace UoFiddler.Controls.UserControls
             toolStripButton3.Size = new System.Drawing.Size(79, 22);
             toolStripButton3.Text = "Save Tiledata";
             toolStripButton3.Click += OnClickSaveTiledata;
-            // 
+            //
+            // toolStripSeparator6
+            //
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            //
+            // helpToolStripButton
+            //
+            helpToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            helpToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            helpToolStripButton.Name = "helpToolStripButton";
+            helpToolStripButton.Size = new System.Drawing.Size(36, 22);
+            helpToolStripButton.Text = "Help";
+            helpToolStripButton.Click += HelpToolStripButton_Click;
+            //
             // TileDataControl
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1185,5 +1201,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Label miscDataLabel;
         private System.Windows.Forms.Label stackOffLabel;
         private System.Windows.Forms.Label layerLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton helpToolStripButton;
     }
 }
