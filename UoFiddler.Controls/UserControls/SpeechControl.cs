@@ -205,6 +205,105 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
+            {
+                bool isNext = keyData == Keys.F3;
+
+                if (IDEntry.Focused)
+                {
+                    if (isNext)
+                    {
+                        OnClickNextID(null, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        FindIdPrevious();
+                    }
+                }
+                else
+                {
+                    if (isNext)
+                    {
+                        OnClickNextKeyWord(null, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        FindKeyWordPrevious();
+                    }
+                }
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void FindIdPrevious()
+        {
+            if (!short.TryParse(IDEntry.Text, NumberStyles.Integer, null, out short nr))
+            {
+                MessageBox.Show("ID not found.", "Goto", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                return;
+            }
+
+            int startRow = dataGridView1.SelectedRows.Count > 0
+                ? dataGridView1.SelectedRows[0].Index - 1
+                : dataGridView1.Rows.Count - 1;
+
+            if (startRow < 0)
+            {
+                startRow = dataGridView1.Rows.Count - 1;
+            }
+
+            for (int i = startRow; i >= 0; --i)
+            {
+                if ((short)dataGridView1.Rows[i].Cells[0].Value != nr)
+                {
+                    continue;
+                }
+
+                dataGridView1.Rows[i].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = i;
+                return;
+            }
+
+            MessageBox.Show("ID not found.", "Goto", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+        }
+
+        private void FindKeyWordPrevious()
+        {
+            if (string.IsNullOrEmpty(KeyWordEntry.Text) || KeyWordEntry.Text == _keywordEntryPlaceholder)
+            {
+                return;
+            }
+
+            string toFind = KeyWordEntry.Text;
+
+            int startRow = dataGridView1.SelectedRows.Count > 0
+                ? dataGridView1.SelectedRows[0].Index - 1
+                : dataGridView1.Rows.Count - 1;
+
+            if (startRow < 0)
+            {
+                startRow = dataGridView1.Rows.Count - 1;
+            }
+
+            for (int i = startRow; i >= 0; --i)
+            {
+                if (!dataGridView1.Rows[i].Cells[1].Value.ToString().Contains(toFind))
+                {
+                    continue;
+                }
+
+                dataGridView1.Rows[i].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = i;
+                return;
+            }
+
+            MessageBox.Show("KeyWord not found.", "Entry", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+        }
+
         private void OnClickSave(object sender, EventArgs e)
         {
             dataGridView1.CancelEdit();

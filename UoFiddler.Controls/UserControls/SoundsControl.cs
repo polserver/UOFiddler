@@ -751,6 +751,23 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3)
+            {
+                GoNextResultButton_Click(null, EventArgs.Empty);
+                return true;
+            }
+
+            if (keyData == (Keys.F3 | Keys.Shift))
+            {
+                GoPrevResultButton_Click(null, EventArgs.Empty);
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void SearchByNameButton_Click(object sender, EventArgs e)
         {
             DoSearchName(SearchNameTextbox.Text, false, false);

@@ -1684,8 +1684,67 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3)
+            {
+                SearchByName();
+                return true;
+            }
+
+            if (keyData == (Keys.F3 | Keys.Shift))
+            {
+                SearchByNamePrevious();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void SearchByNamePrevious()
+        {
+            var searchText = SearchItemTextBox.Text.Trim();
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return;
+            }
+
+            if (_lastSearchText != searchText)
+            {
+                _searchResults.Clear();
+                _lastSearchText = searchText;
+                _lastNodeIndex = 0;
+                SearchNodes(searchText, treeViewItems.Nodes[0]);
+            }
+
+            if (_searchResults.Count == 0)
+            {
+                return;
+            }
+
+            if (_lastNodeIndex >= _searchResults.Count)
+            {
+                _lastNodeIndex = 0;
+            }
+
+            _lastNodeIndex -= 2;
+            if (_lastNodeIndex < 0)
+            {
+                _lastNodeIndex = _searchResults.Count + _lastNodeIndex;
+            }
+
+            treeViewItems.SelectedNode = _searchResults[_lastNodeIndex];
+            _lastNodeIndex++;
+        }
+
         private void SearchItemTextBox_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.F3)
+            {
+                return;
+            }
+
             SearchByName();
         }
 
