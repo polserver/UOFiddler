@@ -33,7 +33,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
         protected virtual void TestFile(ref string message)
         {
-            if (File.Contains(".bmp") || File.Contains(".tiff"))
+            if (File.Contains(".bmp") || File.Contains(".tiff") || File.Contains(".png") || File.Contains(".jpg") || File.Contains(".jpeg"))
             {
                 return;
             }
