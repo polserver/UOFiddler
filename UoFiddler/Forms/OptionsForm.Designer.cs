@@ -41,13 +41,13 @@ namespace UoFiddler.Forms
         {
             components = new System.ComponentModel.Container();
             groupBox1 = new System.Windows.Forms.GroupBox();
-            checkBoxOverrideBackgroundColorFromTile = new System.Windows.Forms.CheckBox();
             numericUpDownItemSizeHeight = new System.Windows.Forms.NumericUpDown();
             checkBoxItemClip = new System.Windows.Forms.CheckBox();
             label1 = new System.Windows.Forms.Label();
             numericUpDownItemSizeWidth = new System.Windows.Forms.NumericUpDown();
             checkBoxCacheData = new System.Windows.Forms.CheckBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
+            checkBoxNewClilocFormat = new System.Windows.Forms.CheckBox();
             checkBoxPolSoundIdOffset = new System.Windows.Forms.CheckBox();
             checkBoxuseDiff = new System.Windows.Forms.CheckBox();
             checkBoxNewMapSize = new System.Windows.Forms.CheckBox();
@@ -81,8 +81,9 @@ namespace UoFiddler.Forms
             RestoreDefaultsButton = new System.Windows.Forms.Button();
             TileSelectionColorComboBox = new System.Windows.Forms.ComboBox();
             TileFocusColorComboBox = new System.Windows.Forms.ComboBox();
+            PreviewBackgroundColorLabel = new System.Windows.Forms.Label();
+            PreviewBackgroundColorButton = new System.Windows.Forms.Button();
             buttonClose = new System.Windows.Forms.Button();
-            checkBoxNewClilocFormat = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownItemSizeHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownItemSizeWidth).BeginInit();
@@ -94,7 +95,6 @@ namespace UoFiddler.Forms
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(checkBoxOverrideBackgroundColorFromTile);
             groupBox1.Controls.Add(numericUpDownItemSizeHeight);
             groupBox1.Controls.Add(checkBoxItemClip);
             groupBox1.Controls.Add(label1);
@@ -103,20 +103,10 @@ namespace UoFiddler.Forms
             groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox1.Size = new System.Drawing.Size(258, 130);
+            groupBox1.Size = new System.Drawing.Size(258, 118);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Item Tab";
-            // 
-            // checkBoxOverrideBackgroundColorFromTile
-            // 
-            checkBoxOverrideBackgroundColorFromTile.Location = new System.Drawing.Point(10, 80);
-            checkBoxOverrideBackgroundColorFromTile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            checkBoxOverrideBackgroundColorFromTile.Name = "checkBoxOverrideBackgroundColorFromTile";
-            checkBoxOverrideBackgroundColorFromTile.Size = new System.Drawing.Size(225, 36);
-            checkBoxOverrideBackgroundColorFromTile.TabIndex = 17;
-            checkBoxOverrideBackgroundColorFromTile.Text = "Set background color same as tile background";
-            checkBoxOverrideBackgroundColorFromTile.UseVisualStyleBackColor = true;
             // 
             // numericUpDownItemSizeHeight
             // 
@@ -193,6 +183,18 @@ namespace UoFiddler.Forms
             groupBox2.TabStop = false;
             groupBox2.Text = "Misc";
             // 
+            // checkBoxNewClilocFormat
+            // 
+            checkBoxNewClilocFormat.AutoSize = true;
+            checkBoxNewClilocFormat.Location = new System.Drawing.Point(7, 123);
+            checkBoxNewClilocFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxNewClilocFormat.Name = "checkBoxNewClilocFormat";
+            checkBoxNewClilocFormat.Size = new System.Drawing.Size(120, 19);
+            checkBoxNewClilocFormat.TabIndex = 8;
+            checkBoxNewClilocFormat.Text = "New cliloc format";
+            toolTip1.SetToolTip(checkBoxNewClilocFormat, "For client version 7.0.104 and newer this needs to be checked. It allows reading of new cliloc format. This option has only partial support so saving file will only produce old cliloc format.");
+            checkBoxNewClilocFormat.UseVisualStyleBackColor = true;
+            // 
             // checkBoxPolSoundIdOffset
             // 
             checkBoxPolSoundIdOffset.AutoSize = true;
@@ -231,7 +233,7 @@ namespace UoFiddler.Forms
             // 
             // buttonApply
             // 
-            buttonApply.Location = new System.Drawing.Point(321, 463);
+            buttonApply.Location = new System.Drawing.Point(318, 476);
             buttonApply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonApply.Name = "buttonApply";
             buttonApply.Size = new System.Drawing.Size(88, 27);
@@ -372,7 +374,7 @@ namespace UoFiddler.Forms
             groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox3.Size = new System.Drawing.Size(220, 288);
+            groupBox3.Size = new System.Drawing.Size(220, 276);
             groupBox3.TabIndex = 5;
             groupBox3.TabStop = false;
             groupBox3.Text = "Map";
@@ -446,7 +448,7 @@ namespace UoFiddler.Forms
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(textBoxOutputPath);
             groupBox4.Controls.Add(label10);
-            groupBox4.Location = new System.Drawing.Point(16, 405);
+            groupBox4.Location = new System.Drawing.Point(16, 419);
             groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -457,7 +459,7 @@ namespace UoFiddler.Forms
             // 
             // button2
             // 
-            button2.Location = new System.Drawing.Point(443, 16);
+            button2.Location = new System.Drawing.Point(442, 17);
             button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button2.Name = "button2";
             button2.Size = new System.Drawing.Size(28, 27);
@@ -468,7 +470,7 @@ namespace UoFiddler.Forms
             // 
             // textBoxOutputPath
             // 
-            textBoxOutputPath.Location = new System.Drawing.Point(89, 20);
+            textBoxOutputPath.Location = new System.Drawing.Point(87, 19);
             textBoxOutputPath.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxOutputPath.Name = "textBoxOutputPath";
             textBoxOutputPath.Size = new System.Drawing.Size(347, 23);
@@ -492,11 +494,13 @@ namespace UoFiddler.Forms
             ColorsGroupBox.Controls.Add(TileSelectionColorComboBox);
             ColorsGroupBox.Controls.Add(FocusColorLabel);
             ColorsGroupBox.Controls.Add(TileFocusColorComboBox);
-            ColorsGroupBox.Location = new System.Drawing.Point(16, 301);
+            ColorsGroupBox.Controls.Add(PreviewBackgroundColorLabel);
+            ColorsGroupBox.Controls.Add(PreviewBackgroundColorButton);
+            ColorsGroupBox.Location = new System.Drawing.Point(16, 288);
             ColorsGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ColorsGroupBox.Name = "ColorsGroupBox";
             ColorsGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            ColorsGroupBox.Size = new System.Drawing.Size(486, 97);
+            ColorsGroupBox.Size = new System.Drawing.Size(486, 125);
             ColorsGroupBox.TabIndex = 7;
             ColorsGroupBox.TabStop = false;
             ColorsGroupBox.Text = "Tile view settings";
@@ -541,9 +545,30 @@ namespace UoFiddler.Forms
             TileFocusColorComboBox.Size = new System.Drawing.Size(153, 23);
             TileFocusColorComboBox.TabIndex = 9;
             // 
+            // PreviewBackgroundColorLabel
+            // 
+            PreviewBackgroundColorLabel.AutoSize = true;
+            PreviewBackgroundColorLabel.Location = new System.Drawing.Point(14, 91);
+            PreviewBackgroundColorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            PreviewBackgroundColorLabel.Name = "PreviewBackgroundColorLabel";
+            PreviewBackgroundColorLabel.Size = new System.Drawing.Size(101, 15);
+            PreviewBackgroundColorLabel.TabIndex = 18;
+            PreviewBackgroundColorLabel.Text = "Background color";
+            // 
+            // PreviewBackgroundColorButton
+            // 
+            PreviewBackgroundColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            PreviewBackgroundColorButton.Location = new System.Drawing.Point(123, 87);
+            PreviewBackgroundColorButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PreviewBackgroundColorButton.Name = "PreviewBackgroundColorButton";
+            PreviewBackgroundColorButton.Size = new System.Drawing.Size(134, 23);
+            PreviewBackgroundColorButton.TabIndex = 19;
+            PreviewBackgroundColorButton.UseVisualStyleBackColor = false;
+            PreviewBackgroundColorButton.Click += PreviewBackgroundColorButton_Click;
+            // 
             // buttonClose
             // 
-            buttonClose.Location = new System.Drawing.Point(415, 463);
+            buttonClose.Location = new System.Drawing.Point(414, 476);
             buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(88, 27);
@@ -552,23 +577,11 @@ namespace UoFiddler.Forms
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += OnClickClose;
             // 
-            // checkBoxNewClilocFormat
-            // 
-            checkBoxNewClilocFormat.AutoSize = true;
-            checkBoxNewClilocFormat.Location = new System.Drawing.Point(7, 123);
-            checkBoxNewClilocFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            checkBoxNewClilocFormat.Name = "checkBoxNewClilocFormat";
-            checkBoxNewClilocFormat.Size = new System.Drawing.Size(120, 19);
-            checkBoxNewClilocFormat.TabIndex = 8;
-            checkBoxNewClilocFormat.Text = "New cliloc format";
-            toolTip1.SetToolTip(checkBoxNewClilocFormat, "For client version 7.0.104 and newer this needs to be checked. It allows reading of new cliloc format. This option has only partial support so saving file will only produce old cliloc format.");
-            checkBoxNewClilocFormat.UseVisualStyleBackColor = true;
-            // 
             // OptionsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(518, 501);
+            ClientSize = new System.Drawing.Size(518, 514);
             Controls.Add(buttonClose);
             Controls.Add(ColorsGroupBox);
             Controls.Add(groupBox4);
@@ -641,7 +654,8 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.CheckBox checkBoxPolSoundIdOffset;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.CheckBox checkboxRemoveTileBorder;
-        private System.Windows.Forms.CheckBox checkBoxOverrideBackgroundColorFromTile;
         private System.Windows.Forms.CheckBox checkBoxNewClilocFormat;
+        private System.Windows.Forms.Label PreviewBackgroundColorLabel;
+        private System.Windows.Forms.Button PreviewBackgroundColorButton;
     }
 }

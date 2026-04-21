@@ -48,7 +48,6 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private bool _showFreeSlots;
         private readonly MultisControl _refMarker;
-        private Color _backgroundImageColor = Color.White;
         private bool _useTransparencyForPng = true;
 
         /// <summary>
@@ -138,6 +137,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.MultiChangeEvent += OnMultiChangeEvent;
+                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
             }
 
             _loaded = true;
@@ -147,6 +147,11 @@ namespace UoFiddler.Controls.UserControls
         private void OnFilePathChangeEvent()
         {
             Reload();
+        }
+
+        private void OnPreviewBackgroundColorChanged()
+        {
+            MultiPictureBox.BackColor = Options.PreviewBackgroundColor;
         }
 
         private void OnMultiChangeEvent(object sender, int id)
@@ -346,22 +351,22 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Bmp, _backgroundImageColor);
+            ExtractMultiImage(ImageFormat.Bmp, Options.PreviewBackgroundColor);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Tiff, _backgroundImageColor);
+            ExtractMultiImage(ImageFormat.Tiff, Options.PreviewBackgroundColor);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Jpeg, _backgroundImageColor);
+            ExtractMultiImage(ImageFormat.Jpeg, Options.PreviewBackgroundColor);
         }
 
         private void Extract_Image_ClickPng(object sender, EventArgs e)
         {
-            ExtractMultiImage(ImageFormat.Png, _useTransparencyForPng ? Color.Transparent : _backgroundImageColor);
+            ExtractMultiImage(ImageFormat.Png, _useTransparencyForPng ? Color.Transparent : Options.PreviewBackgroundColor);
         }
 
         private void ExtractMultiImage(ImageFormat imageFormat, Color backgroundColor)
@@ -593,22 +598,22 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_SaveAllBmp(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Bmp, _backgroundImageColor);
+            ExportAllMultis(ImageFormat.Bmp, Options.PreviewBackgroundColor);
         }
 
         private void OnClick_SaveAllTiff(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Tiff, _backgroundImageColor);
+            ExportAllMultis(ImageFormat.Tiff, Options.PreviewBackgroundColor);
         }
 
         private void OnClick_SaveAllJpg(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Jpeg, _backgroundImageColor);
+            ExportAllMultis(ImageFormat.Jpeg, Options.PreviewBackgroundColor);
         }
 
         private void OnClick_SaveAllPng(object sender, EventArgs e)
         {
-            ExportAllMultis(ImageFormat.Png, _useTransparencyForPng ? Color.Transparent : _backgroundImageColor);
+            ExportAllMultis(ImageFormat.Png, _useTransparencyForPng ? Color.Transparent : Options.PreviewBackgroundColor);
         }
 
         private void ExportAllMultis(ImageFormat imageFormat, Color backgroundColor)
@@ -865,8 +870,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _backgroundImageColor = colorDialog.Color;
-            MultiPictureBox.BackColor = _backgroundImageColor;
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
         }
 
         private void UseTransparencyForPNGToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
