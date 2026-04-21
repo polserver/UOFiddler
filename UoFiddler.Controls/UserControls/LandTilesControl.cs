@@ -170,6 +170,7 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.LandTileChangeEvent += OnLandTileChangeEvent;
                 ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
+                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
             }
 
             IsLoaded = true;
@@ -179,6 +180,12 @@ namespace UoFiddler.Controls.UserControls
         private void OnFilePathChangeEvent()
         {
             Reload();
+        }
+
+        private void OnPreviewBackgroundColorChanged()
+        {
+            LandTilesTileView.BackColor = Options.PreviewBackgroundColor;
+            LandTilesTileView.Invalidate();
         }
 
         private void UpdateToolStripLabels(int graphic)
@@ -659,6 +666,17 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
+        }
+
         private void LandTilesTileView_DrawItem(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
         {
             if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
@@ -674,6 +692,12 @@ namespace UoFiddler.Controls.UserControls
             var previousClip = e.Graphics.Clip;
 
             e.Graphics.Clip = new Region(itemRec);
+
+            var selected = LandTilesTileView.SelectedIndices.Contains(e.Index);
+            if (!selected)
+            {
+                e.Graphics.Clear(Options.PreviewBackgroundColor);
+            }
 
             Bitmap bitmap = Art.GetLand(_tileList[e.Index], out bool patched);
 
@@ -823,6 +847,8 @@ namespace UoFiddler.Controls.UserControls
             LandTilesTileView.TileBorderColor = Options.RemoveTileBorder
                 ? Color.Transparent
                 : Color.Gray;
+
+            LandTilesTileView.BackColor = Options.PreviewBackgroundColor;
 
             var sameFocusColor = LandTilesTileView.TileFocusColor == Options.TileFocusColor;
             var sameSelectionColor = LandTilesTileView.TileHighlightColor == Options.TileSelectionColor;

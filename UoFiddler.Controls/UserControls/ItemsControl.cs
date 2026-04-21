@@ -71,15 +71,13 @@ namespace UoFiddler.Controls.UserControls
                 ? Color.Transparent
                 : Color.Gray;
 
-            if (Options.OverrideBackgroundColorFromTile)
-            {
-                ItemsTileView.BackColor = _backgroundColorItem;
-            }
+            var sameBackColor = ItemsTileView.BackColor == Options.PreviewBackgroundColor;
+            ItemsTileView.BackColor = Options.PreviewBackgroundColor;
 
             var sameTileSize = ItemsTileView.TileSize == newSize;
             var sameFocusColor = ItemsTileView.TileFocusColor == Options.TileFocusColor;
             var sameSelectionColor = ItemsTileView.TileHighlightColor == Options.TileSelectionColor;
-            if (sameTileSize && sameFocusColor && sameSelectionColor)
+            if (sameTileSize && sameFocusColor && sameSelectionColor && sameBackColor)
             {
                 return;
             }
@@ -219,6 +217,7 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.ItemChangeEvent += OnItemChangeEvent;
                 ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
+                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
             }
 
             IsLoaded = true;
@@ -239,6 +238,16 @@ namespace UoFiddler.Controls.UserControls
         private void OnFilePathChangeEvent()
         {
             Reload();
+        }
+
+        private void OnPreviewBackgroundColorChanged()
+        {
+            ItemsTileView.BackColor = Options.PreviewBackgroundColor;
+            ItemsTileView.Invalidate();
+            if (_selectedGraphicId != -1)
+            {
+                UpdateDetail(_selectedGraphicId);
+            }
         }
 
         private void OnTileDataChangeEvent(object sender, int id)
@@ -321,8 +330,6 @@ namespace UoFiddler.Controls.UserControls
             ItemsTileView.Invalidate();
         }
 
-        private Color _backgroundColorItem = Color.White;
-
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (colorDialog.ShowDialog() != DialogResult.OK)
@@ -330,17 +337,9 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _backgroundColorItem = colorDialog.Color;
-
-            if (Options.OverrideBackgroundColorFromTile)
-            {
-                ItemsTileView.BackColor = _backgroundColorItem;
-            }
-
-            ItemsTileView.Invalidate();
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
         }
-
-        private Color _backgroundDetailColor = Color.White;
 
         private void UpdateDetail(int graphic)
         {
@@ -374,7 +373,7 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
                 {
-                    newGraph.Clear(_backgroundDetailColor);
+                    newGraph.Clear(Options.PreviewBackgroundColor);
                 }
 
                 DetailPictureBox.Image?.Dispose();
@@ -388,7 +387,7 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap newBit = new Bitmap(DetailPictureBox.Size.Width, DetailPictureBox.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
                 {
-                    newGraph.Clear(_backgroundDetailColor);
+                    newGraph.Clear(Options.PreviewBackgroundColor);
                     newGraph.DrawImage(bit, (DetailPictureBox.Size.Width - bit.Width) / 2, 5);
                 }
 
@@ -432,11 +431,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _backgroundDetailColor = colorDialog.Color;
-            if (_selectedGraphicId != -1)
-            {
-                UpdateDetail(_selectedGraphicId);
-            }
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
         }
 
         private bool _scrolling;
@@ -894,7 +890,7 @@ namespace UoFiddler.Controls.UserControls
             var selected = ItemsTileView.SelectedIndices.Contains(e.Index);
             if (!selected)
             {
-                e.Graphics.Clear(_backgroundColorItem);
+                e.Graphics.Clear(Options.PreviewBackgroundColor);
             }
 
             var bitmap = Art.GetStatic(_itemList[e.Index], out bool patched);

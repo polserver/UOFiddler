@@ -62,10 +62,11 @@ namespace UoFiddler.Forms
                 .Where(x => x.PropertyType == typeof(Color))
                 .Select(x => x.GetValue(null)).ToList();
 
-            checkBoxOverrideBackgroundColorFromTile.Checked = Options.OverrideBackgroundColorFromTile;
             checkboxRemoveTileBorder.Checked = Options.RemoveTileBorder;
 
             TileSelectionColorComboBox.SelectedItem = Options.TileSelectionColor;
+
+            PreviewBackgroundColorButton.BackColor = Options.PreviewBackgroundColor;
 
             checkBoxCacheData.Checked = Files.CacheData;
             checkBoxNewMapSize.Checked = Map.Felucca.Width == 7168;
@@ -154,18 +155,17 @@ namespace UoFiddler.Forms
                 _updateAllTileViewsAction();
             }
 
-            if (checkBoxOverrideBackgroundColorFromTile.Checked != Options.OverrideBackgroundColorFromTile)
-            {
-                Options.OverrideBackgroundColorFromTile = checkBoxOverrideBackgroundColorFromTile.Checked;
-
-                _updateAllTileViewsAction();
-            }
-
             if (checkboxRemoveTileBorder.Checked != Options.RemoveTileBorder)
             {
                 Options.RemoveTileBorder = checkboxRemoveTileBorder.Checked;
 
                 _updateAllTileViewsAction();
+            }
+
+            if (PreviewBackgroundColorButton.BackColor != Options.PreviewBackgroundColor)
+            {
+                Options.PreviewBackgroundColor = PreviewBackgroundColorButton.BackColor;
+                ControlEvents.FirePreviewBackgroundColorChangeEvent();
             }
 
             if (map0Nametext.Text != Options.MapNames[0]
@@ -269,11 +269,20 @@ namespace UoFiddler.Forms
                 return;
             }
 
-            checkBoxOverrideBackgroundColorFromTile.Checked = false;
             checkboxRemoveTileBorder.Checked = false;
 
             TileFocusColorComboBox.SelectedItem = Color.DarkRed;
             TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;
+            PreviewBackgroundColorButton.BackColor = Color.White;
+        }
+
+        private void PreviewBackgroundColorButton_Click(object sender, EventArgs e)
+        {
+            using var dlg = new ColorDialog { Color = PreviewBackgroundColorButton.BackColor };
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                PreviewBackgroundColorButton.BackColor = dlg.Color;
+            }
         }
 
         private void OnClickClose(object sender, EventArgs e)

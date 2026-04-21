@@ -40,6 +40,8 @@ namespace UoFiddler.Controls.UserControls
             ProgressBar.Visible = false;
 
             _refMarker = this;
+
+            pictureBox.BackColor = Options.PreviewBackgroundColor;
         }
 
         private sealed record GumpEntry(string Name, string[] Tags);
@@ -118,6 +120,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.GumpChangeEvent += OnGumpChangeEvent;
+                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
             }
 
             _loaded = true;
@@ -301,6 +304,11 @@ namespace UoFiddler.Controls.UserControls
             Reload();
         }
 
+        private void OnPreviewBackgroundColorChanged()
+        {
+            pictureBox.BackColor = Options.PreviewBackgroundColor;
+        }
+
         private void OnGumpChangeEvent(object sender, int index)
         {
             if (!_loaded)
@@ -355,6 +363,17 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
+        }
+
         private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0)
@@ -385,7 +404,6 @@ namespace UoFiddler.Controls.UserControls
                     {
                         e.Graphics.FillRectangle(Brushes.LightCoral, e.Bounds.X, e.Bounds.Y, 105, e.Bounds.Height);
                     }
-
                     e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 3, width, height));
                 }
                 else
@@ -439,6 +457,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            pictureBox.BackColor = Options.PreviewBackgroundColor;
             if (Gumps.IsValidIndex(i))
             {
                 Bitmap bmp = Gumps.GetGump(i);

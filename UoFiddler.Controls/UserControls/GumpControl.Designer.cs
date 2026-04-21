@@ -46,6 +46,7 @@ namespace UoFiddler.Controls.UserControls
             contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
             showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            changeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             extractImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,6 +84,7 @@ namespace UoFiddler.Controls.UserControls
             saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             pictureBox = new System.Windows.Forms.PictureBox();
+            colorDialog = new System.Windows.Forms.ColorDialog();
             bottomMenuToolStrip = new System.Windows.Forms.ToolStrip();
             IDLabel = new System.Windows.Forms.ToolStripLabel();
             SizeLabel = new System.Windows.Forms.ToolStripLabel();
@@ -143,7 +145,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip
             // 
-            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, toolStripSeparator2, extractImageToolStripMenuItem, toolStripSeparator6, jumpToMaleFemale, toolStripSeparator5, replaceGumpToolStripMenuItem, insertToolStripMenuItem, toolStripMenuItem1, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
+            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, changeBackgroundColorToolStripMenuItem, toolStripSeparator2, extractImageToolStripMenuItem, toolStripSeparator6, jumpToMaleFemale, toolStripSeparator5, replaceGumpToolStripMenuItem, insertToolStripMenuItem, toolStripMenuItem1, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
             contextMenuStrip.Name = "contextMenuStrip1";
             contextMenuStrip.Size = new System.Drawing.Size(190, 226);
             // 
@@ -160,7 +162,14 @@ namespace UoFiddler.Controls.UserControls
             findNextFreeSlotToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             findNextFreeSlotToolStripMenuItem.Text = "Find Next Free Slot";
             findNextFreeSlotToolStripMenuItem.Click += OnClickFindFree;
-            // 
+            //
+            // changeBackgroundColorToolStripMenuItem
+            //
+            changeBackgroundColorToolStripMenuItem.Name = "changeBackgroundColorToolStripMenuItem";
+            changeBackgroundColorToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            changeBackgroundColorToolStripMenuItem.Text = "Change background color";
+            changeBackgroundColorToolStripMenuItem.Click += ChangeBackgroundColorToolStripMenuItem_Click;
+            //
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
@@ -555,5 +564,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripDropDownButton tagFilterDropDownButton;
+        private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorToolStripMenuItem;
+        private System.Windows.Forms.ColorDialog colorDialog;
     }
 }
