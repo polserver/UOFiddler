@@ -1713,6 +1713,12 @@ namespace UoFiddler.Controls.UserControls
             SearchName(searchByNameToolStripTextBox.Text, true, landTilesSelected);
         }
 
+        private void HelpToolStripButton_Click(object sender, EventArgs e)
+        {
+            using var form = new TileDataHelpForm();
+            form.ShowDialog(this);
+        }
+
         private void AssignToolTipsToLabels()
         {
             // Statics
