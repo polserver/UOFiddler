@@ -19,6 +19,7 @@ using System.Xml;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Plugin.MultiEditor.Classes;
+using UoFiddler.Plugin.MultiEditor.Forms;
 
 namespace UoFiddler.Plugin.MultiEditor.UserControls
 {
@@ -2196,6 +2197,19 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     SetZoom(1.0f);
                     return true;
                 }
+
+                if (ActiveControl is not TextBox && ActiveControl is not NumericUpDown)
+                {
+                    if (keyData == Keys.S) { BTN_Select_Click(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.D) { BTN_Draw_Click(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.R) { BTN_Remove_Click(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.E) { BTN_Z_Click(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.F) { BTN_Floor.Checked = !BTN_Floor.Checked; return true; }
+                    if (keyData == Keys.P) { BTN_Pipette_Click(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.T) { BTN_Trans_Clicked(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.B) { BTN_RectFill_Click(null, EventArgs.Empty); return true; }
+                    if (keyData == Keys.L) { BTN_LineDraw_Click(null, EventArgs.Empty); return true; }
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -2228,6 +2242,12 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private void ToolStripBtnZoom_Click(object sender, EventArgs e)
         {
             SetZoom(1.0f);
+        }
+
+        private void ToolStripBtnHelp_Click(object sender, EventArgs e)
+        {
+            using var form = new ShortcutsHelpForm();
+            form.ShowDialog(this);
         }
 
         private void UpdateTrackBarAfterZChange()
