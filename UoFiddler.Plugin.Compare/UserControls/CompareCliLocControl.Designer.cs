@@ -1,9 +1,9 @@
-﻿/***************************************************************************
+/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -13,12 +13,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     partial class CompareCliLocControl
     {
-        /// <summary> 
+        /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
+        /// <summary>
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -39,8 +39,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            splitContainerMain = new System.Windows.Forms.SplitContainer();
             dataGridView1 = new System.Windows.Forms.DataGridView();
+            toolbarPanel = new System.Windows.Forms.Panel();
             button5 = new System.Windows.Forms.Button();
             checkBox1 = new System.Windows.Forms.CheckBox();
             button4 = new System.Windows.Forms.Button();
@@ -49,44 +50,47 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button1 = new System.Windows.Forms.Button();
             textBox2 = new System.Windows.Forms.TextBox();
             textBox1 = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
+            splitContainerDiff = new System.Windows.Forms.SplitContainer();
+            diffRichTextBox1 = new System.Windows.Forms.RichTextBox();
+            labelDiff1 = new System.Windows.Forms.Label();
+            diffRichTextBox2 = new System.Windows.Forms.RichTextBox();
+            labelDiff2 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
+            splitContainerMain.Panel1.SuspendLayout();
+            splitContainerMain.Panel2.SuspendLayout();
+            splitContainerMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            toolbarPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainerDiff).BeginInit();
+            splitContainerDiff.Panel1.SuspendLayout();
+            splitContainerDiff.Panel2.SuspendLayout();
+            splitContainerDiff.SuspendLayout();
             SuspendLayout();
-            // 
-            // splitContainer1
-            // 
-            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            splitContainer1.IsSplitterFixed = true;
-            splitContainer1.Location = new System.Drawing.Point(0, 0);
-            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            splitContainer1.Name = "splitContainer1";
-            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            splitContainer1.Panel1.Controls.Add(dataGridView1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            splitContainer1.Panel2.Controls.Add(button5);
-            splitContainer1.Panel2.Controls.Add(checkBox1);
-            splitContainer1.Panel2.Controls.Add(button4);
-            splitContainer1.Panel2.Controls.Add(button3);
-            splitContainer1.Panel2.Controls.Add(button2);
-            splitContainer1.Panel2.Controls.Add(button1);
-            splitContainer1.Panel2.Controls.Add(textBox2);
-            splitContainer1.Panel2.Controls.Add(textBox1);
-            splitContainer1.Size = new System.Drawing.Size(729, 377);
-            splitContainer1.SplitterDistance = 278;
-            splitContainer1.SplitterWidth = 5;
-            splitContainer1.TabIndex = 0;
-            // 
+            //
+            // splitContainerMain
+            //
+            splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainerMain.Location = new System.Drawing.Point(0, 0);
+            splitContainerMain.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainerMain.Name = "splitContainerMain";
+            splitContainerMain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            //
+            // splitContainerMain.Panel1 — dataGrid fills top, toolbar docks to bottom
+            //
+            splitContainerMain.Panel1.Controls.Add(dataGridView1);
+            splitContainerMain.Panel1.Controls.Add(toolbarPanel);
+            //
+            // splitContainerMain.Panel2 — diff detail
+            //
+            splitContainerMain.Panel2.Controls.Add(splitContainerDiff);
+            splitContainerMain.Panel2MinSize = 80;
+            splitContainerMain.Size = new System.Drawing.Size(729, 500);
+            splitContainerMain.SplitterDistance = 377;
+            splitContainerMain.SplitterWidth = 5;
+            splitContainerMain.TabIndex = 0;
+            //
             // dataGridView1
-            // 
+            //
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToOrderColumns = true;
@@ -100,14 +104,30 @@ namespace UoFiddler.Plugin.Compare.UserControls
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new System.Drawing.Size(729, 278);
+            dataGridView1.Size = new System.Drawing.Size(729, 282);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellFormatting += CellFormatting;
             dataGridView1.ColumnHeaderMouseClick += OnHeaderClicked;
+            dataGridView1.SelectionChanged += OnSelectionChanged;
+            //
+            // toolbarPanel
+            //
+            toolbarPanel.Controls.Add(button5);
+            toolbarPanel.Controls.Add(checkBox1);
+            toolbarPanel.Controls.Add(button4);
+            toolbarPanel.Controls.Add(button3);
+            toolbarPanel.Controls.Add(button2);
+            toolbarPanel.Controls.Add(button1);
+            toolbarPanel.Controls.Add(textBox2);
+            toolbarPanel.Controls.Add(textBox1);
+            toolbarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            toolbarPanel.Height = 95;
+            toolbarPanel.Margin = new System.Windows.Forms.Padding(0);
+            toolbarPanel.Name = "toolbarPanel";
+            toolbarPanel.TabIndex = 1;
             //
             // button5
-            // 
-            button5.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            //
             button5.AutoSize = true;
             button5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             button5.Location = new System.Drawing.Point(399, 7);
@@ -118,10 +138,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button5.Text = "Find Next Diff";
             button5.UseVisualStyleBackColor = true;
             button5.Click += OnClickFindNextDiff;
-            // 
+            //
             // checkBox1
-            // 
-            checkBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            //
             checkBox1.AutoSize = true;
             checkBox1.Location = new System.Drawing.Point(236, 11);
             checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -131,10 +150,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             checkBox1.Text = "Show Only Differences";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.Click += OnClickShowOnlyDiff;
-            // 
+            //
             // button4
-            // 
-            button4.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            //
+            button4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             button4.AutoSize = true;
             button4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             button4.Location = new System.Drawing.Point(647, 63);
@@ -145,10 +164,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button4.Text = "..";
             button4.UseVisualStyleBackColor = true;
             button4.Click += OnClickDirFile2;
-            // 
+            //
             // button3
-            // 
-            button3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            //
+            button3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
             button3.AutoSize = true;
             button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             button3.Location = new System.Drawing.Point(236, 63);
@@ -159,10 +178,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button3.Text = "..";
             button3.UseVisualStyleBackColor = true;
             button3.Click += OnClickDirFile1;
-            // 
+            //
             // button2
-            // 
-            button2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            //
+            button2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             button2.AutoSize = true;
             button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             button2.Location = new System.Drawing.Point(681, 63);
@@ -173,10 +192,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button2.Text = "Load";
             button2.UseVisualStyleBackColor = true;
             button2.Click += OnLoad2;
-            // 
+            //
             // button1
-            // 
-            button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            //
+            button1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
             button1.AutoSize = true;
             button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             button1.Location = new System.Drawing.Point(270, 63);
@@ -187,40 +206,112 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button1.Text = "Load";
             button1.UseVisualStyleBackColor = true;
             button1.Click += OnLoad;
-            // 
+            //
             // textBox2
-            // 
-            textBox2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            //
+            textBox2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             textBox2.Location = new System.Drawing.Point(399, 64);
             textBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBox2.Name = "textBox2";
             textBox2.Size = new System.Drawing.Size(236, 23);
             textBox2.TabIndex = 1;
-            // 
+            //
             // textBox1
-            // 
-            textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            //
+            textBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
             textBox1.Location = new System.Drawing.Point(5, 64);
             textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBox1.Name = "textBox1";
             textBox1.Size = new System.Drawing.Size(223, 23);
             textBox1.TabIndex = 0;
-            // 
+            //
+            // splitContainerDiff
+            //
+            splitContainerDiff.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainerDiff.Location = new System.Drawing.Point(0, 0);
+            splitContainerDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainerDiff.Name = "splitContainerDiff";
+            //
+            // splitContainerDiff.Panel1
+            //
+            splitContainerDiff.Panel1.Controls.Add(diffRichTextBox1);
+            splitContainerDiff.Panel1.Controls.Add(labelDiff1);
+            //
+            // splitContainerDiff.Panel2
+            //
+            splitContainerDiff.Panel2.Controls.Add(diffRichTextBox2);
+            splitContainerDiff.Panel2.Controls.Add(labelDiff2);
+            splitContainerDiff.Size = new System.Drawing.Size(729, 118);
+            splitContainerDiff.SplitterDistance = 362;
+            splitContainerDiff.SplitterWidth = 5;
+            splitContainerDiff.TabIndex = 0;
+            //
+            // labelDiff1
+            //
+            labelDiff1.Dock = System.Windows.Forms.DockStyle.Top;
+            labelDiff1.Location = new System.Drawing.Point(0, 0);
+            labelDiff1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            labelDiff1.Name = "labelDiff1";
+            labelDiff1.Size = new System.Drawing.Size(362, 18);
+            labelDiff1.TabIndex = 0;
+            labelDiff1.Text = "File 1:";
+            //
+            // diffRichTextBox1
+            //
+            diffRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            diffRichTextBox1.Location = new System.Drawing.Point(0, 18);
+            diffRichTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            diffRichTextBox1.Name = "diffRichTextBox1";
+            diffRichTextBox1.ReadOnly = true;
+            diffRichTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            diffRichTextBox1.Size = new System.Drawing.Size(362, 100);
+            diffRichTextBox1.TabIndex = 1;
+            diffRichTextBox1.Text = "";
+            diffRichTextBox1.WordWrap = true;
+            //
+            // labelDiff2
+            //
+            labelDiff2.Dock = System.Windows.Forms.DockStyle.Top;
+            labelDiff2.Location = new System.Drawing.Point(0, 0);
+            labelDiff2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            labelDiff2.Name = "labelDiff2";
+            labelDiff2.Size = new System.Drawing.Size(362, 18);
+            labelDiff2.TabIndex = 0;
+            labelDiff2.Text = "File 2:";
+            //
+            // diffRichTextBox2
+            //
+            diffRichTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            diffRichTextBox2.Location = new System.Drawing.Point(0, 18);
+            diffRichTextBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            diffRichTextBox2.Name = "diffRichTextBox2";
+            diffRichTextBox2.ReadOnly = true;
+            diffRichTextBox2.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            diffRichTextBox2.Size = new System.Drawing.Size(362, 100);
+            diffRichTextBox2.TabIndex = 1;
+            diffRichTextBox2.Text = "";
+            diffRichTextBox2.WordWrap = true;
+            //
             // CompareCliLocControl
-            // 
+            //
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(splitContainer1);
+            Controls.Add(splitContainerMain);
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CompareCliLocControl";
-            Size = new System.Drawing.Size(729, 377);
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel2.ResumeLayout(false);
-            splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
+            Size = new System.Drawing.Size(729, 500);
+            splitContainerMain.Panel1.ResumeLayout(false);
+            splitContainerMain.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
+            splitContainerMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            toolbarPanel.ResumeLayout(false);
+            toolbarPanel.PerformLayout();
+            splitContainerDiff.Panel1.ResumeLayout(false);
+            splitContainerDiff.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainerDiff).EndInit();
+            splitContainerDiff.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -233,8 +324,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainerMain;
+        private System.Windows.Forms.Panel toolbarPanel;
+        private System.Windows.Forms.SplitContainer splitContainerDiff;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label labelDiff1;
+        private System.Windows.Forms.Label labelDiff2;
+        private System.Windows.Forms.RichTextBox diffRichTextBox1;
+        private System.Windows.Forms.RichTextBox diffRichTextBox2;
     }
 }

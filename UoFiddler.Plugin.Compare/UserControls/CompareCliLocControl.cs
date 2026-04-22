@@ -268,6 +268,117 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
+        private void OnSelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                diffRichTextBox1.Clear();
+                diffRichTextBox2.Clear();
+                return;
+            }
+
+            var entry = dataGridView1.SelectedRows[0].DataBoundItem as CompareEntry;
+            if (entry == null)
+            {
+                return;
+            }
+
+            ShowWordDiff(entry.Text1 ?? string.Empty, entry.Text2 ?? string.Empty);
+        }
+
+        private void ShowWordDiff(string text1, string text2)
+        {
+            diffRichTextBox1.Clear();
+            diffRichTextBox2.Clear();
+
+            if (text1 == text2)
+            {
+                diffRichTextBox1.Text = text1;
+                diffRichTextBox2.Text = text2;
+                return;
+            }
+
+            var diff = ComputeWordDiff(text1, text2);
+            bool first1 = true, first2 = true;
+
+            foreach (var (op, word) in diff)
+            {
+                switch (op)
+                {
+                    case WordDiffOp.Equal:
+                        AppendWord(diffRichTextBox1, word, SystemColors.Window, ref first1);
+                        AppendWord(diffRichTextBox2, word, SystemColors.Window, ref first2);
+                        break;
+                    case WordDiffOp.Delete:
+                        AppendWord(diffRichTextBox1, word, Color.FromArgb(255, 200, 200), ref first1);
+                        break;
+                    case WordDiffOp.Insert:
+                        AppendWord(diffRichTextBox2, word, Color.FromArgb(200, 255, 200), ref first2);
+                        break;
+                }
+            }
+
+            diffRichTextBox1.SelectionStart = 0;
+            diffRichTextBox1.SelectionLength = 0;
+            diffRichTextBox2.SelectionStart = 0;
+            diffRichTextBox2.SelectionLength = 0;
+        }
+
+        private static void AppendWord(RichTextBox rtb, string word, Color backColor, ref bool isFirst)
+        {
+            rtb.SelectionStart = rtb.TextLength;
+            rtb.SelectionLength = 0;
+            rtb.SelectionBackColor = backColor;
+            rtb.SelectionColor = SystemColors.WindowText;
+            rtb.SelectedText = isFirst ? word : " " + word;
+            isFirst = false;
+        }
+
+        private enum WordDiffOp { Equal, Delete, Insert }
+
+        private static List<(WordDiffOp Op, string Word)> ComputeWordDiff(string text1, string text2)
+        {
+            string[] a = text1.Split(' ');
+            string[] b = text2.Split(' ');
+            int m = a.Length, n = b.Length;
+
+            var dp = new int[m + 1, n + 1];
+            for (int i = 1; i <= m; i++)
+            {
+                for (int j = 1; j <= n; j++)
+                {
+                    dp[i, j] = a[i - 1] == b[j - 1]
+                        ? dp[i - 1, j - 1] + 1
+                        : Math.Max(dp[i - 1, j], dp[i, j - 1]);
+                }
+            }
+
+            var result = new List<(WordDiffOp, string)>();
+            int ii = m, jj = n;
+            while (ii > 0 || jj > 0)
+            {
+                if (ii > 0 && jj > 0 && a[ii - 1] == b[jj - 1])
+                {
+                    result.Add((WordDiffOp.Equal, a[ii - 1]));
+                    ii--;
+                    jj--;
+                }
+                else if (jj > 0 && (ii == 0 || dp[ii, jj - 1] >= dp[ii - 1, jj]))
+                {
+                    result.Add((WordDiffOp.Insert, b[jj - 1]));
+                    jj--;
+                }
+                else
+                {
+                    result.Add((WordDiffOp.Delete, a[ii - 1]));
+                    ii--;
+                }
+            }
+
+            result.Reverse();
+            return result;
+        }
+
         private void OnHeaderClicked(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (_sortColumn == e.ColumnIndex)
