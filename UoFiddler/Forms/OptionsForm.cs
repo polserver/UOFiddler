@@ -84,7 +84,6 @@ namespace UoFiddler.Forms
             cmdtext.Text = Options.MapCmd;
             argstext.Text = Options.MapArgs;
             textBoxOutputPath.Text = Options.OutputPath;
-            checkBoxNewClilocFormat.Checked = Options.NewClilocFormat;
         }
 
         private void OnClickApply(object sender, EventArgs e)
@@ -127,11 +126,6 @@ namespace UoFiddler.Forms
                 Options.ArtItemSizeHeight = (int)numericUpDownItemSizeHeight.Value;
 
                 _updateItemsTabAction();
-            }
-
-            if (checkBoxNewClilocFormat.Checked != Options.NewClilocFormat)
-            {
-                Options.NewClilocFormat = checkBoxNewClilocFormat.Checked;
             }
 
             if (checkBoxItemClip.Checked != Options.ArtItemClip)
