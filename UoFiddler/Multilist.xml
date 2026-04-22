@@ -251,6 +251,41 @@
   <Multi name="Foundation [18x16]" id="5241" type="3" />
   <Multi name="Foundation [18x17]" id="5242" type="3" />
   <Multi name="Foundation [18x18]" id="5243" type="3" />
+  <Multi name="Foundation [24x24]" id="5244" type="1" />
+  <Multi name="Foundation [31x31]" id="5245" type="1" />
+  <Multi name="Trinsic Keep" id="5246" type="1" />
+  <Multi name="Gothic Rose Castle" id="5247" type="1" />
+  <Multi name="Elsa Castle" id="5248" type="1" />
+  <Multi name="Spires" id="5249" type="1" />
+  <Multi name="Castle Of Oceania" id="5250" type="1" />
+  <Multi name="Feudal Castle" id="5251" type="1" />
+  <Multi name="Robins Nest" id="5252" type="1" />
+  <Multi name="Traditional Keep" id="5253" type="1" />
+  <Multi name="Villa Crowley" id="5254" type="1" />
+  <Multi name="Darkthorn Keep" id="5255" type="1" />
+  <Multi name="Sandalwood Keep" id="5256" type="1" />
+  <Multi name="Casa Moga" id="5257" type="1" />
+  <Multi name="Robins Roost" id="5258" type="1" />
+  <Multi name="Camelot" id="5259" type="1" />
+  <Multi name="Lacrimae In Caelo" id="5260" type="1" />
+  <Multi name="Okinawa Sweet Dream Castle" id="5261" type="1" />
+  <Multi name="The Sandstone Castle" id="5262" type="1" />
+  <Multi name="Grimswind Sisters" id="5263" type="1" />
+  <Multi name="Fortress Of Lestat" id="5264" type="1" />
+  <Multi name="Citadel Of The Far East" id="5265" type="1" />
+  <Multi name="Keep Incarcerated" id="5266" type="1" />
+  <Multi name="Sally Trees Refurbished Keep" id="5267" type="1" />
+  <Multi name="Desert Rose" id="5268" type="1" />
+  <Multi name="The Clovers Keep" id="5269" type="1" />
+  <Multi name="The Sorceres Castle" id="5270" type="1" />
+  <Multi name="The Castle Cascade" id="5271" type="1" />
+  <Multi name="The House Built On The Ruins" id="5272" type="1" />
+  <Multi name="The Sandstone Fortress Of Grand" id="5273" type="1" />
+  <Multi name="The Dragonstone Castle" id="5274" type="1" />
+  <Multi name="The Terrace Gardens" id="5275" type="1" />
+  <Multi name="The Keep Calm And Carry On Keep" id="5276" type="1" />
+  <Multi name="The Ravenloft Keep" id="5277" type="1" />
+  <Multi name="The Queens Retreat Keep" id="5278" type="1" />
   <Multi name="New Player Quest Cam" id="7500" type="2" />
 </Multis>
 
