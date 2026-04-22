@@ -47,7 +47,6 @@ namespace UoFiddler.Forms
             numericUpDownItemSizeWidth = new System.Windows.Forms.NumericUpDown();
             checkBoxCacheData = new System.Windows.Forms.CheckBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
-            checkBoxNewClilocFormat = new System.Windows.Forms.CheckBox();
             checkBoxPolSoundIdOffset = new System.Windows.Forms.CheckBox();
             checkBoxuseDiff = new System.Windows.Forms.CheckBox();
             checkBoxNewMapSize = new System.Windows.Forms.CheckBox();
@@ -169,7 +168,6 @@ namespace UoFiddler.Forms
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(checkBoxNewClilocFormat);
             groupBox2.Controls.Add(checkBoxPolSoundIdOffset);
             groupBox2.Controls.Add(checkBoxuseDiff);
             groupBox2.Controls.Add(checkBoxNewMapSize);
@@ -178,23 +176,11 @@ namespace UoFiddler.Forms
             groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox2.Size = new System.Drawing.Size(258, 157);
+            groupBox2.Size = new System.Drawing.Size(258, 132);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Misc";
-            // 
-            // checkBoxNewClilocFormat
-            // 
-            checkBoxNewClilocFormat.AutoSize = true;
-            checkBoxNewClilocFormat.Location = new System.Drawing.Point(7, 123);
-            checkBoxNewClilocFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            checkBoxNewClilocFormat.Name = "checkBoxNewClilocFormat";
-            checkBoxNewClilocFormat.Size = new System.Drawing.Size(120, 19);
-            checkBoxNewClilocFormat.TabIndex = 8;
-            checkBoxNewClilocFormat.Text = "New cliloc format";
-            toolTip1.SetToolTip(checkBoxNewClilocFormat, "For client version 7.0.104 and newer this needs to be checked. It allows reading of new cliloc format. This option has only partial support so saving file will only produce old cliloc format.");
-            checkBoxNewClilocFormat.UseVisualStyleBackColor = true;
-            // 
+            //
             // checkBoxPolSoundIdOffset
             // 
             checkBoxPolSoundIdOffset.AutoSize = true;
@@ -654,7 +640,6 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.CheckBox checkBoxPolSoundIdOffset;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.CheckBox checkboxRemoveTileBorder;
-        private System.Windows.Forms.CheckBox checkBoxNewClilocFormat;
         private System.Windows.Forms.Label PreviewBackgroundColorLabel;
         private System.Windows.Forms.Button PreviewBackgroundColorButton;
     }

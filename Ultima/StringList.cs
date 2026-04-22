@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -7,7 +8,7 @@ namespace Ultima
 {
     public sealed class StringList
     {
-        private readonly bool _decompress;
+        private bool _decompress;
         private int _header1;
         private short _header2;
 
@@ -51,45 +52,63 @@ namespace Ultima
                 return;
             }
 
-            Entries = new List<StringEntry>();
-            _stringTable = new Dictionary<int, string>();
-            _entryTable = new Dictionary<int, StringEntry>();
+            using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            byte[] buffer = new byte[fileStream.Length];
+            _ = fileStream.Read(buffer, 0, buffer.Length);
 
-            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            if (!TryParse(buffer, _decompress))
             {
-                byte[] buffer = new byte[fileStream.Length];
-                _ = fileStream.Read(buffer, 0, buffer.Length);
-
-                byte[] clilocData = _decompress
-                    ? MythicDecompress.Decompress(buffer)
-                    : buffer;
-
-                using (var reader = new BinaryReader(new MemoryStream(clilocData)))
+                bool fallback = !_decompress;
+                if (!TryParse(buffer, fallback))
                 {
-                    _header1 = reader.ReadInt32();
-                    _header2 = reader.ReadInt16();
-
-                    while (reader.BaseStream.Length != reader.BaseStream.Position)
-                    {
-                        int number = reader.ReadInt32();
-                        byte flag = reader.ReadByte();
-                        int length = reader.ReadInt16();
-
-                        if (length > _buffer.Length)
-                        {
-                            _buffer = new byte[(length + 1023) & ~1023];
-                        }
-
-                        reader.Read(_buffer, 0, length);
-                        string text = Encoding.UTF8.GetString(_buffer, 0, length);
-
-                        var se = new StringEntry(number, text, flag);
-                        Entries.Add(se);
-
-                        _stringTable[number] = text;
-                        _entryTable[number] = se;
-                    }
+                    throw new InvalidDataException($"Failed to parse cliloc file '{path}' in either compressed or uncompressed format.");
                 }
+                _decompress = fallback;
+            }
+        }
+
+        private bool TryParse(byte[] buffer, bool decompress)
+        {
+            try
+            {
+                byte[] clilocData = decompress ? MythicDecompress.Decompress(buffer) : buffer;
+
+                var entries = new List<StringEntry>();
+                var stringTable = new Dictionary<int, string>();
+                var entryTable = new Dictionary<int, StringEntry>();
+
+                using var reader = new BinaryReader(new MemoryStream(clilocData));
+                _header1 = reader.ReadInt32();
+                _header2 = reader.ReadInt16();
+
+                while (reader.BaseStream.Length != reader.BaseStream.Position)
+                {
+                    int number = reader.ReadInt32();
+                    byte flag = reader.ReadByte();
+                    int length = reader.ReadInt16();
+
+                    if (length > _buffer.Length)
+                    {
+                        _buffer = new byte[(length + 1023) & ~1023];
+                    }
+
+                    reader.Read(_buffer, 0, length);
+                    string text = Encoding.UTF8.GetString(_buffer, 0, length);
+
+                    var se = new StringEntry(number, text, flag);
+                    entries.Add(se);
+                    stringTable[number] = text;
+                    entryTable[number] = se;
+                }
+
+                Entries = entries;
+                _stringTable = stringTable;
+                _entryTable = entryTable;
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 

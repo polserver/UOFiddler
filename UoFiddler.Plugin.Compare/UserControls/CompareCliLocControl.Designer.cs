@@ -41,8 +41,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             dataGridView1 = new System.Windows.Forms.DataGridView();
-            decompressFileTwoCheckBox = new System.Windows.Forms.CheckBox();
-            decompressFileOneCheckBox = new System.Windows.Forms.CheckBox();
             button5 = new System.Windows.Forms.Button();
             checkBox1 = new System.Windows.Forms.CheckBox();
             button4 = new System.Windows.Forms.Button();
@@ -74,8 +72,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(decompressFileTwoCheckBox);
-            splitContainer1.Panel2.Controls.Add(decompressFileOneCheckBox);
             splitContainer1.Panel2.Controls.Add(button5);
             splitContainer1.Panel2.Controls.Add(checkBox1);
             splitContainer1.Panel2.Controls.Add(button4);
@@ -108,31 +104,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             dataGridView1.TabIndex = 0;
             dataGridView1.CellFormatting += CellFormatting;
             dataGridView1.ColumnHeaderMouseClick += OnHeaderClicked;
-            // 
-            // decompressFileTwoCheckBox
-            // 
-            decompressFileTwoCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            decompressFileTwoCheckBox.AutoSize = true;
-            decompressFileTwoCheckBox.Location = new System.Drawing.Point(399, 39);
-            decompressFileTwoCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            decompressFileTwoCheckBox.Name = "decompressFileTwoCheckBox";
-            decompressFileTwoCheckBox.Size = new System.Drawing.Size(202, 19);
-            decompressFileTwoCheckBox.TabIndex = 9;
-            decompressFileTwoCheckBox.Text = "Decompress cliloc before reading";
-            decompressFileTwoCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // decompressFileOneCheckBox
-            // 
-            decompressFileOneCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            decompressFileOneCheckBox.AutoSize = true;
-            decompressFileOneCheckBox.Location = new System.Drawing.Point(5, 39);
-            decompressFileOneCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            decompressFileOneCheckBox.Name = "decompressFileOneCheckBox";
-            decompressFileOneCheckBox.Size = new System.Drawing.Size(202, 19);
-            decompressFileOneCheckBox.TabIndex = 8;
-            decompressFileOneCheckBox.Text = "Decompress cliloc before reading";
-            decompressFileOneCheckBox.UseVisualStyleBackColor = true;
-            // 
+            //
             // button5
             // 
             button5.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -264,7 +236,5 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.CheckBox decompressFileTwoCheckBox;
-        private System.Windows.Forms.CheckBox decompressFileOneCheckBox;
     }
 }
