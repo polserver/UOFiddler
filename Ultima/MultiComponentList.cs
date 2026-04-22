@@ -39,6 +39,8 @@ namespace Ultima
         public MultiTileEntry[] SortedTiles { get; }
         public int Surface { get; private set; }
 
+        public static HashSet<ushort> DynamicItemIds { get; set; }
+
         public struct MultiTileEntry
         {
             public ushort ItemId;
@@ -433,7 +435,7 @@ namespace Ultima
                             var tempItem = new MultiTileEntry
                             {
                                 ItemId = 0xFFFF,
-                                Flags = 1,
+                                Flags = 0,
                                 Unk1 = 0
                             };
 
@@ -444,10 +446,17 @@ namespace Ultima
                                 {
                                     if (tempItem.ItemId != 0xFFFF)
                                     {
+                                        if (DynamicItemIds != null && DynamicItemIds.Contains(tempItem.ItemId))
+                                        {
+                                            tempItem.Flags = 1;
+                                        }
+
                                         SortedTiles[itemCount] = tempItem;
                                         ++itemCount;
                                     }
+
                                     tempItem.ItemId = 0xFFFF;
+                                    tempItem.Flags = 0;
                                 }
                                 else if (line.StartsWith("ID"))
                                 {
@@ -496,11 +505,18 @@ namespace Ultima
                                     }
                                 }
                             }
+
                             if (tempItem.ItemId != 0xFFFF)
                             {
+                                if (DynamicItemIds?.Contains(tempItem.ItemId) == true)
+                                {
+                                    tempItem.Flags = 1;
+                                }
+
                                 SortedTiles[itemCount] = tempItem;
                             }
                         }
+
                         break;
                     }
                 case Multis.ImportType.CSV: 

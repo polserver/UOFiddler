@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Items listed here are flagged as dynamic (Flags=1) when importing from WSC format.
+  Dynamic items spawn as interactive world objects when a house deed is placed
+  (e.g. doors that can be opened, functional crafting stations, placeable signs).
+
+  Syntax:
+    <Item id="0x0E8" comment="optional description" />
+    <Range from="0x0E8" to="0x0F7" comment="optional description" />
+
+  IDs may be in hex (0x...) or decimal.
+-->
+<DynamicItems>
+  <!-- Doors (from TileData Door flag) -->
+  <Range from="0x00E8" to="0x00F7" comment="stone wall, secret door" />
+  <Range from="0x0314" to="0x0363" comment="dungeon wall, secret door, stone wall, wooden wall" />
+  <Range from="0x0675" to="0x0691" comment="metal door, barred metal door" />
+  <Range from="0x0693" to="0x06F4" comment="barred metal door, rattan door, wooden door, metal door" />
+  <Range from="0x0824" to="0x0833" comment="iron gate" />
+  <Range from="0x0839" to="0x0843" comment="wooden gate" />
+  <Item id="0x0845" comment="wooden gate" />
+  <Range from="0x0847" to="0x0848" comment="wooden gate" />
+  <Range from="0x084C" to="0x085B" comment="iron gate" />
+  <Range from="0x0866" to="0x0872" comment="wooden gate" />
+  <Range from="0x0874" to="0x0875" comment="wooden gate" />
+  <Range from="0x190E" to="0x190F" comment="bar door" />
+  <Range from="0x1FED" to="0x1FFC" comment="barred metal door" />
+  <Range from="0x241F" to="0x2424" comment="door" />
+  <Item id="0x26F4" comment="door" />
+  <Item id="0x26F6" comment="door" />
+  <Range from="0x2A05" to="0x2A1C" comment="sliding door, secret door" />
+  <Range from="0x2D46" to="0x2D49" comment="wooden door closed, wooden door opened" />
+  <Range from="0x2D63" to="0x2D6E" comment="simple door, ornate door, plain door" />
+  <Range from="0x2FE2" to="0x2FE5" comment="moon door" />
+  <Range from="0x319C" to="0x31AF" comment="door" />
+  <Range from="0x35E7" to="0x35E8" comment="door" />
+  <Range from="0x3640" to="0x3646" comment="door" />
+  <Range from="0x367B" to="0x369A" comment="door" />
+  <Range from="0x409B" to="0x40A2" comment="Wallset3 door" />
+  <Range from="0x410C" to="0x4113" comment="GargoyleDoor" />
+  <Range from="0x41C2" to="0x41C9" comment="Wallset2 door" />
+  <Range from="0x41CF" to="0x41D6" comment="Wallset1 door" />
+  <Range from="0x436E" to="0x437D" comment="door A/B/C/D variants" />
+  <Range from="0x46DD" to="0x46E4" comment="RuinDoor" />
+  <Range from="0x4D1A" to="0x4D29" comment="QueenDoor" />
+  <Range from="0x50C8" to="0x50D7" comment="door" />
+  <Range from="0x5128" to="0x5129" comment="QC wall door" />
+  <Range from="0x5142" to="0x5149" comment="door" />
+  <Range from="0x9AD7" to="0x9AE6" comment="metal door" />
+  <Range from="0x9B3C" to="0x9B4B" comment="metal door" />
+  <Range from="0xA4BF" to="0xA4CB" comment="wooden gate" />
+  <!-- House signs -->
+  <Range from="0x0BCF" to="0x0BD2" comment="house sign" />
+  <!-- Chests -->
+  <Item id="0x09AB" comment="chest" />
+  <Range from="0x0E40" to="0x0E43" comment="chest" />
+  <Item id="0x0E7C" comment="chest" />
+  <!-- Anvil and forge -->
+  <Range from="0x0FAF" to="0x0FB1" comment="anvil, forge" />
+  <!-- Archery butte -->
+  <Range from="0x100A" to="0x100B" comment="archery butte" />
+  <!-- Spinning wheel -->
+  <Range from="0x1015" to="0x1017" comment="spinning wheel" />
+  <Range from="0x1019" to="0x101E" comment="spinning wheel" />
+  <!-- Upright loom -->
+  <Range from="0x105F" to="0x1066" comment="upright loom" />
+  <!-- Training dummy -->
+  <Item id="0x1070" comment="training dummy" />
+  <Item id="0x1074" comment="training dummy" />
+  <!-- More spinning wheel -->
+  <Range from="0x10A4" to="0x10A6" comment="spinning wheel" />
+  <!-- Forge parts -->
+  <Range from="0x197A" to="0x1999" comment="forge parts" />
+  <Range from="0x19A0" to="0x19A9" comment="forge parts" />
+  <!-- Pickpocket dip -->
+  <Item id="0x1EC0" comment="pickpocket dip" />
+  <Item id="0x1EC3" comment="pickpocket dip" />
+</DynamicItems>

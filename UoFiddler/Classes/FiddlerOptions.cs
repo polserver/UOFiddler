@@ -85,6 +85,7 @@ namespace UoFiddler.Classes
             MoveFiles(di.GetFiles("Animationlist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
             MoveFiles(di.GetFiles("Multilist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
             MoveFiles(di.GetFiles("Gumplist.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
+            MoveFiles(di.GetFiles("DynamicItems.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
 
             di = new DirectoryInfo(Path.Combine(Application.StartupPath, "plugins"));
             MoveFiles(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
@@ -95,6 +96,8 @@ namespace UoFiddler.Classes
                 Logger.Fatal("Can't find default profile file: {FileName}", fileName);
                 throw new FileNotFoundException($"Can't load default profile file {fileName}", "Options_default.xml");
             }
+
+            DynamicItemsConfig.EnsureLoaded();
         }
 
         public static void SaveProfile()

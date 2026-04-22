@@ -140,6 +140,9 @@
 		<Content Include="Multilist.xml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="DynamicItems.xml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<EmbeddedResource Include="Resources\UOFiddler.jpg" />
 		<EmbeddedResource Include="Resources\UOFiddlerIcon.ico" />
 		<None Include="Options_default.xml">
