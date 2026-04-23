@@ -118,7 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.18.1
+    <value>Version 4.18.2
+- Fixed WSC multi import where file has absolute coordinates. Now all coordinates are converted to relative ones.
+- Added DynamicItems.xml with list of items that should be marked as dynamic when importing multis from WSC.
+- Added support for viewing and importing Multicollection.uop multis (there is no save option for now).
+- Improved CliLoc comparison. It shows word diff now with highlights.
+- Removed `New cliloc format` option. Cliloc format is now autodetected.
+
+Version 4.18.1
 - Mass import plugin now allows importing PNG and JPEG.
 - Invalid entries in Animationlist.xml will now be skipped nad will result in a message about the problem.
 - Multi editor now has additional form with shortcut list.
