@@ -26,19 +26,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
             contextMenuStripOrg = new System.Windows.Forms.ContextMenuStrip(components);
             copyEntry1To2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             panelDetail = new System.Windows.Forms.Panel();
+            groupBoxOrg = new System.Windows.Forms.GroupBox();
+            labelOrgColorCaption = new System.Windows.Forms.Label();
+            labelOrgColorValue = new System.Windows.Forms.Label();
+            pictureBoxOrgColor = new System.Windows.Forms.PictureBox();
+            groupBoxSec = new System.Windows.Forms.GroupBox();
+            labelSecColorCaption = new System.Windows.Forms.Label();
+            labelSecColorValue = new System.Windows.Forms.Label();
+            pictureBoxSecColor = new System.Windows.Forms.PictureBox();
             groupBoxLegend = new System.Windows.Forms.GroupBox();
             legendSwatchDifferent = new System.Windows.Forms.Label();
             legendLabelDifferent = new System.Windows.Forms.Label();
             legendSwatchIdentical = new System.Windows.Forms.Label();
             legendLabelIdentical = new System.Windows.Forms.Label();
-            groupBoxSec = new System.Windows.Forms.GroupBox();
-            labelSecColorCaption = new System.Windows.Forms.Label();
-            labelSecColorValue = new System.Windows.Forms.Label();
-            pictureBoxSecColor = new System.Windows.Forms.PictureBox();
-            groupBoxOrg = new System.Windows.Forms.GroupBox();
-            labelOrgColorCaption = new System.Windows.Forms.Label();
-            labelOrgColorValue = new System.Windows.Forms.Label();
-            pictureBoxOrgColor = new System.Windows.Forms.PictureBox();
             tileViewSec = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             contextMenuStripSec = new System.Windows.Forms.ContextMenuStrip(components);
             copyEntry2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,11 +61,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tableLayoutLand.SuspendLayout();
             contextMenuStripOrg.SuspendLayout();
             panelDetail.SuspendLayout();
-            groupBoxLegend.SuspendLayout();
-            groupBoxSec.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxSecColor).BeginInit();
             groupBoxOrg.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxOrgColor).BeginInit();
+            groupBoxSec.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSecColor).BeginInit();
+            groupBoxLegend.SuspendLayout();
             contextMenuStripSec.SuspendLayout();
             tabPageItem.SuspendLayout();
             tableLayoutItem.SuspendLayout();
@@ -93,7 +93,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(buttonBrowse);
             splitContainer1.Panel2.Controls.Add(textBoxSecondFile);
             splitContainer1.Size = new System.Drawing.Size(940, 510);
-            splitContainer1.SplitterDistance = 451;
+            splitContainer1.SplitterDistance = 449;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -105,7 +105,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabControl.Location = new System.Drawing.Point(0, 0);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
-            tabControl.Size = new System.Drawing.Size(940, 451);
+            tabControl.Size = new System.Drawing.Size(940, 449);
             tabControl.TabIndex = 0;
             tabControl.SelectedIndexChanged += OnTabChanged;
             // 
@@ -114,7 +114,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabPageLand.Controls.Add(tableLayoutLand);
             tabPageLand.Location = new System.Drawing.Point(4, 24);
             tabPageLand.Name = "tabPageLand";
-            tabPageLand.Size = new System.Drawing.Size(932, 423);
+            tabPageLand.Size = new System.Drawing.Size(932, 421);
             tabPageLand.TabIndex = 0;
             tabPageLand.Text = "Land Tiles";
             tabPageLand.UseVisualStyleBackColor = true;
@@ -133,7 +133,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tableLayoutLand.Name = "tableLayoutLand";
             tableLayoutLand.RowCount = 1;
             tableLayoutLand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutLand.Size = new System.Drawing.Size(932, 423);
+            tableLayoutLand.Size = new System.Drawing.Size(932, 421);
             tableLayoutLand.TabIndex = 0;
             // 
             // tileViewOrg
@@ -144,7 +144,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewOrg.Location = new System.Drawing.Point(3, 3);
             tileViewOrg.MultiSelect = false;
             tileViewOrg.Name = "tileViewOrg";
-            tileViewOrg.Size = new System.Drawing.Size(248, 417);
+            tileViewOrg.Size = new System.Drawing.Size(248, 415);
             tileViewOrg.TabIndex = 0;
             tileViewOrg.TileBackgroundColor = System.Drawing.SystemColors.Window;
             tileViewOrg.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
@@ -176,14 +176,95 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // panelDetail
             // 
+            panelDetail.BackColor = System.Drawing.SystemColors.Control;
             panelDetail.Controls.Add(groupBoxOrg);
             panelDetail.Controls.Add(groupBoxSec);
             panelDetail.Controls.Add(groupBoxLegend);
             panelDetail.Dock = System.Windows.Forms.DockStyle.Fill;
             panelDetail.Location = new System.Drawing.Point(257, 3);
             panelDetail.Name = "panelDetail";
-            panelDetail.Size = new System.Drawing.Size(417, 417);
+            panelDetail.Size = new System.Drawing.Size(417, 415);
             panelDetail.TabIndex = 1;
+            // 
+            // groupBoxOrg
+            // 
+            groupBoxOrg.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            groupBoxOrg.Controls.Add(labelOrgColorCaption);
+            groupBoxOrg.Controls.Add(labelOrgColorValue);
+            groupBoxOrg.Controls.Add(pictureBoxOrgColor);
+            groupBoxOrg.Location = new System.Drawing.Point(6, 3);
+            groupBoxOrg.Name = "groupBoxOrg";
+            groupBoxOrg.Size = new System.Drawing.Size(405, 155);
+            groupBoxOrg.TabIndex = 0;
+            groupBoxOrg.TabStop = false;
+            groupBoxOrg.Text = "Left (Original)";
+            // 
+            // labelOrgColorCaption
+            // 
+            labelOrgColorCaption.AutoSize = true;
+            labelOrgColorCaption.Location = new System.Drawing.Point(8, 115);
+            labelOrgColorCaption.Name = "labelOrgColorCaption";
+            labelOrgColorCaption.Size = new System.Drawing.Size(39, 15);
+            labelOrgColorCaption.TabIndex = 0;
+            labelOrgColorCaption.Text = "Color:";
+            // 
+            // labelOrgColorValue
+            // 
+            labelOrgColorValue.AutoSize = true;
+            labelOrgColorValue.Location = new System.Drawing.Point(55, 115);
+            labelOrgColorValue.Name = "labelOrgColorValue";
+            labelOrgColorValue.Size = new System.Drawing.Size(12, 15);
+            labelOrgColorValue.TabIndex = 1;
+            labelOrgColorValue.Text = "-";
+            // 
+            // pictureBoxOrgColor
+            // 
+            pictureBoxOrgColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            pictureBoxOrgColor.Location = new System.Drawing.Point(60, 22);
+            pictureBoxOrgColor.Name = "pictureBoxOrgColor";
+            pictureBoxOrgColor.Size = new System.Drawing.Size(80, 80);
+            pictureBoxOrgColor.TabIndex = 2;
+            pictureBoxOrgColor.TabStop = false;
+            // 
+            // groupBoxSec
+            // 
+            groupBoxSec.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            groupBoxSec.Controls.Add(labelSecColorCaption);
+            groupBoxSec.Controls.Add(labelSecColorValue);
+            groupBoxSec.Controls.Add(pictureBoxSecColor);
+            groupBoxSec.Location = new System.Drawing.Point(6, 164);
+            groupBoxSec.Name = "groupBoxSec";
+            groupBoxSec.Size = new System.Drawing.Size(405, 155);
+            groupBoxSec.TabIndex = 1;
+            groupBoxSec.TabStop = false;
+            groupBoxSec.Text = "Right (Second)";
+            // 
+            // labelSecColorCaption
+            // 
+            labelSecColorCaption.AutoSize = true;
+            labelSecColorCaption.Location = new System.Drawing.Point(8, 115);
+            labelSecColorCaption.Name = "labelSecColorCaption";
+            labelSecColorCaption.Size = new System.Drawing.Size(39, 15);
+            labelSecColorCaption.TabIndex = 0;
+            labelSecColorCaption.Text = "Color:";
+            // 
+            // labelSecColorValue
+            // 
+            labelSecColorValue.AutoSize = true;
+            labelSecColorValue.Location = new System.Drawing.Point(55, 115);
+            labelSecColorValue.Name = "labelSecColorValue";
+            labelSecColorValue.Size = new System.Drawing.Size(12, 15);
+            labelSecColorValue.TabIndex = 1;
+            labelSecColorValue.Text = "-";
+            // 
+            // pictureBoxSecColor
+            // 
+            pictureBoxSecColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            pictureBoxSecColor.Location = new System.Drawing.Point(60, 22);
+            pictureBoxSecColor.Name = "pictureBoxSecColor";
+            pictureBoxSecColor.Size = new System.Drawing.Size(80, 80);
+            pictureBoxSecColor.TabIndex = 2;
+            pictureBoxSecColor.TabStop = false;
             // 
             // groupBoxLegend
             // 
@@ -235,86 +316,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             legendLabelIdentical.TabIndex = 3;
             legendLabelIdentical.Text = "Identical";
             // 
-            // groupBoxSec
-            // 
-            groupBoxSec.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            groupBoxSec.Controls.Add(labelSecColorCaption);
-            groupBoxSec.Controls.Add(labelSecColorValue);
-            groupBoxSec.Controls.Add(pictureBoxSecColor);
-            groupBoxSec.Location = new System.Drawing.Point(6, 164);
-            groupBoxSec.Name = "groupBoxSec";
-            groupBoxSec.Size = new System.Drawing.Size(405, 155);
-            groupBoxSec.TabIndex = 1;
-            groupBoxSec.TabStop = false;
-            groupBoxSec.Text = "Right (Second)";
-            // 
-            // labelSecColorCaption
-            // 
-            labelSecColorCaption.AutoSize = true;
-            labelSecColorCaption.Location = new System.Drawing.Point(8, 115);
-            labelSecColorCaption.Name = "labelSecColorCaption";
-            labelSecColorCaption.Size = new System.Drawing.Size(39, 15);
-            labelSecColorCaption.TabIndex = 0;
-            labelSecColorCaption.Text = "Color:";
-            // 
-            // labelSecColorValue
-            // 
-            labelSecColorValue.AutoSize = true;
-            labelSecColorValue.Location = new System.Drawing.Point(55, 115);
-            labelSecColorValue.Name = "labelSecColorValue";
-            labelSecColorValue.Size = new System.Drawing.Size(12, 15);
-            labelSecColorValue.TabIndex = 1;
-            labelSecColorValue.Text = "-";
-            // 
-            // pictureBoxSecColor
-            // 
-            pictureBoxSecColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            pictureBoxSecColor.Location = new System.Drawing.Point(60, 22);
-            pictureBoxSecColor.Name = "pictureBoxSecColor";
-            pictureBoxSecColor.Size = new System.Drawing.Size(80, 80);
-            pictureBoxSecColor.TabIndex = 2;
-            pictureBoxSecColor.TabStop = false;
-            // 
-            // groupBoxOrg
-            // 
-            groupBoxOrg.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            groupBoxOrg.Controls.Add(labelOrgColorCaption);
-            groupBoxOrg.Controls.Add(labelOrgColorValue);
-            groupBoxOrg.Controls.Add(pictureBoxOrgColor);
-            groupBoxOrg.Location = new System.Drawing.Point(6, 3);
-            groupBoxOrg.Name = "groupBoxOrg";
-            groupBoxOrg.Size = new System.Drawing.Size(405, 155);
-            groupBoxOrg.TabIndex = 0;
-            groupBoxOrg.TabStop = false;
-            groupBoxOrg.Text = "Left (Original)";
-            // 
-            // labelOrgColorCaption
-            // 
-            labelOrgColorCaption.AutoSize = true;
-            labelOrgColorCaption.Location = new System.Drawing.Point(8, 115);
-            labelOrgColorCaption.Name = "labelOrgColorCaption";
-            labelOrgColorCaption.Size = new System.Drawing.Size(39, 15);
-            labelOrgColorCaption.TabIndex = 0;
-            labelOrgColorCaption.Text = "Color:";
-            // 
-            // labelOrgColorValue
-            // 
-            labelOrgColorValue.AutoSize = true;
-            labelOrgColorValue.Location = new System.Drawing.Point(55, 115);
-            labelOrgColorValue.Name = "labelOrgColorValue";
-            labelOrgColorValue.Size = new System.Drawing.Size(12, 15);
-            labelOrgColorValue.TabIndex = 1;
-            labelOrgColorValue.Text = "-";
-            // 
-            // pictureBoxOrgColor
-            // 
-            pictureBoxOrgColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            pictureBoxOrgColor.Location = new System.Drawing.Point(60, 22);
-            pictureBoxOrgColor.Name = "pictureBoxOrgColor";
-            pictureBoxOrgColor.Size = new System.Drawing.Size(80, 80);
-            pictureBoxOrgColor.TabIndex = 2;
-            pictureBoxOrgColor.TabStop = false;
-            // 
             // tileViewSec
             // 
             tileViewSec.ContextMenuStrip = contextMenuStripSec;
@@ -323,7 +324,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewSec.Location = new System.Drawing.Point(680, 3);
             tileViewSec.MultiSelect = false;
             tileViewSec.Name = "tileViewSec";
-            tileViewSec.Size = new System.Drawing.Size(249, 417);
+            tileViewSec.Size = new System.Drawing.Size(249, 415);
             tileViewSec.TabIndex = 2;
             tileViewSec.TileBackgroundColor = System.Drawing.SystemColors.Window;
             tileViewSec.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
@@ -358,7 +359,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabPageItem.Controls.Add(tableLayoutItem);
             tabPageItem.Location = new System.Drawing.Point(4, 24);
             tabPageItem.Name = "tabPageItem";
-            tabPageItem.Size = new System.Drawing.Size(932, 424);
+            tabPageItem.Size = new System.Drawing.Size(932, 421);
             tabPageItem.TabIndex = 1;
             tabPageItem.Text = "Static Tiles";
             tabPageItem.UseVisualStyleBackColor = true;
@@ -376,7 +377,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tableLayoutItem.Name = "tableLayoutItem";
             tableLayoutItem.RowCount = 1;
             tableLayoutItem.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutItem.Size = new System.Drawing.Size(932, 424);
+            tableLayoutItem.Size = new System.Drawing.Size(932, 421);
             tableLayoutItem.TabIndex = 0;
             // 
             // tileViewItemOrg
@@ -387,7 +388,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewItemOrg.Location = new System.Drawing.Point(3, 3);
             tileViewItemOrg.MultiSelect = false;
             tileViewItemOrg.Name = "tileViewItemOrg";
-            tileViewItemOrg.Size = new System.Drawing.Size(248, 418);
+            tileViewItemOrg.Size = new System.Drawing.Size(248, 415);
             tileViewItemOrg.TabIndex = 0;
             tileViewItemOrg.TileBackgroundColor = System.Drawing.SystemColors.Window;
             tileViewItemOrg.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
@@ -412,7 +413,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewItemSec.Location = new System.Drawing.Point(680, 3);
             tileViewItemSec.MultiSelect = false;
             tileViewItemSec.Name = "tileViewItemSec";
-            tileViewItemSec.Size = new System.Drawing.Size(249, 418);
+            tileViewItemSec.Size = new System.Drawing.Size(249, 415);
             tileViewItemSec.TabIndex = 2;
             tileViewItemSec.TileBackgroundColor = System.Drawing.SystemColors.Window;
             tileViewItemSec.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
@@ -509,14 +510,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tableLayoutLand.ResumeLayout(false);
             contextMenuStripOrg.ResumeLayout(false);
             panelDetail.ResumeLayout(false);
-            groupBoxLegend.ResumeLayout(false);
-            groupBoxLegend.PerformLayout();
-            groupBoxSec.ResumeLayout(false);
-            groupBoxSec.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxSecColor).EndInit();
             groupBoxOrg.ResumeLayout(false);
             groupBoxOrg.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxOrgColor).EndInit();
+            groupBoxSec.ResumeLayout(false);
+            groupBoxSec.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSecColor).EndInit();
+            groupBoxLegend.ResumeLayout(false);
+            groupBoxLegend.PerformLayout();
             contextMenuStripSec.ResumeLayout(false);
             tabPageItem.ResumeLayout(false);
             tableLayoutItem.ResumeLayout(false);
