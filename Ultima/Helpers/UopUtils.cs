@@ -111,15 +111,13 @@ namespace Ultima.Helpers
 
             try
             {
-                using (var compressedStream = new MemoryStream(compressedData))
-                using (var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, false))
-                using (var resultStream = new MemoryStream())
-                {
-                    zlibStream.CopyTo(resultStream);
-                    resultStream.Flush();
-                    zlibStream.Close();
-                    return (true, resultStream.ToArray());
-                }
+                using var compressedStream = new MemoryStream(compressedData);
+                using var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, false);
+                using var resultStream = new MemoryStream();
+                zlibStream.CopyTo(resultStream);
+                resultStream.Flush();
+                zlibStream.Close();
+                return (true, resultStream.ToArray());
             }
             catch (Exception)
             {
@@ -130,7 +128,6 @@ namespace Ultima.Helpers
         /// <summary>
         /// Method for compressing zlib byte arrays inside .uop
         /// </summary>
-        /// <param name="compressedData">Input compressed array of bytes</param>
         /// <returns>compressed byte[] data</returns>
         public static (bool success, byte[] compressedData) Compress(byte[] rawData)
         {
@@ -141,15 +138,13 @@ namespace Ultima.Helpers
 
             try
             {
-                using (var dataStream = new MemoryStream(rawData))
-                using (var resultStream = new MemoryStream())
-                using (var zlibStream = new ZLibStream(resultStream, CompressionLevel.Optimal))
-                {
-                    dataStream.CopyTo(zlibStream);
-                    zlibStream.Flush();
-                    zlibStream.Close();
-                    return (true, resultStream.ToArray());
-                }
+                using var dataStream = new MemoryStream(rawData);
+                using var resultStream = new MemoryStream();
+                using var zlibStream = new ZLibStream(resultStream, CompressionLevel.Optimal);
+                dataStream.CopyTo(zlibStream);
+                zlibStream.Flush();
+                zlibStream.Close();
+                return (true, resultStream.ToArray());
             }
             catch (Exception)
             {

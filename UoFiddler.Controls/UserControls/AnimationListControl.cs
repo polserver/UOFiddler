@@ -22,6 +22,7 @@ using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
+using UoFiddler.Controls.UserControls.TileView;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -142,6 +143,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _sortAlpha;
         private int _displayType;
         private bool _loaded;
+        private readonly List<int> _listViewGraphics = new List<int>();
 
         /// <summary>
         /// ReLoads if loaded
@@ -255,19 +257,26 @@ namespace UoFiddler.Controls.UserControls
                 TreeViewMobs.Nodes[0].Nodes.Add(nodeParent);
             }
 
-            for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
+            if (Animations.IsUopBody(graphic))
             {
-                if (!Animations.IsActionDefined(graphic, i, 0))
+                AddUopActionNodes(nodeParent, graphic, type);
+            }
+            else
+            {
+                for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
                 {
-                    continue;
+                    if (!Animations.IsActionDefined(graphic, i, 0))
+                    {
+                        continue;
+                    }
+
+                    TreeNode node = new TreeNode($"{i} {GetActionNames[type][i]}")
+                    {
+                        Tag = i
+                    };
+
+                    nodeParent.Nodes.Add(node);
                 }
-
-                TreeNode node = new TreeNode($"{i} {GetActionNames[type][i]}")
-                {
-                    Tag = i
-                };
-
-                nodeParent.Nodes.Add(node);
             }
 
             TreeViewMobs.TreeViewNodeSorter = !_sortAlpha
@@ -500,36 +509,81 @@ namespace UoFiddler.Controls.UserControls
                     MessageBoxIcon.Warning);
             }
 
+            LoadFromMobTypes();
+
             return true;
         }
 
-        private void LoadListView()
+        private void LoadFromMobTypes()
         {
-            listView.BeginUpdate();
+            TreeViewMobs.BeginUpdate();
             try
             {
-                listView.Clear();
-                foreach (TreeNode node in TreeViewMobs.Nodes[_displayType].Nodes)
+                foreach (int body in Animations.GetAllUopBodies())
                 {
-                    ListViewItem item = new ListViewItem($"({((int[])node.Tag)[0]})", 0)
+                    if (IsAlreadyDefined(body))
                     {
-                        Tag = ((int[])node.Tag)[0]
+                        continue;
+                    }
+
+                    int type = Animations.GetUopAnimationType(body);
+                    bool isEquip = type == 4;
+                    int actionType = isEquip ? 3 : (type < 0 || type >= GetActionNames.Length ? 0 : type);
+                    if (!isEquip && (type < 0 || type >= GetActionNames.Length))
+                    {
+                        type = 0;
+                    }
+
+                    string name = $"Body 0x{body:X}";
+
+                    TreeNode nodeParent = new TreeNode($"{name} (0x{body:X})")
+                    {
+                        Tag = new[] { body, type },
+                        ToolTipText = Animations.GetFileName(body)
                     };
-                    listView.Items.Add(item);
+
+                    TreeNode targetRoot = isEquip ? TreeViewMobs.Nodes[1] : TreeViewMobs.Nodes[0];
+                    targetRoot.Nodes.Add(nodeParent);
+
+                    AddUopActionNodes(nodeParent, body, actionType);
                 }
             }
             finally
             {
-                listView.EndUpdate();
+                TreeViewMobs.EndUpdate();
             }
         }
 
-        private void SelectChanged_listView(object sender, EventArgs e)
+        private void AddUopActionNodes(TreeNode parent, int body, int actionType)
         {
-            if (listView.SelectedItems.Count > 0)
+            var definedActions = Animations.GetUopDefinedActions(body);
+            foreach (int i in definedActions)
             {
-                TreeViewMobs.SelectedNode = TreeViewMobs.Nodes[_displayType].Nodes[listView.SelectedItems[0].Index];
+                string actionName = i < GetActionNames[actionType].Length
+                    ? GetActionNames[actionType][i]
+                    : $"Action{i}";
+
+                parent.Nodes.Add(new TreeNode($"{i} {actionName}") { Tag = i });
             }
+        }
+
+        private void LoadListView()
+        {
+            _listViewGraphics.Clear();
+            foreach (TreeNode node in TreeViewMobs.Nodes[_displayType].Nodes)
+            {
+                _listViewGraphics.Add(((int[])node.Tag)[0]);
+            }
+            listView.VirtualListSize = _listViewGraphics.Count;
+        }
+
+        private void SelectChanged_listView(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (!e.IsSelected)
+            {
+                return;
+            }
+            TreeViewMobs.SelectedNode = TreeViewMobs.Nodes[_displayType].Nodes[e.ItemIndex];
         }
 
         private void ListView_DoubleClick(object sender, MouseEventArgs e)
@@ -537,43 +591,52 @@ namespace UoFiddler.Controls.UserControls
             tabControl1.SelectTab(tabPage1);
         }
 
-        private void ListViewDrawItem(object sender, DrawListViewItemEventArgs e)
+        private void ListViewDrawItem(object sender, TileViewControl.DrawTileListItemEventArgs e)
         {
-            int graphic = (int)e.Item.Tag;
-            int hue = 0;
-            Bitmap bmp = Animations.GetAnimation(graphic, 0, 1, ref hue, false, true)?[0].Bitmap;
-
-            if (bmp == null)
+            if (e.Index < 0 || e.Index >= _listViewGraphics.Count)
             {
                 return;
             }
 
-            int width = bmp.Width;
-            int height = bmp.Height;
+            int graphic = _listViewGraphics[e.Index];
+            Point itemPoint = new Point(e.Bounds.X + listView.TilePadding.Left, e.Bounds.Y + listView.TilePadding.Top);
+            Rectangle tileRect = new Rectangle(itemPoint, listView.TileSize);
+            var previousClip = e.Graphics.Clip;
+            e.Graphics.Clip = new Region(tileRect);
 
-            if (width > e.Bounds.Width)
+            if (!listView.SelectedIndices.Contains(e.Index))
             {
-                width = e.Bounds.Width;
+                using var bgBrush = new SolidBrush(listView.BackColor);
+                e.Graphics.FillRectangle(bgBrush, tileRect);
             }
 
-            if (height > e.Bounds.Height)
+            int hue = 0;
+            Bitmap bmp = Animations.GetAnimation(graphic, 0, 1, ref hue, false, true)?[0].Bitmap;
+            if (bmp != null)
             {
-                height = e.Bounds.Height;
-            }
-
-            e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);
-            e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
-            if (listView.SelectedItems.Contains(e.Item))
-            {
-                e.DrawFocusRectangle();
-            }
-            else
-            {
-                using (var pen = new Pen(Color.Gray))
+                int maxW = tileRect.Width;
+                int maxH = tileRect.Height - 18;
+                int drawWidth = bmp.Width;
+                int drawHeight = bmp.Height;
+                if (drawWidth > maxW || drawHeight > maxH)
                 {
-                    e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                    float scale = Math.Min((float)maxW / drawWidth, (float)maxH / drawHeight);
+                    drawWidth = (int)(drawWidth * scale);
+                    drawHeight = (int)(drawHeight * scale);
                 }
+                int drawX = tileRect.X + (tileRect.Width - drawWidth) / 2;
+                int drawY = tileRect.Y + Math.Max(0, (tileRect.Height - 18 - drawHeight) / 2);
+                e.Graphics.DrawImage(bmp, drawX, drawY, drawWidth, drawHeight);
             }
+
+            using var stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Far;
+
+            e.Graphics.DrawString($"({graphic})", listView.Font, Brushes.Black,
+                new RectangleF(tileRect.X, tileRect.Y, tileRect.Width, tileRect.Height), stringFormat);
+
+            e.Graphics.Clip = previousClip;
         }
 
         private HuePopUpForm _showForm;
@@ -621,7 +684,13 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Bitmap bmp = MainPictureBox.Frames[(int)e.Item.Tag].Bitmap;
+            int frameIndex = (int)e.Item.Tag;
+            if (frameIndex < 0 || frameIndex >= MainPictureBox.Frames.Count)
+            {
+                return;
+            }
+
+            Bitmap bmp = MainPictureBox.Frames[frameIndex].Bitmap;
             int width = bmp.Width;
             int height = bmp.Height;
 

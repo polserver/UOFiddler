@@ -14,6 +14,7 @@ namespace Ultima
         private static FileIndex _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
         private static FileIndex _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
         private static FileIndex _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
+        private static FileIndex _fileIndex6 = new FileIndex("Anim6.idx", "Anim6.mul", 0x20000, -1);
 
         private static byte[] _streamBuffer;
 
@@ -27,9 +28,11 @@ namespace Ultima
             _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
             _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
             _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
+            _fileIndex6 = new FileIndex("Anim6.idx", "Anim6.mul", 0x20000, -1);
 
             BodyConverter.Initialize();
             BodyTable.Initialize();
+            AnimationsUopLoader.Reload();
         }
 
         /// <summary>
@@ -46,6 +49,11 @@ namespace Ultima
         /// <returns></returns>
         public static AnimationFrame[] GetAnimation(int body, int action, int direction, ref int hue, bool preserveHue, bool firstFrame)
         {
+            if (AnimationsUopLoader.IsUopBody(body))
+            {
+                return AnimationsUopLoader.GetAnimation(body, action, direction, ref hue, preserveHue, firstFrame);
+            }
+
             if (preserveHue)
             {
                 Translate(ref body);
@@ -262,6 +270,11 @@ namespace Ultima
         /// <returns></returns>
         public static bool IsActionDefined(int body, int action, int direction)
         {
+            if (AnimationsUopLoader.IsUopBody(body))
+            {
+                return AnimationsUopLoader.IsActionDefined(body, action);
+            }
+
             Translate(ref body);
             int fileType = BodyConverter.Convert(ref body);
 
@@ -271,6 +284,19 @@ namespace Ultima
 
             return valid && (length >= 1);
         }
+
+        public static bool IsUopBody(int body) => AnimationsUopLoader.IsUopBody(body);
+
+        public static int GetUopAnimationType(int body) => AnimationsUopLoader.GetAnimationType(body);
+
+        public static System.Collections.Generic.List<int> GetUopDefinedActions(int body) =>
+            AnimationsUopLoader.GetDefinedActions(body);
+
+        public static System.Collections.Generic.IEnumerable<int> GetAllUopBodies() =>
+            AnimationsUopLoader.GetAllUopBodyIds();
+
+        public static System.Collections.Generic.IEnumerable<int> GetAllMobTypeBodies() =>
+            AnimationsUopLoader.GetAllMobTypeBodyIds();
 
         /// <summary>
         /// Is Animation in given anim file defined
@@ -313,6 +339,8 @@ namespace Ultima
                     return 400 + ((int)(_fileIndex4.IdxLength - (35000 * 12)) / (12 * 175));
                 case 5:
                     return 400 + ((int)(_fileIndex5.IdxLength - (35000 * 12)) / (12 * 175));
+                case 6:
+                    return 400 + ((int)(_fileIndex6.IdxLength - (35000 * 12)) / (12 * 175));
             }
         }
 
@@ -371,6 +399,7 @@ namespace Ultima
                     break;
                 case 4:
                 case 5:
+                case 6:
                     if (body < 200)
                     {
                         length = 22;
@@ -479,6 +508,22 @@ namespace Ultima
                     }
 
                     break;
+                case 6:
+                    fileIndex = _fileIndex6;
+                    if (body < 200)
+                    {
+                        index = body * 110;
+                    }
+                    else if (body < 400)
+                    {
+                        index = 22000 + ((body - 200) * 65);
+                    }
+                    else
+                    {
+                        index = 35000 + ((body - 400) * 175);
+                    }
+
+                    break;
             }
 
             index += action * 5;
@@ -500,10 +545,15 @@ namespace Ultima
         /// <returns>anim{0}.mul</returns>
         public static string GetFileName(int body)
         {
+            if (AnimationsUopLoader.IsUopBody(body))
+            {
+                return AnimationsUopLoader.GetUopFileName(body);
+            }
+
             Translate(ref body);
             int fileType = BodyConverter.Convert(ref body);
 
-            return fileType == 1 ? "anim.mul" : $"anim{fileType}.mul";
+            return fileType == 1 ? "anim.mul" : $"anim{fileType}.mul"; // covers anim2–anim6
         }
     }
 
