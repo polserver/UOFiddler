@@ -75,7 +75,7 @@ namespace UoFiddler.Controls.UserControls
             AnimateCheckBox = new System.Windows.Forms.CheckBox();
             FacingBar = new System.Windows.Forms.TrackBar();
             tabPage2 = new System.Windows.Forms.TabPage();
-            listView = new System.Windows.Forms.ListView();
+            listView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             statusStrip1 = new System.Windows.Forms.StatusStrip();
             SettingsButton = new System.Windows.Forms.ToolStripDropDownButton();
             sortAlphaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -450,21 +450,28 @@ namespace UoFiddler.Controls.UserControls
             // 
             // listView
             // 
-            listView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            listView.AutoScroll = true;
+            listView.AutoScrollMinSize = new System.Drawing.Size(0, 116);
             listView.Dock = System.Windows.Forms.DockStyle.Fill;
-            listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            listView.FocusIndex = -1;
+            listView.Font = new System.Drawing.Font("Segoe UI", 9F);
             listView.Location = new System.Drawing.Point(4, 3);
             listView.Margin = new System.Windows.Forms.Padding(0);
             listView.MultiSelect = false;
             listView.Name = "listView";
-            listView.OwnerDraw = true;
             listView.Size = new System.Drawing.Size(480, 344);
             listView.TabIndex = 0;
+            listView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            listView.TileBorderColor = System.Drawing.Color.Gray;
+            listView.TileBorderWidth = 1F;
+            listView.TileFocusColor = System.Drawing.Color.DarkBlue;
+            listView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            listView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            listView.TilePadding = new System.Windows.Forms.Padding(1);
             listView.TileSize = new System.Drawing.Size(81, 110);
-            listView.UseCompatibleStateImageBehavior = false;
-            listView.View = System.Windows.Forms.View.Tile;
+            listView.VirtualListSize = 1;
+            listView.ItemSelectionChanged += SelectChanged_listView;
             listView.DrawItem += ListViewDrawItem;
-            listView.SelectedIndexChanged += SelectChanged_listView;
             listView.MouseDoubleClick += ListView_DoubleClick;
             // 
             // statusStrip1
@@ -631,7 +638,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.ListView listView;
+        private TileView.TileViewControl listView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private AnimatedPictureBox MainPictureBox;

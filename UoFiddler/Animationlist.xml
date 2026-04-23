@@ -1,763 +1,1324 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Graphics>
-  <!--Entries in Mob tab-->
-  <!--Name=Displayed name-->
-  <!--body=Graphic-->
-  <!--type=0:Monster, 1:Sea, 2:Animal, 3:Human/Equipment-->
-  <Mob name="ogres_ogre (1)" body="1" type="0" />
-  <Mob name="ettins_ettin (2)" body="2" type="0" />
-  <Mob name="walking_dead_zombie (3)" body="3" type="0" />
-  <Mob name="gargoyles_gargoyle (4)" body="4" type="0" />
-  <Mob name="birds_eagle (5)" body="5" type="0" />
-  <Mob name="birds_generic (6)" body="6" type="0" />
-  <Mob name="orcs_orc_captain (7)" body="7" type="0" />
-  <Mob name="flails_corpser (8)" body="8" type="0" />
-  <Mob name="daemons_daemon (9)" body="9" type="0" />
-  <Mob name="daemons_daemon2 (10)" body="10" type="0" />
-  <Mob name="arachnids_spider_dread (11)" body="11" type="0" />
-  <Mob name="dragons_dragon_retro_grey (12)" body="12" type="0" />
-  <Mob name="elementals_air_elemental (13)" body="13" type="0" />
-  <Mob name="elementals_earth_elemental (14)" body="14" type="0" />
-  <Mob name="elementals_fire_elemental (15)" body="15" type="0" />
-  <Mob name="elementals_water_elemental (16)" body="16" type="0" />
-  <Mob name="orcs_orc (17)" body="17" type="0" />
-  <Mob name="ettins_ettin2 (18)" body="18" type="0" />
-  <Mob name="arachnids_spider_dread2 (19)" body="19" type="0" />
-  <Mob name="arachnids_spider_frost (20)" body="20" type="0" />
-  <Mob name="serpents_snake_giant (21)" body="21" type="0" />
-  <Mob name="gazers_gazer (22)" body="22" type="0" />
-  <Mob name="canines_wolf_dire (23)" body="23" type="2" />
-  <Mob name="liche_liche_retro (24)" body="24" type="0" />
-  <Mob name="canines_wolf_grey (25)" body="25" type="2" />
-  <Mob name="spirits_ghost (26)" body="26" type="0" />
-  <Mob name="canines_wolf_grey2 (27)" body="27" type="2" />
-  <Mob name="arachnids_spider_giant (28)" body="28" type="0" />
-  <Mob name="gorillas_silverback (29)" body="29" type="0" />
-  <Mob name="harpies_harpy (30)" body="30" type="0" />
-  <Mob name="headless_headless (31)" body="31" type="0" />
-  <Mob name="lizard_race_lizardman (33)" body="33" type="0" />
-  <Mob name="canines_wolf_white (34)" body="34" type="2" />
-  <Mob name="lizard_race_lizardman2 (35)" body="35" type="0" />
-  <Mob name="lizard_race_lizardman3 (36)" body="36" type="0" />
-  <Mob name="canines_wolf_white2 (37)" body="37" type="2" />
-  <Mob name="daemons_daemon_black_gate (38)" body="38" type="0" />
-  <Mob name="mongbats_mongbat (39)" body="39" type="0" />
-  <Mob name="daemons_daemon_elder (40)" body="40" type="0" />
-  <Mob name="orcs_orc2 (41)" body="41" type="0" />
-  <Mob name="rat_race_ratman (42)" body="42" type="0" />
-  <Mob name="daemons_daemon_ice_fiend (43)" body="43" type="0" />
-  <Mob name="rat_race_ratman2 (44)" body="44" type="0" />
-  <Mob name="rat_race_ratman3 (45)" body="45" type="0" />
-  <Mob name="Mf_Dragon_Rust (46)" body="46" type="0" />
-  <Mob name="flails_reaper (47)" body="47" type="0" />
-  <Mob name="scorpions_giant (48)" body="48" type="0" />
-  <Mob name="dragons_wyrm_retro_white (49)" body="49" type="0" />
-  <Mob name="skeletons_skeleton (50)" body="50" type="0" />
-  <Mob name="slimes_slime (51)" body="51" type="0" />
-  <Mob name="serpents_snake (52)" body="52" type="0" />
-  <Mob name="trolls_troll (53)" body="53" type="0" />
-  <Mob name="trolls_troll2 (54)" body="54" type="0" />
-  <Mob name="trolls_troll_frost (55)" body="55" type="0" />
-  <Mob name="skeletons_skeleton2 (56)" body="56" type="0" />
-  <Mob name="skeletons_skeleton3 (57)" body="57" type="0" />
-  <Mob name="ethereals_wisp (58)" body="58" type="0" />
-  <Mob name="dragons_dragon_retro_red (59)" body="59" type="0" />
-  <Mob name="dragons_dragon_retro_grey2 (60)" body="60" type="0" />
-  <Mob name="dragons_dragon_retro_red2 (61)" body="61" type="0" />
-  <Mob name="dragons_wyvern (62)" body="62" type="0" />
-  <Mob name="felines_cougar (63)" body="63" type="2" />
-  <Mob name="felines_leopard_snow (64)" body="64" type="2" />
-  <Mob name="felines_leopard_snow2 (65)" body="65" type="2" />
-  <Mob name="flails_swamp_tentacles (66)" body="66" type="0" />
-  <Mob name="gargoyles_gargoyle_stone (67)" body="67" type="0" />
-  <Mob name="gazers_gazer_elder (68)" body="68" type="0" />
-  <Mob name="gazers_gazer_elder2 (69)" body="69" type="0" />
-  <Mob name="terathan_terathan_warrior (70)" body="70" type="0" />
-  <Mob name="terathan_terathan_drone (71)" body="71" type="0" />
-  <Mob name="terathan_terathan_queen (72)" body="72" type="0" />
-  <Mob name="harpies_harpy_stone (73)" body="73" type="0" />
-  <Mob name="imps_imp (74)" body="74" type="0" />
-  <Mob name="cyclops_cyclops (75)" body="75" type="0" />
-  <Mob name="titans_titan (76)" body="76" type="0" />
-  <Mob name="krakens_kraken (77)" body="77" type="0" />
-  <Mob name="liche_liche_lord_retro (78)" body="78" type="0" />
-  <Mob name="liche_liche_lord_retro2 (79)" body="79" type="0" />
-  <Mob name="frogs_frog_giant (80)" body="80" type="0" />
-  <Mob name="frogs_bullfrog (81)" body="81" type="0" />
-  <Mob name="liche_liche_lord_retro3 (82)" body="82" type="0" />
-  <Mob name="ogres_ogre_lord (83)" body="83" type="0" />
-  <Mob name="ogres_ogre_lord2 (84)" body="84" type="0" />
-  <Mob name="ophidians_ophidian_mage (85)" body="85" type="0" />
-  <Mob name="ophidians_ophidian_warrior (86)" body="86" type="0" />
-  <Mob name="ophidians_ophidian_queen (87)" body="87" type="0" />
-  <Mob name="ruminants_goat_mountain (88)" body="88" type="2" />
-  <Mob name="serpents_snake_giant_ice (89)" body="89" type="0" />
-  <Mob name="serpents_snake_giant_lava (90)" body="90" type="0" />
-  <Mob name="serpents_snake_giant_silver (91)" body="91" type="0" />
-  <Mob name="serpents_snake_giant_silver2 (92)" body="92" type="0" />
-  <Mob name="serpents_snake_giant_silver3 (93)" body="93" type="0" />
-  <Mob name="slimes_slime_frost (94)" body="94" type="0" />
-  <Mob name="bird_turkey (95)" body="95" type="0" />
-  <Mob name="slimes_slime_frost2 (96)" body="96" type="0" />
-  <Mob name="canines_hell_hound (97)" body="97" type="2" />
-  <Mob name="canines_hell_hound2 (98)" body="98" type="2" />
-  <Mob name="canines_wolf_dark (99)" body="99" type="2" />
-  <Mob name="canines_wolf_silver (100)" body="100" type="2" />
-  <Mob name="centaurs_centaur (101)" body="101" type="0" />
-  <Mob name="daemons_daemon_exodus (102)" body="102" type="0" />
-  <Mob name="dragons_dragon_asian (103)" body="103" type="0" />
-  <Mob name="dragons_dragon_skeletal (104)" body="104" type="0" />
-  <Mob name="dragons_wyrm_ancient (105)" body="105" type="0" />
-  <Mob name="dragons_wyrm_shadow (106)" body="106" type="0" />
-  <Mob name="elementals_agapite_elemental (107)" body="107" type="0" />
-  <Mob name="elementals_bronze_elemental (108)" body="108" type="0" />
-  <Mob name="elementals_copper_elemental (109)" body="109" type="0" />
-  <Mob name="elementals_copper_dull_elemental (110)" body="110" type="0" />
-  <Mob name="elementals_iron_elemental (111)" body="111" type="0" />
-  <Mob name="elementals_valorite_elemental (112)" body="112" type="0" />
-  <Mob name="elementals_verite_elemental (113)" body="113" type="0" />
-  <Mob name="equines_horse_dark_steed (114)" body="114" type="2" />
-  <Mob name="equines_horse_ethereal (115)" body="115" type="2" />
-  <Mob name="equines_horse_nightmare (116)" body="116" type="2" />
-  <Mob name="equines_horse_silver_steed (117)" body="117" type="2" />
-  <Mob name="equines_horse_war_brittanian (118)" body="118" type="2" />
-  <Mob name="equines_horse_war_mage_council (119)" body="119" type="2" />
-  <Mob name="equines_horse_war_minax (120)" body="120" type="2" />
-  <Mob name="equines_horse_war_shadowlord (121)" body="121" type="2" />
-  <Mob name="equines_unicorn (122)" body="122" type="2" />
-  <Mob name="ethereal_warriors_male (123)" body="123" type="0" />
-  <Mob name="mages_evil_mage (124)" body="124" type="0" />
-  <Mob name="mages_evil_mage_master (125)" body="125" type="0" />
-  <Mob name="mages_evil_mage_master2 (126)" body="126" type="0" />
-  <Mob name="felines_predator_hellcat (127)" body="127" type="2" />
-  <Mob name="fey_race_pixie (128)" body="128" type="0" />
-  <Mob name="flails_swamp_tentacles2 (129)" body="129" type="0" />
-  <Mob name="gargoyles_gargoyle_blistering (130)" body="130" type="0" />
-  <Mob name="genies_efreet (131)" body="131" type="0" />
-  <Mob name="kirin_kirin (132)" body="132" type="2" />
-  <Mob name="lizards_alligator_small (133)" body="133" type="2" />
-  <Mob name="lizards_komodo_dragon (134)" body="134" type="2" />
-  <Mob name="ogres_ogre_lord_arctic (135)" body="135" type="0" />
-  <Mob name="ophidians_ophidian_archmage (136)" body="136" type="0" />
-  <Mob name="ophidians_ophidian_knight (137)" body="137" type="0" />
-  <Mob name="orcs_orc_lord (138)" body="138" type="0" />
-  <Mob name="orcs_orc_lord2 (139)" body="139" type="0" />
-  <Mob name="orcs_orc_shaman (140)" body="140" type="0" />
-  <Mob name="paladins_paladin (141)" body="141" type="0" />
-  <Mob name="rat_race_ratman4 (142)" body="142" type="0" />
-  <Mob name="rat_race_shaman (143)" body="143" type="0" />
-  <Mob name="sea_horse_sea_horse (144)" body="144" type="1" />
-  <Mob name="sea_serpents_sea_serpent (145)" body="145" type="1" />
-  <Mob name="shadowlords_shadowlord (146)" body="146" type="0" />
-  <Mob name="skeletons_skeleton_knight (147)" body="147" type="0" />
-  <Mob name="skeletons_skeleton_mage (148)" body="148" type="0" />
-  <Mob name="succubi_succubus (149)" body="149" type="0" />
-  <Mob name="sea_serpents_sea_serpent2 (150)" body="150" type="1" />
-  <Mob name="dolphins_dolphin (151)" body="151" type="1" />
-  <Mob name="terathan_terathan_avenger (152)" body="152" type="0" />
-  <Mob name="walking_dead_ghoul (153)" body="153" type="0" />
-  <Mob name="walking_dead_mummy (154)" body="154" type="0" />
-  <Mob name="walking_dead_rotting_corpse (155)" body="155" type="0" />
-  <Mob name="arachnids_spider_black_widow (157)" body="157" type="0" />
-  <Mob name="elementals_acid_elemental (158)" body="158" type="0" />
-  <Mob name="elementals_blood_elemental (159)" body="159" type="0" />
-  <Mob name="elementals_blood_elemental2 (160)" body="160" type="0" />
-  <Mob name="elementals_ice_elemental (161)" body="161" type="0" />
-  <Mob name="elementals_poison_elemental (162)" body="162" type="0" />
-  <Mob name="elementals_snow_elemental (163)" body="163" type="0" />
-  <Mob name="ethereals_energy_vortex (164)" body="164" type="0" />
-  <Mob name="ethereals_wisp2 (165)" body="165" type="0" />
-  <Mob name="elementals_gold_elemental (166)" body="166" type="0" />
-  <Mob name="bruins_bear_brown (167)" body="167" type="2" />
-  <Mob name="imps_shadow_fiend (168)" body="168" type="0" />
-  <Mob name="Giant_Beetle_Fire (169)" body="169" type="2" />
-  <Mob name="llamas_llama_ethereal (170)" body="170" type="2" />
-  <Mob name="ostards_ostard_ethereal (171)" body="171" type="2" />
-  <Mob name="dragons_dragon_retro_red3 (172)" body="172" type="0" />
-  <Mob name="arachnids_spider_black_widow2 (173)" body="173" type="0" />
-  <Mob name="succubi_succubus2 (174)" body="174" type="0" />
-  <Mob name="ethereal_warriors_male2 (175)" body="175" type="0" />
-  <Mob name="fey_race_pixie2 (176)" body="176" type="0" />
-  <Mob name="equines_horse_nightmare2 (177)" body="177" type="2" />
-  <Mob name="equines_horse_nightmare3 (178)" body="178" type="2" />
-  <Mob name="equines_horse_nightmare4 (179)" body="179" type="2" />
-  <Mob name="dragons_wyrm_retro_white2 (180)" body="180" type="0" />
-  <Mob name="orcs_orc_scout (181)" body="181" type="0" />
-  <Mob name="orcs_orc_bomber (182)" body="182" type="0" />
-  <Mob name="H_Savage_Male (183)" body="183" type="3" />
-  <Mob name="H_Savage_Female (184)" body="184" type="3" />
-  <Mob name="H_SavageRider_Male (185)" body="185" type="3" />
-  <Mob name="H_Savage_Female2 (186)" body="186" type="3" />
-  <Mob name="ridgeback_ridgeback (187)" body="187" type="2" />
-  <Mob name="ridgeback_savage (188)" body="188" type="2" />
-  <Mob name="orcs_orc_lord3 (189)" body="189" type="0" />
-  <Mob name="equines_horse_firesteed (190)" body="190" type="2" />
-  <Mob name="kirin_kirin_ethereal (191)" body="191" type="2" />
-  <Mob name="equines_unicorn_ethereal (192)" body="192" type="2" />
-  <Mob name="ridgeback_ridgeback_ethereal (193)" body="193" type="2" />
-  <Mob name="swamp_dragon_ethereal (194)" body="194" type="2" />
-  <Mob name="giant_beetle_ethereal (195)" body="195" type="2" />
-  <Mob name="Denkou_Yajuu (196)" body="196" type="0" />
-  <Mob name="Dragon_Chaos (197)" body="197" type="0" />
-  <Mob name="Dragon_Order (198)" body="198" type="0" />
-  <Mob name="Gouzen_Ha (199)" body="199" type="0" />
-  <Mob name="equines_horse_dappled_brown (200)" body="200" type="2" />
-  <Mob name="felines_housecat (201)" body="201" type="2" />
-  <Mob name="lizards_alligator_brown (202)" body="202" type="2" />
-  <Mob name="porcines_pig (203)" body="203" type="2" />
-  <Mob name="equines_horse_dark_brown (204)" body="204" type="2" />
-  <Mob name="rodents_rabbit_cottontail (205)" body="205" type="2" />
-  <Mob name="lizards_lava_lizard (206)" body="206" type="2" />
-  <Mob name="ruminants_sheep (207)" body="207" type="2" />
-  <Mob name="fowl_normal_hen (208)" body="208" type="2" />
-  <Mob name="ruminants_goat_billy (209)" body="209" type="2" />
-  <Mob name="ostards_ostard_desert (210)" body="210" type="2" />
-  <Mob name="bruins_bear_black (211)" body="211" type="2" />
-  <Mob name="bruins_bear_grizzly (212)" body="212" type="2" />
-  <Mob name="bruins_bear_polar (213)" body="213" type="2" />
-  <Mob name="felines_panther (214)" body="214" type="2" />
-  <Mob name="rodents_rat_giant (215)" body="215" type="2" />
-  <Mob name="bovines_cow_brown (216)" body="216" type="2" />
-  <Mob name="canines_dog_hound (217)" body="217" type="2" />
-  <Mob name="ostards_ostard_forest (218)" body="218" type="2" />
-  <Mob name="ostards_ostard_frenzied (219)" body="219" type="2" />
-  <Mob name="llamas_llama (220)" body="220" type="2" />
-  <Mob name="walrus_walrus_male (221)" body="221" type="2" />
-  <Mob name="ruminants_sheep_shorn (223)" body="223" type="2" />
-  <Mob name="canines_wolf_timber (225)" body="225" type="2" />
-  <Mob name="equines_horse_dappled_grey (226)" body="226" type="2" />
-  <Mob name="equines_horse_tan (228)" body="228" type="2" />
-  <Mob name="bovines_cow_spotted (231)" body="231" type="2" />
-  <Mob name="bovines_bull_brown (232)" body="232" type="2" />
-  <Mob name="bovines_bull_spotted (233)" body="233" type="2" />
-  <Mob name="deer_stag (234)" body="234" type="2" />
-  <Mob name="deer_doe (237)" body="237" type="2" />
-  <Mob name="rodents_rat_sewer (238)" body="238" type="2" />
-  <Mob name="Kappa (240)" body="240" type="0" />
-  <Mob name="Oni (241)" body="241" type="0" />
-  <Mob name="Bimbobushi (242)" body="242" type="0" />
-  <Mob name="Hai_Riyo (243)" body="243" type="2" />
-  <Mob name="Rune_Beetle (244)" body="244" type="0" />
-  <Mob name="Yomotsu_Warrior (245)" body="245" type="0" />
-  <Mob name="Kitsun_Tsuki (246)" body="246" type="2" />
-  <Mob name="Fan_Dancer (247)" body="247" type="0" />
-  <Mob name="Wild_Guar (248)" body="248" type="2" />
-  <Mob name="Yamandon (249)" body="249" type="0" />
-  <Mob name="Tri_Wolf (250)" body="250" type="0" />
-  <Mob name="Vampyric_Beast (251)" body="251" type="0" />
-  <Mob name="Lady_of_the_Snow (252)" body="252" type="0" />
-  <Mob name="Yomotsu_Priest (253)" body="253" type="0" />
-  <Mob name="Crane (254)" body="254" type="2" />
-  <Mob name="Yomotsu_Elder (255)" body="255" type="0" />
-  <Mob name="Paroxysmus (256)" body="256" type="0" />
-  <Mob name="DreadHorn (257)" body="257" type="0" />
-  <Mob name="LadyMelisande (258)" body="258" type="0" />
-  <Mob name="MonstrousInterredGrizzle (259)" body="259" type="0" />
-  <Mob name="Shimmering_Effusion (261)" body="261" type="0" />
-  <Mob name="TormentedMinotaur (262)" body="262" type="0" />
-  <Mob name="Minotaur (263)" body="263" type="0" />
-  <Mob name="Changling (264)" body="264" type="0" />
-  <Mob name="Hydra (265)" body="265" type="0" />
-  <Mob name="Dryad (266)" body="266" type="0" />
-  <Mob name="Troglodyte (267)" body="267" type="0" />
-  <Mob name="Satyr (271)" body="271" type="0" />
-  <Mob name="MonstrousInterredGrizzle2 (272)" body="272" type="0" />
-  <Mob name="Fetid_Essence (273)" body="273" type="0" />
-  <Mob name="Raptalon (276)" body="276" type="2" />
-  <Mob name="CuShidhe (277)" body="277" type="2" />
-  <Mob name="Squirrel (278)" body="278" type="2" />
-  <Mob name="Ferret (279)" body="279" type="2" />
-  <Mob name="MinotaurArmored (280)" body="280" type="0" />
-  <Mob name="LeatherMinotaur (281)" body="281" type="0" />
-  <Mob name="Perched_Parrot (282)" body="282" type="2" />
-  <Mob name="Perched_Crow (283)" body="283" type="2" />
-  <Mob name="MondainSteed01 (284)" body="284" type="2" />
-  <Mob name="ReaperForm (285)" body="285" type="0" />
-  <Mob name="Bloodworm (287)" body="287" type="0" />
-  <Mob name="porcines_boar (290)" body="290" type="2" />
-  <Mob name="equines_horse_dappled_brown_pack (291)" body="291" type="2" />
-  <Mob name="llamas_llama_pack (292)" body="292" type="2" />
-  <Mob name="vollum (293)" body="293" type="0" />
-  <Mob name="crystal_elemental (300)" body="300" type="0" />
-  <Mob name="treefellow (301)" body="301" type="0" />
-  <Mob name="skittering_hopper (302)" body="302" type="0" />
-  <Mob name="devourer (303)" body="303" type="0" />
-  <Mob name="flesh_golem (304)" body="304" type="0" />
-  <Mob name="gore_fiend (305)" body="305" type="0" />
-  <Mob name="impaler (306)" body="306" type="0" />
-  <Mob name="gibberling (307)" body="307" type="0" />
-  <Mob name="bonedemon (308)" body="308" type="0" />
-  <Mob name="patchskeleton (309)" body="309" type="0" />
-  <Mob name="wailingbanshee (310)" body="310" type="0" />
-  <Mob name="shadow_knight (311)" body="311" type="0" />
-  <Mob name="abysmal_horror (312)" body="312" type="0" />
-  <Mob name="Darknight_Creeper (313)" body="313" type="0" />
-  <Mob name="ravager (314)" body="314" type="0" />
-  <Mob name="flesh_renderer (315)" body="315" type="0" />
-  <Mob name="wander (316)" body="316" type="0" />
-  <Mob name="vampire_bat (317)" body="317" type="0" />
-  <Mob name="demon_knight (318)" body="318" type="0" />
-  <Mob name="mound_of_maggots (319)" body="319" type="0" />
-  <Mob name="gray_goblin (334)" body="334" type="0" />
-  <Mob name="h_male (400)" body="400" type="3" />
-  <Mob name="h_female (401)" body="401" type="3" />
-  <Mob name="ridable_boura (432)" body="432" type="2" />
-  <Mob name="death_vortex (573)" body="573" type="0" />
-  <Mob name="spirits_blade_spirit (574)" body="574" type="0" />
-  <Mob name="elf_male (605)" body="605" type="3" />
-  <Mob name="elf_female (606)" body="606" type="3" />
-  <Mob name="garg_male (666)" body="666" type="3" />
-  <Mob name="garg_female (667)" body="667" type="3" />
-  <Mob name="timelord (689)" body="689" type="0" />
-  <Mob name="shadowlord2 (704)" body="704" type="0" />
-  <Mob name="Abyssal_Infernal (713)" body="713" type="0" />
-  <Mob name="beetle_iron (714)" body="714" type="2" />
-  <Mob name="lowland_boura (715)" body="715" type="0" />
-  <Mob name="chicken_lizard (716)" body="716" type="0" />
-  <Mob name="clockwork_scorpion (717)" body="717" type="2" />
-  <Mob name="fairy_dragon (718)" body="718" type="0" />
-  <Mob name="wolfman (719)" body="719" type="0" />
-  <Mob name="lava_worm (720)" body="720" type="0" />
-  <Mob name="Maddening_Horror (721)" body="721" type="0" />
-  <Mob name="Putrid_Undead_Gargoyle (722)" body="722" type="0" />
-  <Mob name="Green_Goblin (723)" body="723" type="0" />
-  <Mob name="Gremlin (724)" body="724" type="0" />
-  <Mob name="Homunculus (725)" body="725" type="0" />
-  <Mob name="Kepetch (726)" body="726" type="0" />
-  <Mob name="Kepetch_Ambusher (727)" body="727" type="0" />
-  <Mob name="Medusa (728)" body="728" type="0" />
-  <Mob name="Paralithode (729)" body="729" type="0" />
-  <Mob name="Raptor (730)" body="730" type="0" />
-  <Mob name="Rotworm (732)" body="732" type="0" />
-  <Mob name="Skree (733)" body="733" type="0" />
-  <Mob name="Toxic Slith (734)" body="734" type="0" />
-  <Mob name="Navrey Night-Eyes (735)" body="735" type="0" />
-  <Mob name="Wolf Spider (736)" body="736" type="0" />
-  <Mob name="Trapdoor Spider (737)" body="737" type="0" />
-  <Mob name="Fire Ant (738)" body="738" type="0" />
-  <Mob name="Leather Wolf (739)" body="739" type="0" />
-  <Mob name="Dream Wraith (740)" body="740" type="0" />
-  <Mob name="Slasher of Viels (741)" body="741" type="0" />
-  <Mob name="Charybdis (742)" body="742" type="0" />
-  <Mob name="Tentacles of Osiredon the Scalis Enforcer (743)" body="743" type="0" />
-  <Mob name="four_armed_demon (746)" body="746" type="0" />
-  <Mob name="wailingbanshee2 (747)" body="747" type="0" />
-  <Mob name="spirits_ghost2 (748)" body="748" type="0" />
-  <Mob name="liche_liche_retro3 (749)" body="749" type="0" />
-  <Mob name="h_savage_male (750)" body="750" type="3" />
-  <Mob name="h_savage_female (751)" body="751" type="3" />
-  <Mob name="golem_iron (752)" body="752" type="0" />
-  <Mob name="gargoyles_gargoyle_slave (753)" body="753" type="0" />
-  <Mob name="gargoyles_gargoyle_enforcer (754)" body="754" type="0" />
-  <Mob name="gargoyles_gargoyle_guard (755)" body="755" type="0" />
-  <Mob name="clockwork_overseer (756)" body="756" type="0" />
-  <Mob name="clockwork_minion (757)" body="757" type="0" />
-  <Mob name="gargoyles_gargoyle_shopkeeper (758)" body="758" type="0" />
-  <Mob name="clockwork_minion2 (763)" body="763" type="0" />
-  <Mob name="Juka_Warrior (764)" body="764" type="0" />
-  <Mob name="Juka_Mage (765)" body="765" type="0" />
-  <Mob name="NPC_Kabur (766)" body="766" type="0" />
-  <Mob name="NPC_Blackthorn_Cohort (767)" body="767" type="0" />
-  <Mob name="Juggernaut (768)" body="768" type="0" />
-  <Mob name="NPC_Blackthorn (769)" body="769" type="0" />
-  <Mob name="Meer_Mage (770)" body="770" type="0" />
-  <Mob name="Meer_Warrior (771)" body="771" type="0" />
-  <Mob name="NPC_Adranath (772)" body="772" type="0" />
-  <Mob name="NPC_Cpt_Dasha (773)" body="773" type="0" />
-  <Mob name="Dawn_Girl (774)" body="774" type="0" />
-  <Mob name="plague_beast (775)" body="775" type="0" />
-  <Mob name="horde_demon (776)" body="776" type="0" />
-  <Mob name="doppleganger (777)" body="777" type="0" />
-  <Mob name="swarm (778)" body="778" type="0" />
-  <Mob name="bogling (779)" body="779" type="0" />
-  <Mob name="bog_thing (780)" body="780" type="0" />
-  <Mob name="fire_ant_worker (781)" body="781" type="0" />
-  <Mob name="fire_ant_warrior (782)" body="782" type="0" />
-  <Mob name="fire_ant_queen (783)" body="783" type="0" />
-  <Mob name="arcane_demon (784)" body="784" type="0" />
-  <Mob name="four_armed_demon2 (785)" body="785" type="0" />
-  <Mob name="chariot (786)" body="786" type="0" />
-  <Mob name="ant_lion (787)" body="787" type="0" />
-  <Mob name="sphinx (788)" body="788" type="0" />
-  <Mob name="quagmire (789)" body="789" type="0" />
-  <Mob name="sand_vortex (790)" body="790" type="0" />
-  <Mob name="giant_beetle (791)" body="791" type="2" />
-  <Mob name="chaos_demon (792)" body="792" type="0" />
-  <Mob name="skeletal_mount (793)" body="793" type="2" />
-  <Mob name="swamp_dragon (794)" body="794" type="2" />
-  <Mob name="horde_demon2 (795)" body="795" type="0" />
-  <Mob name="horde_demon3 (796)" body="796" type="0" />
-  <Mob name="mf_dragon_fire (797)" body="797" type="0" />
-  <Mob name="mf_dragon_rust (798)" body="798" type="0" />
-  <Mob name="swamp_dragon_armor (799)" body="799" type="2" />
-  <Mob name="fire_ant_matriarch (804)" body="804" type="0" />
-  <Mob name="black_ant_worker (805)" body="805" type="0" />
-  <Mob name="black_ant_warrior (806)" body="806" type="0" />
-  <Mob name="black_ant_queen (807)" body="807" type="0" />
-  <Mob name="black_ant_matriarch (808)" body="808" type="0" />
-  <Mob name="Dragon (827)" body="827" type="0" />
-  <Mob name="Rising_Colossus (829)" body="829" type="0" />
-  <Mob name="Prime_Evil_Lich (830)" body="830" type="0" />
-  <Mob name="Parrot (831)" body="831" type="2" />
-  <Mob name="Phoenix (832)" body="832" type="2" />
-  <Mob name="Women_unclear (833)" body="833" type="3" />
-  <Mob name="player_ghost5 (970)" body="970" type="3" />
-  <Mob name="character_lord_british (990)" body="990" type="3" />
-  <Mob name="character_blackthorn (991)" body="991" type="3" />
-  <Mob name="character_dupre (994)" body="994" type="3" />
-  <Mob name="Multi_Colored_Horde_Daemon (999)" body="999" type="0" />  
-  <Mob name="Uber Turkey (1026)" body="1026" type="0" />
-  <Mob name="Oseridan The Scalis Enforcer (1068)" body="1068" type="0" />
-  <Mob name="Ancient Hellhound (1069)" body="1069" type="0" />
-  <Mob name="Werewolf (1070)" body="1070" type="0" />
-  <Mob name="unknown Demon Lord (1071)" body="1071" type="0" />
-  <Mob name="Killer Pumpkin Dark (1246)" body="1246" type="0" />
-  <Mob name="Killer Pumpkin Light (1247)" body="1247" type="0" />
-  <Mob name="Tiger (1254)" body="1254" type="0" />
-  <Equip name="floppy hat (404)" body="404" type="3" />
-  <Equip name="wide-brim hat (405)" body="405" type="3" />
-  <Equip name="cap (406)" body="406" type="3" />
-  <Equip name="tall straw hat (407)" body="407" type="3" />
-  <Equip name="straw hat (408)" body="408" type="3" />
-  <Equip name="wizard's hat (409)" body="409" type="3" />
-  <Equip name="bonnet (410)" body="410" type="3" />
-  <Equip name="feathered hat (411)" body="411" type="3" />
-  <Equip name="tricorne hat (412)" body="412" type="3" />
-  <Equip name="jester hat (413)" body="413" type="3" />
-  <Equip name="bear mask (414)" body="414" type="3" />
-  <Equip name="deer mask (415)" body="415" type="3" />
-  <Equip name="orc mask (416)" body="416" type="3" />
-  <Equip name="tribal mask (417)" body="417" type="3" />
-  <Equip name="tribal mask (418)" body="418" type="3" />
-  <Equip name="skullcap (419)" body="419" type="3" />
-  <Equip name="Leather Ninja Pants (423)" body="423" type="3" />
-  <Equip name="Leather Ninja Mitts (424)" body="424" type="3" />
-  <Equip name="Leather Ninja Hood (425)" body="425" type="3" />
-  <Equip name="Leather Ninja Jacke (426)" body="426" type="3" />
-  <Equip name="short pants (430)" body="430" type="3" />
-  <Equip name="long pants (431)" body="431" type="3" />
-  <Equip name="shirt (434)" body="434" type="3" />
-  <Equip name="fancy shirt (435)" body="435" type="3" />
-  <Equip name="Mail Hatsuburi (442)" body="442" type="3" />
-  <Equip name="Plate Hatsuburi (443)" body="443" type="3" />
-  <Equip name="Leather Jingasa (444)" body="444" type="3" />
-  <Equip name="Plate Jingasa (445)" body="445" type="3" />
-  <Equip name="Plate Jingasa (446)" body="446" type="3" />
-  <Equip name="plain dress (447)" body="447" type="3" />
-  <Equip name="fancy dress (448)" body="448" type="3" />
-  <Equip name="skirt (449)" body="449" type="3" />
-  <Equip name="Plate Jingasa (450)" body="450" type="3" />
-  <Equip name="Plate Kabuto (451)" body="451" type="3" />
-  <Equip name="kilt (455)" body="455" type="3" />
-  <Equip name="Plate Mempo (456)" body="456" type="3" />
-  <Equip name="Leather Do (457)" body="457" type="3" />
-  <Equip name="Studded Do (458)" body="458" type="3" />
-  <Equip name="Plate Do (459)" body="459" type="3" />
-  <Equip name=" (460)" body="460" type="3" />
-  <Equip name=" (461)" body="461" type="3" />
-  <Equip name="Plate Kabuto (462)" body="462" type="3" />
-  <Equip name="Plate Kabuto (463)" body="463" type="3" />
-  <Equip name="Wakizashi (464)" body="464" type="3" />
-  <Equip name="full apron (465)" body="465" type="3" />
-  <Equip name="half apron (466)" body="466" type="3" />
-  <Equip name="Bokuto (467)" body="467" type="3" />
-  <Equip name="cloak (468)" body="468" type="3" />
-  <Equip name="robe (469)" body="469" type="3" />
-  <Equip name="Daisho (470)" body="470" type="3" />
-  <Equip name="Leather Mempo (471)" body="471" type="3" />
-  <Equip name="Studded Mempo (472)" body="472" type="3" />
-  <Equip name="Leather Hiro Sode (473)" body="473" type="3" />
-  <Equip name="Studded Hiro Sode (474)" body="474" type="3" />
-  <Equip name="thigh boots (476)" body="476" type="3" />
-  <Equip name="boots (477)" body="477" type="3" />
-  <Equip name="Plate Hiro Sode (478)" body="478" type="3" />
-  <Equip name="sandals (479)" body="479" type="3" />
-  <Equip name="shoes (480)" body="480" type="3" />
-  <Equip name="flower garland (481)" body="481" type="3" />
-  <Equip name="fur boots (482)" body="482" type="3" />
-  <Equip name="fur cape (483)" body="483" type="3" />
-  <Equip name="fur surong (484)" body="484" type="3" />
-  <Equip name="gilded dress (485)" body="485" type="3" />
-  <Equip name="formal shirt (486)" body="486" type="3" />
-  <Equip name="Leather Suneate (487)" body="487" type="3" />
-  <Equip name="Studded Suneate (488)" body="488" type="3" />
-  <Equip name="Plate Suneate (489)" body="489" type="3" />
-  <Equip name="body sash (490)" body="490" type="3" />
-  <Equip name="Leather Haidate (491)" body="491" type="3" />
-  <Equip name="bandana (492)" body="492" type="3" />
-  <Equip name="lantern (500)" body="500" type="3" />
-  <Equip name="torch (501)" body="501" type="3" />
-  <Equip name="candle (502)" body="502" type="3" />
-  <Equip name="lantern (503)" body="503" type="3" />
-  <Equip name="torch%es% (504)" body="504" type="3" />
-  <Equip name="candle (505)" body="505" type="3" />
-  <Equip name="Plate Haidate (506)" body="506" type="3" />
-  <Equip name="Studded Haidate (512)" body="512" type="3" />
-  <Equip name="Cloth Ninja Hood (513)" body="513" type="3" />
-  <Equip name="Leather Ninja Belt (514)" body="514" type="3" />
-  <Equip name="Kasa (516)" body="516" type="3" />
-  <Equip name="Kamishimo (517)" body="517" type="3" />
-  <Equip name="Hakama (518)" body="518" type="3" />
-  <Equip name="No-Dachi (519)" body="519" type="3" />
-  <Equip name="Tessen (520)" body="520" type="3" />
-  <Equip name="studded tunic (521)" body="521" type="3" />
-  <Equip name="studded sleeves (523)" body="523" type="3" />
-  <Equip name="studded gorget (525)" body="525" type="3" />
-  <Equip name="Lajatang (526)" body="526" type="3" />
-  <Equip name="platemail (527)" body="527" type="3" />
-  <Equip name="platemail arms (528)" body="528" type="3" />
-  <Equip name="platemail legs (529)" body="529" type="3" />
-  <Equip name="platemail gloves (530)" body="530" type="3" />
-  <Equip name="Fukiya (532)" body="532" type="3" />
-  <Equip name="Tekagi (533)" body="533" type="3" />
-  <Equip name="Shuriken (534)" body="534" type="3" />
-  <Equip name="Kama (535)" body="535" type="3" />
-  <Equip name="Nunchaku (536)" body="536" type="3" />
-  <Equip name="Sai (537)" body="537" type="3" />
-  <Equip name="chainmail tunic (538)" body="538" type="3" />
-  <Equip name=" (539)" body="539" type="3" />
-  <Equip name="chainmail leggings (540)" body="540" type="3" />
-  <Equip name="leather tunic (542)" body="542" type="3" />
-  <Equip name="leather leggings (543)" body="543" type="3" />
-  <Equip name="leather sleeves (544)" body="544" type="3" />
-  <Equip name="leather gloves (545)" body="545" type="3" />
-  <Equip name="leather gorget (546)" body="546" type="3" />
-  <Equip name=" (547)" body="547" type="3" />
-  <Equip name="ringmail armor (548)" body="548" type="3" />
-  <Equip name="ringmail leggings (549)" body="549" type="3" />
-  <Equip name="ringmail sleeves (550)" body="550" type="3" />
-  <Equip name=" (551)" body="551" type="3" />
-  <Equip name="Tattsuke-Hakama (552)" body="552" type="3" />
-  <Equip name="Hakama-Shita (553)" body="553" type="3" />
-  <Equip name="bone armor (554)" body="554" type="3" />
-  <Equip name="bone leggings (555)" body="555" type="3" />
-  <Equip name="bone arms (556)" body="556" type="3" />
-  <Equip name="bone gloves (557)" body="557" type="3" />
-  <Equip name="Male Kimono (558)" body="558" type="3" />
-  <Equip name="Female Kimono (559)" body="559" type="3" />
-  <Equip name="leather cap (560)" body="560" type="3" />
-  <Equip name="chainmail  coif (561)" body="561" type="3" />
-  <Equip name="bone helmet (562)" body="562" type="3" />
-  <Equip name="plate helm (563)" body="563" type="3" />
-  <Equip name="nose helm (564)" body="564" type="3" />
-  <Equip name="helmet (565)" body="565" type="3" />
-  <Equip name="kabuto (566)" body="566" type="3" />
-  <Equip name="Obi (567)" body="567" type="3" />
-  <Equip name="Jin-Baori (568)" body="568" type="3" />
-  <Equip name="Samurai Waraji &amp; Ta (569)" body="569" type="3" />
-  <Equip name=" (570)" body="570" type="3" />
-  <Equip name="Cloth Ninja Jacket (571)" body="571" type="3" />
-  <Equip name="Ninja Tall Tabi (572)" body="572" type="3" />
-  <Equip name="Yumi (575)" body="575" type="3" />
-  <Equip name="metal shield (576)" body="576" type="3" />
-  <Equip name="bronze shield (577)" body="577" type="3" />
-  <Equip name="wooden shield (578)" body="578" type="3" />
-  <Equip name="buckler (579)" body="579" type="3" />
-  <Equip name="kite shield (580)" body="580" type="3" />
-  <Equip name="kite shield (581)" body="581" type="3" />
-  <Equip name="heater shield (582)" body="582" type="3" />
-  <Equip name="Tetsubo (583)" body="583" type="3" />
-  <Equip name="large battle axe (611)" body="611" type="3" />
-  <Equip name="two handed axe (612)" body="612" type="3" />
-  <Equip name="executioner's axe (613)" body="613" type="3" />
-  <Equip name="bardiche (614)" body="614" type="3" />
-  <Equip name="hatchet (615)" body="615" type="3" />
-  <Equip name="heavy crossbow (616)" body="616" type="3" />
-  <Equip name="black staff (617)" body="617" type="3" />
-  <Equip name="broadsword (618)" body="618" type="3" />
-  <Equip name="cleaver (619)" body="619" type="3" />
-  <Equip name="club (620)" body="620" type="3" />
-  <Equip name="shepherd's crook (621)" body="621" type="3" />
-  <Equip name="dagger (622)" body="622" type="3" />
-  <Equip name="cutlass (623)" body="623" type="3" />
-  <Equip name="halberd (624)" body="624" type="3" />
-  <Equip name="hammer pick (625)" body="625" type="3" />
-  <Equip name="javelin (626)" body="626" type="3" />
-  <Equip name="katana (627)" body="627" type="3" />
-  <Equip name="gnarled staff (628)" body="628" type="3" />
-  <Equip name="butcher knife (629)" body="629" type="3" />
-  <Equip name="kryss (630)" body="630" type="3" />
-  <Equip name="mace (631)" body="631" type="3" />
-  <Equip name="maul (633)" body="633" type="3" />
-  <Equip name="pickaxe (635)" body="635" type="3" />
-  <Equip name="pitchfork (636)" body="636" type="3" />
-  <Equip name="scimitar (637)" body="637" type="3" />
-  <Equip name="skinning knife (638)" body="638" type="3" />
-  <Equip name="short spear (639)" body="639" type="3" />
-  <Equip name="viking sword (643)" body="643" type="3" />
-  <Equip name="war axe (644)" body="644" type="3" />
-  <Equip name="war fork (645)" body="645" type="3" />
-  <Equip name="war hammer (646)" body="646" type="3" />
-  <Equip name="quarter staff (648)" body="648" type="3" />
-  <Equip name="bow (649)" body="649" type="3" />
-  <Equip name="crossbow (651)" body="651" type="3" />
-  <Equip name="axe (653)" body="653" type="3" />
-  <Equip name="dragon sleeves (679)" body="679" type="3" />
-  <Equip name="dragon breastplate (680)" body="680" type="3" />
-  <Equip name="dragon gloves (681)" body="681" type="3" />
-  <Equip name="dragon helm (682)" body="682" type="3" />
-  <Equip name="dragon leggings (683)" body="683" type="3" />
-  <Equip name="amazon armor (684)" body="684" type="3" />
-  <Equip name="amazon armor (685)" body="685" type="3" />
-  <Equip name="amazon armor (686)" body="686" type="3" />
-  <Equip name="fancy dress (687)" body="687" type="3" />
-  <Equip name="fancy dress (688)" body="688" type="3" />
-  <Equip name=" (700)" body="700" type="3" />
-  <Equip name="Long Hair (701)" body="701" type="3" />
-  <Equip name="Ponytail (702)" body="702" type="3" />
-  <Equip name=" (703)" body="703" type="3" />
-  <Equip name=" (710)" body="710" type="3" />
-  <Equip name=" (712)" body="712" type="3" />
-  <Equip name="Arcane Cloak (759)" body="759" type="3" />
-  <Equip name="Arcane Gloves (760)" body="760" type="3" />
-  <Equip name="Arcane Robe (761)" body="761" type="3" />
-  <Equip name="Arcane Thigh Boots (762)" body="762" type="3" />
-  <Equip name="goatee (800)" body="800" type="3" />
-  <Equip name="long beard (801)" body="801" type="3" />
-  <Equip name="short beard (802)" body="802" type="3" />
-  <Equip name="mustache (803)" body="803" type="3" />
-  <Equip name=" (809)" body="809" type="3" />
-  <Equip name=" (810)" body="810" type="3" />
-  <Equip name=" (811)" body="811" type="3" />
-  <Equip name=" (812)" body="812" type="3" />
-  <Equip name=" (813)" body="813" type="3" />
-  <Equip name=" (814)" body="814" type="3" />
-  <Equip name=" (815)" body="815" type="3" />
-  <Equip name=" (816)" body="816" type="3" />
-  <Equip name=" (817)" body="817" type="3" />
-  <Equip name=" (818)" body="818" type="3" />
-  <Equip name=" (819)" body="819" type="3" />
-  <Equip name=" (821)" body="821" type="3" />
-  <Equip name=" (822)" body="822" type="3" />
-  <Equip name=" (823)" body="823" type="3" />
-  <Equip name=" (833)" body="833" type="3" />
-  <Equip name=" (834)" body="834" type="3" />
-  <Equip name=" (835)" body="835" type="3" />
-  <Equip name=" (836)" body="836" type="3" />
-  <Equip name=" (837)" body="837" type="3" />
-  <Equip name=" (838)" body="838" type="3" />
-  <Equip name=" (839)" body="839" type="3" />
-  <Equip name=" (840)" body="840" type="3" />
-  <Equip name=" (841)" body="841" type="3" />
-  <Equip name=" (842)" body="842" type="3" />
-  <Equip name="winged helmet (866)" body="866" type="3" />
-  <Equip name=" (867)" body="867" type="3" />
-  <Equip name=" (868)" body="868" type="3" />
-  <Equip name="Helm of Spirituali (869)" body="869" type="3" />
-  <Equip name="Gorget of Truth (870)" body="870" type="3" />
-  <Equip name="Breastplate of Jus (871)" body="871" type="3" />
-  <Equip name="Arms of Compassion (872)" body="872" type="3" />
-  <Equip name="Gauntlets of Valor (873)" body="873" type="3" />
-  <Equip name="Legs of Honor (874)" body="874" type="3" />
-  <Equip name="Solaretes of Sacri (875)" body="875" type="3" />
-  <Equip name="Cloak of Humility (876)" body="876" type="3" />
-  <Equip name="Spell weaving book (877)" body="877" type="3" />
-  <Equip name="book of ninjitsu (878)" body="878" type="3" />
-  <Equip name="book of bushido (879)" body="879" type="3" />
-  <Equip name=" (880)" body="880" type="3" />
-  <Equip name=" (881)" body="881" type="3" />
-  <Equip name="necromancer book (882)" body="882" type="3" />
-  <Equip name="book of arms (883)" body="883" type="3" />
-  <Equip name="paladin spellbook (884)" body="884" type="3" />
-  <Equip name="Lt_Armor_Gorget (886)" body="886" type="3" />
-  <Equip name="Quiver of Infinity (887)" body="887" type="3" />
-  <Equip name="Dupres Shield (888)" body="888" type="3" />
-  <Equip name="Elven_Hair (889)" body="889" type="3" />
-  <Equip name="Elven_Hair (890)" body="890" type="3" />
-  <Equip name="Elven_Hair (891)" body="891" type="3" />
-  <Equip name="Elven_Hair (892)" body="892" type="3" />
-  <Equip name="Elven_Hair (893)" body="893" type="3" />
-  <Equip name="Elven_Hair (894)" body="894" type="3" />
-  <Equip name="Elven_Hair (895)" body="895" type="3" />
-  <Equip name="elven quiver r (896)" body="896" type="3" />
-  <Equip name="elven glasses s (897)" body="897" type="3" />
-  <Equip name="elven robe e01 (898)" body="898" type="3" />
-  <Equip name="elven robe e02 (899)" body="899" type="3" />
-  <Equip name=" (900)" body="900" type="3" />
-  <Equip name=" (901)" body="901" type="3" />
-  <Equip name=" (902)" body="902" type="3" />
-  <Equip name=" (903)" body="903" type="3" />
-  <Equip name=" (904)" body="904" type="3" />
-  <Equip name=" (905)" body="905" type="3" />
-  <Equip name=" (906)" body="906" type="3" />
-  <Equip name="elven shirt Male (907)" body="907" type="3" />
-  <Equip name="elven shirt Male (908)" body="908" type="3" />
-  <Equip name="tunic (909)" body="909" type="3" />
-  <Equip name="surcoat (910)" body="910" type="3" />
-  <Equip name="checkered shirt (911)" body="911" type="3" />
-  <Equip name="jester suit (912)" body="912" type="3" />
-  <Equip name="doublet (913)" body="913" type="3" />
-  <Equip name="elven shirt t _Ches (914)" body="914" type="3" />
-  <Equip name="elven shirt t _Ches (915)" body="915" type="3" />
-  <Equip name="Elven_Hair01_BL_Mu (916)" body="916" type="3" />
-  <Equip name="hair (917)" body="917" type="3" />
-  <Equip name="hair (918)" body="918" type="3" />
-  <Equip name="Elven_Hair04_BR_Mu (919)" body="919" type="3" />
-  <Equip name="Elven_Pants s (920)" body="920" type="3" />
-  <Equip name="studded armor (921)" body="921" type="3" />
-  <Equip name="plate armor (922)" body="922" type="3" />
-  <Equip name="leather armor (923)" body="923" type="3" />
-  <Equip name="leather bustier (924)" body="924" type="3" />
-  <Equip name="studded bustier (925)" body="925" type="3" />
-  <Equip name="leather skirt (926)" body="926" type="3" />
-  <Equip name="leather shorts (927)" body="927" type="3" />
-  <Equip name="close helmet (928)" body="928" type="3" />
-  <Equip name="bascinet (929)" body="929" type="3" />
-  <Equip name="scythe (930)" body="930" type="3" />
-  <Equip name="bone harvester (931)" body="931" type="3" />
-  <Equip name="scepter (932)" body="932" type="3" />
-  <Equip name="bladed staff (933)" body="933" type="3" />
-  <Equip name="pike (934)" body="934" type="3" />
-  <Equip name="double bladed staff (935)" body="935" type="3" />
-  <Equip name="lance (936)" body="936" type="3" />
-  <Equip name="crescent blade (937)" body="937" type="3" />
-  <Equip name="composite bow (938)" body="938" type="3" />
-  <Equip name="repeating crossbow (939)" body="939" type="3" />
-  <Equip name="Elven_Boot t (941)" body="941" type="3" />
-  <Equip name="Elven Plate (942)" body="942" type="3" />
-  <Equip name="Elven Plate Belt (943)" body="943" type="3" />
-  <Equip name="Elven Plate Gorget (944)" body="944" type="3" />
-  <Equip name="Elven Plate Gloves (945)" body="945" type="3" />
-  <Equip name="Elven Plate Legs (946)" body="946" type="3" />
-  <Equip name="Elven Arm Plate (947)" body="947" type="3" />
-  <Equip name="Elven Plate (948)" body="948" type="3" />
-  <Equip name="Elven Composite Lo (950)" body="950" type="3" />
-  <Equip name="Magical Shortbow (951)" body="951" type="3" />
-  <Equip name="Elven Spellblade (952)" body="952" type="3" />
-  <Equip name="Assassin Spike (953)" body="953" type="3" />
-  <Equip name="Leafblade (954)" body="954" type="3" />
-  <Equip name="War Cleaver (955)" body="955" type="3" />
-  <Equip name="Diamond Mace (956)" body="956" type="3" />
-  <Equip name="Wild Staff (957)" body="957" type="3" />
-  <Equip name="Rune Blade (958)" body="958" type="3" />
-  <Equip name="Radiant Scimitar (959)" body="959" type="3" />
-  <Equip name="Ornate Axe (960)" body="960" type="3" />
-  <Equip name="bone machete (961)" body="961" type="3" />
-  <Equip name="Raven Helm (965)" body="965" type="3" />
-  <Equip name="Vulture Helm (966)" body="966" type="3" />
-  <Equip name="Winged Helm (967)" body="967" type="3" />
-  <Equip name="Hide Chest (968)" body="968" type="3" />
-  <Equip name="Hide Gloves (969)" body="969" type="3" />
-  <Equip name="knee skirt (971)" body="971" type="3" />
-  <Equip name="fishing pole (972)" body="972" type="3" />
-  <Equip name="orc helm (973)" body="973" type="3" />
-  <Equip name="Hide Gorget (974)" body="974" type="3" />
-  <Equip name="Hide Paldrons (975)" body="975" type="3" />
-  <Equip name="Hide Pants (976)" body="976" type="3" />
-  <Equip name="Hide Female Chest (977)" body="977" type="3" />
-  <Equip name="Lt_Armor_Chest (978)" body="978" type="3" />
-  <Equip name="Lt_Armor_Gloves (979)" body="979" type="3" />
-  <Equip name="wand (980)" body="980" type="3" />
-  <Equip name="wand (981)" body="981" type="3" />
-  <Equip name="wand (982)" body="982" type="3" />
-  <Equip name="wand (983)" body="983" type="3" />
-  <Equip name="spellbook (984)" body="984" type="3" />
-  <Equip name=" (985)" body="985" type="3" />
-  <Equip name=" (986)" body="986" type="3" />
-  <Equip name="Lt_Armor_Paldrons (989)" body="989" type="3" />
-  <Equip name="Order shield (992)" body="992" type="3" />
-  <Equip name="Chaos shield (993)" body="993" type="3" />
-  <Equip name="Lt_Armor_Pants (995)" body="995" type="3" />
-  <Equip name="leaf tonlet t r_Kil (996)" body="996" type="3" />
-  <Equip name="LtF_Chest Chest (997)" body="997" type="3" />
+	<!--Entries in Mob tab-->
+	<!--Name=Displayed name-->
+	<!--body=Graphic-->
+	<!--type=0:Monster, 1:Sea, 2:Animal, 3:Human/Equipment-->
+	<Mob name="ogres ogre (1)" body="1" type="0" />
+	<Mob name="ettins ettin (2)" body="2" type="0" />
+	<Mob name="walking dead zombie (3)" body="3" type="0" />
+	<Mob name="gargoyles gargoyle (4)" body="4" type="0" />
+	<Mob name="birds eagle (5)" body="5" type="0" />
+	<Mob name="birds generic (6)" body="6" type="0" />
+	<Mob name="orcs orc captain (7)" body="7" type="0" />
+	<Mob name="flails corpser (8)" body="8" type="0" />
+	<Mob name="daemons daemon (9)" body="9" type="0" />
+	<Mob name="daemons daemon2 (10)" body="10" type="0" />
+	<Mob name="arachnids spider dread (11)" body="11" type="0" />
+	<Mob name="dragons dragon retro grey (12)" body="12" type="0" />
+	<Mob name="elementals air elemental (13)" body="13" type="0" />
+	<Mob name="elementals earth elemental (14)" body="14" type="0" />
+	<Mob name="elementals fire elemental (15)" body="15" type="0" />
+	<Mob name="elementals water elemental (16)" body="16" type="0" />
+	<Mob name="orcs orc (17)" body="17" type="0" />
+	<Mob name="ettins ettin2 (18)" body="18" type="0" />
+	<Mob name="arachnids spider dread2 (19)" body="19" type="0" />
+	<Mob name="arachnids spider frost (20)" body="20" type="0" />
+	<Mob name="serpents snake giant (21)" body="21" type="0" />
+	<Mob name="gazers gazer (22)" body="22" type="0" />
+	<Mob name="canines wolf dire (23)" body="23" type="2" />
+	<Mob name="liche liche retro (24)" body="24" type="0" />
+	<Mob name="canines wolf grey (25)" body="25" type="2" />
+	<Mob name="spirits ghost (26)" body="26" type="0" />
+	<Mob name="canines wolf grey2 (27)" body="27" type="2" />
+	<Mob name="arachnids spider giant (28)" body="28" type="0" />
+	<Mob name="gorillas silverback (29)" body="29" type="0" />
+	<Mob name="harpies harpy (30)" body="30" type="0" />
+	<Mob name="headless headless (31)" body="31" type="0" />
+	<Mob name="lizard race lizardman (33)" body="33" type="0" />
+	<Mob name="canines wolf white (34)" body="34" type="2" />
+	<Mob name="lizard race lizardman2 (35)" body="35" type="0" />
+	<Mob name="lizard race lizardman3 (36)" body="36" type="0" />
+	<Mob name="canines wolf white2 (37)" body="37" type="2" />
+	<Mob name="daemons daemon black gate (38)" body="38" type="0" />
+	<Mob name="mongbats mongbat (39)" body="39" type="0" />
+	<Mob name="daemons daemon elder (40)" body="40" type="0" />
+	<Mob name="orcs orc2 (41)" body="41" type="0" />
+	<Mob name="rat race ratman (42)" body="42" type="0" />
+	<Mob name="daemons daemon ice fiend (43)" body="43" type="0" />
+	<Mob name="rat race ratman2 (44)" body="44" type="0" />
+	<Mob name="rat race ratman3 (45)" body="45" type="0" />
+	<Mob name="Mf Dragon Rust (46)" body="46" type="0" />
+	<Mob name="flails reaper (47)" body="47" type="0" />
+	<Mob name="scorpions giant (48)" body="48" type="0" />
+	<Mob name="dragons wyrm retro white (49)" body="49" type="0" />
+	<Mob name="skeletons skeleton (50)" body="50" type="0" />
+	<Mob name="slimes slime (51)" body="51" type="0" />
+	<Mob name="serpents snake (52)" body="52" type="0" />
+	<Mob name="trolls troll (53)" body="53" type="0" />
+	<Mob name="trolls troll2 (54)" body="54" type="0" />
+	<Mob name="trolls troll frost (55)" body="55" type="0" />
+	<Mob name="skeletons skeleton2 (56)" body="56" type="0" />
+	<Mob name="skeletons skeleton3 (57)" body="57" type="0" />
+	<Mob name="ethereals wisp (58)" body="58" type="0" />
+	<Mob name="dragons dragon retro red (59)" body="59" type="0" />
+	<Mob name="dragons dragon retro grey2 (60)" body="60" type="0" />
+	<Mob name="dragons dragon retro red2 (61)" body="61" type="0" />
+	<Mob name="dragons wyvern (62)" body="62" type="0" />
+	<Mob name="felines cougar (63)" body="63" type="2" />
+	<Mob name="felines leopard snow (64)" body="64" type="2" />
+	<Mob name="felines leopard snow2 (65)" body="65" type="2" />
+	<Mob name="flails swamp tentacles (66)" body="66" type="0" />
+	<Mob name="gargoyles gargoyle stone (67)" body="67" type="0" />
+	<Mob name="gazers gazer elder (68)" body="68" type="0" />
+	<Mob name="gazers gazer elder2 (69)" body="69" type="0" />
+	<Mob name="terathan terathan warrior (70)" body="70" type="0" />
+	<Mob name="terathan terathan drone (71)" body="71" type="0" />
+	<Mob name="terathan terathan queen (72)" body="72" type="0" />
+	<Mob name="harpies harpy stone (73)" body="73" type="0" />
+	<Mob name="imps imp (74)" body="74" type="0" />
+	<Mob name="cyclops cyclops (75)" body="75" type="0" />
+	<Mob name="titans titan (76)" body="76" type="0" />
+	<Mob name="krakens kraken (77)" body="77" type="0" />
+	<Mob name="liche liche lord retro (78)" body="78" type="0" />
+	<Mob name="liche liche lord retro2 (79)" body="79" type="0" />
+	<Mob name="frogs frog giant (80)" body="80" type="0" />
+	<Mob name="frogs bullfrog (81)" body="81" type="0" />
+	<Mob name="liche liche lord retro3 (82)" body="82" type="0" />
+	<Mob name="ogres ogre lord (83)" body="83" type="0" />
+	<Mob name="ogres ogre lord2 (84)" body="84" type="0" />
+	<Mob name="ophidians ophidian mage (85)" body="85" type="0" />
+	<Mob name="ophidians ophidian warrior (86)" body="86" type="0" />
+	<Mob name="ophidians ophidian queen (87)" body="87" type="0" />
+	<Mob name="ruminants goat mountain (88)" body="88" type="2" />
+	<Mob name="serpents snake giant ice (89)" body="89" type="0" />
+	<Mob name="serpents snake giant lava (90)" body="90" type="0" />
+	<Mob name="serpents snake giant silver (91)" body="91" type="0" />
+	<Mob name="serpents snake giant silver2 (92)" body="92" type="0" />
+	<Mob name="serpents snake giant silver3 (93)" body="93" type="0" />
+	<Mob name="slimes slime frost (94)" body="94" type="0" />
+	<Mob name="Turkey (95)" body="95" type="0" />
+	<Mob name="slimes slime frost2 (96)" body="96" type="0" />
+	<Mob name="canines hell hound (97)" body="97" type="2" />
+	<Mob name="canines hell hound2 (98)" body="98" type="2" />
+	<Mob name="canines wolf dark (99)" body="99" type="2" />
+	<Mob name="canines wolf silver (100)" body="100" type="2" />
+	<Mob name="centaurs centaur (101)" body="101" type="0" />
+	<Mob name="daemons daemon exodus (102)" body="102" type="0" />
+	<Mob name="dragons dragon asian (103)" body="103" type="0" />
+	<Mob name="dragons dragon skeletal (104)" body="104" type="0" />
+	<Mob name="dragons wyrm ancient (105)" body="105" type="0" />
+	<Mob name="dragons wyrm shadow (106)" body="106" type="0" />
+	<Mob name="elementals agapite elemental (107)" body="107" type="0" />
+	<Mob name="elementals bronze elemental (108)" body="108" type="0" />
+	<Mob name="elementals copper elemental (109)" body="109" type="0" />
+	<Mob name="elementals copper dull elemental (110)" body="110" type="0" />
+	<Mob name="elementals iron elemental (111)" body="111" type="0" />
+	<Mob name="elementals valorite elemental (112)" body="112" type="0" />
+	<Mob name="elementals verite elemental (113)" body="113" type="0" />
+	<Mob name="equines horse dark steed (114)" body="114" type="2" />
+	<Mob name="equines horse ethereal (115)" body="115" type="2" />
+	<Mob name="equines horse nightmare (116)" body="116" type="2" />
+	<Mob name="equines horse silver steed (117)" body="117" type="2" />
+	<Mob name="equines horse war brittanian (118)" body="118" type="2" />
+	<Mob name="equines horse war mage council (119)" body="119" type="2" />
+	<Mob name="equines horse war minax (120)" body="120" type="2" />
+	<Mob name="equines horse war shadowlord (121)" body="121" type="2" />
+	<Mob name="equines unicorn (122)" body="122" type="2" />
+	<Mob name="ethereal warriors male (123)" body="123" type="0" />
+	<Mob name="mages evil mage (124)" body="124" type="0" />
+	<Mob name="mages evil mage master (125)" body="125" type="0" />
+	<Mob name="mages evil mage master2 (126)" body="126" type="0" />
+	<Mob name="felines predator hellcat (127)" body="127" type="2" />
+	<Mob name="fey race pixie (128)" body="128" type="0" />
+	<Mob name="flails swamp tentacles2 (129)" body="129" type="0" />
+	<Mob name="Blistering Gargoyle (130)" body="130" type="0" />
+	<Mob name="genies efreet (131)" body="131" type="0" />
+	<Mob name="kirin kirin (132)" body="132" type="2" />
+	<Mob name="lizards alligator small (133)" body="133" type="2" />
+	<Mob name="lizards komodo dragon (134)" body="134" type="2" />
+	<Mob name="ogres ogre lord arctic (135)" body="135" type="0" />
+	<Mob name="ophidians ophidian archmage (136)" body="136" type="0" />
+	<Mob name="ophidians ophidian knight (137)" body="137" type="0" />
+	<Mob name="orcs orc lord (138)" body="138" type="0" />
+	<Mob name="orcs orc lord2 (139)" body="139" type="0" />
+	<Mob name="orcs orc shaman (140)" body="140" type="0" />
+	<Mob name="paladins paladin (141)" body="141" type="0" />
+	<Mob name="rat race ratman4 (142)" body="142" type="0" />
+	<Mob name="rat race shaman (143)" body="143" type="0" />
+	<Mob name="sea horse sea horse (144)" body="144" type="1" />
+	<Mob name="sea serpents sea serpent (145)" body="145" type="1" />
+	<Mob name="shadowlords shadowlord (146)" body="146" type="0" />
+	<Mob name="skeletons skeleton knight (147)" body="147" type="0" />
+	<Mob name="skeletons skeleton mage (148)" body="148" type="0" />
+	<Mob name="succubi succubus (149)" body="149" type="0" />
+	<Mob name="sea serpents sea serpent2 (150)" body="150" type="1" />
+	<Mob name="dolphins dolphin (151)" body="151" type="1" />
+	<Mob name="terathan terathan avenger (152)" body="152" type="0" />
+	<Mob name="walking dead ghoul (153)" body="153" type="0" />
+	<Mob name="walking dead mummy (154)" body="154" type="0" />
+	<Mob name="walking dead rotting corpse (155)" body="155" type="0" />
+	<Mob name="arachnids spider black widow (157)" body="157" type="0" />
+	<Mob name="elementals acid elemental (158)" body="158" type="0" />
+	<Mob name="elementals blood elemental (159)" body="159" type="0" />
+	<Mob name="elementals blood elemental2 (160)" body="160" type="0" />
+	<Mob name="elementals ice elemental (161)" body="161" type="0" />
+	<Mob name="elementals poison elemental (162)" body="162" type="0" />
+	<Mob name="elementals snow elemental (163)" body="163" type="0" />
+	<Mob name="ethereals energy vortex (164)" body="164" type="0" />
+	<Mob name="ethereals wisp2 (165)" body="165" type="0" />
+	<Mob name="elementals gold elemental (166)" body="166" type="0" />
+	<Mob name="bruins bear brown (167)" body="167" type="2" />
+	<Mob name="imps shadow fiend (168)" body="168" type="0" />
+	<Mob name="Giant Beetle Fire (169)" body="169" type="2" />
+	<Mob name="llamas llama ethereal (170)" body="170" type="2" />
+	<Mob name="ostards ostard ethereal (171)" body="171" type="2" />
+	<Mob name="dragons dragon retro red3 (172)" body="172" type="0" />
+	<Mob name="arachnids spider black widow2 (173)" body="173" type="0" />
+	<Mob name="succubi succubus2 (174)" body="174" type="0" />
+	<Mob name="ethereal warriors male2 (175)" body="175" type="0" />
+	<Mob name="fey race pixie2 (176)" body="176" type="0" />
+	<Mob name="equines horse nightmare2 (177)" body="177" type="2" />
+	<Mob name="equines horse nightmare3 (178)" body="178" type="2" />
+	<Mob name="equines horse nightmare4 (179)" body="179" type="2" />
+	<Mob name="dragons wyrm retro white2 (180)" body="180" type="0" />
+	<Mob name="orcs orc scout (181)" body="181" type="0" />
+	<Mob name="orcs orc bomber (182)" body="182" type="0" />
+	<Mob name="H Savage Male (183)" body="183" type="3" />
+	<Mob name="H Savage Female (184)" body="184" type="3" />
+	<Mob name="H SavageRider Male (185)" body="185" type="3" />
+	<Mob name="H Savage Female2 (186)" body="186" type="3" />
+	<Mob name="ridgeback ridgeback (187)" body="187" type="2" />
+	<Mob name="ridgeback savage (188)" body="188" type="2" />
+	<Mob name="orcs orc lord3 (189)" body="189" type="0" />
+	<Mob name="equines horse firesteed (190)" body="190" type="2" />
+	<Mob name="kirin kirin ethereal (191)" body="191" type="2" />
+	<Mob name="equines unicorn ethereal (192)" body="192" type="2" />
+	<Mob name="ridgeback ridgeback ethereal (193)" body="193" type="2" />
+	<Mob name="swamp dragon ethereal (194)" body="194" type="2" />
+	<Mob name="giant beetle ethereal (195)" body="195" type="2" />
+	<Mob name="Denkou Yajuu (196)" body="196" type="0" />
+	<Mob name="Order Variant (197)" body="197" type="0" />
+	<Mob name="Chaos Variant (198)" body="198" type="0" />
+	<Mob name="Gouzen Ha (199)" body="199" type="0" />
+	<Mob name="equines horse dappled brown (200)" body="200" type="2" />
+	<Mob name="felines housecat (201)" body="201" type="2" />
+	<Mob name="lizards alligator brown (202)" body="202" type="2" />
+	<Mob name="porcines pig (203)" body="203" type="2" />
+	<Mob name="equines horse dark brown (204)" body="204" type="2" />
+	<Mob name="rodents rabbit cottontail (205)" body="205" type="2" />
+	<Mob name="lizards lava lizard (206)" body="206" type="2" />
+	<Mob name="Sheep (207)" body="207" type="2" />
+	<Mob name="fowl normal hen (208)" body="208" type="2" />
+	<Mob name="ruminants goat billy (209)" body="209" type="2" />
+	<Mob name="ostards ostard desert (210)" body="210" type="2" />
+	<Mob name="bruins bear black (211)" body="211" type="2" />
+	<Mob name="bruins bear grizzly (212)" body="212" type="2" />
+	<Mob name="bruins bear polar (213)" body="213" type="2" />
+	<Mob name="felines panther (214)" body="214" type="2" />
+	<Mob name="rodents rat giant (215)" body="215" type="2" />
+	<Mob name="bovines cow brown (216)" body="216" type="2" />
+	<Mob name="canines dog hound (217)" body="217" type="2" />
+	<Mob name="ostards ostard forest (218)" body="218" type="2" />
+	<Mob name="ostards ostard frenzied (219)" body="219" type="2" />
+	<Mob name="llamas llama (220)" body="220" type="2" />
+	<Mob name="walrus walrus male (221)" body="221" type="2" />
+	<Mob name="ruminants sheep shorn (223)" body="223" type="2" />
+	<Mob name="canines wolf timber (225)" body="225" type="2" />
+	<Mob name="equines horse dappled grey (226)" body="226" type="2" />
+	<Mob name="equines horse tan (228)" body="228" type="2" />
+	<Mob name="bovines cow spotted (231)" body="231" type="2" />
+	<Mob name="bovines bull brown (232)" body="232" type="2" />
+	<Mob name="bovines bull spotted (233)" body="233" type="2" />
+	<Mob name="deer stag (234)" body="234" type="2" />
+	<Mob name="deer doe (237)" body="237" type="2" />
+	<Mob name="rodents rat sewer (238)" body="238" type="2" />
+	<Mob name="Kappa (240)" body="240" type="0" />
+	<Mob name="Oni (241)" body="241" type="0" />
+	<Mob name="Bimbobushi (242)" body="242" type="0" />
+	<Mob name="Hai Riyo (243)" body="243" type="2" />
+	<Mob name="Rune Beetle (244)" body="244" type="0" />
+	<Mob name="Yomotsu Warrior (245)" body="245" type="0" />
+	<Mob name="Kitsun Tsuki (246)" body="246" type="2" />
+	<Mob name="Fan Dancer (247)" body="247" type="0" />
+	<Mob name="Wild Guar (248)" body="248" type="2" />
+	<Mob name="Yamandon (249)" body="249" type="0" />
+	<Mob name="Tri Wolf (250)" body="250" type="0" />
+	<Mob name="Vampyric Beast (251)" body="251" type="0" />
+	<Mob name="Lady of the Snow (252)" body="252" type="0" />
+	<Mob name="Yomotsu Priest (253)" body="253" type="0" />
+	<Mob name="Crane (254)" body="254" type="2" />
+	<Mob name="Yomotsu Elder (255)" body="255" type="0" />
+	<Mob name="Chief Paroxysmus (256)" body="256" type="0" />
+	<Mob name="Dread Horn (257)" body="257" type="0" />
+	<Mob name="Lady Melisande (258)" body="258" type="0" />
+	<Mob name="Monstrous Interred Grizzle (259)" body="259" type="0" />
+	<Mob name="Shimmering Effusion (261)" body="261" type="0" />
+	<Mob name="Tormented Minotaur (262)" body="262" type="0" />
+	<Mob name="Minotaur (263)" body="263" type="0" />
+	<Mob name="Changeling (264)" body="264" type="0" />
+	<Mob name="Hydra (265)" body="265" type="0" />
+	<Mob name="Dryad (266)" body="266" type="0" />
+	<Mob name="Troglodyte (267)" body="267" type="0" />
+	<Mob name="Satyr (271)" body="271" type="0" />
+	<Mob name="Monstrous Interred Grizzle (272)" body="272" type="0" />
+	<Mob name="Fetid Essence (273)" body="273" type="0" />
+	<Mob name="Chimera (276)" body="276" type="2" />
+	<Mob name="Cu Sidhe (277)" body="277" type="2" />
+	<Mob name="Squirrel (278)" body="278" type="2" />
+	<Mob name="Ferret (279)" body="279" type="2" />
+	<Mob name="Plate Armored Minotaur (280)" body="280" type="0" />
+	<Mob name="Leather Armored Minotaur (281)" body="281" type="0" />
+	<Mob name="Parrot (282)" body="282" type="2" />
+	<Mob name="Crow (283)" body="283" type="2" />
+	<Mob name="Mondains Steed (284)" body="284" type="2" />
+	<Mob name="Reaper Form (285)" body="285" type="0" />
+	<Mob name="Bloodworm (287)" body="287" type="0" />
+	<Mob name="porcines boar (290)" body="290" type="2" />
+	<Mob name="equines horse dappled brown pack (291)" body="291" type="2" />
+	<Mob name="llamas llama pack (292)" body="292" type="2" />
+	<Mob name="Gargoyle Pet (vollum?) (293)" body="293" type="0" />
+	<Mob name="crystal elemental (300)" body="300" type="0" />
+	<Mob name="treefellow (301)" body="301" type="0" />
+	<Mob name="skittering hopper (302)" body="302" type="0" />
+	<Mob name="devourer (303)" body="303" type="0" />
+	<Mob name="flesh golem (304)" body="304" type="0" />
+	<Mob name="gore fiend (305)" body="305" type="0" />
+	<Mob name="impaler (306)" body="306" type="0" />
+	<Mob name="gibberling (307)" body="307" type="0" />
+	<Mob name="bonedemon (308)" body="308" type="0" />
+	<Mob name="patchskeleton (309)" body="309" type="0" />
+	<Mob name="wailingbanshee (310)" body="310" type="0" />
+	<Mob name="shadow knight (311)" body="311" type="0" />
+	<Mob name="abysmal horror (312)" body="312" type="0" />
+	<Mob name="Darknight Creeper (313)" body="313" type="0" />
+	<Mob name="ravager (314)" body="314" type="0" />
+	<Mob name="flesh renderer (315)" body="315" type="0" />
+	<Mob name="wander (316)" body="316" type="0" />
+	<Mob name="vampire bat (317)" body="317" type="0" />
+	<Mob name="demon knight (318)" body="318" type="0" />
+	<Mob name="mound of maggots (319)" body="319" type="0" />
+	<Mob name="Grey Goblin (334)" body="334" type="0" />
+	<Mob name="h male (400)" body="400" type="3" />
+	<Mob name="h female (401)" body="401" type="3" />
+	<Mob name="Ethereal Boura Vet Reward (432)" body="432" type="2" />
+	<Mob name="death vortex (573)" body="573" type="0" />
+	<Mob name="spirits blade spirit (574)" body="574" type="0" />
+	<Mob name="Elf Male (605)" body="605" type="3" />
+	<Mob name="Elf Female (606)" body="606" type="3" />
+	<Mob name="Gargoyle Male (666)" body="666" type="3" />
+	<Mob name="Gargoyle Female (667)" body="667" type="3" />
+	<Mob name="Time Lord (689)" body="689" type="0" />
+	<Mob name="Shadow Lord (704)" body="704" type="0" />
+	<Mob name="Abyssal Infernal (713)" body="713" type="0" />
+	<Mob name="Beetle Iron (714)" body="714" type="2" />
+	<Mob name="Boura (715)" body="715" type="0" />
+	<Mob name="Chicken Lizard (716)" body="716" type="0" />
+	<Mob name="Clockwork Scorpion (717)" body="717" type="2" />
+	<Mob name="Dragon Faerie (718)" body="718" type="0" />
+	<Mob name="Dragon Wolf (719)" body="719" type="0" />
+	<Mob name="Elemental Lava (720)" body="720" type="0" />
+	<Mob name="Flayer (721)" body="721" type="0" />
+	<Mob name="Putrid Gargoyle Undead (722)" body="722" type="0" />
+	<Mob name="Green Goblin (723)" body="723" type="0" />
+	<Mob name="Gremlin (724)" body="724" type="0" />
+	<Mob name="Humunculous (725)" body="725" type="0" />
+	<Mob name="Kepetch (726)" body="726" type="0" />
+	<Mob name="Kepetch Shorn (727)" body="727" type="0" />
+	<Mob name="Medusa (728)" body="728" type="0" />
+	<Mob name="Mimic (729)" body="729" type="0" />
+	<Mob name="Raptor (730)" body="730" type="0" />
+	<Mob name="Rot Worm (732)" body="732" type="0" />
+	<Mob name="Skree (733)" body="733" type="0" />
+	<Mob name="Slith (734)" body="734" type="0" />
+	<Mob name="Spider Female (735)" body="735" type="0" />
+	<Mob name="Spider Male (736)" body="736" type="0" />
+	<Mob name="Spider Trap Door (737)" body="737" type="0" />
+	<Mob name="Trapdoor Creature (738)" body="738" type="0" />
+	<Mob name="Wolf Leather (739)" body="739" type="0" />
+	<Mob name="Shadow Dweller (740)" body="740" type="0" />
+	<Mob name="Slasher Of Veils (741)" body="741" type="0" />
+	<Mob name="Tunnel Spirit Body (742)" body="742" type="0" />
+	<Mob name="Tunnel Spirit Tentacle (743)" body="743" type="0" />
+	<Mob name="four armed demon (746)" body="746" type="0" />
+	<Mob name="wailingbanshee2 (747)" body="747" type="0" />
+	<Mob name="spirits ghost2 (748)" body="748" type="0" />
+	<Mob name="liche liche retro3 (749)" body="749" type="0" />
+	<Mob name="h savage male (750)" body="750" type="3" />
+	<Mob name="h savage female (751)" body="751" type="3" />
+	<Mob name="golem iron (752)" body="752" type="0" />
+	<Mob name="Gargoyle Slave (753)" body="753" type="0" />
+	<Mob name="gargoyles gargoyle enforcer (754)" body="754" type="0" />
+	<Mob name="gargoyles gargoyle guard (755)" body="755" type="0" />
+	<Mob name="clockwork overseer (756)" body="756" type="0" />
+	<Mob name="clockwork minion (757)" body="757" type="0" />
+	<Mob name="gargoyles gargoyle shopkeeper (758)" body="758" type="0" />
+	<Mob name="clockwork minion2 (763)" body="763" type="0" />
+	<Mob name="Juka Warrior (764)" body="764" type="0" />
+	<Mob name="Juka Mage (765)" body="765" type="0" />
+	<Mob name="NPC Kabur (766)" body="766" type="0" />
+	<Mob name="NPC Blackthorn Cohort (767)" body="767" type="0" />
+	<Mob name="Juggernaut (768)" body="768" type="0" />
+	<Equip name="Horns Gargoyle Female Legacy (769)" body="769" type="3" />
+	<Mob name="Meer Mage (770)" body="770" type="0" />
+	<Mob name="Meer Warrior (771)" body="771" type="0" />
+	<Mob name="NPC Adranath (772)" body="772" type="0" />
+	<Mob name="NPC Cpt Dasha (773)" body="773" type="0" />
+	<Mob name="Dawn Girl (774)" body="774" type="0" />
+	<Mob name="plague beast (775)" body="775" type="0" />
+	<Mob name="horde demon (776)" body="776" type="0" />
+	<Mob name="doppleganger (777)" body="777" type="0" />
+	<Mob name="swarm (778)" body="778" type="0" />
+	<Mob name="bogling (779)" body="779" type="0" />
+	<Mob name="bog thing (780)" body="780" type="0" />
+	<Mob name="fire ant worker (781)" body="781" type="0" />
+	<Mob name="fire ant warrior (782)" body="782" type="0" />
+	<Mob name="fire ant queen (783)" body="783" type="0" />
+	<Mob name="arcane demon (784)" body="784" type="0" />
+	<Mob name="four armed demon2 (785)" body="785" type="0" />
+	<Mob name="chariot (786)" body="786" type="0" />
+	<Mob name="ant lion (787)" body="787" type="0" />
+	<Mob name="sphinx (788)" body="788" type="0" />
+	<Mob name="quagmire (789)" body="789" type="0" />
+	<Mob name="sand vortex (790)" body="790" type="0" />
+	<Mob name="giant beetle (791)" body="791" type="2" />
+	<Mob name="chaos demon (792)" body="792" type="0" />
+	<Mob name="skeletal mount (793)" body="793" type="2" />
+	<Mob name="swamp dragon (794)" body="794" type="2" />
+	<Equip name="Horns Gargoyle Female Legacy (795)" body="795" type="3" />
+	<Mob name="horde demon3 (796)" body="796" type="0" />
+	<Mob name="mf dragon fire (797)" body="797" type="0" />
+	<Mob name="mf dragon rust (798)" body="798" type="0" />
+	<Mob name="swamp dragon armor (799)" body="799" type="2" />
+	<Mob name="fire ant matriarch (804)" body="804" type="0" />
+	<Mob name="black ant worker (805)" body="805" type="0" />
+	<Mob name="black ant warrior (806)" body="806" type="0" />
+	<Mob name="black ant queen (807)" body="807" type="0" />
+	<Mob name="black ant matriarch (808)" body="808" type="0" />
+	<Equip name="Dragon (827)" body="827" type="3" />
+	<Mob name="Rising Colosus (829)" body="829" type="0" />
+	<Mob name="Primeval Lich (830)" body="830" type="0" />
+	<Mob name="Parrot Bird (831)" body="831" type="2" />
+	<Mob name="Phoenix Bird (832)" body="832" type="2" />
+	<Equip name="Women unclear (833)" body="833" type="3" />
+	<Mob name="player ghost5 (970)" body="970" type="3" />
+	<Mob name="character lord british (990)" body="990" type="3" />
+	<Mob name="character blackthorn (991)" body="991" type="3" />
+	<Mob name="character dupre (994)" body="994" type="3" />
+	<Mob name="Multi Colored Horde Daemon (999)" body="999" type="0" />
+	<Mob name="Uber Turkey (1026)" body="1026" type="0" />
+	<Mob name="Osiredon the Scalis Enforcer (1068)" body="1068" type="0" />
+	<Mob name="Ancient Hell Hound (1069)" body="1069" type="0" />
+	<Mob name="Werewolf (1070)" body="1070" type="0" />
+	<Mob name="Virtue Bane (1071)" body="1071" type="0" />
+	<Mob name="Jack O Lantern Clown (1246)" body="1246" type="0" />
+	<Mob name="Jack O Lantern Daemon (1247)" body="1247" type="0" />
+	<Mob name="Tiger Mount (1254)" body="1254" type="0" />
+	<Equip name="floppy hat (404)" body="404" type="3" />
+	<Equip name="wide-brim hat (405)" body="405" type="3" />
+	<Equip name="cap (406)" body="406" type="3" />
+	<Equip name="tall straw hat (407)" body="407" type="3" />
+	<Equip name="straw hat (408)" body="408" type="3" />
+	<Equip name="wizard's hat (409)" body="409" type="3" />
+	<Equip name="bonnet (410)" body="410" type="3" />
+	<Equip name="feathered hat (411)" body="411" type="3" />
+	<Equip name="tricorne hat (412)" body="412" type="3" />
+	<Equip name="jester hat (413)" body="413" type="3" />
+	<Equip name="bear mask (414)" body="414" type="3" />
+	<Equip name="deer mask (415)" body="415" type="3" />
+	<Equip name="orc mask (416)" body="416" type="3" />
+	<Equip name="tribal mask (417)" body="417" type="3" />
+	<Equip name="tribal mask (418)" body="418" type="3" />
+	<Equip name="skullcap (419)" body="419" type="3" />
+	<Equip name="Leather Ninja Pants (423)" body="423" type="3" />
+	<Equip name="Leather Ninja Mitts (424)" body="424" type="3" />
+	<Equip name="Leather Ninja Hood (425)" body="425" type="3" />
+	<Equip name="Leather Ninja Jacke (426)" body="426" type="3" />
+	<Equip name="short pants (430)" body="430" type="3" />
+	<Equip name="long pants (431)" body="431" type="3" />
+	<Equip name="shirt (434)" body="434" type="3" />
+	<Equip name="fancy shirt (435)" body="435" type="3" />
+	<Equip name="Mail Hatsuburi (442)" body="442" type="3" />
+	<Equip name="Plate Hatsuburi (443)" body="443" type="3" />
+	<Equip name="Leather Jingasa (444)" body="444" type="3" />
+	<Equip name="Plate Jingasa (445)" body="445" type="3" />
+	<Equip name="Plate Jingasa (446)" body="446" type="3" />
+	<Equip name="plain dress (447)" body="447" type="3" />
+	<Equip name="fancy dress (448)" body="448" type="3" />
+	<Equip name="skirt (449)" body="449" type="3" />
+	<Equip name="Plate Jingasa (450)" body="450" type="3" />
+	<Equip name="Plate Kabuto (451)" body="451" type="3" />
+	<Equip name="kilt (455)" body="455" type="3" />
+	<Equip name="Plate Mempo (456)" body="456" type="3" />
+	<Equip name="Leather Do (457)" body="457" type="3" />
+	<Equip name="Studded Do (458)" body="458" type="3" />
+	<Equip name="Plate Do (459)" body="459" type="3" />
+	<Equip name=" (460)" body="460" type="3" />
+	<Equip name=" (461)" body="461" type="3" />
+	<Equip name="Plate Kabuto (462)" body="462" type="3" />
+	<Equip name="Plate Kabuto (463)" body="463" type="3" />
+	<Equip name="Wakizashi (464)" body="464" type="3" />
+	<Equip name="full apron (465)" body="465" type="3" />
+	<Equip name="half apron (466)" body="466" type="3" />
+	<Equip name="Bokuto (467)" body="467" type="3" />
+	<Equip name="cloak (468)" body="468" type="3" />
+	<Equip name="robe (469)" body="469" type="3" />
+	<Equip name="Daisho (470)" body="470" type="3" />
+	<Equip name="Leather Mempo (471)" body="471" type="3" />
+	<Equip name="Studded Mempo (472)" body="472" type="3" />
+	<Equip name="Leather Hiro Sode (473)" body="473" type="3" />
+	<Equip name="Studded Hiro Sode (474)" body="474" type="3" />
+	<Equip name="thigh boots (476)" body="476" type="3" />
+	<Equip name="boots (477)" body="477" type="3" />
+	<Equip name="Plate Hiro Sode (478)" body="478" type="3" />
+	<Equip name="sandals (479)" body="479" type="3" />
+	<Equip name="shoes (480)" body="480" type="3" />
+	<Equip name="flower garland (481)" body="481" type="3" />
+	<Equip name="fur boots (482)" body="482" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (483)" body="483" type="3" />
+	<Equip name="fur surong (484)" body="484" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (485)" body="485" type="3" />
+	<Equip name="formal shirt (486)" body="486" type="3" />
+	<Equip name="Leather Suneate (487)" body="487" type="3" />
+	<Equip name="Studded Suneate (488)" body="488" type="3" />
+	<Equip name="Plate Suneate (489)" body="489" type="3" />
+	<Equip name="body sash (490)" body="490" type="3" />
+	<Equip name="Leather Haidate (491)" body="491" type="3" />
+	<Equip name="Bandanna (Old School) (492)" body="492" type="3" />
+	<Equip name="lantern (500)" body="500" type="3" />
+	<Equip name="torch (501)" body="501" type="3" />
+	<Equip name="candle (502)" body="502" type="3" />
+	<Equip name="lantern (503)" body="503" type="3" />
+	<Equip name="torch%es% (504)" body="504" type="3" />
+	<Equip name="candle (505)" body="505" type="3" />
+	<Equip name="Plate Haidate (506)" body="506" type="3" />
+	<Equip name="Studded Haidate (512)" body="512" type="3" />
+	<Equip name="Cloth Ninja Hood (513)" body="513" type="3" />
+	<Equip name="Leather Ninja Belt (514)" body="514" type="3" />
+	<Equip name="Kasa (516)" body="516" type="3" />
+	<Equip name="Kamishimo (517)" body="517" type="3" />
+	<Equip name="Hakama (518)" body="518" type="3" />
+	<Equip name="No-Dachi (519)" body="519" type="3" />
+	<Equip name="Tessen (520)" body="520" type="3" />
+	<Equip name="studded tunic (521)" body="521" type="3" />
+	<Equip name="studded sleeves (523)" body="523" type="3" />
+	<Equip name="studded gorget (525)" body="525" type="3" />
+	<Equip name="Lajatang (526)" body="526" type="3" />
+	<Equip name="platemail (527)" body="527" type="3" />
+	<Equip name="platemail arms (528)" body="528" type="3" />
+	<Equip name="platemail legs (529)" body="529" type="3" />
+	<Equip name="platemail gloves (530)" body="530" type="3" />
+	<Equip name="Fukiya (532)" body="532" type="3" />
+	<Equip name="Tekagi (533)" body="533" type="3" />
+	<Equip name="Horns Gargoyle Female Legacy (534)" body="534" type="3" />
+	<Equip name="Kama (535)" body="535" type="3" />
+	<Equip name="Nunchaku (536)" body="536" type="3" />
+	<Equip name="Sai (537)" body="537" type="3" />
+	<Equip name="chainmail tunic (538)" body="538" type="3" />
+	<Equip name=" (539)" body="539" type="3" />
+	<Equip name="chainmail leggings (540)" body="540" type="3" />
+	<Equip name="leather tunic (542)" body="542" type="3" />
+	<Equip name="leather leggings (543)" body="543" type="3" />
+	<Equip name="leather sleeves (544)" body="544" type="3" />
+	<Equip name="leather gloves (545)" body="545" type="3" />
+	<Equip name="leather gorget (546)" body="546" type="3" />
+	<Equip name="Clothing Robe Deathshroud Gargoyle Legacy (547)" body="547" type="3" />
+	<Equip name="ringmail armor (548)" body="548" type="3" />
+	<Equip name="ringmail leggings (549)" body="549" type="3" />
+	<Equip name="ringmail sleeves (550)" body="550" type="3" />
+	<Equip name=" (551)" body="551" type="3" />
+	<Equip name="Tattsuke-Hakama (552)" body="552" type="3" />
+	<Equip name="Hakama-Shita (553)" body="553" type="3" />
+	<Equip name="bone armor (554)" body="554" type="3" />
+	<Equip name="bone leggings (555)" body="555" type="3" />
+	<Equip name="bone arms (556)" body="556" type="3" />
+	<Equip name="bone gloves (557)" body="557" type="3" />
+	<Equip name="Male Kimono (558)" body="558" type="3" />
+	<Equip name="Female Kimono (559)" body="559" type="3" />
+	<Equip name="leather cap (560)" body="560" type="3" />
+	<Equip name="chainmail  coif (561)" body="561" type="3" />
+	<Equip name="bone helmet (562)" body="562" type="3" />
+	<Equip name="plate helm (563)" body="563" type="3" />
+	<Equip name="nose helm (564)" body="564" type="3" />
+	<Equip name="helmet (565)" body="565" type="3" />
+	<Equip name="kabuto (566)" body="566" type="3" />
+	<Equip name="Obi (567)" body="567" type="3" />
+	<Equip name="Jin-Baori (568)" body="568" type="3" />
+	<Equip name="Samurai Waraji &amp; Ta (569)" body="569" type="3" />
+	<Equip name=" (570)" body="570" type="3" />
+	<Equip name="Cloth Ninja Jacket (571)" body="571" type="3" />
+	<Equip name="Ninja Tall Tabi (572)" body="572" type="3" />
+	<Equip name="Yumi (575)" body="575" type="3" />
+	<Equip name="metal shield (576)" body="576" type="3" />
+	<Equip name="bronze shield (577)" body="577" type="3" />
+	<Equip name="wooden shield (578)" body="578" type="3" />
+	<Equip name="buckler (579)" body="579" type="3" />
+	<Equip name="kite shield (580)" body="580" type="3" />
+	<Equip name="kite shield (581)" body="581" type="3" />
+	<Equip name="heater shield (582)" body="582" type="3" />
+	<Equip name="Tetsubo (583)" body="583" type="3" />
+	<Equip name="large battle axe (611)" body="611" type="3" />
+	<Equip name="two handed axe (612)" body="612" type="3" />
+	<Equip name="executioner's axe (613)" body="613" type="3" />
+	<Equip name="bardiche (614)" body="614" type="3" />
+	<Equip name="hatchet (615)" body="615" type="3" />
+	<Equip name="heavy crossbow (616)" body="616" type="3" />
+	<Equip name="black staff (617)" body="617" type="3" />
+	<Equip name="broadsword (618)" body="618" type="3" />
+	<Equip name="cleaver (619)" body="619" type="3" />
+	<Equip name="club (620)" body="620" type="3" />
+	<Equip name="shepherd's crook (621)" body="621" type="3" />
+	<Equip name="dagger (622)" body="622" type="3" />
+	<Equip name="cutlass (623)" body="623" type="3" />
+	<Equip name="halberd (624)" body="624" type="3" />
+	<Equip name="hammer pick (625)" body="625" type="3" />
+	<Equip name="javelin (626)" body="626" type="3" />
+	<Equip name="katana (627)" body="627" type="3" />
+	<Equip name="gnarled staff (628)" body="628" type="3" />
+	<Equip name="butcher knife (629)" body="629" type="3" />
+	<Equip name="kryss (630)" body="630" type="3" />
+	<Equip name="mace (631)" body="631" type="3" />
+	<Equip name="maul (633)" body="633" type="3" />
+	<Equip name="pickaxe (635)" body="635" type="3" />
+	<Equip name="pitchfork (636)" body="636" type="3" />
+	<Equip name="scimitar (637)" body="637" type="3" />
+	<Equip name="skinning knife (638)" body="638" type="3" />
+	<Equip name="short spear (639)" body="639" type="3" />
+	<Equip name="viking sword (643)" body="643" type="3" />
+	<Equip name="war axe (644)" body="644" type="3" />
+	<Equip name="war fork (645)" body="645" type="3" />
+	<Equip name="war hammer (646)" body="646" type="3" />
+	<Equip name="quarter staff (648)" body="648" type="3" />
+	<Equip name="bow (649)" body="649" type="3" />
+	<Equip name="crossbow (651)" body="651" type="3" />
+	<Equip name="axe (653)" body="653" type="3" />
+	<Equip name="H M Dragon Arms (679)" body="679" type="3" />
+	<Equip name="H M Dragon Chest (680)" body="680" type="3" />
+	<Equip name="H M Dragon Gauntlests (681)" body="681" type="3" />
+	<Equip name="H M Dragon Helm (682)" body="682" type="3" />
+	<Equip name="H N Dragon Legs (683)" body="683" type="3" />
+	<Equip name="H F Dragon Arms (684)" body="684" type="3" />
+	<Equip name="H F Dragon Chest (685)" body="685" type="3" />
+	<Equip name="H F Dragon Gauntlets (686)" body="686" type="3" />
+	<Equip name="H F Dragon Helm (687)" body="687" type="3" />
+	<Equip name="H F Dragon Legs (688)" body="688" type="3" />
+	<Equip name=" (700)" body="700" type="3" />
+	<Equip name="Long Hair (701)" body="701" type="3" />
+	<Equip name="Ponytail (702)" body="702" type="3" />
+	<Equip name=" (703)" body="703" type="3" />
+	<Equip name=" (710)" body="710" type="3" />
+	<Equip name=" (712)" body="712" type="3" />
+	<Equip name="Arcane Cloak (759)" body="759" type="3" />
+	<Equip name="Arcane Gloves (760)" body="760" type="3" />
+	<Equip name="Arcane Robe (761)" body="761" type="3" />
+	<Equip name="Arcane Thigh Boots (762)" body="762" type="3" />
+	<Equip name="goatee (800)" body="800" type="3" />
+	<Equip name="long beard (801)" body="801" type="3" />
+	<Equip name="short beard (802)" body="802" type="3" />
+	<Equip name="mustache (803)" body="803" type="3" />
+	<Equip name="Ninja Jacket Cloth Female (809)" body="809" type="3" />
+	<Equip name="Ninja Jacket Leather Feamale (810)" body="810" type="3" />
+	<Equip name="Shirt Doublet Female (811)" body="811" type="3" />
+	<Equip name=" (812)" body="812" type="3" />
+	<Equip name=" (813)" body="813" type="3" />
+	<Equip name=" (814)" body="814" type="3" />
+	<Equip name=" (815)" body="815" type="3" />
+	<Equip name="Female Checkered Shirt (816)" body="816" type="3" />
+	<Equip name=" (817)" body="817" type="3" />
+	<Equip name=" (818)" body="818" type="3" />
+	<Equip name=" (819)" body="819" type="3" />
+	<Equip name=" (821)" body="821" type="3" />
+	<Equip name=" (822)" body="822" type="3" />
+	<Equip name=" (823)" body="823" type="3" />
+	<Equip name=" (833)" body="833" type="3" />
+	<Equip name=" (834)" body="834" type="3" />
+	<Equip name=" (835)" body="835" type="3" />
+	<Equip name=" (836)" body="836" type="3" />
+	<Equip name=" (837)" body="837" type="3" />
+	<Equip name=" (838)" body="838" type="3" />
+	<Equip name=" (839)" body="839" type="3" />
+	<Equip name=" (840)" body="840" type="3" />
+	<Equip name=" (841)" body="841" type="3" />
+	<Equip name=" (842)" body="842" type="3" />
+	<Equip name="H M Winged Helm (866)" body="866" type="3" />
+	<Equip name="H F Winged Helm (867)" body="867" type="3" />
+	<Equip name="Female Breastplate Of Justice (868)" body="868" type="3" />
+	<Equip name="Helm Of Spirituality (869)" body="869" type="3" />
+	<Equip name="Gorget Of Honesty (870)" body="870" type="3" />
+	<Equip name="Male Breastplate Of Justice (871)" body="871" type="3" />
+	<Equip name="Arms Of Compassion (872)" body="872" type="3" />
+	<Equip name="Gauntlets Of Valor (873)" body="873" type="3" />
+	<Equip name="Legs Of Honor (874)" body="874" type="3" />
+	<Equip name="Sollerets Of Sacrifice (875)" body="875" type="3" />
+	<Equip name="Cloak Of Humility (876)" body="876" type="3" />
+	<Equip name="Book 01 (877)" body="877" type="3" />
+	<Equip name="Book 02 (878)" body="878" type="3" />
+	<Equip name="Book 03 (879)" body="879" type="3" />
+	<Equip name="Book 04 (880)" body="880" type="3" />
+	<Equip name="Book 05 (881)" body="881" type="3" />
+	<Equip name="Book 06 (882)" body="882" type="3" />
+	<Equip name="Book 07 (883)" body="883" type="3" />
+	<Equip name="Book 08 (884)" body="884" type="3" />
+	<Equip name="Lt Armor Gorget (886)" body="886" type="3" />
+	<Equip name="Quiver Of Infinity (887)" body="887" type="3" />
+	<Equip name="Dupres Shield (888)" body="888" type="3" />
+	<Equip name="Elf Male Hair 11 (889)" body="889" type="3" />
+	<Equip name="More Hair (890)" body="890" type="3" />
+	<Equip name="More Hair (891)" body="891" type="3" />
+	<Equip name="More Hair (892)" body="892" type="3" />
+	<Equip name="More Hair (893)" body="893" type="3" />
+	<Equip name="More Hair (894)" body="894" type="3" />
+	<Equip name="More Hair (895)" body="895" type="3" />
+	<Equip name="elven quiver r (896)" body="896" type="3" />
+	<Equip name="elven glasses s (897)" body="897" type="3" />
+	<Equip name="elven robe e01 (898)" body="898" type="3" />
+	<Equip name="elven robe e02 (899)" body="899" type="3" />
+	<Equip name=" (900)" body="900" type="3" />
+	<Equip name=" (901)" body="901" type="3" />
+	<Equip name=" (902)" body="902" type="3" />
+	<Equip name=" (903)" body="903" type="3" />
+	<Equip name=" (904)" body="904" type="3" />
+	<Equip name=" (905)" body="905" type="3" />
+	<Equip name=" (906)" body="906" type="3" />
+	<Equip name="elven shirt Male (907)" body="907" type="3" />
+	<Equip name="elven shirt Male (908)" body="908" type="3" />
+	<Equip name="tunic (909)" body="909" type="3" />
+	<Equip name="surcoat (910)" body="910" type="3" />
+	<Equip name="checkered shirt (911)" body="911" type="3" />
+	<Equip name="jester suit (912)" body="912" type="3" />
+	<Equip name="doublet (913)" body="913" type="3" />
+	<Equip name="elven shirt t  Ches (914)" body="914" type="3" />
+	<Equip name="elven shirt t  Ches (915)" body="915" type="3" />
+	<Equip name="Elven Hair01 BL Mu (916)" body="916" type="3" />
+	<Equip name="hair (917)" body="917" type="3" />
+	<Equip name="hair (918)" body="918" type="3" />
+	<Equip name="Elven Hair04 BR Mu (919)" body="919" type="3" />
+	<Equip name="Elven Pants s (920)" body="920" type="3" />
+	<Equip name="studded armor (921)" body="921" type="3" />
+	<Equip name="plate armor (922)" body="922" type="3" />
+	<Equip name="leather armor (923)" body="923" type="3" />
+	<Equip name="leather bustier (924)" body="924" type="3" />
+	<Equip name="studded bustier (925)" body="925" type="3" />
+	<Equip name="leather skirt (926)" body="926" type="3" />
+	<Equip name="leather shorts (927)" body="927" type="3" />
+	<Equip name="close helmet (928)" body="928" type="3" />
+	<Equip name="bascinet (929)" body="929" type="3" />
+	<Equip name="scythe (930)" body="930" type="3" />
+	<Equip name="bone harvester (931)" body="931" type="3" />
+	<Equip name="scepter (932)" body="932" type="3" />
+	<Equip name="bladed staff (933)" body="933" type="3" />
+	<Equip name="pike (934)" body="934" type="3" />
+	<Equip name="double bladed staff (935)" body="935" type="3" />
+	<Equip name="lance (936)" body="936" type="3" />
+	<Equip name="crescent blade (937)" body="937" type="3" />
+	<Equip name="composite bow (938)" body="938" type="3" />
+	<Equip name="repeating crossbow (939)" body="939" type="3" />
+	<Equip name="Elven Boot t (941)" body="941" type="3" />
+	<Equip name="Elven Plate (942)" body="942" type="3" />
+	<Equip name="Elven Plate Belt (943)" body="943" type="3" />
+	<Equip name="Elven Plate Gorget (944)" body="944" type="3" />
+	<Equip name="Elven Plate Gloves (945)" body="945" type="3" />
+	<Equip name="Elven Plate Legs (946)" body="946" type="3" />
+	<Equip name="Elven Arm Plate (947)" body="947" type="3" />
+	<Equip name="Elven Plate (948)" body="948" type="3" />
+	<Equip name="Elven Composite Lo (950)" body="950" type="3" />
+	<Equip name="Magical Shortbow (951)" body="951" type="3" />
+	<Equip name="Elven Spellblade (952)" body="952" type="3" />
+	<Equip name="Assassin Spike (953)" body="953" type="3" />
+	<Equip name="Leafblade (954)" body="954" type="3" />
+	<Equip name="War Cleaver (955)" body="955" type="3" />
+	<Equip name="Diamond Mace (956)" body="956" type="3" />
+	<Equip name="Wild Staff (957)" body="957" type="3" />
+	<Equip name="Rune Blade (958)" body="958" type="3" />
+	<Equip name="Radiant Scimitar (959)" body="959" type="3" />
+	<Equip name="Ornate Axe (960)" body="960" type="3" />
+	<Equip name="bone machete (961)" body="961" type="3" />
+	<Equip name="Raven Helm (965)" body="965" type="3" />
+	<Equip name="Vulture Helm (966)" body="966" type="3" />
+	<Equip name="Winged Helm (967)" body="967" type="3" />
+	<Equip name="Hide Chest (968)" body="968" type="3" />
+	<Equip name="Hide Gloves (969)" body="969" type="3" />
+	<Equip name="knee skirt (971)" body="971" type="3" />
+	<Equip name="fishing pole (972)" body="972" type="3" />
+	<Equip name="orc helm (973)" body="973" type="3" />
+	<Equip name="Hide Gorget (974)" body="974" type="3" />
+	<Equip name="Hide Paldrons (975)" body="975" type="3" />
+	<Equip name="Hide Pants (976)" body="976" type="3" />
+	<Equip name="Hide Female Chest (977)" body="977" type="3" />
+	<Equip name="Lt Armor Chest (978)" body="978" type="3" />
+	<Equip name="Lt Armor Gloves (979)" body="979" type="3" />
+	<Equip name="wand (980)" body="980" type="3" />
+	<Equip name="wand (981)" body="981" type="3" />
+	<Equip name="wand (982)" body="982" type="3" />
+	<Equip name="wand (983)" body="983" type="3" />
+	<Equip name="spellbook (984)" body="984" type="3" />
+	<Equip name=" (985)" body="985" type="3" />
+	<Equip name=" (986)" body="986" type="3" />
+	<Equip name="Lt Armor Paldrons (989)" body="989" type="3" />
+	<Equip name="Order shield (992)" body="992" type="3" />
+	<Equip name="Chaos shield (993)" body="993" type="3" />
+	<Equip name="Lt Armor Pants (995)" body="995" type="3" />
+	<Equip name="leaf tonlet t r Kil (996)" body="996" type="3" />
+	<Equip name="LtF Chest Chest (997)" body="997" type="3" />
+	<Mob name="Travesty (260)" body="260" type="0" />
+	<Equip name="Body 0x10C" body="268" type="3" />
+	<Mob name="Thorn Bat (269)" body="269" type="0" />
+	<Mob name="Bulbous Putrification (270)" body="270" type="0" />
+	<Mob name="Rot Worm Juvenile (286)" body="286" type="0" />
+	<Equip name="Fishing Pole Gargoyle (320)" body="320" type="3" />
+	<Equip name="Lantern Off Gargoyle (321)" body="321" type="3" />
+	<Equip name="Lantern On Gargoyle (322)" body="322" type="3" />
+	<Equip name="Pickaxe Gargoyle (323)" body="323" type="3" />
+	<Equip name="Shepards Crook Gargoyle (324)" body="324" type="3" />
+	<Equip name="Smithyhammer Gargoyle (325)" body="325" type="3" />
+	<Equip name="Spellbook Book Of Arms Gargoyle (326)" body="326" type="3" />
+	<Equip name="Spellbook Bushido Gargoyle (327)" body="327" type="3" />
+	<Equip name="Spellbook Chivalry Gargoyle (328)" body="328" type="3" />
+	<Equip name="Spellbook Gargoyle (329)" body="329" type="3" />
+	<Mob name="Spellbook Necromancy Gargoyle5:13 Pm 4/29/2009 (330)" body="330" type="3" />
+	<Equip name="Spellbook Ninjutsu Gargoyle (331)" body="331" type="3" />
+	<Equip name="Spellbook Spell Weaving Gargoyle (332)" body="332" type="3" />
+	<Equip name="Weapon Wand Gargoyle Legacy (333)" body="333" type="3" />
+	<Equip name="Weapon Shield Leather Medium Gargoyle Legacy (335)" body="335" type="3" />
+	<Equip name="Weapon Shield Leather Small Gargoyle Legacy (336)" body="336" type="3" />
+	<Equip name="Weapon Shield Plate Large Gargoyle Legacy (337)" body="337" type="3" />
+	<Equip name="Weapon Shield Plate Medium Gargoyle Legacy (338)" body="338" type="3" />
+	<Equip name="Weapon Shield Plate Small Gargoyle Legacy (339)" body="339" type="3" />
+	<Equip name="Weapon Shield Scale Large Gargoyle Legacy (340)" body="340" type="3" />
+	<Equip name="Gargoyle Robe Fancy (341)" body="341" type="3" />
+	<Equip name="Gargoyle Robe Regular (342)" body="342" type="3" />
+	<Equip name="Weapon Shield Scale Chaos Gargoyle (343)" body="343" type="3" />
+	<Equip name="Weapon Shield Scale Order Gargoyle (344)" body="344" type="3" />
+	<Equip name="Body 0x15D" body="349" type="3" />
+	<Mob name="Body 0x192" body="402" type="3" />
+	<Mob name="Body 0x193" body="403" type="3" />
+	<Equip name="Human Mysticism Spellbook (427)" body="427" type="3" />
+	<Equip name="Gargoyle Mysticism Spellbook (428)" body="428" type="3" />
+	<Equip name="Halloween Mask (Paperdoll Only) (433)" body="433" type="3" />
+	<Equip name="Gargoyle Bracelet - No Animation - Placeholder For Paperdoll (436)" body="436" type="3" />
+	<Equip name="Gargoyle Earrings - No Animation - Placeholder For Paperdoll (437)" body="437" type="3" />
+	<Equip name="Gargoyle Ring - No Animation - Placeholder For Paperdoll (438)" body="438" type="3" />
+	<Equip name="Gargoyle Necklace - No Animation - Placeholder For Paperdoll (439)" body="439" type="3" />
+	<Equip name="Horns Gargoyle Female Legacy (475)" body="475" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (499)" body="499" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (509)" body="509" type="3" />
+	<Equip name="Human And Garg Necklace - No Animation - Placeholder For Paperdoll (510)" body="510" type="3" />
+	<Equip name="Body 0x213" body="531" type="3" />
+	<Equip name="Horns Gargoyle Female Legacy (541)" body="541" type="3" />
+	<Equip name="Body 0x248" body="584" type="3" />
+	<Equip name="Leather Arms Female (585)" body="585" type="3" />
+	<Equip name="Leather Arms Male (586)" body="586" type="3" />
+	<Equip name="Leather Chest Female (587)" body="587" type="3" />
+	<Equip name="Leather Chest Male (588)" body="588" type="3" />
+	<Equip name="Leather Legs Female (589)" body="589" type="3" />
+	<Equip name="Leather Legs Male (590)" body="590" type="3" />
+	<Equip name="Plate Arms Female (591)" body="591" type="3" />
+	<Equip name="Plate Arms Male (592)" body="592" type="3" />
+	<Equip name="Plate Chest Female (593)" body="593" type="3" />
+	<Equip name="Plate Chest Male (594)" body="594" type="3" />
+	<Equip name="Plate Kilt Female (595)" body="595" type="3" />
+	<Equip name="Plate Kilt Male (596)" body="596" type="3" />
+	<Equip name="Plate Legs Female (597)" body="597" type="3" />
+	<Equip name="Plate Legs Male (598)" body="598" type="3" />
+	<Equip name="Stone Arms Female (599)" body="599" type="3" />
+	<Equip name="Armor Stone Arms Male (600)" body="600" type="3" />
+	<Equip name="Armor Stone Chest Female (601)" body="601" type="3" />
+	<Equip name="Armor Stone Chest Male (602)" body="602" type="3" />
+	<Equip name="Armor Stone Kilt Female (603)" body="603" type="3" />
+	<Equip name="Armor Stone Kilt Male (604)" body="604" type="3" />
+	<Mob name="Elf Male Ghost (607)" body="607" type="3" />
+	<Mob name="Elf Female Ghost (608)" body="608" type="3" />
+	<Equip name="Armor Stone Legs Female (609)" body="609" type="3" />
+	<Equip name="Armor Stone Legs Male (610)" body="610" type="3" />
+	<Equip name="Horns Gargoyle Female Legacy (632)" body="632" type="3" />
+	<Equip name="Horns Facial Male (647)" body="647" type="3" />
+	<Equip name="Horns Facial Male (650)" body="650" type="3" />
+	<Equip name="Horns Facial Male (652)" body="652" type="3" />
+	<Equip name="Clothing Arms Female (654)" body="654" type="3" />
+	<Equip name="Clothing Arms Male (655)" body="655" type="3" />
+	<Equip name="Clothing Chest Female (656)" body="656" type="3" />
+	<Equip name="Clothing Chest Male (657)" body="657" type="3" />
+	<Equip name="Clothing Kilt Female (658)" body="658" type="3" />
+	<Equip name="Clothing Kilt Male (659)" body="659" type="3" />
+	<Equip name="Clothing Legs Female (660)" body="660" type="3" />
+	<Equip name="Clothing Legs Male (661)" body="661" type="3" />
+	<Equip name="Axe Dual Short (662)" body="662" type="3" />
+	<Equip name="Leather Kilt Female (663)" body="663" type="3" />
+	<Equip name="Leather Kilt Male (664)" body="664" type="3" />
+	<Equip name="Horns Facial Male (665)" body="665" type="3" />
+	<Equip name="Sword Bloodblade (668)" body="668" type="3" />
+	<Equip name="Boomerang (669)" body="669" type="3" />
+	<Equip name="Sword Broadsword (670)" body="670" type="3" />
+	<Equip name="Sword Dread (671)" body="671" type="3" />
+	<Equip name="Glave Cyclone (672)" body="672" type="3" />
+	<Equip name="Dagger (673)" body="673" type="3" />
+	<Equip name="Mace Disk (674)" body="674" type="3" />
+	<Equip name="Spear Dual Pointed (675)" body="675" type="3" />
+	<Equip name="Staff Glass (676)" body="676" type="3" />
+	<Equip name="Staff Serpentstone (677)" body="677" type="3" />
+	<Equip name="Sword Shortblade (678)" body="678" type="3" />
+	<Equip name="Sword Talwar (690)" body="690" type="3" />
+	<Equip name="Sword Glass (691)" body="691" type="3" />
+	<Mob name="Animated Weapon (692)" body="692" type="0" />
+	<Equip name="Glave Soul (693)" body="693" type="3" />
+	<Mob name="Gargoyle Ghost Male (694)" body="694" type="3" />
+	<Mob name="Gargoyle Ghost Female (695)" body="695" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (696)" body="696" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (697)" body="697" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (698)" body="698" type="3" />
+	<Equip name="Horns Gargoyle Male Legacy (699)" body="699" type="3" />
+	<Mob name="Stone Form (705)" body="705" type="0" />
+	<Equip name="Horns Gargoyle Female Legacy (707)" body="707" type="3" />
+	<Equip name="Horns Gargoyle Female Legacy (708)" body="708" type="3" />
+	<Equip name="Body 0x2DB" body="731" type="3" />
+	<Mob name="Body 0x2E8" body="744" type="3" />
+	<Mob name="Body 0x2E9" body="745" type="3" />
+	<Equip name="Body 0x334" body="820" type="3" />
+	<Equip name="Body 0x338" body="824" type="3" />
+	<Equip name="Body 0x339" body="825" type="3" />
+	<Mob name="Stygian Dragon (826)" body="826" type="0" />
+	<Equip name="Body 0x33C" body="828" type="3" />
+	<Equip name="Horns Gargoyle Male (843)" body="843" type="3" />
+	<Equip name="Body 0x34E" body="846" type="3" />
+	<Equip name="Body 0x350" body="848" type="3" />
+	<Equip name="Human Ankh Asset - No Animation - Placeholder For Paperdoll (865)" body="865" type="3" />
+	<Equip name="Gargoyle Ankh Asset - No Animation - Placeholder For Paperdoll (885)" body="885" type="3" />
+	<Equip name="Body 0x3C2" body="962" type="3" />
+	<Equip name="Body 0x3C3" body="963" type="3" />
+	<Equip name="Body 0x3C4" body="964" type="3" />
+	<Mob name="Body 0x3DB" body="987" type="3" />
+	<Mob name="Body 0x3DC" body="988" type="3" />
+	<Mob name="Body 0x3E6" body="998" type="0" />
+	<Equip name="Weapon Gargoyle Bardich 2H (1027)" body="1027" type="3" />
+	<Equip name="Weapon Gargoyle Battle Axe 2H (1028)" body="1028" type="3" />
+	<Equip name="Weapon Gargoyle Bone Harvester 1H (1029)" body="1029" type="3" />
+	<Equip name="Weapon Gargoyle Butchers Knife 1H (1030)" body="1030" type="3" />
+	<Equip name="Weapon Gargoyle Cleaver 1H (1032)" body="1032" type="3" />
+	<Equip name="Weapon Gargoyle Daisho 2H (1033)" body="1033" type="3" />
+	<Equip name="Weapon Gargoyle Katana 1H (1034)" body="1034" type="3" />
+	<Equip name="Weapon Gargoyle Kriss Knife 1H (1035)" body="1035" type="3" />
+	<Equip name="Weapon Gargoyle Lance 2H (1036)" body="1036" type="3" />
+	<Equip name="Weapon Gargoyle Maul (1037)" body="1037" type="3" />
+	<Equip name="Weapon Gargoyle New Glave01 1H (1038)" body="1038" type="3" />
+	<Equip name="Weapon Gargoyle New Glave02 1H (1039)" body="1039" type="3" />
+	<Equip name="Weapon Gargoyle Pike 2H (1040)" body="1040" type="3" />
+	<Equip name="Weapon Gargoyle Scythe 2H (1041)" body="1041" type="3" />
+	<Equip name="Weapon Gargoyle Staff Gnarled 2H (1042)" body="1042" type="3" />
+	<Equip name="Weapon Gargoyle Tekagi 2H (1043)" body="1043" type="3" />
+	<Equip name="Weapon Gargoyle Tessen 2H 001044 (1044)" body="1044" type="3" />
+	<Equip name="Weapon Gargoyle War Fork 1H 001045 (1045)" body="1045" type="3" />
+	<Equip name="Weapon Gargoyle War Hammer 2H 001046 (1046)" body="1046" type="3" />
+	<Equip name="Weapon Gargoyle Axe 2H (1047)" body="1047" type="3" />
+	<Equip name="Gargoyle Talons Leather Female (1048)" body="1048" type="3" />
+	<Equip name="Gargoyle Talons Leather Male (1049)" body="1049" type="3" />
+	<Equip name="Gargoyle Talons Plate Female (1050)" body="1050" type="3" />
+	<Equip name="Gargoyle Talons Plate Male (1051)" body="1051" type="3" />
+	<Equip name="Gargoyle Belt (1053)" body="1053" type="3" />
+	<Equip name="Gargoyle Half Apron (1054)" body="1054" type="3" />
+	<Equip name="Armor Cloth Wings Female (1055)" body="1055" type="3" />
+	<Equip name="Armor Cloth Wings Male (1056)" body="1056" type="3" />
+	<Equip name="Armor Leather Wings Female (1057)" body="1057" type="3" />
+	<Equip name="Armor Leather Wings Male (1058)" body="1058" type="3" />
+	<Equip name="Human Barding Spellbook (1062)" body="1062" type="3" />
+	<Equip name="Gargoyle Female Glasses Legacy (1063)" body="1063" type="3" />
+	<Equip name="Gargoyle Male Glasses Legacy (1064)" body="1064" type="3" />
+	<Equip name="Gargoyle Female Sash Legacy (1065)" body="1065" type="3" />
+	<Equip name="Gargoyle Male Sash Legacy (1066)" body="1066" type="3" />
+	<Equip name="Gargoyle Barding Spellbook (1067)" body="1067" type="3" />
+	<Equip name="Talisman Harp - No Animation - Placeholder For Paperdoll (1239)" body="1239" type="3" />
+	<Equip name="Talisman Lute - No Animation - Placeholder For Paperdoll (1240)" body="1240" type="3" />
+	<Equip name="Talisman Drum- No Animation - Placeholder For Paperdoll (1241)" body="1241" type="3" />
+	<Equip name="Talisman Flute - No Animation - Placeholder For Paperdoll (1242)" body="1242" type="3" />
+	<Equip name="Talisman Gargoyle Musical Instrument - No Animation - Placeholder For Paperdoll (1243)" body="1243" type="3" />
+	<Mob name="Water Spirit (1244)" body="1244" type="0" />
+	<Mob name="Water Spirit Tentacle (1245)" body="1245" type="0" />
+	<Mob name="Baddie 01 (1248)" body="1248" type="0" />
+	<Equip name="Human 15 Robe Male (1249)" body="1249" type="3" />
+	<Equip name="Human 15 Robe Female (1250)" body="1250" type="3" />
+	<Equip name="Gargoyle 15 Robe Male (1251)" body="1251" type="3" />
+	<Equip name="Gargoyle 15 Robe Female (1252)" body="1252" type="3" />
+	<Mob name="Lbt (1253)" body="1253" type="3" />
+	<Mob name="Tiger Ethereal Mount (1255)" body="1255" type="2" />
+	<Equip name="Human Robe Bg Male (1261)" body="1261" type="3" />
+	<Equip name="Human Robe Bg Female (1262)" body="1262" type="3" />
+	<Equip name="Shield Vice (1263)" body="1263" type="3" />
+	<Equip name="Shield Virtue (1265)" body="1265" type="3" />
+	<Equip name="Equip Shoes Jester (1267)" body="1267" type="3" />
+	<Equip name="Body 0x4F4" body="1268" type="3" />
+	<Equip name="Equip Hat Chef (1269)" body="1269" type="3" />
+	<Equip name="Equip Kilt01 (1271)" body="1271" type="3" />
+	<Equip name="Equip Kilt02 (1273)" body="1273" type="3" />
+	<Equip name="Equip Kilt03 (1275)" body="1275" type="3" />
+	<Equip name="Equip Dress Red (1278)" body="1278" type="3" />
+	<Equip name="Shield Vice Gargoyle (1279)" body="1279" type="3" />
+	<Equip name="Shield Virtue Gargoyle (1280)" body="1280" type="3" />
+	<Equip name="Body 0x501" body="1281" type="3" />
+	<Equip name="Body 0x503" body="1283" type="3" />
+	<Equip name="Equip Dress Wed (1284)" body="1284" type="3" />
+	<Mob name="Dino Dimetrosaur (1285)" body="1285" type="2" />
+	<Mob name="Dino Gallusaurus (1286)" body="1286" type="2" />
+	<Mob name="Dino Archaeosaurus (1287)" body="1287" type="2" />
+	<Mob name="Dragon Turtle (1288)" body="1288" type="2" />
+	<Mob name="Dino Najasaurus (1289)" body="1289" type="2" />
+	<Mob name="Dino Allosaurus (1290)" body="1290" type="2" />
+	<Mob name="Dino Saurosaurus (1291)" body="1291" type="2" />
+	<Mob name="Dino Anchisaur (1292)" body="1292" type="2" />
+	<Mob name="Dino Myrmidex (1293)" body="1293" type="2" />
+	<Mob name="Dragon Turtle Baby (1294)" body="1294" type="2" />
+	<Equip name="Equip Chest Tiger H M (1295)" body="1295" type="3" />
+	<Equip name="Equip Chest Tiger H F (1296)" body="1296" type="3" />
+	<Equip name="Equip Pants Long Tiger H (1297)" body="1297" type="3" />
+	<Equip name="Equip Pants Short Tiger H (1298)" body="1298" type="3" />
+	<Equip name="Equip Skirt Long Tiger H (1299)" body="1299" type="3" />
+	<Equip name="Equip Skirt Short Tiger H (1300)" body="1300" type="3" />
+	<Equip name="Equip Helm Tiger H (1301)" body="1301" type="3" />
+	<Equip name="Equip Collar Tiger H (1302)" body="1302" type="3" />
+	<Equip name="Equip Chest Turtle H M (1303)" body="1303" type="3" />
+	<Equip name="Equip Chest Turtle H F (1304)" body="1304" type="3" />
+	<Equip name="Equip Pants Long Turtle H (1305)" body="1305" type="3" />
+	<Equip name="Equip Helm Turtle H (1306)" body="1306" type="3" />
+	<Equip name="Equip Bracers Turtle H (1307)" body="1307" type="3" />
+	<Mob name="Gorilla Giant (1308)" body="1308" type="2" />
+	<Mob name="Baby Tiger (1309)" body="1309" type="2" />
+	<Equip name="Body 0x52D" body="1325" type="3" />
+	<Equip name="Body 0x545" body="1349" type="3" />
+	<Mob name="Dino Trex (1400)" body="1400" type="2" />
+	<Mob name="Turanchula Mount (1401)" body="1401" type="2" />
+	<Mob name="Myrmidex Drone (1402)" body="1402" type="2" />
+	<Mob name="Myrmidex Warrior (1403)" body="1403" type="2" />
+	<Mob name="Myrmidex Queen (1404)" body="1404" type="2" />
+	<Mob name="Dr Spector (1405)" body="1405" type="2" />
+	<Mob name="Golem Aztec (1406)" body="1406" type="2" />
+	<Mob name="Horse Unicorn Rb (1407)" body="1407" type="2" />
+	<Mob name="Horse Palomino (1408)" body="1408" type="2" />
+	<Mob name="Dragon Hildebrandt (1409)" body="1409" type="2" />
+	<Mob name="Canine Windrunner (1410)" body="1410" type="2" />
+	<Equip name="Equip Dress Wedding (1411)" body="1411" type="3" />
+	<Equip name="Equip Hat Top Hat (1412)" body="1412" type="3" />
+	<Equip name="Equip Shirt Tux (1413)" body="1413" type="3" />
+	<Equip name="Equip Pants Wedding (1414)" body="1414" type="3" />
+	<Mob name="Dino Triceratops (1415)" body="1415" type="2" />
+	<Mob name="Tiger Sabertooth (1416)" body="1416" type="2" />
+	<Mob name="Dragon Small Platinum (1417)" body="1417" type="2" />
+	<Mob name="Dragon Ele Platinum (1418)" body="1418" type="2" />
+	<Mob name="Dragon Small Crimson (1419)" body="1419" type="2" />
+	<Mob name="Dragon Ele Crimson (1420)" body="1420" type="2" />
+	<Mob name="Dragon Small Stygian (1421)" body="1421" type="2" />
+	<Mob name="Dragon Ele Stygian (1422)" body="1422" type="2" />
+	<Mob name="Fox Small (1423)" body="1423" type="2" />
+	<Mob name="Beetle Rhino (1424)" body="1424" type="2" />
+	<Mob name="Goat Necromancer (1425)" body="1425" type="2" />
+	<Mob name="Lion (1426)" body="1426" type="2" />
+	<Mob name="Titan Water Tentacle (1427)" body="1427" type="2" />
+	<Mob name="Jackinthe Box (1428)" body="1428" type="0" />
+	<Equip name="Haunted Vale (1429)" body="1429" type="3" />
+	<Equip name="Hat Wed Haunted (1430)" body="1430" type="3" />
+	<Mob name="Titan Earth Head (1431)" body="1431" type="2" />
+	<Mob name="Titan Air Whirlwind (1432)" body="1432" type="2" />
+	<Mob name="Titan Fire Demon (1433)" body="1433" type="0" />
+	<Mob name="Dragon Asian Mount (1434)" body="1434" type="2" />
+	<Equip name="Equip Robe Store M01 (1435)" body="1435" type="3" />
+	<Equip name="Equip Robe Store F01 (1436)" body="1436" type="3" />
+	<Equip name="Equip Robe Store M02 (1437)" body="1437" type="3" />
+	<Equip name="Equip Robe Store F02 (1438)" body="1438" type="3" />
+	<Equip name="Equip Robe Store M03 (1439)" body="1439" type="3" />
+	<Mob name="Bird Peacock Mount (1440)" body="1440" type="2" />
+	<Mob name="Tiger Undead Mount (1441)" body="1441" type="2" />
+	<Equip name="Equip Robe Store F03 (1442)" body="1442" type="3" />
+	<Equip name="Equip Robe Store M04 (1443)" body="1443" type="3" />
+	<Equip name="Equip Robe Store F04 (1444)" body="1444" type="3" />
+	<Equip name="Equip Robe Store M05 (1445)" body="1445" type="3" />
+	<Equip name="Equip Robe Store F05 (1446)" body="1446" type="3" />
+	<Equip name="Equip Male H Hair (1447)" body="1447" type="3" />
+	<Equip name="Equip Male H Hair (1448)" body="1448" type="3" />
+	<Equip name="Equip Male H Hair (1449)" body="1449" type="3" />
+	<Equip name="Equip Male H Hair (1450)" body="1450" type="3" />
+	<Equip name="Equip Male H Beard (1451)" body="1451" type="3" />
+	<Equip name="Equip Male H Beard (1452)" body="1452" type="3" />
+	<Equip name="Equip Male H Beard (1453)" body="1453" type="3" />
+	<Equip name="Equip Male H Beard (1454)" body="1454" type="3" />
+	<Equip name="Equip Female H Hair (1455)" body="1455" type="3" />
+	<Equip name="Equip Female H Hair (1456)" body="1456" type="3" />
+	<Equip name="Equip Female H Hair (1457)" body="1457" type="3" />
+	<Equip name="Equip Female H Hair (1458)" body="1458" type="3" />
+	<Equip name="Equip Male E Hair (1459)" body="1459" type="3" />
+	<Equip name="Equip Male E Hair (1460)" body="1460" type="3" />
+	<Equip name="Equip Male E Hair (1461)" body="1461" type="3" />
+	<Equip name="Equip Male E Hair (1462)" body="1462" type="3" />
+	<Equip name="Equip Female E Hair (1463)" body="1463" type="3" />
+	<Equip name="Equip Female E Hair (1464)" body="1464" type="3" />
+	<Equip name="Equip Female E Hair (1465)" body="1465" type="3" />
+	<Equip name="Equip Female E Hair (1466)" body="1466" type="3" />
+	<Equip name="Equip Male G Horns (1467)" body="1467" type="3" />
+	<Equip name="Equip Male G Horns (1468)" body="1468" type="3" />
+	<Equip name="Equip Male G Horns (1469)" body="1469" type="3" />
+	<Equip name="Equip Male G Horns (1470)" body="1470" type="3" />
+	<Equip name="Equip Male G Beard Hhorns (1471)" body="1471" type="3" />
+	<Equip name="Equip Male G Beard Horns (1472)" body="1472" type="3" />
+	<Equip name="Equip Male G Beard Horns (1473)" body="1473" type="3" />
+	<Equip name="Equip Male G Beard Horns (1474)" body="1474" type="3" />
+	<Equip name="Equip Female G Horns (1475)" body="1475" type="3" />
+	<Equip name="Equip Female G Horns (1476)" body="1476" type="3" />
+	<Equip name="Equip Female G Horns (1477)" body="1477" type="3" />
+	<Equip name="Equip Female G Horns (1478)" body="1478" type="3" />
+	<Mob name="Khal Ankur (1479)" body="1479" type="0" />
+	<Equip name="Equip Male H Mask Khal Ankur (1480)" body="1480" type="3" />
+	<Equip name="Equip Female H Mask Khal Ankur (1481)" body="1481" type="3" />
+	<Equip name="Equip Male G Necklace Khal Ankur (1482)" body="1482" type="3" />
+	<Equip name="Equip Female G Necklace Khal Ankur (1483)" body="1483" type="3" />
+	<Mob name="Krumpus (1484)" body="1484" type="0" />
+	<Mob name="Krumpus Imp (1485)" body="1485" type="0" />
+	<Equip name="Equip Whip 1H Blunt (1486)" body="1486" type="3" />
+	<Equip name="Equip Gargoyle Whip 1H Blunt (1488)" body="1488" type="3" />
+	<Equip name="Equip Whip 1H Pierce (1490)" body="1490" type="3" />
+	<Equip name="Equip Gargoyle Whip 1H Pierce (1492)" body="1492" type="3" />
+	<Equip name="Equip Whip 1H Slash (1494)" body="1494" type="3" />
+	<Equip name="Equip Gargoyle Whip 1H Slash (1496)" body="1496" type="3" />
+	<Equip name="Equip Male Boots Holiday (1498)" body="1498" type="3" />
+	<Equip name="Equip Female Boots Holiday (1499)" body="1499" type="3" />
+	<Equip name="Equip Male Hat Santa (1500)" body="1500" type="3" />
+	<Equip name="Equip Female Hat Santa (1501)" body="1501" type="3" />
+	<Equip name="Gargoyle Talons Holiday Male (1502)" body="1502" type="3" />
+	<Equip name="Gargoyle Talons Holiday Female (1503)" body="1503" type="3" />
+	<Equip name="Gargoyle Earrings - No Animation - Placeholder For Paperdoll - Male - Holiday (1504)" body="1504" type="3" />
+	<Equip name="Gargoyle Earrings - No Animation - Placeholder For Paperdoll - Female - Holiday (1505)" body="1505" type="3" />
+	<Equip name="Equip H Male Parrot Epaulets- No Animation - Placeholder For Paperdoll (1506)" body="1506" type="3" />
+	<Equip name="Equip H Female Parrot Epaulets - No Animation - Placeholder For Paperdoll (1507)" body="1507" type="3" />
+	<Equip name="Gargoyle Male Parrot Epaulets - No Animation - Placeholder For Paperdoll (1508)" body="1508" type="3" />
+	<Equip name="Gargoyle Female Parrot Epaulets- No Animation - Placeholder For Paperdoll (1509)" body="1509" type="3" />
+	<Mob name="Crab Coconut Mount (1510)" body="1510" type="2" />
+	<Mob name="Crab Coconut Small (1511)" body="1511" type="2" />
+	<Mob name="Crab Coconut Large (1512)" body="1512" type="2" />
+	<Equip name="Equip Helm Pumpkin (1513)" body="1513" type="3" />
+	<Equip name="Equip Bottle 1H (1515)" body="1515" type="3" />
+	<Equip name="Equip Neck Mempo (1516)" body="1516" type="3" />
+	<Equip name="Equip Belt Mace (1517)" body="1517" type="3" />
+	<Equip name="Equip Hood Assassin (1518)" body="1518" type="3" />
+	<Equip name="Equip Belt Sword (1519)" body="1519" type="3" />
+	<Equip name="Equip Hood Mage (1520)" body="1520" type="3" />
+	<Equip name="Equip Belt Dagger (1521)" body="1521" type="3" />
+	<Equip name="Equip Tabbard (1522)" body="1522" type="3" />
+	<Equip name="Equip Cloak Quarter (1523)" body="1523" type="3" />
+	<Equip name="Equip Hat Bake Kitsune (1524)" body="1524" type="3" />
+	<Equip name="Equip Tabbard Gargoyle (1525)" body="1525" type="3" />
+	<Mob name="War Boar Mount (1526)" body="1526" type="2" />
+	<Mob name="Capybara Mount (1527)" body="1527" type="2" />
+	<Mob name="Capybara Baby (1528)" body="1528" type="2" />
+	<Equip name="Equip Shield Pirate Male H (1529)" body="1529" type="3" />
+	<Equip name="Equip Shield Pirate Female H (1530)" body="1530" type="3" />
+	<Equip name="Equip Shield Pirate Male G (1531)" body="1531" type="3" />
+	<Equip name="Equip Shield Pirate Female G (1532)" body="1532" type="3" />
+	<Equip name="Equip Sash H Empty New Legacy (1533)" body="1533" type="3" />
+	<Equip name="Equip Sash H 1Thirdfull New Legacy (1534)" body="1534" type="3" />
+	<Equip name="Equip Sash H 2Thirdfull New Legacy (1535)" body="1535" type="3" />
+	<Equip name="Equip Sash H Full New Legacy (1536)" body="1536" type="3" />
+	<Equip name="Equip Sash G Empty New Legacy (1537)" body="1537" type="3" />
+	<Equip name="Equip Sash G 1Thirdfull New Legacy (1538)" body="1538" type="3" />
+	<Equip name="Equip Sash G 2Thirdfull New Legacy (1539)" body="1539" type="3" />
+	<Equip name="Equip Sash G Full New Legacy (1540)" body="1540" type="3" />
+	<Mob name="Rabbit Doom (1541)" body="1541" type="2" />
+	<Mob name="Rabbit Doom Baby (1542)" body="1542" type="2" />
+	<Equip name="Weapon Wand H (1543)" body="1543" type="3" />
+	<Equip name="Equip Lantern H On (1544)" body="1544" type="3" />
+	<Equip name="Equip Lantern H Off (1545)" body="1545" type="3" />
+	<Mob name="Dog Newfoundland (1546)" body="1546" type="2" />
+	<Mob name="Dog Alaskan Malamute (1547)" body="1547" type="2" />
+	<Mob name="Dog Great Dane (1548)" body="1548" type="2" />
+	<Mob name="Dog Saint Bernard (1549)" body="1549" type="2" />
+	<Equip name="Equip Orb H (1550)" body="1550" type="3" />
+	<Mob name="Dog Black Russian Terrier (1551)" body="1551" type="2" />
+	<Mob name="Dog Rottweiler (1552)" body="1552" type="2" />
+	<Mob name="Manticore (1553)" body="1553" type="2" />
+	<Equip name="Equip Staff Candycane H (1554)" body="1554" type="3" />
+	<Equip name="Weapon Staff Candycane G (1555)" body="1555" type="3" />
+	<Equip name="Equip Armor Gloves Leather Arcane New Legacy (1556)" body="1556" type="3" />
+	<Equip name="Equip Armor Arms Leather Arcane New Legacy (1557)" body="1557" type="3" />
+	<Equip name="Equip Armor Legs Leather Arcane New Legacy (1558)" body="1558" type="3" />
+	<Equip name="Equip Armor Jacket Leather Arcane Male New Legacy (1559)" body="1559" type="3" />
+	<Equip name="Equip Armor Jacket Leather Arcane Female New Legacy (1560)" body="1560" type="3" />
+	<Equip name="Equip Armor Helmet Ringmail New Legacy (1561)" body="1561" type="3" />
+	<Equip name="Equip Armor Helmet Leather Studded New Legacy (1562)" body="1562" type="3" />
+	<Equip name="Equip Armor Gloves Chainmail New Legacy (1563)" body="1563" type="3" />
+	<Equip name="Equip Armor Arms Chainmail New Legacy (1564)" body="1564" type="3" />
+	<Equip name="Equip Belt Demon H (1565)" body="1565" type="3" />
+	<Equip name="Equip Belt Demon G (1566)" body="1566" type="3" />
+	<Equip name="Weapon Wand Garg (1567)" body="1567" type="3" />
+	<Equip name="Equip Lantern Garg On (1568)" body="1568" type="3" />
+	<Equip name="Equip Lantern Garg Off (1569)" body="1569" type="3" />
+	<Equip name="Equip Orb Garg (1570)" body="1570" type="3" />
+	<Equip name="Equip Shield Hildebrandt H (1571)" body="1571" type="3" />
+	<Equip name="Equip Shield Hildebrandt G (1572)" body="1572" type="3" />
+	<Mob name="Manticore L (1573)" body="1573" type="2" />
+	<Mob name="Potato Sack (1574)" body="1574" type="2" />
+	<Mob name="Orc Boss (1575)" body="1575" type="2" />
+	<Mob name="Orc Hell Hound (1576)" body="1576" type="2" />
+	<Equip name="Closed Helmet Air (1577)" body="1577" type="3" />
+	<Equip name="Platemail Gorget Air (1578)" body="1578" type="3" />
+	<Equip name="Platemail Arms Air (1579)" body="1579" type="3" />
+	<Equip name="Platemail Gloves Air (1580)" body="1580" type="3" />
+	<Equip name="Platemail Chest Air (1581)" body="1581" type="3" />
+	<Equip name="Platemail Legs Air (1582)" body="1582" type="3" />
+	<Equip name="Cloak Air (1583)" body="1583" type="3" />
+	<Equip name="Warhammer Air (1584)" body="1584" type="3" />
+	<Equip name="Warfork Air (1585)" body="1585" type="3" />
+	<Equip name="Kite Shield Air (1586)" body="1586" type="3" />
+	<Equip name="Amulet G Air (1587)" body="1587" type="3" />
+	<Equip name="Chest G Air (1588)" body="1588" type="3" />
+	<Equip name="Legs G Air (1589)" body="1589" type="3" />
+	<Equip name="Kilt G Air (1590)" body="1590" type="3" />
+	<Equip name="Arms G Air (1591)" body="1591" type="3" />
+	<Equip name="Closed Helmet Water (1592)" body="1592" type="3" />
+	<Equip name="Platemail Gorget Water (1593)" body="1593" type="3" />
+	<Equip name="Platemail Arms Water (1594)" body="1594" type="3" />
+	<Equip name="Platemail Gloves Water (1595)" body="1595" type="3" />
+	<Equip name="Platemail Chest Water (1596)" body="1596" type="3" />
+	<Equip name="Platemail Legs Water (1597)" body="1597" type="3" />
+	<Equip name="Cloak Water (1598)" body="1598" type="3" />
+	<Equip name="Warhammer Water (1599)" body="1599" type="3" />
+	<Equip name="Warfork Water (1600)" body="1600" type="3" />
+	<Equip name="Kite Shield Water (1601)" body="1601" type="3" />
+	<Equip name="Amulet G Water (1602)" body="1602" type="3" />
+	<Equip name="Chest G Water (1603)" body="1603" type="3" />
+	<Equip name="Legs G Water (1604)" body="1604" type="3" />
+	<Equip name="Kilt G Water (1605)" body="1605" type="3" />
+	<Equip name="Arms G Water (1606)" body="1606" type="3" />
+	<Equip name="Closed Helmet Earth (1607)" body="1607" type="3" />
+	<Equip name="Platemail Gorget Earth (1608)" body="1608" type="3" />
+	<Equip name="Platemail Arms Earth (1609)" body="1609" type="3" />
+	<Equip name="Platemail Gloves Earth (1610)" body="1610" type="3" />
+	<Equip name="Platemail Chest Earth (1611)" body="1611" type="3" />
+	<Equip name="Platemail Legs Earth (1612)" body="1612" type="3" />
+	<Equip name="Cloak Earth (1613)" body="1613" type="3" />
+	<Equip name="Warhammer Earth (1614)" body="1614" type="3" />
+	<Equip name="Warfork Earth (1615)" body="1615" type="3" />
+	<Equip name="Kite Shield Earth (1616)" body="1616" type="3" />
+	<Equip name="Amulet G Earth (1617)" body="1617" type="3" />
+	<Equip name="Chest G Earth (1618)" body="1618" type="3" />
+	<Equip name="Legs G Earth (1619)" body="1619" type="3" />
+	<Equip name="Kilt G Earth (1620)" body="1620" type="3" />
+	<Equip name="Arms G Earth (1621)" body="1621" type="3" />
+	<Equip name="Closed Helmet Fire (1622)" body="1622" type="3" />
+	<Equip name="Platemail Gorget Fire (1623)" body="1623" type="3" />
+	<Equip name="Platemail Arms Fire (1624)" body="1624" type="3" />
+	<Equip name="Platemail Gloves Fire (1625)" body="1625" type="3" />
+	<Equip name="Platemail Chest Fire (1626)" body="1626" type="3" />
+	<Equip name="Platemail Legs Fire (1627)" body="1627" type="3" />
+	<Equip name="Cloak Fire (1628)" body="1628" type="3" />
+	<Equip name="Warhammer Fire (1629)" body="1629" type="3" />
+	<Equip name="Warfork Fire (1630)" body="1630" type="3" />
+	<Equip name="Kite Shield Fire (1631)" body="1631" type="3" />
+	<Equip name="Amulet G Fire (1632)" body="1632" type="3" />
+	<Equip name="Chest G Fire (1633)" body="1633" type="3" />
+	<Equip name="Legs G Fire (1634)" body="1634" type="3" />
+	<Equip name="Kilt G Fire (1635)" body="1635" type="3" />
+	<Equip name="Arms G Fire (1636)" body="1636" type="3" />
+	<Equip name="Reagent Belt (1637)" body="1637" type="3" />
+	<Mob name="Bear Zombie (1638)" body="1638" type="2" />
+	<Equip name="Backpack (1639)" body="1639" type="3" />
+	<Mob name="Uoholder Melee (1641)" body="1641" type="0" />
+	<Mob name="Uoholder Magic (1642)" body="1642" type="0" />
+	<Mob name="Uoholder Slug (1643)" body="1643" type="0" />
+	<Mob name="Chula Large (1644)" body="1644" type="0" />
+	<Mob name="Chula Small (1645)" body="1645" type="0" />
+	<Mob name="Corrupted Tree (1646)" body="1646" type="0" />
+	<Mob name="Horse Clydesdale (1651)" body="1651" type="2" />
+	<Mob name="Horse Elemental Earth (1652)" body="1652" type="2" />
+	<Mob name="Horse Elemental Fire (1653)" body="1653" type="2" />
+	<Equip name="Human Corsage - No Animation - Placeholder For Paperdoll (1654)" body="1654" type="3" />
+	<Equip name="Garg Corsage - No Animation - Placeholder For Paperdoll (1655)" body="1655" type="3" />
+	<Mob name="Horse Elemental Water (1656)" body="1656" type="2" />
+	<Mob name="Horse Elemental Air (1657)" body="1657" type="2" />
+	<Equip name="Human Victor Blackthorn Tabard - No Animation - Placeholder For Paperdoll (1659)" body="1659" type="3" />
+	<Equip name="Garg Victor Blackthorn Tabard - No Animation - Placeholder For Paperdoll (1660)" body="1660" type="3" />
+	<Equip name="Victor Blackthorn Shield - No Animation - Placeholder For Paperdoll (1661)" body="1661" type="3" />
+	<Equip name="Garg Victor Blackthorn Shield - No Animation - Placeholder For Paperdoll (1662)" body="1662" type="3" />
+	<Equip name="Holiday Sash Santa - No Animation - Placeholder For Paperdoll (1663)" body="1663" type="3" />
+	<Equip name="Garg Holiday Sash Santa - No Animation - Placeholder For Paperdoll (1664)" body="1664" type="3" />
+	<Equip name="Holiday Sash Snowflake - No Animation - Placeholder For Paperdoll (1665)" body="1665" type="3" />
+	<Equip name="Garg Holiday Sash Snowflake - No Animation - Placeholder For Paperdoll (1666)" body="1666" type="3" />
+	<Equip name="Holiday Sash Garland - No Animation - Placeholder For Paperdoll (1667)" body="1667" type="3" />
+	<Equip name="Garg Holiday Sash Garland - No Animation - Placeholder For Paperdoll (1668)" body="1668" type="3" />
+	<Equip name="Human Shamrock - No Animation - Placeholder For Paperdoll (1669)" body="1669" type="3" />
+	<Equip name="Garg Shamrock - No Animation - Placeholder For Paperdoll (1670)" body="1670" type="3" />
+	<Equip name="Robe Dragon H (1671)" body="1671" type="3" />
+	<Equip name="Robe Dragon G (1672)" body="1672" type="3" />
+	<Equip name="Dress Dragon H (1673)" body="1673" type="3" />
+	<Equip name="Dress Dragon G (1674)" body="1674" type="3" />
+	<Equip name="Dragon Helm H (1675)" body="1675" type="3" />
+	<Equip name="Dragon Chest H (1676)" body="1676" type="3" />
+	<Equip name="Dragon Arms H (1677)" body="1677" type="3" />
+	<Equip name="Dragon Legs H (1678)" body="1678" type="3" />
+	<Equip name="Dragon Hands H (1679)" body="1679" type="3" />
+	<Equip name="Dragon Neck H (1680)" body="1680" type="3" />
+	<Equip name="Mushroom Hat H (1681)" body="1681" type="3" />
+	<Equip name="Mushroom Earrings G - No Animation - Placeholder For Paperdoll (1682)" body="1682" type="3" />
+	<Equip name="Raptor Claw Necklace H - No Animation - Placeholder For Paperdoll (1683)" body="1683" type="3" />
+	<Equip name="Raptor Claw Necklace G - No Animation - Placeholder For Paperdoll (1684)" body="1684" type="3" />
+	<Equip name="Animal Teeth Necklace H - No Animation - Placeholder For Paperdoll (1685)" body="1685" type="3" />
+	<Equip name="Animal Teeth Necklace G - No Animation - Placeholder For Paperdoll (1686)" body="1686" type="3" />
+	<Equip name="Seashell Necklace H - No Animation - Placeholder For Paperdoll (1687)" body="1687" type="3" />
+	<Equip name="Seashell Necklace G - No Animation - Placeholder For Paperdoll (1688)" body="1688" type="3" />
+	<Equip name="Skull Necklace H - No Animation - Placeholder For Paperdoll (1689)" body="1689" type="3" />
+	<Equip name="Skull Necklace G - No Animation - Placeholder For Paperdoll (1690)" body="1690" type="3" />
+	<Equip name="Anchor Necklace H - No Animation - Placeholder For Paperdoll (1691)" body="1691" type="3" />
+	<Equip name="Anchor Necklace G - No Animation - Placeholder For Paperdoll (1692)" body="1692" type="3" />
+	<Equip name="Tachi - No Animation - Placeholder For Paperdoll (1693)" body="1693" type="3" />
+	<Equip name="Escrima - No Animation - Placeholder For Paperdoll (1694)" body="1694" type="3" />
+	<Equip name="Bo - No Animation - Placeholder For Paperdoll (1695)" body="1695" type="3" />
+	<Equip name="Yari - No Animation - Placeholder For Paperdoll (1696)" body="1696" type="3" />
+	<Equip name="Tanto - No Animation - Placeholder For Paperdoll (1697)" body="1697" type="3" />
+	<Equip name="Tanto G - No Animation - Placeholder For Paperdoll (1698)" body="1698" type="3" />
+	<Equip name="Otsuchi G - No Animation - Placeholder For Paperdoll (1699)" body="1699" type="3" />
+	<Equip name="Bokuto G - No Animation - Placeholder For Paperdoll (1700)" body="1700" type="3" />
+	<Equip name="Body 0x6A5" body="1701" type="3" />
+	<Equip name="Body 0x6A6" body="1702" type="3" />
+	<Equip name="Body 0x6A7" body="1703" type="3" />
+	<Equip name="Body 0x6AE" body="1710" type="3" />
+	<Equip name="Body 0x6B0" body="1712" type="3" />
+	<Equip name="Body 0x6B1" body="1713" type="3" />
+	<Equip name="Body 0x6B3" body="1715" type="3" />
+	<Equip name="Body 0x6B4" body="1716" type="3" />
+	<Equip name="Body 0x6B8" body="1720" type="3" />
+	<Equip name="Body 0x6B9" body="1721" type="3" />
+	<Equip name="Body 0x6BA" body="1722" type="3" />
+	<Equip name="Body 0x6BB" body="1723" type="3" />
+	<Equip name="Body 0x6BC" body="1724" type="3" />
+	<Equip name="Body 0x6BD" body="1725" type="3" />
+	<Equip name="Body 0x6BE" body="1726" type="3" />
+	<Equip name="Body 0x6BF" body="1727" type="3" />
+	<Equip name="Body 0x6C0" body="1728" type="3" />
+	<Equip name="Body 0x6C1" body="1729" type="3" />
+	<Equip name="Body 0x6C2" body="1730" type="3" />
+	<Equip name="Body 0x6C3" body="1731" type="3" />
+	<Equip name="Body 0x6C4" body="1732" type="3" />
+	<Equip name="Body 0x6C5" body="1733" type="3" />
+	<Equip name="Body 0x6C6" body="1734" type="3" />
+	<Equip name="Body 0x6C7" body="1735" type="3" />
+	<Equip name="Body 0x6C8" body="1736" type="3" />
+	<Equip name="Body 0x6CC" body="1740" type="3" />
+	<Equip name="Body 0x6CE" body="1742" type="3" />
+	<Equip name="Body 0x6CF" body="1743" type="3" />
+	<Equip name="Body 0x6DF" body="1759" type="3" />
+	<Equip name="Body 0x6E1" body="1761" type="3" />
+	<Equip name="Body 0x6E2" body="1762" type="3" />
+	<Equip name="Body 0x76C" body="1900" type="3" />
+	<Equip name="Body 0x76D" body="1901" type="3" />
+	<Equip name="Body 0x76E" body="1902" type="3" />
+	<Equip name="Body 0x76F" body="1903" type="3" />
+	<Equip name="Body 0x775" body="1909" type="3" />
+	<Equip name="Body 0x776" body="1910" type="3" />
+	<Equip name="Body 0x777" body="1911" type="3" />
+	<Equip name="Body 0x778" body="1912" type="3" />
+	<Equip name="Body 0x779" body="1913" type="3" />
+	<Equip name="Body 0x781" body="1921" type="3" />
+	<Equip name="Body 0x782" body="1922" type="3" />
+	<Equip name="Body 0x783" body="1923" type="3" />
+	<Equip name="Body 0x784" body="1924" type="3" />
+	<Equip name="Body 0x785" body="1925" type="3" />
+	<Equip name="Body 0x786" body="1926" type="3" />
+	<Equip name="Body 0x787" body="1927" type="3" />
+	<Equip name="Body 0x788" body="1928" type="3" />
+	<Equip name="Body 0x789" body="1929" type="3" />
+	<Equip name="Body 0x7B3" body="1971" type="3" />
+	<Equip name="Body 0x7B5" body="1973" type="3" />
 </Graphics>

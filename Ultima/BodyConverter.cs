@@ -14,6 +14,7 @@ namespace Ultima
         public static int[] Table2 { get; private set; }
         public static int[] Table3 { get; private set; }
         public static int[] Table4 { get; private set; }
+        public static int[] Table5 { get; private set; }
 
         static BodyConverter()
         {
@@ -35,11 +36,13 @@ namespace Ultima
             List<int> list2 = new List<int>();
             List<int> list3 = new List<int>();
             List<int> list4 = new List<int>();
+            List<int> list5 = new List<int>();
 
             int max1 = 0;
             int max2 = 0;
             int max3 = 0;
             int max4 = 0;
+            int max5 = 0;
 
             using (var ip = new StreamReader(path))
             {
@@ -82,6 +85,12 @@ namespace Ultima
                         if (!int.TryParse(split[4], out int anim5))
                         {
                             anim5 = -1;
+                        }
+
+                        int anim6 = -1;
+                        if (split.Length > 5 && !int.TryParse(split[5], out anim6))
+                        {
+                            anim6 = -1;
                         }
 
                         if (anim2 != -1)
@@ -131,6 +140,17 @@ namespace Ultima
 
                             list4.Add(original);
                             list4.Add(anim5);
+                        }
+
+                        if (anim6 != -1)
+                        {
+                            if (original > max5)
+                            {
+                                max5 = original;
+                            }
+
+                            list5.Add(original);
+                            list5.Add(anim6);
                         }
                     }
                     catch
@@ -187,6 +207,18 @@ namespace Ultima
             {
                 Table4[list4[i]] = list4[i + 1];
             }
+
+            Table5 = new int[max5 + 1];
+
+            for (int i = 0; i < Table5.Length; ++i)
+            {
+                Table5[i] = -1;
+            }
+
+            for (int i = 0; i < list5.Count; i += 2)
+            {
+                Table5[list5[i]] = list5[i + 1];
+            }
         }
 
         /// <summary>
@@ -211,6 +243,11 @@ namespace Ultima
             }
 
             if (Table4 != null && body >= 0 && body < Table4.Length && Table4[body] != -1)
+            {
+                return true;
+            }
+
+            if (Table5 != null && body >= 0 && body < Table5.Length && Table5[body] != -1)
             {
                 return true;
             }
@@ -247,6 +284,10 @@ namespace Ultima
         ///         <item>
         ///             <term>5</term>
         ///             <description>Anim5.mul, Anim5.idx (ML)</description>
+        ///         </item>
+        ///         <item>
+        ///             <term>6</term>
+        ///             <description>Anim6.mul, Anim6.idx (SA/HS)</description>
         ///         </item>
         ///     </list>
         /// </returns>
@@ -288,13 +329,24 @@ namespace Ultima
             if (Table4 != null && body >= 0 && body < Table4.Length)
             {
                 int val = Table4[body];
+
+                if (val != -1)
+                {
+                    body = val;
+                    return 5;
+                }
+            }
+
+            if (Table5 != null && body >= 0 && body < Table5.Length)
+            {
+                int val = Table5[body];
                 if (val == -1)
                 {
                     return 1;
                 }
 
                 body = val;
-                return 5;
+                return 6;
             }
 
             return 1;
@@ -364,6 +416,20 @@ namespace Ultima
                         for (int i = 0; i < Table4.Length; ++i)
                         {
                             if (Table4[i] == index)
+                            {
+                                return i;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 6:
+                {
+                    if (Table5 != null && index >= 0)
+                    {
+                        for (int i = 0; i < Table5.Length; ++i)
+                        {
+                            if (Table5[i] == index)
                             {
                                 return i;
                             }
