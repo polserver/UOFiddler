@@ -40,6 +40,9 @@ namespace UoFiddler.Controls.UserControls
 
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
             ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
+            ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+
+            pictureBoxItem.BackColor = Options.PreviewBackgroundColor;
         }
 
         private void InitLandTilesFlagsCheckBoxes()
@@ -614,6 +617,33 @@ namespace UoFiddler.Controls.UserControls
             Reload();
         }
 
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
+        }
+
+        private void OnPreviewBackgroundColorChanged()
+        {
+            pictureBoxItem.BackColor = Options.PreviewBackgroundColor;
+            pictureBoxLand.BackColor = Options.PreviewBackgroundColor;
+
+            if (treeViewItem.SelectedNode != null)
+            {
+                AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
+            }
+
+            if (treeViewLand.SelectedNode != null)
+            {
+                AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
+            }
+        }
+
         private void OnTileDataChangeEvent(object sender, int index)
         {
             if (!IsLoaded)
@@ -698,7 +728,7 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap newBit = new Bitmap(pictureBoxItem.Size.Width, pictureBoxItem.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
                 {
-                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.Clear(Options.PreviewBackgroundColor);
                     newGraph.DrawImage(bit, (pictureBoxItem.Size.Width - bit.Width) / 2, 1);
                 }
 
@@ -749,7 +779,7 @@ namespace UoFiddler.Controls.UserControls
                 Bitmap newBit = new Bitmap(pictureBoxLand.Size.Width, pictureBoxLand.Size.Height);
                 using (Graphics newGraph = Graphics.FromImage(newBit))
                 {
-                    newGraph.Clear(Color.FromArgb(-1));
+                    newGraph.Clear(Options.PreviewBackgroundColor);
                     newGraph.DrawImage(bit, (pictureBoxLand.Size.Width - bit.Width) / 2, 1);
                 }
 

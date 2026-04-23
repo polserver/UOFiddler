@@ -100,6 +100,10 @@ namespace UoFiddler.Controls.UserControls
             if (!_loaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+
+                pictureBoxPreview.BackColor = Options.PreviewBackgroundColor;
+                panelMultiScroll.BackColor = Options.PreviewBackgroundColor;
             }
 
             _loaded = true;
@@ -111,6 +115,23 @@ namespace UoFiddler.Controls.UserControls
             _customPatches = null;
             labelCurrentFile.Text = string.Empty;
             Populate();
+        }
+
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            Options.PreviewBackgroundColor = colorDialog.Color;
+            ControlEvents.FirePreviewBackgroundColorChangeEvent();
+        }
+
+        private void OnPreviewBackgroundColorChanged()
+        {
+            pictureBoxPreview.BackColor = Options.PreviewBackgroundColor;
+            panelMultiScroll.BackColor = Options.PreviewBackgroundColor;
         }
 
         private void Populate()
@@ -583,7 +604,7 @@ namespace UoFiddler.Controls.UserControls
                 richTextBoxDetails.Visible = false;
                 pictureBoxPreview.Visible = true;
                 pictureBoxPreview.Image = bmp;
-                pictureBoxPreview.BackColor = Color.White;
+                pictureBoxPreview.BackColor = Options.PreviewBackgroundColor;
             }
         }
 

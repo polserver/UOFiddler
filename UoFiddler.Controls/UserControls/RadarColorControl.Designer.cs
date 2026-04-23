@@ -93,8 +93,12 @@ namespace UoFiddler.Controls.UserControls
             button2 = new System.Windows.Forms.Button();
             button1 = new System.Windows.Forms.Button();
             buttonMean = new System.Windows.Forms.Button();
+            PictureBoxContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
+            changeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            colorDialog = new System.Windows.Forms.ColorDialog();
             contextMenuStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
+            PictureBoxContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxArt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxColor).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
@@ -229,7 +233,8 @@ namespace UoFiddler.Controls.UserControls
             setAsRangeToToolStripMenuItem1.Click += OnClickSetRangeTo;
             // 
             // pictureBoxArt
-            // 
+            //
+            pictureBoxArt.ContextMenuStrip = PictureBoxContextMenuStrip;
             pictureBoxArt.Dock = System.Windows.Forms.DockStyle.Fill;
             pictureBoxArt.Location = new System.Drawing.Point(0, 0);
             pictureBoxArt.Margin = new System.Windows.Forms.Padding(4);
@@ -237,7 +242,20 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxArt.Size = new System.Drawing.Size(244, 154);
             pictureBoxArt.TabIndex = 0;
             pictureBoxArt.TabStop = false;
-            // 
+            //
+            // PictureBoxContextMenuStrip
+            //
+            PictureBoxContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeBackgroundColorToolStripMenuItem });
+            PictureBoxContextMenuStrip.Name = "PictureBoxContextMenuStrip";
+            PictureBoxContextMenuStrip.Size = new System.Drawing.Size(213, 26);
+            //
+            // changeBackgroundColorToolStripMenuItem
+            //
+            changeBackgroundColorToolStripMenuItem.Name = "changeBackgroundColorToolStripMenuItem";
+            changeBackgroundColorToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            changeBackgroundColorToolStripMenuItem.Text = "Change background color";
+            changeBackgroundColorToolStripMenuItem.Click += ChangeBackgroundColorToolStripMenuItem_Click;
+            //
             // pictureBoxColor
             // 
             pictureBoxColor.Location = new System.Drawing.Point(4, 4);
@@ -757,6 +775,7 @@ namespace UoFiddler.Controls.UserControls
             Load += OnLoad;
             contextMenuStrip1.ResumeLayout(false);
             contextMenuStrip2.ResumeLayout(false);
+            PictureBoxContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxArt).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxColor).EndInit();
             splitContainer5.Panel1.ResumeLayout(false);
@@ -806,6 +825,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Button buttonMean;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ContextMenuStrip PictureBoxContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorToolStripMenuItem;
+        private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.NumericUpDown numericUpDownB;
         private System.Windows.Forms.NumericUpDown numericUpDownG;
         private System.Windows.Forms.NumericUpDown numericUpDownR;
