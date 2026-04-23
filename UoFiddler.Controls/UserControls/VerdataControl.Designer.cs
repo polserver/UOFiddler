@@ -17,6 +17,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             toolStrip = new System.Windows.Forms.ToolStrip();
             buttonReload = new System.Windows.Forms.ToolStripButton();
             buttonLoadFile = new System.Windows.Forms.ToolStripButton();
@@ -59,6 +60,9 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxMulti = new System.Windows.Forms.PictureBox();
             tabPageMultiComponents = new System.Windows.Forms.TabPage();
             richTextBoxMultiComponents = new System.Windows.Forms.RichTextBox();
+            PictureBoxContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
+            changeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            colorDialog = new System.Windows.Forms.ColorDialog();
             toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
             splitContainerMain.Panel1.SuspendLayout();
@@ -86,6 +90,7 @@ namespace UoFiddler.Controls.UserControls
             panelAnimControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarDirection).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxPreview).BeginInit();
+            PictureBoxContextMenuStrip.SuspendLayout();
             panelMulti.SuspendLayout();
             tabControlMulti.SuspendLayout();
             tabPageMultiPreview.SuspendLayout();
@@ -462,8 +467,8 @@ namespace UoFiddler.Controls.UserControls
             buttonPlayStop.Click += OnClickPlayStop;
             // 
             // pictureBoxPreview
-            // 
-            pictureBoxPreview.BackColor = System.Drawing.Color.White;
+            //
+            pictureBoxPreview.ContextMenuStrip = PictureBoxContextMenuStrip;
             pictureBoxPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             pictureBoxPreview.Location = new System.Drawing.Point(0, 0);
             pictureBoxPreview.Name = "pictureBoxPreview";
@@ -471,7 +476,20 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxPreview.TabIndex = 1;
             pictureBoxPreview.TabStop = false;
             pictureBoxPreview.Visible = false;
-            // 
+            //
+            // PictureBoxContextMenuStrip
+            //
+            PictureBoxContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeBackgroundColorToolStripMenuItem });
+            PictureBoxContextMenuStrip.Name = "PictureBoxContextMenuStrip";
+            PictureBoxContextMenuStrip.Size = new System.Drawing.Size(213, 26);
+            //
+            // changeBackgroundColorToolStripMenuItem
+            //
+            changeBackgroundColorToolStripMenuItem.Name = "changeBackgroundColorToolStripMenuItem";
+            changeBackgroundColorToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            changeBackgroundColorToolStripMenuItem.Text = "Change background color";
+            changeBackgroundColorToolStripMenuItem.Click += ChangeBackgroundColorToolStripMenuItem_Click;
+            //
             // richTextBoxDetails
             // 
             richTextBoxDetails.BackColor = System.Drawing.SystemColors.Window;
@@ -517,7 +535,6 @@ namespace UoFiddler.Controls.UserControls
             // panelMultiScroll
             //
             panelMultiScroll.AutoScroll = true;
-            panelMultiScroll.BackColor = System.Drawing.Color.White;
             panelMultiScroll.Controls.Add(pictureBoxMulti);
             panelMultiScroll.Dock = System.Windows.Forms.DockStyle.Fill;
             panelMultiScroll.Location = new System.Drawing.Point(0, 0);
@@ -598,6 +615,7 @@ namespace UoFiddler.Controls.UserControls
             panelAnimControls.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarDirection).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxPreview).EndInit();
+            PictureBoxContextMenuStrip.ResumeLayout(false);
             panelMulti.ResumeLayout(false);
             tabControlMulti.ResumeLayout(false);
             tabPageMultiPreview.ResumeLayout(false);
@@ -653,5 +671,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.PictureBox pictureBoxMulti;
         private System.Windows.Forms.TabPage tabPageMultiComponents;
         private System.Windows.Forms.RichTextBox richTextBoxMultiComponents;
+        private System.Windows.Forms.ContextMenuStrip PictureBoxContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorToolStripMenuItem;
+        private System.Windows.Forms.ColorDialog colorDialog;
     }
 }
