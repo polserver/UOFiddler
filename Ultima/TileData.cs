@@ -1604,21 +1604,25 @@ namespace Ultima
                         continue;
                     }
 
+                    string[] split = line.Split(';');
+                    if (split.Length < 44)
+                    {
+                        continue;
+                    }
+
+                    int id = TileDataHelpers.ConvertStringToInt(split[0]);
+                    if (id < 0 || id >= ItemTable.Length)
+                    {
+                        continue;
+                    }
+
                     try
                     {
-                        string[] split = line.Split(';');
-                        if (split.Length < 44)
-                        {
-                            continue;
-                        }
-
-                        int id = TileDataHelpers.ConvertStringToInt(split[0]);
                         ItemTable[id].ReadData(split);
                     }
                     catch
                     {
-                        // TODO: ignored?
-                        // ignored
+                        // Malformed CSV field value — skip
                     }
                 }
             }
@@ -1647,21 +1651,25 @@ namespace Ultima
                         continue;
                     }
 
+                    string[] split = line.Split(';');
+                    if (split.Length < 35)
+                    {
+                        continue;
+                    }
+
+                    int id = TileDataHelpers.ConvertStringToInt(split[0]);
+                    if (id < 0 || id >= LandTable.Length)
+                    {
+                        continue;
+                    }
+
                     try
                     {
-                        string[] split = line.Split(';');
-                        if (split.Length < 35)
-                        {
-                            continue;
-                        }
-
-                        int id = TileDataHelpers.ConvertStringToInt(split[0]);
                         LandTable[id].ReadData(split);
                     }
                     catch
                     {
-                        // TODO: ignored?
-                        // ignored
+                        // Malformed CSV field value — skip
                     }
                 }
             }

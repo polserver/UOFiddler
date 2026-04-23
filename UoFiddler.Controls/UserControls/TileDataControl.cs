@@ -1626,13 +1626,13 @@ namespace UoFiddler.Controls.UserControls
                 if (tabcontrol.SelectedIndex == 0) // items
                 {
                     TileData.ImportItemDataFromCsv(dialog.FileName);
-                    AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
                 }
                 else
                 {
                     TileData.ImportLandDataFromCsv(dialog.FileName);
-                    AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
                 }
+
+                Reload();
             }
         }
 
