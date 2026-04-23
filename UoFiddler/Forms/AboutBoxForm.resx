@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.18.2
+    <value>Version 4.19.0
+- Added support for previewing contents of animations in anim6.mul and AnimationFrame1-6.uop (no export or edit option for uop yet).
+- Fixed possible crash and slowdown during tiledata CSV import from newer client to older client.
+- More preview boxes now support change background color and use background color set in Options.
+- Small adjustments to RadarCol compare layout.
+
+Version 4.18.2
 - Fixed WSC multi import where file has absolute coordinates. Now all coordinates are converted to relative ones.
 - Added DynamicItems.xml with list of items that should be marked as dynamic when importing multis from WSC.
 - Added support for viewing and importing Multicollection.uop multis (there is no save option for now).
