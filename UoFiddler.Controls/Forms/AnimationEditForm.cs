@@ -34,6 +34,7 @@ namespace UoFiddler.Controls.Forms
         private bool _showOnlyValid;
         private static bool _drawEmpty;
         private static bool _drawFull;
+        private static int _lastAddFilterIndex = 1;
         private static readonly Color _whiteConvert = Color.FromArgb(255, 255, 255, 255);
 
         private static readonly Pen _blackUnDrawTransparent = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
@@ -846,9 +847,11 @@ namespace UoFiddler.Controls.Forms
                     dialog.Title = "Choose image file to add";
                     dialog.CheckFileExists = true;
                     dialog.Filter = "Gif files (*.gif;)|*.gif; |Bitmap files (*.bmp;)|*.bmp; |Tiff files (*.tif;*.tiff)|*.tif;*.tiff; |Png files (*.png;)|*.png; |Jpeg files (*.jpeg;*.jpg;)|*.jpeg;*.jpg;";
+                    dialog.FilterIndex = _lastAddFilterIndex;
 
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
+                        _lastAddFilterIndex = dialog.FilterIndex;
                         FramesListView.BeginUpdate();
                         try
                         {
