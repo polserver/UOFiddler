@@ -226,8 +226,7 @@ namespace UoFiddler.Controls.UserControls
                 bmp.Save(fileName, ImageFormat.Tiff);
             }
 
-            MessageBox.Show($"Character saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Character saved successfully.");
         }
 
         private static int AsciiFontOffset => 32;

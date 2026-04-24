@@ -16,6 +16,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Plugin.MassImport.Imports;
 
 namespace UoFiddler.Plugin.MassImport.Forms
@@ -121,8 +122,8 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
             dom.AppendChild(sr);
             dom.Save(fileName);
-            MessageBox.Show($"Default xml saved to {fileName}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Default xml saved successfully.");
         }
 
         private readonly List<ImportEntry> _importList;
@@ -254,7 +255,6 @@ namespace UoFiddler.Plugin.MassImport.Forms
             {
                 button3.Enabled = true;
             }
-
         }
 
         private void StartOnClick(object sender, EventArgs e)

@@ -352,8 +352,7 @@ namespace UoFiddler.Controls.UserControls
 
             SpeechList.ExportToCsv(fileName);
 
-            MessageBox.Show($"Speech saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Speech saved successfully.");
         }
 
         private void OnClickImport(object sender, EventArgs e)

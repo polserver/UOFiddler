@@ -18,6 +18,7 @@ using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -348,9 +349,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {i}.bmp");
-            Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"Light saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
+            FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
@@ -364,8 +364,7 @@ namespace UoFiddler.Controls.UserControls
             int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {i}.tiff");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show($"Light saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
@@ -379,8 +378,7 @@ namespace UoFiddler.Controls.UserControls
             int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {i}.jpg");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Jpeg);
-            MessageBox.Show($"Light saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
         }
 
         private void IgPreviewClicked(object sender, EventArgs e)

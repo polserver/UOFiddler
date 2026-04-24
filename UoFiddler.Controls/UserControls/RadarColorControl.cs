@@ -831,8 +831,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, "RadarColor.csv");
             RadarCol.ExportToCSV(fileName);
-            MessageBox.Show($"RadarColor saved to {fileName}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "RadarColor saved successfully.");
         }
 
         private void OnClickMeanColorAll(object sender, EventArgs e)

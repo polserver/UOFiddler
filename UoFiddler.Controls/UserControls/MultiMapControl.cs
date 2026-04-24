@@ -222,8 +222,7 @@ namespace UoFiddler.Controls.UserControls
 
             pictureBox.Image.Save(fileName, imageFormat);
 
-            MessageBox.Show($"{CheckedToString()} saved to {fileName}", "Export", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, $"{CheckedToString()} saved successfully.");
         }
 
         private string CheckedToString()
