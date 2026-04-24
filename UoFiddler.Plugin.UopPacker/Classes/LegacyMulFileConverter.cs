@@ -47,10 +47,16 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                        : new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None));
         }
 
+        // Identifier for "build/multicollection/housing.bin" inside MultiCollection.uop.
+        private const ulong _housingBinIdentifier = 0x126D1E99DDEDEE0A;
+
+        // Sentinel Id used to mark a synthetic entry that should be written from housing.bin.
+        private const int _housingBinSentinelId = -1;
+
         //
         // MUL -> UOP
         //
-        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag = CompressionFlag.None)
+        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag = CompressionFlag.None, string housingBinFile = "")
         {
             // Same for all UOP files
             const long firstTable = 0x200;
@@ -121,6 +127,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     }
                 }
 
+                if (type == FileType.MultiCollection && !string.IsNullOrWhiteSpace(housingBinFile) && File.Exists(housingBinFile))
+                {
+                    idxEntries.Add(new IdxEntry
+                    {
+                        Id = _housingBinSentinelId,
+                        Offset = 0,
+                        Size = 0,
+                        Extra = 0
+                    });
+                }
+
                 // File header
                 writer.Write(0x50594D); // MYP
                 writer.Write(type == FileType.GumpartLegacyMul ? 4 : 5); // version
@@ -163,8 +180,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                     for (int j = idxStart; j < idxEnd; ++j, ++tableIdx)
                     {
-                        reader.BaseStream.Seek(idxEntries[j].Offset, SeekOrigin.Begin);
-                        byte[] data = reader.ReadBytes(idxEntries[j].Size);
+                        byte[] data;
+
+                        if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
+                        {
+                            data = File.ReadAllBytes(housingBinFile);
+                        }
+                        else
+                        {
+                            reader.BaseStream.Seek(idxEntries[j].Offset, SeekOrigin.Begin);
+                            data = reader.ReadBytes(idxEntries[j].Size);
+                        }
 
                         tableEntries[tableIdx].Offset = writer.BaseStream.Position;
                         tableEntries[tableIdx].DecompressedSize = data.Length;
@@ -177,12 +203,37 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         {
                             tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[1], idxEntries[j].Id));
                         }
+                        else if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
+                        {
+                            tableEntries[tableIdx].Identifier = _housingBinIdentifier;
+                        }
                         else
                         {
                             tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[0], idxEntries[j].Id));
                         }
 
-                        if (type == FileType.GumpartLegacyMul)
+                        if (type == FileType.MultiCollection && idxEntries[j].Id != _housingBinSentinelId)
+                        {
+                            byte[] multiData = BuildMultiUopEntryFromMul(data, idxEntries[j].Id);
+
+                            tableEntries[tableIdx].DecompressedSize = multiData.Length;
+                            tableEntries[tableIdx].Size = multiData.Length;
+
+                            if (compressionFlag >= CompressionFlag.Zlib)
+                            {
+                                var result = UopUtils.Compress(multiData);
+                                if (!result.success)
+                                {
+                                    return;
+                                }
+                                multiData = result.compressedData;
+                                tableEntries[tableIdx].Size = multiData.Length;
+                            }
+
+                            tableEntries[tableIdx].Hash = HashAdler32(multiData);
+                            writer.Write(multiData);
+                        }
+                        else if (type == FileType.GumpartLegacyMul)
                         {
                             byte[] gumpArtData = new byte[data.Length + 8];
                             using (MemoryStream ms = new MemoryStream(gumpArtData))
@@ -230,6 +281,26 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             }
                             tableEntries[tableIdx].Hash = HashAdler32(gumpArtData);
                             writer.Write(gumpArtData);
+                        }
+                        else if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
+                        {
+                            byte[] binData = data;
+                            tableEntries[tableIdx].DecompressedSize = binData.Length;
+                            tableEntries[tableIdx].Size = binData.Length;
+
+                            if (compressionFlag >= CompressionFlag.Zlib)
+                            {
+                                var result = UopUtils.Compress(binData);
+                                if (!result.success)
+                                {
+                                    return;
+                                }
+                                binData = result.compressedData;
+                                tableEntries[tableIdx].Size = binData.Length;
+                            }
+
+                            tableEntries[tableIdx].Hash = HashAdler32(binData);
+                            writer.Write(binData);
                         }
                         else
                         {
@@ -311,7 +382,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             {
                 if (reader.ReadInt32() != 0x50594D) // MYP
                 {
-                    throw new ArgumentException("inFile is not a UOP file.");
+                    throw new ArgumentException("Input file is not a UOP file.");
                 }
 
                 Stream stream = reader.BaseStream;
@@ -582,7 +653,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     }
                 case FileType.MultiCollection:
                     {
-                        maxId = 0x2200; // seems like this is reasonable limit for multis
+                        maxId = 0x2710; // newer clients add multis past 0x2200 (e.g. 9000); keep generous for future entries
                         return ["build/multicollection/{0:000000}.bin", string.Empty];
                     }
                 default:
@@ -703,6 +774,49 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 mulWriter.Write(flagValue != 0 ? 0 : 1);
                 mulWriter.Write(0);
             }
+        }
+
+        // MUL row layout: [itemId:2][x:2][y:2][z:2][flag:4][extra:4] = 16 bytes
+        // UOP component:  [itemId:2][x:2][y:2][z:2][flag:2][clilocsCount:4] = 14 bytes
+        private static byte[] BuildMultiUopEntryFromMul(byte[] mulData, int multiId)
+        {
+            const int mulRowSize = 16;
+            const int uopComponentSize = 14;
+
+            int componentCount = mulData.Length / mulRowSize;
+            byte[] result = new byte[8 + componentCount * uopComponentSize];
+
+            Span<byte> dst = result.AsSpan();
+            BinaryPrimitives.WriteUInt32LittleEndian(dst, (uint)multiId);
+            BinaryPrimitives.WriteUInt32LittleEndian(dst[4..], (uint)componentCount);
+            dst = dst[8..];
+
+            ReadOnlySpan<byte> src = mulData.AsSpan();
+
+            for (int i = 0; i < componentCount; i++)
+            {
+                ushort itemId = BinaryPrimitives.ReadUInt16LittleEndian(src);
+                short x = BinaryPrimitives.ReadInt16LittleEndian(src[2..]);
+                short y = BinaryPrimitives.ReadInt16LittleEndian(src[4..]);
+                short z = BinaryPrimitives.ReadInt16LittleEndian(src[6..]);
+                int mulFlag = BinaryPrimitives.ReadInt32LittleEndian(src[8..]);
+                // extra int32 at src[12..16] is discarded
+
+                // Inverse of WriteMultiUopEntryToMul: mul==1 -> visible (uop flag 0), otherwise invisible (uop flag 1).
+                ushort uopFlag = (ushort)(mulFlag == 1 ? 0 : 1);
+
+                BinaryPrimitives.WriteUInt16LittleEndian(dst, itemId);
+                BinaryPrimitives.WriteInt16LittleEndian(dst[2..], x);
+                BinaryPrimitives.WriteInt16LittleEndian(dst[4..], y);
+                BinaryPrimitives.WriteInt16LittleEndian(dst[6..], z);
+                BinaryPrimitives.WriteUInt16LittleEndian(dst[8..], uopFlag);
+                BinaryPrimitives.WriteUInt32LittleEndian(dst[10..], 0u); // clilocsCount
+
+                src = src[mulRowSize..];
+                dst = dst[uopComponentSize..];
+            }
+
+            return result;
         }
     }
 }
