@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -34,6 +36,8 @@ namespace UoFiddler.Controls.UserControls
         }
 
         public bool IsLoaded { get; private set; }
+
+        private static readonly Regex _hexIndexRegex = new(@"0[xX][0-9a-fA-F]+", RegexOptions.Compiled);
 
         private const int _landTileMax = 0x4000;
 
@@ -799,6 +803,99 @@ namespace UoFiddler.Controls.UserControls
         private static bool IsIndexValid(int index)
         {
             return index < 0x4000;
+        }
+
+        private void OnClickReplaceFromFolder(object sender, EventArgs e)
+        {
+            using FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.Description = "Select folder containing images to replace";
+
+            if (dialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            string[] allFiles = Directory.GetFiles(dialog.SelectedPath);
+            var replacedLines = new List<string>();
+            var skippedLines = new List<string>();
+
+            foreach (string file in allFiles)
+            {
+                string ext = Path.GetExtension(file).ToLowerInvariant();
+                if (ext != ".bmp" && ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".tif" && ext != ".tiff")
+                {
+                    continue;
+                }
+
+                string name = Path.GetFileName(file);
+                Match match = _hexIndexRegex.Match(Path.GetFileNameWithoutExtension(file));
+                if (!match.Success)
+                {
+                    skippedLines.Add($"  {name}  (no hex ID in filename)");
+                    continue;
+                }
+
+                int index;
+                try
+                {
+                    index = Convert.ToInt32(match.Value, 16);
+                }
+                catch
+                {
+                    skippedLines.Add($"  {name}  (invalid hex value)");
+                    continue;
+                }
+
+                if (!IsIndexValid(index))
+                {
+                    skippedLines.Add($"  {name}  (index 0x{index:X} out of range)");
+                    continue;
+                }
+
+                try
+                {
+                    AddSingleLandTile(file, index);
+                    replacedLines.Add($"  0x{index:X4}  {name}");
+                }
+                catch
+                {
+                    skippedLines.Add($"  {name}  (failed to load image)");
+                }
+            }
+
+            LandTilesTileView.VirtualListSize = _tileList.Count;
+            LandTilesTileView.Invalidate();
+
+            if (replacedLines.Count > 0)
+            {
+                Options.ChangedUltimaClass["Art"] = true;
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"Replaced: {replacedLines.Count}    Skipped: {skippedLines.Count}");
+
+            if (replacedLines.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"Replaced ({replacedLines.Count}):");
+                foreach (string line in replacedLines)
+                {
+                    sb.AppendLine(line);
+                }
+            }
+
+            if (skippedLines.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"Skipped ({skippedLines.Count}):");
+                foreach (string line in skippedLines)
+                {
+                    sb.AppendLine(line);
+                }
+            }
+
+            using var resultForm = new ReplaceFromFolderResultForm(sb.ToString());
+            resultForm.ShowDialog(this);
         }
 
         /// <summary>
