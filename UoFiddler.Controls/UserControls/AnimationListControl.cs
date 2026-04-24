@@ -944,8 +944,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            MessageBox.Show($"{what} saved to '{fileName}-X.{fileExtension}'", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"Files with following format {fileName}-X.{fileExtension} saved successfully.");
         }
 
         private void OnClickExportFrameBmp(object sender, EventArgs e)
@@ -1007,8 +1006,8 @@ namespace UoFiddler.Controls.UserControls
 
             var outputFile = Path.Combine(Options.OutputPath, $"{(_displayType == 1 ? "Equipment" : "Mob")} {_currentSelect}.gif");
             MainPictureBox.Frames.ToGif(outputFile, looping: looping, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
-            MessageBox.Show($"InGame Anim saved to {outputFile}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), outputFile, "InGame Anim saved successfully.");
         }
 
         private void OnClickExtractAnimGifLooping(object sender, EventArgs e)

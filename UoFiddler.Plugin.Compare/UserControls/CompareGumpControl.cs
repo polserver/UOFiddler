@@ -18,6 +18,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.Compare.Classes;
 
@@ -326,8 +327,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.bmp");
             SecondGump.GetGump(i).Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"Gump saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
 
         private void Export_Tiff(object sender, EventArgs e)
@@ -347,8 +348,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.tiff");
             SecondGump.GetGump(i).Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show($"Gump saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
 
         private void OnClickCopy(object sender, EventArgs e)

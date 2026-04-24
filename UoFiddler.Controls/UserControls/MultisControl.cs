@@ -20,6 +20,7 @@ using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -673,8 +674,7 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
             }
         }
 
@@ -706,8 +706,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.txt");
                     multi.ExportToTextFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
             }
         }
 
@@ -739,8 +739,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.uoa");
                     multi.ExportToUOAFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
             }
         }
 
@@ -772,8 +772,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.wsc");
                     multi.ExportToWscFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
             }
         }
 
@@ -805,8 +805,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"{index:D4}.csv");
                     multi.ExportToCsvFile(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
             }
         }
 
@@ -838,8 +838,8 @@ namespace UoFiddler.Controls.UserControls
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.uox3");
                     multi.ExportToUox3File(fileName);
                 }
-                MessageBox.Show($"All Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
             }
         }
 
@@ -861,8 +861,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"{id:D4}.csv");
             multi.ExportToCsvFile(fileName);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
 
         private void OnExportUox3File(object sender, EventArgs e)
@@ -883,8 +882,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi 0x{id:X4}.uox3");
             multi.ExportToUox3File(fileName);
-            MessageBox.Show($"Multi saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
 
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1365,8 +1363,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            MessageBox.Show($"All UOP Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllText(object sender, EventArgs e)
@@ -1392,8 +1389,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToTextFile(Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.txt"));
             }
 
-            MessageBox.Show($"All UOP Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllUOA(object sender, EventArgs e)
@@ -1419,8 +1415,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToUOAFile(Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.uoa"));
             }
 
-            MessageBox.Show($"All UOP Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllWSC(object sender, EventArgs e)
@@ -1446,8 +1441,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToWscFile(Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.wsc"));
             }
 
-            MessageBox.Show($"All UOP Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllCSV(object sender, EventArgs e)
@@ -1473,8 +1467,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToCsvFile(Path.Combine(dialog.SelectedPath, $"{index:D4}_uop.csv"));
             }
 
-            MessageBox.Show($"All UOP Multis saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
         }
 
         private void OnClick_SaveAllToXML(object sender, EventArgs e)
@@ -1545,20 +1538,20 @@ namespace UoFiddler.Controls.UserControls
                 groupWriter.WriteEndDocument();
             }
 
-            MessageBox.Show($"All Multis saved to {fileName}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "All Multis saved successfully.");
         }
 
         private sealed class MouseWheelFilter : IMessageFilter
         {
-            private const int WmMouseWheel = 0x020A;
+            private const int _wmMouseWheel = 0x020A;
+
             private readonly MultisControl _owner;
 
             public MouseWheelFilter(MultisControl owner) => _owner = owner;
 
             public bool PreFilterMessage(ref Message m)
             {
-                if (m.Msg != WmMouseWheel)
+                if (m.Msg != _wmMouseWheel)
                 {
                     return false;
                 }

@@ -20,6 +20,7 @@ using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -272,7 +273,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Hue {_selected}.txt");
             Hues.List[_selected].Export(fileName);
-            MessageBox.Show($"Hue saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Hue saved successfully.");
         }
 
         private void OnImport(object sender, EventArgs e)
@@ -396,7 +397,7 @@ namespace UoFiddler.Controls.UserControls
 
             Hues.ExportHueList(fileName);
 
-            MessageBox.Show($"Hue names list saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Hue names list saved successfully.");
         }
 
         private void IndexOffsetButton_CheckedChanged(object sender, EventArgs e)

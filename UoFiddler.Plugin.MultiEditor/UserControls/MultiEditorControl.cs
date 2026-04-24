@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using System.Xml;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Plugin.MultiEditor.Classes;
 using UoFiddler.Plugin.MultiEditor.Forms;
 
@@ -265,8 +266,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     break;
             }
 
-            MessageBox.Show($"Multi design saved to {fileName}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Multi design saved successfully.");
         }
 
         private void BTN_Export_TXT_OnClick(object sender, EventArgs e)

@@ -18,6 +18,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.Compare.Classes;
 
@@ -252,8 +253,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) 0x{i:X}.bmp");
             SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"Texture saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
         private void ExportAsTiff(object sender, EventArgs e)
@@ -272,8 +272,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) 0x{i:X}.tiff");
             SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show($"Texture saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
         private void BrowseOnClick(object sender, EventArgs e)

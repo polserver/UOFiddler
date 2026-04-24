@@ -854,8 +854,7 @@ namespace UoFiddler.Controls.UserControls
                 Cursor.Current = Cursors.Default;
             }
 
-            MessageBox.Show($"Map saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Map saved successfully.");
         }
 
         private MapMarkerForm _mapMarkerForm;
@@ -1108,7 +1107,8 @@ namespace UoFiddler.Controls.UserControls
             Map.DefragStatics(Options.OutputPath,
                 CurrentMap, CurrentMap.Width, CurrentMap.Height, false);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Statics saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Statics saved successfully.");
         }
 
         private void OnClickDefragRemoveStatics(object sender, EventArgs e)
@@ -1117,7 +1117,7 @@ namespace UoFiddler.Controls.UserControls
             Map.DefragStatics(Options.OutputPath,
                 CurrentMap, CurrentMap.Width, CurrentMap.Height, true);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Statics saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Statics saved successfully.");
         }
 
         private void OnResizeMap(object sender, EventArgs e)
@@ -1158,8 +1158,7 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             CurrentMap.ReportInvalidMapIDs(Options.OutputPath);
             Cursor.Current = Cursors.Default;
-            MessageBox.Show($"Report saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
         }
 
         private MapReplaceForm _showForm;

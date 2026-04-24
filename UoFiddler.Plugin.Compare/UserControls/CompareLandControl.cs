@@ -18,6 +18,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.Compare.Classes;
 
@@ -263,8 +264,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) 0x{i:X}.bmp");
             SecondArt.GetLand(i).Save(fileName, ImageFormat.Bmp);
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
 
         private void ExportAsTiff(object sender, EventArgs e)
@@ -283,8 +284,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) 0x{i:X}.tiff");
             SecondArt.GetLand(i).Save(fileName, ImageFormat.Tiff);
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved",
-                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
 
         private void BrowseOnClick(object sender, EventArgs e)

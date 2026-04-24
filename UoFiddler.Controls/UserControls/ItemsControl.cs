@@ -836,8 +836,7 @@ namespace UoFiddler.Controls.UserControls
 
                 Cursor.Current = Cursors.Default;
 
-                MessageBox.Show($"All items saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All items saved successfully.");
             }
         }
 

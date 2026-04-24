@@ -474,8 +474,7 @@ namespace UoFiddler.Controls.UserControls
 
             Sounds.SaveSoundListToCsv(fileName, _soundIdOffset);
 
-            MessageBox.Show($"SoundList saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            FileSavedDialog.Show(FindForm(), fileName, "SoundList saved successfully.");
         }
 
         public bool SearchId(int id)

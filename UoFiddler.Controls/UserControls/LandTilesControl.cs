@@ -665,8 +665,7 @@ namespace UoFiddler.Controls.UserControls
 
                 Cursor.Current = Cursors.Default;
 
-                MessageBox.Show($"All land tiles saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All land tiles saved successfully.");
             }
         }
 
