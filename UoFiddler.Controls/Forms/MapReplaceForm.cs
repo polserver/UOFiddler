@@ -157,31 +157,26 @@ namespace UoFiddler.Controls.Forms
 
             if (checkBoxMap.Checked)
             {
-                string copyMap = Path.Combine(path, $"map{replaceMap.Id}.mul");
-                if (!File.Exists(copyMap))
+                string copyMapMul = Path.Combine(path, $"map{replaceMap.Id}.mul");
+                string copyMapUop = Path.Combine(path, $"map{replaceMap.Id}LegacyMUL.uop");
+                if (!File.Exists(copyMapMul) && !File.Exists(copyMapUop))
                 {
                     MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
                     return;
                 }
 
-                FileStream mMapCopy = new FileStream(copyMap, FileMode.Open, FileAccess.Read, FileShare.Read);
-                BinaryReader mMapReaderCopy = new BinaryReader(mMapCopy);
-                string mapPath = Files.GetFilePath($"map{_workingMap.FileIndex}.mul");
-
-                BinaryReader mMapReader;
-
-                if (mapPath != null)
-                {
-                    FileStream mMap = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    mMapReader = new BinaryReader(mMap);
-                }
-                else
+                string workingMapMul = Files.GetFilePath($"map{_workingMap.FileIndex}.mul");
+                string workingMapUop = Files.GetFilePath($"map{_workingMap.FileIndex}LegacyMUL.uop");
+                if (workingMapMul == null && workingMapUop == null)
                 {
                     MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
                     return;
                 }
+
+                var copyTileMatrix = new TileMatrix(replaceMap.Id, replaceMap.Id, replaceMap.Width, replaceMap.Height, path);
+                var workTileMatrix = new TileMatrix(_workingMap.FileIndex, _workingMap.FileIndex, _workingMap.Width, _workingMap.Height, null);
 
                 string mul = Path.Combine(Options.OutputPath, $"map{_workingMap.FileIndex}.mul");
                 using (FileStream fsMul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -192,35 +187,16 @@ namespace UoFiddler.Controls.Forms
                         {
                             for (int y = 0; y < blockY; ++y)
                             {
-                                if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
-                                {
-                                    mMapReaderCopy.BaseStream.Seek((((x - tox + x1) * blockYReplace) + (y - toy) + y1) * 196, SeekOrigin.Begin);
-                                    int header = mMapReaderCopy.ReadInt32();
-                                    binMul.Write(header);
-                                }
-                                else
-                                {
-                                    mMapReader.BaseStream.Seek(((x * blockY) + y) * 196, SeekOrigin.Begin);
-                                    int header = mMapReader.ReadInt32();
-                                    binMul.Write(header);
-                                }
-                                for (int i = 0; i < 64; ++i)
-                                {
-                                    ushort tileId;
-                                    sbyte z;
+                                bool inRegion = tox <= x && x <= tox2 && toy <= y && y <= toy2;
+                                Tile[] tiles = inRegion
+                                    ? copyTileMatrix.GetLandBlock(x - tox + x1, y - toy + y1, false)
+                                    : workTileMatrix.GetLandBlock(x, y, false);
 
-                                    if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
-                                    {
-                                        tileId = mMapReaderCopy.ReadUInt16();
-                                        z = mMapReaderCopy.ReadSByte();
-                                    }
-                                    else
-                                    {
-                                        tileId = mMapReader.ReadUInt16();
-                                        z = mMapReader.ReadSByte();
-                                    }
-
-                                    tileId = Art.GetLegalItemId(tileId);
+                                binMul.Write(0); // 4-byte block header
+                                foreach (Tile tile in tiles)
+                                {
+                                    ushort tileId = Art.GetLegalItemId(tile.Id);
+                                    sbyte z = tile.Z;
 
                                     if (z < -128)
                                     {
@@ -241,8 +217,8 @@ namespace UoFiddler.Controls.Forms
                     }
                 }
 
-                mMapReader.Close();
-                mMapReaderCopy.Close();
+                copyTileMatrix.CloseStreams();
+                workTileMatrix.CloseStreams();
             }
 
             if (checkBoxStatics.Checked)
