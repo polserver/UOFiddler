@@ -118,7 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.19.0
+    <value>Version 4.19.1
+- UopPacker: added save support for MultiCollection.uop (including housing.bin) and refreshed the plugin UI.
+- Map copy/replace dialog now supports UOP map files. #105
+- Added "Replace from folder" bulk action for Items and Land Tiles tabs. #102
+- More controls now use the unified File Saved dialog (with Open Folder shortcut) when saving.
+- Animation editor remembers the selected file filter when adding new frames. #82
+
+Version 4.19.0
 - Added support for previewing contents of animations in anim6.mul and AnimationFrame1-6.uop (no export or edit option for uop yet).
 - Fixed possible crash and slowdown during tiledata CSV import from newer client to older client.
 - More preview boxes now support change background color and use background color set in Options.
