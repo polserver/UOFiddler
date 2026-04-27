@@ -16,6 +16,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -35,7 +37,12 @@ namespace UoFiddler.Controls.UserControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             // TODO can this be moved into the control itself?
             listView1.Height += SystemInformation.HorizontalScrollBarHeight;
+            // Add handlers for new context menu items
+            packFramesToolStripMenuItem.Click += OnPackFramesClick;
+            unpackFramesToolStripMenuItem.Click += OnUnpackFramesClick;
+            bulkUnpackFramesToolStripMenuItem.Click += OnBulkUnpackFramesClick;
         }
+
 
         public string[][] GetActionNames { get; } = {
             // Monster
@@ -1037,57 +1044,730 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
             ShowFrameBoundsCheckBox.Checked = MainPictureBox.ShowFrameBounds;
         }
-    }
 
-    public class AlphaSorter : IComparer
-    {
-        public int Compare(object x, object y)
+        private async void OnPackFramesClick(object? sender, EventArgs e)
         {
-            TreeNode tx = x as TreeNode;
-            TreeNode ty = y as TreeNode;
-            if (tx.Parent == null) // don't change Mob and Equipment
+            if (_currentSelect == 0)
             {
-                return (int)tx.Tag == -1 ? -1 : 1;
-            }
-            if (tx.Parent.Parent != null)
-            {
-                return (int)tx.Tag - (int)ty.Tag;
+                MessageBox.Show("No graphic selected.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
 
-            return string.CompareOrdinal(tx.Text, ty.Text);
+            // show pack options dialog
+            using var optionsForm = new PackOptionsForm();
+            if (optionsForm.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var selectedDirections = optionsForm.SelectedDirections; // list<int>
+            int maxWidth = optionsForm.MaxWidth;
+            bool oneRowPerDirection = optionsForm.OneRowPerDirection;
+            int spacing = optionsForm.FrameSpacing;
+            bool exportAll = optionsForm.ExportAllAnimations;
+
+            // Ask for output base name/location
+            using (var dlg = new FolderBrowserDialog())
+            {
+                dlg.Description = "Select folder to save packed sprite and JSON";
+                dlg.ShowNewFolderButton = true;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                string outDir = dlg.SelectedPath;
+
+                try
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    if (exportAll)
+                    {
+                        int exportedCount = 0;
+                        TreeNode? bodyNode = null;
+
+                        // Find the body node based on current selection
+                        if (TreeViewMobs.SelectedNode != null)
+                        {
+                            if (TreeViewMobs.SelectedNode.Tag is int[]) // It's a body node
+                            {
+                                bodyNode = TreeViewMobs.SelectedNode;
+                            }
+                            else if (TreeViewMobs.SelectedNode.Parent != null && TreeViewMobs.SelectedNode.Parent.Tag is int[]) // It's an action node
+                            {
+                                bodyNode = TreeViewMobs.SelectedNode.Parent;
+                            }
+                        }
+
+                        if (bodyNode != null)
+                        {
+                            foreach (TreeNode node in bodyNode.Nodes)
+                            {
+                                if (node.Tag is int action)
+                                {
+                                    var result = PackSingleAnimation(outDir, _currentSelect, action, selectedDirections, maxWidth, oneRowPerDirection, spacing);
+                                    if (result != null && result.Count > 0)
+                                    {
+                                        exportedCount++;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Fallback if tree node structure is unexpected (shouldn't happen if _currentSelect is valid)
+                            // Try to export just the current action or maybe a small range? 
+                            // But better to warn or just do nothing if we can't find the nodes.
+                            MessageBox.Show("Could not determine animation list from selection.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+
+                        if (exportedCount == 0)
+                        {
+                            MessageBox.Show("No animations found to export.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Exported {exportedCount} animations.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    else
+                    {
+                        var result = PackSingleAnimation(outDir, _currentSelect, _currentSelectAction, selectedDirections, maxWidth, oneRowPerDirection, spacing);
+                        if (result != null && result.Count > 0)
+                        {
+                            string msg = $"Saved sprite: {result[0]}\nSaved JSON: {result[1]}";
+                            if (result.Count > 2)
+                            {
+                                msg += $"\nSaved Info: {result[2]}";
+                            }
+                            MessageBox.Show(msg, "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("No frames found to pack.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to pack frames: {ex.Message}", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
+                }
+            }
         }
-    }
 
-    public class GraphicSorter : IComparer
-    {
-        public int Compare(object x, object y)
+        private List<string>? PackSingleAnimation(string outDir, int body, int action, List<int> selectedDirections, int maxWidth, bool oneRowPerDirection, int spacing)
         {
-            TreeNode tx = x as TreeNode;
-            TreeNode ty = y as TreeNode;
-            if (tx.Parent == null)
+            // Collect frames for directions 0..4 (common editable directions)
+            var packedFrames = new List<PackedFrameEntry>();
+            var images = new List<Bitmap>();
+
+            int currentX = spacing, currentY = spacing, rowHeight = 0, canvasWidth = 0, canvasHeight = 0;
+            var rowMapping = new System.Text.StringBuilder();
+            int rowIndex = 0;
+
+            foreach (int dir in selectedDirections)
             {
-                return (int)tx.Tag == -1 ? -1 : 1;
+                int localHue = 0;
+                var frames = Animations.GetAnimation(body, action, dir, ref localHue, false, false);
+                if (frames == null || frames.Length == 0)
+                {
+                    continue;
+                }
+
+                if (oneRowPerDirection)
+                {
+                    if (currentX > spacing)
+                    {
+                        currentY += rowHeight + spacing;
+                        currentX = spacing;
+                        rowHeight = 0;
+                    }
+                    rowMapping.AppendLine($"Row {rowIndex++}: Facing {GetDirectionName(dir)}");
+                }
+
+                for (int fi = 0; fi < frames.Length; fi++)
+                {
+                    var anim = frames[fi];
+                    if (anim?.Bitmap == null)
+                    {
+                        continue;
+                    }
+
+                    // determine size
+                    int w = anim.Bitmap.Width;
+                    int h = anim.Bitmap.Height;
+
+                    if (!oneRowPerDirection && currentX + w > maxWidth)
+                    {
+                        currentY += rowHeight + spacing;
+                        currentX = spacing;
+                        rowHeight = 0;
+                    }
+
+                    if (currentX == spacing)
+                        rowHeight = h;
+                    else
+                        rowHeight = Math.Max(rowHeight, h);
+
+                    var entry = new PackedFrameEntry
+                    {
+                        Direction = dir,
+                        Index = fi,
+                        Frame = new Rect { X = currentX, Y = currentY, W = w, H = h },
+                        Center = new PointStruct { X = anim.Center.X, Y = anim.Center.Y }
+                    };
+
+                    packedFrames.Add(entry);
+
+                    // store image copy
+                    images.Add(new Bitmap(anim.Bitmap));
+
+                    canvasWidth = Math.Max(canvasWidth, currentX + w + spacing); // Include right margin
+                    currentX += w + spacing;
+                    canvasHeight = Math.Max(canvasHeight, currentY + rowHeight + spacing); // Include bottom margin
+                }
             }
 
-            if (tx.Parent.Parent != null)
+            if (images.Count == 0)
             {
-                return (int)tx.Tag - (int)ty.Tag;
+                return null;
             }
 
-            int[] ix = (int[])tx.Tag;
-            int[] iy = (int[])ty.Tag;
-
-            if (ix[0] == iy[0])
+            // Create sprite sheet and paste images
+            using (var sprite = new Bitmap(Math.Max(1, canvasWidth), Math.Max(1, canvasHeight)))
+            using (var g = Graphics.FromImage(sprite))
             {
-                return 0;
+                g.Clear(Color.Transparent);
+
+                for (int i = 0; i < images.Count; i++)
+                {
+                    var img = images[i];
+                    var rect = packedFrames[i].Frame;
+                    g.DrawImage(img, rect.X, rect.Y, rect.W, rect.H);
+                    img.Dispose();
+                }
+
+                string baseName = $"anim_{body}_{action}";
+                string imageFile = Path.Combine(outDir, baseName + ".png");
+                sprite.Save(imageFile, ImageFormat.Png);
+
+                // prepare JSON
+                var outObj = new PackedOutput
+                {
+                    Meta = new PackedMeta { Image = Path.GetFileName(imageFile), Size = new SizeStruct { W = sprite.Width, H = sprite.Height }, Format = "RGBA8888" },
+                    Frames = packedFrames
+                };
+
+                string jsonFile = Path.Combine(outDir, baseName + ".json");
+                var jsOptions = new JsonSerializerOptions { WriteIndented = true };
+                string json = JsonSerializer.Serialize(outObj, jsOptions);
+                File.WriteAllText(jsonFile, json);
+
+                // Generate Debug Image
+                string debugImageFile = Path.Combine(outDir, $"{baseName}_guide.png");
+                AnimationDebugHelper.CreateDebugImage(debugImageFile, sprite, packedFrames);
+
+                var result = new List<string> { imageFile, jsonFile, debugImageFile };
+
+                if (oneRowPerDirection)
+                {
+                    string txtFile = Path.Combine(outDir, baseName + "_rows.txt");
+                    File.WriteAllText(txtFile, rowMapping.ToString());
+                    result.Add(txtFile);
+                }
+
+                return result;
+            }
+        }
+
+        private void OnUnpackFramesClick(object? sender, EventArgs e)
+        {
+            if (_currentSelect == 0)
+            {
+                MessageBox.Show("No graphic selected.", "Unpack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
 
-            if (ix[0] < iy[0])
+            using (var ofd = new OpenFileDialog())
             {
-                return -1;
+                ofd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                ofd.Title = "Select packing JSON file";
+                if (ofd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                string jsonFile = ofd.FileName;
+                try
+                {
+                    UnpackAnimation(jsonFile, _currentSelect, _currentSelectAction, true);
+                    MessageBox.Show("Import finished. Remember to save animations via AnimationEdit.Save if needed.", "Unpack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to unpack/import frames: {ex.Message}", "Unpack Frames", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void OnBulkUnpackFramesClick(object? sender, EventArgs e)
+        {
+            if (_currentSelect == 0)
+            {
+                MessageBox.Show("No graphic selected.", "Bulk Unpack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
 
-            return 1;
+            using (var dlg = new FolderBrowserDialog())
+            {
+                dlg.Description = "Select folder containing exported animations (JSON + PNG)";
+                dlg.ShowNewFolderButton = false;
+
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                string[] jsonFiles = Directory.GetFiles(dlg.SelectedPath, "*.json");
+                if (jsonFiles.Length == 0)
+                {
+                    MessageBox.Show("No JSON files found in selected directory.", "Bulk Unpack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                int importedCount = 0;
+                int errorCount = 0;
+
+                Cursor.Current = Cursors.WaitCursor;
+                try
+                {
+                    // Ask user once for overwrite preference
+                    DialogResult globalChoice = MessageBox.Show(
+                        "Overwrite existing frames for all imported animations?\n\nYes = overwrite\nNo = append\nCancel = abort import",
+                        "Bulk Unpack Frames", MessageBoxButtons.YesNoCancel);
+
+                    if (globalChoice == DialogResult.Cancel)
+                        return;
+
+                    bool overwriteAll = (globalChoice == DialogResult.Yes);
+
+                    foreach (string jsonFile in jsonFiles)
+                    {
+                        // Expected format: anim_{body}_{action}.json
+                        string fileName = Path.GetFileNameWithoutExtension(jsonFile);
+                        string[] parts = fileName.Split('_');
+
+                        if (parts.Length >= 3 && parts[0] == "anim" && int.TryParse(parts[1], out int body) && int.TryParse(parts[2], out int action))
+                        {
+                            // Only import if body matches current selection (optional, but safer)
+                            if (body == _currentSelect)
+                            {
+                                try
+                                {
+                                    UnpackAnimation(jsonFile, body, action, false, overwriteAll);
+                                    importedCount++;
+                                }
+                                catch
+                                {
+                                    errorCount++;
+                                }
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
+                }
+
+                MessageBox.Show($"Bulk import finished.\nImported: {importedCount}\nErrors: {errorCount}\n\nRemember to save animations via AnimationEdit.Save if needed.", "Bulk Unpack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void UnpackAnimation(string jsonFile, int body, int action, bool promptOverwrite, bool overwriteAll = false)
+        {
+            string json = File.ReadAllText(jsonFile);
+            var doc = JsonSerializer.Deserialize<PackedOutput>(json);
+            if (doc == null)
+            {
+                throw new Exception("Invalid JSON file.");
+            }
+
+            string spritePath = Path.Combine(Path.GetDirectoryName(jsonFile) ?? string.Empty, doc.Meta.Image);
+            if (!File.Exists(spritePath))
+            {
+                throw new FileNotFoundException($"Sprite sheet not found: {spritePath}");
+            }
+
+            using (var sprite = new Bitmap(spritePath))
+            {
+                // determine body/fileType for import
+                int bodyTrans = body;
+                Animations.Translate(ref bodyTrans);
+                int fileType = BodyConverter.Convert(ref bodyTrans);
+
+                // Group frames by direction
+                var groups = doc.Frames.GroupBy(f => f.Direction).ToDictionary(g => g.Key, g => g.OrderBy(f => f.Index).ToList());
+
+                if (promptOverwrite)
+                {
+                    // Ask the user once how to handle existing frames
+                    DialogResult globalChoice = MessageBox.Show(
+                        "Overwrite existing frames for all directions?\n\nYes = overwrite\nNo = append\nCancel = abort import",
+                        "Unpack Frames", MessageBoxButtons.YesNoCancel);
+
+                    if (globalChoice == DialogResult.Cancel)
+                        return;
+
+                    overwriteAll = (globalChoice == DialogResult.Yes);
+                }
+
+                // Build palette once 
+                var allRects = doc.Frames.Select(f => new RectangleF(f.Frame.X, f.Frame.Y, f.Frame.W, f.Frame.H)).ToList();
+                var importPalette = BuildPaletteFromFrames(sprite, allRects, alphaThreshold: 4);
+
+                foreach (var kv in groups)
+                {
+                    int dir = kv.Key;
+                    if (dir > 4)
+                    {
+                        continue;
+                    }
+                    var framesList = kv.Value;
+
+                    var animIdx = RequireAnimIdx(fileType, bodyTrans, action, dir);
+
+                    if (overwriteAll) animIdx.ClearFrames();
+
+                    animIdx.ReplacePalette(importPalette); // key for proper color mapping
+
+                    int imported = 0;
+                    foreach (var frameEntry in framesList)
+                    {
+                        var r = frameEntry.Frame;
+                        // bounds guard to avoid GDI+ OutOfMemory on bad rects
+                        if (r.W <= 0 || r.H <= 0 || r.X < 0 || r.Y < 0 ||
+                            r.X + r.W > sprite.Width || r.Y + r.H > sprite.Height)
+                            continue;
+
+                        using (var bit16 = Extract1555Region(sprite, new Rectangle(r.X, r.Y, r.W, r.H), alphaThreshold: 4))
+                        {
+                            animIdx.AddFrame(bit16, frameEntry.Center.X, frameEntry.Center.Y);
+                        }
+
+                        // light GC throttle for very large imports
+                        if ((++imported & 127) == 0)
+                        {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                        }
+                    }
+                }
+
+                Options.ChangedUltimaClass["Animations"] = true;
+                if (body == _currentSelect)
+                {
+                    CurrentSelect = CurrentSelect;   // this calls SetPicture() and repopulates frames
+                }
+            }
+        }
+
+        // --- Reflection helpers (safe & cached) ---
+        private static ushort[] BuildPaletteFromFrames(Bitmap sprite, IEnumerable<RectangleF> rects, byte alphaThreshold = 4)
+        {
+            var freq = new Dictionary<ushort, int>(capacity: 4096);
+
+            // Lock the whole sprite once (32bpp ARGB)
+            var sheetRect = new Rectangle(0, 0, sprite.Width, sprite.Height);
+            var sData = sprite.LockBits(sheetRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            try
+            {
+                unsafe
+                {
+                    byte* basePtr = (byte*)sData.Scan0;
+                    int stride = sData.Stride;
+
+                    foreach (var rf in rects)
+                    {
+                        var r = Rectangle.Round(rf);
+                        if (r.Width <= 0 || r.Height <= 0) continue;
+                        if (r.X < 0 || r.Y < 0 || r.Right > sprite.Width || r.Bottom > sprite.Height) continue;
+
+                        for (int y = 0; y < r.Height; y++)
+                        {
+                            byte* src = basePtr + (r.Y + y) * stride + r.X * 4;
+                            for (int x = 0; x < r.Width; x++)
+                            {
+                                byte b = src[0], g = src[1], r8 = src[2], a = src[3];
+                                src += 4;
+
+                                if (a <= alphaThreshold) continue; // transparent -> skip
+
+                                ushort col =
+                                    (ushort)(0x8000 | ((r8 >> 3) << 10) | ((g >> 3) << 5) | (b >> 3)); // A1R5G5B5
+
+                                if (freq.TryGetValue(col, out int n)) freq[col] = n + 1;
+                                else freq[col] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                sprite.UnlockBits(sData);
+            }
+
+            var palette = new ushort[256];
+            int i = 0;
+            foreach (var kv in freq.OrderByDescending(kv => kv.Value).Take(256))
+                palette[i++] = kv.Key;
+
+            return palette;
+        }
+
+        private static Bitmap Extract1555Region(Bitmap sprite, Rectangle rect, byte alphaThreshold = 4)
+        {
+            // Bounds guard
+            if (rect.Width <= 0 || rect.Height <= 0) throw new ArgumentException("Empty region.");
+            if (rect.X < 0 || rect.Y < 0 || rect.Right > sprite.Width || rect.Bottom > sprite.Height)
+                throw new ArgumentOutOfRangeException(nameof(rect), "Region outside sprite bounds.");
+
+            // Dest: 16bpp A1R5G5B5
+            Bitmap dst16 = new Bitmap(rect.Width, rect.Height, PixelFormat.Format16bppArgb1555);
+
+            var sheetRect = new Rectangle(0, 0, sprite.Width, sprite.Height);
+            var sData = sprite.LockBits(sheetRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            var dData = dst16.LockBits(new Rectangle(0, 0, rect.Width, rect.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            try
+            {
+                unsafe
+                {
+                    byte* sBase = (byte*)sData.Scan0;
+                    int sStride = sData.Stride;
+
+                    byte* dBase = (byte*)dData.Scan0;
+                    int dStride = dData.Stride;
+
+                    for (int y = 0; y < rect.Height; y++)
+                    {
+                        byte* sp = sBase + (rect.Y + y) * sStride + rect.X * 4;
+                        ushort* dp = (ushort*)(dBase + y * dStride);
+
+                        for (int x = 0; x < rect.Width; x++)
+                        {
+                            byte b = sp[0], g = sp[1], r = sp[2], a = sp[3];
+                            sp += 4;
+
+                            if (a <= alphaThreshold)
+                                dp[x] = 0; // transparent
+                            else
+                                dp[x] = (ushort)(0x8000 | ((r >> 3) << 10) | ((g >> 3) << 5) | (b >> 3));
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                sprite.UnlockBits(sData);
+                dst16.UnlockBits(dData);
+            }
+
+            return dst16;
+        }
+
+        private static Bitmap ToArgb1555From32(Bitmap src32, byte alphaThreshold = 8)
+        {
+            if (src32.PixelFormat != PixelFormat.Format32bppArgb)
+                throw new ArgumentException("src32 must be 32bpp ARGB.", nameof(src32));
+
+            int w = src32.Width, h = src32.Height;
+            var rect = new Rectangle(0, 0, w, h);
+            Bitmap dst16 = new Bitmap(w, h, PixelFormat.Format16bppArgb1555);
+
+            var sData = src32.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            var dData = dst16.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            try
+            {
+                unsafe
+                {
+                    byte* sp = (byte*)sData.Scan0;
+                    byte* dp = (byte*)dData.Scan0;
+                    int sStride = sData.Stride, dStride = dData.Stride;
+
+                    for (int y = 0; y < h; y++)
+                    {
+                        byte* sRow = sp + y * sStride;
+                        ushort* dRow = (ushort*)(dp + y * dStride);
+                        for (int x = 0; x < w; x++)
+                        {
+                            byte b = sRow[0], g = sRow[1], r = sRow[2], a = sRow[3];
+                            if (a <= alphaThreshold)
+                            {
+                                dRow[x] = 0; // A=0 transparent
+                            }
+                            else
+                            {
+                                ushort A = 0x8000;
+                                ushort R = (ushort)((r >> 3) << 10);
+                                ushort G = (ushort)((g >> 3) << 5);
+                                ushort B = (ushort)(b >> 3);
+                                dRow[x] = (ushort)(A | R | G | B);
+                            }
+                            sRow += 4;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                src32.UnlockBits(sData);
+                dst16.UnlockBits(dData);
+            }
+            return dst16;
+        }
+
+
+
+        // Helper types for JSON
+        // Replace the entire EnsureAnimIdx(..) with this:
+        private static AnimIdx RequireAnimIdx(int fileType, int body, int action, int dir)
+        {
+            var anim = AnimationEdit.GetAnimation(fileType, body, action, dir);
+            if (anim == null)
+                throw new InvalidOperationException(
+                    $"Target animation missing (fileType={fileType}, body={body}, action={action}, dir={dir}). " +
+                    "Create the action/direction in Animation Edit first, then re-run the import."
+                );
+            return anim;
+        }
+
+        private static Bitmap UnPremultiply(Bitmap src32)
+
+        {
+            // expects PixelFormat.Format32bppArgb
+            var rect = new Rectangle(0, 0, src32.Width, src32.Height);
+            var data = src32.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            try
+            {
+                Bitmap dst = new Bitmap(src32.Width, src32.Height, PixelFormat.Format32bppArgb);
+                var ddata = dst.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                try
+                {
+                    unsafe
+                    {
+                        byte* sp = (byte*)data.Scan0;
+                        byte* dp = (byte*)ddata.Scan0;
+                        int sw = data.Stride, dw = ddata.Stride;
+                        for (int y = 0; y < src32.Height; y++)
+                        {
+                            byte* srow = sp + y * sw;
+                            byte* drow = dp + y * dw;
+                            for (int x = 0; x < src32.Width; x++)
+                            {
+                                byte b = srow[0], g = srow[1], r = srow[2], a = srow[3];
+                                if (a == 0)
+                                {
+                                    drow[0] = drow[1] = drow[2] = 0; drow[3] = 0;
+                                }
+                                else if (a == 255)
+                                {
+                                    drow[0] = b; drow[1] = g; drow[2] = r; drow[3] = 255;
+                                }
+                                else
+                                {
+                                    // convert from premultiplied to straight alpha
+                                    drow[0] = (byte)Math.Min(255, (b * 255 + (a >> 1)) / a);
+                                    drow[1] = (byte)Math.Min(255, (g * 255 + (a >> 1)) / a);
+                                    drow[2] = (byte)Math.Min(255, (r * 255 + (a >> 1)) / a);
+                                    drow[3] = a;
+                                }
+                                srow += 4; drow += 4;
+                            }
+                        }
+                    }
+                }
+                finally { dst.UnlockBits(ddata); }
+                return dst;
+            }
+            finally { src32.UnlockBits(data); }
+        }
+
+        private string GetDirectionName(int dir)
+        {
+            switch (dir)
+            {
+                case 0: return "South";
+                case 1: return "South West";
+                case 2: return "West";
+                case 3: return "North West";
+                case 4: return "North";
+                case 5: return "North East";
+                case 6: return "East";
+                case 7: return "South East";
+                default: return "Unknown";
+            }
+        }
+
+
+
+        private class AlphaSorter : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                TreeNode tx = x as TreeNode;
+                TreeNode ty = y as TreeNode;
+                if (tx.Parent == null) // don't change Mob and Equipment
+                {
+                    return (int)tx.Tag == -1 ? -1 : 1;
+                }
+                if (tx.Parent.Parent != null)
+                {
+                    return (int)tx.Tag - (int)ty.Tag;
+                }
+
+                return string.CompareOrdinal(tx.Text, ty.Text);
+            }
+        }
+
+        public class GraphicSorter : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                TreeNode tx = x as TreeNode;
+                TreeNode ty = y as TreeNode;
+                if (tx.Parent == null)
+                {
+                    return (int)tx.Tag == -1 ? -1 : 1;
+                }
+
+                if (tx.Parent.Parent != null)
+                {
+                    return (int)tx.Tag - (int)ty.Tag;
+                }
+
+                int[] ix = (int[])tx.Tag;
+                int[] iy = (int[])ty.Tag;
+
+                if (ix[0] == iy[0])
+                {
+                    return 0;
+                }
+
+                if (ix[0] < iy[0])
+                {
+                    return -1;
+                }
+
+                return 1;
+            }
         }
     }
 }
