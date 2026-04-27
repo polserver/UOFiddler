@@ -118,15 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="FileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>155, 17</value>
   </metadata>
   <metadata name="ExtractionStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>347, 17</value>
+    <value>519, 17</value>
   </metadata>
+  <metadata name="compressionTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="compressionBox.ToolTip" xml:space="preserve">
+    <value>Pick the compression that matches the original UOP for the file type:
+  Art / Map / Sound: None
+  Gumpart: None on older clients, Mythic on newer clients (New Legacy 7.0.103)
+  MultiCollection: Zlib
+Picking the wrong option produces a UOP that is much larger than the original or unreadable by the client.
+</value>
+  </data>
+  <data name="compressionLabel.ToolTip" xml:space="preserve">
+    <value>Pick the compression that matches the original UOP for the file type:
+  Art / Map / Sound: None
+  Gumpart: None on older clients, Mythic on newer clients (New Legacy 7.0.103)
+  MultiCollection: Zlib
+Picking the wrong option produces a UOP that is much larger than the original or unreadable by the client.</value>
+  </data>
   <metadata name="MainStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>116, 17</value>
+    <value>261, 17</value>
   </metadata>
   <metadata name="FolderDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>232, 17</value>
+    <value>398, 17</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>25</value>
   </metadata>
 </root>

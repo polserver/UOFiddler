@@ -39,6 +39,8 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UopPackerControl));
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             inmul = new System.Windows.Forms.TextBox();
@@ -85,6 +87,8 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             SelectFolderButton = new System.Windows.Forms.Button();
             ExtractSingleFileTabPage = new System.Windows.Forms.TabPage();
             compressionBox = new System.Windows.Forms.ComboBox();
+            compressionLabel = new System.Windows.Forms.Label();
+            compressionTip = new System.Windows.Forms.ToolTip(components);
             MainStatusStrip = new System.Windows.Forms.StatusStrip();
             toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             guilabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -557,6 +561,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // ExtractSingleFileTabPage
             // 
             ExtractSingleFileTabPage.Controls.Add(compressionBox);
+            ExtractSingleFileTabPage.Controls.Add(compressionLabel);
             ExtractSingleFileTabPage.Controls.Add(label1);
             ExtractSingleFileTabPage.Controls.Add(label2);
             ExtractSingleFileTabPage.Controls.Add(inmul);
@@ -601,13 +606,32 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // compressionBox
             // 
             compressionBox.BackColor = System.Drawing.Color.White;
+            compressionBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             compressionBox.Items.AddRange(new object[] { "None", "Zlib", "Mythic" });
             compressionBox.Location = new System.Drawing.Point(168, 158);
             compressionBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             compressionBox.Name = "compressionBox";
             compressionBox.Size = new System.Drawing.Size(191, 23);
             compressionBox.TabIndex = 8;
-            compressionBox.Text = "None";
+            compressionTip.SetToolTip(compressionBox, resources.GetString("compressionBox.ToolTip"));
+            // 
+            // compressionLabel
+            // 
+            compressionLabel.AutoSize = true;
+            compressionLabel.ForeColor = System.Drawing.SystemColors.GrayText;
+            compressionLabel.Location = new System.Drawing.Point(365, 161);
+            compressionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            compressionLabel.Name = "compressionLabel";
+            compressionLabel.Size = new System.Drawing.Size(20, 15);
+            compressionLabel.TabIndex = 46;
+            compressionLabel.Text = "(?)";
+            compressionTip.SetToolTip(compressionLabel, resources.GetString("compressionLabel.ToolTip"));
+            // 
+            // compressionTip
+            // 
+            compressionTip.AutoPopDelay = 20000;
+            compressionTip.InitialDelay = 400;
+            compressionTip.ReshowDelay = 200;
             // 
             // MainStatusStrip
             // 
@@ -740,6 +764,8 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
         private System.Windows.Forms.ComboBox uoptype;
         private System.Windows.Forms.ToolStripStatusLabel VersionLabel;
         private System.Windows.Forms.ComboBox compressionBox;
+        private System.Windows.Forms.Label compressionLabel;
+        private System.Windows.Forms.ToolTip compressionTip;
         private System.Windows.Forms.TextBox inhousingbin;
         private System.Windows.Forms.Button inhousingbinbtn;
         private System.Windows.Forms.Label labelHousingBin;
