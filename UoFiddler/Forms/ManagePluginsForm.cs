@@ -12,7 +12,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using UoFiddler.Classes;
+using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
 
@@ -20,6 +20,8 @@ namespace UoFiddler.Forms
 {
     public partial class ManagePluginsForm : Form
     {
+        private static readonly ILogger _log = AppLog.For(typeof(ManagePluginsForm));
+
         public ManagePluginsForm()
         {
             InitializeComponent();
@@ -30,7 +32,7 @@ namespace UoFiddler.Forms
                 bool loaded = true;
                 if (plugin.Instance == null)
                 {
-                    FiddlerOptions.Logger.Information("ManagePlugins - creating plugin instance: {Plugin} path: {AssemblyPath}", plugin.Type, plugin.AssemblyPath);
+                    _log.LogInformation("ManagePlugins - creating plugin instance: {Plugin} path: {AssemblyPath}", plugin.Type, plugin.AssemblyPath);
                     plugin.CreateInstance();
                     loaded = false;
                 }
@@ -75,7 +77,7 @@ namespace UoFiddler.Forms
                 {
                     if (checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
                     {
-                        FiddlerOptions.Logger.Information("ManagePlugins - adding plugin to profile: {Plugin}", plug.Type.ToString());
+                        _log.LogInformation("ManagePlugins - adding plugin to profile: {Plugin}", plug.Type.ToString());
                         Options.PluginsToLoad.Add(plug.Type.ToString());
                     }
 
@@ -85,7 +87,7 @@ namespace UoFiddler.Forms
                 {
                     if (!checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
                     {
-                        FiddlerOptions.Logger.Information("ManagePlugins - removing plugin from profile: {Plugin}", plug.Type.ToString());
+                        _log.LogInformation("ManagePlugins - removing plugin from profile: {Plugin}", plug.Type.ToString());
                         Options.PluginsToLoad.Remove(plug.Type.ToString());
                     }
                 }

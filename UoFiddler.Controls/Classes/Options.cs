@@ -12,22 +12,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using Serilog;
 
 namespace UoFiddler.Controls.Classes
 {
     public static class Options
     {
-        /// <summary>
-        /// Logger instance
-        /// </summary>
-        public static ILogger Logger { get; private set; }
-
-        public static void SetLogger(ILogger logger)
-        {
-            Logger = logger;
-        }
-
         /// <summary>
         /// Defines Element Width in ItemShow
         /// </summary>

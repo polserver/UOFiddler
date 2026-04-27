@@ -14,12 +14,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using Microsoft.Extensions.Logging;
 using Ultima;
 
 namespace UoFiddler.Controls.Classes
 {
     public static class DynamicItemsConfig
     {
+        private static readonly ILogger _log = AppLog.For(typeof(DynamicItemsConfig));
         private static bool _loaded;
 
         public static void EnsureLoaded()
@@ -33,7 +35,7 @@ namespace UoFiddler.Controls.Classes
             string path = Path.Combine(Options.AppDataPath, "DynamicItems.xml");
             if (!File.Exists(path))
             {
-                Options.Logger?.Warning("DynamicItems.xml not found at {Path}", path);
+                _log.LogWarning("DynamicItems.xml not found at {Path}", path);
                 return;
             }
 

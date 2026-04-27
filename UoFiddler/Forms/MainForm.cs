@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
 using Ultima;
 using Ultima.Helpers;
 using UoFiddler.Classes;
@@ -41,8 +42,13 @@ namespace UoFiddler.Forms
         private const int WM_LBUTTONUP   = 0x0202;
         private const int MK_LBUTTON     = 0x0001;
 
-        public MainForm()
+        private readonly ILogger<MainForm> _log;
+
+        public MainForm() : this(AppLog.For<MainForm>()) { }
+
+        public MainForm(ILogger<MainForm> logger)
         {
+            _log = logger;
             InitializeComponent();
 
             if (FiddlerOptions.StoreFormState)
@@ -461,7 +467,7 @@ namespace UoFiddler.Forms
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
-            FiddlerOptions.Logger.Information("MainForm - OnClosing - start");
+            _log.LogInformation("MainForm - OnClosing - start");
             string files = Options.ChangedUltimaClass
                                     .Where(key => key.Value)
                                     .Aggregate(string.Empty, (current, key) => current + $"- {key.Key} \r\n");
@@ -483,10 +489,10 @@ namespace UoFiddler.Forms
             FiddlerOptions.FormPosition = Location;
             FiddlerOptions.FormSize = Size;
 
-            FiddlerOptions.Logger.Information("MainForm - OnClosing - unloading plugins");
+            _log.LogInformation("MainForm - OnClosing - unloading plugins");
             GlobalPlugins.Plugins.ClosePlugins();
 
-            FiddlerOptions.Logger.Information("MainForm - OnClosing - done");
+            _log.LogInformation("MainForm - OnClosing - done");
         }
 
         private static bool IsOkFormStateLocation(Point loc, Size size)

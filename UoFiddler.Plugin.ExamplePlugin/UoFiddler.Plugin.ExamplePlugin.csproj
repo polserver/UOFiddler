@@ -21,9 +21,6 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="Serilog" Version="4.3.1" />
-	</ItemGroup>
-	<ItemGroup>
 		<Compile Update="Forms\ExampleForm.cs">
 			<SubType>Form</SubType>
 		</Compile>

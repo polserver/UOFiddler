@@ -2,11 +2,15 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Classes
 {
     internal static class UpdateRunner
     {
+        private static readonly ILogger _log = AppLog.For(typeof(UpdateRunner));
+
         public static async Task RunAsync(string repositoryOwner, string repositoryName, Version currentVersion, bool upToDateNotification = true)
         {
             const string updateCheckCaption = "Check for update";
@@ -51,7 +55,7 @@ namespace UoFiddler.Classes
                     MessageBox.Show("Update check failed. Check application log for details.", updateCheckCaption);
                 }
 
-                FiddlerOptions.Logger.Error(ex, "Update check failed");
+                _log.LogError(ex, "Update check failed");
             }
         }
     }

@@ -12,7 +12,7 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
@@ -481,9 +481,9 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
         private static void LogConverterError(Exception ex, string operation, string input, string output, FileType type)
         {
-            ILogger logger = Options.Logger;
+            ILogger logger = AppLog.For(typeof(UopPackerControl));
 
-            logger?.Error(ex, "UopPacker {Operation} failed (type={FileType}, input={Input}, output={Output})",
+            logger.LogError(ex, "UopPacker {Operation} failed (type={FileType}, input={Input}, output={Output})",
                 operation, type, input, output);
         }
 

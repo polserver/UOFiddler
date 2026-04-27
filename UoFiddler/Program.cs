@@ -1,9 +1,9 @@
 /***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using UoFiddler.Forms;
 
@@ -29,7 +30,7 @@ namespace UoFiddler
             string fiddlerAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UoFiddler");
             string logFileName = Path.Combine(fiddlerAppDataPath, "log", "uo-fiddler-log.txt");
 
-            var logger = new LoggerConfiguration()
+            var serilogLogger = new LoggerConfiguration()
                                 .MinimumLevel.Information()
                                 .WriteTo.File(logFileName,
                                               fileSizeLimitBytes: 44040192,
@@ -37,21 +38,25 @@ namespace UoFiddler
                                               rollOnFileSizeLimit: true)
                                 .CreateLogger();
 
-            logger.Information("UOFiddler - Application start");
+            serilogLogger.Information("UOFiddler - Application start");
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+            var services = new ServiceCollection();
+            services.AddLogging(b => b.AddSerilog(serilogLogger, dispose: true));
+            using var serviceProvider = services.BuildServiceProvider();
+
             try
             {
-                FiddlerAppContext fiddlerAppContext = new FiddlerAppContext(logger);
+                FiddlerAppContext fiddlerAppContext = new FiddlerAppContext(serviceProvider);
                 Application.Run(fiddlerAppContext);
             }
             catch (Exception err)
             {
                 Clipboard.SetDataObject(err.ToString(), true);
-                logger.Fatal(err, "UOFiddler - unhandled exception caught!");
+                serilogLogger.Fatal(err, "UOFiddler - unhandled exception caught!");
                 Application.Run(new ExceptionForm(err));
-                logger.Fatal("UOFiddler - unhandled exception - Application exit");
+                serilogLogger.Fatal("UOFiddler - unhandled exception - Application exit");
             }
         }
     }
