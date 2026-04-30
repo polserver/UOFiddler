@@ -36,12 +36,16 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Validates if a static bitmap will fit within the MUL format limits.
-        /// The format uses 16-bit lookup table offsets, limiting total encoded data to ~65,535 ushorts.
+        /// Validates if a static bitmap will fit within the MUL format limits by computing
+        /// the exact encoded size. The format uses 16-bit lookup table offsets, limiting total
+        /// encoded data to 65,535 ushorts. A pixel is considered opaque when its alpha bit
+        /// (0x8000) is set in 16bppArgb1555 — callers that want pure-black/white treated as
+        /// transparent must run the bitmap through Utils.ConvertBmp first (mirrors the save path).
+        /// Per-row encoded cost: 2 ushorts header per opaque run + 1 ushort per opaque pixel + 2 end markers.
         /// </summary>
         /// <param name="bmp">The bitmap to validate</param>
-        /// <param name="estimatedSize">Estimated size in ushorts (output)</param>
-        /// <returns>True if the image should fit, false if it exceeds limits</returns>
+        /// <param name="estimatedSize">Encoded size in ushorts (output)</param>
+        /// <returns>True if the image fits, false if it exceeds limits</returns>
         public static unsafe bool ValidateStaticSize(Bitmap bmp, out int estimatedSize)
         {
             estimatedSize = 0;
@@ -50,14 +54,48 @@ namespace Ultima
                 return true;
             }
 
-            // Estimate worst case: each scanline has full width of visible pixels
-            // Format: 2 ushorts for offset/run + width ushorts for data + 2 ushorts for end markers per line
-            int maxUshortsPerLine = 4 + bmp.Width;
-            estimatedSize = bmp.Height * maxUshortsPerLine;
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
 
-            // The lookup table uses 16-bit offsets, so we're limited to 65535 ushorts
+            int total = 0;
+            try
+            {
+                var line = (ushort*)bd.Scan0;
+                int delta = bd.Stride >> 1;
+
+                for (int y = 0; y < bmp.Height; ++y, line += delta)
+                {
+                    ushort* cur = line;
+                    int x = 0;
+                    while (x < bmp.Width)
+                    {
+                        while (x < bmp.Width && (cur[x] & 0x8000) == 0)
+                        {
+                            ++x;
+                        }
+                        if (x >= bmp.Width)
+                        {
+                            break;
+                        }
+
+                        int runStart = x;
+                        while (x < bmp.Width && (cur[x] & 0x8000) != 0)
+                        {
+                            ++x;
+                        }
+                        total += 2 + (x - runStart);
+                    }
+                    total += 2;
+                }
+            }
+            finally
+            {
+                bmp.UnlockBits(bd);
+            }
+
+            estimatedSize = total;
+
             const int maxUshorts = 65535;
-
             return estimatedSize <= maxUshorts;
         }
 

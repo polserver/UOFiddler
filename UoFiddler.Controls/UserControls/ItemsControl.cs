@@ -519,11 +519,11 @@ namespace UoFiddler.Controls.UserControls
                         MessageBox.Show(
                             $"Image is too large for MUL format!\n\n" +
                             $"Image dimensions: {bitmap.Width}x{bitmap.Height}\n" +
-                            $"Estimated encoded size: {estimatedSize:N0} ushorts\n" +
+                            $"Encoded size: {estimatedSize:N0} ushorts\n" +
                             $"Maximum allowed: 65,535 ushorts\n\n" +
-                            $"Recommended maximum for solid color images: ~254x254 pixels\n" +
-                            $"Images with transparency can be larger.\n\n" +
-                            $"Please use a smaller image.",
+                            $"The static art format encodes opaque pixel runs only; cost per row is\n" +
+                            $"2 ushorts per run + 1 ushort per opaque pixel + 2 end markers.\n" +
+                            $"Reduce the image size or the amount of opaque content.",
                             "Image Too Large",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
