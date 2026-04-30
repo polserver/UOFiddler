@@ -118,7 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.19.1
+    <value>Version 4.19.2
+- Fix validation when adding and replacing images in Items and Land tiles tabs.
+- Added tooltips explaining compression settings in UopPacker plugin.
+- Minor fixes to internal logger construction.
+
+Version 4.19.1
 - UopPacker: added save support for MultiCollection.uop (including housing.bin) and refreshed the plugin UI.
 - Map copy/replace dialog now supports UOP map files. #105
 - Added "Replace from folder" bulk action for Items and Land Tiles tabs. #102
