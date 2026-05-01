@@ -31,7 +31,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 {
                     var colors = new ushort[fs.Length / 2];
                     var buffer = new byte[(int)fs.Length];
-                    fs.Read(buffer, 0, (int)fs.Length);
+                    fs.ReadExactly(buffer, 0, (int)fs.Length);
                     GCHandle gc = GCHandle.Alloc(colors, GCHandleType.Pinned);
                     Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)fs.Length);
                     gc.Free();
