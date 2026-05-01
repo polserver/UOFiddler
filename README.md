@@ -14,7 +14,7 @@ Starting from version 4.20.0:
 - You can download .NET 10.0 at: <https://dotnet.microsoft.com/en-us/download/dotnet/10.0>
 - Minimum supported Windows version is Windows 10.
 
-Versions between version 4.11.0 and 4.19.4:
+Versions between 4.11.0 and 4.19.4:
 
 - Requires .NET Desktop Runtime 8.0.x (or SDK) installed to run the application.
 - You can download .NET 8.0 at: <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>
