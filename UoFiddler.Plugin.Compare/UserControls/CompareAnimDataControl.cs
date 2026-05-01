@@ -23,6 +23,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (Options.DarkMode)
+            {
+                legendSwatchDifferent.BackColor = Color.CornflowerBlue;
+            }
             PopulateOrgList();
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
         }
@@ -101,7 +105,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                 if (inOrg && inSec && !Compare(id))
                 {
-                    return Brushes.Blue;
+                    return Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue;
                 }
             }
 

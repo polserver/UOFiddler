@@ -29,7 +29,7 @@ namespace UoFiddler.Controls.Forms
             TopMost = true;
             _type = type;
             _font = font;
-            pictureBox1.BackColor = Color.White;
+            pictureBox1.BackColor = Options.DarkMode ? Color.LightGray : Color.White;
             Text = _type == 1
                 ? $"Unicode Font: {font}"
                 : $"ASCII Font: {font}";

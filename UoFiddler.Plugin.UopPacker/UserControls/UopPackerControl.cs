@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
@@ -54,7 +55,43 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             RefreshMulTypeUi();
             RefreshUopTypeUi();
 
+            ApplyDarkModeIfNeeded();
+
             Dock = DockStyle.Fill;
+        }
+
+        private void ApplyDarkModeIfNeeded()
+        {
+            if (!Options.DarkMode)
+            {
+                return;
+            }
+
+            Color tabBg = Color.FromArgb(32, 32, 32);
+            ExtractAllFilesTabPage.UseVisualStyleBackColor = false;
+            ExtractAllFilesTabPage.BackColor = tabBg;
+            ExtractSingleFileTabPage.UseVisualStyleBackColor = false;
+            ExtractSingleFileTabPage.BackColor = tabBg;
+
+            // Reset hardcoded white BackColors so dark mode visual styles apply.
+            TextBox[] whiteTextBoxes =
+            {
+                inmul, inidx, inhousingbin, outuopfolder, inuop, outfolder, inputfolder
+            };
+            foreach (var tb in whiteTextBoxes)
+            {
+                tb.BackColor = SystemColors.Window;
+            }
+
+            multype.BackColor = SystemColors.Window;
+            uoptype.BackColor = SystemColors.Window;
+            mulMapIndex.BackColor = SystemColors.Window;
+            uopMapIndex.BackColor = SystemColors.Window;
+            packAllGumpCompressionBox.BackColor = SystemColors.Window;
+            packAllHousingBin.BackColor = SystemColors.Window;
+            compressionBox.BackColor = SystemColors.Window;
+
+            statustext.ForeColor = Color.OrangeRed;
         }
 
         private void OnPackAllModeChanged(object sender, EventArgs e) => UpdatePackAllCompressionVisibility();

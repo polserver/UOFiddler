@@ -162,7 +162,7 @@ namespace UoFiddler.Controls.UserControls
                 int hueDisplayIndex = hue.Index + (IndexOffsetButton.Checked ? 1 : 0);
 
                 e.Graphics.DrawString(
-                    $"{hueDisplayIndex,-5} {$"(0x{hueDisplayIndex:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                    $"{hueDisplayIndex,-5} {$"(0x{hueDisplayIndex:X})",-7} {hue.Name}", Font, SystemBrushes.ControlText, stringRect);
 
                 for (int i = 0; i < hue.Colors.Length; ++i)
                 {

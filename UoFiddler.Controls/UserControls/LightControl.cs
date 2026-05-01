@@ -54,6 +54,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            pictureBoxPreview.BackColor = Options.DarkMode ? Color.LightGray : Color.White;
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Light"] = true;
 

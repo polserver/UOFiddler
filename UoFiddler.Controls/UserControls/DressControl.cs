@@ -975,15 +975,15 @@ namespace UoFiddler.Controls.UserControls
 
                     if (Array.IndexOf(_drawOrder, TileData.ItemTable[i].Quality) == -1)
                     {
-                        node.ForeColor = Color.DarkRed;
+                        node.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.DarkRed;
                     }
                     else if (!hasAnimation)
                     {
-                        node.ForeColor = !hasGump ? Color.Red : Color.Orange;
+                        node.ForeColor = !hasGump ? Options.DarkMode ? Color.OrangeRed : Color.Red : Color.Orange;
                     }
                     else if (!hasGump)
                     {
-                        node.ForeColor = Color.Blue;
+                        node.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
                     }
 
                     treeViewItems.Nodes.Add(node);

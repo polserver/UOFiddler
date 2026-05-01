@@ -48,7 +48,7 @@ namespace UoFiddler
 
             try
             {
-                FiddlerAppContext fiddlerAppContext = new FiddlerAppContext(serviceProvider);
+                FiddlerAppContext fiddlerAppContext = new(serviceProvider);
                 Application.Run(fiddlerAppContext);
             }
             catch (Exception err)

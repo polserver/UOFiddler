@@ -670,8 +670,35 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// <summary>
         /// Load of UserControl
         /// </summary>
+        private void ApplyDarkModeIfNeeded()
+        {
+            if (Options.DarkMode)
+            {
+                Color tabBg = Color.FromArgb(32, 32, 32);
+                TabPage[] tabPages = { tileTab, designTab, importTab, Save };
+                foreach (var tp in tabPages)
+                {
+                    tp.UseVisualStyleBackColor = false;
+                    tp.BackColor = tabBg;
+                }
+
+                pictureBoxDrawTiles.BackColor = Color.LightGray;
+            }
+
+            ApplyPreviewBackgroundColor();
+            ControlEvents.PreviewBackgroundColorChangeEvent += ApplyPreviewBackgroundColor;
+        }
+
+        private void ApplyPreviewBackgroundColor()
+        {
+            pictureBoxMulti.BackColor = Options.PreviewBackgroundColor;
+            pictureBoxMulti.Invalidate();
+        }
+
         private void OnLoad(object sender, EventArgs e)
         {
+            ApplyDarkModeIfNeeded();
+
             Options.LoadedUltimaClass["TileData"] = true;
             Options.LoadedUltimaClass["Art"] = true;
             Options.LoadedUltimaClass["Multis"] = true;
@@ -1277,7 +1304,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         /// </summary>
         private void PictureBoxMultiOnPaint(object sender, PaintEventArgs e)
         {
-            e.Graphics.Clear(Color.White);
+            e.Graphics.Clear(pictureBoxMulti.BackColor);
 
             if (_compList == null)
             {
@@ -1983,7 +2010,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         private void PictureBoxDrawTiles_OnPaint(object sender, PaintEventArgs e)
         {
-            e.Graphics.Clear(Color.White);
+            e.Graphics.Clear(pictureBoxDrawTiles.BackColor);
 
             for (int y = 0; y < _pictureBoxDrawTilesRow; ++y)
             {

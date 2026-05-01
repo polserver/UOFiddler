@@ -87,7 +87,6 @@ namespace UoFiddler.Controls.UserControls
             splitContainer2.SuspendLayout();
             groupBox1.SuspendLayout();
             statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)MainPictureBox).BeginInit();
             contextMenuStripMainPictureBox.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -504,7 +503,6 @@ namespace UoFiddler.Controls.UserControls
             groupBox1.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)MainPictureBox).EndInit();
             contextMenuStripMainPictureBox.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             groupBox4.ResumeLayout(false);

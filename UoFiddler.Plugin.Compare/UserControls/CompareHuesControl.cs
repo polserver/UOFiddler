@@ -87,7 +87,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
                     else if (!Compare(index))
                     {
-                        g.FillRectangle(Brushes.Red, rect);
+                        g.FillRectangle(Options.DarkMode ? Brushes.OrangeRed : Brushes.Red, rect);
                     }
                     else
                     {
@@ -97,7 +97,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     float size = (float)(pictureBox1.Width - 200) / 32;
                     Hue hue = Hues.List[index];
                     Rectangle stringRect = new Rectangle(3, y * _itemHeight, pictureBox1.Width, _itemHeight);
-                    g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, Brushes.Black, stringRect);
+                    g.DrawString($"{hue.Index + 1,-5} {$"(0x{hue.Index + 1:X})",-7} {hue.Name}", Font, SystemBrushes.ControlText, stringRect);
 
                     for (int i = 0; i < hue.Colors.Length; i++)
                     {
@@ -134,7 +134,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
                     else if (!Compare(index))
                     {
-                        g.FillRectangle(Brushes.Red, rect);
+                        g.FillRectangle(Options.DarkMode ? Brushes.OrangeRed : Brushes.Red, rect);
                     }
                     else
                     {

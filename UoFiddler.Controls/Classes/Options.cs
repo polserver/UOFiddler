@@ -38,6 +38,11 @@ namespace UoFiddler.Controls.Classes
         public static bool PolSoundIdOffset { get; set; }
 
         /// <summary>
+        /// Runtime flag set from AppSettings at startup. Not persisted in profiles.
+        /// </summary>
+        public static bool DarkMode { get; set; }
+
+        /// <summary>
         /// Defines the cmd to Send Client to Loc
         /// </summary>
         public static string MapCmd { get; set; } = ".goforce";

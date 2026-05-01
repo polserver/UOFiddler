@@ -9,7 +9,9 @@
  *
  ***************************************************************************/
 
+using System.Drawing;
 using System.Windows.Forms;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Plugin.MultiEditor.Forms
 {
@@ -23,42 +25,51 @@ namespace UoFiddler.Plugin.MultiEditor.Forms
 
         private void PopulateShortcuts()
         {
-            _listView.Groups.Add(new ListViewGroup("tool-switches", "Tool Switches"));
-            _listView.Groups.Add(new ListViewGroup("editing", "Editing"));
-            _listView.Groups.Add(new ListViewGroup("navigation", "Navigation"));
-            _listView.Groups.Add(new ListViewGroup("zoom", "Zoom"));
+            AddHeader("Tool Switches");
+            Add("S",                     "Select Tool");
+            Add("D",                     "Draw Tool");
+            Add("R",                     "Remove Tool");
+            Add("E",                     "Apply Z Level Tool");
+            Add("F",                     "Toggle Virtual Floor");
+            Add("P",                     "Pipette (Pick Tile)");
+            Add("T",                     "Switch Transparent");
+            Add("B",                     "Rectangle Fill Tool");
+            Add("L",                     "Line Draw Tool");
 
-            Add("S",                     "Select Tool",           "tool-switches");
-            Add("D",                     "Draw Tool",             "tool-switches");
-            Add("R",                     "Remove Tool",           "tool-switches");
-            Add("E",                     "Apply Z Level Tool",    "tool-switches");
-            Add("F",                     "Toggle Virtual Floor",  "tool-switches");
-            Add("P",                     "Pipette (Pick Tile)",   "tool-switches");
-            Add("T",                     "Switch Transparent",    "tool-switches");
-            Add("B",                     "Rectangle Fill Tool",   "tool-switches");
-            Add("L",                     "Line Draw Tool",        "tool-switches");
+            AddHeader("Editing");
+            Add("Ctrl+Z",                "Undo");
+            Add("Ctrl+Y / Ctrl+Shift+Z", "Redo");
+            Add("Ctrl+C",                "Copy Selection");
+            Add("Ctrl+V",                "Paste");
+            Add("Escape",                "Cancel Paste");
+            Add("[",                     "Z Level -1");
+            Add("]",                     "Z Level +1");
 
-            Add("Ctrl+Z",                "Undo",                  "editing");
-            Add("Ctrl+Y / Ctrl+Shift+Z", "Redo",                  "editing");
-            Add("Ctrl+C",                "Copy Selection",         "editing");
-            Add("Ctrl+V",                "Paste",                  "editing");
-            Add("Escape",                "Cancel Paste",           "editing");
-            Add("[",                     "Z Level -1",             "editing");
-            Add("]",                     "Z Level +1",             "editing");
+            AddHeader("Navigation");
+            Add("Arrow Keys",            "Pan View");
+            Add("Page Up",               "Floor Z +5");
+            Add("Page Down",             "Floor Z -5");
 
-            Add("Arrow Keys",            "Pan View",               "navigation");
-            Add("Page Up",               "Floor Z +5",             "navigation");
-            Add("Page Down",             "Floor Z -5",             "navigation");
-
-            Add("+ / Shift+=",           "Zoom In",                "zoom");
-            Add("-",                     "Zoom Out",               "zoom");
-            Add("Ctrl+0",                "Reset Zoom to 100%",     "zoom");
+            AddHeader("Zoom");
+            Add("+ / Shift+=",           "Zoom In");
+            Add("-",                     "Zoom Out");
+            Add("Ctrl+0",                "Reset Zoom to 100%");
         }
 
-        private void Add(string key, string action, string groupKey)
+        private void AddHeader(string text)
         {
-            var group = _listView.Groups[groupKey];
-            var item = new ListViewItem(key, group);
+            var item = new ListViewItem(text)
+            {
+                Font = new Font(_listView.Font, FontStyle.Bold),
+                ForeColor = Options.DarkMode ? Color.OrangeRed : Color.MediumBlue,
+            };
+            item.SubItems.Add(string.Empty);
+            _listView.Items.Add(item);
+        }
+
+        private void Add(string key, string action)
+        {
+            var item = new ListViewItem(key);
             item.SubItems.Add(action);
             _listView.Items.Add(item);
         }

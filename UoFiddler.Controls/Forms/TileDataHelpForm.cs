@@ -9,8 +9,10 @@
  *
  ***************************************************************************/
 
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -24,10 +26,7 @@ namespace UoFiddler.Controls.Forms
 
         private void PopulateFields()
         {
-            _listView.Groups.Add(new ListViewGroup("items", "Items"));
-            _listView.Groups.Add(new ListViewGroup("land", "Land Tiles"));
-            _listView.Groups.Add(new ListViewGroup("flags", "Flags"));
-
+            AddHeader("Items");
             Add("Name", "This field is for the name of the item, which can be a maximum of 20 characters.", "items");
             Add("Animation", "This field is for the animation ID associated with the item.", "items");
             Add("Weight", "This field is for the weight of the item.", "items");
@@ -75,9 +74,11 @@ namespace UoFiddler.Controls.Forms
             Add("Height", "This field is for the height of the item.", "items");
             Add("Unknown 3", "This field is for the third unknown value.", "items");
 
+            AddHeader("Land Tiles");
             Add("Name", "This field is for the name of the land tile, which can be a maximum of 20 characters.", "land");
             Add("Texture ID", "This field is for the texture ID associated with the land tile.", "land");
 
+            AddHeader("Flags");
             Add("Background",    "Not yet documented.",                                                               "flags");
             Add("Weapon",        "Not yet documented.",                                                               "flags");
             Add("Transparent",   "Not yet documented.",                                                               "flags");
@@ -143,13 +144,31 @@ namespace UoFiddler.Controls.Forms
             Add("Unused32",      "Unused or unknown yet.",                                                            "flags");
 
             if (_listView.Items.Count > 0)
-                _listView.Items[0].Selected = true;
+            {
+                foreach (ListViewItem li in _listView.Items)
+                {
+                    if (li.Tag is string)
+                    {
+                        li.Selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void AddHeader(string text)
+        {
+            var item = new ListViewItem(text)
+            {
+                Font = new Font(_listView.Font, FontStyle.Bold),
+                ForeColor = Options.DarkMode ? Color.OrangeRed : Color.MediumBlue,
+            };
+            _listView.Items.Add(item);
         }
 
         private void Add(string field, string description, string groupKey)
         {
-            var group = _listView.Groups[groupKey];
-            var item = new ListViewItem(field, group) { Tag = description };
+            var item = new ListViewItem(field) { Tag = description };
             _listView.Items.Add(item);
         }
 

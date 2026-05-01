@@ -29,6 +29,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            if (Options.DarkMode)
+            {
+                legendSwatchDifferent.BackColor = Color.CornflowerBlue;
+            }
             PopulateOrgOnly(isLand: true);
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
         }
@@ -156,7 +160,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             Brush fontBrush = SecondRadarCol.IsLoaded && IsDifferent(idx)
-                ? Brushes.Blue
+                ? (Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue)
                 : Brushes.Gray;
 
             string section = idx < 0x4000 ? "Land" : "Item";

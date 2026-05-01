@@ -82,6 +82,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            FontsTileView.BackColor = Options.DarkMode ? Color.LightGray : Color.White;
+
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["ASCIIFont"] = true;
             Options.LoadedUltimaClass["UnicodeFont"] = true;
@@ -298,7 +300,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSetOffsets(object sender, EventArgs e)
         {
-            if(treeView.SelectedNode == null)
+            if (treeView.SelectedNode == null)
             {
                 return;
             }
@@ -354,7 +356,7 @@ namespace UoFiddler.Controls.UserControls
                 c = (char)i;
 
                 // draw what should be in tile
-                e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
+                e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.DimGray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
 
                 // draw using font from uo if character exists
                 var bmp = UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].GetImage();
@@ -387,7 +389,7 @@ namespace UoFiddler.Controls.UserControls
                 c = (char)(i + AsciiFontOffset);
 
                 // draw what should be in tile
-                e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.Gray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
+                e.Graphics.DrawString(c.ToString(), DefaultFont, Brushes.DimGray, e.Bounds.X + (e.Bounds.Width / 2), e.Bounds.Y + (e.Bounds.Height / 2));
 
                 // draw using font from uo if character exists
                 var font = (int)treeView.SelectedNode.Tag;
@@ -464,6 +466,7 @@ namespace UoFiddler.Controls.UserControls
 
             FontsTileView.TileFocusColor = Options.TileFocusColor;
             FontsTileView.TileHighlightColor = Options.TileSelectionColor;
+
             FontsTileView.Invalidate();
         }
     }

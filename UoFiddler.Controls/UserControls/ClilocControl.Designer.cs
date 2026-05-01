@@ -39,251 +39,230 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copyCliLocNumberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyCliLocTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.LangComboBox = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.GotoEntry = new System.Windows.Forms.ToolStripTextBox();
-            this.GotoButton = new System.Windows.Forms.ToolStripButton();
-            this.FindEntry = new System.Windows.Forms.ToolStripTextBox();
-            this.FindButton = new System.Windows.Forms.ToolStripButton();
-            this.RegexToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.ClilocExportButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tileDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            dataGridView1 = new System.Windows.Forms.DataGridView();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            copyCliLocNumberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyCliLocTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            LangComboBox = new System.Windows.Forms.ToolStripComboBox();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            GotoEntry = new System.Windows.Forms.ToolStripTextBox();
+            GotoButton = new System.Windows.Forms.ToolStripButton();
+            FindEntry = new System.Windows.Forms.ToolStripTextBox();
+            FindButton = new System.Windows.Forms.ToolStripButton();
+            RegexToolStripButton = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            ClilocExportButton = new System.Windows.Forms.ToolStripButton();
+            toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tileDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            contextMenuStrip1.SuspendLayout();
+            toolStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 25);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dataGridView1.RowHeadersWidth = 30;
-            this.dataGridView1.Size = new System.Drawing.Size(902, 417);
-            this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCell_dbClick);
-            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnHeaderClicked);
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.ContextMenuStrip = contextMenuStrip1;
+            dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
+            dataGridView1.Location = new System.Drawing.Point(0, 25);
+            dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            dataGridView1.MultiSelect = false;
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.RowHeadersWidth = 30;
+            dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new System.Drawing.Size(902, 417);
+            dataGridView1.TabIndex = 1;
+            dataGridView1.CellContentDoubleClick += OnCell_dbClick;
+            dataGridView1.ColumnHeaderMouseClick += OnHeaderClicked;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyCliLocNumberToolStripMenuItem,
-            this.copyCliLocTextToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.addEntryToolStripMenuItem,
-            this.deleteEntryToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(186, 98);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyCliLocNumberToolStripMenuItem, copyCliLocTextToolStripMenuItem, toolStripSeparator3, addEntryToolStripMenuItem, deleteEntryToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(186, 98);
             // 
             // copyCliLocNumberToolStripMenuItem
             // 
-            this.copyCliLocNumberToolStripMenuItem.Name = "copyCliLocNumberToolStripMenuItem";
-            this.copyCliLocNumberToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.copyCliLocNumberToolStripMenuItem.Text = "Copy CliLoc Number";
-            this.copyCliLocNumberToolStripMenuItem.Click += new System.EventHandler(this.OnCLick_CopyClilocNumber);
+            copyCliLocNumberToolStripMenuItem.Name = "copyCliLocNumberToolStripMenuItem";
+            copyCliLocNumberToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            copyCliLocNumberToolStripMenuItem.Text = "Copy CliLoc Number";
+            copyCliLocNumberToolStripMenuItem.Click += OnCLick_CopyClilocNumber;
             // 
             // copyCliLocTextToolStripMenuItem
             // 
-            this.copyCliLocTextToolStripMenuItem.Name = "copyCliLocTextToolStripMenuItem";
-            this.copyCliLocTextToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.copyCliLocTextToolStripMenuItem.Text = "Copy CliLoc Text";
-            this.copyCliLocTextToolStripMenuItem.Click += new System.EventHandler(this.OnCLick_CopyClilocText);
+            copyCliLocTextToolStripMenuItem.Name = "copyCliLocTextToolStripMenuItem";
+            copyCliLocTextToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            copyCliLocTextToolStripMenuItem.Text = "Copy CliLoc Text";
+            copyCliLocTextToolStripMenuItem.Click += OnCLick_CopyClilocText;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(182, 6);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(182, 6);
             // 
             // addEntryToolStripMenuItem
             // 
-            this.addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
-            this.addEntryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.addEntryToolStripMenuItem.Text = "Add Entry";
-            this.addEntryToolStripMenuItem.Click += new System.EventHandler(this.OnClick_AddEntry);
+            addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
+            addEntryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            addEntryToolStripMenuItem.Text = "Add Entry";
+            addEntryToolStripMenuItem.Click += OnClick_AddEntry;
             // 
             // deleteEntryToolStripMenuItem
             // 
-            this.deleteEntryToolStripMenuItem.Name = "deleteEntryToolStripMenuItem";
-            this.deleteEntryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.deleteEntryToolStripMenuItem.Text = "Delete Entry";
-            this.deleteEntryToolStripMenuItem.Click += new System.EventHandler(this.OnClick_DeleteEntry);
+            deleteEntryToolStripMenuItem.Name = "deleteEntryToolStripMenuItem";
+            deleteEntryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            deleteEntryToolStripMenuItem.Text = "Delete Entry";
+            deleteEntryToolStripMenuItem.Click += OnClick_DeleteEntry;
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.LangComboBox,
-            this.toolStripSeparator1,
-            this.GotoEntry,
-            this.GotoButton,
-            this.FindEntry,
-            this.FindButton,
-            this.RegexToolStripButton,
-            this.toolStripSeparator2,
-            this.toolStripButton1,
-            this.toolStripSeparator5,
-            this.ClilocExportButton,
-            this.toolStripDropDownButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(902, 25);
-            this.toolStrip1.TabIndex = 2;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { LangComboBox, toolStripSeparator1, GotoEntry, GotoButton, FindEntry, FindButton, RegexToolStripButton, toolStripSeparator2, toolStripButton1, toolStripSeparator5, ClilocExportButton, toolStripDropDownButton1 });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            toolStrip1.Size = new System.Drawing.Size(902, 25);
+            toolStrip1.TabIndex = 2;
+            toolStrip1.Text = "toolStrip1";
             // 
             // LangComboBox
             // 
-            this.LangComboBox.Items.AddRange(new object[] {
-            "English",
-            "German",
-            "Custom 1",
-            "Custom 2"});
-            this.LangComboBox.Name = "LangComboBox";
-            this.LangComboBox.Size = new System.Drawing.Size(140, 25);
-            this.LangComboBox.SelectedIndexChanged += new System.EventHandler(this.OnLangChange);
+            LangComboBox.Items.AddRange(new object[] { "English", "German", "Custom 1", "Custom 2" });
+            LangComboBox.Name = "LangComboBox";
+            LangComboBox.Size = new System.Drawing.Size(140, 25);
+            LangComboBox.SelectedIndexChanged += OnLangChange;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // GotoEntry
             // 
-            this.GotoEntry.MaxLength = 10;
-            this.GotoEntry.Name = "GotoEntry";
-            this.GotoEntry.Size = new System.Drawing.Size(116, 25);
-            this.GotoEntry.Text = "Enter Number";
-            this.GotoEntry.Enter += new System.EventHandler(this.GotoEntry_Enter);
-            this.GotoEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GotoEntry_KeyDown);
+            GotoEntry.MaxLength = 10;
+            GotoEntry.Name = "GotoEntry";
+            GotoEntry.Size = new System.Drawing.Size(116, 25);
+            GotoEntry.Text = "Enter Number";
+            GotoEntry.Enter += GotoEntry_Enter;
+            GotoEntry.KeyDown += GotoEntry_KeyDown;
             // 
             // GotoButton
             // 
-            this.GotoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.GotoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.GotoButton.Name = "GotoButton";
-            this.GotoButton.Size = new System.Drawing.Size(37, 22);
-            this.GotoButton.Text = "Goto";
-            this.GotoButton.Click += new System.EventHandler(this.GotoNr);
+            GotoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            GotoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            GotoButton.Name = "GotoButton";
+            GotoButton.Size = new System.Drawing.Size(37, 22);
+            GotoButton.Text = "Goto";
+            GotoButton.Click += GotoNr;
             // 
             // FindEntry
             // 
-            this.FindEntry.AcceptsTab = true;
-            this.FindEntry.Name = "FindEntry";
-            this.FindEntry.Size = new System.Drawing.Size(163, 25);
-            this.FindEntry.Text = "Enter Text";
-            this.FindEntry.Enter += new System.EventHandler(this.FindEntry_Enter);
-            this.FindEntry.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindEntry_KeyDown);
+            FindEntry.AcceptsTab = true;
+            FindEntry.Name = "FindEntry";
+            FindEntry.Size = new System.Drawing.Size(163, 25);
+            FindEntry.Text = "Enter Text";
+            FindEntry.Enter += FindEntry_Enter;
+            FindEntry.KeyDown += FindEntry_KeyDown;
             // 
             // FindButton
             // 
-            this.FindButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.FindButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.FindButton.Name = "FindButton";
-            this.FindButton.Size = new System.Drawing.Size(34, 22);
-            this.FindButton.Text = "Find";
-            this.FindButton.Click += new System.EventHandler(this.FindEntryClick);
+            FindButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            FindButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            FindButton.Name = "FindButton";
+            FindButton.Size = new System.Drawing.Size(34, 22);
+            FindButton.Text = "Find";
+            FindButton.Click += FindEntryClick;
             // 
             // RegexToolStripButton
             // 
-            this.RegexToolStripButton.CheckOnClick = true;
-            this.RegexToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.RegexToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.RegexToolStripButton.Name = "RegexToolStripButton";
-            this.RegexToolStripButton.Size = new System.Drawing.Size(129, 22);
-            this.RegexToolStripButton.Text = "Use regular expression";
+            RegexToolStripButton.CheckOnClick = true;
+            RegexToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            RegexToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            RegexToolStripButton.Name = "RegexToolStripButton";
+            RegexToolStripButton.Size = new System.Drawing.Size(129, 22);
+            RegexToolStripButton.Text = "Use regular expression";
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButton1
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(35, 22);
-            this.toolStripButton1.Text = "Save";
-            this.toolStripButton1.Click += new System.EventHandler(this.OnClickSave);
+            toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new System.Drawing.Size(35, 22);
+            toolStripButton1.Text = "Save";
+            toolStripButton1.Click += OnClickSave;
             // 
             // toolStripSeparator5
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
             // ClilocExportButton
             // 
-            this.ClilocExportButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.ClilocExportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ClilocExportButton.Name = "ClilocExportButton";
-            this.ClilocExportButton.Size = new System.Drawing.Size(45, 22);
-            this.ClilocExportButton.Text = "Export";
-            this.ClilocExportButton.Click += new System.EventHandler(this.OnClickExportCSV);
+            ClilocExportButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            ClilocExportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            ClilocExportButton.Name = "ClilocExportButton";
+            ClilocExportButton.Size = new System.Drawing.Size(45, 22);
+            ClilocExportButton.Text = "Export";
+            ClilocExportButton.Click += OnClickExportCSV;
             // 
             // toolStripDropDownButton1
             // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cSVToolStripMenuItem,
-            this.tileDataToolStripMenuItem});
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(56, 22);
-            this.toolStripDropDownButton1.Text = "Import";
+            toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { cSVToolStripMenuItem, tileDataToolStripMenuItem });
+            toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new System.Drawing.Size(56, 22);
+            toolStripDropDownButton1.Text = "Import";
             // 
             // cSVToolStripMenuItem
             // 
-            this.cSVToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.cSVToolStripMenuItem.Name = "cSVToolStripMenuItem";
-            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.cSVToolStripMenuItem.Text = "CSV";
-            this.cSVToolStripMenuItem.Click += new System.EventHandler(this.OnClickImportCSV);
+            cSVToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            cSVToolStripMenuItem.Name = "cSVToolStripMenuItem";
+            cSVToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            cSVToolStripMenuItem.Text = "CSV";
+            cSVToolStripMenuItem.Click += OnClickImportCSV;
             // 
             // tileDataToolStripMenuItem
             // 
-            this.tileDataToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tileDataToolStripMenuItem.Name = "tileDataToolStripMenuItem";
-            this.tileDataToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.tileDataToolStripMenuItem.Text = "TileData";
-            this.tileDataToolStripMenuItem.Click += new System.EventHandler(this.TileDataToolStripMenuItem_Click);
+            tileDataToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            tileDataToolStripMenuItem.Name = "tileDataToolStripMenuItem";
+            tileDataToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            tileDataToolStripMenuItem.Text = "TileData";
+            tileDataToolStripMenuItem.Click += TileDataToolStripMenuItem_Click;
             // 
             // ClilocControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.toolStrip1);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "ClilocControl";
-            this.Size = new System.Drawing.Size(902, 442);
-            this.Load += new System.EventHandler(this.OnLoad);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(dataGridView1);
+            Controls.Add(toolStrip1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "ClilocControl";
+            Size = new System.Drawing.Size(902, 442);
+            Load += OnLoad;
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            contextMenuStrip1.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

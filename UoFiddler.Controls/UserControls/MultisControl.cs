@@ -124,12 +124,37 @@ namespace UoFiddler.Controls.UserControls
             return node;
         }
 
+        private void ApplyDarkModeIfNeeded()
+        {
+            if (Options.DarkMode)
+            {
+                Color tabBg = Color.FromArgb(32, 32, 32);
+                TabPage[] tabPages = { tabPage5, tabPage6, tabPageMul, tabPageUop, tabPageUopPreview, tabPageUopComponents };
+                foreach (var tp in tabPages)
+                {
+                    tp.UseVisualStyleBackColor = false;
+                    tp.BackColor = tabBg;
+                }
+            }
+
+            ApplyPreviewBackgroundColor();
+            ControlEvents.PreviewBackgroundColorChangeEvent += ApplyPreviewBackgroundColor;
+        }
+
+        private void ApplyPreviewBackgroundColor()
+        {
+            MultiPictureBox.BackColor = Options.PreviewBackgroundColor;
+            UopPictureBox.BackColor = Options.PreviewBackgroundColor;
+        }
+
         private void OnLoad(object sender, EventArgs e)
         {
             if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
             }
+
+            ApplyDarkModeIfNeeded();
 
             Cursor.Current = Cursors.WaitCursor;
 

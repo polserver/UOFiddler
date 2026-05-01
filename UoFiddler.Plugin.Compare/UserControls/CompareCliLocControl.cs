@@ -15,6 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Ultima;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Plugin.Compare.UserControls
 {
@@ -182,10 +183,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             switch (entry.CompareResult)
             {
                 case CompareEntry.CompareRes.Diff:
-                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
                     break;
                 case CompareEntry.CompareRes.NewIn1:
-                    e.CellStyle.ForeColor = Color.Blue;
+                    e.CellStyle.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
                     break;
                 case CompareEntry.CompareRes.NewIn2:
                     e.CellStyle.ForeColor = Color.Orange;
@@ -310,10 +311,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         AppendWord(diffRichTextBox2, word, SystemColors.Window, ref first2);
                         break;
                     case WordDiffOp.Delete:
-                        AppendWord(diffRichTextBox1, word, Color.FromArgb(255, 200, 200), ref first1);
+                        AppendWord(diffRichTextBox1, word, Options.DarkMode ? Color.FromArgb(140, 30, 30) : Color.FromArgb(255, 200, 200), ref first1);
                         break;
                     case WordDiffOp.Insert:
-                        AppendWord(diffRichTextBox2, word, Color.FromArgb(200, 255, 200), ref first2);
+                        AppendWord(diffRichTextBox2, word, Options.DarkMode ? Color.FromArgb(30, 100, 40) : Color.FromArgb(200, 255, 200), ref first2);
                         break;
                 }
             }

@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ultima;
+using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Forms
@@ -265,9 +266,18 @@ namespace UoFiddler.Forms
 
             checkboxRemoveTileBorder.Checked = false;
 
-            TileFocusColorComboBox.SelectedItem = Color.DarkRed;
-            TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;
-            PreviewBackgroundColorButton.BackColor = Color.White;
+            if (AppSettings.DarkMode)
+            {
+                TileFocusColorComboBox.SelectedItem = Color.Red;
+                TileSelectionColorComboBox.SelectedItem = Color.MediumTurquoise;
+                PreviewBackgroundColorButton.BackColor = Color.FromArgb(32, 32, 32);
+            }
+            else
+            {
+                TileFocusColorComboBox.SelectedItem = Color.DarkRed;
+                TileSelectionColorComboBox.SelectedItem = Color.DodgerBlue;
+                PreviewBackgroundColorButton.BackColor = Color.White;
+            }
         }
 
         private void PreviewBackgroundColorButton_Click(object sender, EventArgs e)

@@ -95,11 +95,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             if (!valid)
             {
-                fontBrush = Brushes.Red;
+                fontBrush = Options.DarkMode ? Brushes.OrangeRed : Brushes.Red;
             }
             else if (tileViewSec.VirtualListSize > 0 && !Compare(i))
             {
-                fontBrush = Brushes.Blue;
+                fontBrush = Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue;
             }
 
             string label = $"0x{i:X}";

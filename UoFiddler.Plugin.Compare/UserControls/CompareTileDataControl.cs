@@ -256,7 +256,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             finally
             {
                 flagTlp.ResumeLayout(true);
-                scrollPanel?.ResumeLayout(false);
+                scrollPanel?.ResumeLayout(true);
+                flagTlp.PerformLayout();
+                scrollPanel?.PerformLayout();
             }
         }
 
@@ -668,7 +670,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                 if (!CompareLand(i))
                 {
-                    return Brushes.Blue;
+                    return Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue;
                 }
             }
 
@@ -749,12 +751,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                 if (!CompareItem(i))
                 {
-                    return Brushes.Blue;
+                    return Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue;
                 }
             }
             else if (!inOrg)
             {
-                return Brushes.Red;
+                return Options.DarkMode ? Brushes.OrangeRed : Brushes.Red;
             }
 
             return Brushes.Gray;
@@ -861,7 +863,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         // ── Detail panel population ───────────────────────────────────────────────
 
-        private static readonly Color DiffColor = Color.LightYellow;
+        private static Color DiffColor => Options.DarkMode ? Color.FromArgb(96, 76, 0) : Color.LightYellow;
 
         private void ResetLandDetailHighlights()
         {

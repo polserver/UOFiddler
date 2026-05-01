@@ -20,6 +20,7 @@ using Ultima;
 using Ultima.Helpers;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Properties;
 using UoFiddler.Controls.Plugin;
 
 namespace UoFiddler.Forms
@@ -50,6 +51,15 @@ namespace UoFiddler.Forms
         {
             _log = logger;
             InitializeComponent();
+
+            darkModeMenuItem.Checked = AppSettings.DarkMode;
+
+            if (AppSettings.DarkMode)
+            {
+                StartTab.BackColor = Color.FromArgb(32, 32, 32);
+                StartTab.BackgroundImage = Resources.UOFiddler_bk;
+                reloadFilesMenuItem.ForeColor = Color.OrangeRed;
+            }
 
             if (FiddlerOptions.StoreFormState)
             {
@@ -126,6 +136,13 @@ namespace UoFiddler.Forms
         {
             TopMost = AlwaysOnTopMenuitem.Checked;
             ControlEvents.FireAlwaysOnTopChangeEvent(TopMost);
+        }
+
+        private void OnClickDarkMode(object sender, EventArgs e)
+        {
+            AppSettings.DarkMode = darkModeMenuItem.Checked;
+            AppSettings.Save();
+            MessageBox.Show("Dark mode setting will take effect after restarting the application.", "Restart Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void ReloadFiles(object sender, EventArgs e)

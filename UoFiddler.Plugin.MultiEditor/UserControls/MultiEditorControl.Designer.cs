@@ -921,7 +921,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             pictureBoxMinimap.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             pictureBoxMinimap.BackColor = System.Drawing.Color.DimGray;
             pictureBoxMinimap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            pictureBoxMinimap.Location = new System.Drawing.Point(342, 277);
+            pictureBoxMinimap.Location = new System.Drawing.Point(342, 276);
             pictureBoxMinimap.Name = "pictureBoxMinimap";
             pictureBoxMinimap.Size = new System.Drawing.Size(155, 100);
             pictureBoxMinimap.TabIndex = 10;
@@ -1066,10 +1066,10 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // toolStripBtnHelp
             // 
             toolStripBtnHelp.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            toolStripBtnHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            toolStripBtnHelp.Image = (System.Drawing.Image)resources.GetObject("toolStripBtnHelp.Image");
+            toolStripBtnHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             toolStripBtnHelp.Name = "toolStripBtnHelp";
-            toolStripBtnHelp.Size = new System.Drawing.Size(23, 22);
+            toolStripBtnHelp.Size = new System.Drawing.Size(36, 22);
+            toolStripBtnHelp.Text = "Help";
             toolStripBtnHelp.ToolTipText = "Keyboard Shortcuts";
             toolStripBtnHelp.Click += ToolStripBtnHelp_Click;
             // 

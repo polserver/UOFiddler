@@ -710,9 +710,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);
-            e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
+            TextRenderer.DrawText(e.Graphics, e.Item.Text, listView1.Font, e.Bounds, Color.Black, TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
 
-            using (var pen = new Pen(Color.Gray))
+            using (var pen = new Pen(Color.Black))
             {
                 e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             }

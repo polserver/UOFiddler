@@ -9,7 +9,9 @@
  *
  ***************************************************************************/
 
+using System.Drawing;
 using System.Windows.Forms;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -23,26 +25,35 @@ namespace UoFiddler.Controls.Forms
 
         private void PopulateShortcuts()
         {
-            _listView.Groups.Add(new ListViewGroup("preview", "Preview"));
-            _listView.Groups.Add(new ListViewGroup("zoom", "Zoom (100% mode only)"));
-            _listView.Groups.Add(new ListViewGroup("pan", "Panning (100% mode only)"));
+            AddHeader("Preview");
+            Add("Fit preview to window",        "Toggle button on toolbar — scales to fit or shows at 100% with scrollbars");
 
-            Add("Fit preview to window",        "Toggle button on toolbar — scales to fit or shows at 100% with scrollbars", "preview");
+            AddHeader("Zoom (100% mode only)");
+            Add("Ctrl + Mouse Wheel",           "Zoom In / Out");
+            Add("Shift + = (Plus key)",         "Zoom In");
+            Add("- (Minus key)",                "Zoom Out");
+            Add("Numpad +",                     "Zoom In");
+            Add("Numpad -",                     "Zoom Out");
+            Add("Ctrl + 0",                     "Reset zoom to 100%");
 
-            Add("Ctrl + Mouse Wheel",           "Zoom In / Out",         "zoom");
-            Add("Shift + = (Plus key)",         "Zoom In",               "zoom");
-            Add("- (Minus key)",                "Zoom Out",              "zoom");
-            Add("Numpad +",                     "Zoom In",               "zoom");
-            Add("Numpad -",                     "Zoom Out",              "zoom");
-            Add("Ctrl + 0",                     "Reset zoom to 100%",    "zoom");
-
-            Add("Left-click drag",              "Pan the view",          "pan");
+            AddHeader("Panning (100% mode only)");
+            Add("Left-click drag",              "Pan the view");
         }
 
-        private void Add(string key, string action, string groupKey)
+        private void AddHeader(string text)
         {
-            var group = _listView.Groups[groupKey];
-            var item = new ListViewItem(key, group);
+            var item = new ListViewItem(text)
+            {
+                Font = new Font(_listView.Font, FontStyle.Bold),
+                ForeColor = Options.DarkMode ? Color.OrangeRed : Color.MediumBlue,
+            };
+            item.SubItems.Add(string.Empty);
+            _listView.Items.Add(item);
+        }
+
+        private void Add(string key, string action)
+        {
+            var item = new ListViewItem(key);
             item.SubItems.Add(action);
             _listView.Items.Add(item);
         }

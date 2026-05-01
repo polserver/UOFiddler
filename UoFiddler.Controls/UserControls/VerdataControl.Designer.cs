@@ -86,7 +86,6 @@ namespace UoFiddler.Controls.UserControls
             splitContainerAnim.Panel2.SuspendLayout();
             splitContainerAnim.SuspendLayout();
             panelActionList.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)animatedPictureBox).BeginInit();
             panelAnimControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarDirection).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxPreview).BeginInit();
@@ -610,7 +609,6 @@ namespace UoFiddler.Controls.UserControls
             splitContainerAnim.ResumeLayout(false);
             panelActionList.ResumeLayout(false);
             panelActionList.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)animatedPictureBox).EndInit();
             panelAnimControls.ResumeLayout(false);
             panelAnimControls.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarDirection).EndInit();

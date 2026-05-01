@@ -665,7 +665,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if ((int)treeViewItem.SelectedNode.Tag == index)
                 {
-                    treeViewItem.SelectedNode.ForeColor = Color.Red;
+                    treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                     AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
                 }
                 else
@@ -679,7 +679,7 @@ namespace UoFiddler.Controls.UserControls
                                 continue;
                             }
 
-                            node.ForeColor = Color.Red;
+                            node.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                             break;
                         }
                     }
@@ -694,7 +694,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if ((int)treeViewLand.SelectedNode.Tag == index)
                 {
-                    treeViewLand.SelectedNode.ForeColor = Color.Red;
+                    treeViewLand.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                     AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
                 }
                 else
@@ -706,7 +706,7 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        node.ForeColor = Color.Red;
+                        node.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                         break;
                     }
                 }
@@ -899,7 +899,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 TileData.ItemTable[index] = item;
-                treeViewItem.SelectedNode.ForeColor = Color.Red;
+                treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
                 if (memorySaveWarningToolStripMenuItem.Checked)
@@ -945,7 +945,7 @@ namespace UoFiddler.Controls.UserControls
                 TileData.LandTable[index] = land;
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index);
-                treeViewLand.SelectedNode.ForeColor = Color.Red;
+                treeViewLand.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 if (memorySaveWarningToolStripMenuItem.Checked)
                 {
                     MessageBox.Show(
@@ -987,7 +987,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Animation = shortRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1025,7 +1025,7 @@ namespace UoFiddler.Controls.UserControls
             item.Name = name;
 
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1078,7 +1078,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Weight = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1109,7 +1109,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Quality = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1140,7 +1140,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Quantity = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1171,7 +1171,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Hue = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1202,7 +1202,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.StackingOffset = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1233,7 +1233,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Value = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1264,7 +1264,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Height = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1295,7 +1295,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.MiscData = shortRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1326,7 +1326,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Unk2 = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1357,7 +1357,7 @@ namespace UoFiddler.Controls.UserControls
             ItemData item = TileData.ItemTable[index];
             item.Unk3 = byteRes;
             TileData.ItemTable[index] = item;
-            treeViewItem.SelectedNode.ForeColor = Color.Red;
+            treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
         }
@@ -1395,7 +1395,7 @@ namespace UoFiddler.Controls.UserControls
             land.Name = name;
             treeViewLand.SelectedNode.Text = string.Format("0x{0:X4} ({0}) {1}", index, name);
             TileData.LandTable[index] = land;
-            treeViewLand.SelectedNode.ForeColor = Color.Red;
+            treeViewLand.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index);
         }
@@ -1426,7 +1426,7 @@ namespace UoFiddler.Controls.UserControls
             LandData land = TileData.LandTable[index];
             land.TextureId = shortRes;
             TileData.LandTable[index] = land;
-            treeViewLand.SelectedNode.ForeColor = Color.Red;
+            treeViewLand.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, index);
         }
@@ -1468,7 +1468,7 @@ namespace UoFiddler.Controls.UserControls
 
                 item.Flags ^= changeFlag;
                 TileData.ItemTable[index] = item;
-                treeViewItem.SelectedNode.ForeColor = Color.Red;
+                treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
             }
@@ -1481,7 +1481,7 @@ namespace UoFiddler.Controls.UserControls
 
                 item.Flags |= changeFlag;
                 TileData.ItemTable[index] = item;
-                treeViewItem.SelectedNode.ForeColor = Color.Red;
+                treeViewItem.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index + 0x4000);
             }
@@ -1548,7 +1548,7 @@ namespace UoFiddler.Controls.UserControls
 
                 land.Flags ^= changeFlag;
                 TileData.LandTable[index] = land;
-                treeViewLand.SelectedNode.ForeColor = Color.Red;
+                treeViewLand.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index);
             }
@@ -1561,7 +1561,7 @@ namespace UoFiddler.Controls.UserControls
 
                 land.Flags |= changeFlag;
                 TileData.LandTable[index] = land;
-                treeViewLand.SelectedNode.ForeColor = Color.Red;
+                treeViewLand.SelectedNode.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 Options.ChangedUltimaClass["TileData"] = true;
                 ControlEvents.FireTileDataChangeEvent(this, index);
             }
@@ -1806,7 +1806,7 @@ namespace UoFiddler.Controls.UserControls
                 var node = treeViewLand.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag.Equals(i));
                 if (node != null)
                 {
-                    node.ForeColor = Color.Red;
+                    node.ForeColor = (Options.DarkMode ? Color.OrangeRed : Color.Red);
                 }
 
                 updated++;

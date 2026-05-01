@@ -119,7 +119,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 {
                     if (tileView2.VirtualListSize > 0 && !Compare(i))
                     {
-                        fontBrush = Brushes.Blue;
+                        fontBrush = Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue;
                     }
 
                     int width  = bmp.Width  > 80 ? 80 : bmp.Width;
@@ -128,12 +128,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
                 else
                 {
-                    fontBrush = Brushes.Red;
+                    fontBrush = Options.DarkMode ? Brushes.OrangeRed : Brushes.Red;
                 }
             }
             else
             {
-                fontBrush = Brushes.Red;
+                fontBrush = Options.DarkMode ? Brushes.OrangeRed : Brushes.Red;
             }
 
             string label = $"0x{i:X}";

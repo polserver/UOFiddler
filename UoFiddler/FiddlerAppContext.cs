@@ -32,6 +32,12 @@ namespace UoFiddler
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            AppSettings.Load();
+            Options.DarkMode = AppSettings.DarkMode;
+            if (AppSettings.DarkMode)
+            {
+                Application.SetColorMode(SystemColorMode.Dark);
+            }
             Application.ApplicationExit += OnApplicationExit;
 
             FiddlerOptions.Startup();
@@ -43,6 +49,25 @@ namespace UoFiddler
             {
                 _logger.LogInformation("No profile loaded... exiting");
                 return;
+            }
+
+            if (AppSettings.DarkMode)
+            {
+                if (Options.TileFocusColor.ToArgb() == System.Drawing.Color.DarkRed.ToArgb())
+                    Options.TileFocusColor = System.Drawing.Color.Red;
+                if (Options.TileSelectionColor.ToArgb() == System.Drawing.Color.DodgerBlue.ToArgb())
+                    Options.TileSelectionColor = System.Drawing.Color.MediumTurquoise;
+                if (Options.PreviewBackgroundColor.ToArgb() == System.Drawing.Color.White.ToArgb())
+                    Options.PreviewBackgroundColor = System.Drawing.Color.FromArgb(32, 32, 32);
+            }
+            else
+            {
+                if (Options.TileFocusColor.ToArgb() == System.Drawing.Color.Red.ToArgb())
+                    Options.TileFocusColor = System.Drawing.Color.DarkRed;
+                if (Options.TileSelectionColor.ToArgb() == System.Drawing.Color.MediumTurquoise.ToArgb())
+                    Options.TileSelectionColor = System.Drawing.Color.DodgerBlue;
+                if (Options.PreviewBackgroundColor.ToArgb() == System.Drawing.Color.FromArgb(32, 32, 32).ToArgb())
+                    Options.PreviewBackgroundColor = System.Drawing.Color.White;
             }
 
             if (FiddlerOptions.UpdateCheckOnStart)

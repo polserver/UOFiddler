@@ -331,7 +331,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // pictureBoxDress
             // 
-            pictureBoxDress.BackColor = System.Drawing.SystemColors.Control;
+            pictureBoxDress.BackColor = System.Drawing.Color.Black;
             pictureBoxDress.Dock = System.Windows.Forms.DockStyle.Fill;
             pictureBoxDress.Location = new System.Drawing.Point(0, 0);
             pictureBoxDress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
