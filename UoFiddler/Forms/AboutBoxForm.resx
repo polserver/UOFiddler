@@ -118,7 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.19.2
+    <value>Version 4.19.3
+- Improve cliloc editing.
+    * Add "Next free" button when adding new cliloc entry.
+    * Add entry will now use current selection when searching for next free number or will seach starting from the number user inputs in the text box.
+    * Add tiledata import preview form.
+- Update extract/pack all logic in UopPacker plugin.
+
+Version 4.19.2
 - Fix validation when adding and replacing images in Items and Land tiles tabs.
 - Added tooltips explaining compression settings in UopPacker plugin.
 - Minor fixes to internal logger construction.
