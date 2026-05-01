@@ -42,7 +42,7 @@ namespace UoFiddler.Forms
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "http://uofiddler.polserver.com/",
+                FileName = "https://uofiddler.polserver.com/",
                 UseShellExecute = true
             });
         }
