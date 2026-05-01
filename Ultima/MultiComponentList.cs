@@ -435,7 +435,7 @@ namespace Ultima
                             var tempItem = new MultiTileEntry
                             {
                                 ItemId = 0xFFFF,
-                                Flags = 0,
+                                Flags = 1,
                                 Unk1 = 0
                             };
 
@@ -448,7 +448,7 @@ namespace Ultima
                                     {
                                         if (DynamicItemIds != null && DynamicItemIds.Contains(tempItem.ItemId))
                                         {
-                                            tempItem.Flags = 1;
+                                            tempItem.Flags = 0;
                                         }
 
                                         SortedTiles[itemCount] = tempItem;
@@ -456,7 +456,7 @@ namespace Ultima
                                     }
 
                                     tempItem.ItemId = 0xFFFF;
-                                    tempItem.Flags = 0;
+                                    tempItem.Flags = 1;
                                 }
                                 else if (line.StartsWith("ID"))
                                 {
@@ -510,7 +510,7 @@ namespace Ultima
                             {
                                 if (DynamicItemIds?.Contains(tempItem.ItemId) == true)
                                 {
-                                    tempItem.Flags = 1;
+                                    tempItem.Flags = 0;
                                 }
 
                                 SortedTiles[itemCount] = tempItem;

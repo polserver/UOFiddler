@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Items listed here are flagged as dynamic (Flags=1) when importing from WSC format.
+  Items listed here are flagged as dynamic (Flags=0) when importing from WSC format.
   Dynamic items spawn as interactive world objects when a house deed is placed
   (e.g. doors that can be opened, functional crafting stations, placeable signs).
 
