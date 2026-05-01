@@ -39,68 +39,81 @@ namespace UoFiddler.Controls.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.NumberBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.Add_Button = new System.Windows.Forms.Button();
-            this.Cancel_Button = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            NumberBox = new System.Windows.Forms.TextBox();
+            label1 = new System.Windows.Forms.Label();
+            Add_Button = new System.Windows.Forms.Button();
+            Cancel_Button = new System.Windows.Forms.Button();
+            NextFree_Button = new System.Windows.Forms.Button();
+            SuspendLayout();
             // 
             // NumberBox
             // 
-            this.NumberBox.Location = new System.Drawing.Point(46, 14);
-            this.NumberBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.NumberBox.Name = "NumberBox";
-            this.NumberBox.Size = new System.Drawing.Size(153, 23);
-            this.NumberBox.TabIndex = 0;
+            NumberBox.Location = new System.Drawing.Point(45, 14);
+            NumberBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            NumberBox.Name = "NumberBox";
+            NumberBox.Size = new System.Drawing.Size(95, 23);
+            NumberBox.TabIndex = 0;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 17);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(23, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Nr:";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(14, 17);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(23, 15);
+            label1.TabIndex = 1;
+            label1.Text = "Nr:";
             // 
             // Add_Button
             // 
-            this.Add_Button.Location = new System.Drawing.Point(18, 44);
-            this.Add_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Add_Button.Name = "Add_Button";
-            this.Add_Button.Size = new System.Drawing.Size(88, 27);
-            this.Add_Button.TabIndex = 2;
-            this.Add_Button.Text = "Add";
-            this.Add_Button.UseVisualStyleBackColor = true;
-            this.Add_Button.Click += new System.EventHandler(this.OnClickAdd);
+            Add_Button.Location = new System.Drawing.Point(16, 43);
+            Add_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Add_Button.Name = "Add_Button";
+            Add_Button.Size = new System.Drawing.Size(94, 27);
+            Add_Button.TabIndex = 2;
+            Add_Button.Text = "Add";
+            Add_Button.UseVisualStyleBackColor = true;
+            Add_Button.Click += OnClickAdd;
             // 
             // Cancel_Button
             // 
-            this.Cancel_Button.Location = new System.Drawing.Point(112, 44);
-            this.Cancel_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Cancel_Button.Name = "Cancel_Button";
-            this.Cancel_Button.Size = new System.Drawing.Size(88, 27);
-            this.Cancel_Button.TabIndex = 3;
-            this.Cancel_Button.Text = "Cancel";
-            this.Cancel_Button.UseVisualStyleBackColor = true;
-            this.Cancel_Button.Click += new System.EventHandler(this.OnClickCancel);
+            Cancel_Button.Location = new System.Drawing.Point(118, 43);
+            Cancel_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Cancel_Button.Name = "Cancel_Button";
+            Cancel_Button.Size = new System.Drawing.Size(94, 27);
+            Cancel_Button.TabIndex = 3;
+            Cancel_Button.Text = "Cancel";
+            Cancel_Button.UseVisualStyleBackColor = true;
+            Cancel_Button.Click += OnClickCancel;
+            // 
+            // NextFree_Button
+            // 
+            NextFree_Button.Location = new System.Drawing.Point(148, 12);
+            NextFree_Button.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            NextFree_Button.Name = "NextFree_Button";
+            NextFree_Button.Size = new System.Drawing.Size(64, 25);
+            NextFree_Button.TabIndex = 1;
+            NextFree_Button.Text = "Next free";
+            NextFree_Button.UseVisualStyleBackColor = true;
+            NextFree_Button.Click += OnClickNextFree;
             // 
             // ClilocAddForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(214, 81);
-            this.Controls.Add(this.Cancel_Button);
-            this.Controls.Add(this.Add_Button);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.NumberBox);
-            this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "ClilocAddForm";
-            this.Text = "Add CliLoc";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(224, 81);
+            Controls.Add(Cancel_Button);
+            Controls.Add(Add_Button);
+            Controls.Add(NextFree_Button);
+            Controls.Add(label1);
+            Controls.Add(NumberBox);
+            DoubleBuffered = true;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "ClilocAddForm";
+            Text = "Add CliLoc";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -108,6 +121,7 @@ namespace UoFiddler.Controls.Forms
 
         private System.Windows.Forms.Button Add_Button;
         private System.Windows.Forms.Button Cancel_Button;
+        private System.Windows.Forms.Button NextFree_Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox NumberBox;
     }

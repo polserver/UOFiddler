@@ -19,8 +19,9 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Func<int, bool> _isNumberFreeAction;
         private readonly Action<int> _addEntryAction;
+        private readonly Func<int?, int> _getNextFreeAction;
 
-        public ClilocAddForm(Func<int, bool> isNumberFreeAction, Action<int> addEntryAction)
+        public ClilocAddForm(Func<int, bool> isNumberFreeAction, Action<int> addEntryAction, Func<int?, int> getNextFreeAction, int? initialNumber = null)
         {
             InitializeComponent();
 
@@ -29,6 +30,13 @@ namespace UoFiddler.Controls.Forms
 
             _isNumberFreeAction = isNumberFreeAction;
             _addEntryAction = addEntryAction;
+            _getNextFreeAction = getNextFreeAction;
+
+            if (initialNumber.HasValue)
+            {
+                NumberBox.Text = initialNumber.Value.ToString();
+                NumberBox.SelectAll();
+            }
         }
 
         private void OnClickAdd(object sender, EventArgs e)
@@ -52,6 +60,17 @@ namespace UoFiddler.Controls.Forms
                 MessageBox.Show("Error reading Number", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1);
             }
+        }
+
+        private void OnClickNextFree(object sender, EventArgs e)
+        {
+            int? start = null;
+            if (int.TryParse(NumberBox.Text, System.Globalization.NumberStyles.Integer, null, out int parsed))
+            {
+                start = parsed;
+            }
+
+            NumberBox.Text = _getNextFreeAction(start).ToString();
         }
 
         private void OnClickCancel(object sender, EventArgs e)

@@ -10,8 +10,10 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -359,7 +361,19 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClick_AddEntry(object sender, EventArgs e)
         {
-            new ClilocAddForm(IsNumberFree, AddEntry).Show();
+            int? initial = null;
+            if (dataGridView1.SelectedCells.Count > 0)
+            {
+                var cellValue = dataGridView1.SelectedCells[0].OwningRow.Cells[0].Value;
+                if (cellValue is int n)
+                {
+                    initial = GetNextFreeNumber(n);
+                }
+            }
+
+            initial ??= GetNextFreeNumber(null);
+
+            new ClilocAddForm(IsNumberFree, AddEntry, GetNextFreeNumber, initial).Show();
         }
 
         private void OnClick_DeleteEntry(object sender, EventArgs e)
@@ -458,6 +472,28 @@ namespace UoFiddler.Controls.UserControls
             return true;
         }
 
+        public int GetNextFreeNumber(int? startFrom)
+        {
+            var clilocIds = new System.Collections.Generic.List<int>(_cliloc.Entries.Count);
+            clilocIds.AddRange(_cliloc.Entries.Select(entry => entry.Number));
+            clilocIds.Sort();
+
+            int candidate = startFrom ?? (clilocIds.Count > 0 ? clilocIds[0] : 0);
+            foreach (var id in clilocIds.Where(n => n >= candidate))
+            {
+                if (id == candidate)
+                {
+                    candidate++;
+                }
+                else
+                {
+                    return candidate;
+                }
+            }
+
+            return candidate;
+        }
+
         public void AddEntry(int number)
         {
             int index = 0;
@@ -479,6 +515,20 @@ namespace UoFiddler.Controls.UserControls
 
                 ++index;
             }
+
+            _cliloc.Entries.Add(new StringEntry(number, "", StringEntry.CliLocFlag.Custom));
+
+            _source.ResetBindings(false);
+            dataGridView1.Invalidate();
+
+            int newIndex = _cliloc.Entries.Count - 1;
+            if (newIndex >= 0 && newIndex < dataGridView1.Rows.Count)
+            {
+                dataGridView1.Rows[newIndex].Selected = true;
+                dataGridView1.FirstDisplayedScrollingRowIndex = newIndex;
+            }
+
+            Options.ChangedUltimaClass["CliLoc"] = true;
         }
 
         private static void FindEntry_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -545,6 +595,7 @@ namespace UoFiddler.Controls.UserControls
                             string text = split[1].Trim();
 
                             int index = 0;
+                            bool handled = false;
                             foreach (StringEntry entry in _cliloc.Entries)
                             {
                                 if (entry.Number == id)
@@ -555,6 +606,7 @@ namespace UoFiddler.Controls.UserControls
                                         entry.Flag = StringEntry.CliLocFlag.Modified;
                                         count++;
                                     }
+                                    handled = true;
                                     break;
                                 }
 
@@ -562,9 +614,16 @@ namespace UoFiddler.Controls.UserControls
                                 {
                                     _cliloc.Entries.Insert(index, new StringEntry(id, text, StringEntry.CliLocFlag.Custom));
                                     count++;
+                                    handled = true;
                                     break;
                                 }
                                 ++index;
+                            }
+
+                            if (!handled)
+                            {
+                                _cliloc.Entries.Add(new StringEntry(id, text, StringEntry.CliLocFlag.Custom));
+                                count++;
                             }
 
                             dataGridView1.Invalidate();
@@ -578,6 +637,8 @@ namespace UoFiddler.Controls.UserControls
                     if (count > 0)
                     {
                         Options.ChangedUltimaClass["CliLoc"] = true;
+                        _source.ResetBindings(false);
+                        dataGridView1.Invalidate();
                         MessageBox.Show(this, $"{count} entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
@@ -591,60 +652,173 @@ namespace UoFiddler.Controls.UserControls
 
         private void TileDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int count = 0;
+            Cursor.Current = Cursors.WaitCursor;
+
+            List<TileDataSyncChange> changes;
+            TileDataSyncPreviewForm preview;
+            try
+            {
+                changes = BuildTileDataSyncPlan();
+
+                if (changes.Count == 0)
+                {
+                    Cursor.Current = Cursors.Default;
+                    MessageBox.Show(this, "No differences between TileData and CliLoc — nothing to sync.", "Sync from TileData", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                preview = new TileDataSyncPreviewForm(changes);
+            }
+            catch
+            {
+                Cursor.Current = Cursors.Default;
+                throw;
+            }
+
+            // Cursor stays as WaitCursor across ShowDialog; the form resets it in OnShown.
+            using (preview)
+            {
+                if (preview.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var accepted = preview.AcceptedChanges;
+                if (accepted.Count == 0)
+                {
+                    MessageBox.Show(this, "No changes were selected — nothing applied.", "Sync from TileData", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                Cursor.Current = Cursors.WaitCursor;
+                int added, updated, removed;
+                try
+                {
+                    ApplyTileDataSyncPlan(accepted, out added, out updated, out removed);
+                }
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
+                }
+
+                if (added + updated + removed > 0)
+                {
+                    Options.ChangedUltimaClass["CliLoc"] = true;
+                }
+
+                _source.ResetBindings(false);
+                dataGridView1.Invalidate();
+
+                MessageBox.Show(
+                    this,
+                    $"Sync from TileData applied:\r\n\r\nAdded: {added}\r\nUpdated: {updated}\r\nRemoved: {removed}",
+                    "Sync from TileData",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+        }
+
+        private static List<TileDataSyncChange> BuildTileDataSyncPlan()
+        {
+            var byId = new System.Collections.Generic.Dictionary<int, StringEntry>(_cliloc.Entries.Count);
+            foreach (StringEntry entry in _cliloc.Entries)
+            {
+                byId[entry.Number] = entry;
+            }
+
+            var changes = new List<TileDataSyncChange>();
             for (int index = 0; index < TileData.ItemTable.Length; index++)
             {
                 ItemData itemData = TileData.ItemTable[index];
-                int baseClilocId = GetCliLocBaseId(index);
-                int id = index + baseClilocId;
+                int id = index + GetCliLocBaseId(index);
+                bool exists = byId.TryGetValue(id, out StringEntry existing);
 
                 if (string.IsNullOrWhiteSpace(itemData.Name))
                 {
-                    int i = _cliloc.Entries.FindIndex(x => x.Number == id);
-
-                    if (i >= 0)
+                    if (exists)
                     {
-                        _cliloc.Entries.RemoveAt(i);
-                        count++;
+                        changes.Add(new TileDataSyncChange
+                        {
+                            Kind = TileDataSyncKind.Remove,
+                            Number = id,
+                            OldText = existing.Text,
+                            NewText = string.Empty,
+                        });
                     }
                 }
-                else
+                else if (!exists)
                 {
-                    int entryIndex = 0;
-                    foreach (StringEntry entry in _cliloc.Entries)
+                    changes.Add(new TileDataSyncChange
                     {
-                        if (entry.Number == id)
-                        {
-                            if (entry.Text != itemData.Name)
-                            {
-                                entry.Text = itemData.Name;
-                                entry.Flag = StringEntry.CliLocFlag.Modified;
-                                count++;
-                            }
-
-                            break;
-                        }
-
-                        if (entry.Number > id)
-                        {
-                            _cliloc.Entries.Insert(entryIndex, new StringEntry(id, itemData.Name, StringEntry.CliLocFlag.Modified));
-                            count++;
-                            break;
-                        }
-
-                        entryIndex++;
-                    }
+                        Kind = TileDataSyncKind.Add,
+                        Number = id,
+                        OldText = string.Empty,
+                        NewText = itemData.Name,
+                    });
+                }
+                else if (existing.Text != itemData.Name)
+                {
+                    changes.Add(new TileDataSyncChange
+                    {
+                        Kind = TileDataSyncKind.Update,
+                        Number = id,
+                        OldText = existing.Text,
+                        NewText = itemData.Name,
+                    });
                 }
             }
 
-            if (count > 0)
+            return changes;
+        }
+
+        private static void ApplyTileDataSyncPlan(IReadOnlyList<TileDataSyncChange> changes, out int added, out int updated, out int removed)
+        {
+            added = updated = removed = 0;
+
+            var byId = new System.Collections.Generic.Dictionary<int, StringEntry>(_cliloc.Entries.Count);
+            foreach (StringEntry entry in _cliloc.Entries)
             {
-                Options.ChangedUltimaClass["CliLoc"] = true;
-                MessageBox.Show(this, $"{count} entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                byId[entry.Number] = entry;
             }
-            else
+
+            bool insertedAny = false;
+
+            foreach (var change in changes)
             {
-                MessageBox.Show(this, "No entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                switch (change.Kind)
+                {
+                    case TileDataSyncKind.Add:
+                        var fresh = new StringEntry(change.Number, change.NewText, StringEntry.CliLocFlag.Modified);
+                        _cliloc.Entries.Add(fresh);
+                        byId[change.Number] = fresh;
+                        insertedAny = true;
+                        added++;
+                        break;
+
+                    case TileDataSyncKind.Update:
+                        if (byId.TryGetValue(change.Number, out StringEntry toUpdate))
+                        {
+                            toUpdate.Text = change.NewText;
+                            toUpdate.Flag = StringEntry.CliLocFlag.Modified;
+                            updated++;
+                        }
+                        break;
+
+                    case TileDataSyncKind.Remove:
+                        int idx = _cliloc.Entries.FindIndex(x => x.Number == change.Number);
+                        if (idx >= 0)
+                        {
+                            _cliloc.Entries.RemoveAt(idx);
+                            byId.Remove(change.Number);
+                            removed++;
+                        }
+                        break;
+                }
+            }
+
+            if (insertedAny)
+            {
+                _cliloc.Entries.Sort(new StringList.NumberComparer(false));
             }
         }
 
