@@ -119,9 +119,12 @@
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Version 4.19.3
+- Fix dynamic flag when importing from WSC - value was flipped after recent changes.
+
+Version 4.19.3
 - Improve cliloc editing.
     * Add "Next free" button when adding new cliloc entry.
-    * Add entry will now use current selection when searching for next free number or will seach starting from the number user inputs in the text box.
+    * Add entry will now use current selection when searching for next free number or will search starting from the number user inputs in the text box.
     * Add tiledata import preview form.
 - Update extract/pack all logic in UopPacker plugin.
 
