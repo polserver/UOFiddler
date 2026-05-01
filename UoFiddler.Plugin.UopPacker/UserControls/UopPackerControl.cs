@@ -46,10 +46,27 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             outfolder.PlaceholderText = "folder where .mul/.idx will be written";
             outuopfolder.PlaceholderText = "folder where .uop will be written";
 
+            packAllGumpCompressionBox.SelectedIndex = 0;
+            extract.CheckedChanged += OnPackAllModeChanged;
+            pack.CheckedChanged += OnPackAllModeChanged;
+            UpdatePackAllCompressionVisibility();
+
             RefreshMulTypeUi();
             RefreshUopTypeUi();
 
             Dock = DockStyle.Fill;
+        }
+
+        private void OnPackAllModeChanged(object sender, EventArgs e) => UpdatePackAllCompressionVisibility();
+
+        private void UpdatePackAllCompressionVisibility()
+        {
+            bool show = pack.Checked;
+            packAllGumpCompressionLabel.Visible = show;
+            packAllGumpCompressionBox.Visible = show;
+            packAllHousingBinLabel.Visible = show;
+            packAllHousingBin.Visible = show;
+            packAllHousingBinBtn.Visible = show;
         }
 
         private static (string mul, string idx, string uop) GetConventionalNames(FileType type, int mapIndex)
@@ -384,6 +401,25 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             if (FolderDialog.ShowDialog() == DialogResult.OK)
             {
                 inputfolder.Text = FolderDialog.SelectedPath;
+
+                if (string.IsNullOrWhiteSpace(packAllHousingBin.Text))
+                {
+                    string candidate = Path.Combine(FolderDialog.SelectedPath, "housing.bin");
+                    if (File.Exists(candidate))
+                    {
+                        packAllHousingBin.Text = candidate;
+                    }
+                }
+            }
+        }
+
+        private void PackAllHousingBinSelect(object sender, EventArgs e)
+        {
+            FileDialog.FilterIndex = 4;
+
+            if (FileDialog.ShowDialog() == DialogResult.OK)
+            {
+                packAllHousingBin.Text = FileDialog.FileName;
             }
         }
 
@@ -436,7 +472,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
         }
 
-        private void Pack(string inFile, string inIdx, string outFile, FileType type, int typeIndex, string housingBinFile = "")
+        private void Pack(string inFile, string inIdx, string outFile, FileType type, int typeIndex, CompressionFlag compression, string housingBinFile = "")
         {
             try
             {
@@ -466,9 +502,8 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 }
 
                 ++_total;
-                CompressionFlag selectedCompressionMethod = Enum.Parse<CompressionFlag>(compressionBox.SelectedItem.ToString());
 
-                LegacyMulFileConverter.ToUop(inFile, inIdx, outFile, type, typeIndex, selectedCompressionMethod, housingBinFile ?? string.Empty);
+                LegacyMulFileConverter.ToUop(inFile, inIdx, outFile, type, typeIndex, compression, housingBinFile ?? string.Empty);
 
                 ++_success;
             }
@@ -523,19 +558,41 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
             else if (pack.Checked)
             {
+                CompressionFlag gumpCompression = CompressionFlag.None;
+                if (packAllGumpCompressionBox.SelectedItem != null)
+                {
+                    Enum.TryParse(packAllGumpCompressionBox.SelectedItem.ToString(), out gumpCompression);
+                }
+
+                string housingBinPath = string.IsNullOrWhiteSpace(packAllHousingBin.Text)
+                    ? "housing.bin"
+                    : packAllHousingBin.Text;
+
+                if (!string.IsNullOrWhiteSpace(packAllHousingBin.Text))
+                {
+                    string resolved = Path.IsPathRooted(housingBinPath)
+                        ? housingBinPath
+                        : Path.Combine(inputfolder.Text, housingBinPath);
+                    if (!File.Exists(resolved))
+                    {
+                        MessageBox.Show($"The specified housing.bin does not exist:\r\n{resolved}");
+                        return;
+                    }
+                }
+
                 _success = _total = 0;
 
-                Pack("art.mul", "artidx.mul", "artLegacyMUL.uop", FileType.ArtLegacyMul, 0);
-                Pack("gumpart.mul", "gumpidx.mul", "gumpartLegacyMUL.uop", FileType.GumpartLegacyMul, 0);
-                Pack("sound.mul", "soundidx.mul", "soundLegacyMUL.uop", FileType.SoundLegacyMul, 0);
-                Pack("multi-unpacked.mul", "multi-unpacked.idx", "MultiCollection.uop", FileType.MultiCollection, 0, "housing.bin");
+                Pack("art.mul", "artidx.mul", "artLegacyMUL.uop", FileType.ArtLegacyMul, 0, CompressionFlag.None);
+                Pack("gumpart.mul", "gumpidx.mul", "gumpartLegacyMUL.uop", FileType.GumpartLegacyMul, 0, gumpCompression);
+                Pack("sound.mul", "soundidx.mul", "soundLegacyMUL.uop", FileType.SoundLegacyMul, 0, CompressionFlag.None);
+                Pack("multi-unpacked.mul", "multi-unpacked.idx", "MultiCollection.uop", FileType.MultiCollection, 0, CompressionFlag.Zlib, housingBinPath);
 
                 for (int i = 0; i <= 5; ++i)
                 {
                     string map = $"map{i}";
 
-                    Pack(map + ".mul", null, map + "LegacyMUL.uop", FileType.MapLegacyMul, i);
-                    Pack(map + "x.mul", null, map + "xLegacyMUL.uop", FileType.MapLegacyMul, i);
+                    Pack(map + ".mul", null, map + "LegacyMUL.uop", FileType.MapLegacyMul, i, CompressionFlag.None);
+                    Pack(map + "x.mul", null, map + "xLegacyMUL.uop", FileType.MapLegacyMul, i, CompressionFlag.None);
                 }
 
                 string packMessage = $"Done ({_success}/{_total} files packed)";

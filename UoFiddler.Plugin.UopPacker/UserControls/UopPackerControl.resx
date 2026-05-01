@@ -148,6 +148,6 @@ Picking the wrong option produces a UOP that is much larger than the original or
     <value>398, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>25</value>
+    <value>72</value>
   </metadata>
 </root>

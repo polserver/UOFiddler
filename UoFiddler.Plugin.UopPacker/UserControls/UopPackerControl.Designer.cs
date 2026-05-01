@@ -82,6 +82,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             pack = new System.Windows.Forms.RadioButton();
             extract = new System.Windows.Forms.RadioButton();
+            packAllGumpCompressionLabel = new System.Windows.Forms.Label();
+            packAllGumpCompressionBox = new System.Windows.Forms.ComboBox();
+            packAllHousingBinLabel = new System.Windows.Forms.Label();
+            packAllHousingBin = new System.Windows.Forms.TextBox();
+            packAllHousingBinBtn = new System.Windows.Forms.Button();
             label13 = new System.Windows.Forms.Label();
             inputfolder = new System.Windows.Forms.TextBox();
             SelectFolderButton = new System.Windows.Forms.Button();
@@ -447,7 +452,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             OperationTypeTabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             OperationTypeTabControl.Name = "OperationTypeTabControl";
             OperationTypeTabControl.SelectedIndex = 0;
-            OperationTypeTabControl.Size = new System.Drawing.Size(645, 470);
+            OperationTypeTabControl.Size = new System.Drawing.Size(640, 422);
             OperationTypeTabControl.TabIndex = 43;
             // 
             // ExtractAllFilesTabPage
@@ -456,6 +461,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             ExtractAllFilesTabPage.Controls.Add(ExtractionStatusStrip);
             ExtractAllFilesTabPage.Controls.Add(pack);
             ExtractAllFilesTabPage.Controls.Add(extract);
+            ExtractAllFilesTabPage.Controls.Add(packAllGumpCompressionLabel);
+            ExtractAllFilesTabPage.Controls.Add(packAllGumpCompressionBox);
+            ExtractAllFilesTabPage.Controls.Add(packAllHousingBinLabel);
+            ExtractAllFilesTabPage.Controls.Add(packAllHousingBin);
+            ExtractAllFilesTabPage.Controls.Add(packAllHousingBinBtn);
             ExtractAllFilesTabPage.Controls.Add(label13);
             ExtractAllFilesTabPage.Controls.Add(inputfolder);
             ExtractAllFilesTabPage.Controls.Add(SelectFolderButton);
@@ -463,18 +473,18 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             ExtractAllFilesTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ExtractAllFilesTabPage.Name = "ExtractAllFilesTabPage";
             ExtractAllFilesTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            ExtractAllFilesTabPage.Size = new System.Drawing.Size(637, 442);
+            ExtractAllFilesTabPage.Size = new System.Drawing.Size(632, 394);
             ExtractAllFilesTabPage.TabIndex = 1;
             ExtractAllFilesTabPage.Text = "Every file";
             ExtractAllFilesTabPage.UseVisualStyleBackColor = true;
             // 
             // StartFolderButton
             // 
-            StartFolderButton.Location = new System.Drawing.Point(56, 96);
+            StartFolderButton.Location = new System.Drawing.Point(56, 154);
             StartFolderButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             StartFolderButton.Name = "StartFolderButton";
             StartFolderButton.Size = new System.Drawing.Size(279, 27);
-            StartFolderButton.TabIndex = 12;
+            StartFolderButton.TabIndex = 13;
             StartFolderButton.Text = "Start";
             StartFolderButton.UseVisualStyleBackColor = true;
             StartFolderButton.Click += StartFolderButtonClick;
@@ -482,10 +492,10 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // ExtractionStatusStrip
             // 
             ExtractionStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { statustext, toolStripStatusLabel2 });
-            ExtractionStatusStrip.Location = new System.Drawing.Point(4, 417);
+            ExtractionStatusStrip.Location = new System.Drawing.Point(4, 369);
             ExtractionStatusStrip.Name = "ExtractionStatusStrip";
             ExtractionStatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            ExtractionStatusStrip.Size = new System.Drawing.Size(629, 22);
+            ExtractionStatusStrip.Size = new System.Drawing.Size(624, 22);
             ExtractionStatusStrip.TabIndex = 11;
             ExtractionStatusStrip.Text = "statusStrip2";
             // 
@@ -493,7 +503,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // 
             statustext.ForeColor = System.Drawing.Color.DarkRed;
             statustext.Name = "statustext";
-            statustext.Size = new System.Drawing.Size(330, 17);
+            statustext.Size = new System.Drawing.Size(325, 17);
             statustext.Spring = true;
             statustext.Text = "Status";
             statustext.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -527,6 +537,60 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             extract.TabStop = true;
             extract.Text = "Extract UOP to MUL";
             extract.UseVisualStyleBackColor = true;
+            // 
+            // packAllGumpCompressionLabel
+            // 
+            packAllGumpCompressionLabel.AutoSize = true;
+            packAllGumpCompressionLabel.Location = new System.Drawing.Point(7, 99);
+            packAllGumpCompressionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            packAllGumpCompressionLabel.Name = "packAllGumpCompressionLabel";
+            packAllGumpCompressionLabel.Size = new System.Drawing.Size(114, 15);
+            packAllGumpCompressionLabel.TabIndex = 11;
+            packAllGumpCompressionLabel.Text = "Gump compression:";
+            // 
+            // packAllGumpCompressionBox
+            // 
+            packAllGumpCompressionBox.BackColor = System.Drawing.Color.White;
+            packAllGumpCompressionBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            packAllGumpCompressionBox.Items.AddRange(new object[] { "None", "Mythic" });
+            packAllGumpCompressionBox.Location = new System.Drawing.Point(129, 96);
+            packAllGumpCompressionBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            packAllGumpCompressionBox.Name = "packAllGumpCompressionBox";
+            packAllGumpCompressionBox.Size = new System.Drawing.Size(206, 23);
+            packAllGumpCompressionBox.TabIndex = 12;
+            compressionTip.SetToolTip(packAllGumpCompressionBox, "Compression for gumpartLegacyMUL.uop only.\r\nMultiCollection.uop is always Zlib; art/sound/maps are stored uncompressed.");
+            // 
+            // packAllHousingBinLabel
+            // 
+            packAllHousingBinLabel.AutoSize = true;
+            packAllHousingBinLabel.Location = new System.Drawing.Point(8, 128);
+            packAllHousingBinLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            packAllHousingBinLabel.Name = "packAllHousingBinLabel";
+            packAllHousingBinLabel.Size = new System.Drawing.Size(70, 15);
+            packAllHousingBinLabel.TabIndex = 14;
+            packAllHousingBinLabel.Text = "housing.bin";
+            // 
+            // packAllHousingBin
+            // 
+            packAllHousingBin.BackColor = System.Drawing.Color.White;
+            packAllHousingBin.Location = new System.Drawing.Point(86, 125);
+            packAllHousingBin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            packAllHousingBin.Name = "packAllHousingBin";
+            packAllHousingBin.PlaceholderText = "optional, defaults to folder/housing.bin";
+            packAllHousingBin.Size = new System.Drawing.Size(210, 23);
+            packAllHousingBin.TabIndex = 15;
+            compressionTip.SetToolTip(packAllHousingBin, "Path to housing.bin used when packing MultiCollection.uop.\r\nLeave empty to use 'housing.bin' inside the folder above.");
+            // 
+            // packAllHousingBinBtn
+            // 
+            packAllHousingBinBtn.Location = new System.Drawing.Point(304, 125);
+            packAllHousingBinBtn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            packAllHousingBinBtn.Name = "packAllHousingBinBtn";
+            packAllHousingBinBtn.Size = new System.Drawing.Size(31, 23);
+            packAllHousingBinBtn.TabIndex = 16;
+            packAllHousingBinBtn.Text = "...";
+            packAllHousingBinBtn.UseVisualStyleBackColor = true;
+            packAllHousingBinBtn.Click += PackAllHousingBinSelect;
             // 
             // label13
             // 
@@ -598,7 +662,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             ExtractSingleFileTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ExtractSingleFileTabPage.Name = "ExtractSingleFileTabPage";
             ExtractSingleFileTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            ExtractSingleFileTabPage.Size = new System.Drawing.Size(637, 442);
+            ExtractSingleFileTabPage.Size = new System.Drawing.Size(632, 394);
             ExtractSingleFileTabPage.TabIndex = 0;
             ExtractSingleFileTabPage.Text = "One file";
             ExtractSingleFileTabPage.UseVisualStyleBackColor = true;
@@ -637,11 +701,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // 
             MainStatusStrip.Enabled = false;
             MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1, guilabel, VersionLabel });
-            MainStatusStrip.Location = new System.Drawing.Point(0, 8);
+            MainStatusStrip.Location = new System.Drawing.Point(0, 5);
             MainStatusStrip.Name = "MainStatusStrip";
             MainStatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
             MainStatusStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            MainStatusStrip.Size = new System.Drawing.Size(645, 22);
+            MainStatusStrip.Size = new System.Drawing.Size(640, 22);
             MainStatusStrip.Stretch = false;
             MainStatusStrip.TabIndex = 44;
             MainStatusStrip.Text = "statusStrip1";
@@ -679,8 +743,8 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(MainStatusStrip);
-            splitContainer.Size = new System.Drawing.Size(645, 505);
-            splitContainer.SplitterDistance = 470;
+            splitContainer.Size = new System.Drawing.Size(640, 454);
+            splitContainer.SplitterDistance = 422;
             splitContainer.SplitterWidth = 5;
             splitContainer.TabIndex = 40;
             // 
@@ -694,7 +758,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "UopPackerControl";
-            Size = new System.Drawing.Size(645, 505);
+            Size = new System.Drawing.Size(640, 454);
             ((System.ComponentModel.ISupportInitialize)mulMapIndex).EndInit();
             ((System.ComponentModel.ISupportInitialize)uopMapIndex).EndInit();
             OperationTypeTabControl.ResumeLayout(false);
@@ -765,6 +829,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
         private System.Windows.Forms.ToolStripStatusLabel VersionLabel;
         private System.Windows.Forms.ComboBox compressionBox;
         private System.Windows.Forms.Label compressionLabel;
+        private System.Windows.Forms.ComboBox packAllGumpCompressionBox;
+        private System.Windows.Forms.Label packAllGumpCompressionLabel;
+        private System.Windows.Forms.TextBox packAllHousingBin;
+        private System.Windows.Forms.Button packAllHousingBinBtn;
+        private System.Windows.Forms.Label packAllHousingBinLabel;
         private System.Windows.Forms.ToolTip compressionTip;
         private System.Windows.Forms.TextBox inhousingbin;
         private System.Windows.Forms.Button inhousingbinbtn;
