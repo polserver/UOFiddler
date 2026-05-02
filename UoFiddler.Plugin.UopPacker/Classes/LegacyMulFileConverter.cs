@@ -56,7 +56,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // MUL -> UOP
         //
-        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag = CompressionFlag.None, string housingBinFile = "")
+        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag = CompressionFlag.None, string housingBinFile = "", IProgress<int> progress = null)
         {
             // Same for all UOP files
             const long firstTable = 0x200;
@@ -162,6 +162,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 TableEntry[] tableEntries = new TableEntry[tableSize];
 
                 string[] hashFormat = GetHashFormat(type, typeIndex, out int _);
+
+                int totalEntries = idxEntries.Count;
+                int lastReportedPct = -1;
+                progress?.Report(0);
 
                 for (int i = 0; i < tableCount; ++i)
                 {
@@ -308,6 +312,16 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             tableEntries[tableIdx].Hash = HashAdler32(data);
                             writer.Write(data);
                         }
+
+                        if (totalEntries > 0)
+                        {
+                            int pct = (j + 1) * 100 / totalEntries;
+                            if (pct != lastReportedPct)
+                            {
+                                lastReportedPct = pct;
+                                progress?.Report(pct);
+                            }
+                        }
                     }
 
                     long nextTable = writer.BaseStream.Position;
@@ -354,7 +368,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // UOP -> MUL
         //
-        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex, string housingBinFile = "")
+        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex, string housingBinFile = "", IProgress<int> progress = null)
         {
             Dictionary<ulong, int> chunkIds = new Dictionary<ulong, int>();
             Dictionary<ulong, int> chunkIds2 = new Dictionary<ulong, int>();
@@ -391,6 +405,11 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 reader.ReadInt32(); // format timestamp? 0xFD23EC43
 
                 long nextTable = reader.ReadInt64();
+                reader.ReadInt32(); // table size (unused)
+                int totalFileCount = reader.ReadInt32();
+                int processedCount = 0;
+                int lastReportedPct = -1;
+                progress?.Report(0);
 
                 do
                 {
@@ -414,7 +433,8 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         offsets[i].DecompressedSize = reader.ReadInt32(); // decompressed size
                         offsets[i].Identifier = reader.ReadUInt64(); // filename hash (HashLittle2)
                         offsets[i].Hash = reader.ReadUInt32(); // data hash (Adler32)
-                        offsets[i].Compressed = reader.ReadInt16() != 0; // compression method (0 = none, 1 = zlib)
+                        offsets[i].CompressionFlag = reader.ReadInt16(); // compression method (0 = none, 1 = zlib, 3 = mythic)
+                        offsets[i].Compressed = offsets[i].CompressionFlag != 0;
                     }
 
                     // Copy chunks
@@ -452,6 +472,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 writerBin.Write(binDataToWrite, 0, binDataToWrite.Length);
                             }
 
+                            if (totalFileCount > 0)
+                            {
+                                ++processedCount;
+                                int pct = processedCount * 100 / totalFileCount;
+                                if (pct != lastReportedPct)
+                                {
+                                    lastReportedPct = pct;
+                                    progress?.Report(pct);
+                                }
+                            }
+
                             continue;
                         }
 
@@ -478,6 +509,11 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             byte[] decompressed = new byte[offsets[i].DecompressedSize];
                             zlib.ReadExactly(decompressed);
                             chunkData = decompressed;
+                        }
+
+                        if (offsets[i].CompressionFlag == (short)CompressionFlag.Mythic)
+                        {
+                            chunkData = MythicDecompress.Decompress(chunkData);
                         }
 
                         if (type == FileType.MapLegacyMul)
@@ -541,6 +577,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 mulWriter.Write(chunkData, dataOffset, chunkData.Length - dataOffset);
                             }
                         }
+
+                        if (totalFileCount > 0)
+                        {
+                            ++processedCount;
+                            int pct = processedCount * 100 / totalFileCount;
+                            if (pct != lastReportedPct)
+                            {
+                                lastReportedPct = pct;
+                                progress?.Report(pct);
+                            }
+                        }
                     }
 
                     // Move to next table
@@ -551,10 +598,22 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 }
                 while (nextTable != 0);
 
-                // Fix index
+                // Fix index. Only pad up to the highest used entry — `used.Length` is the hash-lookup
+                // upper bound (often 0x7FFFF), which would otherwise produce a multi-megabyte idx file
+                // padded with sentinel rows beyond any real entry.
                 if (idxWriter != null)
                 {
-                    for (int i = 0; i < used.Length; ++i)
+                    int padCount = 0;
+                    for (int i = used.Length - 1; i >= 0; --i)
+                    {
+                        if (used[i])
+                        {
+                            padCount = i + 1;
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < padCount; ++i)
                     {
                         if (used[i])
                         {
