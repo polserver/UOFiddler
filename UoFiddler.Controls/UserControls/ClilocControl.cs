@@ -69,6 +69,12 @@ namespace UoFiddler.Controls.UserControls
                         _cliloc = new StringList("custom2", false);
                         break;
                 }
+
+                if (!string.IsNullOrEmpty(_cliloc?.LoadWarning))
+                {
+                    MessageBox.Show(this, _cliloc.LoadWarning, "Cliloc parsed with warnings",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
         }
 

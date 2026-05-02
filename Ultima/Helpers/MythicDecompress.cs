@@ -129,10 +129,13 @@ namespace Ultima.Helpers
 
                 return output;
             }
+            catch (InvalidDataException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during decompression: {ex.Message}");
-                throw;
+                throw new InvalidDataException("Mythic decompression failed: " + ex.Message, ex);
             }
         }
 

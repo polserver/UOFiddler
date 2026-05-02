@@ -15,6 +15,13 @@ namespace Ultima
         public List<StringEntry> Entries { get; private set; }
         public string Language { get; }
 
+        /// <summary>
+        /// Non-null when the file was loaded but parsing did not consume the full file cleanly
+        /// (e.g. a malformed entry). Contains a human-readable description of where parsing failed
+        /// and how many entries were salvaged. Caller should surface this to the user.
+        /// </summary>
+        public string LoadWarning { get; private set; }
+
         private Dictionary<int, string> _stringTable;
         private Dictionary<int, StringEntry> _entryTable;
         private static byte[] _buffer = new byte[1024];
@@ -56,60 +63,166 @@ namespace Ultima
             byte[] buffer = new byte[fileStream.Length];
             _ = fileStream.Read(buffer, 0, buffer.Length);
 
-            if (!TryParse(buffer, _decompress))
+            ParseResult primary = TryParse(buffer, _decompress);
+            if (primary.Success)
             {
-                bool fallback = !_decompress;
-                if (!TryParse(buffer, fallback))
-                {
-                    throw new InvalidDataException($"Failed to parse cliloc file '{path}' in either compressed or uncompressed format.");
-                }
-                _decompress = fallback;
+                Apply(primary);
+                return;
             }
+
+            ParseResult fallback = TryParse(buffer, !_decompress);
+            if (fallback.Success)
+            {
+                _decompress = !_decompress;
+                Apply(fallback);
+                return;
+            }
+
+            // Both attempts failed. Prefer whichever extracted more entries — that's the format
+            // the file was actually in, just with a corrupt section somewhere.
+            bool keepPrimary = primary.EntriesParsed >= fallback.EntriesParsed;
+            ParseResult best = keepPrimary ? primary : fallback;
+            if (!keepPrimary)
+            {
+                _decompress = !_decompress;
+            }
+
+            if (best.EntriesParsed > 0)
+            {
+                Apply(best);
+                LoadWarning =
+                    $"Cliloc '{path}' parsed partially as {FormatLabel(_decompress)}: " +
+                    $"{best.EntriesParsed} entries recovered before parsing failed. {best.ErrorMessage}";
+                return;
+            }
+
+            throw new InvalidDataException(
+                $"Failed to parse cliloc file '{path}' in either compressed or uncompressed format." +
+                $"{Environment.NewLine}  As {FormatLabel(_decompress)}: {primary.ErrorMessage}" +
+                $"{Environment.NewLine}  As {FormatLabel(!_decompress)}: {fallback.ErrorMessage}");
         }
 
-        private bool TryParse(byte[] buffer, bool decompress)
+        private void Apply(ParseResult result)
         {
+            Entries = result.Entries;
+            _stringTable = result.StringTable;
+            _entryTable = result.EntryTable;
+            _header1 = result.Header1;
+            _header2 = result.Header2;
+        }
+
+        private static string FormatLabel(bool decompress) => decompress ? "compressed" : "uncompressed";
+
+        private struct ParseResult
+        {
+            public bool Success;
+            public int EntriesParsed;
+            public List<StringEntry> Entries;
+            public Dictionary<int, string> StringTable;
+            public Dictionary<int, StringEntry> EntryTable;
+            public int Header1;
+            public short Header2;
+            public string ErrorMessage;
+        }
+
+        private static ParseResult TryParse(byte[] buffer, bool decompress)
+        {
+            var result = new ParseResult
+            {
+                Entries = new List<StringEntry>(),
+                StringTable = new Dictionary<int, string>(),
+                EntryTable = new Dictionary<int, StringEntry>(),
+            };
+
+            byte[] clilocData;
             try
             {
-                byte[] clilocData = decompress ? MythicDecompress.Decompress(buffer) : buffer;
+                clilocData = decompress ? MythicDecompress.Decompress(buffer) : buffer;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = $"decompression failed: {ex.Message}";
+                return result;
+            }
 
-                var entries = new List<StringEntry>();
-                var stringTable = new Dictionary<int, string>();
-                var entryTable = new Dictionary<int, StringEntry>();
+            // Header is 4 + 2 bytes.
+            if (clilocData.Length < 6)
+            {
+                result.ErrorMessage = $"file is {clilocData.Length} bytes, smaller than the 6-byte header.";
+                return result;
+            }
 
-                using var reader = new BinaryReader(new MemoryStream(clilocData));
-                _header1 = reader.ReadInt32();
-                _header2 = reader.ReadInt16();
+            using var stream = new MemoryStream(clilocData);
+            using var reader = new BinaryReader(stream);
+            result.Header1 = reader.ReadInt32();
+            result.Header2 = reader.ReadInt16();
 
-                while (reader.BaseStream.Length != reader.BaseStream.Position)
+            int lastNumber = -1;
+            while (stream.Position < stream.Length)
+            {
+                long entryStart = stream.Position;
+                long remaining = stream.Length - entryStart;
+
+                // Each entry header is 4 (number) + 1 (flag) + 2 (length) = 7 bytes.
+                if (remaining < 7)
                 {
-                    int number = reader.ReadInt32();
-                    byte flag = reader.ReadByte();
-                    int length = reader.ReadInt16();
-
-                    if (length > _buffer.Length)
-                    {
-                        _buffer = new byte[(length + 1023) & ~1023];
-                    }
-
-                    reader.Read(_buffer, 0, length);
-                    string text = Encoding.UTF8.GetString(_buffer, 0, length);
-
-                    var se = new StringEntry(number, text, flag);
-                    entries.Add(se);
-                    stringTable[number] = text;
-                    entryTable[number] = se;
+                    result.ErrorMessage =
+                        $"unexpected {remaining} trailing byte(s) at offset 0x{entryStart:X} after entry #{lastNumber}; " +
+                        $"need 7 bytes for the next entry header.";
+                    return result;
                 }
 
-                Entries = entries;
-                _stringTable = stringTable;
-                _entryTable = entryTable;
-                return true;
+                int number = reader.ReadInt32();
+                byte flag = reader.ReadByte();
+                // Writer emits ushort; reading as signed Int16 truncates strings ≥32768 bytes to a negative length.
+                int length = reader.ReadUInt16();
+
+                long bodyRemaining = stream.Length - stream.Position;
+                if (length > bodyRemaining)
+                {
+                    result.ErrorMessage =
+                        $"entry #{number} at offset 0x{entryStart:X} declares length {length}, " +
+                        $"but only {bodyRemaining} byte(s) remain in the file " +
+                        $"(previous entry was #{lastNumber}, parsed {result.EntriesParsed} so far).";
+                    return result;
+                }
+
+                if (length > _buffer.Length)
+                {
+                    _buffer = new byte[(length + 1023) & ~1023];
+                }
+
+                int read = reader.Read(_buffer, 0, length);
+                if (read != length)
+                {
+                    result.ErrorMessage =
+                        $"entry #{number} at offset 0x{entryStart:X} expected {length} body byte(s) " +
+                        $"but only {read} were available.";
+                    return result;
+                }
+
+                string text;
+                try
+                {
+                    text = Encoding.UTF8.GetString(_buffer, 0, length);
+                }
+                catch (Exception ex)
+                {
+                    result.ErrorMessage =
+                        $"entry #{number} at offset 0x{entryStart:X} has {length} body bytes that are not valid UTF-8: {ex.Message}";
+                    return result;
+                }
+
+                var se = new StringEntry(number, text, flag);
+                result.Entries.Add(se);
+                result.StringTable[number] = text;
+                result.EntryTable[number] = se;
+                result.EntriesParsed++;
+                lastNumber = number;
             }
-            catch
-            {
-                return false;
-            }
+
+            result.Success = true;
+            return result;
         }
 
         /// <summary>
