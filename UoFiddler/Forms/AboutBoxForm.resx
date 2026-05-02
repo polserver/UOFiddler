@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.20.0
+    <value>Version 4.20.1
+- UopPacker: fix gump extraction, improve sizing of extracted index.
+- UopPacker: fix validation when extracting maps.
+- UopPacker: add progress bars and minor improvements to UI.
+- Cliloc tab: added additional validation and warnings if files contain unknown bytes.
+
+Version 4.20.0
 - Migrate to .NET 10.0
 - Add dark mode (experimental).
 
