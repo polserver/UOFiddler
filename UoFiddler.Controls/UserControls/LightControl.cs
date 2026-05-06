@@ -349,7 +349,7 @@ namespace UoFiddler.Controls.UserControls
 
             string path = Options.OutputPath;
             int i = (int)treeViewLights.SelectedNode.Tag;
-            string fileName = Path.Combine(path, $"Light {i}.bmp");
+            string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.bmp");
             Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
             FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
         }
@@ -363,7 +363,7 @@ namespace UoFiddler.Controls.UserControls
 
             string path = Options.OutputPath;
             int i = (int)treeViewLights.SelectedNode.Tag;
-            string fileName = Path.Combine(path, $"Light {i}.tiff");
+            string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.tiff");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
         }
@@ -377,7 +377,7 @@ namespace UoFiddler.Controls.UserControls
 
             string path = Options.OutputPath;
             int i = (int)treeViewLights.SelectedNode.Tag;
-            string fileName = Path.Combine(path, $"Light {i}.jpg");
+            string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.jpg");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Jpeg);
             FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
         }

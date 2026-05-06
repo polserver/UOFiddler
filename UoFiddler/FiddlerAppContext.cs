@@ -34,6 +34,8 @@ namespace UoFiddler
             Application.SetCompatibleTextRenderingDefault(false);
             AppSettings.Load();
             Options.DarkMode = AppSettings.DarkMode;
+            Options.ExportFilenameInHex = AppSettings.ExportFilenameInHex;
+            Options.ExportFilenameDecimalPadded = AppSettings.ExportFilenameDecimalPadded;
             if (AppSettings.DarkMode)
             {
                 Application.SetColorMode(SystemColorMode.Dark);

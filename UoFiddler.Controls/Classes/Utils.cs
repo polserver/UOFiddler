@@ -64,6 +64,23 @@ namespace UoFiddler.Controls.Classes
             return int.TryParse(text, NumberStyles.Integer, null, out result);
         }
 
+        /// <summary>
+        /// Formats an ID for inclusion in an exported filename, honoring the user's
+        /// hex/decimal preference in <see cref="Options.ExportFilenameInHex"/> and
+        /// <see cref="Options.ExportFilenameDecimalPadded"/>.
+        /// </summary>
+        public static string FormatExportId(int id)
+        {
+            if (Options.ExportFilenameInHex)
+            {
+                return $"0x{id:X4}";
+            }
+
+            return Options.ExportFilenameDecimalPadded
+                ? id.ToString("D5")
+                : id.ToString();
+        }
+
         public static unsafe Bitmap ConvertBmp(Bitmap bmp)
         {
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);

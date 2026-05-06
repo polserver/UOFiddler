@@ -251,7 +251,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) 0x{i:X}.bmp");
+            string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
             SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Bmp);
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
@@ -270,7 +270,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) 0x{i:X}.tiff");
+            string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
             SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }

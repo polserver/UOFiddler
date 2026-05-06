@@ -679,7 +679,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_selAnimdataEntry != null)
             {
-                var outputFile = Path.Combine(Options.OutputPath, $"AnimData 0x{_currentSelect:X}.gif");
+                var outputFile = Path.Combine(Options.OutputPath, $"AnimData {Utils.FormatExportId(_currentSelect)}.gif");
                 MainPictureBox.Frames.ToGif(outputFile, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
                 MessageBox.Show($"Saved to {outputFile}");
             }

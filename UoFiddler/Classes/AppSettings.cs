@@ -24,6 +24,10 @@ namespace UoFiddler.Classes
 
         public static bool DarkMode { get; set; } = false;
 
+        public static bool ExportFilenameInHex { get; set; } = true;
+
+        public static bool ExportFilenameDecimalPadded { get; set; } = true;
+
         public static void Load()
         {
             if (!File.Exists(FilePath))
@@ -39,6 +43,18 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 DarkMode = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)root?.SelectSingleNode("ExportFilenameInHex");
+            if (elem != null)
+            {
+                ExportFilenameInHex = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)root?.SelectSingleNode("ExportFilenameDecimalPadded");
+            if (elem != null)
+            {
+                ExportFilenameDecimalPadded = bool.Parse(elem.GetAttribute("active"));
             }
         }
 
@@ -56,6 +72,14 @@ namespace UoFiddler.Classes
 
             XmlElement elem = dom.CreateElement("DarkMode");
             elem.SetAttribute("active", DarkMode.ToString());
+            root.AppendChild(elem);
+
+            elem = dom.CreateElement("ExportFilenameInHex");
+            elem.SetAttribute("active", ExportFilenameInHex.ToString());
+            root.AppendChild(elem);
+
+            elem = dom.CreateElement("ExportFilenameDecimalPadded");
+            elem.SetAttribute("active", ExportFilenameDecimalPadded.ToString());
             root.AppendChild(elem);
 
             dom.AppendChild(root);

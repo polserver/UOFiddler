@@ -43,6 +43,18 @@ namespace UoFiddler.Controls.Classes
         public static bool DarkMode { get; set; }
 
         /// <summary>
+        /// When true, exported image filenames embed the ID in hexadecimal form (e.g. "Item 0x00FF.png").
+        /// When false, decimal form is used. Runtime flag set from AppSettings at startup.
+        /// </summary>
+        public static bool ExportFilenameInHex { get; set; } = true;
+
+        /// <summary>
+        /// When <see cref="ExportFilenameInHex"/> is false, controls whether decimal IDs are zero-padded
+        /// to 5 digits ("00255") or written without padding ("255"). Runtime flag set from AppSettings.
+        /// </summary>
+        public static bool ExportFilenameDecimalPadded { get; set; } = true;
+
+        /// <summary>
         /// Defines the cmd to Send Client to Loc
         /// </summary>
         public static string MapCmd { get; set; } = ".goforce";
