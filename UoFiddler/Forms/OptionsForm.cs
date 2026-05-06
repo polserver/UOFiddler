@@ -34,6 +34,11 @@ namespace UoFiddler.Forms
         {
             InitializeComponent();
 
+            radioExportFilenameHex.Checked = AppSettings.ExportFilenameInHex;
+            radioExportFilenameDec.Checked = !AppSettings.ExportFilenameInHex;
+            checkBoxExportFilenameDecPad.Checked = AppSettings.ExportFilenameDecimalPadded;
+            checkBoxExportFilenameDecPad.Enabled = !AppSettings.ExportFilenameInHex;
+
             Icon = Options.GetFiddlerIcon();
 
             _updateAllTileViewsAction = updateAllTileViewsAction;
@@ -186,6 +191,22 @@ namespace UoFiddler.Forms
             {
                 Options.OutputPath = textBoxOutputPath.Text;
             }
+
+            bool newHex = radioExportFilenameHex.Checked;
+            bool newPad = checkBoxExportFilenameDecPad.Checked;
+            if (newHex != AppSettings.ExportFilenameInHex || newPad != AppSettings.ExportFilenameDecimalPadded)
+            {
+                AppSettings.ExportFilenameInHex = newHex;
+                AppSettings.ExportFilenameDecimalPadded = newPad;
+                Options.ExportFilenameInHex = newHex;
+                Options.ExportFilenameDecimalPadded = newPad;
+                AppSettings.Save();
+            }
+        }
+
+        private void OnExportFilenameFormatChanged(object sender, EventArgs e)
+        {
+            checkBoxExportFilenameDecPad.Enabled = !radioExportFilenameHex.Checked;
         }
 
         private void OnClickBrowseOutputPath(object sender, EventArgs e)

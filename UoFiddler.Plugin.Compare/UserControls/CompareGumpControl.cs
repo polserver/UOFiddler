@@ -325,7 +325,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             string path     = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.bmp");
+            string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
             SecondGump.GetGump(i).Save(fileName, ImageFormat.Bmp);
 
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
@@ -346,7 +346,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             string path     = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Gump(Sec) 0x{i:X}.tiff");
+            string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
             SecondGump.GetGump(i).Save(fileName, ImageFormat.Tiff);
 
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");

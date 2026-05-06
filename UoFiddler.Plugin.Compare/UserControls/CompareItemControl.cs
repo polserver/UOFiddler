@@ -297,7 +297,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) 0x{i:X}.bmp");
+            string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
             SecondArt.GetStatic(i).Save(fileName, ImageFormat.Bmp);
 
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
@@ -317,7 +317,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) 0x{i:X}.tiff");
+            string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
             SecondArt.GetStatic(i).Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
         }

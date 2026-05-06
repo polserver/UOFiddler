@@ -1191,7 +1191,7 @@ namespace UoFiddler.Controls.Forms
             }
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"anim{_fileType}_0x{_currentBody:X}.vd");
+            string fileName = Path.Combine(path, $"anim{_fileType}_{Utils.FormatExportId(_currentBody)}.vd");
             AnimationEdit.ExportToVD(_fileType, _currentBody, fileName);
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
@@ -2240,7 +2240,7 @@ namespace UoFiddler.Controls.Forms
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"anim{_fileType}_0x{index:X}.vd");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"anim{_fileType}_{Utils.FormatExportId(index)}.vd");
                     AnimationEdit.ExportToVD(_fileType, index, fileName);
                 }
 

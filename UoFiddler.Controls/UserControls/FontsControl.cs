@@ -209,8 +209,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileType = (int)treeView.SelectedNode.Parent.Tag == 1 ? "Unicode" : "ASCII";
             string fileName = (int)treeView.SelectedNode.Parent.Tag == 1
-                ? Path.Combine(path, $"{fileType} {(int)treeView.SelectedNode.Tag} 0x{FontsTileView.SelectedIndices[0]:X}.tiff")
-                : Path.Combine(path, $"{fileType} {(int)treeView.SelectedNode.Tag} 0x{_fonts[FontsTileView.SelectedIndices[0]] + AsciiFontOffset:X}.tiff");
+                ? Path.Combine(path, $"{fileType} {(int)treeView.SelectedNode.Tag} {Utils.FormatExportId(FontsTileView.SelectedIndices[0])}.tiff")
+                : Path.Combine(path, $"{fileType} {(int)treeView.SelectedNode.Tag} {Utils.FormatExportId(_fonts[FontsTileView.SelectedIndices[0]] + AsciiFontOffset)}.tiff");
 
             if ((int)treeView.SelectedNode.Parent.Tag == 1)
             {

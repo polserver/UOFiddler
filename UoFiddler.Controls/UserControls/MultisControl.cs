@@ -469,7 +469,7 @@ namespace UoFiddler.Controls.UserControls
 
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string floorSuffix = HeightChangeMulti.Value > 0 ? $"_Z{HeightChangeMulti.Value:000}" : string.Empty;
-            string fileName = Path.Combine(Options.OutputPath, $"Multi 0x{int.Parse(TreeViewMulti.SelectedNode.Name):X4}{floorSuffix}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Multi {Utils.FormatExportId(int.Parse(TreeViewMulti.SelectedNode.Name))}{floorSuffix}.{fileExtension}");
             SaveImage(_mulBitmap, fileName, imageFormat, backgroundColor);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -539,7 +539,7 @@ namespace UoFiddler.Controls.UserControls
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{id:X}.txt");
+            string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.txt");
             multi.ExportToTextFile(fileName);
 
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -561,7 +561,7 @@ namespace UoFiddler.Controls.UserControls
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{id:X}.wsc");
+            string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.wsc");
             multi.ExportToWscFile(fileName);
 
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -583,7 +583,7 @@ namespace UoFiddler.Controls.UserControls
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{id:X}.uoa");
+            string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.uoa");
             multi.ExportToUOAFile(fileName);
 
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -687,7 +687,7 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     const int maximumMultiHeight = 127;
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.{fileExtension}");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi {Utils.FormatExportId(index)}.{fileExtension}");
 
                     using (Bitmap multiBitmap = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag)?.GetImage(maximumMultiHeight))
                     {
@@ -727,7 +727,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.txt");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi {Utils.FormatExportId(index)}.txt");
                     multi.ExportToTextFile(fileName);
                 }
 
@@ -760,7 +760,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.uoa");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi {Utils.FormatExportId(index)}.uoa");
                     multi.ExportToUOAFile(fileName);
                 }
 
@@ -793,7 +793,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.wsc");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi {Utils.FormatExportId(index)}.wsc");
                     multi.ExportToWscFile(fileName);
                 }
 
@@ -859,7 +859,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi 0x{index:X4}.uox3");
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Multi {Utils.FormatExportId(index)}.uox3");
                     multi.ExportToUox3File(fileName);
                 }
 
@@ -904,7 +904,7 @@ namespace UoFiddler.Controls.UserControls
             int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"Multi 0x{id:X4}.uox3");
+            string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.uox3");
             multi.ExportToUox3File(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -1288,7 +1288,7 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string floorSuffix = HeightChangeUop.Value > 0 ? $"_Z{HeightChangeUop.Value:000}" : string.Empty;
             int id = int.Parse(treeViewUop.SelectedNode.Name);
-            string fileName = Path.Combine(Options.OutputPath, $"UopMulti 0x{id:X4}{floorSuffix}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}{floorSuffix}.{fileExtension}");
             SaveImage(_uopBitmap, fileName, imageFormat, backgroundColor);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -1301,7 +1301,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int id = int.Parse(treeViewUop.SelectedNode.Name);
-            string fileName = Path.Combine(Options.OutputPath, $"UopMulti 0x{id:X}.txt");
+            string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.txt");
             multi.ExportToTextFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -1314,7 +1314,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int id = int.Parse(treeViewUop.SelectedNode.Name);
-            string fileName = Path.Combine(Options.OutputPath, $"UopMulti 0x{id:X}.uoa");
+            string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.uoa");
             multi.ExportToUOAFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -1327,7 +1327,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int id = int.Parse(treeViewUop.SelectedNode.Name);
-            string fileName = Path.Combine(Options.OutputPath, $"UopMulti 0x{id:X}.wsc");
+            string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.wsc");
             multi.ExportToWscFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -1379,7 +1379,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                string fileName = Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.{fileExtension}");
+                string fileName = Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.{fileExtension}");
                 using Bitmap bitmap = multi.GetImage(maxHeight);
                 if (bitmap != null)
                 {
@@ -1410,7 +1410,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                multi.ExportToTextFile(Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.txt"));
+                multi.ExportToTextFile(Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.txt"));
             }
 
             FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
@@ -1436,7 +1436,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                multi.ExportToUOAFile(Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.uoa"));
+                multi.ExportToUOAFile(Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.uoa"));
             }
 
             FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
@@ -1462,7 +1462,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                multi.ExportToWscFile(Path.Combine(dialog.SelectedPath, $"UopMulti 0x{index:X4}.wsc"));
+                multi.ExportToWscFile(Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.wsc"));
             }
 
             FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");

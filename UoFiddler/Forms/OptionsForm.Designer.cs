@@ -62,6 +62,9 @@ namespace UoFiddler.Forms
             label9 = new System.Windows.Forms.Label();
             FocusColorLabel = new System.Windows.Forms.Label();
             SelectedColorLabel = new System.Windows.Forms.Label();
+            radioExportFilenameHex = new System.Windows.Forms.RadioButton();
+            radioExportFilenameDec = new System.Windows.Forms.RadioButton();
+            checkBoxExportFilenameDecPad = new System.Windows.Forms.CheckBox();
             groupBox3 = new System.Windows.Forms.GroupBox();
             map5Nametext = new System.Windows.Forms.TextBox();
             argstext = new System.Windows.Forms.TextBox();
@@ -83,6 +86,7 @@ namespace UoFiddler.Forms
             PreviewBackgroundColorLabel = new System.Windows.Forms.Label();
             PreviewBackgroundColorButton = new System.Windows.Forms.Button();
             buttonClose = new System.Windows.Forms.Button();
+            ExportFilenamesGroupBox = new System.Windows.Forms.GroupBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownItemSizeHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownItemSizeWidth).BeginInit();
@@ -90,6 +94,7 @@ namespace UoFiddler.Forms
             groupBox3.SuspendLayout();
             groupBox4.SuspendLayout();
             ColorsGroupBox.SuspendLayout();
+            ExportFilenamesGroupBox.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -180,7 +185,7 @@ namespace UoFiddler.Forms
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Misc";
-            //
+            // 
             // checkBoxPolSoundIdOffset
             // 
             checkBoxPolSoundIdOffset.AutoSize = true;
@@ -219,7 +224,7 @@ namespace UoFiddler.Forms
             // 
             // buttonApply
             // 
-            buttonApply.Location = new System.Drawing.Point(318, 476);
+            buttonApply.Location = new System.Drawing.Point(318, 551);
             buttonApply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonApply.Name = "buttonApply";
             buttonApply.Size = new System.Drawing.Size(88, 27);
@@ -337,6 +342,45 @@ namespace UoFiddler.Forms
             SelectedColorLabel.TabIndex = 14;
             SelectedColorLabel.Text = "Tile Selection";
             toolTip1.SetToolTip(SelectedColorLabel, "ItemSize controls the size of images in items tab");
+            // 
+            // radioExportFilenameHex
+            // 
+            radioExportFilenameHex.AutoSize = true;
+            radioExportFilenameHex.Location = new System.Drawing.Point(10, 21);
+            radioExportFilenameHex.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            radioExportFilenameHex.Name = "radioExportFilenameHex";
+            radioExportFilenameHex.Size = new System.Drawing.Size(214, 19);
+            radioExportFilenameHex.TabIndex = 0;
+            radioExportFilenameHex.TabStop = true;
+            radioExportFilenameHex.Text = "Hexadecimal (e.g. Item 0x00FF.png)";
+            toolTip1.SetToolTip(radioExportFilenameHex, "Exported filenames embed the ID in hexadecimal form.");
+            radioExportFilenameHex.UseVisualStyleBackColor = true;
+            radioExportFilenameHex.CheckedChanged += OnExportFilenameFormatChanged;
+            // 
+            // radioExportFilenameDec
+            // 
+            radioExportFilenameDec.AutoSize = true;
+            radioExportFilenameDec.Location = new System.Drawing.Point(240, 21);
+            radioExportFilenameDec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            radioExportFilenameDec.Name = "radioExportFilenameDec";
+            radioExportFilenameDec.Size = new System.Drawing.Size(182, 19);
+            radioExportFilenameDec.TabIndex = 1;
+            radioExportFilenameDec.TabStop = true;
+            radioExportFilenameDec.Text = "Decimal (e.g. Item 00255.png)";
+            toolTip1.SetToolTip(radioExportFilenameDec, "Exported filenames embed the ID in decimal form.");
+            radioExportFilenameDec.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxExportFilenameDecPad
+            // 
+            checkBoxExportFilenameDecPad.AutoSize = true;
+            checkBoxExportFilenameDecPad.Location = new System.Drawing.Point(240, 46);
+            checkBoxExportFilenameDecPad.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxExportFilenameDecPad.Name = "checkBoxExportFilenameDecPad";
+            checkBoxExportFilenameDecPad.Size = new System.Drawing.Size(146, 19);
+            checkBoxExportFilenameDecPad.TabIndex = 2;
+            checkBoxExportFilenameDecPad.Text = "Pad decimal to 5 digits";
+            toolTip1.SetToolTip(checkBoxExportFilenameDecPad, "When using decimal format, pad the ID with leading zeros so files sort correctly.");
+            checkBoxExportFilenameDecPad.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -554,7 +598,7 @@ namespace UoFiddler.Forms
             // 
             // buttonClose
             // 
-            buttonClose.Location = new System.Drawing.Point(414, 476);
+            buttonClose.Location = new System.Drawing.Point(414, 551);
             buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(88, 27);
@@ -563,12 +607,27 @@ namespace UoFiddler.Forms
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += OnClickClose;
             // 
+            // ExportFilenamesGroupBox
+            // 
+            ExportFilenamesGroupBox.Controls.Add(radioExportFilenameHex);
+            ExportFilenamesGroupBox.Controls.Add(radioExportFilenameDec);
+            ExportFilenamesGroupBox.Controls.Add(checkBoxExportFilenameDecPad);
+            ExportFilenamesGroupBox.Location = new System.Drawing.Point(16, 476);
+            ExportFilenamesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ExportFilenamesGroupBox.Name = "ExportFilenamesGroupBox";
+            ExportFilenamesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ExportFilenamesGroupBox.Size = new System.Drawing.Size(486, 69);
+            ExportFilenamesGroupBox.TabIndex = 9;
+            ExportFilenamesGroupBox.TabStop = false;
+            ExportFilenamesGroupBox.Text = "Export Filenames";
+            // 
             // OptionsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(518, 514);
+            ClientSize = new System.Drawing.Size(518, 590);
             Controls.Add(buttonClose);
+            Controls.Add(ExportFilenamesGroupBox);
             Controls.Add(ColorsGroupBox);
             Controls.Add(groupBox4);
             Controls.Add(groupBox3);
@@ -594,6 +653,8 @@ namespace UoFiddler.Forms
             groupBox4.PerformLayout();
             ColorsGroupBox.ResumeLayout(false);
             ColorsGroupBox.PerformLayout();
+            ExportFilenamesGroupBox.ResumeLayout(false);
+            ExportFilenamesGroupBox.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -642,5 +703,9 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.CheckBox checkboxRemoveTileBorder;
         private System.Windows.Forms.Label PreviewBackgroundColorLabel;
         private System.Windows.Forms.Button PreviewBackgroundColorButton;
+        private System.Windows.Forms.GroupBox ExportFilenamesGroupBox;
+        private System.Windows.Forms.RadioButton radioExportFilenameHex;
+        private System.Windows.Forms.RadioButton radioExportFilenameDec;
+        private System.Windows.Forms.CheckBox checkBoxExportFilenameDecPad;
     }
 }
