@@ -140,11 +140,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // Header row
             var header = new Panel { Dock = DockStyle.Top, Height = 22, BackColor = SystemColors.ControlLight };
             var hLbl = new Label { Text = "Flag", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(4, 0, 0, 0) };
-            var hSec = new Label { Text = "Sec", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
             var hOrg = new Label { Text = "Org", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
+            var hSec = new Label { Text = "Sec", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
             header.Controls.Add(hLbl);
-            header.Controls.Add(hSec);
+            // Highest index docks first, so hSec (added last) takes the rightmost slot above secChk (col 2),
+            // and hOrg (added second) ends up to its left above orgChk (col 1).
             header.Controls.Add(hOrg);
+            header.Controls.Add(hSec);
 
             // Scrollable area
             var scroll = new Panel { Dock = DockStyle.Fill, AutoScroll = true };
