@@ -289,6 +289,7 @@ namespace UoFiddler.Controls.UserControls
             _exportForm.Show();
         }
 
+
         private void OnClickImport(object sender, EventArgs e)
         {
             if (_importForm?.IsDisposed == false)
@@ -316,7 +317,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_selAnimdataEntry == null)
             {
-                return;
+                return; 
             }
 
             if (_selAnimdataEntry.FrameStart == (byte)numericUpDownStartDelay.Value)
