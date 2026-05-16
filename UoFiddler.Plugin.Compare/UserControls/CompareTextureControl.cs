@@ -275,6 +275,44 @@ namespace UoFiddler.Plugin.Compare.UserControls
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
+        private void ExportAsJpg(object sender, EventArgs e)
+        {
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondTexture.IsValidTexture(i))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
+            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Jpeg);
+            FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
+        }
+
+        private void ExportAsPng(object sender, EventArgs e)
+        {
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondTexture.IsValidTexture(i))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
+            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Png);
+            FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
+        }
+
         private void BrowseOnClick(object sender, EventArgs e)
         {
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())

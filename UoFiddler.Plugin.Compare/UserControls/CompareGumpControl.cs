@@ -352,6 +352,48 @@ namespace UoFiddler.Plugin.Compare.UserControls
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
 
+        private void Export_Jpg(object sender, EventArgs e)
+        {
+            int focusIdx = tileView2.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondGump.IsValidIndex(i))
+            {
+                return;
+            }
+
+            string path     = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
+            SecondGump.GetGump(i).Save(fileName, ImageFormat.Jpeg);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
+        }
+
+        private void Export_Png(object sender, EventArgs e)
+        {
+            int focusIdx = tileView2.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondGump.IsValidIndex(i))
+            {
+                return;
+            }
+
+            string path     = Options.OutputPath;
+            string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
+            SecondGump.GetGump(i).Save(fileName, ImageFormat.Png);
+
+            FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
+        }
+
         private void OnClickCopy(object sender, EventArgs e)
         {
             int focusIdx = tileView2.FocusIndex;

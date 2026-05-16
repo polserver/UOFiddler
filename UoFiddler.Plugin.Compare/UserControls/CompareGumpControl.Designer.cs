@@ -46,6 +46,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.extractAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.jpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyGump2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -112,25 +114,41 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             this.extractAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tiffToolStripMenuItem,
-            this.bmpToolStripMenuItem});
+            this.bmpToolStripMenuItem,
+            this.jpgToolStripMenuItem,
+            this.pngToolStripMenuItem});
             this.extractAsToolStripMenuItem.Name = "extractAsToolStripMenuItem";
             this.extractAsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.extractAsToolStripMenuItem.Text = "Export Image..";
-            // 
+            //
             // tiffToolStripMenuItem
-            // 
+            //
             this.tiffToolStripMenuItem.Name = "tiffToolStripMenuItem";
             this.tiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.tiffToolStripMenuItem.Text = "As Bmp";
             this.tiffToolStripMenuItem.Click += new System.EventHandler(this.Export_Bmp);
-            // 
+            //
             // bmpToolStripMenuItem
-            // 
+            //
             this.bmpToolStripMenuItem.Name = "bmpToolStripMenuItem";
             this.bmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.bmpToolStripMenuItem.Text = "As Tiff";
             this.bmpToolStripMenuItem.Click += new System.EventHandler(this.Export_Tiff);
-            // 
+            //
+            // jpgToolStripMenuItem
+            //
+            this.jpgToolStripMenuItem.Name = "jpgToolStripMenuItem";
+            this.jpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.jpgToolStripMenuItem.Text = "As Jpg";
+            this.jpgToolStripMenuItem.Click += new System.EventHandler(this.Export_Jpg);
+            //
+            // pngToolStripMenuItem
+            //
+            this.pngToolStripMenuItem.Name = "pngToolStripMenuItem";
+            this.pngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.pngToolStripMenuItem.Text = "As Png";
+            this.pngToolStripMenuItem.Click += new System.EventHandler(this.Export_Png);
+            //
             // copyGump2To1ToolStripMenuItem
             // 
             this.copyGump2To1ToolStripMenuItem.Name = "copyGump2To1ToolStripMenuItem";
@@ -278,6 +296,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyGump2To1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem jpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pngToolStripMenuItem;
         private UoFiddler.Controls.UserControls.TileView.TileViewControl tileView1;
         private UoFiddler.Controls.UserControls.TileView.TileViewControl tileView2;
         private System.Windows.Forms.PictureBox pictureBox1;
