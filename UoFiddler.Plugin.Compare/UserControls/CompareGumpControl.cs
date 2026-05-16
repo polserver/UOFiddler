@@ -56,6 +56,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 tileView1.FocusIndex = 0;
             }
 
+            if (comboBoxFileMode.SelectedIndex < 0)
+            {
+                comboBoxFileMode.SelectedIndex = 0;
+            }
+
             if (!_loaded)
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
@@ -217,19 +222,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void Load_Click(object sender, EventArgs e)
         {
-            if (textBoxSecondDir.Text == null)
+            if (string.IsNullOrWhiteSpace(textBoxSecondDir.Text))
             {
                 return;
             }
 
-            string path  = textBoxSecondDir.Text;
-            string file  = Path.Combine(path, "gumpart.mul");
-            string file2 = Path.Combine(path, "gumpidx.mul");
-            if (File.Exists(file) && File.Exists(file2))
+            string path = textBoxSecondDir.Text;
+            string mulFile = Path.Combine(path, "gumpart.mul");
+            string idxFile = Path.Combine(path, "gumpidx.mul");
+            string uopFile = Path.Combine(path, "gumpartLegacyMUL.uop");
+
+            if (!SecondLoadHelper.TryResolveGumpPaths(comboBoxFileMode.Text, idxFile, mulFile, uopFile,
+                    out string resolvedIdx, out string resolvedMul, out string resolvedUop, out string error))
             {
-                SecondGump.SetFileIndex(file2, file);
-                LoadSecond();
+                MessageBox.Show(error, "Missing Files", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            SecondGump.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
+            LoadSecond();
         }
 
         private void LoadSecond()

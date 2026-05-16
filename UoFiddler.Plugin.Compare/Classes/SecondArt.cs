@@ -18,7 +18,12 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static void SetFileIndex(string idxPath, string mulPath)
         {
-            _fileIndex = new SecondFileIndex(idxPath, mulPath, 0x14000);
+            SetFileIndex(idxPath, mulPath, null);
+        }
+
+        public static void SetFileIndex(string idxPath, string mulPath, string uopPath)
+        {
+            _fileIndex = new SecondFileIndex(idxPath, mulPath, uopPath, 0x14000, ".tga", 0x13FDC, false);
             _cache = new Bitmap[0x14000];
             FileIndexChanged?.Invoke();
         }

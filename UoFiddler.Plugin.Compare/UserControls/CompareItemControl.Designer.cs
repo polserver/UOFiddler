@@ -59,6 +59,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.button2 = new System.Windows.Forms.Button();
+            this.comboBoxFileMode = new System.Windows.Forms.ComboBox();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOrg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSec)).BeginInit();
@@ -283,6 +284,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.Panel2.Controls.Add(this.textBoxSecondDir);
             this.splitContainer1.Panel2.Controls.Add(this.checkBox1);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
+            this.splitContainer1.Panel2.Controls.Add(this.comboBoxFileMode);
             this.splitContainer1.Size = new System.Drawing.Size(720, 383);
             this.splitContainer1.SplitterDistance = 320;
             this.splitContainer1.SplitterWidth = 5;
@@ -300,9 +302,23 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.button2.Text = "...";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.OnClickBrowse);
-            // 
+            //
+            // comboBoxFileMode
+            //
+            this.comboBoxFileMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxFileMode.FormattingEnabled = true;
+            this.comboBoxFileMode.Items.AddRange(new object[] {
+            "Auto",
+            "MUL",
+            "UOP"});
+            this.comboBoxFileMode.Location = new System.Drawing.Point(5, 16);
+            this.comboBoxFileMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.comboBoxFileMode.Name = "comboBoxFileMode";
+            this.comboBoxFileMode.Size = new System.Drawing.Size(70, 23);
+            this.comboBoxFileMode.TabIndex = 10;
+            //
             // CompareItemControl
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
@@ -346,5 +362,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TextBox textBoxSecondDir;
         private System.Windows.Forms.ToolStripMenuItem tiffToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBoxFileMode;
     }
 }

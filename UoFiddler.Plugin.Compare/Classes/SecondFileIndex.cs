@@ -1,77 +1,175 @@
-﻿using System;
+/***************************************************************************
+ *
+ * $Author: Turley
+ *
+ * "THE BEER-WARE LICENSE"
+ * As long as you retain this notice you can do whatever you want with
+ * this stuff. If we meet some day, and you think this stuff is worth it,
+ * you can buy me a beer in return.
+ *
+ ***************************************************************************/
+
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace UoFiddler.Plugin.Compare.Classes
 {
     public sealed class SecondFileIndex
     {
         private readonly string _mulPath;
-        private Entry3D[] Index { get; }
-        private Stream Stream { get; set; }
 
-        public long IdxLength { get; }
+        public SecondIFileAccessor FileAccessor { get; }
+
+        public long IdxLength => FileAccessor?.IdxLength ?? 0;
+        public int IndexLength => FileAccessor?.IndexLength ?? 0;
+
+        public SecondFileIndex(string idxFile, string mulFile, int length)
+            : this(idxFile, mulFile, null, length, ".dat", -1, false)
+        {
+        }
+
+        public SecondFileIndex(string idxFile, string mulFile, string uopFile, int length,
+                               string uopEntryExtension, int idxLength, bool hasExtra)
+        {
+            string idxPath = string.IsNullOrEmpty(idxFile) || !File.Exists(idxFile) ? null : idxFile;
+            string mulPath = string.IsNullOrEmpty(mulFile) || !File.Exists(mulFile) ? null : mulFile;
+            string uopPath = string.IsNullOrEmpty(uopFile) || !File.Exists(uopFile) ? null : uopFile;
+
+            if (uopPath != null)
+            {
+                FileAccessor = new SecondUopFileAccessor(uopPath, uopEntryExtension, length, idxLength, hasExtra);
+                _mulPath = uopPath;
+                return;
+            }
+
+            if (idxPath != null && mulPath != null)
+            {
+                FileAccessor = new SecondMulFileAccessor(idxPath, mulPath, length);
+                _mulPath = mulPath;
+                return;
+            }
+
+            FileAccessor = null;
+            _mulPath = null;
+        }
 
         public Stream Seek(int index, out int length, out int extra)
         {
-            if (index < 0 || index >= Index.Length)
+            length = extra = 0;
+            if (FileAccessor == null || index < 0 || index >= FileAccessor.IndexLength)
             {
-                length = extra = 0;
                 return null;
             }
 
-            Entry3D e = Index[index];
+            SecondIEntry e = FileAccessor.GetEntry(index);
 
             if (e.Lookup < 0 || (e.Lookup > 0 && e.Length == -1))
             {
-                length = extra = 0;
                 return null;
             }
 
             length = e.Length & 0x7FFFFFFF;
             extra = e.Extra;
 
-            // TODO: possible bug wrong ternary or condition?
-            if (Stream?.CanRead != true || !Stream.CanSeek)
-            {
-                Stream = _mulPath == null
-                    ? null
-                    : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            }
-
-            if (Stream == null)
+            if (e.Length < 0)
             {
                 length = extra = 0;
                 return null;
             }
 
-            Stream.Seek(e.Lookup, SeekOrigin.Begin);
-            return Stream;
+            if (FileAccessor.Stream?.CanRead != true || !FileAccessor.Stream.CanSeek)
+            {
+                FileAccessor.Stream = _mulPath == null
+                    ? null
+                    : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (FileAccessor.Stream == null)
+            {
+                length = extra = 0;
+                return null;
+            }
+
+            if (FileAccessor.Stream.Length < e.Lookup)
+            {
+                length = extra = 0;
+                return null;
+            }
+
+            FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
+            return FileAccessor.Stream;
+        }
+
+        public Stream Seek(int index, ref SecondIEntry entry)
+        {
+            if (FileAccessor == null || index < 0 || index >= FileAccessor.IndexLength)
+            {
+                return null;
+            }
+
+            SecondIEntry e = FileAccessor.GetEntry(index);
+
+            if (e.Lookup < 0)
+            {
+                return null;
+            }
+
+            int length = e.Length & 0x7FFFFFFF;
+            if (length < 0)
+            {
+                return null;
+            }
+
+            entry = e;
+
+            if (e.Length < 0)
+            {
+                return null;
+            }
+
+            if (FileAccessor.Stream?.CanRead != true || !FileAccessor.Stream.CanSeek)
+            {
+                FileAccessor.Stream = _mulPath == null
+                    ? null
+                    : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (FileAccessor.Stream == null)
+            {
+                return null;
+            }
+
+            if (FileAccessor.Stream.Length < e.Lookup)
+            {
+                return null;
+            }
+
+            FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
+            return FileAccessor.Stream;
         }
 
         public bool Valid(int index, out int length, out int extra)
         {
-            if (index < 0 || index >= Index.Length)
+            length = extra = 0;
+            if (FileAccessor == null || index < 0 || index >= FileAccessor.IndexLength)
             {
-                length = extra = 0;
                 return false;
             }
 
-            Entry3D e = Index[index];
+            SecondIEntry e = FileAccessor.GetEntry(index);
 
             if (e.Lookup < 0)
             {
-                length = extra = 0;
                 return false;
             }
+
+            length = e.Length & 0x7FFFFFFF;
+            extra = e.Extra;
+
             if (e.Length < 0)
             {
                 length = extra = 0;
                 return false;
             }
-
-            length = e.Length & 0x7FFFFFFF;
-            extra = e.Extra;
 
             if (_mulPath == null || !File.Exists(_mulPath))
             {
@@ -79,69 +177,18 @@ namespace UoFiddler.Plugin.Compare.Classes
                 return false;
             }
 
-            if (Stream?.CanRead != true || !Stream.CanSeek)
+            if (FileAccessor.Stream?.CanRead != true || !FileAccessor.Stream.CanSeek)
             {
-                Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                FileAccessor.Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
-            if (Stream.Length >= e.Lookup)
+            if (FileAccessor.Stream.Length < e.Lookup)
             {
-                return true;
+                length = extra = 0;
+                return false;
             }
 
-            length = extra = 0;
-            return false;
+            return true;
         }
-
-        public SecondFileIndex(string idxFile, string mulFile, int length)
-        {
-            Index = new Entry3D[length];
-
-            _mulPath = mulFile;
-            if (!File.Exists(idxFile))
-            {
-                idxFile = null;
-            }
-
-            if (!File.Exists(_mulPath))
-            {
-                _mulPath = null;
-            }
-
-            if (idxFile != null && _mulPath != null)
-            {
-                using (FileStream index = new FileStream(idxFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                    int count = (int)(index.Length / 12);
-                    IdxLength = index.Length;
-
-                    GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
-                    byte[] buffer = new byte[index.Length];
-                    index.ReadExactly(buffer, 0, (int)index.Length);
-                    Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(IdxLength, length * 12));
-                    gc.Free();
-
-                    for (int i = count; i < length; ++i)
-                    {
-                        Index[i].Lookup = -1;
-                        Index[i].Length = -1;
-                        Index[i].Extra = -1;
-                    }
-                }
-            }
-            else
-            {
-                Stream = null;
-            }
-        }
-    }
-
-    public struct Entry3D
-    {
-        public int Lookup;
-        public int Length;
-        public int Extra;
     }
 }
