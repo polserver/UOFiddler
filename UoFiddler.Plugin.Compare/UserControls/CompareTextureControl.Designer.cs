@@ -39,283 +39,295 @@ namespace UoFiddler.Plugin.Compare.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBoxSec = new System.Windows.Forms.PictureBox();
-            this.pictureBoxOrg = new System.Windows.Forms.PictureBox();
-            this.textBoxSecondDir = new System.Windows.Forms.TextBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.tileViewSec = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyLandTile2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.CopyAddOnly = new System.Windows.Forms.Button();
-            this.FromLeftToRight = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSec)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOrg)).BeginInit();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.SuspendLayout();
-            //
+            components = new System.ComponentModel.Container();
+            tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            pictureBoxSec = new System.Windows.Forms.PictureBox();
+            pictureBoxOrg = new System.Windows.Forms.PictureBox();
+            textBoxSecondDir = new System.Windows.Forms.TextBox();
+            tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            tileViewSec = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyLandTile2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            checkBox1 = new System.Windows.Forms.CheckBox();
+            button1 = new System.Windows.Forms.Button();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            CopyAddOnly = new System.Windows.Forms.Button();
+            FromLeftToRight = new System.Windows.Forms.Button();
+            button2 = new System.Windows.Forms.Button();
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSec).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxOrg).BeginInit();
+            tableLayoutPanel2.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            SuspendLayout();
+            // 
             // tileViewOrg
-            //
-            this.tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tileViewOrg.Location = new System.Drawing.Point(4, 3);
-            this.tileViewOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tileViewOrg.Name = "tileViewOrg";
-            this.tileViewOrg.Size = new System.Drawing.Size(189, 364);
-            this.tileViewOrg.TabIndex = 0;
-            this.tileViewOrg.TileSize = new System.Drawing.Size(189, 13);
-            this.tileViewOrg.TileMargin = new System.Windows.Forms.Padding(0);
-            this.tileViewOrg.TilePadding = new System.Windows.Forms.Padding(0);
-            this.tileViewOrg.TileBorderWidth = 0f;
-            this.tileViewOrg.TileHighLightOpacity = 0.0;
-            this.tileViewOrg.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItemOrg);
-            this.tileViewOrg.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChangedOrg);
-            this.tileViewOrg.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
+            // 
+            tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileViewOrg.Location = new System.Drawing.Point(4, 3);
+            tileViewOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tileViewOrg.Name = "tileViewOrg";
+            tileViewOrg.Size = new System.Drawing.Size(189, 363);
+            tileViewOrg.TabIndex = 0;
+            tileViewOrg.TileSize = new System.Drawing.Size(189, 13);
+            tileViewOrg.TileMargin = new System.Windows.Forms.Padding(0);
+            tileViewOrg.TilePadding = new System.Windows.Forms.Padding(0);
+            tileViewOrg.TileBorderWidth = 0f;
+            tileViewOrg.TileHighLightOpacity = 0D;
+            tileViewOrg.FocusSelectionChanged += OnFocusChangedOrg;
+            tileViewOrg.DrawItem += OnDrawItemOrg;
+            tileViewOrg.SizeChanged += OnTileViewSizeChanged;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.pictureBoxSec, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.pictureBoxOrg, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(201, 3);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(321, 364);
-            this.tableLayoutPanel1.TabIndex = 7;
+            tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(pictureBoxSec, 0, 1);
+            tableLayoutPanel1.Controls.Add(pictureBoxOrg, 0, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(201, 3);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(321, 363);
+            tableLayoutPanel1.TabIndex = 7;
             // 
             // pictureBoxSec
             // 
-            this.pictureBoxSec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBoxSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxSec.Location = new System.Drawing.Point(5, 185);
-            this.pictureBoxSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBoxSec.Name = "pictureBoxSec";
-            this.pictureBoxSec.Size = new System.Drawing.Size(311, 175);
-            this.pictureBoxSec.TabIndex = 3;
-            this.pictureBoxSec.TabStop = false;
+            pictureBoxSec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pictureBoxSec.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBoxSec.Location = new System.Drawing.Point(5, 185);
+            pictureBoxSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBoxSec.Name = "pictureBoxSec";
+            pictureBoxSec.Size = new System.Drawing.Size(311, 174);
+            pictureBoxSec.TabIndex = 3;
+            pictureBoxSec.TabStop = false;
             // 
             // pictureBoxOrg
             // 
-            this.pictureBoxOrg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBoxOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxOrg.Location = new System.Drawing.Point(5, 4);
-            this.pictureBoxOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBoxOrg.Name = "pictureBoxOrg";
-            this.pictureBoxOrg.Size = new System.Drawing.Size(311, 174);
-            this.pictureBoxOrg.TabIndex = 2;
-            this.pictureBoxOrg.TabStop = false;
+            pictureBoxOrg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pictureBoxOrg.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBoxOrg.Location = new System.Drawing.Point(5, 4);
+            pictureBoxOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBoxOrg.Name = "pictureBoxOrg";
+            pictureBoxOrg.Size = new System.Drawing.Size(311, 174);
+            pictureBoxOrg.TabIndex = 2;
+            pictureBoxOrg.TabStop = false;
             // 
             // textBoxSecondDir
             // 
-            this.textBoxSecondDir.Location = new System.Drawing.Point(28, 13);
-            this.textBoxSecondDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxSecondDir.Name = "textBoxSecondDir";
-            this.textBoxSecondDir.Size = new System.Drawing.Size(168, 23);
-            this.textBoxSecondDir.TabIndex = 4;
+            textBoxSecondDir.Location = new System.Drawing.Point(28, 13);
+            textBoxSecondDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxSecondDir.Name = "textBoxSecondDir";
+            textBoxSecondDir.Size = new System.Drawing.Size(168, 23);
+            textBoxSecondDir.TabIndex = 4;
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 3;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45.45454F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.tableLayoutPanel2.Controls.Add(this.tileViewOrg, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.tileViewSec, 2, 0);
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel1, 1, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(724, 370);
-            this.tableLayoutPanel2.TabIndex = 8;
-            //
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45.45454F));
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
+            tableLayoutPanel2.Controls.Add(tileViewOrg, 0, 0);
+            tableLayoutPanel2.Controls.Add(tileViewSec, 2, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 1, 0);
+            tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new System.Drawing.Size(724, 369);
+            tableLayoutPanel2.TabIndex = 8;
+            // 
             // tileViewSec
-            //
-            this.tileViewSec.ContextMenuStrip = this.contextMenuStrip1;
-            this.tileViewSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tileViewSec.Location = new System.Drawing.Point(530, 3);
-            this.tileViewSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tileViewSec.Name = "tileViewSec";
-            this.tileViewSec.Size = new System.Drawing.Size(190, 364);
-            this.tileViewSec.TabIndex = 1;
-            this.tileViewSec.TileSize = new System.Drawing.Size(190, 13);
-            this.tileViewSec.TileMargin = new System.Windows.Forms.Padding(0);
-            this.tileViewSec.TilePadding = new System.Windows.Forms.Padding(0);
-            this.tileViewSec.TileBorderWidth = 0f;
-            this.tileViewSec.TileHighLightOpacity = 0.0;
-            this.tileViewSec.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItemSec);
-            this.tileViewSec.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChangedSec);
-            this.tileViewSec.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
-            this.tileViewSec.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.CopyToLeft_Click);
+            // 
+            tileViewSec.ContextMenuStrip = contextMenuStrip1;
+            tileViewSec.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileViewSec.Location = new System.Drawing.Point(530, 3);
+            tileViewSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tileViewSec.Name = "tileViewSec";
+            tileViewSec.Size = new System.Drawing.Size(190, 363);
+            tileViewSec.TabIndex = 1;
+            tileViewSec.TileSize = new System.Drawing.Size(190, 13);
+            tileViewSec.TileMargin = new System.Windows.Forms.Padding(0);
+            tileViewSec.TilePadding = new System.Windows.Forms.Padding(0);
+            tileViewSec.TileBorderWidth = 0f;
+            tileViewSec.TileHighLightOpacity = 0D;
+            tileViewSec.FocusSelectionChanged += OnFocusChangedSec;
+            tileViewSec.DrawItem += OnDrawItemSec;
+            tileViewSec.SizeChanged += OnTileViewSizeChanged;
+            tileViewSec.MouseDoubleClick += CopyToLeft_Click;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportImageToolStripMenuItem,
-            this.copyLandTile2To1ToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(182, 48);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { exportImageToolStripMenuItem, copyLandTile2To1ToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(182, 48);
             // 
             // exportImageToolStripMenuItem
             // 
-            this.exportImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.asBmpToolStripMenuItem,
-            this.asTiffToolStripMenuItem});
-            this.exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
-            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.exportImageToolStripMenuItem.Text = "Export Image..";
+            exportImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem, asTiffToolStripMenuItem, asJpgToolStripMenuItem, asPngToolStripMenuItem });
+            exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
+            exportImageToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            exportImageToolStripMenuItem.Text = "Export Image..";
             // 
             // asBmpToolStripMenuItem
             // 
-            this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.ExportAsBmp);
+            asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
+            asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asBmpToolStripMenuItem.Text = "As Bmp";
+            asBmpToolStripMenuItem.Click += ExportAsBmp;
             // 
             // asTiffToolStripMenuItem
             // 
-            this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.ExportAsTiff);
+            asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
+            asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asTiffToolStripMenuItem.Text = "As Tiff";
+            asTiffToolStripMenuItem.Click += ExportAsTiff;
+            // 
+            // asJpgToolStripMenuItem
+            // 
+            asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
+            asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asJpgToolStripMenuItem.Text = "As Jpg";
+            asJpgToolStripMenuItem.Click += ExportAsJpg;
+            // 
+            // asPngToolStripMenuItem
+            // 
+            asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asPngToolStripMenuItem.Text = "As Png";
+            asPngToolStripMenuItem.Click += ExportAsPng;
             // 
             // copyLandTile2To1ToolStripMenuItem
             // 
-            this.copyLandTile2To1ToolStripMenuItem.Name = "copyLandTile2To1ToolStripMenuItem";
-            this.copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile 2 to 1";
-            this.copyLandTile2To1ToolStripMenuItem.Click += new System.EventHandler(this.OnClickCopy);
+            copyLandTile2To1ToolStripMenuItem.Name = "copyLandTile2To1ToolStripMenuItem";
+            copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile 2 to 1";
+            copyLandTile2To1ToolStripMenuItem.Click += OnClickCopy;
             // 
             // checkBox1
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(343, 15);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(143, 19);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Show only Differences";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.Click += new System.EventHandler(this.OnChangeShowDiff);
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new System.Drawing.Point(343, 15);
+            checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new System.Drawing.Size(143, 19);
+            checkBox1.TabIndex = 6;
+            checkBox1.Text = "Show only Differences";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.Click += OnChangeShowDiff;
             // 
             // button1
             // 
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(238, 10);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(99, 29);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Load Second";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickLoadSecond);
+            button1.AutoSize = true;
+            button1.Location = new System.Drawing.Point(238, 10);
+            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(99, 29);
+            button1.TabIndex = 5;
+            button1.Text = "Load Second";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += OnClickLoadSecond;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer1.BackColor = System.Drawing.SystemColors.Control;
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new System.Drawing.Point(0, 0);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel2);
+            splitContainer1.Panel1.Controls.Add(tableLayoutPanel2);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.CopyAddOnly);
-            this.splitContainer1.Panel2.Controls.Add(this.FromLeftToRight);
-            this.splitContainer1.Panel2.Controls.Add(this.button2);
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxSecondDir);
-            this.splitContainer1.Panel2.Controls.Add(this.checkBox1);
-            this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(724, 434);
-            this.splitContainer1.SplitterDistance = 370;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 10;
+            splitContainer1.Panel2.Controls.Add(CopyAddOnly);
+            splitContainer1.Panel2.Controls.Add(FromLeftToRight);
+            splitContainer1.Panel2.Controls.Add(button2);
+            splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
+            splitContainer1.Panel2.Controls.Add(checkBox1);
+            splitContainer1.Panel2.Controls.Add(button1);
+            splitContainer1.Size = new System.Drawing.Size(724, 434);
+            splitContainer1.SplitterDistance = 369;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 10;
             // 
             // CopyAddOnly
             // 
-            this.CopyAddOnly.Location = new System.Drawing.Point(590, 12);
-            this.CopyAddOnly.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.CopyAddOnly.Name = "CopyAddOnly";
-            this.CopyAddOnly.Size = new System.Drawing.Size(88, 27);
-            this.CopyAddOnly.TabIndex = 9;
-            this.CopyAddOnly.Text = "Copy Added Only";
-            this.CopyAddOnly.UseVisualStyleBackColor = true;
-            this.CopyAddOnly.Click += new System.EventHandler(this.CopyAddOnly_Click);
+            CopyAddOnly.Location = new System.Drawing.Point(590, 12);
+            CopyAddOnly.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            CopyAddOnly.Name = "CopyAddOnly";
+            CopyAddOnly.Size = new System.Drawing.Size(100, 27);
+            CopyAddOnly.TabIndex = 9;
+            CopyAddOnly.Text = "Copy Added Only";
+            CopyAddOnly.UseVisualStyleBackColor = true;
+            CopyAddOnly.Click += CopyAddOnly_Click;
             // 
             // FromLeftToRight
             // 
-            this.FromLeftToRight.Location = new System.Drawing.Point(494, 12);
-            this.FromLeftToRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.FromLeftToRight.Name = "FromLeftToRight";
-            this.FromLeftToRight.Size = new System.Drawing.Size(88, 27);
-            this.FromLeftToRight.TabIndex = 8;
-            this.FromLeftToRight.Text = "Copy All Diff";
-            this.FromLeftToRight.UseVisualStyleBackColor = true;
-            this.FromLeftToRight.Click += new System.EventHandler(this.CopyAll_Click);
+            FromLeftToRight.Location = new System.Drawing.Point(494, 12);
+            FromLeftToRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            FromLeftToRight.Name = "FromLeftToRight";
+            FromLeftToRight.Size = new System.Drawing.Size(88, 27);
+            FromLeftToRight.TabIndex = 8;
+            FromLeftToRight.Text = "Copy All Diff";
+            FromLeftToRight.UseVisualStyleBackColor = true;
+            FromLeftToRight.Click += CopyAll_Click;
             // 
             // button2
             // 
-            this.button2.AutoSize = true;
-            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Location = new System.Drawing.Point(204, 12);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(26, 25);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "...";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.BrowseOnClick);
+            button2.AutoSize = true;
+            button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            button2.Location = new System.Drawing.Point(204, 12);
+            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(26, 25);
+            button2.TabIndex = 7;
+            button2.Text = "...";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += BrowseOnClick;
             // 
             // CompareTextureControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "CompareTextureControl";
-            this.Size = new System.Drawing.Size(724, 434);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSec)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOrg)).EndInit();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(splitContainer1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "CompareTextureControl";
+            Size = new System.Drawing.Size(724, 434);
+            Load += OnLoad;
+            tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSec).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxOrg).EndInit();
+            tableLayoutPanel2.ResumeLayout(false);
+            contextMenuStrip1.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 
@@ -335,6 +347,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolStripMenuItem copyLandTile2To1ToolStripMenuItem;
         private System.Windows.Forms.Button FromLeftToRight;

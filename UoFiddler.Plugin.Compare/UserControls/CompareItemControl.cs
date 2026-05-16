@@ -153,6 +153,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             pictureBoxOrg.BackgroundImage = Art.IsValidStatic(i) ? Art.GetStatic(i) : null;
+            pictureBoxSec.BackgroundImage = _secondLoaded && SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
             tileViewOrg.Invalidate();
         }
 
@@ -180,6 +181,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 _syncingSelection = false;
             }
 
+            pictureBoxOrg.BackgroundImage = Art.IsValidStatic(i) ? Art.GetStatic(i) : null;
             pictureBoxSec.BackgroundImage = SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
             tileViewSec.Invalidate();
         }
@@ -259,6 +261,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             int maxId = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
             _displayIndices.Clear();
             if (checkBox1.Checked)
@@ -281,6 +284,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             tileViewOrg.VirtualListSize = _displayIndices.Count;
             tileViewSec.VirtualListSize = _displayIndices.Count;
+            Cursor.Current = Cursors.Default;
         }
 
         private void ExportAsBmp(object sender, EventArgs e)
@@ -319,6 +323,44 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
             SecondArt.GetStatic(i).Save(fileName, ImageFormat.Tiff);
+            FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
+        }
+
+        private void ExportAsJpg(object sender, EventArgs e)
+        {
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondArt.IsValidStatic(i))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
+            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Jpeg);
+            FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
+        }
+
+        private void ExportAsPng(object sender, EventArgs e)
+        {
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondArt.IsValidStatic(i))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
+            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Png);
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
         }
 

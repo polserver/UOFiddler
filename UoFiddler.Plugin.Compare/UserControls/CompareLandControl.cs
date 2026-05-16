@@ -142,6 +142,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             pictureBoxOrg.BackgroundImage = Art.IsValidLand(i) ? Art.GetLand(i) : null;
+            pictureBoxSec.BackgroundImage = _secondLoaded && SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
             tileViewOrg.Invalidate();
         }
 
@@ -163,6 +164,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             try { tileViewOrg.FocusIndex = e.FocusedItemIndex; }
             finally { _syncingSelection = false; }
 
+            pictureBoxOrg.BackgroundImage = Art.IsValidLand(i) ? Art.GetLand(i) : null;
             pictureBoxSec.BackgroundImage = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
             tileViewSec.Invalidate();
         }
@@ -225,6 +227,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             _displayIndices.Clear();
             if (checkBox1.Checked)
             {
@@ -246,6 +249,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             tileViewOrg.VirtualListSize = _displayIndices.Count;
             tileViewSec.VirtualListSize = _displayIndices.Count;
+            Cursor.Current = Cursors.Default;
         }
 
         private void ExportAsBmp(object sender, EventArgs e)
@@ -284,6 +288,44 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
             SecondArt.GetLand(i).Save(fileName, ImageFormat.Tiff);
+            FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
+        }
+
+        private void ExportAsJpg(object sender, EventArgs e)
+        {
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondArt.IsValidLand(i))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
+            SecondArt.GetLand(i).Save(fileName, ImageFormat.Jpeg);
+            FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
+        }
+
+        private void ExportAsPng(object sender, EventArgs e)
+        {
+            int focusIdx = tileViewSec.FocusIndex;
+            if (focusIdx < 0)
+            {
+                return;
+            }
+
+            int i = _displayIndices[focusIdx];
+            if (!SecondArt.IsValidLand(i))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
+            SecondArt.GetLand(i).Save(fileName, ImageFormat.Png);
             FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
 
