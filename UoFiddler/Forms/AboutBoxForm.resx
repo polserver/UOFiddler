@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.20.2
+    <value>Version 4.21.0
+- Fixed display order in tiledata - org comes first now.
+- Fixed refreshing of preview images in compare plugins.
+- Added jpg and png to export image in items, land, texture and gump compare plugins.
+- Added UOP file support for compare art, land and gumps. When comparing you can select which type of file you want to use Auto/UOP/MUL (UOP comes before MUL in Auto).
+
+Version 4.20.2
 - Fixed tooltip client version information in UopPacker.
 - Added option to set export file name template hexadecimal/decimal (defaults to hexadecimal).
 
