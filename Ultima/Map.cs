@@ -108,21 +108,79 @@ namespace Ultima
         private readonly string _path;
         private static bool _useDiff;
 
+        private static int _altitudeIntensity = 15;
+        private static AltitudeShadingPreset _shadingPreset = AltitudeShadingPreset.Normal;
+        private static AltitudeShadingSettings _customShadingSettings = AltitudeShadingSettings.GetPreset(AltitudeShadingPreset.Soft);
+
         /// <summary>
         /// Controls the intensity of altitude-based shading (1-20, lower = more contrast)
         /// Default is 15 for subtle effect
         /// </summary>
-        public static int AltitudeIntensity { get; set; } = 15;
+        public static int AltitudeIntensity
+        {
+            get => _altitudeIntensity;
+            set
+            {
+                if (_altitudeIntensity == value)
+                {
+                    return;
+                }
+                _altitudeIntensity = value;
+                InvalidateAltitudeShadingCache();
+            }
+        }
 
         /// <summary>
         /// Current altitude shading preset
         /// </summary>
-        public static AltitudeShadingPreset ShadingPreset { get; set; } = AltitudeShadingPreset.Normal;
+        public static AltitudeShadingPreset ShadingPreset
+        {
+            get => _shadingPreset;
+            set
+            {
+                if (_shadingPreset == value)
+                {
+                    return;
+                }
+                _shadingPreset = value;
+                InvalidateAltitudeShadingCache();
+            }
+        }
 
         /// <summary>
         /// Custom altitude shading settings (used when ShadingPreset is Custom)
         /// </summary>
-        public static AltitudeShadingSettings CustomShadingSettings { get; set; } = AltitudeShadingSettings.GetPreset(AltitudeShadingPreset.Soft);
+        public static AltitudeShadingSettings CustomShadingSettings
+        {
+            get => _customShadingSettings;
+            set
+            {
+                _customShadingSettings = value;
+                InvalidateAltitudeShadingCache();
+            }
+        }
+
+        /// <summary>
+        /// Clears the cached altitude-shaded color blocks across all map instances.
+        /// Call after changing any shading parameter so the next paint re-shades.
+        /// </summary>
+        public static void InvalidateAltitudeShadingCache()
+        {
+            Felucca.ClearLitCache();
+            Trammel.ClearLitCache();
+            Ilshenar.ClearLitCache();
+            Malas.ClearLitCache();
+            Tokuno.ClearLitCache();
+            TerMur.ClearLitCache();
+        }
+
+        private void ClearLitCache()
+        {
+            _litCache = null;
+            _litCacheNoStatics = null;
+            _litCacheNoPatch = null;
+            _litCacheNoStaticsNoPatch = null;
+        }
 
         public static bool UseDiff
         {
@@ -196,6 +254,33 @@ namespace Ultima
                 Trammel._cacheNoStaticsNoPatch =
                 Ilshenar._cacheNoStaticsNoPatch =
                 Malas._cacheNoStaticsNoPatch = Tokuno._cacheNoStaticsNoPatch = TerMur._cacheNoStaticsNoPatch = null;
+
+            foreach (Map m in new[] { Felucca, Trammel, Ilshenar, Malas, Tokuno, TerMur })
+            {
+                m.ClearMipCaches();
+                m.ClearAltitudeCaches();
+                m.ClearLitCache();
+            }
+        }
+
+        private void ClearMipCaches()
+        {
+            _cacheHalf = null;
+            _cacheHalfNoStatics = null;
+            _cacheHalfNoPatch = null;
+            _cacheHalfNoStaticsNoPatch = null;
+            _cacheQuarter = null;
+            _cacheQuarterNoStatics = null;
+            _cacheQuarterNoPatch = null;
+            _cacheQuarterNoStaticsNoPatch = null;
+        }
+
+        private void ClearAltitudeCaches()
+        {
+            _altitudeCache = null;
+            _altitudeCacheNoStatics = null;
+            _altitudeCacheNoPatch = null;
+            _altitudeCacheNoStaticsNoPatch = null;
         }
 
         public void ResetCache()
@@ -204,6 +289,10 @@ namespace Ultima
             _cacheNoPatch = null;
             _cacheNoStatics = null;
             _cacheNoStaticsNoPatch = null;
+
+            ClearMipCaches();
+            ClearAltitudeCaches();
+            ClearLitCache();
 
             _isCachedDefault = false;
             _isCachedNoStatics = false;
@@ -268,6 +357,33 @@ namespace Ultima
         private ushort[][][] _cacheNoStaticsNoPatch;
         private ushort[] _black;
 
+        // Half-resolution mipmap (4x4 px per block, 16 ushorts)
+        private ushort[][][] _cacheHalf;
+        private ushort[][][] _cacheHalfNoStatics;
+        private ushort[][][] _cacheHalfNoPatch;
+        private ushort[][][] _cacheHalfNoStaticsNoPatch;
+        private ushort[] _blackHalf;
+
+        // Quarter-resolution mipmap (2x2 px per block, 4 ushorts)
+        private ushort[][][] _cacheQuarter;
+        private ushort[][][] _cacheQuarterNoStatics;
+        private ushort[][][] _cacheQuarterNoPatch;
+        private ushort[][][] _cacheQuarterNoStaticsNoPatch;
+        private ushort[] _blackQuarter;
+
+        // Per-block altitude data (sbyte[64])
+        private sbyte[][][] _altitudeCache;
+        private sbyte[][][] _altitudeCacheNoStatics;
+        private sbyte[][][] _altitudeCacheNoPatch;
+        private sbyte[][][] _altitudeCacheNoStaticsNoPatch;
+        private sbyte[] _blackAltitude;
+
+        // Pre-shaded color blocks for NormalWithAltitude mode (ushort[64])
+        private ushort[][][] _litCache;
+        private ushort[][][] _litCacheNoStatics;
+        private ushort[][][] _litCacheNoPatch;
+        private ushort[][][] _litCacheNoStaticsNoPatch;
+
         public bool IsCached(bool statics)
         {
             if (UseDiff)
@@ -284,67 +400,11 @@ namespace Ultima
 
             if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
             {
-                if (_black == null)
-                {
-                    _black = new ushort[64];
-                }
-
+                _black ??= new ushort[64];
                 return;
             }
 
-            ushort[][][] cache;
-            if (UseDiff)
-            {
-                if (statics)
-                {
-                    _isCachedDefault = true;
-                }
-                else
-                {
-                    _isCachedNoStatics = true;
-                }
-
-                cache = (statics ? _cache : _cacheNoStatics);
-            }
-            else
-            {
-                if (statics)
-                {
-                    _isCachedNoPatch = true;
-                }
-                else
-                {
-                    _isCachedNoStaticsNoPatch = true;
-                }
-
-                cache = (statics ? _cacheNoPatch : _cacheNoStaticsNoPatch);
-            }
-
-            if (cache == null)
-            {
-                if (UseDiff)
-                {
-                    if (statics)
-                    {
-                        _cache = cache = new ushort[_tiles.BlockHeight][][];
-                    }
-                    else
-                    {
-                        _cacheNoStatics = cache = new ushort[_tiles.BlockHeight][][];
-                    }
-                }
-                else
-                {
-                    if (statics)
-                    {
-                        _cacheNoPatch = cache = new ushort[_tiles.BlockHeight][][];
-                    }
-                    else
-                    {
-                        _cacheNoStaticsNoPatch = cache = new ushort[_tiles.BlockHeight][][];
-                    }
-                }
-            }
+            ushort[][][] cache = EnsureColorCacheArray(statics);
 
             if (cache[y] == null)
             {
@@ -355,8 +415,48 @@ namespace Ultima
             {
                 cache[y][x] = RenderBlock(x, y, statics, UseDiff);
             }
+        }
 
-            _tiles.CloseStreams();
+        private ushort[][][] EnsureColorCacheArray(bool statics)
+        {
+            ushort[][][] cache;
+            if (UseDiff)
+            {
+                cache = statics ? _cache : _cacheNoStatics;
+                if (cache == null)
+                {
+                    cache = new ushort[_tiles.BlockHeight][][];
+                    if (statics) _cache = cache; else _cacheNoStatics = cache;
+                }
+            }
+            else
+            {
+                cache = statics ? _cacheNoPatch : _cacheNoStaticsNoPatch;
+                if (cache == null)
+                {
+                    cache = new ushort[_tiles.BlockHeight][][];
+                    if (statics) _cacheNoPatch = cache; else _cacheNoStaticsNoPatch = cache;
+                }
+            }
+            return cache;
+        }
+
+        /// <summary>
+        /// Marks the chosen color cache as fully preloaded. Call once after a full
+        /// PreloadRenderedBlock sweep so IsCached(statics) reports true.
+        /// </summary>
+        public void MarkPreloaded(bool statics)
+        {
+            if (UseDiff)
+            {
+                if (statics) _isCachedDefault = true;
+                else _isCachedNoStatics = true;
+            }
+            else
+            {
+                if (statics) _isCachedNoPatch = true;
+                else _isCachedNoStaticsNoPatch = true;
+            }
         }
 
         private ushort[] GetRenderedBlock(int x, int y, bool statics)
@@ -414,6 +514,213 @@ namespace Ultima
             if (data == null)
             {
                 cache[y][x] = data = RenderBlock(x, y, statics, UseDiff);
+            }
+
+            return data;
+        }
+
+        private sbyte[] GetAltitudeBlockCached(int x, int y, bool statics)
+        {
+            TileMatrix matrix = Tiles;
+
+            if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
+            {
+                return _blackAltitude ??= new sbyte[64];
+            }
+
+            sbyte[][][] cache;
+            if (UseDiff)
+            {
+                cache = statics ? _altitudeCache : _altitudeCacheNoStatics;
+            }
+            else
+            {
+                cache = statics ? _altitudeCacheNoPatch : _altitudeCacheNoStaticsNoPatch;
+            }
+
+            if (cache == null)
+            {
+                cache = new sbyte[_tiles.BlockHeight][][];
+                if (UseDiff)
+                {
+                    if (statics) _altitudeCache = cache; else _altitudeCacheNoStatics = cache;
+                }
+                else
+                {
+                    if (statics) _altitudeCacheNoPatch = cache; else _altitudeCacheNoStaticsNoPatch = cache;
+                }
+            }
+
+            if (cache[y] == null)
+            {
+                cache[y] = new sbyte[_tiles.BlockWidth][];
+            }
+
+            sbyte[] data = cache[y][x];
+
+            if (data == null)
+            {
+                cache[y][x] = data = GetAltitudeBlock(x, y, statics);
+            }
+
+            return data;
+        }
+
+        private ushort[] GetLitBlock(int x, int y, bool statics)
+        {
+            TileMatrix matrix = Tiles;
+
+            if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
+            {
+                return _black ??= new ushort[64];
+            }
+
+            ushort[][][] cache;
+            if (UseDiff)
+            {
+                cache = statics ? _litCache : _litCacheNoStatics;
+            }
+            else
+            {
+                cache = statics ? _litCacheNoPatch : _litCacheNoStaticsNoPatch;
+            }
+
+            if (cache == null)
+            {
+                cache = new ushort[_tiles.BlockHeight][][];
+                if (UseDiff)
+                {
+                    if (statics) _litCache = cache; else _litCacheNoStatics = cache;
+                }
+                else
+                {
+                    if (statics) _litCacheNoPatch = cache; else _litCacheNoStaticsNoPatch = cache;
+                }
+            }
+
+            if (cache[y] == null)
+            {
+                cache[y] = new ushort[_tiles.BlockWidth][];
+            }
+
+            ushort[] data = cache[y][x];
+
+            if (data == null)
+            {
+                ushort[] colors = GetRenderedBlock(x, y, statics);
+                sbyte[] altitudes = GetAltitudeBlockCached(x, y, statics);
+                cache[y][x] = data = ProcessBlockWithAltitude(colors, altitudes);
+            }
+
+            return data;
+        }
+
+        private ushort[] GetRenderedBlockHalf(int x, int y, bool statics)
+        {
+            TileMatrix matrix = Tiles;
+
+            if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
+            {
+                return _blackHalf ??= new ushort[16];
+            }
+
+            ushort[][][] cache;
+            if (UseDiff)
+            {
+                cache = statics ? _cacheHalf : _cacheHalfNoStatics;
+            }
+            else
+            {
+                cache = statics ? _cacheHalfNoPatch : _cacheHalfNoStaticsNoPatch;
+            }
+
+            if (cache == null)
+            {
+                cache = new ushort[_tiles.BlockHeight][][];
+                if (UseDiff)
+                {
+                    if (statics) _cacheHalf = cache; else _cacheHalfNoStatics = cache;
+                }
+                else
+                {
+                    if (statics) _cacheHalfNoPatch = cache; else _cacheHalfNoStaticsNoPatch = cache;
+                }
+            }
+
+            if (cache[y] == null)
+            {
+                cache[y] = new ushort[_tiles.BlockWidth][];
+            }
+
+            ushort[] data = cache[y][x];
+
+            if (data == null)
+            {
+                ushort[] full = GetRenderedBlock(x, y, statics);
+                var half = new ushort[16];
+                // Subsample 8x8 -> 4x4 (nearest neighbour, same as GDI NearestNeighbor)
+                for (int j = 0; j < 4; ++j)
+                {
+                    int srcRow = (j * 2) * 8;
+                    int dstRow = j * 4;
+                    half[dstRow + 0] = full[srcRow + 0];
+                    half[dstRow + 1] = full[srcRow + 2];
+                    half[dstRow + 2] = full[srcRow + 4];
+                    half[dstRow + 3] = full[srcRow + 6];
+                }
+                cache[y][x] = data = half;
+            }
+
+            return data;
+        }
+
+        private ushort[] GetRenderedBlockQuarter(int x, int y, bool statics)
+        {
+            TileMatrix matrix = Tiles;
+
+            if (x < 0 || y < 0 || x >= matrix.BlockWidth || y >= matrix.BlockHeight)
+            {
+                return _blackQuarter ??= new ushort[4];
+            }
+
+            ushort[][][] cache;
+            if (UseDiff)
+            {
+                cache = statics ? _cacheQuarter : _cacheQuarterNoStatics;
+            }
+            else
+            {
+                cache = statics ? _cacheQuarterNoPatch : _cacheQuarterNoStaticsNoPatch;
+            }
+
+            if (cache == null)
+            {
+                cache = new ushort[_tiles.BlockHeight][][];
+                if (UseDiff)
+                {
+                    if (statics) _cacheQuarter = cache; else _cacheQuarterNoStatics = cache;
+                }
+                else
+                {
+                    if (statics) _cacheQuarterNoPatch = cache; else _cacheQuarterNoStaticsNoPatch = cache;
+                }
+            }
+
+            if (cache[y] == null)
+            {
+                cache[y] = new ushort[_tiles.BlockWidth][];
+            }
+
+            ushort[] data = cache[y][x];
+
+            if (data == null)
+            {
+                ushort[] full = GetRenderedBlock(x, y, statics);
+                cache[y][x] = data = new ushort[]
+                {
+                    full[0],  full[4],
+                    full[32], full[36]
+                };
             }
 
             return data;
@@ -654,7 +961,83 @@ namespace Ultima
             }
 
             bmp.UnlockBits(bd);
-            _tiles.CloseStreams();
+        }
+
+        /// <summary>
+        /// Renders the requested block region into a half-resolution bitmap (4x4 px per block).
+        /// Bitmap must be Format16bppRgb555 sized (width*4, height*4).
+        /// </summary>
+        public unsafe void GetImageHalf(int x, int y, int width, int height, Bitmap bmp, bool statics)
+        {
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, width << 2, height << 2), ImageLockMode.WriteOnly, PixelFormat.Format16bppRgb555);
+            int stride = bd.Stride;
+            int blockStride = stride << 2; // 4 rows per block
+
+            var pStart = (byte*)bd.Scan0;
+
+            for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
+            {
+                var pRow0 = (int*)(pStart + (0 * stride));
+                var pRow1 = (int*)(pStart + (1 * stride));
+                var pRow2 = (int*)(pStart + (2 * stride));
+                var pRow3 = (int*)(pStart + (3 * stride));
+
+                for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
+                {
+                    ushort[] data = GetRenderedBlockHalf(bx, by, statics);
+
+                    fixed (ushort* pData = data)
+                    {
+                        var pvData = (int*)pData;
+
+                        *pRow0++ = *pvData++;
+                        *pRow0++ = *pvData++;
+                        *pRow1++ = *pvData++;
+                        *pRow1++ = *pvData++;
+                        *pRow2++ = *pvData++;
+                        *pRow2++ = *pvData++;
+                        *pRow3++ = *pvData++;
+                        *pRow3++ = *pvData;
+                    }
+                }
+            }
+
+            bmp.UnlockBits(bd);
+        }
+
+        /// <summary>
+        /// Renders the requested block region into a quarter-resolution bitmap (2x2 px per block).
+        /// Bitmap must be Format16bppRgb555 sized (width*2, height*2).
+        /// </summary>
+        public unsafe void GetImageQuarter(int x, int y, int width, int height, Bitmap bmp, bool statics)
+        {
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, width << 1, height << 1), ImageLockMode.WriteOnly, PixelFormat.Format16bppRgb555);
+            int stride = bd.Stride;
+            int blockStride = stride << 1; // 2 rows per block
+
+            var pStart = (byte*)bd.Scan0;
+
+            for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
+            {
+                var pRow0 = (int*)(pStart + (0 * stride));
+                var pRow1 = (int*)(pStart + (1 * stride));
+
+                for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
+                {
+                    ushort[] data = GetRenderedBlockQuarter(bx, by, statics);
+
+                    fixed (ushort* pData = data)
+                    {
+                        var pvData = (int*)pData;
+                        *pRow0++ = *pvData++;
+                        *pRow1++ = *pvData;
+                    }
+                }
+            }
+
+            bmp.UnlockBits(bd);
         }
 
         public static void DefragStatics(string path, Map map, int width, int height, bool remove)
@@ -1108,8 +1491,8 @@ namespace Ultima
         /// <param name="altitudeMode">Altitude rendering mode</param>
         public unsafe void GetImageWithAltitude(int x, int y, int width, int height, Bitmap bmp, bool statics, MapAltitudeMode altitudeMode)
         {
-            PixelFormat format = altitudeMode == MapAltitudeMode.Altitude 
-                ? PixelFormat.Format8bppIndexed 
+            PixelFormat format = altitudeMode == MapAltitudeMode.Altitude
+                ? PixelFormat.Format8bppIndexed
                 : PixelFormat.Format16bppRgb555;
 
             BitmapData bd = bmp.LockBits(
@@ -1124,36 +1507,31 @@ namespace Ultima
                 // 8-bit altitude mode
                 for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
                 {
-                    var pRow0 = (byte*)(pStart + (0 * stride));
-                    var pRow1 = (byte*)(pStart + (1 * stride));
-                    var pRow2 = (byte*)(pStart + (2 * stride));
-                    var pRow3 = (byte*)(pStart + (3 * stride));
-                    var pRow4 = (byte*)(pStart + (4 * stride));
-                    var pRow5 = (byte*)(pStart + (5 * stride));
-                    var pRow6 = (byte*)(pStart + (6 * stride));
-                    var pRow7 = (byte*)(pStart + (7 * stride));
+                    var pRow0 = pStart + (0 * stride);
+                    var pRow1 = pStart + (1 * stride);
+                    var pRow2 = pStart + (2 * stride);
+                    var pRow3 = pStart + (3 * stride);
+                    var pRow4 = pStart + (4 * stride);
+                    var pRow5 = pStart + (5 * stride);
+                    var pRow6 = pStart + (6 * stride);
+                    var pRow7 = pStart + (7 * stride);
 
                     for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
                     {
-                        sbyte[] altitudeData = GetAltitudeBlock(bx, by, statics);
+                        sbyte[] altitudeData = GetAltitudeBlockCached(bx, by, statics);
 
-                        for (int i = 0; i < 64; i++)
+                        fixed (sbyte* pAlt = altitudeData)
                         {
-                            byte altValue = (byte)Math.Clamp(altitudeData[i] + 128, 0, 255);
-                            int rowIndex = i / 8;
-                            int colIndex = i % 8;
+                            sbyte* pa = pAlt;
 
-                            switch (rowIndex)
-                            {
-                                case 0: pRow0[ox * 8 + colIndex] = altValue; break;
-                                case 1: pRow1[ox * 8 + colIndex] = altValue; break;
-                                case 2: pRow2[ox * 8 + colIndex] = altValue; break;
-                                case 3: pRow3[ox * 8 + colIndex] = altValue; break;
-                                case 4: pRow4[ox * 8 + colIndex] = altValue; break;
-                                case 5: pRow5[ox * 8 + colIndex] = altValue; break;
-                                case 6: pRow6[ox * 8 + colIndex] = altValue; break;
-                                case 7: pRow7[ox * 8 + colIndex] = altValue; break;
-                            }
+                            for (int col = 0; col < 8; ++col) *pRow0++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow1++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow2++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow3++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow4++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow5++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow6++ = (byte)(*pa++ + 128);
+                            for (int col = 0; col < 8; ++col) *pRow7++ = (byte)(*pa++ + 128);
                         }
                     }
                 }
@@ -1161,6 +1539,8 @@ namespace Ultima
             else
             {
                 // 16-bit color modes (Normal and NormalWithAltitude)
+                bool withAltitude = altitudeMode == MapAltitudeMode.NormalWithAltitude;
+
                 for (int oy = 0, by = y; oy < height; ++oy, ++by, pStart += blockStride)
                 {
                     var pRow0 = (ushort*)(pStart + (0 * stride));
@@ -1174,37 +1554,28 @@ namespace Ultima
 
                     for (int ox = 0, bx = x; ox < width; ++ox, ++bx)
                     {
-                        ushort[] colorData = GetRenderedBlock(bx, by, statics);
+                        ushort[] colorData = withAltitude
+                            ? GetLitBlock(bx, by, statics)
+                            : GetRenderedBlock(bx, by, statics);
 
-                        if (altitudeMode == MapAltitudeMode.NormalWithAltitude)
+                        fixed (ushort* pData = colorData)
                         {
-                            sbyte[] altitudeData = GetAltitudeBlock(bx, by, statics);
-                            colorData = ProcessBlockWithAltitude(colorData, altitudeData);
-                        }
+                            ushort* pd = pData;
 
-                        for (int i = 0; i < 64; i++)
-                        {
-                            int rowIndex = i / 8;
-                            int colIndex = i % 8;
-
-                            switch (rowIndex)
-                            {
-                                case 0: pRow0[ox * 8 + colIndex] = colorData[i]; break;
-                                case 1: pRow1[ox * 8 + colIndex] = colorData[i]; break;
-                                case 2: pRow2[ox * 8 + colIndex] = colorData[i]; break;
-                                case 3: pRow3[ox * 8 + colIndex] = colorData[i]; break;
-                                case 4: pRow4[ox * 8 + colIndex] = colorData[i]; break;
-                                case 5: pRow5[ox * 8 + colIndex] = colorData[i]; break;
-                                case 6: pRow6[ox * 8 + colIndex] = colorData[i]; break;
-                                case 7: pRow7[ox * 8 + colIndex] = colorData[i]; break;
-                            }
+                            for (int col = 0; col < 8; ++col) *pRow0++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow1++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow2++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow3++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow4++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow5++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow6++ = *pd++;
+                            for (int col = 0; col < 8; ++col) *pRow7++ = *pd++;
                         }
                     }
                 }
             }
 
             bmp.UnlockBits(bd);
-            _tiles.CloseStreams();
         }
 
         /// <summary>

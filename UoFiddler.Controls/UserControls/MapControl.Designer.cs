@@ -30,7 +30,14 @@ namespace UoFiddler.Controls.UserControls
             }
             if (disposing)
             {
-                
+                _zoomBufferGraphics?.Dispose();
+                _zoomBuffer?.Dispose();
+                _renderBuffer?.Dispose();
+                _dragTrailTimer?.Dispose();
+                _zoomBufferGraphics = null;
+                _zoomBuffer = null;
+                _renderBuffer = null;
+                _dragTrailTimer = null;
             }
             base.Dispose(disposing);
         }
