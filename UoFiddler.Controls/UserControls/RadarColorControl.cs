@@ -22,6 +22,7 @@ using Ultima.Helpers;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
+using UoFiddler.Controls.UserControls.TileView;
 
 namespace UoFiddler.Controls.UserControls
 {
@@ -33,9 +34,23 @@ namespace UoFiddler.Controls.UserControls
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             _refMarker = this;
+
+            // TileViewControl runtime config (TileSize/Margin/Padding/Border) +
+            // checkbox-toggle sync into the canonical _selectedItems/_selectedLand
+            // HashSets.
+            ConfigureTileView(tileViewItem);
+            ConfigureTileView(tileViewLand);
+            tileViewItem.SelectedIndices.CollectionChanged += OnItemSelectedIndicesChanged;
+            tileViewLand.SelectedIndices.CollectionChanged += OnLandSelectedIndicesChanged;
         }
 
         private int _selectedIndex = -1;
+        // Tracks whether _selectedIndex refers to an item or a land tile. Set
+        // when _selectedIndex is updated; consulted by SaveColor so that
+        // committing the editor on a tab switch routes to the right table.
+        // (Otherwise SaveColor would see the *new* tab and save the previous
+        // tab's color to whatever index happens to be in _selectedIndex.)
+        private bool _selectedIsItem;
         private ushort _currentColor;
         private static RadarColorControl _refMarker;
         private bool _updating;
@@ -43,8 +58,304 @@ namespace UoFiddler.Controls.UserControls
         private readonly Dictionary<int, ushort> _originalLandColors = [];
         private Timer _debounceTimer;
         private const int _debounceTimeout = 500;
+        // Canonical "checked" backing store, keyed by graphic id so the
+        // selection survives filter changes. Sync'd both ways with the
+        // TileViewControl.SelectedIndices collection (which uses *row positions*).
         private readonly HashSet<int> _selectedItems = [];
         private readonly HashSet<int> _selectedLand = [];
+
+        // Visible row position → graphic id. Default identity; ApplyFilter narrows.
+        private int[] _itemIndices = Array.Empty<int>();
+        private int[] _landIndices = Array.Empty<int>();
+
+        // Re-entrancy guard: when we mutate TileViewControl.SelectedIndices
+        // programmatically (e.g. during a filter rebuild or Select All), we
+        // don't want the CollectionChanged handler to re-mutate our HashSet
+        // and double-count.
+        private bool _syncingSelection;
+
+        private static int[] BuildIdentity(int length)
+        {
+            var array = new int[length];
+            for (int i = 0; i < length; ++i)
+            {
+                array[i] = i;
+            }
+            return array;
+        }
+
+        // TileViewControl strips TileSize/Margin/Padding/BorderWidth in the
+        // Designer (DesignerSerializationVisibility.Hidden), so we apply them
+        // here. Matches the compare plugin's ConfigureTileView.
+        private static void ConfigureTileView(TileView.TileViewControl tv)
+        {
+            tv.TileSize = new Size(tv.TileSize.Width, 20);
+            tv.TileMargin = new Padding(0);
+            tv.TilePadding = new Padding(0);
+            tv.TileBorderWidth = 0f;
+        }
+
+        private void OnTileViewSizeChanged(object sender, EventArgs e)
+        {
+            var tv = (TileView.TileViewControl)sender;
+            int w = tv.DisplayRectangle.Width;
+            if (w > 0 && tv.TileSize.Width != w)
+            {
+                tv.TileSize = new Size(w, tv.TileSize.Height);
+            }
+        }
+
+        private int GetSelectedItemGraphic()
+        {
+            int focus = tileViewItem.FocusIndex;
+            return focus >= 0 && focus < _itemIndices.Length ? _itemIndices[focus] : -1;
+        }
+
+        private int GetSelectedLandGraphic()
+        {
+            int focus = tileViewLand.FocusIndex;
+            return focus >= 0 && focus < _landIndices.Length ? _landIndices[focus] : -1;
+        }
+
+        private void OnDrawItemRow(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
+        {
+            if ((uint)e.Index >= (uint)_itemIndices.Length)
+            {
+                return;
+            }
+            int graphic = _itemIndices[e.Index];
+            ref readonly ItemData row = ref TileData.ItemTable[graphic];
+            DrawRow(e, graphic, row.Name, _originalItemColors.ContainsKey(graphic), RadarCol.GetItemColor(graphic));
+        }
+
+        private void OnDrawLandRow(object sender, TileView.TileViewControl.DrawTileListItemEventArgs e)
+        {
+            if ((uint)e.Index >= (uint)_landIndices.Length)
+            {
+                return;
+            }
+            int graphic = _landIndices[e.Index];
+            ref readonly LandData row = ref TileData.LandTable[graphic];
+            DrawRow(e, graphic, row.Name, _originalLandColors.ContainsKey(graphic), RadarCol.GetLandColor(graphic));
+        }
+
+        // Layout (left → right): [checkbox column from TileViewControl] | [color swatch] | [text]
+        private const int SwatchSize = 12;
+        private const int SwatchGap = 4;
+
+        private static void DrawRow(TileView.TileViewControl.DrawTileListItemEventArgs e, int graphic, string name, bool modified, ushort radarHue)
+        {
+            bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+
+            // Row background.
+            if (focused)
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
+            }
+
+            // Color swatch — a small filled rectangle showing this row's radar color.
+            int swatchX = e.ContentLeft + 2;
+            int swatchY = e.Bounds.Y + (e.Bounds.Height - SwatchSize) / 2;
+            var swatchRect = new Rectangle(swatchX, swatchY, SwatchSize, SwatchSize);
+            Color swatchColor = HueHelpers.HueToColor(radarHue);
+            using (var swatchBrush = new SolidBrush(swatchColor))
+            {
+                e.Graphics.FillRectangle(swatchBrush, swatchRect);
+            }
+            using (var swatchBorder = new Pen(focused ? SystemColors.HighlightText : SystemColors.ControlDark))
+            {
+                e.Graphics.DrawRectangle(swatchBorder, swatchRect);
+            }
+
+            // Text starts after the swatch.
+            Color textColor;
+            if (focused)
+            {
+                textColor = SystemColors.HighlightText;
+            }
+            else if (modified)
+            {
+                textColor = Color.Blue;
+            }
+            else
+            {
+                textColor = Options.DarkMode ? Color.White : SystemColors.WindowText;
+            }
+
+            string text = $"0x{graphic:X4} ({graphic}) {name}";
+            int textX = swatchX + SwatchSize + SwatchGap;
+            float textY = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(text, e.Font).Height) / 2f;
+            using var brush = new SolidBrush(textColor);
+            e.Graphics.DrawString(text, e.Font, brush, new PointF(textX, textY));
+        }
+
+        private void OnItemFocusChanged(object sender, TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
+        {
+            if (e.FocusedItemIndex < 0 || e.FocusedItemIndex >= _itemIndices.Length)
+            {
+                return;
+            }
+            UpdateSelectedItemPreview(_itemIndices[e.FocusedItemIndex]);
+        }
+
+        private void OnLandFocusChanged(object sender, TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
+        {
+            if (e.FocusedItemIndex < 0 || e.FocusedItemIndex >= _landIndices.Length)
+            {
+                return;
+            }
+            UpdateSelectedLandPreview(_landIndices[e.FocusedItemIndex]);
+        }
+
+        private void OnItemSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            if (_syncingSelection || e.ItemsChanged == null)
+            {
+                return;
+            }
+
+            foreach (int row in e.ItemsChanged)
+            {
+                if ((uint)row >= (uint)_itemIndices.Length)
+                {
+                    continue;
+                }
+                int graphic = _itemIndices[row];
+                if (e.Action == IndicesCollection.NotifyCollectionChangedAction.Add)
+                {
+                    _selectedItems.Add(graphic);
+                }
+                else
+                {
+                    _selectedItems.Remove(graphic);
+                }
+            }
+        }
+
+        private void OnLandSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            if (_syncingSelection || e.ItemsChanged == null)
+            {
+                return;
+            }
+
+            foreach (int row in e.ItemsChanged)
+            {
+                if ((uint)row >= (uint)_landIndices.Length)
+                {
+                    continue;
+                }
+                int graphic = _landIndices[row];
+                if (e.Action == IndicesCollection.NotifyCollectionChangedAction.Add)
+                {
+                    _selectedLand.Add(graphic);
+                }
+                else
+                {
+                    _selectedLand.Remove(graphic);
+                }
+            }
+        }
+
+        private void RedrawItemRow(int graphic)
+        {
+            int pos = Array.IndexOf(_itemIndices, graphic);
+            if (pos >= 0)
+            {
+                tileViewItem.RedrawItem(pos);
+            }
+        }
+
+        private void RedrawLandRow(int graphic)
+        {
+            int pos = Array.IndexOf(_landIndices, graphic);
+            if (pos >= 0)
+            {
+                tileViewLand.RedrawItem(pos);
+            }
+        }
+
+        private void SelectItemRow(int rowPos)
+        {
+            if ((uint)rowPos < (uint)_itemIndices.Length)
+            {
+                tileViewItem.FocusIndex = rowPos;
+            }
+        }
+
+        private void SelectLandRow(int rowPos)
+        {
+            if ((uint)rowPos < (uint)_landIndices.Length)
+            {
+                tileViewLand.FocusIndex = rowPos;
+            }
+        }
+
+        // After _itemIndices/_landIndices change (reset or filter), the row
+        // positions in SelectedIndices are stale. Rebuild them from the canonical
+        // _selectedItems/_selectedLand HashSets. _syncingSelection prevents the
+        // CollectionChanged handler from feeding the writes back into the HashSet.
+        private void SyncItemSelectedIndicesFromHashSet()
+        {
+            _syncingSelection = true;
+            try
+            {
+                tileViewItem.SelectedIndices.Clear();
+                for (int i = 0; i < _itemIndices.Length; ++i)
+                {
+                    if (_selectedItems.Contains(_itemIndices[i]))
+                    {
+                        tileViewItem.SelectedIndices.Add(i);
+                    }
+                }
+            }
+            finally
+            {
+                _syncingSelection = false;
+            }
+        }
+
+        private void SyncLandSelectedIndicesFromHashSet()
+        {
+            _syncingSelection = true;
+            try
+            {
+                tileViewLand.SelectedIndices.Clear();
+                for (int i = 0; i < _landIndices.Length; ++i)
+                {
+                    if (_selectedLand.Contains(_landIndices[i]))
+                    {
+                        tileViewLand.SelectedIndices.Add(i);
+                    }
+                }
+            }
+            finally
+            {
+                _syncingSelection = false;
+            }
+        }
+
+        private void ResetItemView()
+        {
+            int total = TileData.ItemTable != null ? Art.GetMaxItemId() : 0;
+            _itemIndices = BuildIdentity(total);
+            tileViewItem.VirtualListSize = _itemIndices.Length;
+            SyncItemSelectedIndicesFromHashSet();
+            tileViewItem.Invalidate();
+        }
+
+        private void ResetLandView()
+        {
+            int total = TileData.LandTable?.Length ?? 0;
+            _landIndices = BuildIdentity(total);
+            tileViewLand.VirtualListSize = _landIndices.Length;
+            SyncLandSelectedIndicesFromHashSet();
+            tileViewLand.Invalidate();
+        }
 
         public bool IsLoaded { get; private set; }
 
@@ -79,38 +390,41 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(_refMarker, EventArgs.Empty);
             }
 
-            const int index = 0;
             if (land)
             {
-                for (int i = index; i < _refMarker.treeViewLand.Nodes.Count; ++i)
+                int pos = Array.IndexOf(_refMarker._landIndices, graphic);
+                if (pos < 0)
                 {
-                    TreeNode node = _refMarker.treeViewLand.Nodes[i];
-                    if ((int)node.Tag != graphic)
-                    {
-                        continue;
-                    }
-
-                    _refMarker.tabControl2.SelectTab(1);
-                    _refMarker.treeViewLand.SelectedNode = node;
-                    node.EnsureVisible();
-                    break;
+                    // Filter may exclude the target — reset and retry so
+                    // cross-tab navigation always lands on the row.
+                    _refMarker.ResetLandView();
+                    pos = Array.IndexOf(_refMarker._landIndices, graphic);
                 }
+
+                if (pos < 0)
+                {
+                    return;
+                }
+
+                _refMarker.tabControl2.SelectTab(1);
+                _refMarker.SelectLandRow(pos);
             }
             else
             {
-                for (int i = index; i < _refMarker.treeViewItem.Nodes.Count; ++i)
+                int pos = Array.IndexOf(_refMarker._itemIndices, graphic);
+                if (pos < 0)
                 {
-                    TreeNode node = _refMarker.treeViewItem.Nodes[i];
-                    if ((int)node.Tag != graphic)
-                    {
-                        continue;
-                    }
-
-                    _refMarker.tabControl2.SelectTab(0);
-                    _refMarker.treeViewItem.SelectedNode = node;
-                    node.EnsureVisible();
-                    break;
+                    _refMarker.ResetItemView();
+                    pos = Array.IndexOf(_refMarker._itemIndices, graphic);
                 }
+
+                if (pos < 0)
+                {
+                    return;
+                }
+
+                _refMarker.tabControl2.SelectTab(0);
+                _refMarker.SelectItemRow(pos);
             }
         }
 
@@ -134,58 +448,21 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["TileData"] = true;
             Options.LoadedUltimaClass["Art"] = true;
             Options.LoadedUltimaClass["RadarColor"] = true;
+
+            // Fresh data from disk — nothing is checked or dirty until the
+            // user edits it again.
             _selectedItems.Clear();
             _selectedLand.Clear();
             _originalItemColors.Clear();
             _originalLandColors.Clear();
+            _selectedIndex = -1;
+            _selectedIsItem = false;
 
-            treeViewItem.BeginUpdate();
-            try
-            {
-                treeViewItem.Nodes.Clear();
-                if (TileData.ItemTable != null)
-                {
-                    TreeNode[] nodes = new TreeNode[Art.GetMaxItemId()];
-                    for (int i = 0; i < Art.GetMaxItemId(); ++i)
-                    {
-                        nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.ItemTable[i].Name))
-                        {
-                            Tag = i
-                        };
-                    }
-                    treeViewItem.Nodes.AddRange(nodes);
-                }
-            }
-            finally
-            {
-                treeViewItem.EndUpdate();
-            }
-
-            treeViewLand.BeginUpdate();
-            try
-            {
-                treeViewLand.Nodes.Clear();
-                if (TileData.LandTable != null)
-                {
-                    TreeNode[] nodes = new TreeNode[TileData.LandTable.Length];
-                    for (int i = 0; i < TileData.LandTable.Length; ++i)
-                    {
-                        nodes[i] = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, TileData.LandTable[i].Name))
-                        {
-                            Tag = i
-                        };
-                    }
-                    treeViewLand.Nodes.AddRange(nodes);
-                }
-            }
-            finally
-            {
-                treeViewLand.EndUpdate();
-            }
+            ResetItemView();
+            ResetLandView();
 
             if (!IsLoaded)
             {
@@ -196,7 +473,6 @@ namespace UoFiddler.Controls.UserControls
             }
 
             IsLoaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()
@@ -219,24 +495,27 @@ namespace UoFiddler.Controls.UserControls
         {
             pictureBoxArt.BackColor = Options.PreviewBackgroundColor;
 
-            if (_selectedIndex >= 0)
+            if (_selectedIndex < 0)
             {
-                if (tabControl2.SelectedIndex == 0)
-                {
-                    AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
-                }
-                else
-                {
-                    AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
-                }
+                return;
+            }
+
+            if (tabControl2.SelectedIndex == 0)
+            {
+                UpdateSelectedItemPreview(_selectedIndex);
+            }
+            else
+            {
+                UpdateSelectedLandPreview(_selectedIndex);
             }
         }
 
-        private void AfterSelectTreeViewItem(object sender, TreeViewEventArgs e)
+        private void UpdateSelectedItemPreview(int graphic)
         {
             SaveColor();
 
-            _selectedIndex = (int)e.Node.Tag;
+            _selectedIndex = graphic;
+            _selectedIsItem = true;
 
             if (Art.IsValidStatic(_selectedIndex))
             {
@@ -261,11 +540,12 @@ namespace UoFiddler.Controls.UserControls
             buttonRevertAll.Enabled = _originalLandColors.Count > 0 || _originalItemColors.Count > 0;
         }
 
-        private void AfterSelectTreeViewLand(object sender, TreeViewEventArgs e)
+        private void UpdateSelectedLandPreview(int graphic)
         {
             SaveColor();
 
-            _selectedIndex = (int)e.Node.Tag;
+            _selectedIndex = graphic;
+            _selectedIsItem = false;
 
             if (Art.IsValidLand(_selectedIndex))
             {
@@ -309,16 +589,8 @@ namespace UoFiddler.Controls.UserControls
 
             _originalItemColors.Clear();
             _originalLandColors.Clear();
-
-            foreach (TreeNode node in treeViewItem.Nodes)
-            {
-                node.ForeColor = SystemColors.WindowText;
-            }
-
-            foreach (TreeNode node in treeViewLand.Nodes)
-            {
-                node.ForeColor = SystemColors.WindowText;
-            }
+            tileViewItem.Invalidate();
+            tileViewLand.Invalidate();
 
             Options.ChangedUltimaClass["RadarCol"] = false;
 
@@ -327,7 +599,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void SaveColor()
         {
-            SaveColor(_selectedIndex, CurrentColor, tabControl2.SelectedIndex == 0);
+            // Use the tab the index originated from, NOT tabControl2.SelectedIndex.
+            // Otherwise switching tabs and clicking a row in the new tab would
+            // commit the editor's color to the previous tab's id, mis-attributed.
+            SaveColor(_selectedIndex, CurrentColor, _selectedIsItem);
         }
 
         private void SaveColor(int index, ushort color, bool isItemTile)
@@ -340,32 +615,18 @@ namespace UoFiddler.Controls.UserControls
             if (isItemTile)
             {
                 var datafileColor = RadarCol.GetItemColor(index);
-                if (color != datafileColor)
+                if (color != datafileColor && _originalItemColors.TryAdd(index, datafileColor))
                 {
-                    if (_originalItemColors.TryAdd(index, datafileColor))
-                    {
-                        var previousNode = treeViewItem.Nodes.OfType<TreeNode>()
-                                .FirstOrDefault(node => node.Tag.Equals(index));
-
-                        if (previousNode != null)
-                            previousNode.ForeColor = Color.Blue;
-                    }
+                    RedrawItemRow(index);
                 }
                 RadarCol.SetItemColor(index, color);
             }
             else
             {
                 var datafileColor = RadarCol.GetLandColor(index);
-                if (color != datafileColor)
+                if (color != datafileColor && _originalLandColors.TryAdd(index, datafileColor))
                 {
-                    if (_originalLandColors.TryAdd(index, datafileColor))
-                    {
-                        var previousNode = treeViewLand.Nodes.OfType<TreeNode>()
-                                .FirstOrDefault(node => node.Tag.Equals(index));
-
-                        if (previousNode != null)
-                            previousNode.ForeColor = Color.Blue;
-                    }
+                    RedrawLandRow(index);
                 }
                 RadarCol.SetLandColor(index, color);
             }
@@ -408,16 +669,8 @@ namespace UoFiddler.Controls.UserControls
 
             _originalItemColors.Clear();
             _originalLandColors.Clear();
-
-            foreach (TreeNode node in treeViewItem.Nodes)
-            {
-                node.ForeColor = SystemColors.WindowText;
-            }
-
-            foreach (TreeNode node in treeViewLand.Nodes)
-            {
-                node.ForeColor = SystemColors.WindowText;
-            }
+            tileViewItem.Invalidate();
+            tileViewLand.Invalidate();
         }
 
         private void OnClickRevert(object sender, EventArgs e)
@@ -430,28 +683,16 @@ namespace UoFiddler.Controls.UserControls
                     {
                         CurrentColor = color;
                         RadarCol.SetItemColor(_selectedIndex, color);
-
-                        var node = treeViewItem.Nodes.OfType<TreeNode>()
-                            .FirstOrDefault(node => node.Tag.Equals(_selectedIndex));
-
-                        if (node != null)
-                            node.ForeColor = SystemColors.WindowText;
-
                         _originalItemColors.Remove(_selectedIndex);
+                        RedrawItemRow(_selectedIndex);
                     }
                 }
                 else if (_originalLandColors.TryGetValue(_selectedIndex, out var color))
                 {
                     CurrentColor = color;
                     RadarCol.SetLandColor(_selectedIndex, color);
-
-                    var node = treeViewLand.Nodes.OfType<TreeNode>()
-                        .FirstOrDefault(node => node.Tag.Equals(_selectedIndex));
-
-                    if (node != null)
-                        node.ForeColor = SystemColors.WindowText;
-
                     _originalLandColors.Remove(_selectedIndex);
+                    RedrawLandRow(_selectedIndex);
                 }
             }
 
@@ -486,22 +727,35 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSetRangeFrom(object sender, EventArgs e)
         {
-            var node = ((TreeView)((ContextMenuStrip)((ToolStripItem)sender).Owner).SourceControl).SelectedNode;
-
-            if (node != null)
+            int graphic = GetGraphicFromContextSource(sender);
+            if (graphic >= 0)
             {
-                textBoxMeanFrom.Text = node.Tag.ToString();
+                textBoxMeanFrom.Text = graphic.ToString();
             }
         }
 
         private void OnClickSetRangeTo(object sender, EventArgs e)
         {
-            var node = ((TreeView)((ContextMenuStrip)((ToolStripItem)sender).Owner).SourceControl).SelectedNode;
-
-            if (node != null)
+            int graphic = GetGraphicFromContextSource(sender);
+            if (graphic >= 0)
             {
-                textBoxMeanTo.Text = node.Tag.ToString();
+                textBoxMeanTo.Text = graphic.ToString();
             }
+        }
+
+        private int GetGraphicFromContextSource(object sender)
+        {
+            var tv = ((ContextMenuStrip)((ToolStripItem)sender).Owner).SourceControl as TileView.TileViewControl;
+            if (tv == null || tv.FocusIndex < 0)
+            {
+                return -1;
+            }
+            var indices = tv == tileViewItem ? _itemIndices : _landIndices;
+            if (tv.FocusIndex >= indices.Length)
+            {
+                return -1;
+            }
+            return indices[tv.FocusIndex];
         }
 
         private void OnChangeR(object sender, EventArgs e)
@@ -744,12 +998,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectItemsTab(object sender, EventArgs e)
         {
-            if (treeViewItem.SelectedNode == null)
+            int index = GetSelectedItemGraphic();
+            if (index < 0)
             {
                 return;
             }
 
-            int index = (int)treeViewItem.SelectedNode.Tag;
             var found = ItemsControl.SearchGraphic(index);
             if (!found)
             {
@@ -759,23 +1013,23 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectItemTiledataTab(object sender, EventArgs e)
         {
-            if (treeViewItem.SelectedNode == null)
+            int index = GetSelectedItemGraphic();
+            if (index < 0)
             {
                 return;
             }
 
-            int index = (int)treeViewItem.SelectedNode.Tag;
             TileDataControl.Select(index, false);
         }
 
         private void OnClickSelectLandTilesTab(object sender, EventArgs e)
         {
-            if (treeViewLand.SelectedNode == null)
+            int index = GetSelectedLandGraphic();
+            if (index < 0)
             {
                 return;
             }
 
-            int index = (int)treeViewLand.SelectedNode.Tag;
             var found = LandTilesControl.SearchGraphic(index);
             if (!found)
             {
@@ -785,12 +1039,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectLandTiledataTab(object sender, EventArgs e)
         {
-            if (treeViewLand.SelectedNode == null)
+            int index = GetSelectedLandGraphic();
+            if (index < 0)
             {
                 return;
             }
 
-            int index = (int)treeViewLand.SelectedNode.Tag;
             TileDataControl.Select(index, true);
         }
 
@@ -810,16 +1064,18 @@ namespace UoFiddler.Controls.UserControls
                 RadarCol.ImportFromCSV(dialog.FileName);
                 if (tabControl2.SelectedTab == tabControl2.TabPages[0])
                 {
-                    if (treeViewItem.SelectedNode != null)
+                    int graphic = GetSelectedItemGraphic();
+                    if (graphic >= 0)
                     {
-                        AfterSelectTreeViewItem(this, new TreeViewEventArgs(treeViewItem.SelectedNode));
+                        UpdateSelectedItemPreview(graphic);
                     }
                 }
                 else
                 {
-                    if (treeViewLand.SelectedNode != null)
+                    int graphic = GetSelectedLandGraphic();
+                    if (graphic >= 0)
                     {
-                        AfterSelectTreeViewLand(this, new TreeViewEventArgs(treeViewLand.SelectedNode));
+                        UpdateSelectedLandPreview(graphic);
                     }
                 }
             }
@@ -987,137 +1243,90 @@ namespace UoFiddler.Controls.UserControls
             FilterChange(textFilterItems, FilterItems);
         }
 
-        private void ApplyFilter(TreeView control, string filterText)
-        {
-            object table;
-            int max;
-            Dictionary<int, ushort> originalColors;
-            HashSet<int> selected;
-            Func<int, string> getName;
-
-            if (control == treeViewItem)
-            {
-                table = TileData.ItemTable;
-                max = Art.GetMaxItemId();
-                originalColors = _originalItemColors;
-                getName = (int index) => TileData.ItemTable[index].Name;
-                selected = _selectedItems;
-            }
-            else
-            {
-                table = TileData.LandTable;
-                max = 0x3FFF;
-                originalColors = _originalLandColors;
-                getName = (int index) => TileData.LandTable[index].Name;
-                selected = _selectedLand;
-            }
-
-            Cursor.Current = Cursors.WaitCursor;
-            control.BeginUpdate();
-            try
-            {
-                if (table == null)
-                {
-                    return;
-                }
-
-                control.Nodes.Clear();
-
-                List<TreeNode> nodes = [];
-                for (int i = 0; i < max; ++i)
-                {
-                    var name = getName(i);
-                    if (!name.ContainsCaseInsensitive(filterText))
-                    {
-                        continue;
-                    }
-
-                    var node = new TreeNode(string.Format("0x{0:X4} ({0}) {1}", i, name))
-                    {
-                        Tag = i,
-                        Checked = selected.Contains(i)
-                    };
-
-                    if (originalColors.ContainsKey(i))
-                    {
-                        node.ForeColor = Color.Blue;
-                    }
-
-                    nodes.Add(node);
-                }
-
-                control.Nodes.AddRange(nodes.ToArray());
-            }
-            finally
-            {
-                control.EndUpdate();
-                Cursor.Current = Cursors.Default;
-            }
-        }
-
         private void FilterLand(string filterText)
         {
-            ApplyFilter(treeViewLand, filterText);
+            int max = TileData.LandTable?.Length ?? 0;
+            var matches = new List<int>(max);
+            for (int i = 0; i < max; ++i)
+            {
+                string name = TileData.LandTable[i].Name;
+                if (name.ContainsCaseInsensitive(filterText))
+                {
+                    matches.Add(i);
+                }
+            }
+            _landIndices = matches.ToArray();
+            tileViewLand.VirtualListSize = _landIndices.Length;
+            SyncLandSelectedIndicesFromHashSet();
+            tileViewLand.Invalidate();
         }
 
         private void FilterItems(string filterText)
         {
-            ApplyFilter(treeViewItem, filterText);
-        }
-
-        private void AfterCheckTreeViewItem(object sender, TreeViewEventArgs e)
-        {
-            var index = (int)e.Node.Tag;
-            if (e.Node.Checked)
+            int max = TileData.ItemTable != null ? Art.GetMaxItemId() : 0;
+            var matches = new List<int>(max);
+            for (int i = 0; i < max; ++i)
             {
-                _selectedItems.Add(index);
-            }
-            else
-            {
-                _selectedItems.Remove(index);
-            }
-        }
-
-        private void AfterCheckTreeViewLand(object sender, TreeViewEventArgs e)
-        {
-            var index = (int)e.Node.Tag;
-            if (e.Node.Checked)
-            {
-                _selectedLand.Add(index);
-            }
-            else
-            {
-                _selectedLand.Remove(index);
-            }
-        }
-
-        private static void SetAllCheckedStatus(TreeView treeView, bool isChecked)
-        {
-            treeView.BeginUpdate();
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
-
-                foreach (TreeNode node in treeView.Nodes)
+                string name = TileData.ItemTable[i].Name;
+                if (name.ContainsCaseInsensitive(filterText))
                 {
-                    node.Checked = isChecked;
+                    matches.Add(i);
                 }
             }
-            finally
+            _itemIndices = matches.ToArray();
+            tileViewItem.VirtualListSize = _itemIndices.Length;
+            SyncItemSelectedIndicesFromHashSet();
+            tileViewItem.Invalidate();
+        }
+
+        private void SetAllCheckedItems(bool isChecked)
+        {
+            if (isChecked)
             {
-                treeView.EndUpdate();
-                Cursor.Current = Cursors.Default;
+                foreach (int graphic in _itemIndices)
+                {
+                    _selectedItems.Add(graphic);
+                }
             }
+            else
+            {
+                foreach (int graphic in _itemIndices)
+                {
+                    _selectedItems.Remove(graphic);
+                }
+            }
+            SyncItemSelectedIndicesFromHashSet();
+            tileViewItem.Invalidate();
+        }
+
+        private void SetAllCheckedLand(bool isChecked)
+        {
+            if (isChecked)
+            {
+                foreach (int graphic in _landIndices)
+                {
+                    _selectedLand.Add(graphic);
+                }
+            }
+            else
+            {
+                foreach (int graphic in _landIndices)
+                {
+                    _selectedLand.Remove(graphic);
+                }
+            }
+            SyncLandSelectedIndicesFromHashSet();
+            tileViewLand.Invalidate();
         }
 
         private void OnClickSelectAllItems(object sender, EventArgs e)
         {
-            SetAllCheckedStatus(treeViewItem, true);
+            SetAllCheckedItems(true);
         }
 
         private void OnClickSelectNoneItems(object sender, EventArgs e)
         {
-            SetAllCheckedStatus(treeViewItem, false);
+            SetAllCheckedItems(false);
         }
 
         private void OnCheckedChangeUseSelection(object sender, EventArgs e)
@@ -1140,12 +1349,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectAllLand(object sender, EventArgs e)
         {
-            SetAllCheckedStatus(treeViewLand, true);
+            SetAllCheckedLand(true);
         }
 
         private void OnClickSelectNoneLand(object sender, EventArgs e)
         {
-            SetAllCheckedStatus(treeViewLand, false);
+            SetAllCheckedLand(false);
         }
     }
 }

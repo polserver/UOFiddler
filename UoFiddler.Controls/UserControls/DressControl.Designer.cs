@@ -45,7 +45,8 @@ namespace UoFiddler.Controls.UserControls
             ItemsSplitContainer = new System.Windows.Forms.SplitContainer();
             SearchItemTextBox = new System.Windows.Forms.TextBox();
             FindNextItemButton = new System.Windows.Forms.Button();
-            treeViewItems = new System.Windows.Forms.TreeView();
+            listViewItems = new System.Windows.Forms.ListView();
+            listViewItemsColumn = new System.Windows.Forms.ColumnHeader();
             splitContainer3 = new System.Windows.Forms.SplitContainer();
             checkBoxHuman = new System.Windows.Forms.RadioButton();
             checkBoxGargoyle = new System.Windows.Forms.RadioButton();
@@ -179,7 +180,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ItemsSplitContainer.Panel2
             // 
-            ItemsSplitContainer.Panel2.Controls.Add(treeViewItems);
+            ItemsSplitContainer.Panel2.Controls.Add(listViewItems);
             ItemsSplitContainer.Size = new System.Drawing.Size(248, 623);
             ItemsSplitContainer.SplitterDistance = 40;
             ItemsSplitContainer.SplitterWidth = 5;
@@ -205,16 +206,26 @@ namespace UoFiddler.Controls.UserControls
             FindNextItemButton.UseVisualStyleBackColor = true;
             FindNextItemButton.Click += FindNextItemButton_Click;
             // 
-            // treeViewItems
-            // 
-            treeViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewItems.Location = new System.Drawing.Point(0, 0);
-            treeViewItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            treeViewItems.Name = "treeViewItems";
-            treeViewItems.Size = new System.Drawing.Size(248, 578);
-            treeViewItems.TabIndex = 1;
-            treeViewItems.AfterSelect += AfterSelectTreeView;
-            treeViewItems.DoubleClick += TreeViewItems_DoubleClick;
+            // listViewItems
+            //
+            listViewItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            listViewItems.HideSelection = false;
+            listViewItems.Location = new System.Drawing.Point(0, 0);
+            listViewItems.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listViewItems.Name = "listViewItems";
+            listViewItems.Size = new System.Drawing.Size(248, 578);
+            listViewItems.TabIndex = 1;
+            listViewItems.View = System.Windows.Forms.View.Details;
+            listViewItems.VirtualMode = true;
+            listViewItems.FullRowSelect = true;
+            listViewItems.MultiSelect = false;
+            listViewItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItemsColumn.Text = "Item";
+            listViewItemsColumn.Width = 240;
+            listViewItems.Columns.Add(listViewItemsColumn);
+            listViewItems.RetrieveVirtualItem += OnRetrieveItemVirtualItem;
+            listViewItems.SelectedIndexChanged += OnListItemSelectedIndexChanged;
+            listViewItems.DoubleClick += TreeViewItems_DoubleClick;
             // 
             // splitContainer3
             // 
@@ -729,7 +740,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem unDressToolStripMenuItem;
         private System.Windows.Forms.SplitContainer ItemsSplitContainer;
         private System.Windows.Forms.Button FindNextItemButton;
-        private System.Windows.Forms.TreeView treeViewItems;
+        private System.Windows.Forms.ListView listViewItems;
+        private System.Windows.Forms.ColumnHeader listViewItemsColumn;
         private System.Windows.Forms.TextBox SearchItemTextBox;
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifnoLoopingToolStripMenuItem;

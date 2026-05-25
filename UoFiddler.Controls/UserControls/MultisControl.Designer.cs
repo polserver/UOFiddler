@@ -41,7 +41,8 @@ namespace UoFiddler.Controls.UserControls
         {
             components = new System.ComponentModel.Container();
             splitContainer2 = new System.Windows.Forms.SplitContainer();
-            TreeViewMulti = new System.Windows.Forms.TreeView();
+            listViewMulti = new System.Windows.Forms.ListView();
+            listViewMultiColumn = new System.Windows.Forms.ColumnHeader();
             contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(components);
             toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,7 +107,8 @@ namespace UoFiddler.Controls.UserControls
             tabPageMul = new System.Windows.Forms.TabPage();
             tabPageUop = new System.Windows.Forms.TabPage();
             splitContainerUop = new System.Windows.Forms.SplitContainer();
-            treeViewUop = new System.Windows.Forms.TreeView();
+            listViewUop = new System.Windows.Forms.ListView();
+            listViewUopColumn = new System.Windows.Forms.ColumnHeader();
             contextMenuStripUop = new System.Windows.Forms.ContextMenuStrip(components);
             uopExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             uopToUOAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -192,7 +194,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer2.Panel1
             // 
-            splitContainer2.Panel1.Controls.Add(TreeViewMulti);
+            splitContainer2.Panel1.Controls.Add(listViewMulti);
             splitContainer2.Panel1.Controls.Add(toolStrip1);
             // 
             // splitContainer2.Panel2
@@ -203,18 +205,27 @@ namespace UoFiddler.Controls.UserControls
             splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 1;
             // 
-            // TreeViewMulti
-            // 
-            TreeViewMulti.ContextMenuStrip = contextMenuStrip2;
-            TreeViewMulti.Dock = System.Windows.Forms.DockStyle.Fill;
-            TreeViewMulti.HideSelection = false;
-            TreeViewMulti.Location = new System.Drawing.Point(0, 25);
-            TreeViewMulti.Margin = new System.Windows.Forms.Padding(0);
-            TreeViewMulti.Name = "TreeViewMulti";
-            TreeViewMulti.ShowNodeToolTips = true;
-            TreeViewMulti.Size = new System.Drawing.Size(245, 389);
-            TreeViewMulti.TabIndex = 0;
-            TreeViewMulti.AfterSelect += AfterSelect_Multi;
+            // listViewMulti
+            //
+            listViewMulti.ContextMenuStrip = contextMenuStrip2;
+            listViewMulti.Dock = System.Windows.Forms.DockStyle.Fill;
+            listViewMulti.HideSelection = false;
+            listViewMulti.Location = new System.Drawing.Point(0, 25);
+            listViewMulti.Margin = new System.Windows.Forms.Padding(0);
+            listViewMulti.Name = "listViewMulti";
+            listViewMulti.ShowItemToolTips = true;
+            listViewMulti.Size = new System.Drawing.Size(245, 389);
+            listViewMulti.TabIndex = 0;
+            listViewMulti.View = System.Windows.Forms.View.Details;
+            listViewMulti.VirtualMode = true;
+            listViewMulti.FullRowSelect = true;
+            listViewMulti.MultiSelect = false;
+            listViewMulti.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewMultiColumn.Text = "Multi";
+            listViewMultiColumn.Width = 240;
+            listViewMulti.Columns.Add(listViewMultiColumn);
+            listViewMulti.RetrieveVirtualItem += OnRetrieveMultiVirtualItem;
+            listViewMulti.SelectedIndexChanged += AfterSelect_Multi;
             // 
             // contextMenuStrip2
             // 
@@ -769,7 +780,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainerUop.Panel1
             // 
-            splitContainerUop.Panel1.Controls.Add(treeViewUop);
+            splitContainerUop.Panel1.Controls.Add(listViewUop);
             splitContainerUop.Panel1.Controls.Add(toolStripUop);
             // 
             // splitContainerUop.Panel2
@@ -780,18 +791,27 @@ namespace UoFiddler.Controls.UserControls
             splitContainerUop.SplitterWidth = 5;
             splitContainerUop.TabIndex = 0;
             // 
-            // treeViewUop
-            // 
-            treeViewUop.ContextMenuStrip = contextMenuStripUop;
-            treeViewUop.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewUop.HideSelection = false;
-            treeViewUop.Location = new System.Drawing.Point(0, 25);
-            treeViewUop.Margin = new System.Windows.Forms.Padding(0);
-            treeViewUop.Name = "treeViewUop";
-            treeViewUop.ShowNodeToolTips = true;
-            treeViewUop.Size = new System.Drawing.Size(245, 389);
-            treeViewUop.TabIndex = 0;
-            treeViewUop.AfterSelect += AfterSelect_UopMulti;
+            // listViewUop
+            //
+            listViewUop.ContextMenuStrip = contextMenuStripUop;
+            listViewUop.Dock = System.Windows.Forms.DockStyle.Fill;
+            listViewUop.HideSelection = false;
+            listViewUop.Location = new System.Drawing.Point(0, 25);
+            listViewUop.Margin = new System.Windows.Forms.Padding(0);
+            listViewUop.Name = "listViewUop";
+            listViewUop.ShowItemToolTips = true;
+            listViewUop.Size = new System.Drawing.Size(245, 389);
+            listViewUop.TabIndex = 0;
+            listViewUop.View = System.Windows.Forms.View.Details;
+            listViewUop.VirtualMode = true;
+            listViewUop.FullRowSelect = true;
+            listViewUop.MultiSelect = false;
+            listViewUop.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewUopColumn.Text = "Multi";
+            listViewUopColumn.Width = 240;
+            listViewUop.Columns.Add(listViewUopColumn);
+            listViewUop.RetrieveVirtualItem += OnRetrieveUopVirtualItem;
+            listViewUop.SelectedIndexChanged += AfterSelect_UopMulti;
             // 
             // contextMenuStripUop
             // 
@@ -1148,7 +1168,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem toUOAToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toWSCFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toWscToolStripMenuItem;
-        private System.Windows.Forms.TreeView TreeViewMulti;
+        private System.Windows.Forms.ListView listViewMulti;
+        private System.Windows.Forms.ColumnHeader listViewMultiColumn;
         private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.ToolStripMenuItem ChangeBackgroundColorToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -1168,7 +1189,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TabPage tabPageMul;
         private System.Windows.Forms.TabPage tabPageUop;
         private System.Windows.Forms.SplitContainer splitContainerUop;
-        private System.Windows.Forms.TreeView treeViewUop;
+        private System.Windows.Forms.ListView listViewUop;
+        private System.Windows.Forms.ColumnHeader listViewUopColumn;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripUop;
         private System.Windows.Forms.ToolStripMenuItem uopExportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uopToTextfileToolStripMenuItem;

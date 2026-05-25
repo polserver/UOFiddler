@@ -48,6 +48,121 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private bool _showFreeSlots;
         private readonly MultisControl _refMarker;
+
+        // Virtual ListView backing: row index → multi id. _mulIds includes both
+        // present and (when _showFreeSlots is on) empty slots; emptiness is
+        // resolved at draw time via Multis.GetComponents.
+        private int[] _mulIds = Array.Empty<int>();
+        private int[] _uopIds = Array.Empty<int>();
+
+        private int GetSelectedMulId()
+        {
+            return listViewMulti.SelectedIndices.Count > 0 && listViewMulti.SelectedIndices[0] < _mulIds.Length
+                ? _mulIds[listViewMulti.SelectedIndices[0]]
+                : -1;
+        }
+
+        private int GetSelectedUopId()
+        {
+            return listViewUop.SelectedIndices.Count > 0 && listViewUop.SelectedIndices[0] < _uopIds.Length
+                ? _uopIds[listViewUop.SelectedIndices[0]]
+                : -1;
+        }
+
+        private void OnRetrieveMultiVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if ((uint)e.ItemIndex >= (uint)_mulIds.Length)
+            {
+                e.Item = new ListViewItem(string.Empty);
+                return;
+            }
+
+            int id = _mulIds[e.ItemIndex];
+            // Special-case the "missing UOP file" placeholder row (id == -1).
+            if (id < 0)
+            {
+                e.Item = new ListViewItem("multicollection.uop not found or path is not set.") { Tag = -1 };
+                return;
+            }
+
+            var lvi = new ListViewItem(BuildNodeLabel(id))
+            {
+                Tag = id,
+                ToolTipText = BuildToolTip(id)
+            };
+            if (_showFreeSlots && Multis.GetComponents(id) == MultiComponentList.Empty)
+            {
+                lvi.ForeColor = Color.Red;
+            }
+            e.Item = lvi;
+        }
+
+        private void OnRetrieveUopVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if ((uint)e.ItemIndex >= (uint)_uopIds.Length)
+            {
+                e.Item = new ListViewItem(string.Empty);
+                return;
+            }
+
+            int id = _uopIds[e.ItemIndex];
+            if (id < 0)
+            {
+                e.Item = new ListViewItem("multicollection.uop not found or path is not set.") { Tag = -1 };
+                return;
+            }
+
+            e.Item = new ListViewItem(BuildNodeLabel(id))
+            {
+                Tag = id,
+                ToolTipText = BuildToolTip(id)
+            };
+        }
+
+        private string BuildToolTip(int id)
+        {
+            if (_xmlElementMultis == null)
+            {
+                return null;
+            }
+            string name = "";
+            foreach (XmlNode xMultiNode in _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + id + "']"))
+            {
+                name = xMultiNode.Attributes["name"].Value;
+            }
+            string tooltipText = null;
+            foreach (XmlNode xMultiNode in _xmlElementMultis.SelectNodes("/Multis/ToolTip[@id='" + id + "']"))
+            {
+                tooltipText = xMultiNode.Attributes["text"].Value;
+            }
+            if (tooltipText != null)
+            {
+                return name + "\r\n" + tooltipText;
+            }
+            return name;
+        }
+
+        private void SelectMulRow(int rowPos)
+        {
+            listViewMulti.SelectedIndices.Clear();
+            if ((uint)rowPos < (uint)_mulIds.Length)
+            {
+                listViewMulti.SelectedIndices.Add(rowPos);
+                listViewMulti.EnsureVisible(rowPos);
+                listViewMulti.FocusedItem = listViewMulti.Items[rowPos];
+            }
+        }
+
+        private void SelectUopRow(int rowPos)
+        {
+            listViewUop.SelectedIndices.Clear();
+            if ((uint)rowPos < (uint)_uopIds.Length)
+            {
+                listViewUop.SelectedIndices.Add(rowPos);
+                listViewUop.EnsureVisible(rowPos);
+                listViewUop.FocusedItem = listViewUop.Items[rowPos];
+            }
+        }
         private bool _useTransparencyForPng = true;
         private bool _previewFitMode = true;
         private Bitmap _mulBitmap;
@@ -90,40 +205,6 @@ namespace UoFiddler.Controls.UserControls
             return $"{i,5} (0x{i:X}) {name}";
         }
 
-        private TreeNode BuildMulNode(int i, MultiComponentList multi)
-        {
-            TreeNode node;
-            if (_xmlDocument == null)
-            {
-                node = new TreeNode(BuildNodeLabel(i));
-            }
-            else
-            {
-                node = new TreeNode(BuildNodeLabel(i));
-                XmlNodeList xMultiNodeList = _xmlElementMultis.SelectNodes("/Multis/Multi[@id='" + i + "']");
-                string name = "";
-                foreach (XmlNode xMultiNode in xMultiNodeList)
-                {
-                    name = xMultiNode.Attributes["name"].Value;
-                }
-
-                XmlNodeList tooltipList = _xmlElementMultis.SelectNodes("/Multis/ToolTip[@id='" + i + "']");
-                foreach (XmlNode xMultiNode in tooltipList)
-                {
-                    node.ToolTipText = name + "\r\n" + xMultiNode.Attributes["text"].Value;
-                }
-
-                if (tooltipList.Count == 0)
-                {
-                    node.ToolTipText = name;
-                }
-            }
-
-            node.Tag = multi;
-            node.Name = i.ToString();
-            return node;
-        }
-
         private void ApplyDarkModeIfNeeded()
         {
             if (Options.DarkMode)
@@ -163,32 +244,11 @@ namespace UoFiddler.Controls.UserControls
             Options.LoadedUltimaClass["Multis"] = true;
             Options.LoadedUltimaClass["Hues"] = true;
 
-            TreeViewMulti.BeginUpdate();
-            try
-            {
-                TreeViewMulti.Nodes.Clear();
-                var cache = new List<TreeNode>();
-                for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
-                {
-                    MultiComponentList multi = Multis.GetComponents(i);
-                    if (multi == MultiComponentList.Empty)
-                    {
-                        continue;
-                    }
+            RebuildMulIds(includeEmpty: false);
 
-                    cache.Add(BuildMulNode(i, multi));
-                }
-
-                TreeViewMulti.Nodes.AddRange(cache.ToArray());
-            }
-            finally
+            if (_mulIds.Length > 0)
             {
-                TreeViewMulti.EndUpdate();
-            }
-
-            if (TreeViewMulti.Nodes.Count > 0)
-            {
-                TreeViewMulti.SelectedNode = TreeViewMulti.Nodes[0];
+                SelectMulRow(0);
             }
 
             if (!_loaded)
@@ -235,46 +295,37 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            bool done = false;
-            for (int i = 0; i < TreeViewMulti.Nodes.Count; ++i)
+            int existing = Array.IndexOf(_mulIds, id);
+            if (existing >= 0)
             {
-                if (id == int.Parse(TreeViewMulti.Nodes[i].Name))
+                // Already in the list — just repaint the row (text might depend
+                // on XML lookups that could now resolve differently).
+                listViewMulti.RedrawItems(existing, existing, false);
+                if (listViewMulti.SelectedIndices.Count > 0 && listViewMulti.SelectedIndices[0] == existing)
                 {
-                    TreeViewMulti.Nodes[i].Tag = multi;
-                    TreeViewMulti.Nodes[i].ForeColor = Color.Black;
-                    if (i == TreeViewMulti.SelectedNode.Index)
-                    {
-                        AfterSelect_Multi(this, null);
-                    }
+                    AfterSelect_Multi(this, EventArgs.Empty);
+                }
+                return;
+            }
 
-                    done = true;
+            // Find insertion point to keep the list sorted by id.
+            int insertAt = _mulIds.Length;
+            for (int i = 0; i < _mulIds.Length; ++i)
+            {
+                if (id < _mulIds[i])
+                {
+                    insertAt = i;
                     break;
                 }
-
-                if (id >= int.Parse(TreeViewMulti.Nodes[i].Name))
-                {
-                    continue;
-                }
-
-                TreeNode node = new TreeNode(string.Format("{0,5} (0x{0:X})", id))
-                {
-                    Tag = multi,
-                    Name = id.ToString()
-                };
-                TreeViewMulti.Nodes.Insert(i, node);
-                done = true;
-                break;
             }
 
-            if (!done)
-            {
-                TreeNode node = new TreeNode(string.Format("{0,5} (0x{0:X})", id))
-                {
-                    Tag = multi,
-                    Name = id.ToString()
-                };
-                TreeViewMulti.Nodes.Add(node);
-            }
+            var next = new int[_mulIds.Length + 1];
+            Array.Copy(_mulIds, 0, next, 0, insertAt);
+            next[insertAt] = id;
+            Array.Copy(_mulIds, insertAt, next, insertAt + 1, _mulIds.Length - insertAt);
+            _mulIds = next;
+            listViewMulti.VirtualListSize = _mulIds.Length;
+            listViewMulti.Invalidate();
         }
 
         public void ChangeMulti(int id, MultiComponentList multi)
@@ -284,34 +335,27 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            int index = _refMarker.TreeViewMulti.SelectedNode.Index;
-            if (int.Parse(_refMarker.TreeViewMulti.SelectedNode.Name) != id)
+            int pos = Array.IndexOf(_refMarker._mulIds, id);
+            if (pos < 0)
             {
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                // Not yet in the list — insert sorted.
+                _refMarker.OnMultiChangeEvent(null, id);
+                pos = Array.IndexOf(_refMarker._mulIds, id);
+                if (pos < 0)
                 {
-                    if (int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name) != id)
-                    {
-                        continue;
-                    }
-
-                    index = i;
-                    break;
+                    return;
                 }
             }
-            _refMarker.TreeViewMulti.Nodes[index].Tag = multi;
-            _refMarker.TreeViewMulti.Nodes[index].ForeColor = Color.Black;
-            if (index != _refMarker.TreeViewMulti.SelectedNode.Index)
-            {
-                _refMarker.TreeViewMulti.SelectedNode = _refMarker.TreeViewMulti.Nodes[index];
-            }
 
-            AfterSelect_Multi(this, null);
-            ControlEvents.FireMultiChangeEvent(this, index);
+            _refMarker.SelectMulRow(pos);
+            _refMarker.AfterSelect_Multi(this, EventArgs.Empty);
+            ControlEvents.FireMultiChangeEvent(this, pos);
         }
 
-        private void AfterSelect_Multi(object sender, TreeViewEventArgs e)
+        private void AfterSelect_Multi(object sender, EventArgs e)
         {
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            int id = GetSelectedMulId();
+            MultiComponentList multi = id >= 0 ? Multis.GetComponents(id) : MultiComponentList.Empty;
             if (multi == MultiComponentList.Empty)
             {
                 HeightChangeMulti.Maximum = 0;
@@ -334,11 +378,31 @@ namespace UoFiddler.Controls.UserControls
         {
             _mulBitmap?.Dispose();
             _mulBitmap = null;
-            if (TreeViewMulti.SelectedNode?.Tag is MultiComponentList multi && multi != MultiComponentList.Empty)
+            int id = GetSelectedMulId();
+            if (id >= 0)
             {
-                int h = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
-                _mulBitmap = multi.GetImage(h);
+                MultiComponentList multi = Multis.GetComponents(id);
+                if (multi != MultiComponentList.Empty)
+                {
+                    int h = HeightChangeMulti.Maximum - HeightChangeMulti.Value;
+                    _mulBitmap = multi.GetImage(h);
+                }
             }
+        }
+
+        private void RebuildMulIds(bool includeEmpty)
+        {
+            var ids = new List<int>(Multis.MaximumMultiIndex);
+            for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
+            {
+                if (includeEmpty || Multis.GetComponents(i) != MultiComponentList.Empty)
+                {
+                    ids.Add(i);
+                }
+            }
+            _mulIds = ids.ToArray();
+            listViewMulti.VirtualListSize = _mulIds.Length;
+            listViewMulti.Invalidate();
         }
 
         private void UpdateMulPictureBox()
@@ -469,7 +533,7 @@ namespace UoFiddler.Controls.UserControls
 
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string floorSuffix = HeightChangeMulti.Value > 0 ? $"_Z{HeightChangeMulti.Value:000}" : string.Empty;
-            string fileName = Path.Combine(Options.OutputPath, $"Multi {Utils.FormatExportId(int.Parse(TreeViewMulti.SelectedNode.Name))}{floorSuffix}.{fileExtension}");
+            string fileName = Path.Combine(Options.OutputPath, $"Multi {Utils.FormatExportId(GetSelectedMulId())}{floorSuffix}.{fileExtension}");
             SaveImage(_mulBitmap, fileName, imageFormat, backgroundColor);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
         }
@@ -490,53 +554,22 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickFreeSlots(object sender, EventArgs e)
         {
             _showFreeSlots = !_showFreeSlots;
-            TreeViewMulti.BeginUpdate();
-            TreeViewMulti.Nodes.Clear();
-
-            if (_showFreeSlots)
-            {
-                for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
-                {
-                    MultiComponentList multi = Multis.GetComponents(i);
-                    TreeNode node = BuildMulNode(i, multi);
-                    if (multi == MultiComponentList.Empty)
-                    {
-                        node.ForeColor = Color.Red;
-                    }
-
-                    TreeViewMulti.Nodes.Add(node);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
-                {
-                    MultiComponentList multi = Multis.GetComponents(i);
-                    if (multi == MultiComponentList.Empty)
-                    {
-                        continue;
-                    }
-
-                    TreeViewMulti.Nodes.Add(BuildMulNode(i, multi));
-                }
-            }
-            TreeViewMulti.EndUpdate();
+            RebuildMulIds(includeEmpty: _showFreeSlots);
         }
 
         private void OnExportTextFile(object sender, EventArgs e)
         {
-            if (TreeViewMulti.SelectedNode == null)
+            int id = GetSelectedMulId();
+            if (id < 0)
             {
                 return;
             }
 
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi == MultiComponentList.Empty)
             {
                 return;
             }
-
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.txt");
@@ -547,18 +580,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnExportWscFile(object sender, EventArgs e)
         {
-            if (TreeViewMulti.SelectedNode == null)
+            int id = GetSelectedMulId();
+            if (id < 0)
             {
                 return;
             }
 
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi == MultiComponentList.Empty)
             {
                 return;
             }
-
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.wsc");
@@ -569,18 +601,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnExportUOAFile(object sender, EventArgs e)
         {
-            if (TreeViewMulti.SelectedNode == null)
+            int id = GetSelectedMulId();
+            if (id < 0)
             {
                 return;
             }
 
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi == MultiComponentList.Empty)
             {
                 return;
             }
-
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.uoa");
@@ -599,18 +630,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            if (TreeViewMulti.SelectedNode == null)
+            int id = GetSelectedMulId();
+            if (id < 0)
             {
                 return;
             }
 
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi == MultiComponentList.Empty)
             {
                 return;
             }
-
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
             DialogResult result = MessageBox.Show(string.Format("Are you sure to remove {0} (0x{0:X})", id), "Remove",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
@@ -619,15 +649,28 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Multis.Remove(id);
-            TreeViewMulti.SelectedNode.Remove();
+            int pos = Array.IndexOf(_mulIds, id);
+            if (pos >= 0)
+            {
+                var next = new int[_mulIds.Length - 1];
+                Array.Copy(_mulIds, 0, next, 0, pos);
+                Array.Copy(_mulIds, pos + 1, next, pos, _mulIds.Length - pos - 1);
+                _mulIds = next;
+                listViewMulti.VirtualListSize = _mulIds.Length;
+                listViewMulti.Invalidate();
+            }
             Options.ChangedUltimaClass["Multis"] = true;
             ControlEvents.FireMultiChangeEvent(this, id);
         }
 
         private void OnClickImport(object sender, EventArgs e)
         {
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
+            int id = GetSelectedMulId();
+            if (id < 0)
+            {
+                return;
+            }
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi != MultiComponentList.Empty)
             {
                 DialogResult result = MessageBox.Show(string.Format("Are you sure to replace {0} (0x{0:X})", id),
@@ -678,9 +721,9 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; i++)
+                for (int i = 0; i < _refMarker._mulIds.Length; i++)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
@@ -689,7 +732,7 @@ namespace UoFiddler.Controls.UserControls
                     const int maximumMultiHeight = 127;
                     string fileName = Path.Combine(dialog.SelectedPath, $"Multi {Utils.FormatExportId(index)}.{fileExtension}");
 
-                    using (Bitmap multiBitmap = ((MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag)?.GetImage(maximumMultiHeight))
+                    using (Bitmap multiBitmap = Multis.GetComponents(index)?.GetImage(maximumMultiHeight))
                     {
                         if (multiBitmap != null)
                         {
@@ -713,15 +756,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                for (int i = 0; i < _refMarker._mulIds.Length; ++i)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
                     }
 
-                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    MultiComponentList multi = Multis.GetComponents(index);
                     if (multi == MultiComponentList.Empty)
                     {
                         continue;
@@ -746,15 +789,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                for (int i = 0; i < _refMarker._mulIds.Length; ++i)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
                     }
 
-                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    MultiComponentList multi = Multis.GetComponents(index);
                     if (multi == MultiComponentList.Empty)
                     {
                         continue;
@@ -779,15 +822,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                for (int i = 0; i < _refMarker._mulIds.Length; ++i)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
                     }
 
-                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    MultiComponentList multi = Multis.GetComponents(index);
                     if (multi == MultiComponentList.Empty)
                     {
                         continue;
@@ -812,15 +855,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                for (int i = 0; i < _refMarker._mulIds.Length; ++i)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
                     }
 
-                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    MultiComponentList multi = Multis.GetComponents(index);
                     if (multi == MultiComponentList.Empty)
                     {
                         continue;
@@ -845,15 +888,15 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                for (int i = 0; i < _refMarker._mulIds.Length; ++i)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
                     }
 
-                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    MultiComponentList multi = Multis.GetComponents(index);
                     if (multi == MultiComponentList.Empty)
                     {
                         continue;
@@ -869,18 +912,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnExportCsvFile(object sender, EventArgs e)
         {
-            if (TreeViewMulti.SelectedNode == null)
+            int id = GetSelectedMulId();
+            if (id < 0)
             {
                 return;
             }
 
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi == MultiComponentList.Empty)
             {
                 return;
             }
-
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"{id:D4}.csv");
@@ -890,18 +932,17 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnExportUox3File(object sender, EventArgs e)
         {
-            if (TreeViewMulti.SelectedNode == null)
+            int id = GetSelectedMulId();
+            if (id < 0)
             {
                 return;
             }
 
-            MultiComponentList multi = (MultiComponentList)TreeViewMulti.SelectedNode.Tag;
+            MultiComponentList multi = Multis.GetComponents(id);
             if (multi == MultiComponentList.Empty)
             {
                 return;
             }
-
-            int id = int.Parse(TreeViewMulti.SelectedNode.Name);
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.uox3");
@@ -927,44 +968,36 @@ namespace UoFiddler.Controls.UserControls
 
         private void LoadUopTree()
         {
-            treeViewUop.BeginUpdate();
-            treeViewUop.Nodes.Clear();
-
             if (!Multis.HasUopFile)
             {
-                treeViewUop.Nodes.Add(new TreeNode("multicollection.uop not found or path is not set.") { Name = "-1" });
-                treeViewUop.EndUpdate();
+                _uopIds = new[] { -1 }; // placeholder row rendered as the "not found" message
+                listViewUop.VirtualListSize = 1;
+                listViewUop.Invalidate();
                 return;
             }
 
-            var cache = new List<TreeNode>();
+            var ids = new List<int>(Multis.MaximumMultiIndex);
             for (int i = 0; i < Multis.MaximumMultiIndex; ++i)
             {
-                MultiComponentList multi = Multis.GetUopComponents(i);
-                if (multi == MultiComponentList.Empty)
+                if (Multis.GetUopComponents(i) != MultiComponentList.Empty)
                 {
-                    continue;
+                    ids.Add(i);
                 }
-
-                cache.Add(new TreeNode(BuildNodeLabel(i)) { Tag = multi, Name = i.ToString() });
             }
+            _uopIds = ids.ToArray();
+            listViewUop.VirtualListSize = _uopIds.Length;
+            listViewUop.Invalidate();
 
-            treeViewUop.Nodes.AddRange(cache.ToArray());
-            treeViewUop.EndUpdate();
-
-            if (treeViewUop.Nodes.Count > 0)
+            if (_uopIds.Length > 0)
             {
-                treeViewUop.SelectedNode = treeViewUop.Nodes[0];
+                SelectUopRow(0);
             }
         }
 
-        private void AfterSelect_UopMulti(object sender, TreeViewEventArgs e)
+        private void AfterSelect_UopMulti(object sender, EventArgs e)
         {
-            if (treeViewUop.SelectedNode?.Tag is not MultiComponentList multi)
-            {
-                return;
-            }
-
+            int id = GetSelectedUopId();
+            MultiComponentList multi = id >= 0 ? Multis.GetUopComponents(id) : MultiComponentList.Empty;
             if (multi == MultiComponentList.Empty)
             {
                 HeightChangeUop.Maximum = 0;
@@ -987,10 +1020,15 @@ namespace UoFiddler.Controls.UserControls
         {
             _uopBitmap?.Dispose();
             _uopBitmap = null;
-            if (treeViewUop.SelectedNode?.Tag is MultiComponentList multi && multi != MultiComponentList.Empty)
+            int id = GetSelectedUopId();
+            if (id >= 0)
             {
-                int h = HeightChangeUop.Maximum - HeightChangeUop.Value;
-                _uopBitmap = multi.GetImage(h);
+                MultiComponentList multi = Multis.GetUopComponents(id);
+                if (multi != MultiComponentList.Empty)
+                {
+                    int h = HeightChangeUop.Maximum - HeightChangeUop.Value;
+                    _uopBitmap = multi.GetImage(h);
+                }
             }
         }
 
@@ -1287,7 +1325,7 @@ namespace UoFiddler.Controls.UserControls
 
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string floorSuffix = HeightChangeUop.Value > 0 ? $"_Z{HeightChangeUop.Value:000}" : string.Empty;
-            int id = int.Parse(treeViewUop.SelectedNode.Name);
+            int id = GetSelectedUopId();
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}{floorSuffix}.{fileExtension}");
             SaveImage(_uopBitmap, fileName, imageFormat, backgroundColor);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -1295,12 +1333,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnUopExportTextFile(object sender, EventArgs e)
         {
-            if (treeViewUop.SelectedNode?.Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+            int id = GetSelectedUopId();
+            if (id < 0)
             {
                 return;
             }
-
-            int id = int.Parse(treeViewUop.SelectedNode.Name);
+            MultiComponentList multi = Multis.GetUopComponents(id);
+            if (multi == MultiComponentList.Empty)
+            {
+                return;
+            }
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.txt");
             multi.ExportToTextFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -1308,12 +1350,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnUopExportUOAFile(object sender, EventArgs e)
         {
-            if (treeViewUop.SelectedNode?.Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+            int id = GetSelectedUopId();
+            if (id < 0)
             {
                 return;
             }
-
-            int id = int.Parse(treeViewUop.SelectedNode.Name);
+            MultiComponentList multi = Multis.GetUopComponents(id);
+            if (multi == MultiComponentList.Empty)
+            {
+                return;
+            }
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.uoa");
             multi.ExportToUOAFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -1321,12 +1367,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnUopExportWscFile(object sender, EventArgs e)
         {
-            if (treeViewUop.SelectedNode?.Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+            int id = GetSelectedUopId();
+            if (id < 0)
             {
                 return;
             }
-
-            int id = int.Parse(treeViewUop.SelectedNode.Name);
+            MultiComponentList multi = Multis.GetUopComponents(id);
+            if (multi == MultiComponentList.Empty)
+            {
+                return;
+            }
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.wsc");
             multi.ExportToWscFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -1334,12 +1384,16 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnUopExportCsvFile(object sender, EventArgs e)
         {
-            if (treeViewUop.SelectedNode?.Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+            int id = GetSelectedUopId();
+            if (id < 0)
             {
                 return;
             }
-
-            int id = int.Parse(treeViewUop.SelectedNode.Name);
+            MultiComponentList multi = Multis.GetUopComponents(id);
+            if (multi == MultiComponentList.Empty)
+            {
+                return;
+            }
             string fileName = Path.Combine(Options.OutputPath, $"{id:D4}_uop.csv");
             multi.ExportToCsvFile(fileName);
             FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
@@ -1367,14 +1421,16 @@ namespace UoFiddler.Controls.UserControls
             }
 
             const int maxHeight = 127;
-            for (int i = 0; i < treeViewUop.Nodes.Count; i++)
+            for (int i = 0; i < _uopIds.Length; i++)
             {
-                if (!int.TryParse(treeViewUop.Nodes[i].Name, out int index) || index < 0)
+                int index = _uopIds[i];
+                if (index < 0)
                 {
                     continue;
                 }
 
-                if (treeViewUop.Nodes[i].Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+                MultiComponentList multi = Multis.GetUopComponents(index);
+                if (multi == MultiComponentList.Empty)
                 {
                     continue;
                 }
@@ -1398,14 +1454,16 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            for (int i = 0; i < treeViewUop.Nodes.Count; ++i)
+            for (int i = 0; i < _uopIds.Length; ++i)
             {
-                if (!int.TryParse(treeViewUop.Nodes[i].Name, out int index) || index < 0)
+                int index = _uopIds[i];
+                if (index < 0)
                 {
                     continue;
                 }
 
-                if (treeViewUop.Nodes[i].Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+                MultiComponentList multi = Multis.GetUopComponents(index);
+                if (multi == MultiComponentList.Empty)
                 {
                     continue;
                 }
@@ -1424,14 +1482,16 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            for (int i = 0; i < treeViewUop.Nodes.Count; ++i)
+            for (int i = 0; i < _uopIds.Length; ++i)
             {
-                if (!int.TryParse(treeViewUop.Nodes[i].Name, out int index) || index < 0)
+                int index = _uopIds[i];
+                if (index < 0)
                 {
                     continue;
                 }
 
-                if (treeViewUop.Nodes[i].Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+                MultiComponentList multi = Multis.GetUopComponents(index);
+                if (multi == MultiComponentList.Empty)
                 {
                     continue;
                 }
@@ -1450,14 +1510,16 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            for (int i = 0; i < treeViewUop.Nodes.Count; ++i)
+            for (int i = 0; i < _uopIds.Length; ++i)
             {
-                if (!int.TryParse(treeViewUop.Nodes[i].Name, out int index) || index < 0)
+                int index = _uopIds[i];
+                if (index < 0)
                 {
                     continue;
                 }
 
-                if (treeViewUop.Nodes[i].Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+                MultiComponentList multi = Multis.GetUopComponents(index);
+                if (multi == MultiComponentList.Empty)
                 {
                     continue;
                 }
@@ -1476,14 +1538,16 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            for (int i = 0; i < treeViewUop.Nodes.Count; ++i)
+            for (int i = 0; i < _uopIds.Length; ++i)
             {
-                if (!int.TryParse(treeViewUop.Nodes[i].Name, out int index) || index < 0)
+                int index = _uopIds[i];
+                if (index < 0)
                 {
                     continue;
                 }
 
-                if (treeViewUop.Nodes[i].Tag is not MultiComponentList multi || multi == MultiComponentList.Empty)
+                MultiComponentList multi = Multis.GetUopComponents(index);
+                if (multi == MultiComponentList.Empty)
                 {
                     continue;
                 }
@@ -1512,15 +1576,15 @@ namespace UoFiddler.Controls.UserControls
                 groupWriter.WriteStartElement("Group");
                 groupWriter.WriteAttributeString("Name", "Exported Multis");
 
-                for (int i = 0; i < _refMarker.TreeViewMulti.Nodes.Count; ++i)
+                for (int i = 0; i < _refMarker._mulIds.Length; ++i)
                 {
-                    int index = int.Parse(_refMarker.TreeViewMulti.Nodes[i].Name);
+                    int index = _refMarker._mulIds[i];
                     if (index < 0)
                     {
                         continue;
                     }
 
-                    MultiComponentList multi = (MultiComponentList)_refMarker.TreeViewMulti.Nodes[i].Tag;
+                    MultiComponentList multi = Multis.GetComponents(index);
                     if (multi == MultiComponentList.Empty)
                     {
                         continue;
@@ -1528,11 +1592,11 @@ namespace UoFiddler.Controls.UserControls
 
                     groupWriter.WriteStartElement("Entry");
                     groupWriter.WriteAttributeString("ID", index.ToString());
-                    groupWriter.WriteAttributeString("Name", _refMarker.TreeViewMulti.Nodes[i].Text.Trim());
+                    groupWriter.WriteAttributeString("Name", _refMarker.BuildNodeLabel(index).Trim());
 
                     writer.WriteStartElement("Entry");
                     writer.WriteAttributeString("ID", index.ToString());
-                    writer.WriteAttributeString("Name", _refMarker.TreeViewMulti.Nodes[i].Text.Trim());
+                    writer.WriteAttributeString("Name", _refMarker.BuildNodeLabel(index).Trim());
 
                     for (int x = 0; x < multi.Width; x++)
                     {

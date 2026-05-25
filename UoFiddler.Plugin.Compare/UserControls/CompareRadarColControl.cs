@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Ultima;
+using Ultima.Helpers;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.UserControls.TileView;
 using UoFiddler.Plugin.Compare.Classes;
@@ -222,20 +223,27 @@ namespace UoFiddler.Plugin.Compare.UserControls
         }
 
         private void OnDrawItemLandOrg(object sender, TileViewControl.DrawTileListItemEventArgs e)
-            => DrawListItem(e, _landDisplayIndices[e.Index]);
+            => DrawListItem(e, _landDisplayIndices[e.Index], isSec: false);
 
         private void OnDrawItemLandSec(object sender, TileViewControl.DrawTileListItemEventArgs e)
-            => DrawListItem(e, _landDisplayIndices[e.Index]);
+            => DrawListItem(e, _landDisplayIndices[e.Index], isSec: true);
 
         private void OnDrawItemItemOrg(object sender, TileViewControl.DrawTileListItemEventArgs e)
-            => DrawListItem(e, _itemDisplayIndices[e.Index]);
+            => DrawListItem(e, _itemDisplayIndices[e.Index], isSec: false);
 
         private void OnDrawItemItemSec(object sender, TileViewControl.DrawTileListItemEventArgs e)
-            => DrawListItem(e, _itemDisplayIndices[e.Index]);
+            => DrawListItem(e, _itemDisplayIndices[e.Index], isSec: true);
 
-        private void DrawListItem(TileViewControl.DrawTileListItemEventArgs e, int idx)
+        // Layout (left → right): [checkbox column from TileViewControl, if any] | [color swatch] | [text].
+        // Mirrors RadarColorControl so the eye doesn't have to retrain when
+        // switching between the two tabs.
+        private const int SwatchSize = 12;
+        private const int SwatchGap = 4;
+
+        private void DrawListItem(TileViewControl.DrawTileListItemEventArgs e, int idx, bool isSec)
         {
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            if (focused)
             {
                 e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
             }
@@ -244,14 +252,66 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
             }
 
+            // Color swatch.
+            ushort radarHue = GetRadarColor(idx, isSec);
+            int swatchX = e.ContentLeft + 2;
+            int swatchY = e.Bounds.Y + (e.Bounds.Height - SwatchSize) / 2;
+            var swatchRect = new Rectangle(swatchX, swatchY, SwatchSize, SwatchSize);
+            using (var swatchBrush = new SolidBrush(HueHelpers.HueToColor(radarHue)))
+            {
+                e.Graphics.FillRectangle(swatchBrush, swatchRect);
+            }
+            using (var border = new Pen(SystemColors.ControlDark))
+            {
+                e.Graphics.DrawRectangle(border, swatchRect);
+            }
+
+            // Text — display id is *within* the section (0x0000-based for both
+            // items and land), matching RadarColorControl's labelling.
+            int displayId = idx < 0x4000 ? idx : idx - 0x4000;
+            string name = GetTileName(idx);
+            string text = string.IsNullOrEmpty(name)
+                ? $"0x{displayId:X4} ({displayId})"
+                : $"0x{displayId:X4} ({displayId}) {name}";
+
             Brush fontBrush = SecondRadarCol.IsLoaded && IsDifferent(idx)
                 ? (Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue)
                 : Brushes.Gray;
 
-            string section = idx < 0x4000 ? "Land" : "Item";
-            string text = $"0x{idx:X4}  [{section}]";
-            float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(text, e.Font).Height) / 2f;
-            e.Graphics.DrawString(text, e.Font, fontBrush, new PointF(e.ContentLeft + 4, y));
+            int textX = swatchX + SwatchSize + SwatchGap;
+            float textY = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(text, e.Font).Height) / 2f;
+            e.Graphics.DrawString(text, e.Font, fontBrush, new PointF(textX, textY));
+        }
+
+        private static ushort GetRadarColor(int idx, bool isSec)
+        {
+            if (isSec)
+            {
+                return SecondRadarCol.IsLoaded ? SecondRadarCol.GetColor(idx) : (ushort)0;
+            }
+            return RadarCol.Colors != null && idx < RadarCol.Colors.Length
+                ? RadarCol.Colors[idx]
+                : (ushort)0;
+        }
+
+        private static string GetTileName(int idx)
+        {
+            if (idx < 0x4000)
+            {
+                if (TileData.LandTable != null && idx < TileData.LandTable.Length)
+                {
+                    return TileData.LandTable[idx].Name;
+                }
+            }
+            else
+            {
+                int itemId = idx - 0x4000;
+                if (TileData.ItemTable != null && itemId < TileData.ItemTable.Length)
+                {
+                    return TileData.ItemTable[itemId].Name;
+                }
+            }
+            return null;
         }
 
         private void OnFocusChangedLandOrg(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
@@ -367,31 +427,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ushort secColor = SecondRadarCol.IsLoaded ? SecondRadarCol.GetColor(idx) : (ushort)0;
 
             labelOrgColorValue.Text = $"0x{orgColor:X4} ({orgColor})";
-            pictureBoxOrgColor.BackColor = UshortToColor(orgColor);
+            pictureBoxOrgColor.BackColor = HueHelpers.HueToColor(orgColor);
 
             if (SecondRadarCol.IsLoaded)
             {
                 labelSecColorValue.Text = $"0x{secColor:X4} ({secColor})";
-                pictureBoxSecColor.BackColor = UshortToColor(secColor);
+                pictureBoxSecColor.BackColor = HueHelpers.HueToColor(secColor);
             }
             else
             {
                 labelSecColorValue.Text = "-";
                 pictureBoxSecColor.BackColor = SystemColors.Control;
             }
-        }
-
-        private static Color UshortToColor(ushort value)
-        {
-            if (value == 0)
-            {
-                return Color.Black;
-            }
-
-            int b = (value & 0x7C00) >> 10;
-            int g = (value & 0x03E0) >> 5;
-            int r = value & 0x001F;
-            return Color.FromArgb((r << 3) | (r >> 2), (g << 3) | (g >> 2), (b << 3) | (b >> 2));
         }
 
         private void OnClickBrowse(object sender, EventArgs e)

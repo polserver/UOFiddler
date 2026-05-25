@@ -59,10 +59,10 @@ namespace UoFiddler.Controls.UserControls
             Cursor.Current = Cursors.WaitCursor;
             Options.LoadedUltimaClass["Light"] = true;
 
-            treeViewLights.BeginUpdate();
+            listViewLights.BeginUpdate();
             try
             {
-                treeViewLights.Nodes.Clear();
+                listViewLights.Items.Clear();
                 for (int i = 0; i < Ultima.Light.GetCount(); ++i)
                 {
                     if (!Ultima.Light.TestLight(i))
@@ -70,21 +70,18 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    var treeNode = new TreeNode(i.ToString())
-                    {
-                        Tag = i
-                    };
-                    treeViewLights.Nodes.Add(treeNode);
+                    listViewLights.Items.Add(new ListViewItem(i.ToString()) { Tag = i });
                 }
             }
             finally
             {
-                treeViewLights.EndUpdate();
+                listViewLights.EndUpdate();
             }
 
-            if (treeViewLights.Nodes.Count > 0)
+            if (listViewLights.Items.Count > 0)
             {
-                treeViewLights.SelectedNode = treeViewLights.Nodes[0];
+                listViewLights.Items[0].Selected = true;
+                listViewLights.Items[0].EnsureVisible();
             }
 
             if (!_loaded)
@@ -101,16 +98,22 @@ namespace UoFiddler.Controls.UserControls
             Reload();
         }
 
+        private int GetSelectedLightId()
+        {
+            return listViewLights.SelectedItems.Count > 0 ? (int)listViewLights.SelectedItems[0].Tag : -1;
+        }
+
         private unsafe Bitmap GetImage()
         {
-            if (treeViewLights.SelectedNode == null)
+            int selectedId = GetSelectedLightId();
+            if (selectedId < 0)
             {
                 return null;
             }
 
             if (!iGPreviewToolStripMenuItem.Checked)
             {
-                return Ultima.Light.GetLight((int)treeViewLights.SelectedNode.Tag);
+                return Ultima.Light.GetLight(selectedId);
             }
 
             var bit = new Bitmap(pictureBoxPreview.Width, pictureBoxPreview.Height);
@@ -138,7 +141,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            byte[] light = Ultima.Light.GetRawLight((int)treeViewLights.SelectedNode.Tag, out int lightWidth, out int lightHeight);
+            byte[] light = Ultima.Light.GetRawLight(selectedId, out int lightWidth, out int lightHeight);
 
             if (light == null)
             {
@@ -198,19 +201,20 @@ namespace UoFiddler.Controls.UserControls
             return bit;
         }
 
-        private void AfterSelect(object sender, TreeViewEventArgs e)
+        private void AfterSelect(object sender, EventArgs e)
         {
             pictureBoxPreview.Image = GetImage();
         }
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            if (treeViewLights.SelectedNode == null)
+            if (listViewLights.SelectedItems.Count == 0)
             {
                 return;
             }
 
-            int i = (int)treeViewLights.SelectedNode.Tag;
+            var selected = listViewLights.SelectedItems[0];
+            int i = (int)selected.Tag;
             DialogResult result = MessageBox.Show(string.Format("Are you sure to remove {0} (0x{0:X})", i), "Remove",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
@@ -219,14 +223,14 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Ultima.Light.Remove(i);
-            treeViewLights.Nodes.Remove(treeViewLights.SelectedNode);
-            treeViewLights.Invalidate();
+            listViewLights.Items.Remove(selected);
+            listViewLights.Invalidate();
             Options.ChangedUltimaClass["Light"] = true;
         }
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (treeViewLights.SelectedNode == null)
+            if (listViewLights.SelectedItems.Count == 0)
             {
                 return;
             }
@@ -251,12 +255,12 @@ namespace UoFiddler.Controls.UserControls
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
-                    int i = (int)treeViewLights.SelectedNode.Tag;
+                    int i = (int)listViewLights.SelectedItems[0].Tag;
 
                     Ultima.Light.Replace(i, bitmap);
 
-                    treeViewLights.Invalidate();
-                    AfterSelect(this, null);
+                    listViewLights.Invalidate();
+                    AfterSelect(this, EventArgs.Empty);
 
                     Options.ChangedUltimaClass["Light"] = true;
                 }
@@ -306,29 +310,28 @@ namespace UoFiddler.Controls.UserControls
 
                 var bmp = new Bitmap(dialog.FileName);
                 Ultima.Light.Replace(index, bmp);
-                var treeNode = new TreeNode(index.ToString())
-                {
-                    Tag = index
-                };
+                var newItem = new ListViewItem(index.ToString()) { Tag = index };
                 bool done = false;
-                foreach (TreeNode node in treeViewLights.Nodes)
+                foreach (ListViewItem item in listViewLights.Items)
                 {
-                    if ((int)node.Tag <= index)
+                    if ((int)item.Tag <= index)
                     {
                         continue;
                     }
 
-                    treeViewLights.Nodes.Insert(node.Index, treeNode);
+                    listViewLights.Items.Insert(item.Index, newItem);
                     done = true;
                     break;
                 }
                 if (!done)
                 {
-                    treeViewLights.Nodes.Add(treeNode);
+                    listViewLights.Items.Add(newItem);
                 }
 
-                treeViewLights.Invalidate();
-                treeViewLights.SelectedNode = treeNode;
+                listViewLights.Invalidate();
+                listViewLights.SelectedItems.Clear();
+                newItem.Selected = true;
+                newItem.EnsureVisible();
                 Options.ChangedUltimaClass["Light"] = true;
             }
         }
@@ -342,13 +345,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportBmp(object sender, EventArgs e)
         {
-            if (treeViewLights.SelectedNode == null)
+            int i = GetSelectedLightId();
+            if (i < 0)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.bmp");
             Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
             FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
@@ -356,13 +359,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportTiff(object sender, EventArgs e)
         {
-            if (treeViewLights.SelectedNode == null)
+            int i = GetSelectedLightId();
+            if (i < 0)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.tiff");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
@@ -370,13 +373,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickExportJpg(object sender, EventArgs e)
         {
-            if (treeViewLights.SelectedNode == null)
+            int i = GetSelectedLightId();
+            if (i < 0)
             {
                 return;
             }
 
             string path = Options.OutputPath;
-            int i = (int)treeViewLights.SelectedNode.Tag;
             string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.jpg");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Jpeg);
             FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");

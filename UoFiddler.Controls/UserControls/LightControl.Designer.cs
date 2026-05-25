@@ -41,7 +41,8 @@ namespace UoFiddler.Controls.UserControls
         {
             components = new System.ComponentModel.Container();
             splitContainer = new System.Windows.Forms.SplitContainer();
-            treeViewLights = new System.Windows.Forms.TreeView();
+            listViewLights = new System.Windows.Forms.ListView();
+            listViewLightsColumn = new System.Windows.Forms.ColumnHeader();
             treeViewContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
             exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,7 +80,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer.Panel1
             // 
-            splitContainer.Panel1.Controls.Add(treeViewLights);
+            splitContainer.Panel1.Controls.Add(listViewLights);
             // 
             // splitContainer.Panel2
             // 
@@ -89,17 +90,24 @@ namespace UoFiddler.Controls.UserControls
             splitContainer.SplitterWidth = 5;
             splitContainer.TabIndex = 0;
             // 
-            // treeViewLights
-            // 
-            treeViewLights.ContextMenuStrip = treeViewContextMenuStrip;
-            treeViewLights.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewLights.HideSelection = false;
-            treeViewLights.Location = new System.Drawing.Point(0, 0);
-            treeViewLights.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            treeViewLights.Name = "treeViewLights";
-            treeViewLights.Size = new System.Drawing.Size(242, 380);
-            treeViewLights.TabIndex = 0;
-            treeViewLights.AfterSelect += AfterSelect;
+            // listViewLights
+            //
+            listViewLights.ContextMenuStrip = treeViewContextMenuStrip;
+            listViewLights.Dock = System.Windows.Forms.DockStyle.Fill;
+            listViewLights.HideSelection = false;
+            listViewLights.Location = new System.Drawing.Point(0, 0);
+            listViewLights.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listViewLights.Name = "listViewLights";
+            listViewLights.Size = new System.Drawing.Size(242, 380);
+            listViewLights.TabIndex = 0;
+            listViewLights.View = System.Windows.Forms.View.Details;
+            listViewLights.FullRowSelect = true;
+            listViewLights.MultiSelect = false;
+            listViewLights.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewLightsColumn.Text = "Light";
+            listViewLightsColumn.Width = 240;
+            listViewLights.Columns.Add(listViewLightsColumn);
+            listViewLights.SelectedIndexChanged += AfterSelect;
             // 
             // treeViewContextMenuStrip
             // 
@@ -277,6 +285,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.TreeView treeViewLights;
+        private System.Windows.Forms.ListView listViewLights;
+        private System.Windows.Forms.ColumnHeader listViewLightsColumn;
     }
 }

@@ -45,7 +45,8 @@ namespace UoFiddler.Controls.UserControls
             tabPageItems = new System.Windows.Forms.TabPage();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             splitContainer2 = new System.Windows.Forms.SplitContainer();
-            treeViewItem = new System.Windows.Forms.TreeView();
+            listViewItem = new System.Windows.Forms.ListView();
+            listViewItemColumn = new System.Windows.Forms.ColumnHeader();
             ItemsContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
             selectInItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             selectRadarColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -95,7 +96,8 @@ namespace UoFiddler.Controls.UserControls
             tabPageLand = new System.Windows.Forms.TabPage();
             splitContainer5 = new System.Windows.Forms.SplitContainer();
             splitContainer6 = new System.Windows.Forms.SplitContainer();
-            treeViewLand = new System.Windows.Forms.TreeView();
+            listViewLand = new System.Windows.Forms.ListView();
+            listViewLandColumn = new System.Windows.Forms.ColumnHeader();
             LandTilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
             selectInLandtilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             selToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -222,7 +224,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer2.Panel1
             // 
-            splitContainer2.Panel1.Controls.Add(treeViewItem);
+            splitContainer2.Panel1.Controls.Add(listViewItem);
             // 
             // splitContainer2.Panel2
             // 
@@ -232,18 +234,26 @@ namespace UoFiddler.Controls.UserControls
             splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 0;
             // 
-            // treeViewItem
-            // 
-            treeViewItem.ContextMenuStrip = ItemsContextMenuStrip;
-            treeViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewItem.HideSelection = false;
-            treeViewItem.Location = new System.Drawing.Point(0, 0);
-            treeViewItem.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            treeViewItem.Name = "treeViewItem";
-            treeViewItem.Size = new System.Drawing.Size(245, 207);
-            treeViewItem.TabIndex = 0;
-            treeViewItem.BeforeExpand += OnItemDataNodeExpanded;
-            treeViewItem.AfterSelect += AfterSelectTreeViewItem;
+            // listViewItem
+            //
+            listViewItem.ContextMenuStrip = ItemsContextMenuStrip;
+            listViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
+            listViewItem.HideSelection = false;
+            listViewItem.Location = new System.Drawing.Point(0, 0);
+            listViewItem.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listViewItem.Name = "listViewItem";
+            listViewItem.Size = new System.Drawing.Size(245, 207);
+            listViewItem.TabIndex = 0;
+            listViewItem.View = System.Windows.Forms.View.Details;
+            listViewItem.VirtualMode = true;
+            listViewItem.FullRowSelect = true;
+            listViewItem.MultiSelect = false;
+            listViewItem.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItemColumn.Text = "Item";
+            listViewItemColumn.Width = 240;
+            listViewItem.Columns.Add(listViewItemColumn);
+            listViewItem.RetrieveVirtualItem += OnRetrieveItemVirtualItem;
+            listViewItem.SelectedIndexChanged += OnItemSelectedIndexChanged;
             // 
             // ItemsContextMenuStrip
             // 
@@ -777,7 +787,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer6.Panel1
             // 
-            splitContainer6.Panel1.Controls.Add(treeViewLand);
+            splitContainer6.Panel1.Controls.Add(listViewLand);
             // 
             // splitContainer6.Panel2
             // 
@@ -787,17 +797,26 @@ namespace UoFiddler.Controls.UserControls
             splitContainer6.SplitterWidth = 5;
             splitContainer6.TabIndex = 0;
             // 
-            // treeViewLand
-            // 
-            treeViewLand.ContextMenuStrip = LandTilesContextMenuStrip;
-            treeViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewLand.HideSelection = false;
-            treeViewLand.Location = new System.Drawing.Point(0, 0);
-            treeViewLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            treeViewLand.Name = "treeViewLand";
-            treeViewLand.Size = new System.Drawing.Size(245, 205);
-            treeViewLand.TabIndex = 0;
-            treeViewLand.AfterSelect += AfterSelectTreeViewLand;
+            // listViewLand
+            //
+            listViewLand.ContextMenuStrip = LandTilesContextMenuStrip;
+            listViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
+            listViewLand.HideSelection = false;
+            listViewLand.Location = new System.Drawing.Point(0, 0);
+            listViewLand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listViewLand.Name = "listViewLand";
+            listViewLand.Size = new System.Drawing.Size(245, 205);
+            listViewLand.TabIndex = 0;
+            listViewLand.View = System.Windows.Forms.View.Details;
+            listViewLand.VirtualMode = true;
+            listViewLand.FullRowSelect = true;
+            listViewLand.MultiSelect = false;
+            listViewLand.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewLandColumn.Text = "Land";
+            listViewLandColumn.Width = 240;
+            listViewLand.Columns.Add(listViewLandColumn);
+            listViewLand.RetrieveVirtualItem += OnRetrieveLandVirtualItem;
+            listViewLand.SelectedIndexChanged += OnLandSelectedIndexChanged;
             // 
             // LandTilesContextMenuStrip
             // 
@@ -1203,8 +1222,10 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.TreeView treeViewItem;
-        private System.Windows.Forms.TreeView treeViewLand;
+        private System.Windows.Forms.ListView listViewItem;
+        private System.Windows.Forms.ColumnHeader listViewItemColumn;
+        private System.Windows.Forms.ListView listViewLand;
+        private System.Windows.Forms.ColumnHeader listViewLandColumn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;

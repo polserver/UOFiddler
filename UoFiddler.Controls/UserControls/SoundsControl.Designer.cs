@@ -40,7 +40,8 @@ namespace UoFiddler.Controls.UserControls
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            treeView = new System.Windows.Forms.TreeView();
+            listView = new System.Windows.Forms.ListView();
+            listViewColumn = new System.Windows.Forms.ColumnHeader();
             cmStripSounds = new System.Windows.Forms.ContextMenuStrip(components);
             nameSortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -108,20 +109,26 @@ namespace UoFiddler.Controls.UserControls
             tableLayoutPanel6.SuspendLayout();
             SuspendLayout();
             // 
-            // treeView
-            // 
-            treeView.ContextMenuStrip = cmStripSounds;
-            treeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeView.HideSelection = false;
-            treeView.Location = new System.Drawing.Point(0, 0);
-            treeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            treeView.Name = "treeView";
-            treeView.Size = new System.Drawing.Size(406, 670);
-            treeView.TabIndex = 0;
-            treeView.BeforeSelect += BeforeSelect;
-            treeView.AfterSelect += AfterSelect;
-            treeView.NodeMouseDoubleClick += OnDoubleClick;
-            treeView.KeyDown += TreeView_KeyDown;
+            // listView
+            //
+            listView.ContextMenuStrip = cmStripSounds;
+            listView.Dock = System.Windows.Forms.DockStyle.Fill;
+            listView.HideSelection = false;
+            listView.Location = new System.Drawing.Point(0, 0);
+            listView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listView.Name = "listView";
+            listView.Size = new System.Drawing.Size(406, 670);
+            listView.TabIndex = 0;
+            listView.View = System.Windows.Forms.View.Details;
+            listView.FullRowSelect = true;
+            listView.MultiSelect = false;
+            listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewColumn.Text = "Sound";
+            listViewColumn.Width = 400;
+            listView.Columns.Add(listViewColumn);
+            listView.SelectedIndexChanged += AfterSelect;
+            listView.MouseDoubleClick += OnDoubleClick;
+            listView.KeyDown += TreeView_KeyDown;
             // 
             // cmStripSounds
             // 
@@ -276,7 +283,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(treeView);
+            splitContainer1.Panel1.Controls.Add(listView);
             // 
             // splitContainer1.Panel2
             // 
@@ -752,7 +759,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusSpacer;
-        private System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.ListView listView;
+        private System.Windows.Forms.ColumnHeader listViewColumn;
         private System.Windows.Forms.ToolStripSeparator tsSeparator1;
         private System.Windows.Forms.ToolStripSeparator tsSeparator2;
         private System.Windows.Forms.SplitContainer splitContainer1;

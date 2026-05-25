@@ -40,13 +40,13 @@ namespace UoFiddler.Controls.UserControls
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            treeViewItem = new System.Windows.Forms.TreeView();
+            tileViewItem = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             selectInItemsTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             selectInTiledataTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             setAsRangeFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             setAsRangeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            treeViewLand = new System.Windows.Forms.TreeView();
+            tileViewLand = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(components);
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,19 +134,20 @@ namespace UoFiddler.Controls.UserControls
             ((System.ComponentModel.ISupportInitialize)numericUpDownR).BeginInit();
             SuspendLayout();
             // 
-            // treeViewItem
-            // 
-            treeViewItem.CheckBoxes = true;
-            treeViewItem.ContextMenuStrip = contextMenuStrip1;
-            treeViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewItem.HideSelection = false;
-            treeViewItem.Location = new System.Drawing.Point(0, 0);
-            treeViewItem.Margin = new System.Windows.Forms.Padding(4);
-            treeViewItem.Name = "treeViewItem";
-            treeViewItem.Size = new System.Drawing.Size(228, 164);
-            treeViewItem.TabIndex = 0;
-            treeViewItem.AfterCheck += AfterCheckTreeViewItem;
-            treeViewItem.AfterSelect += AfterSelectTreeViewItem;
+            // tileViewItem
+            //
+            tileViewItem.ContextMenuStrip = contextMenuStrip1;
+            tileViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileViewItem.Location = new System.Drawing.Point(0, 0);
+            tileViewItem.Margin = new System.Windows.Forms.Padding(4);
+            tileViewItem.Name = "tileViewItem";
+            tileViewItem.Size = new System.Drawing.Size(228, 164);
+            tileViewItem.TabIndex = 0;
+            tileViewItem.ShowCheckBoxes = true;
+            tileViewItem.TileHighLightOpacity = 0D;
+            tileViewItem.DrawItem += OnDrawItemRow;
+            tileViewItem.FocusSelectionChanged += OnItemFocusChanged;
+            tileViewItem.SizeChanged += OnTileViewSizeChanged;
             // 
             // contextMenuStrip1
             // 
@@ -183,19 +184,20 @@ namespace UoFiddler.Controls.UserControls
             setAsRangeToToolStripMenuItem.Text = "Set as Range \"to\"";
             setAsRangeToToolStripMenuItem.Click += OnClickSetRangeTo;
             // 
-            // treeViewLand
-            // 
-            treeViewLand.CheckBoxes = true;
-            treeViewLand.ContextMenuStrip = contextMenuStrip2;
-            treeViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewLand.HideSelection = false;
-            treeViewLand.Location = new System.Drawing.Point(0, 0);
-            treeViewLand.Margin = new System.Windows.Forms.Padding(4);
-            treeViewLand.Name = "treeViewLand";
-            treeViewLand.Size = new System.Drawing.Size(228, 164);
-            treeViewLand.TabIndex = 0;
-            treeViewLand.AfterCheck += AfterCheckTreeViewLand;
-            treeViewLand.AfterSelect += AfterSelectTreeViewLand;
+            // tileViewLand
+            //
+            tileViewLand.ContextMenuStrip = contextMenuStrip2;
+            tileViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileViewLand.Location = new System.Drawing.Point(0, 0);
+            tileViewLand.Margin = new System.Windows.Forms.Padding(4);
+            tileViewLand.Name = "tileViewLand";
+            tileViewLand.Size = new System.Drawing.Size(228, 164);
+            tileViewLand.TabIndex = 0;
+            tileViewLand.ShowCheckBoxes = true;
+            tileViewLand.TileHighLightOpacity = 0D;
+            tileViewLand.DrawItem += OnDrawLandRow;
+            tileViewLand.FocusSelectionChanged += OnLandFocusChanged;
+            tileViewLand.SizeChanged += OnTileViewSizeChanged;
             // 
             // contextMenuStrip2
             // 
@@ -368,7 +370,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(treeViewItem);
+            splitContainer1.Panel2.Controls.Add(tileViewItem);
             splitContainer1.Size = new System.Drawing.Size(228, 193);
             splitContainer1.SplitterDistance = 25;
             splitContainer1.TabIndex = 2;
@@ -456,7 +458,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer3.Panel2
             // 
-            splitContainer3.Panel2.Controls.Add(treeViewLand);
+            splitContainer3.Panel2.Controls.Add(tileViewLand);
             splitContainer3.Size = new System.Drawing.Size(228, 193);
             splitContainer3.SplitterDistance = 25;
             splitContainer3.TabIndex = 0;
@@ -845,8 +847,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.TextBox textBoxMeanTo;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.TreeView treeViewItem;
-        private System.Windows.Forms.TreeView treeViewLand;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewItem;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewLand;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label2;
