@@ -49,6 +49,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             buttonCopyAllDiff = new System.Windows.Forms.Button();
             buttonCopySelected = new System.Windows.Forms.Button();
             checkBoxShowDiff = new System.Windows.Forms.CheckBox();
+            chkMultiSelect = new System.Windows.Forms.CheckBox();
             buttonLoadSecond = new System.Windows.Forms.Button();
             buttonBrowse = new System.Windows.Forms.Button();
             textBoxSecondFile = new System.Windows.Forms.TextBox();
@@ -89,11 +90,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(buttonCopyAllDiff);
             splitContainer1.Panel2.Controls.Add(buttonCopySelected);
             splitContainer1.Panel2.Controls.Add(checkBoxShowDiff);
+            splitContainer1.Panel2.Controls.Add(chkMultiSelect);
             splitContainer1.Panel2.Controls.Add(buttonLoadSecond);
             splitContainer1.Panel2.Controls.Add(buttonBrowse);
             splitContainer1.Panel2.Controls.Add(textBoxSecondFile);
             splitContainer1.Size = new System.Drawing.Size(940, 510);
-            splitContainer1.SplitterDistance = 449;
+            splitContainer1.SplitterDistance = 438;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -105,7 +107,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabControl.Location = new System.Drawing.Point(0, 0);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
-            tabControl.Size = new System.Drawing.Size(940, 449);
+            tabControl.Size = new System.Drawing.Size(940, 438);
             tabControl.TabIndex = 0;
             tabControl.SelectedIndexChanged += OnTabChanged;
             // 
@@ -114,7 +116,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabPageLand.Controls.Add(tableLayoutLand);
             tabPageLand.Location = new System.Drawing.Point(4, 24);
             tabPageLand.Name = "tabPageLand";
-            tabPageLand.Size = new System.Drawing.Size(932, 421);
+            tabPageLand.Size = new System.Drawing.Size(932, 410);
             tabPageLand.TabIndex = 0;
             tabPageLand.Text = "Land Tiles";
             tabPageLand.UseVisualStyleBackColor = true;
@@ -133,29 +135,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tableLayoutLand.Name = "tableLayoutLand";
             tableLayoutLand.RowCount = 1;
             tableLayoutLand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutLand.Size = new System.Drawing.Size(932, 421);
+            tableLayoutLand.Size = new System.Drawing.Size(932, 410);
             tableLayoutLand.TabIndex = 0;
             // 
             // tileViewOrg
             // 
             tileViewOrg.ContextMenuStrip = contextMenuStripOrg;
             tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            tileViewOrg.FocusIndex = -1;
             tileViewOrg.Location = new System.Drawing.Point(3, 3);
-            tileViewOrg.MultiSelect = false;
             tileViewOrg.Name = "tileViewOrg";
-            tileViewOrg.Size = new System.Drawing.Size(248, 415);
+            tileViewOrg.Size = new System.Drawing.Size(248, 404);
             tileViewOrg.TabIndex = 0;
-            tileViewOrg.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            tileViewOrg.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
-            tileViewOrg.TileBorderWidth = 0F;
-            tileViewOrg.TileFocusColor = System.Drawing.Color.DarkRed;
-            tileViewOrg.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             tileViewOrg.TileHighLightOpacity = 0D;
-            tileViewOrg.TileMargin = new System.Windows.Forms.Padding(0);
-            tileViewOrg.TilePadding = new System.Windows.Forms.Padding(0);
-            tileViewOrg.TileSize = new System.Drawing.Size(248, 15);
-            tileViewOrg.VirtualListSize = 0;
             tileViewOrg.FocusSelectionChanged += OnFocusChangedLandOrg;
             tileViewOrg.DrawItem += OnDrawItemLandOrg;
             tileViewOrg.SizeChanged += OnTileViewSizeChanged;
@@ -183,7 +174,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             panelDetail.Dock = System.Windows.Forms.DockStyle.Fill;
             panelDetail.Location = new System.Drawing.Point(257, 3);
             panelDetail.Name = "panelDetail";
-            panelDetail.Size = new System.Drawing.Size(417, 415);
+            panelDetail.Size = new System.Drawing.Size(417, 404);
             panelDetail.TabIndex = 1;
             // 
             // groupBoxOrg
@@ -320,22 +311,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             tileViewSec.ContextMenuStrip = contextMenuStripSec;
             tileViewSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            tileViewSec.FocusIndex = -1;
             tileViewSec.Location = new System.Drawing.Point(680, 3);
-            tileViewSec.MultiSelect = false;
             tileViewSec.Name = "tileViewSec";
-            tileViewSec.Size = new System.Drawing.Size(249, 415);
+            tileViewSec.Size = new System.Drawing.Size(249, 404);
             tileViewSec.TabIndex = 2;
-            tileViewSec.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            tileViewSec.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
-            tileViewSec.TileBorderWidth = 0F;
-            tileViewSec.TileFocusColor = System.Drawing.Color.DarkRed;
-            tileViewSec.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             tileViewSec.TileHighLightOpacity = 0D;
-            tileViewSec.TileMargin = new System.Windows.Forms.Padding(0);
-            tileViewSec.TilePadding = new System.Windows.Forms.Padding(0);
-            tileViewSec.TileSize = new System.Drawing.Size(248, 15);
-            tileViewSec.VirtualListSize = 0;
             tileViewSec.FocusSelectionChanged += OnFocusChangedLandSec;
             tileViewSec.DrawItem += OnDrawItemLandSec;
             tileViewSec.SizeChanged += OnTileViewSizeChanged;
@@ -345,13 +325,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             contextMenuStripSec.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyEntry2To1ToolStripMenuItem });
             contextMenuStripSec.Name = "contextMenuStripSec";
-            contextMenuStripSec.Size = new System.Drawing.Size(165, 26);
+            contextMenuStripSec.Size = new System.Drawing.Size(167, 26);
             // 
             // copyEntry2To1ToolStripMenuItem
             // 
             copyEntry2To1ToolStripMenuItem.Name = "copyEntry2To1ToolStripMenuItem";
-            copyEntry2To1ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            copyEntry2To1ToolStripMenuItem.Text = "Copy Entry 2 to 1";
+            copyEntry2To1ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            copyEntry2To1ToolStripMenuItem.Text = "Copy Entry to left";
             copyEntry2To1ToolStripMenuItem.Click += OnClickCopySelected;
             // 
             // tabPageItem
@@ -384,22 +364,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             tileViewItemOrg.ContextMenuStrip = contextMenuStripOrg;
             tileViewItemOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            tileViewItemOrg.FocusIndex = -1;
             tileViewItemOrg.Location = new System.Drawing.Point(3, 3);
-            tileViewItemOrg.MultiSelect = false;
             tileViewItemOrg.Name = "tileViewItemOrg";
             tileViewItemOrg.Size = new System.Drawing.Size(248, 415);
             tileViewItemOrg.TabIndex = 0;
-            tileViewItemOrg.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            tileViewItemOrg.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
-            tileViewItemOrg.TileBorderWidth = 0F;
-            tileViewItemOrg.TileFocusColor = System.Drawing.Color.DarkRed;
-            tileViewItemOrg.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             tileViewItemOrg.TileHighLightOpacity = 0D;
-            tileViewItemOrg.TileMargin = new System.Windows.Forms.Padding(0);
-            tileViewItemOrg.TilePadding = new System.Windows.Forms.Padding(0);
-            tileViewItemOrg.TileSize = new System.Drawing.Size(248, 15);
-            tileViewItemOrg.VirtualListSize = 0;
             tileViewItemOrg.FocusSelectionChanged += OnFocusChangedItemOrg;
             tileViewItemOrg.DrawItem += OnDrawItemItemOrg;
             tileViewItemOrg.SizeChanged += OnTileViewSizeChanged;
@@ -409,22 +378,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             tileViewItemSec.ContextMenuStrip = contextMenuStripSec;
             tileViewItemSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            tileViewItemSec.FocusIndex = -1;
             tileViewItemSec.Location = new System.Drawing.Point(680, 3);
-            tileViewItemSec.MultiSelect = false;
             tileViewItemSec.Name = "tileViewItemSec";
             tileViewItemSec.Size = new System.Drawing.Size(249, 415);
             tileViewItemSec.TabIndex = 2;
-            tileViewItemSec.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            tileViewItemSec.TileBorderColor = System.Drawing.Color.FromArgb(0, 0, 0);
-            tileViewItemSec.TileBorderWidth = 0F;
-            tileViewItemSec.TileFocusColor = System.Drawing.Color.DarkRed;
-            tileViewItemSec.TileHighlightColor = System.Drawing.SystemColors.Highlight;
             tileViewItemSec.TileHighLightOpacity = 0D;
-            tileViewItemSec.TileMargin = new System.Windows.Forms.Padding(0);
-            tileViewItemSec.TilePadding = new System.Windows.Forms.Padding(0);
-            tileViewItemSec.TileSize = new System.Drawing.Size(248, 15);
-            tileViewItemSec.VirtualListSize = 0;
             tileViewItemSec.FocusSelectionChanged += OnFocusChangedItemSec;
             tileViewItemSec.DrawItem += OnDrawItemItemSec;
             tileViewItemSec.SizeChanged += OnTileViewSizeChanged;
@@ -460,6 +418,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             checkBoxShowDiff.Text = "Show only Differences";
             checkBoxShowDiff.UseVisualStyleBackColor = true;
             checkBoxShowDiff.Click += OnChangeShowDiff;
+            // 
+            // chkMultiSelect
+            // 
+            chkMultiSelect.AutoSize = true;
+            chkMultiSelect.Location = new System.Drawing.Point(408, 38);
+            chkMultiSelect.Name = "chkMultiSelect";
+            chkMultiSelect.Size = new System.Drawing.Size(90, 19);
+            chkMultiSelect.TabIndex = 10;
+            chkMultiSelect.Text = "Multi-Select";
+            chkMultiSelect.UseVisualStyleBackColor = true;
+            chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
             // 
             // buttonLoadSecond
             // 
@@ -558,6 +527,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.Button buttonLoadSecond;
         private System.Windows.Forms.CheckBox checkBoxShowDiff;
+        private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button buttonCopySelected;
         private System.Windows.Forms.Button buttonCopyAllDiff;
     }

@@ -55,6 +55,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             copyLandTile2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             checkBox1 = new System.Windows.Forms.CheckBox();
+            chkMultiSelect = new System.Windows.Forms.CheckBox();
             button1 = new System.Windows.Forms.Button();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             CopyAddOnly = new System.Windows.Forms.Button();
@@ -79,7 +80,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewOrg.Name = "tileViewOrg";
             tileViewOrg.Size = new System.Drawing.Size(189, 363);
             tileViewOrg.TabIndex = 0;
-            tileViewOrg.TileSize = new System.Drawing.Size(189, 13);
+            tileViewOrg.TileSize = new System.Drawing.Size(189, 20);
             tileViewOrg.TileMargin = new System.Windows.Forms.Padding(0);
             tileViewOrg.TilePadding = new System.Windows.Forms.Padding(0);
             tileViewOrg.TileBorderWidth = 0f;
@@ -162,7 +163,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewSec.Name = "tileViewSec";
             tileViewSec.Size = new System.Drawing.Size(190, 363);
             tileViewSec.TabIndex = 1;
-            tileViewSec.TileSize = new System.Drawing.Size(190, 13);
+            tileViewSec.TileSize = new System.Drawing.Size(190, 20);
             tileViewSec.TileMargin = new System.Windows.Forms.Padding(0);
             tileViewSec.TilePadding = new System.Windows.Forms.Padding(0);
             tileViewSec.TileBorderWidth = 0f;
@@ -217,7 +218,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             copyLandTile2To1ToolStripMenuItem.Name = "copyLandTile2To1ToolStripMenuItem";
             copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile 2 to 1";
+            copyLandTile2To1ToolStripMenuItem.Text = "Copy Texture to left";
             copyLandTile2To1ToolStripMenuItem.Click += OnClickCopy;
             // 
             // checkBox1
@@ -231,7 +232,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
             checkBox1.Text = "Show only Differences";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.Click += OnChangeShowDiff;
-            // 
+            //
+            // chkMultiSelect
+            //
+            chkMultiSelect.AutoSize = true;
+            chkMultiSelect.Location = new System.Drawing.Point(343, 38);
+            chkMultiSelect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            chkMultiSelect.Name = "chkMultiSelect";
+            chkMultiSelect.Size = new System.Drawing.Size(90, 19);
+            chkMultiSelect.TabIndex = 10;
+            chkMultiSelect.Text = "Multi-Select";
+            chkMultiSelect.UseVisualStyleBackColor = true;
+            chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
+            //
             // button1
             // 
             button1.AutoSize = true;
@@ -266,6 +279,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(button2);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
             splitContainer1.Panel2.Controls.Add(checkBox1);
+            splitContainer1.Panel2.Controls.Add(chkMultiSelect);
             splitContainer1.Panel2.Controls.Add(button1);
             splitContainer1.Size = new System.Drawing.Size(724, 434);
             splitContainer1.SplitterDistance = 369;
@@ -341,6 +355,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewSec;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;

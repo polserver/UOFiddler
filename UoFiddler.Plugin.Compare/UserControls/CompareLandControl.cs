@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using Ultima;
@@ -40,6 +41,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            ConfigureTileView(tileViewOrg);
+            ConfigureTileView(tileViewSec);
+
             _displayIndices.Clear();
             for (int i = 0; i < 0x4000; i++)
             {
@@ -49,6 +53,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewOrg.VirtualListSize = _displayIndices.Count;
             tileViewSec.VirtualListSize = 0;
 
+            tileViewSec.MultiSelect = true;
+            tileViewSec.SelectedIndices.CollectionChanged += OnSecSelectedIndicesChanged;
+            contextMenuStrip1.Opening += (s, ev) =>
+            {
+                int count = tileViewSec.SelectedIndices.Count;
+                copyLandTile2To1ToolStripMenuItem.Text = tileViewSec.ShowCheckBoxes && count > 1
+                    ? $"Copy {count} LandTiles to left"
+                    : "Copy LandTile to left";
+            };
+
             if (comboBoxFileMode.SelectedIndex < 0)
             {
                 comboBoxFileMode.SelectedIndex = 0;
@@ -56,6 +70,61 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             SecondArt.FileIndexChanged += OnSecondArtChanged;
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+        }
+
+        // TileViewControl exposes TileSize/Margin/Padding/Border with DesignerSerializationVisibility.Hidden,
+        // so VS strips them when re-saving the .Designer.cs. Apply the intended values here so they survive.
+        private static void ConfigureTileView(TileViewControl tv)
+        {
+            tv.TileSize = new Size(tv.TileSize.Width, 20);
+            tv.TileMargin = new Padding(0);
+            tv.TilePadding = new Padding(0);
+            tv.TileBorderWidth = 0f;
+        }
+
+        private void OnChangeMultiSelect(object sender, EventArgs e)
+        {
+            tileViewSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            if (!chkMultiSelect.Checked)
+            {
+                tileViewSec.SelectedIndices.Clear();
+            }
+        }
+
+        private void OnSecSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            if (_syncingSelection)
+            {
+                return;
+            }
+
+            _syncingSelection = true;
+            try
+            {
+                tileViewOrg.SelectedIndices.Clear();
+                foreach (int idx in tileViewSec.SelectedIndices)
+                {
+                    tileViewOrg.SelectedIndices.Add(idx);
+                }
+            }
+            finally
+            {
+                _syncingSelection = false;
+            }
+        }
+
+        private List<int> GetCopyTargets()
+        {
+            var sel = tileViewSec.SelectedIndices;
+            if (sel.Count > 0)
+            {
+                return sel.ToList();
+            }
+            if (tileViewSec.FocusIndex >= 0)
+            {
+                return new List<int> { tileViewSec.FocusIndex };
+            }
+            return new List<int>();
         }
 
         private void OnFilePathChangeEvent()
@@ -97,7 +166,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DrawListItem(e, _displayIndices[e.Index], isSecondary: true);
         }
 
-        private void DrawListItem(DrawItemEventArgs e, int i, bool isSecondary)
+        private void DrawListItem(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
             if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
             {
@@ -122,7 +191,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string label = $"0x{i:X}";
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, Font).Height) / 2f;
-            e.Graphics.DrawString(label, Font, fontBrush, new PointF(5, y));
+            e.Graphics.DrawString(label, Font, fontBrush, new PointF(e.ContentLeft + 5, y));
         }
 
         private void OnFocusChangedOrg(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
@@ -355,38 +424,74 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickCopy(object sender, EventArgs e)
         {
-            int focusIdx = tileViewSec.FocusIndex;
-            if (focusIdx < 0)
+            var targets = GetCopyTargets();
+            if (targets.Count == 0)
             {
                 return;
             }
 
-            int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidLand(i))
+            Cursor.Current = Cursors.WaitCursor;
+            int lastCopiedId = -1;
+            bool changed = false;
+
+            foreach (int focusIdx in targets)
             {
-                return;
+                if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
+                {
+                    continue;
+                }
+
+                int i = _displayIndices[focusIdx];
+                if (!SecondArt.IsValidLand(i))
+                {
+                    continue;
+                }
+
+                Bitmap copy = new Bitmap(SecondArt.GetLand(i));
+                Art.ReplaceLand(i, copy);
+                ControlEvents.FireLandTileChangeEvent(this, i);
+                _compare[i] = true;
+                lastCopiedId = i;
+                changed = true;
             }
 
-            Bitmap copy = new Bitmap(SecondArt.GetLand(i));
-            Art.ReplaceLand(i, copy);
-            Options.ChangedUltimaClass["Art"] = true;
-            ControlEvents.FireLandTileChangeEvent(this, i);
-            _compare[i] = true;
-
-            if (checkBox1.Checked)
+            if (changed)
             {
-                _displayIndices.RemoveAt(focusIdx);
+                Options.ChangedUltimaClass["Art"] = true;
+            }
+
+            if (checkBox1.Checked && changed)
+            {
+                foreach (int idx in targets.OrderByDescending(x => x))
+                {
+                    if (idx >= 0 && idx < _displayIndices.Count)
+                    {
+                        _displayIndices.RemoveAt(idx);
+                    }
+                }
                 tileViewOrg.VirtualListSize = _displayIndices.Count;
                 tileViewSec.VirtualListSize = _displayIndices.Count;
+            }
+            else
+            {
+                tileViewSec.SelectedIndices.Clear();
             }
 
             tileViewOrg.Invalidate();
             tileViewSec.Invalidate();
-            pictureBoxOrg.BackgroundImage = Art.IsValidLand(i) ? Art.GetLand(i) : null;
+            if (lastCopiedId >= 0)
+            {
+                pictureBoxOrg.BackgroundImage = Art.IsValidLand(lastCopiedId) ? Art.GetLand(lastCopiedId) : null;
+            }
+            Cursor.Current = Cursors.Default;
         }
 
         private void OnDoubleClickSec(object sender, MouseEventArgs e)
         {
+            if (tileViewSec.ShowCheckBoxes)
+            {
+                return;
+            }
             OnClickCopy(sender, e);
         }
 

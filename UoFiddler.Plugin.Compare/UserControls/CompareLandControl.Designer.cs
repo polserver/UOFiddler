@@ -39,305 +39,302 @@ namespace UoFiddler.Plugin.Compare.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            this.btnCopyAllDiff = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBoxSec = new System.Windows.Forms.PictureBox();
-            this.pictureBoxOrg = new System.Windows.Forms.PictureBox();
-            this.textBoxSecondDir = new System.Windows.Forms.TextBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.tileViewSec = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyLandTile2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.button2 = new System.Windows.Forms.Button();
-            this.comboBoxFileMode = new System.Windows.Forms.ComboBox();
-            this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSec)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOrg)).BeginInit();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.SuspendLayout();
-            //
+            components = new System.ComponentModel.Container();
+            tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            btnCopyAllDiff = new System.Windows.Forms.Button();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            pictureBoxSec = new System.Windows.Forms.PictureBox();
+            pictureBoxOrg = new System.Windows.Forms.PictureBox();
+            textBoxSecondDir = new System.Windows.Forms.TextBox();
+            tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            tileViewSec = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            exportImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asTiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asJpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyLandTile2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            checkBox1 = new System.Windows.Forms.CheckBox();
+            chkMultiSelect = new System.Windows.Forms.CheckBox();
+            button1 = new System.Windows.Forms.Button();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            button2 = new System.Windows.Forms.Button();
+            comboBoxFileMode = new System.Windows.Forms.ComboBox();
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSec).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxOrg).BeginInit();
+            tableLayoutPanel2.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            SuspendLayout();
+            // 
             // tileViewOrg
-            //
-            this.tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tileViewOrg.Location = new System.Drawing.Point(4, 3);
-            this.tileViewOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tileViewOrg.Name = "tileViewOrg";
-            this.tileViewOrg.Size = new System.Drawing.Size(188, 364);
-            this.tileViewOrg.TabIndex = 0;
-            this.tileViewOrg.TileSize = new System.Drawing.Size(188, 13);
-            this.tileViewOrg.TileMargin = new System.Windows.Forms.Padding(0);
-            this.tileViewOrg.TilePadding = new System.Windows.Forms.Padding(0);
-            this.tileViewOrg.TileBorderWidth = 0f;
-            this.tileViewOrg.TileHighLightOpacity = 0.0;
-            this.tileViewOrg.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItemOrg);
-            this.tileViewOrg.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChangedOrg);
-            this.tileViewOrg.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
+            // 
+            tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileViewOrg.Location = new System.Drawing.Point(4, 3);
+            tileViewOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tileViewOrg.Name = "tileViewOrg";
+            tileViewOrg.Size = new System.Drawing.Size(188, 353);
+            tileViewOrg.TabIndex = 0;
+            tileViewOrg.TileHighLightOpacity = 0D;
+            tileViewOrg.FocusSelectionChanged += OnFocusChangedOrg;
+            tileViewOrg.DrawItem += OnDrawItemOrg;
+            tileViewOrg.SizeChanged += OnTileViewSizeChanged;
+            // 
+            // btnCopyAllDiff
+            // 
+            btnCopyAllDiff.AutoSize = true;
+            btnCopyAllDiff.Location = new System.Drawing.Point(594, 11);
+            btnCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnCopyAllDiff.Name = "btnCopyAllDiff";
+            btnCopyAllDiff.Size = new System.Drawing.Size(99, 29);
+            btnCopyAllDiff.TabIndex = 9;
+            btnCopyAllDiff.Text = "Copy All Diff";
+            btnCopyAllDiff.UseVisualStyleBackColor = true;
+            btnCopyAllDiff.Click += OnClickCopyAllDiff;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.pictureBoxSec, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.pictureBoxOrg, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(200, 3);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(318, 364);
-            this.tableLayoutPanel1.TabIndex = 7;
+            tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(pictureBoxSec, 0, 1);
+            tableLayoutPanel1.Controls.Add(pictureBoxOrg, 0, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(200, 3);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(318, 353);
+            tableLayoutPanel1.TabIndex = 7;
             // 
             // pictureBoxSec
             // 
-            this.pictureBoxSec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBoxSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxSec.Location = new System.Drawing.Point(5, 185);
-            this.pictureBoxSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBoxSec.Name = "pictureBoxSec";
-            this.pictureBoxSec.Size = new System.Drawing.Size(308, 175);
-            this.pictureBoxSec.TabIndex = 3;
-            this.pictureBoxSec.TabStop = false;
+            pictureBoxSec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pictureBoxSec.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBoxSec.Location = new System.Drawing.Point(5, 180);
+            pictureBoxSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBoxSec.Name = "pictureBoxSec";
+            pictureBoxSec.Size = new System.Drawing.Size(308, 169);
+            pictureBoxSec.TabIndex = 3;
+            pictureBoxSec.TabStop = false;
             // 
             // pictureBoxOrg
             // 
-            this.pictureBoxOrg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBoxOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxOrg.Location = new System.Drawing.Point(5, 4);
-            this.pictureBoxOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBoxOrg.Name = "pictureBoxOrg";
-            this.pictureBoxOrg.Size = new System.Drawing.Size(308, 174);
-            this.pictureBoxOrg.TabIndex = 2;
-            this.pictureBoxOrg.TabStop = false;
+            pictureBoxOrg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pictureBoxOrg.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBoxOrg.Location = new System.Drawing.Point(5, 4);
+            pictureBoxOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBoxOrg.Name = "pictureBoxOrg";
+            pictureBoxOrg.Size = new System.Drawing.Size(308, 169);
+            pictureBoxOrg.TabIndex = 2;
+            pictureBoxOrg.TabStop = false;
             // 
             // textBoxSecondDir
             // 
-            this.textBoxSecondDir.Location = new System.Drawing.Point(122, 13);
-            this.textBoxSecondDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxSecondDir.Name = "textBoxSecondDir";
-            this.textBoxSecondDir.Size = new System.Drawing.Size(168, 23);
-            this.textBoxSecondDir.TabIndex = 4;
+            textBoxSecondDir.Location = new System.Drawing.Point(122, 13);
+            textBoxSecondDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxSecondDir.Name = "textBoxSecondDir";
+            textBoxSecondDir.Size = new System.Drawing.Size(168, 23);
+            textBoxSecondDir.TabIndex = 4;
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 3;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45.45454F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.tableLayoutPanel2.Controls.Add(this.tileViewOrg, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.tileViewSec, 2, 0);
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel1, 1, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(719, 370);
-            this.tableLayoutPanel2.TabIndex = 8;
-            //
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45.45454F));
+            tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
+            tableLayoutPanel2.Controls.Add(tileViewOrg, 0, 0);
+            tableLayoutPanel2.Controls.Add(tileViewSec, 2, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 1, 0);
+            tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new System.Drawing.Size(719, 359);
+            tableLayoutPanel2.TabIndex = 8;
+            // 
             // tileViewSec
-            //
-            this.tileViewSec.ContextMenuStrip = this.contextMenuStrip1;
-            this.tileViewSec.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tileViewSec.Location = new System.Drawing.Point(526, 3);
-            this.tileViewSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tileViewSec.Name = "tileViewSec";
-            this.tileViewSec.Size = new System.Drawing.Size(189, 364);
-            this.tileViewSec.TabIndex = 1;
-            this.tileViewSec.TileSize = new System.Drawing.Size(189, 13);
-            this.tileViewSec.TileMargin = new System.Windows.Forms.Padding(0);
-            this.tileViewSec.TilePadding = new System.Windows.Forms.Padding(0);
-            this.tileViewSec.TileBorderWidth = 0f;
-            this.tileViewSec.TileHighLightOpacity = 0.0;
-            this.tileViewSec.DrawItem += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.DrawTileListItemEventArgs>(this.OnDrawItemSec);
-            this.tileViewSec.FocusSelectionChanged += new System.EventHandler<UoFiddler.Controls.UserControls.TileView.TileViewControl.ListViewFocusedItemSelectionChangedEventArgs>(this.OnFocusChangedSec);
-            this.tileViewSec.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnDoubleClickSec);
-            this.tileViewSec.SizeChanged += new System.EventHandler(this.OnTileViewSizeChanged);
+            // 
+            tileViewSec.ContextMenuStrip = contextMenuStrip1;
+            tileViewSec.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileViewSec.Location = new System.Drawing.Point(526, 3);
+            tileViewSec.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tileViewSec.Name = "tileViewSec";
+            tileViewSec.Size = new System.Drawing.Size(189, 353);
+            tileViewSec.TabIndex = 1;
+            tileViewSec.TileHighLightOpacity = 0D;
+            tileViewSec.FocusSelectionChanged += OnFocusChangedSec;
+            tileViewSec.DrawItem += OnDrawItemSec;
+            tileViewSec.SizeChanged += OnTileViewSizeChanged;
+            tileViewSec.MouseDoubleClick += OnDoubleClickSec;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportImageToolStripMenuItem,
-            this.copyLandTile2To1ToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(182, 48);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { exportImageToolStripMenuItem, copyLandTile2To1ToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(184, 48);
             // 
             // exportImageToolStripMenuItem
             // 
-            this.exportImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.asBmpToolStripMenuItem,
-            this.asTiffToolStripMenuItem,
-            this.asJpgToolStripMenuItem,
-            this.asPngToolStripMenuItem});
-            this.exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
-            this.exportImageToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.exportImageToolStripMenuItem.Text = "Export Image..";
-            //
+            exportImageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem, asTiffToolStripMenuItem, asJpgToolStripMenuItem, asPngToolStripMenuItem });
+            exportImageToolStripMenuItem.Name = "exportImageToolStripMenuItem";
+            exportImageToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            exportImageToolStripMenuItem.Text = "Export Image..";
+            // 
             // asBmpToolStripMenuItem
-            //
-            this.asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            this.asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asBmpToolStripMenuItem.Text = "As Bmp";
-            this.asBmpToolStripMenuItem.Click += new System.EventHandler(this.ExportAsBmp);
-            //
+            // 
+            asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
+            asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asBmpToolStripMenuItem.Text = "As Bmp";
+            asBmpToolStripMenuItem.Click += ExportAsBmp;
+            // 
             // asTiffToolStripMenuItem
-            //
-            this.asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            this.asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asTiffToolStripMenuItem.Text = "As Tiff";
-            this.asTiffToolStripMenuItem.Click += new System.EventHandler(this.ExportAsTiff);
-            //
+            // 
+            asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
+            asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asTiffToolStripMenuItem.Text = "As Tiff";
+            asTiffToolStripMenuItem.Click += ExportAsTiff;
+            // 
             // asJpgToolStripMenuItem
-            //
-            this.asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            this.asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asJpgToolStripMenuItem.Text = "As Jpg";
-            this.asJpgToolStripMenuItem.Click += new System.EventHandler(this.ExportAsJpg);
-            //
+            // 
+            asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
+            asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asJpgToolStripMenuItem.Text = "As Jpg";
+            asJpgToolStripMenuItem.Click += ExportAsJpg;
+            // 
             // asPngToolStripMenuItem
-            //
-            this.asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            this.asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.asPngToolStripMenuItem.Text = "As Png";
-            this.asPngToolStripMenuItem.Click += new System.EventHandler(this.ExportAsPng);
-            //
+            // 
+            asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
+            asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            asPngToolStripMenuItem.Text = "As Png";
+            asPngToolStripMenuItem.Click += ExportAsPng;
+            // 
             // copyLandTile2To1ToolStripMenuItem
             // 
-            this.copyLandTile2To1ToolStripMenuItem.Name = "copyLandTile2To1ToolStripMenuItem";
-            this.copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile 2 to 1";
-            this.copyLandTile2To1ToolStripMenuItem.Click += new System.EventHandler(this.OnClickCopy);
-            //
-            // btnCopyAllDiff
-            //
-            this.btnCopyAllDiff.AutoSize = true;
-            this.btnCopyAllDiff.Location = new System.Drawing.Point(594, 11);
-            this.btnCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnCopyAllDiff.Name = "btnCopyAllDiff";
-            this.btnCopyAllDiff.Size = new System.Drawing.Size(99, 29);
-            this.btnCopyAllDiff.TabIndex = 9;
-            this.btnCopyAllDiff.Text = "Copy All Diff";
-            this.btnCopyAllDiff.UseVisualStyleBackColor = true;
-            this.btnCopyAllDiff.Click += new System.EventHandler(this.OnClickCopyAllDiff);
-            //
+            copyLandTile2To1ToolStripMenuItem.Name = "copyLandTile2To1ToolStripMenuItem";
+            copyLandTile2To1ToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            copyLandTile2To1ToolStripMenuItem.Text = "Copy LandTile to left";
+            copyLandTile2To1ToolStripMenuItem.Click += OnClickCopy;
+            // 
             // checkBox1
-            //
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(439, 15);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(143, 19);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Show only Differences";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.Click += new System.EventHandler(this.OnChangeShowDiff);
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new System.Drawing.Point(439, 15);
+            checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new System.Drawing.Size(143, 19);
+            checkBox1.TabIndex = 6;
+            checkBox1.Text = "Show only Differences";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.Click += OnChangeShowDiff;
+            // 
+            // chkMultiSelect
+            // 
+            chkMultiSelect.AutoSize = true;
+            chkMultiSelect.Location = new System.Drawing.Point(439, 38);
+            chkMultiSelect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            chkMultiSelect.Name = "chkMultiSelect";
+            chkMultiSelect.Size = new System.Drawing.Size(90, 19);
+            chkMultiSelect.TabIndex = 10;
+            chkMultiSelect.Text = "Multi-Select";
+            chkMultiSelect.UseVisualStyleBackColor = true;
+            chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
             // 
             // button1
             // 
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(332, 11);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(99, 29);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Load Second";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickLoadSecond);
+            button1.AutoSize = true;
+            button1.Location = new System.Drawing.Point(332, 11);
+            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(99, 29);
+            button1.TabIndex = 5;
+            button1.Text = "Load Second";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += OnClickLoadSecond;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer1.BackColor = System.Drawing.SystemColors.Control;
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new System.Drawing.Point(0, 0);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel2);
+            splitContainer1.Panel1.Controls.Add(tableLayoutPanel2);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.btnCopyAllDiff);
-            this.splitContainer1.Panel2.Controls.Add(this.button2);
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxSecondDir);
-            this.splitContainer1.Panel2.Controls.Add(this.checkBox1);
-            this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Panel2.Controls.Add(this.comboBoxFileMode);
-            this.splitContainer1.Size = new System.Drawing.Size(719, 430);
-            this.splitContainer1.SplitterDistance = 370;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 10;
+            splitContainer1.Panel2.Controls.Add(btnCopyAllDiff);
+            splitContainer1.Panel2.Controls.Add(button2);
+            splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
+            splitContainer1.Panel2.Controls.Add(checkBox1);
+            splitContainer1.Panel2.Controls.Add(chkMultiSelect);
+            splitContainer1.Panel2.Controls.Add(button1);
+            splitContainer1.Panel2.Controls.Add(comboBoxFileMode);
+            splitContainer1.Size = new System.Drawing.Size(719, 430);
+            splitContainer1.SplitterDistance = 359;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 10;
             // 
             // button2
             // 
-            this.button2.AutoSize = true;
-            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Location = new System.Drawing.Point(298, 13);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(26, 25);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "...";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.BrowseOnClick);
-            //
+            button2.AutoSize = true;
+            button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            button2.Location = new System.Drawing.Point(298, 13);
+            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(26, 25);
+            button2.TabIndex = 7;
+            button2.Text = "...";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += BrowseOnClick;
+            // 
             // comboBoxFileMode
-            //
-            this.comboBoxFileMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxFileMode.FormattingEnabled = true;
-            this.comboBoxFileMode.Items.AddRange(new object[] {
-            "Auto",
-            "MUL",
-            "UOP"});
-            this.comboBoxFileMode.Location = new System.Drawing.Point(5, 13);
-            this.comboBoxFileMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.comboBoxFileMode.Name = "comboBoxFileMode";
-            this.comboBoxFileMode.Size = new System.Drawing.Size(70, 23);
-            this.comboBoxFileMode.TabIndex = 10;
-            //
+            // 
+            comboBoxFileMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxFileMode.FormattingEnabled = true;
+            comboBoxFileMode.Items.AddRange(new object[] { "Auto", "MUL", "UOP" });
+            comboBoxFileMode.Location = new System.Drawing.Point(5, 13);
+            comboBoxFileMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            comboBoxFileMode.Name = "comboBoxFileMode";
+            comboBoxFileMode.Size = new System.Drawing.Size(70, 23);
+            comboBoxFileMode.TabIndex = 10;
+            // 
             // CompareLandControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "CompareLandControl";
-            this.Size = new System.Drawing.Size(719, 430);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSec)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOrg)).EndInit();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(splitContainer1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "CompareLandControl";
+            Size = new System.Drawing.Size(719, 430);
+            Load += OnLoad;
+            tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSec).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxOrg).EndInit();
+            tableLayoutPanel2.ResumeLayout(false);
+            contextMenuStrip1.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 
@@ -351,6 +348,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyLandTile2To1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;

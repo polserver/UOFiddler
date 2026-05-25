@@ -94,6 +94,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToOrderColumns = true;
+            dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;

@@ -23,6 +23,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             btnBrowse = new System.Windows.Forms.Button();
             btnLoad = new System.Windows.Forms.Button();
             chkShowDiff = new System.Windows.Forms.CheckBox();
+            chkMultiSelect = new System.Windows.Forms.CheckBox();
             btnToggleRules = new System.Windows.Forms.Button();
             panelRules = new System.Windows.Forms.Panel();
             gbLandFields = new System.Windows.Forms.GroupBox();
@@ -149,6 +150,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             panelTop.Controls.Add(btnBrowse);
             panelTop.Controls.Add(btnLoad);
             panelTop.Controls.Add(chkShowDiff);
+            panelTop.Controls.Add(chkMultiSelect);
             panelTop.Controls.Add(btnToggleRules);
             panelTop.Dock = System.Windows.Forms.DockStyle.Bottom;
             panelTop.Location = new System.Drawing.Point(0, 591);
@@ -200,6 +202,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             chkShowDiff.TabIndex = 4;
             chkShowDiff.Text = "Show Differences Only";
             chkShowDiff.CheckedChanged += OnChangeShowDiff;
+            //
+            // chkMultiSelect
+            //
+            chkMultiSelect.AutoSize = true;
+            chkMultiSelect.Location = new System.Drawing.Point(737, 6);
+            chkMultiSelect.Name = "chkMultiSelect";
+            chkMultiSelect.Size = new System.Drawing.Size(90, 19);
+            chkMultiSelect.TabIndex = 6;
+            chkMultiSelect.Text = "Multi-Select";
+            chkMultiSelect.UseVisualStyleBackColor = true;
+            chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
             // 
             // btnToggleRules
             // 
@@ -525,7 +538,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewLandOrg.Name = "tileViewLandOrg";
             tileViewLandOrg.Size = new System.Drawing.Size(280, 413);
             tileViewLandOrg.TabIndex = 0;
-            tileViewLandOrg.TileSize = new System.Drawing.Size(280, 15);
+            tileViewLandOrg.TileSize = new System.Drawing.Size(280, 20);
             tileViewLandOrg.TileMargin = new System.Windows.Forms.Padding(0);
             tileViewLandOrg.TilePadding = new System.Windows.Forms.Padding(0);
             tileViewLandOrg.TileBorderWidth = 0f;
@@ -617,7 +630,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewLandSec.Name = "tileViewLandSec";
             tileViewLandSec.Size = new System.Drawing.Size(57, 413);
             tileViewLandSec.TabIndex = 0;
-            tileViewLandSec.TileSize = new System.Drawing.Size(57, 15);
+            tileViewLandSec.TileSize = new System.Drawing.Size(57, 20);
             tileViewLandSec.TileMargin = new System.Windows.Forms.Padding(0);
             tileViewLandSec.TilePadding = new System.Windows.Forms.Padding(0);
             tileViewLandSec.TileBorderWidth = 0f;
@@ -663,7 +676,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewItemOrg.Name = "tileViewItemOrg";
             tileViewItemOrg.Size = new System.Drawing.Size(280, 413);
             tileViewItemOrg.TabIndex = 0;
-            tileViewItemOrg.TileSize = new System.Drawing.Size(280, 15);
+            tileViewItemOrg.TileSize = new System.Drawing.Size(280, 20);
             tileViewItemOrg.TileMargin = new System.Windows.Forms.Padding(0);
             tileViewItemOrg.TilePadding = new System.Windows.Forms.Padding(0);
             tileViewItemOrg.TileBorderWidth = 0f;
@@ -766,7 +779,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewItemSec.Name = "tileViewItemSec";
             tileViewItemSec.Size = new System.Drawing.Size(121, 413);
             tileViewItemSec.TabIndex = 0;
-            tileViewItemSec.TileSize = new System.Drawing.Size(121, 15);
+            tileViewItemSec.TileSize = new System.Drawing.Size(121, 20);
             tileViewItemSec.TileMargin = new System.Windows.Forms.Padding(0);
             tileViewItemSec.TilePadding = new System.Windows.Forms.Padding(0);
             tileViewItemSec.TileBorderWidth = 0f;
@@ -1174,6 +1187,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.CheckBox chkShowDiff;
+        private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button btnToggleRules;
 
         private System.Windows.Forms.Panel panelRules;

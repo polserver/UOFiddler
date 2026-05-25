@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -33,8 +34,92 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 legendSwatchDifferent.BackColor = Color.CornflowerBlue;
             }
+            ConfigureTileView(tileViewOrg);
+            ConfigureTileView(tileViewSec);
+            ConfigureTileView(tileViewItemOrg);
+            ConfigureTileView(tileViewItemSec);
             PopulateOrgOnly(isLand: true);
+
+            tileViewSec.MultiSelect = true;
+            tileViewItemSec.MultiSelect = true;
+            tileViewSec.SelectedIndices.CollectionChanged += OnLandSecSelectedIndicesChanged;
+            tileViewItemSec.SelectedIndices.CollectionChanged += OnItemSecSelectedIndicesChanged;
+            contextMenuStripSec.Opening += (s, ev) =>
+            {
+                int count = ActiveSecView.SelectedIndices.Count;
+                copyEntry2To1ToolStripMenuItem.Text = ActiveSecView.ShowCheckBoxes && count > 1
+                    ? $"Copy {count} Entries to left"
+                    : "Copy Entry to left";
+            };
+
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+        }
+
+        // TileViewControl exposes TileSize/Margin/Padding/Border with DesignerSerializationVisibility.Hidden,
+        // so VS strips them when re-saving the .Designer.cs. Apply the intended values here so they survive.
+        private static void ConfigureTileView(TileViewControl tv)
+        {
+            tv.TileSize = new Size(tv.TileSize.Width, 20);
+            tv.TileMargin = new Padding(0);
+            tv.TilePadding = new Padding(0);
+            tv.TileBorderWidth = 0f;
+        }
+
+        private void OnChangeMultiSelect(object sender, EventArgs e)
+        {
+            tileViewSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            tileViewItemSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            if (!chkMultiSelect.Checked)
+            {
+                tileViewSec.SelectedIndices.Clear();
+                tileViewItemSec.SelectedIndices.Clear();
+            }
+        }
+
+        private void OnLandSecSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            MirrorSelection(tileViewSec, tileViewOrg);
+        }
+
+        private void OnItemSecSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            MirrorSelection(tileViewItemSec, tileViewItemOrg);
+        }
+
+        private void MirrorSelection(TileViewControl source, TileViewControl target)
+        {
+            if (_syncingSelection)
+            {
+                return;
+            }
+
+            _syncingSelection = true;
+            try
+            {
+                target.SelectedIndices.Clear();
+                foreach (int idx in source.SelectedIndices)
+                {
+                    target.SelectedIndices.Add(idx);
+                }
+            }
+            finally
+            {
+                _syncingSelection = false;
+            }
+        }
+
+        private List<int> GetCopyTargets(TileViewControl secView)
+        {
+            var sel = secView.SelectedIndices;
+            if (sel.Count > 0)
+            {
+                return sel.ToList();
+            }
+            if (secView.FocusIndex >= 0)
+            {
+                return new List<int> { secView.FocusIndex };
+            }
+            return new List<int>();
         }
 
         private void OnFilePathChangeEvent()
@@ -148,7 +233,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void OnDrawItemItemSec(object sender, TileViewControl.DrawTileListItemEventArgs e)
             => DrawListItem(e, _itemDisplayIndices[e.Index]);
 
-        private void DrawListItem(DrawItemEventArgs e, int idx)
+        private void DrawListItem(TileViewControl.DrawTileListItemEventArgs e, int idx)
         {
             if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
             {
@@ -166,7 +251,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string section = idx < 0x4000 ? "Land" : "Item";
             string text = $"0x{idx:X4}  [{section}]";
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(text, e.Font).Height) / 2f;
-            e.Graphics.DrawString(text, e.Font, fontBrush, new PointF(4, y));
+            e.Graphics.DrawString(text, e.Font, fontBrush, new PointF(e.ContentLeft + 4, y));
         }
 
         private void OnFocusChangedLandOrg(object sender, TileViewControl.ListViewFocusedItemSelectionChangedEventArgs e)
@@ -377,34 +462,69 @@ namespace UoFiddler.Plugin.Compare.UserControls
             return !same;
         }
 
-        private void OnDoubleClickSec(object sender, MouseEventArgs e) => OnClickCopySelected(sender, e);
+        private void OnDoubleClickSec(object sender, MouseEventArgs e)
+        {
+            if (ActiveSecView.ShowCheckBoxes)
+            {
+                return;
+            }
+            OnClickCopySelected(sender, e);
+        }
         private void OnDoubleClickOrg(object sender, MouseEventArgs e) => OnClickCopy1To2(sender, e);
 
         private void OnClickCopySelected(object sender, EventArgs e)
         {
             var secView = ActiveSecView;
-            if (secView.FocusIndex < 0)
+            var orgView = ActiveOrgView;
+            var indices = ActiveIndices;
+
+            var targets = GetCopyTargets(secView);
+            if (targets.Count == 0)
             {
                 return;
             }
 
-            int idx = ActiveIndices[secView.FocusIndex];
-            CopySecToOrg(idx);
+            Cursor.Current = Cursors.WaitCursor;
+            int lastIdx = -1;
+            bool changed = false;
 
-            if (checkBoxShowDiff.Checked)
+            foreach (int focusIdx in targets)
             {
-                int displayIdx = ActiveIndices.IndexOf(idx);
-                if (displayIdx >= 0)
+                if (focusIdx < 0 || focusIdx >= indices.Count)
                 {
-                    ActiveIndices.RemoveAt(displayIdx);
-                    ActiveOrgView.VirtualListSize = ActiveIndices.Count;
-                    secView.VirtualListSize       = ActiveIndices.Count;
+                    continue;
                 }
+
+                int idx = indices[focusIdx];
+                CopySecToOrg(idx);
+                lastIdx = idx;
+                changed = true;
             }
 
-            ActiveOrgView.Invalidate();
+            if (checkBoxShowDiff.Checked && changed)
+            {
+                foreach (int displayIdx in targets.OrderByDescending(x => x))
+                {
+                    if (displayIdx >= 0 && displayIdx < indices.Count)
+                    {
+                        indices.RemoveAt(displayIdx);
+                    }
+                }
+                orgView.VirtualListSize = indices.Count;
+                secView.VirtualListSize = indices.Count;
+            }
+            else
+            {
+                secView.SelectedIndices.Clear();
+            }
+
+            orgView.Invalidate();
             secView.Invalidate();
-            UpdateDetailPanel(idx);
+            if (lastIdx >= 0)
+            {
+                UpdateDetailPanel(lastIdx);
+            }
+            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickCopy1To2(object sender, EventArgs e)

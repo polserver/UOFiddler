@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -89,11 +90,88 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            ConfigureTileView(tileViewLandOrg);
+            ConfigureTileView(tileViewLandSec);
+            ConfigureTileView(tileViewItemOrg);
+            ConfigureTileView(tileViewItemSec);
+
             SetupDetailPanels();
             PopulateItemOrg();
             PopulateLandOrg();
             BuildRulesPanel();
             SetInnerSplitterPositions();
+
+            tileViewLandSec.MultiSelect = true;
+            tileViewItemSec.MultiSelect = true;
+            tileViewLandSec.SelectedIndices.CollectionChanged += OnLandSecSelectedIndicesChanged;
+            tileViewItemSec.SelectedIndices.CollectionChanged += OnItemSecSelectedIndicesChanged;
+        }
+
+        // TileViewControl exposes TileSize/Margin/Padding/Border with DesignerSerializationVisibility.Hidden,
+        // so VS strips them when re-saving the .Designer.cs. Apply the intended values here so they survive.
+        private static void ConfigureTileView(TileViewControl tv)
+        {
+            tv.TileSize = new Size(tv.TileSize.Width, 20);
+            tv.TileMargin = new Padding(0);
+            tv.TilePadding = new Padding(0);
+            tv.TileBorderWidth = 0f;
+        }
+
+        private void OnChangeMultiSelect(object sender, EventArgs e)
+        {
+            tileViewLandSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            tileViewItemSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            if (!chkMultiSelect.Checked)
+            {
+                tileViewLandSec.SelectedIndices.Clear();
+                tileViewItemSec.SelectedIndices.Clear();
+            }
+        }
+
+        private void OnLandSecSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            MirrorSelection(tileViewLandSec, tileViewLandOrg);
+        }
+
+        private void OnItemSecSelectedIndicesChanged(object sender, IndicesCollection.NotifyCollectionChangedEventArgs e)
+        {
+            MirrorSelection(tileViewItemSec, tileViewItemOrg);
+        }
+
+        private void MirrorSelection(TileViewControl source, TileViewControl target)
+        {
+            if (_syncingSelection)
+            {
+                return;
+            }
+
+            _syncingSelection = true;
+            try
+            {
+                target.SelectedIndices.Clear();
+                foreach (int idx in source.SelectedIndices)
+                {
+                    target.SelectedIndices.Add(idx);
+                }
+            }
+            finally
+            {
+                _syncingSelection = false;
+            }
+        }
+
+        private List<int> GetCopyTargets(TileViewControl secView)
+        {
+            var sel = secView.SelectedIndices;
+            if (sel.Count > 0)
+            {
+                return sel.ToList();
+            }
+            if (secView.FocusIndex >= 0)
+            {
+                return new List<int> { secView.FocusIndex };
+            }
+            return new List<int>();
         }
 
         private void SetupDetailPanels()
@@ -347,17 +425,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             string tileFile = Path.Combine(path, "tiledata.mul");
-            string artFile = Path.Combine(path, "art.mul");
-            string artIdx = Path.Combine(path, "artidx.mul");
-
-            if (!File.Exists(tileFile) || !File.Exists(artFile) || !File.Exists(artIdx))
+            if (!File.Exists(tileFile))
             {
-                MessageBox.Show("Could not find tiledata.mul, art.mul and artidx.mul in the selected directory.",
+                MessageBox.Show("Could not find tiledata.mul in the selected directory.",
                     "Missing Files", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            SecondArt.SetFileIndex(artIdx, artFile);
+            string mulFile = Path.Combine(path, "art.mul");
+            string idxFile = Path.Combine(path, "artidx.mul");
+            string uopFile = Path.Combine(path, "artLegacyMUL.uop");
+
+            if (!SecondLoadHelper.TryResolveArtPaths("Auto", idxFile, mulFile, uopFile,
+                    out string resolvedIdx, out string resolvedMul, out string resolvedUop, out string error))
+            {
+                MessageBox.Show(error, "Missing Files", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            SecondArt.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
 
             _secondTileData = new SecondTileData();
             _secondTileData.Initialize(tileFile, SecondArt.IsUOAHS());
@@ -635,7 +721,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DrawLandItem(e, _landDisplayIndices[e.Index], isSecondary: true);
         }
 
-        private void DrawLandItem(DrawItemEventArgs e, int i, bool isSecondary)
+        private void DrawLandItem(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
             if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
             {
@@ -650,7 +736,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string label = GetLandLabel(i, isSecondary);
 
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, e.Font).Height) / 2f;
-            e.Graphics.DrawString(label, e.Font, brush, new PointF(4, y));
+            e.Graphics.DrawString(label, e.Font, brush, new PointF(e.ContentLeft + 4, y));
         }
 
         private Brush GetLandBrush(int i, bool isSecondary)
@@ -716,7 +802,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DrawItemEntry(e, _itemDisplayIndices[e.Index], isSecondary: true);
         }
 
-        private void DrawItemEntry(DrawItemEventArgs e, int i, bool isSecondary)
+        private void DrawItemEntry(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
             if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
             {
@@ -731,7 +817,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string label = GetItemLabel(i, isSecondary);
 
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, e.Font).Height) / 2f;
-            e.Graphics.DrawString(label, e.Font, brush, new PointF(4, y));
+            e.Graphics.DrawString(label, e.Font, brush, new PointF(e.ContentLeft + 4, y));
         }
 
         private Brush GetItemBrush(int i)
@@ -1077,28 +1163,56 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickCopyLandSelected(object sender, EventArgs e)
         {
-            if (_secondTileData == null || tileViewLandSec.FocusIndex < 0)
+            if (_secondTileData == null)
             {
                 return;
             }
 
-            int id = _landDisplayIndices[tileViewLandSec.FocusIndex];
-            CopyLandEntry(id);
-
-            if (chkShowDiff.Checked)
+            var targets = GetCopyTargets(tileViewLandSec);
+            if (targets.Count == 0)
             {
-                int displayIdx = _landDisplayIndices.IndexOf(id);
-                if (displayIdx >= 0)
+                return;
+            }
+
+            Cursor.Current = Cursors.WaitCursor;
+            int lastId = -1;
+
+            foreach (int focusIdx in targets)
+            {
+                if (focusIdx < 0 || focusIdx >= _landDisplayIndices.Count)
                 {
-                    _landDisplayIndices.RemoveAt(displayIdx);
-                    tileViewLandOrg.VirtualListSize = _landDisplayIndices.Count;
-                    tileViewLandSec.VirtualListSize = _landDisplayIndices.Count;
+                    continue;
                 }
+
+                int id = _landDisplayIndices[focusIdx];
+                CopyLandEntry(id);
+                lastId = id;
+            }
+
+            if (chkShowDiff.Checked && lastId >= 0)
+            {
+                foreach (int displayIdx in targets.OrderByDescending(x => x))
+                {
+                    if (displayIdx >= 0 && displayIdx < _landDisplayIndices.Count)
+                    {
+                        _landDisplayIndices.RemoveAt(displayIdx);
+                    }
+                }
+                tileViewLandOrg.VirtualListSize = _landDisplayIndices.Count;
+                tileViewLandSec.VirtualListSize = _landDisplayIndices.Count;
+            }
+            else
+            {
+                tileViewLandSec.SelectedIndices.Clear();
             }
 
             tileViewLandOrg.Invalidate();
             tileViewLandSec.Invalidate();
-            UpdateLandDetail(id);
+            if (lastId >= 0)
+            {
+                UpdateLandDetail(lastId);
+            }
+            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickCopyLandAllDiff(object sender, EventArgs e)
@@ -1143,28 +1257,56 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickCopyItemSelected(object sender, EventArgs e)
         {
-            if (_secondTileData == null || tileViewItemSec.FocusIndex < 0)
+            if (_secondTileData == null)
             {
                 return;
             }
 
-            int id = _itemDisplayIndices[tileViewItemSec.FocusIndex];
-            CopyItemEntry(id);
-
-            if (chkShowDiff.Checked)
+            var targets = GetCopyTargets(tileViewItemSec);
+            if (targets.Count == 0)
             {
-                int displayIdx = _itemDisplayIndices.IndexOf(id);
-                if (displayIdx >= 0)
+                return;
+            }
+
+            Cursor.Current = Cursors.WaitCursor;
+            int lastId = -1;
+
+            foreach (int focusIdx in targets)
+            {
+                if (focusIdx < 0 || focusIdx >= _itemDisplayIndices.Count)
                 {
-                    _itemDisplayIndices.RemoveAt(displayIdx);
-                    tileViewItemOrg.VirtualListSize = _itemDisplayIndices.Count;
-                    tileViewItemSec.VirtualListSize = _itemDisplayIndices.Count;
+                    continue;
                 }
+
+                int id = _itemDisplayIndices[focusIdx];
+                CopyItemEntry(id);
+                lastId = id;
+            }
+
+            if (chkShowDiff.Checked && lastId >= 0)
+            {
+                foreach (int displayIdx in targets.OrderByDescending(x => x))
+                {
+                    if (displayIdx >= 0 && displayIdx < _itemDisplayIndices.Count)
+                    {
+                        _itemDisplayIndices.RemoveAt(displayIdx);
+                    }
+                }
+                tileViewItemOrg.VirtualListSize = _itemDisplayIndices.Count;
+                tileViewItemSec.VirtualListSize = _itemDisplayIndices.Count;
+            }
+            else
+            {
+                tileViewItemSec.SelectedIndices.Clear();
             }
 
             tileViewItemOrg.Invalidate();
             tileViewItemSec.Invalidate();
-            UpdateItemDetail(id);
+            if (lastId >= 0)
+            {
+                UpdateItemDetail(lastId);
+            }
+            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickCopyItemAllDiff(object sender, EventArgs e)
@@ -1196,11 +1338,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnDoubleClickItemSec(object sender, MouseEventArgs e)
         {
+            if (tileViewItemSec.ShowCheckBoxes)
+            {
+                return;
+            }
             OnClickCopyItemSelected(sender, e);
         }
 
         private void OnDoubleClickLandSec(object sender, MouseEventArgs e)
         {
+            if (tileViewLandSec.ShowCheckBoxes)
+            {
+                return;
+            }
             OnClickCopyLandSelected(sender, e);
         }
 

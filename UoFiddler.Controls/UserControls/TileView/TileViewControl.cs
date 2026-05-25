@@ -112,6 +112,33 @@ namespace UoFiddler.Controls.UserControls.TileView
             }
         }
 
+        private bool _showCheckBoxes;
+        private const int CheckBoxSize = 13;
+        private const int CheckBoxLeftInset = 5;
+
+        /// <summary>
+        /// Horizontal space (in pixels) reserved on the left of each tile for the checkbox column when
+        /// <see cref="ShowCheckBoxes"/> is enabled. DrawItem handlers should offset their content by
+        /// <c>e.ContentLeft</c> instead of hard-coding the X position so the checkbox does not overlap text/images.
+        /// </summary>
+        public const int CheckBoxColumnWidth = 22;
+
+        /// <summary>
+        /// When true, a checkbox is drawn at the right edge of every tile and clicking it toggles the tile in <see cref="SelectedIndices"/>
+        /// without changing <see cref="FocusIndex"/>. Intended for multi-selection workflows.
+        /// </summary>
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool ShowCheckBoxes
+        {
+            get => _showCheckBoxes;
+            set
+            {
+                _showCheckBoxes = value;
+                Invalidate();
+            }
+        }
+
         private int _virtualListSize;
 
         /// <summary>
@@ -340,6 +367,19 @@ namespace UoFiddler.Controls.UserControls.TileView
             {
                 int idx = GetIndexAtLocation(e.Location);
 
+                if (_showCheckBoxes && idx >= 0 && e.Button == MouseButtons.Left && IsInCheckBoxRegion(e.Location, idx))
+                {
+                    if (SelectedIndices.Contains(idx))
+                    {
+                        SelectedIndices.Remove(idx);
+                    }
+                    else
+                    {
+                        SelectedIndices.Add(idx);
+                    }
+                    return;
+                }
+
                 FocusIndex = idx;
 
                 if (idx != -2 && e.Button == MouseButtons.Left) // no Tile at given location
@@ -512,6 +552,13 @@ namespace UoFiddler.Controls.UserControls.TileView
 
                     break;
                 default:
+                    // When the checkbox column is visible, the selection set is owned by the checkboxes;
+                    // a plain click must only change focus and never wipe an in-progress multi-selection.
+                    if (_showCheckBoxes)
+                    {
+                        break;
+                    }
+
                     if (!SelectedIndices.Contains(index))
                     {
                         SelectedIndices.Clear();
@@ -540,6 +587,23 @@ namespace UoFiddler.Controls.UserControls.TileView
         private Point GetItemLocation(int index)
         {
             return new Point(index % _itemsPerRow * TotalTileSize.Width, index / _itemsPerRow * TotalTileSize.Height);
+        }
+
+        private Rectangle GetCheckBoxRect(int index)
+        {
+            Point itemLoc = GetItemLocation(index);
+            int left = itemLoc.X + _tileMargin.Left + (int)_tileBorder.Width + CheckBoxLeftInset;
+            int size = Math.Min(CheckBoxSize, Math.Max(8, TotalTileSize.Height - 4));
+            int top = itemLoc.Y + (TotalTileSize.Height - size) / 2;
+            return new Rectangle(left, top, size, size);
+        }
+
+        private bool IsInCheckBoxRegion(Point location, int index)
+        {
+            Rectangle cb = GetCheckBoxRect(index);
+            int virtX = location.X - AutoScrollPosition.X;
+            int virtY = location.Y - AutoScrollPosition.Y;
+            return cb.Contains(virtX, virtY);
         }
 
         /// <summary>
@@ -671,7 +735,8 @@ namespace UoFiddler.Controls.UserControls.TileView
 
                 if (DrawItem != null)
                 {
-                    DrawItem(this, new DrawTileListItemEventArgs(e.Graphics, Font, borderRec, i, _focusIndex == i ? DrawItemState.Selected : DrawItemState.None));
+                    int contentLeft = _showCheckBoxes ? CheckBoxColumnWidth : 0;
+                    DrawItem(this, new DrawTileListItemEventArgs(e.Graphics, Font, borderRec, i, _focusIndex == i ? DrawItemState.Selected : DrawItemState.None, contentLeft));
                 }
                 else
                 {
@@ -715,6 +780,13 @@ namespace UoFiddler.Controls.UserControls.TileView
                         e.Graphics.DrawRectangle(pen, focusRec);
                     }
                 }
+
+                if (_showCheckBoxes)
+                {
+                    Rectangle cb = GetCheckBoxRect(i);
+                    ButtonState state = SelectedIndices.Contains(i) ? ButtonState.Checked : ButtonState.Normal;
+                    ControlPaint.DrawCheckBox(e.Graphics, cb, state);
+                }
             }
         }
 
@@ -732,9 +804,17 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         public class DrawTileListItemEventArgs : DrawItemEventArgs
         {
+            /// <summary>
+            /// Horizontal offset inside <see cref="DrawItemEventArgs.Bounds"/> where the handler's content
+            /// should start drawing, to avoid overlapping the checkbox column when <see cref="ShowCheckBoxes"/>
+            /// is enabled. Zero when no checkbox column is reserved.
+            /// </summary>
+            public int ContentLeft { get; }
+
             public DrawTileListItemEventArgs(Graphics graphics, Font font, Rectangle rect, int index,
-                DrawItemState state) : base(graphics, font, rect, index, state)
+                DrawItemState state, int contentLeft = 0) : base(graphics, font, rect, index, state)
             {
+                ContentLeft = contentLeft;
             }
         }
     }

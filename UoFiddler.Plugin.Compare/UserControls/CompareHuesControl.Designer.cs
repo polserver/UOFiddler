@@ -49,6 +49,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.chkMultiSelect = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
@@ -103,7 +104,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             this.applyHue1ToHue2ToolStripMenuItem.Name = "applyHue1ToHue2ToolStripMenuItem";
             this.applyHue1ToHue2ToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.applyHue1ToHue2ToolStripMenuItem.Text = "Apply Hue 2 to Hue 1";
+            this.applyHue1ToHue2ToolStripMenuItem.Text = "Apply Hue to left";
             this.applyHue1ToHue2ToolStripMenuItem.Click += new System.EventHandler(this.OnClickApplyHue1to2);
             // 
             // pictureBox2
@@ -146,6 +147,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
+            this.splitContainer1.Panel2.Controls.Add(this.chkMultiSelect);
             this.splitContainer1.Panel2.Controls.Add(this.textBox1);
             this.splitContainer1.Size = new System.Drawing.Size(733, 380);
             this.splitContainer1.SplitterDistance = 320;
@@ -179,6 +181,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.button1.Text = "Load";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.OnClickLoad);
+            //
+            // chkMultiSelect
+            //
+            this.chkMultiSelect.AutoSize = true;
+            this.chkMultiSelect.Location = new System.Drawing.Point(569, 15);
+            this.chkMultiSelect.Name = "chkMultiSelect";
+            this.chkMultiSelect.Size = new System.Drawing.Size(90, 19);
+            this.chkMultiSelect.TabIndex = 10;
+            this.chkMultiSelect.Text = "Multi-Select";
+            this.chkMultiSelect.UseVisualStyleBackColor = true;
+            this.chkMultiSelect.CheckedChanged += new System.EventHandler(this.OnChangeMultiSelect);
             // 
             // textBox1
             // 
@@ -220,6 +233,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private System.Windows.Forms.ToolStripMenuItem applyHue1ToHue2ToolStripMenuItem;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.PictureBox pictureBox1;
