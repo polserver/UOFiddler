@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using Ultima.Helpers;
 
 namespace UoFiddler.Plugin.Compare.Classes
 {
@@ -403,7 +404,7 @@ namespace UoFiddler.Plugin.Compare.Classes
             ushort hue = 0x0421;
             if (bmp.PixelFormat == PixelFormat.Format32bppRgb)
             {
-                hue = Ultima.Hues.ColorToHue(Color.FromArgb((int)r, (int)g, (int)b));
+                hue = HueHelpers.ColorToHue(Color.FromArgb((int)r, (int)g, (int)b));
             }
             else if (bmp.PixelFormat == PixelFormat.Format16bppArgb1555)
             {

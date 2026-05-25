@@ -53,6 +53,8 @@ namespace UoFiddler.Controls.UserControls
             setAsRangeFromToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             setAsRangeToToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             pictureBoxArt = new System.Windows.Forms.PictureBox();
+            PictureBoxContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
+            changeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pictureBoxColor = new System.Windows.Forms.PictureBox();
             splitContainer5 = new System.Windows.Forms.SplitContainer();
             splitContainer6 = new System.Windows.Forms.SplitContainer();
@@ -69,37 +71,45 @@ namespace UoFiddler.Controls.UserControls
             textFilterLand = new System.Windows.Forms.TextBox();
             buttonSelectAllLand = new System.Windows.Forms.Button();
             buttonSelectNoneLand = new System.Windows.Forms.Button();
+            groupColor = new System.Windows.Forms.GroupBox();
+            groupColorValue = new System.Windows.Forms.GroupBox();
+            labelHex = new System.Windows.Forms.Label();
+            numericUpDownShortCol = new System.Windows.Forms.NumericUpDown();
+            labelRgb = new System.Windows.Forms.Label();
+            numericUpDownR = new System.Windows.Forms.NumericUpDown();
+            numericUpDownG = new System.Windows.Forms.NumericUpDown();
+            numericUpDownB = new System.Windows.Forms.NumericUpDown();
+            groupSingleTile = new System.Windows.Forms.GroupBox();
+            buttonMean = new System.Windows.Forms.Button();
+            buttonRevert = new System.Windows.Forms.Button();
+            comboMeanStrategy = new System.Windows.Forms.ComboBox();
+            buttonStrategyHelp = new System.Windows.Forms.Button();
+            buttonSaveColor = new System.Windows.Forms.Button();
+            groupBatch = new System.Windows.Forms.GroupBox();
             radioUseSelection = new System.Windows.Forms.RadioButton();
             radioUseRange = new System.Windows.Forms.RadioButton();
-            label4 = new System.Windows.Forms.Label();
-            buttonRangeToRangeAverage = new System.Windows.Forms.Button();
-            buttonRangeToIndividualAverage = new System.Windows.Forms.Button();
-            buttonRevertAll = new System.Windows.Forms.Button();
-            buttonRevert = new System.Windows.Forms.Button();
-            label2 = new System.Windows.Forms.Label();
-            label1 = new System.Windows.Forms.Label();
-            progressBar2 = new System.Windows.Forms.ProgressBar();
-            progressBar1 = new System.Windows.Forms.ProgressBar();
-            button6 = new System.Windows.Forms.Button();
-            button5 = new System.Windows.Forms.Button();
-            button4 = new System.Windows.Forms.Button();
-            numericUpDownShortCol = new System.Windows.Forms.NumericUpDown();
             textBoxMeanFrom = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
             textBoxMeanTo = new System.Windows.Forms.TextBox();
             buttonCurrentToRangeAverage = new System.Windows.Forms.Button();
-            numericUpDownB = new System.Windows.Forms.NumericUpDown();
-            numericUpDownG = new System.Windows.Forms.NumericUpDown();
-            numericUpDownR = new System.Windows.Forms.NumericUpDown();
-            button2 = new System.Windows.Forms.Button();
-            button1 = new System.Windows.Forms.Button();
-            buttonMean = new System.Windows.Forms.Button();
-            PictureBoxContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
-            changeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            buttonRangeToIndividualAverage = new System.Windows.Forms.Button();
+            buttonRangeToRangeAverage = new System.Windows.Forms.Button();
+            groupFile = new System.Windows.Forms.GroupBox();
+            buttonSaveFile = new System.Windows.Forms.Button();
+            buttonRevertAll = new System.Windows.Forms.Button();
+            buttonExport = new System.Windows.Forms.Button();
+            buttonImport = new System.Windows.Forms.Button();
+            buttonAverageAll = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
+            progressBar1 = new System.Windows.Forms.ProgressBar();
+            label2 = new System.Windows.Forms.Label();
+            progressBar2 = new System.Windows.Forms.ProgressBar();
+            toolTip = new System.Windows.Forms.ToolTip(components);
             colorDialog = new System.Windows.Forms.ColorDialog();
             contextMenuStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
-            PictureBoxContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxArt).BeginInit();
+            PictureBoxContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxColor).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
             splitContainer5.Panel1.SuspendLayout();
@@ -128,25 +138,30 @@ namespace UoFiddler.Controls.UserControls
             splitContainer4.Panel1.SuspendLayout();
             splitContainer4.Panel2.SuspendLayout();
             splitContainer4.SuspendLayout();
+            groupColor.SuspendLayout();
+            groupColorValue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownShortCol).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownB).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownG).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownR).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownG).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownB).BeginInit();
+            groupSingleTile.SuspendLayout();
+            groupBatch.SuspendLayout();
+            groupFile.SuspendLayout();
             SuspendLayout();
             // 
             // tileViewItem
-            //
+            // 
             tileViewItem.ContextMenuStrip = contextMenuStrip1;
             tileViewItem.Dock = System.Windows.Forms.DockStyle.Fill;
             tileViewItem.Location = new System.Drawing.Point(0, 0);
             tileViewItem.Margin = new System.Windows.Forms.Padding(4);
             tileViewItem.Name = "tileViewItem";
-            tileViewItem.Size = new System.Drawing.Size(228, 164);
+            tileViewItem.Size = new System.Drawing.Size(259, 289);
             tileViewItem.TabIndex = 0;
             tileViewItem.ShowCheckBoxes = true;
             tileViewItem.TileHighLightOpacity = 0D;
-            tileViewItem.DrawItem += OnDrawItemRow;
             tileViewItem.FocusSelectionChanged += OnItemFocusChanged;
+            tileViewItem.DrawItem += OnDrawItemRow;
             tileViewItem.SizeChanged += OnTileViewSizeChanged;
             // 
             // contextMenuStrip1
@@ -185,7 +200,7 @@ namespace UoFiddler.Controls.UserControls
             setAsRangeToToolStripMenuItem.Click += OnClickSetRangeTo;
             // 
             // tileViewLand
-            //
+            // 
             tileViewLand.ContextMenuStrip = contextMenuStrip2;
             tileViewLand.Dock = System.Windows.Forms.DockStyle.Fill;
             tileViewLand.Location = new System.Drawing.Point(0, 0);
@@ -195,8 +210,8 @@ namespace UoFiddler.Controls.UserControls
             tileViewLand.TabIndex = 0;
             tileViewLand.ShowCheckBoxes = true;
             tileViewLand.TileHighLightOpacity = 0D;
-            tileViewLand.DrawItem += OnDrawLandRow;
             tileViewLand.FocusSelectionChanged += OnLandFocusChanged;
+            tileViewLand.DrawItem += OnDrawLandRow;
             tileViewLand.SizeChanged += OnTileViewSizeChanged;
             // 
             // contextMenuStrip2
@@ -235,35 +250,35 @@ namespace UoFiddler.Controls.UserControls
             setAsRangeToToolStripMenuItem1.Click += OnClickSetRangeTo;
             // 
             // pictureBoxArt
-            //
+            // 
             pictureBoxArt.ContextMenuStrip = PictureBoxContextMenuStrip;
             pictureBoxArt.Dock = System.Windows.Forms.DockStyle.Fill;
             pictureBoxArt.Location = new System.Drawing.Point(0, 0);
             pictureBoxArt.Margin = new System.Windows.Forms.Padding(4);
             pictureBoxArt.Name = "pictureBoxArt";
-            pictureBoxArt.Size = new System.Drawing.Size(244, 154);
+            pictureBoxArt.Size = new System.Drawing.Size(275, 241);
             pictureBoxArt.TabIndex = 0;
             pictureBoxArt.TabStop = false;
-            //
+            // 
             // PictureBoxContextMenuStrip
-            //
+            // 
             PictureBoxContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { changeBackgroundColorToolStripMenuItem });
             PictureBoxContextMenuStrip.Name = "PictureBoxContextMenuStrip";
             PictureBoxContextMenuStrip.Size = new System.Drawing.Size(213, 26);
-            //
+            // 
             // changeBackgroundColorToolStripMenuItem
-            //
+            // 
             changeBackgroundColorToolStripMenuItem.Name = "changeBackgroundColorToolStripMenuItem";
             changeBackgroundColorToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             changeBackgroundColorToolStripMenuItem.Text = "Change background color";
             changeBackgroundColorToolStripMenuItem.Click += ChangeBackgroundColorToolStripMenuItem_Click;
-            //
+            // 
             // pictureBoxColor
             // 
-            pictureBoxColor.Location = new System.Drawing.Point(4, 4);
+            pictureBoxColor.Location = new System.Drawing.Point(10, 22);
             pictureBoxColor.Margin = new System.Windows.Forms.Padding(4);
             pictureBoxColor.Name = "pictureBoxColor";
-            pictureBoxColor.Size = new System.Drawing.Size(161, 116);
+            pictureBoxColor.Size = new System.Drawing.Size(210, 96);
             pictureBoxColor.TabIndex = 0;
             pictureBoxColor.TabStop = false;
             // 
@@ -280,33 +295,13 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer5.Panel2
             // 
-            splitContainer5.Panel2.Controls.Add(radioUseSelection);
-            splitContainer5.Panel2.Controls.Add(radioUseRange);
-            splitContainer5.Panel2.Controls.Add(label4);
-            splitContainer5.Panel2.Controls.Add(buttonRangeToRangeAverage);
-            splitContainer5.Panel2.Controls.Add(buttonRangeToIndividualAverage);
-            splitContainer5.Panel2.Controls.Add(buttonRevertAll);
-            splitContainer5.Panel2.Controls.Add(buttonRevert);
-            splitContainer5.Panel2.Controls.Add(label2);
-            splitContainer5.Panel2.Controls.Add(label1);
-            splitContainer5.Panel2.Controls.Add(progressBar2);
-            splitContainer5.Panel2.Controls.Add(progressBar1);
-            splitContainer5.Panel2.Controls.Add(button6);
-            splitContainer5.Panel2.Controls.Add(button5);
-            splitContainer5.Panel2.Controls.Add(button4);
-            splitContainer5.Panel2.Controls.Add(numericUpDownShortCol);
-            splitContainer5.Panel2.Controls.Add(textBoxMeanFrom);
-            splitContainer5.Panel2.Controls.Add(textBoxMeanTo);
-            splitContainer5.Panel2.Controls.Add(buttonCurrentToRangeAverage);
-            splitContainer5.Panel2.Controls.Add(numericUpDownB);
-            splitContainer5.Panel2.Controls.Add(numericUpDownG);
-            splitContainer5.Panel2.Controls.Add(numericUpDownR);
-            splitContainer5.Panel2.Controls.Add(button2);
-            splitContainer5.Panel2.Controls.Add(button1);
-            splitContainer5.Panel2.Controls.Add(buttonMean);
-            splitContainer5.Panel2.Controls.Add(pictureBoxColor);
-            splitContainer5.Size = new System.Drawing.Size(744, 388);
-            splitContainer5.SplitterDistance = 244;
+            splitContainer5.Panel2.Controls.Add(groupColor);
+            splitContainer5.Panel2.Controls.Add(groupColorValue);
+            splitContainer5.Panel2.Controls.Add(groupSingleTile);
+            splitContainer5.Panel2.Controls.Add(groupBatch);
+            splitContainer5.Panel2.Controls.Add(groupFile);
+            splitContainer5.Size = new System.Drawing.Size(840, 600);
+            splitContainer5.SplitterDistance = 275;
             splitContainer5.TabIndex = 1;
             // 
             // splitContainer6
@@ -324,8 +319,8 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer6.Panel2
             // 
             splitContainer6.Panel2.Controls.Add(pictureBoxArt);
-            splitContainer6.Size = new System.Drawing.Size(244, 388);
-            splitContainer6.SplitterDistance = 229;
+            splitContainer6.Size = new System.Drawing.Size(275, 600);
+            splitContainer6.SplitterDistance = 354;
             splitContainer6.SplitterWidth = 5;
             splitContainer6.TabIndex = 0;
             // 
@@ -338,7 +333,7 @@ namespace UoFiddler.Controls.UserControls
             tabControl2.Margin = new System.Windows.Forms.Padding(4);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new System.Drawing.Size(244, 229);
+            tabControl2.Size = new System.Drawing.Size(275, 354);
             tabControl2.TabIndex = 0;
             // 
             // tabPage3
@@ -348,7 +343,7 @@ namespace UoFiddler.Controls.UserControls
             tabPage3.Margin = new System.Windows.Forms.Padding(4);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new System.Windows.Forms.Padding(4);
-            tabPage3.Size = new System.Drawing.Size(236, 201);
+            tabPage3.Size = new System.Drawing.Size(267, 326);
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Items";
             tabPage3.UseVisualStyleBackColor = true;
@@ -371,7 +366,7 @@ namespace UoFiddler.Controls.UserControls
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(tileViewItem);
-            splitContainer1.Size = new System.Drawing.Size(228, 193);
+            splitContainer1.Size = new System.Drawing.Size(259, 318);
             splitContainer1.SplitterDistance = 25;
             splitContainer1.TabIndex = 2;
             // 
@@ -394,8 +389,8 @@ namespace UoFiddler.Controls.UserControls
             splitContainer2.Panel2.Controls.Add(buttonSelectNoneItems);
             splitContainer2.Panel2.Controls.Add(buttonSelectAllItems);
             splitContainer2.Panel2MinSize = 170;
-            splitContainer2.Size = new System.Drawing.Size(228, 25);
-            splitContainer2.SplitterDistance = 54;
+            splitContainer2.Size = new System.Drawing.Size(259, 25);
+            splitContainer2.SplitterDistance = 85;
             splitContainer2.TabIndex = 1;
             // 
             // textFilterItems
@@ -404,7 +399,7 @@ namespace UoFiddler.Controls.UserControls
             textFilterItems.Location = new System.Drawing.Point(0, 0);
             textFilterItems.Name = "textFilterItems";
             textFilterItems.PlaceholderText = "Filter";
-            textFilterItems.Size = new System.Drawing.Size(54, 23);
+            textFilterItems.Size = new System.Drawing.Size(85, 23);
             textFilterItems.TabIndex = 1;
             textFilterItems.TextChanged += OnTextChangedFilterItems;
             // 
@@ -516,11 +511,183 @@ namespace UoFiddler.Controls.UserControls
             buttonSelectNoneLand.UseVisualStyleBackColor = true;
             buttonSelectNoneLand.Click += OnClickSelectNoneLand;
             // 
+            // groupColor
+            // 
+            groupColor.Controls.Add(pictureBoxColor);
+            groupColor.Location = new System.Drawing.Point(4, 4);
+            groupColor.Name = "groupColor";
+            groupColor.Size = new System.Drawing.Size(230, 124);
+            groupColor.TabIndex = 0;
+            groupColor.TabStop = false;
+            groupColor.Text = "Color preview";
+            // 
+            // groupColorValue
+            // 
+            groupColorValue.Controls.Add(labelHex);
+            groupColorValue.Controls.Add(numericUpDownShortCol);
+            groupColorValue.Controls.Add(labelRgb);
+            groupColorValue.Controls.Add(numericUpDownR);
+            groupColorValue.Controls.Add(numericUpDownG);
+            groupColorValue.Controls.Add(numericUpDownB);
+            groupColorValue.Location = new System.Drawing.Point(240, 4);
+            groupColorValue.Name = "groupColorValue";
+            groupColorValue.Size = new System.Drawing.Size(252, 78);
+            groupColorValue.TabIndex = 1;
+            groupColorValue.TabStop = false;
+            groupColorValue.Text = "Color value";
+            // 
+            // labelHex
+            // 
+            labelHex.AutoSize = true;
+            labelHex.Location = new System.Drawing.Point(10, 25);
+            labelHex.Name = "labelHex";
+            labelHex.Size = new System.Drawing.Size(31, 15);
+            labelHex.TabIndex = 0;
+            labelHex.Text = "Hex:";
+            // 
+            // numericUpDownShortCol
+            // 
+            numericUpDownShortCol.Location = new System.Drawing.Point(50, 22);
+            numericUpDownShortCol.Margin = new System.Windows.Forms.Padding(4);
+            numericUpDownShortCol.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
+            numericUpDownShortCol.Name = "numericUpDownShortCol";
+            numericUpDownShortCol.Size = new System.Drawing.Size(116, 23);
+            numericUpDownShortCol.TabIndex = 3;
+            numericUpDownShortCol.ValueChanged += OnNumericShortColChanged;
+            // 
+            // labelRgb
+            // 
+            labelRgb.AutoSize = true;
+            labelRgb.Location = new System.Drawing.Point(10, 52);
+            labelRgb.Name = "labelRgb";
+            labelRgb.Size = new System.Drawing.Size(32, 15);
+            labelRgb.TabIndex = 4;
+            labelRgb.Text = "RGB:";
+            // 
+            // numericUpDownR
+            // 
+            numericUpDownR.Location = new System.Drawing.Point(50, 50);
+            numericUpDownR.Margin = new System.Windows.Forms.Padding(4);
+            numericUpDownR.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownR.Name = "numericUpDownR";
+            numericUpDownR.Size = new System.Drawing.Size(55, 23);
+            numericUpDownR.TabIndex = 4;
+            numericUpDownR.ValueChanged += OnChangeR;
+            // 
+            // numericUpDownG
+            // 
+            numericUpDownG.Location = new System.Drawing.Point(115, 50);
+            numericUpDownG.Margin = new System.Windows.Forms.Padding(4);
+            numericUpDownG.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownG.Name = "numericUpDownG";
+            numericUpDownG.Size = new System.Drawing.Size(55, 23);
+            numericUpDownG.TabIndex = 5;
+            numericUpDownG.ValueChanged += OnChangeG;
+            // 
+            // numericUpDownB
+            // 
+            numericUpDownB.Location = new System.Drawing.Point(180, 50);
+            numericUpDownB.Margin = new System.Windows.Forms.Padding(4);
+            numericUpDownB.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownB.Name = "numericUpDownB";
+            numericUpDownB.Size = new System.Drawing.Size(55, 23);
+            numericUpDownB.TabIndex = 6;
+            numericUpDownB.ValueChanged += OnChangeB;
+            // 
+            // groupSingleTile
+            // 
+            groupSingleTile.Controls.Add(buttonMean);
+            groupSingleTile.Controls.Add(buttonRevert);
+            groupSingleTile.Controls.Add(comboMeanStrategy);
+            groupSingleTile.Controls.Add(buttonStrategyHelp);
+            groupSingleTile.Controls.Add(buttonSaveColor);
+            groupSingleTile.Location = new System.Drawing.Point(4, 132);
+            groupSingleTile.Name = "groupSingleTile";
+            groupSingleTile.Size = new System.Drawing.Size(230, 130);
+            groupSingleTile.TabIndex = 2;
+            groupSingleTile.TabStop = false;
+            groupSingleTile.Text = "Single tile";
+            // 
+            // buttonMean
+            // 
+            buttonMean.Location = new System.Drawing.Point(10, 22);
+            buttonMean.Margin = new System.Windows.Forms.Padding(4);
+            buttonMean.Name = "buttonMean";
+            buttonMean.Size = new System.Drawing.Size(88, 26);
+            buttonMean.TabIndex = 0;
+            buttonMean.Text = "Average Color";
+            buttonMean.UseVisualStyleBackColor = true;
+            buttonMean.Click += OnClickMeanColor;
+            // 
+            // buttonRevert
+            // 
+            buttonRevert.Enabled = false;
+            buttonRevert.Location = new System.Drawing.Point(104, 22);
+            buttonRevert.Name = "buttonRevert";
+            buttonRevert.Size = new System.Drawing.Size(88, 26);
+            buttonRevert.TabIndex = 1;
+            buttonRevert.Text = "Revert";
+            buttonRevert.UseVisualStyleBackColor = true;
+            buttonRevert.Click += OnClickRevert;
+            // 
+            // comboMeanStrategy
+            // 
+            comboMeanStrategy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboMeanStrategy.FormattingEnabled = true;
+            comboMeanStrategy.Location = new System.Drawing.Point(10, 56);
+            comboMeanStrategy.Margin = new System.Windows.Forms.Padding(4);
+            comboMeanStrategy.Name = "comboMeanStrategy";
+            comboMeanStrategy.Size = new System.Drawing.Size(182, 23);
+            comboMeanStrategy.TabIndex = 19;
+            comboMeanStrategy.TabStop = false;
+            comboMeanStrategy.SelectedIndexChanged += OnSelectedMeanStrategyChanged;
+            // 
+            // buttonStrategyHelp
+            // 
+            buttonStrategyHelp.Location = new System.Drawing.Point(196, 56);
+            buttonStrategyHelp.Margin = new System.Windows.Forms.Padding(0);
+            buttonStrategyHelp.Name = "buttonStrategyHelp";
+            buttonStrategyHelp.Size = new System.Drawing.Size(24, 23);
+            buttonStrategyHelp.TabIndex = 21;
+            buttonStrategyHelp.TabStop = false;
+            buttonStrategyHelp.Text = "?";
+            toolTip.SetToolTip(buttonStrategyHelp, "About these averaging strategies");
+            buttonStrategyHelp.UseVisualStyleBackColor = true;
+            buttonStrategyHelp.Click += OnClickStrategyHelp;
+            // 
+            // buttonSaveColor
+            // 
+            buttonSaveColor.Location = new System.Drawing.Point(10, 90);
+            buttonSaveColor.Margin = new System.Windows.Forms.Padding(4);
+            buttonSaveColor.Name = "buttonSaveColor";
+            buttonSaveColor.Size = new System.Drawing.Size(210, 26);
+            buttonSaveColor.TabIndex = 2;
+            buttonSaveColor.Text = "Save Color";
+            buttonSaveColor.UseVisualStyleBackColor = true;
+            buttonSaveColor.Click += OnClickSaveColor;
+            // 
+            // groupBatch
+            // 
+            groupBatch.Controls.Add(radioUseSelection);
+            groupBatch.Controls.Add(radioUseRange);
+            groupBatch.Controls.Add(textBoxMeanFrom);
+            groupBatch.Controls.Add(label4);
+            groupBatch.Controls.Add(textBoxMeanTo);
+            groupBatch.Controls.Add(buttonCurrentToRangeAverage);
+            groupBatch.Controls.Add(buttonRangeToIndividualAverage);
+            groupBatch.Controls.Add(buttonRangeToRangeAverage);
+            groupBatch.Location = new System.Drawing.Point(240, 86);
+            groupBatch.Name = "groupBatch";
+            groupBatch.Size = new System.Drawing.Size(252, 176);
+            groupBatch.TabIndex = 3;
+            groupBatch.TabStop = false;
+            groupBatch.Text = "Batch";
+            // 
             // radioUseSelection
             // 
             radioUseSelection.AutoSize = true;
             radioUseSelection.Checked = true;
-            radioUseSelection.Location = new System.Drawing.Point(220, 109);
+            radioUseSelection.Location = new System.Drawing.Point(10, 22);
             radioUseSelection.Name = "radioUseSelection";
             radioUseSelection.Size = new System.Drawing.Size(154, 19);
             radioUseSelection.TabIndex = 7;
@@ -532,7 +699,7 @@ namespace UoFiddler.Controls.UserControls
             // radioUseRange
             // 
             radioUseRange.AutoSize = true;
-            radioUseRange.Location = new System.Drawing.Point(220, 135);
+            radioUseRange.Location = new System.Drawing.Point(10, 50);
             radioUseRange.Name = "radioUseRange";
             radioUseRange.Size = new System.Drawing.Size(61, 19);
             radioUseRange.TabIndex = 8;
@@ -540,150 +707,31 @@ namespace UoFiddler.Controls.UserControls
             radioUseRange.UseVisualStyleBackColor = true;
             radioUseRange.CheckedChanged += OnCheckedChangeUseRange;
             // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(356, 136);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(16, 15);
-            label4.TabIndex = 27;
-            label4.Text = "...";
-            // 
-            // buttonRangeToRangeAverage
-            // 
-            buttonRangeToRangeAverage.Location = new System.Drawing.Point(220, 233);
-            buttonRangeToRangeAverage.Name = "buttonRangeToRangeAverage";
-            buttonRangeToRangeAverage.Size = new System.Drawing.Size(220, 26);
-            buttonRangeToRangeAverage.TabIndex = 13;
-            buttonRangeToRangeAverage.Text = "Selected tiles to selection average";
-            buttonRangeToRangeAverage.UseVisualStyleBackColor = true;
-            buttonRangeToRangeAverage.Click += OnClickRangeToRangeAverage;
-            // 
-            // buttonRangeToIndividualAverage
-            // 
-            buttonRangeToIndividualAverage.Location = new System.Drawing.Point(220, 198);
-            buttonRangeToIndividualAverage.Name = "buttonRangeToIndividualAverage";
-            buttonRangeToIndividualAverage.Size = new System.Drawing.Size(220, 26);
-            buttonRangeToIndividualAverage.TabIndex = 12;
-            buttonRangeToIndividualAverage.Text = "Selected tiles to individual average";
-            buttonRangeToIndividualAverage.UseVisualStyleBackColor = true;
-            buttonRangeToIndividualAverage.Click += OnClickRangeToIndividualAverage;
-            // 
-            // buttonRevertAll
-            // 
-            buttonRevertAll.Enabled = false;
-            buttonRevertAll.Location = new System.Drawing.Point(4, 294);
-            buttonRevertAll.Name = "buttonRevertAll";
-            buttonRevertAll.Size = new System.Drawing.Size(88, 26);
-            buttonRevertAll.TabIndex = 14;
-            buttonRevertAll.Text = "Revert All";
-            buttonRevertAll.UseVisualStyleBackColor = true;
-            buttonRevertAll.Click += OnClickRevertAll;
-            // 
-            // buttonRevert
-            // 
-            buttonRevert.Enabled = false;
-            buttonRevert.Location = new System.Drawing.Point(97, 128);
-            buttonRevert.Name = "buttonRevert";
-            buttonRevert.Size = new System.Drawing.Size(88, 26);
-            buttonRevert.TabIndex = 1;
-            buttonRevert.Text = "Revert";
-            buttonRevert.UseVisualStyleBackColor = true;
-            buttonRevert.Click += OnClickRevert;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(226, 364);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(62, 15);
-            label2.TabIndex = 21;
-            label2.Text = "Land Tiles:";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(255, 337);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(39, 15);
-            label1.TabIndex = 20;
-            label1.Text = "Items:";
-            // 
-            // progressBar2
-            // 
-            progressBar2.Location = new System.Drawing.Point(309, 359);
-            progressBar2.Name = "progressBar2";
-            progressBar2.Size = new System.Drawing.Size(117, 22);
-            progressBar2.TabIndex = 19;
-            // 
-            // progressBar1
-            // 
-            progressBar1.Location = new System.Drawing.Point(309, 331);
-            progressBar1.Name = "progressBar1";
-            progressBar1.Size = new System.Drawing.Size(117, 22);
-            progressBar1.TabIndex = 18;
-            // 
-            // button6
-            // 
-            button6.AutoSize = true;
-            button6.Location = new System.Drawing.Point(220, 294);
-            button6.Margin = new System.Windows.Forms.Padding(4);
-            button6.Name = "button6";
-            button6.Size = new System.Drawing.Size(206, 31);
-            button6.TabIndex = 18;
-            button6.TabStop = false;
-            button6.Text = "Average All (Items and Land Tiles)";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += OnClickMeanColorAll;
-            // 
-            // button5
-            // 
-            button5.Location = new System.Drawing.Point(97, 329);
-            button5.Margin = new System.Windows.Forms.Padding(4);
-            button5.Name = "button5";
-            button5.Size = new System.Drawing.Size(88, 26);
-            button5.TabIndex = 17;
-            button5.Text = "Import..";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += OnClickImport;
-            // 
-            // button4
-            // 
-            button4.Location = new System.Drawing.Point(3, 329);
-            button4.Margin = new System.Windows.Forms.Padding(4);
-            button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(88, 26);
-            button4.TabIndex = 16;
-            button4.Text = "Export..";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += OnClickExport;
-            // 
-            // numericUpDownShortCol
-            // 
-            numericUpDownShortCol.Location = new System.Drawing.Point(220, 11);
-            numericUpDownShortCol.Margin = new System.Windows.Forms.Padding(4);
-            numericUpDownShortCol.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
-            numericUpDownShortCol.Name = "numericUpDownShortCol";
-            numericUpDownShortCol.Size = new System.Drawing.Size(116, 23);
-            numericUpDownShortCol.TabIndex = 3;
-            numericUpDownShortCol.ValueChanged += OnNumericShortColChanged;
-            // 
             // textBoxMeanFrom
             // 
             textBoxMeanFrom.Enabled = false;
             textBoxMeanFrom.ForeColor = System.Drawing.SystemColors.WindowText;
-            textBoxMeanFrom.Location = new System.Drawing.Point(290, 133);
+            textBoxMeanFrom.Location = new System.Drawing.Point(80, 48);
             textBoxMeanFrom.Margin = new System.Windows.Forms.Padding(4);
             textBoxMeanFrom.Name = "textBoxMeanFrom";
             textBoxMeanFrom.PlaceholderText = "from";
             textBoxMeanFrom.Size = new System.Drawing.Size(60, 23);
             textBoxMeanFrom.TabIndex = 9;
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(145, 53);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(17, 15);
+            label4.TabIndex = 27;
+            label4.Text = "→";
+            // 
             // textBoxMeanTo
             // 
             textBoxMeanTo.Enabled = false;
             textBoxMeanTo.ForeColor = System.Drawing.SystemColors.WindowText;
-            textBoxMeanTo.Location = new System.Drawing.Point(380, 134);
+            textBoxMeanTo.Location = new System.Drawing.Point(165, 48);
             textBoxMeanTo.Margin = new System.Windows.Forms.Padding(4);
             textBoxMeanTo.Name = "textBoxMeanTo";
             textBoxMeanTo.PlaceholderText = "to";
@@ -692,97 +740,158 @@ namespace UoFiddler.Controls.UserControls
             // 
             // buttonCurrentToRangeAverage
             // 
-            buttonCurrentToRangeAverage.AutoSize = true;
-            buttonCurrentToRangeAverage.Location = new System.Drawing.Point(220, 163);
+            buttonCurrentToRangeAverage.Location = new System.Drawing.Point(10, 76);
             buttonCurrentToRangeAverage.Margin = new System.Windows.Forms.Padding(4);
             buttonCurrentToRangeAverage.Name = "buttonCurrentToRangeAverage";
-            buttonCurrentToRangeAverage.Size = new System.Drawing.Size(220, 26);
+            buttonCurrentToRangeAverage.Size = new System.Drawing.Size(232, 26);
             buttonCurrentToRangeAverage.TabIndex = 11;
             buttonCurrentToRangeAverage.Text = "Current tile to selection average";
             buttonCurrentToRangeAverage.UseVisualStyleBackColor = true;
             buttonCurrentToRangeAverage.Click += OnClickCurrentToRangeAverage;
             // 
-            // numericUpDownB
+            // buttonRangeToIndividualAverage
             // 
-            numericUpDownB.Location = new System.Drawing.Point(344, 41);
-            numericUpDownB.Margin = new System.Windows.Forms.Padding(4);
-            numericUpDownB.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            numericUpDownB.Name = "numericUpDownB";
-            numericUpDownB.Size = new System.Drawing.Size(55, 23);
-            numericUpDownB.TabIndex = 6;
-            numericUpDownB.ValueChanged += OnChangeB;
+            buttonRangeToIndividualAverage.Location = new System.Drawing.Point(10, 108);
+            buttonRangeToIndividualAverage.Name = "buttonRangeToIndividualAverage";
+            buttonRangeToIndividualAverage.Size = new System.Drawing.Size(232, 26);
+            buttonRangeToIndividualAverage.TabIndex = 12;
+            buttonRangeToIndividualAverage.Text = "Selected tiles to individual average";
+            buttonRangeToIndividualAverage.UseVisualStyleBackColor = true;
+            buttonRangeToIndividualAverage.Click += OnClickRangeToIndividualAverage;
             // 
-            // numericUpDownG
+            // buttonRangeToRangeAverage
             // 
-            numericUpDownG.Location = new System.Drawing.Point(283, 41);
-            numericUpDownG.Margin = new System.Windows.Forms.Padding(4);
-            numericUpDownG.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            numericUpDownG.Name = "numericUpDownG";
-            numericUpDownG.Size = new System.Drawing.Size(55, 23);
-            numericUpDownG.TabIndex = 5;
-            numericUpDownG.ValueChanged += OnChangeG;
+            buttonRangeToRangeAverage.Location = new System.Drawing.Point(10, 140);
+            buttonRangeToRangeAverage.Name = "buttonRangeToRangeAverage";
+            buttonRangeToRangeAverage.Size = new System.Drawing.Size(232, 26);
+            buttonRangeToRangeAverage.TabIndex = 13;
+            buttonRangeToRangeAverage.Text = "Selected tiles to selection average";
+            buttonRangeToRangeAverage.UseVisualStyleBackColor = true;
+            buttonRangeToRangeAverage.Click += OnClickRangeToRangeAverage;
             // 
-            // numericUpDownR
+            // groupFile
             // 
-            numericUpDownR.Location = new System.Drawing.Point(220, 41);
-            numericUpDownR.Margin = new System.Windows.Forms.Padding(4);
-            numericUpDownR.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            numericUpDownR.Name = "numericUpDownR";
-            numericUpDownR.Size = new System.Drawing.Size(55, 23);
-            numericUpDownR.TabIndex = 4;
-            numericUpDownR.ValueChanged += OnChangeR;
+            groupFile.Controls.Add(buttonSaveFile);
+            groupFile.Controls.Add(buttonRevertAll);
+            groupFile.Controls.Add(buttonExport);
+            groupFile.Controls.Add(buttonImport);
+            groupFile.Controls.Add(buttonAverageAll);
+            groupFile.Controls.Add(label1);
+            groupFile.Controls.Add(progressBar1);
+            groupFile.Controls.Add(label2);
+            groupFile.Controls.Add(progressBar2);
+            groupFile.Location = new System.Drawing.Point(4, 268);
+            groupFile.Name = "groupFile";
+            groupFile.Size = new System.Drawing.Size(488, 90);
+            groupFile.TabIndex = 4;
+            groupFile.TabStop = false;
+            groupFile.Text = "File";
             // 
-            // button2
+            // buttonSaveFile
             // 
-            button2.Location = new System.Drawing.Point(97, 294);
-            button2.Margin = new System.Windows.Forms.Padding(4);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(88, 26);
-            button2.TabIndex = 15;
-            button2.Text = "Save File";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += OnClickSaveFile;
+            buttonSaveFile.Location = new System.Drawing.Point(10, 22);
+            buttonSaveFile.Margin = new System.Windows.Forms.Padding(4);
+            buttonSaveFile.Name = "buttonSaveFile";
+            buttonSaveFile.Size = new System.Drawing.Size(100, 26);
+            buttonSaveFile.TabIndex = 15;
+            buttonSaveFile.Text = "Save File";
+            buttonSaveFile.UseVisualStyleBackColor = true;
+            buttonSaveFile.Click += OnClickSaveFile;
             // 
-            // button1
+            // buttonRevertAll
             // 
-            button1.Location = new System.Drawing.Point(3, 163);
-            button1.Margin = new System.Windows.Forms.Padding(4);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(88, 26);
-            button1.TabIndex = 2;
-            button1.Text = "Save Color";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += OnClickSaveColor;
+            buttonRevertAll.Enabled = false;
+            buttonRevertAll.Location = new System.Drawing.Point(117, 22);
+            buttonRevertAll.Name = "buttonRevertAll";
+            buttonRevertAll.Size = new System.Drawing.Size(100, 26);
+            buttonRevertAll.TabIndex = 14;
+            buttonRevertAll.Text = "Revert All";
+            buttonRevertAll.UseVisualStyleBackColor = true;
+            buttonRevertAll.Click += OnClickRevertAll;
             // 
-            // buttonMean
+            // buttonExport
             // 
-            buttonMean.Location = new System.Drawing.Point(4, 128);
-            buttonMean.Margin = new System.Windows.Forms.Padding(4);
-            buttonMean.Name = "buttonMean";
-            buttonMean.Size = new System.Drawing.Size(88, 26);
-            buttonMean.TabIndex = 0;
-            buttonMean.Text = "Average Color";
-            buttonMean.UseVisualStyleBackColor = true;
-            buttonMean.Click += OnClickMeanColor;
+            buttonExport.Location = new System.Drawing.Point(224, 22);
+            buttonExport.Margin = new System.Windows.Forms.Padding(4);
+            buttonExport.Name = "buttonExport";
+            buttonExport.Size = new System.Drawing.Size(100, 26);
+            buttonExport.TabIndex = 16;
+            buttonExport.Text = "Export..";
+            buttonExport.UseVisualStyleBackColor = true;
+            buttonExport.Click += OnClickExport;
             // 
+            // buttonImport
+            // 
+            buttonImport.Location = new System.Drawing.Point(332, 22);
+            buttonImport.Margin = new System.Windows.Forms.Padding(4);
+            buttonImport.Name = "buttonImport";
+            buttonImport.Size = new System.Drawing.Size(100, 26);
+            buttonImport.TabIndex = 17;
+            buttonImport.Text = "Import..";
+            buttonImport.UseVisualStyleBackColor = true;
+            buttonImport.Click += OnClickImport;
+            // 
+            // buttonAverageAll
+            // 
+            buttonAverageAll.Location = new System.Drawing.Point(11, 55);
+            buttonAverageAll.Margin = new System.Windows.Forms.Padding(4);
+            buttonAverageAll.Name = "buttonAverageAll";
+            buttonAverageAll.Size = new System.Drawing.Size(160, 26);
+            buttonAverageAll.TabIndex = 18;
+            buttonAverageAll.TabStop = false;
+            buttonAverageAll.Text = "Auto-fill empty entries";
+            buttonAverageAll.UseVisualStyleBackColor = true;
+            buttonAverageAll.Click += OnClickMeanColorAll;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(178, 57);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(39, 15);
+            label1.TabIndex = 20;
+            label1.Text = "Items:";
+            // 
+            // progressBar1
+            // 
+            progressBar1.Location = new System.Drawing.Point(222, 55);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new System.Drawing.Size(125, 22);
+            progressBar1.TabIndex = 18;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(353, 57);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(36, 15);
+            label2.TabIndex = 21;
+            label2.Text = "Land:";
+            // 
+            // progressBar2
+            // 
+            progressBar2.Location = new System.Drawing.Point(393, 55);
+            progressBar2.Name = "progressBar2";
+            progressBar2.Size = new System.Drawing.Size(85, 22);
+            progressBar2.TabIndex = 19;
+            //
             // RadarColorControl
-            // 
+            //
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             Controls.Add(splitContainer5);
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4);
             Name = "RadarColorControl";
-            Size = new System.Drawing.Size(744, 388);
+            Size = new System.Drawing.Size(840, 600);
             Load += OnLoad;
             contextMenuStrip1.ResumeLayout(false);
             contextMenuStrip2.ResumeLayout(false);
-            PictureBoxContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxArt).EndInit();
+            PictureBoxContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxColor).EndInit();
             splitContainer5.Panel1.ResumeLayout(false);
             splitContainer5.Panel2.ResumeLayout(false);
-            splitContainer5.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
             splitContainer5.ResumeLayout(false);
             splitContainer6.Panel1.ResumeLayout(false);
@@ -810,21 +919,32 @@ namespace UoFiddler.Controls.UserControls
             splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
             splitContainer4.ResumeLayout(false);
+            groupColor.ResumeLayout(false);
+            groupColorValue.ResumeLayout(false);
+            groupColorValue.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownShortCol).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownB).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownG).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownR).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownG).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownB).EndInit();
+            groupSingleTile.ResumeLayout(false);
+            groupBatch.ResumeLayout(false);
+            groupBatch.PerformLayout();
+            groupFile.ResumeLayout(false);
+            groupFile.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonSaveColor;
+        private System.Windows.Forms.Button buttonSaveFile;
         private System.Windows.Forms.Button buttonCurrentToRangeAverage;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button buttonExport;
+        private System.Windows.Forms.Button buttonImport;
         private System.Windows.Forms.Button buttonMean;
+        private System.Windows.Forms.ComboBox comboMeanStrategy;
+        private System.Windows.Forms.Button buttonStrategyHelp;
+        private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ContextMenuStrip PictureBoxContextMenuStrip;
@@ -849,7 +969,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewItem;
         private UoFiddler.Controls.UserControls.TileView.TileViewControl tileViewLand;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button buttonAverageAll;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
@@ -875,5 +995,12 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.Button buttonSelectAllLand;
         private System.Windows.Forms.RadioButton radioUseSelection;
         private System.Windows.Forms.RadioButton radioUseRange;
+        private System.Windows.Forms.GroupBox groupColor;
+        private System.Windows.Forms.GroupBox groupColorValue;
+        private System.Windows.Forms.GroupBox groupSingleTile;
+        private System.Windows.Forms.GroupBox groupBatch;
+        private System.Windows.Forms.GroupBox groupFile;
+        private System.Windows.Forms.Label labelHex;
+        private System.Windows.Forms.Label labelRgb;
     }
 }

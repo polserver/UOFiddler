@@ -33,6 +33,12 @@ namespace UoFiddler.Controls.Classes
         public static bool ArtItemClip { get; set; } = true;
 
         /// <summary>
+        /// Strategy used by the RadarColor control to derive a 16-bit color from a tile graphic.
+        /// Runtime-only (not persisted across sessions yet).
+        /// </summary>
+        public static RadarAveragingStrategy RadarColorStrategy { get; set; } = RadarAveragingStrategy.Mean5BankersRound;
+
+        /// <summary>
         /// Offsets the sound ids in Sound tab by 1 (POL specific setting)
         /// </summary>
         public static bool PolSoundIdOffset { get; set; }

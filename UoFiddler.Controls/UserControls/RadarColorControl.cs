@@ -42,6 +42,23 @@ namespace UoFiddler.Controls.UserControls
             ConfigureTileView(tileViewLand);
             tileViewItem.SelectedIndices.CollectionChanged += OnItemSelectedIndicesChanged;
             tileViewLand.SelectedIndices.CollectionChanged += OnLandSelectedIndicesChanged;
+
+#if DEBUG
+            // Dev-only research harness. Created programmatically (rather than via the
+            // designer) so the WinForms designer can't re-serialize it without the #if
+            // guard and break Release builds.
+            var benchmark = new Button
+            {
+                Location = new Point(4, 365),
+                Size = new Size(488, 24),
+                Margin = new Padding(4),
+                Text = "Algorithm benchmark (CSV)",
+                TabStop = false,
+                UseVisualStyleBackColor = true,
+            };
+            benchmark.Click += OnClickAlgorithmBenchmark;
+            splitContainer5.Panel2.Controls.Add(benchmark);
+#endif
         }
 
         private int _selectedIndex = -1;
@@ -93,6 +110,10 @@ namespace UoFiddler.Controls.UserControls
             tv.TileMargin = new Padding(0);
             tv.TilePadding = new Padding(0);
             tv.TileBorderWidth = 0f;
+            // Suppress the default focus-rectangle (DarkRed 1px outline). DrawRow already
+            // renders a SystemBrushes.Highlight fill for the focused row, so the extra
+            // border just adds a red line at the row edges.
+            tv.TileFocusColor = Color.Transparent;
         }
 
         private void OnTileViewSizeChanged(object sender, EventArgs e)
@@ -489,9 +510,223 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
 
                 pictureBoxArt.BackColor = Options.PreviewBackgroundColor;
+
+                PopulateMeanStrategyCombo();
             }
 
             IsLoaded = true;
+        }
+
+        private void PopulateMeanStrategyCombo()
+        {
+            if (comboMeanStrategy.Items.Count > 0)
+            {
+                return;
+            }
+
+            comboMeanStrategy.BeginUpdate();
+            foreach (RadarAveragingStrategy s in RadarColorAveraging.All)
+            {
+                comboMeanStrategy.Items.Add(new MeanStrategyItem(s));
+            }
+            // Select the persisted/runtime strategy.
+            for (int i = 0; i < comboMeanStrategy.Items.Count; ++i)
+            {
+                if (((MeanStrategyItem)comboMeanStrategy.Items[i]).Strategy == Options.RadarColorStrategy)
+                {
+                    comboMeanStrategy.SelectedIndex = i;
+                    break;
+                }
+            }
+            if (comboMeanStrategy.SelectedIndex < 0)
+            {
+                comboMeanStrategy.SelectedIndex = 0;
+            }
+            comboMeanStrategy.EndUpdate();
+        }
+
+        private sealed class MeanStrategyItem
+        {
+            public RadarAveragingStrategy Strategy { get; }
+            public MeanStrategyItem(RadarAveragingStrategy s) { Strategy = s; }
+            public override string ToString() => RadarColorAveraging.DisplayName(Strategy);
+        }
+
+        private RadarAveragingStrategy CurrentStrategy =>
+            comboMeanStrategy.SelectedItem is MeanStrategyItem item ? item.Strategy : Options.RadarColorStrategy;
+
+        private void OnSelectedMeanStrategyChanged(object sender, EventArgs e)
+        {
+            if (comboMeanStrategy.SelectedItem is MeanStrategyItem item)
+            {
+                Options.RadarColorStrategy = item.Strategy;
+            }
+        }
+
+        private void OnClickStrategyHelp(object sender, EventArgs e)
+        {
+            using var dlg = new StrategyHelpForm();
+            dlg.ShowDialog(FindForm());
+        }
+
+        // Modal explainer for the averaging strategies. Read-only TextBox so users can
+        // copy/paste text out of it. Content comes from a static string so it lives next
+        // to the code that defines the strategies.
+        private sealed class StrategyHelpForm : Form
+        {
+            public StrategyHelpForm()
+            {
+                Text = "Radar color — averaging strategies";
+                FormBorderStyle = FormBorderStyle.Sizable;
+                StartPosition = FormStartPosition.CenterParent;
+                MinimumSize = new Size(560, 400);
+                ClientSize = new Size(640, 540);
+                ShowInTaskbar = false;
+                MinimizeBox = false;
+                MaximizeBox = true;
+
+                var text = new TextBox
+                {
+                    Multiline = true,
+                    ReadOnly = true,
+                    ScrollBars = ScrollBars.Vertical,
+                    WordWrap = true,
+                    Dock = DockStyle.Fill,
+                    Font = new Font(FontFamily.GenericSansSerif, 9f),
+                    Text = HelpText,
+                    TabStop = false,
+                };
+                var ok = new Button
+                {
+                    Text = "Close",
+                    DialogResult = DialogResult.OK,
+                    Dock = DockStyle.Bottom,
+                    Height = 32,
+                };
+                Controls.Add(text);
+                Controls.Add(ok);
+                AcceptButton = ok;
+                CancelButton = ok;
+                // Route initial focus to the Close button so the read-only TextBox
+                // doesn't auto-select its entire content when the dialog opens.
+                ActiveControl = ok;
+            }
+
+            // Defensive: if focus ever lands on the TextBox (e.g. user clicks into it),
+            // collapse the selection to the start instead of leaving everything selected.
+            protected override void OnShown(EventArgs e)
+            {
+                base.OnShown(e);
+                foreach (Control c in Controls)
+                {
+                    if (c is TextBox tb)
+                    {
+                        tb.SelectionStart = 0;
+                        tb.SelectionLength = 0;
+                        break;
+                    }
+                }
+            }
+
+            private const string HelpText =
+                "Radar color averaging strategies\r\n" +
+                "================================\r\n\r\n" +
+                "Each entry in radarcol.mul is a 16-bit (RGB555) color used to render the world map. " +
+                "When you click \"Average Color\", UOFiddler computes that color from the tile's pixels. " +
+                "There are several ways to compute the average; they differ in rounding, source-pixel " +
+                "selection, and the color space used.\r\n\r\n" +
+
+                "What we learned by benchmarking\r\n" +
+                "-------------------------------\r\n" +
+                "Each strategy was scored against the values in radarcol.mul. The findings:\r\n\r\n" +
+                "  - The 24->15 bit downscale that produced the file's values uses bit-shift (>>3), not " +
+                "the *31/255 rounding that older UOFiddler builds used.\r\n\r\n" +
+                "  - For ITEMS (statics): values are reproducible by a per-channel arithmetic mean of " +
+                "the tile's 5-bit pixels with round-half-up. \"Mean (5-bit, banker's round)\" matches " +
+                "the file byte-for-byte on ~96.6% of 13,771 item entries; the remainder is " +
+                "sub-1-step error.\r\n\r\n" +
+                "  - For LAND tiles: 4,239 active entries use only ~103 unique colors total. That is " +
+                "a hand-tuned terrain palette, not a computed result. No pixel-averaging algorithm " +
+                "matches more than ~10% of land entries. \"Snap to land palette\" picks the closest " +
+                "entry from the colors already in the file, preserving terrain coherence.\r\n\r\n" +
+
+                "Gold standard (recommended defaults)\r\n" +
+                "------------------------------------\r\n" +
+                "  - Items tab  ->  Mean (5-bit, banker's round)     [the actual default]\r\n" +
+                "  - Land tab   ->  Snap to land palette\r\n\r\n" +
+                "Switch the dropdown manually when changing tabs; selection persists in this session.\r\n\r\n" +
+
+                "Strategies in detail\r\n" +
+                "--------------------\r\n\r\n" +
+
+                "Mean (5-bit)\r\n" +
+                "    Extract 5-bit R/G/B per non-transparent pixel, sum, divide by count with " +
+                "truncation. Simple but biases dark by ~half a step per channel. ~13% match on items.\r\n\r\n" +
+
+                "Mean (5-bit, rounded)\r\n" +
+                "    Same as Mean (5-bit) but uses round-half-up ((sum + n/2) / n). 96.4% match on items.\r\n\r\n" +
+
+                "Mean (5-bit, banker's round)   [DEFAULT]\r\n" +
+                "    Same but with round-half-to-even tie-break. The empirical winner: 96.6% match on items.\r\n\r\n" +
+
+                "Mean (5-bit, rounded, incl. transparent)\r\n" +
+                "    Includes transparent pixels (value 0) in the divisor. Drags the average toward 0; " +
+                "useful only as a diagnostic.\r\n\r\n" +
+
+                "Mean (8-bit, >>3 pack)\r\n" +
+                "    Expands each 5-bit pixel to 8-bit (via (c<<3)|(c>>2)), averages in 8-bit space, then " +
+                "packs back to 555 with bit-shift. Halfway result: ~42% match on items.\r\n\r\n" +
+
+                "Mean (8-bit, rounded pack)\r\n" +
+                "    Same as Mean (8-bit) but packs with ((c*31+127)/255). ~69% match.\r\n\r\n" +
+
+                "Mean (5-bit, rounded, no outline)\r\n" +
+                "    Drops near-black pixels (5-bit Y < 2) before averaging. Tests the common 90s sprite " +
+                "trick of excluding outlines. Worse than the rounded mean in practice (~44%).\r\n\r\n" +
+
+                "Mean (linear-light)\r\n" +
+                "    Gamma-corrects sRGB to linear (x*x), averages, then back to sRGB. A control candidate; " +
+                "1997 art pipelines almost certainly weren't gamma-aware. Low match (~11%).\r\n\r\n" +
+
+                "Mode (dominant pixel)\r\n" +
+                "    Returns the single most common non-transparent pixel. Useful for very uniform tiles, " +
+                "noisy elsewhere. ~5% match.\r\n\r\n" +
+
+                "Median per channel\r\n" +
+                "    Independent per-channel median in 5-bit space. Robust to outliers but doesn't match " +
+                "the file's values (~15%).\r\n\r\n" +
+
+                "Mean (no outline)\r\n" +
+                "    Plain 5-bit truncated mean with outline rejection. (~19%.)\r\n\r\n" +
+
+                "Snap to land palette\r\n" +
+                "    Computes the banker's-rounded 5-bit mean, then snaps the result to whichever of the " +
+                "~103 land colors already in radarcol.mul is closest in 5-bit Euclidean distance. The " +
+                "right choice for new/edited land tiles when you want them to look like neighbours " +
+                "instead of producing a freeform color.\r\n\r\n" +
+
+                "Snap to item palette\r\n" +
+                "    Analogous to Snap to land palette but uses the ~2,200 unique item colors. Less " +
+                "useful for items (their values are genuinely computed); kept for symmetry.\r\n\r\n" +
+
+                "Legacy (UOFiddler)\r\n" +
+                "    Reproduces UOFiddler's earlier behavior bit-for-bit: average in *31/255-truncated " +
+                "8-bit space, repack with the same truncation. Matches only ~1.9% of file values. Kept " +
+                "for continuity with older versions of UOFiddler.\r\n\r\n" +
+
+                "Transparency and clamps\r\n" +
+                "-----------------------\r\n" +
+                "All strategies (except \"incl. transparent\") skip pixels equal to 0 (transparent). " +
+                "The clamp rule is applied on the output: if all components downscale to 0 but the " +
+                "input was non-zero, force the lane to 1. Pure black opaque pixels do not survive a " +
+                "24->15 bit downscale; they appear as transparent both at runtime and in our " +
+                "averaging.\r\n\r\n" +
+
+                "Tools\r\n" +
+                "-----\r\n" +
+                "  - In Debug builds, the \"Algorithm benchmark (CSV)\" button on this control runs " +
+                "every strategy against the loaded radarcol.mul and writes a per-strategy report to " +
+                "Options.OutputPath\\radarcol_eval.csv.\r\n";
         }
 
         private void OnFilePathChangeEvent()
@@ -597,7 +832,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            CurrentColor = HueHelpers.ColorToHue(AverageColorFrom(image));
+            CurrentColor = RadarColorAveraging.Compute(image, CurrentStrategy);
         }
 
         private void OnClickSaveFile(object sender, EventArgs e)
@@ -854,68 +1089,23 @@ namespace UoFiddler.Controls.UserControls
 
         private ushort GetSequenceAverage(IEnumerable<int> sequence)
         {
-            int gmeanr = 0;
-            int gmeang = 0;
-            int gmeanb = 0;
-
-            foreach (int i in sequence)
+            // Pool pixels across all tiles in the sequence and run the chosen strategy once.
+            // The previous implementation averaged per-tile averages, which over-weights small
+            // tiles and biases the result; pooling is what you'd expect "average over a range"
+            // to mean.
+            bool isItem = tabControl2.SelectedIndex == 0;
+            IEnumerable<Bitmap> Images()
             {
-                Bitmap image = tabControl2.SelectedIndex == 0 ? Art.GetStatic(i) : Art.GetLand(i);
-                if (image == null)
+                foreach (int i in sequence)
                 {
-                    continue;
-                }
-
-                unsafe
-                {
-                    BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-                    ushort* line = (ushort*)bd.Scan0;
-                    int delta = bd.Stride >> 1;
-                    ushort* cur = line;
-
-                    int meanr = 0;
-                    int meang = 0;
-                    int meanb = 0;
-
-                    int count = 0;
-                    for (int y = 0; y < image.Height; ++y, line += delta)
+                    Bitmap image = isItem ? Art.GetStatic(i) : Art.GetLand(i);
+                    if (image != null)
                     {
-                        cur = line;
-                        for (int x = 0; x < image.Width; ++x)
-                        {
-                            if (cur[x] != 0)
-                            {
-                                meanr += HueHelpers.HueToColorR(cur[x]);
-                                meang += HueHelpers.HueToColorG(cur[x]);
-                                meanb += HueHelpers.HueToColorB(cur[x]);
-                                ++count;
-                            }
-                        }
+                        yield return image;
                     }
-                    image.UnlockBits(bd);
-
-                    meanr /= count;
-                    meang /= count;
-                    meanb /= count;
-
-                    gmeanr += meanr;
-                    gmeang += meang;
-                    gmeanb += meanb;
                 }
             }
-
-            var diff = sequence.Count();
-
-            if (diff > 0)
-            {
-
-                gmeanr /= diff;
-                gmeang /= diff;
-                gmeanb /= diff;
-            }
-
-            Color col = Color.FromArgb(gmeanr, gmeang, gmeanb);
-            return HueHelpers.ColorToHue(col);
+            return RadarColorAveraging.ComputeFromMany(Images(), CurrentStrategy);
         }
 
         private void OnClickCurrentToRangeAverage(object sender, EventArgs e)
@@ -993,7 +1183,7 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                var color = HueHelpers.ColorToHue(AverageColorFrom(image));
+                var color = RadarColorAveraging.Compute(image, CurrentStrategy);
 
                 SaveColor(i, color, isItemTile);
 
@@ -1147,7 +1337,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    var currentColor = HueHelpers.ColorToHue(AverageColorFrom(image));
+                    var currentColor = RadarColorAveraging.Compute(image, CurrentStrategy);
                     RadarCol.SetItemColor(i, currentColor);
                     Options.ChangedUltimaClass["RadarCol"] = true;
                 }
@@ -1176,7 +1366,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    var currentColor = HueHelpers.ColorToHue(AverageColorFrom(image));
+                    var currentColor = RadarColorAveraging.Compute(image, CurrentStrategy);
                     RadarCol.SetLandColor(i, currentColor);
                     Options.ChangedUltimaClass["RadarCol"] = true;
                 }
@@ -1188,45 +1378,6 @@ namespace UoFiddler.Controls.UserControls
             progressBar2.Value = 0;
         }
 
-        private unsafe Color AverageColorFrom(Bitmap image)
-        {
-            BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-            ushort* cur = line;
-
-            int meanR = 0;
-            int meanG = 0;
-            int meanB = 0;
-
-            int count = 0;
-            for (int y = 0; y < image.Height; ++y, line += delta)
-            {
-                cur = line;
-                for (int x = 0; x < image.Width; ++x)
-                {
-                    if (cur[x] == 0)
-                    {
-                        continue;
-                    }
-
-                    meanR += HueHelpers.HueToColorR(cur[x]);
-                    meanG += HueHelpers.HueToColorG(cur[x]);
-                    meanB += HueHelpers.HueToColorB(cur[x]);
-                    ++count;
-                }
-            }
-            image.UnlockBits(bd);
-
-            if (count > 0)
-            {
-                meanR /= count;
-                meanG /= count;
-                meanB /= count;
-            }
-
-            return Color.FromArgb(meanR, meanG, meanB);
-        }
 
         private void FilterChange(TextBox control, Action<string> filterCallback)
         {
@@ -1375,5 +1526,202 @@ namespace UoFiddler.Controls.UserControls
         {
             SetAllCheckedLand(false);
         }
+
+#if DEBUG
+        private void OnClickAlgorithmBenchmark(object sender, EventArgs e)
+        {
+            // Dev-only research harness for the radarcol generation algorithm. Sweeps
+            // every tile in the currently-loaded radarcol.mul, runs each candidate
+            // averaging strategy against the tile graphic, and writes a CSV of
+            // exact-match rates plus per-channel error stats. Output goes to
+            // Options.OutputPath. Not shipped in Release.
+            string outDir = Options.OutputPath ?? Path.GetTempPath();
+            string outPath = Path.Combine(outDir, "radarcol_eval.csv");
+
+            var strategies = RadarColorAveraging.All;
+            int n = strategies.Count;
+
+            const int landCount = 0x4000;
+            int itemCount = Math.Min(Art.GetMaxItemId() + 1, 0x4000);
+
+            // Per-class stats so we can see whether land vs item behave differently.
+            var land = new BenchStats(n);
+            var item = new BenchStats(n);
+
+            // Uniqueness check: if land has very few unique values, it's almost certainly
+            // hand-tuned to a palette rather than computed from the tile art.
+            var landUnique = new HashSet<ushort>();
+            var itemUnique = new HashSet<ushort>();
+
+            using var progress = new ProgressBarForm("Algorithm benchmark", "Iterating tiles…");
+            progress.Show(FindForm());
+
+            for (int i = 0; i < landCount; ++i)
+            {
+                ushort target = RadarCol.GetLandColor(i);
+                if (target == 0)
+                {
+                    continue;
+                }
+                landUnique.Add(target);
+                Bitmap image;
+                try { image = Art.GetLand(i); }
+                catch { continue; }
+                if (image == null)
+                {
+                    continue;
+                }
+                for (int s = 0; s < n; ++s)
+                {
+                    ushort got = RadarColorAveraging.Compute(image, strategies[s]);
+                    land.Tally(target, got, s);
+                }
+            }
+
+            for (int i = 0; i < itemCount; ++i)
+            {
+                ushort target = RadarCol.GetItemColor(i);
+                if (target == 0)
+                {
+                    continue;
+                }
+                itemUnique.Add(target);
+                if (!Art.IsValidStatic(i))
+                {
+                    continue;
+                }
+                Bitmap image;
+                try { image = Art.GetStatic(i); }
+                catch { continue; }
+                if (image == null)
+                {
+                    continue;
+                }
+                for (int s = 0; s < n; ++s)
+                {
+                    ushort got = RadarColorAveraging.Compute(image, strategies[s]);
+                    item.Tally(target, got, s);
+                }
+            }
+
+            progress.Close();
+
+            using (var sw = new StreamWriter(outPath))
+            {
+                sw.WriteLine($"# unique_land_colors={landUnique.Count} (out of {land.Counted[0]} land tiles with a non-zero entry)");
+                sw.WriteLine($"# unique_item_colors={itemUnique.Count} (out of {item.Counted[0]} item tiles with a non-zero entry)");
+                sw.WriteLine("class;strategy;tiles;exact;exact_pct;mae_r5;mae_g5;mae_b5;max_r5;max_g5;max_b5");
+                for (int s = 0; s < n; ++s)
+                {
+                    land.WriteRow(sw, "land", strategies[s], s);
+                }
+                for (int s = 0; s < n; ++s)
+                {
+                    item.WriteRow(sw, "item", strategies[s], s);
+                }
+                for (int s = 0; s < n; ++s)
+                {
+                    BenchStats.WriteCombinedRow(sw, "total", strategies[s], s, land, item);
+                }
+            }
+
+            // Pick the best strategy by combined exact-match count.
+            int bestIdx = 0;
+            long bestExact = land.Exact[0] + item.Exact[0];
+            long bestCount = land.Counted[0] + item.Counted[0];
+            for (int s = 1; s < n; ++s)
+            {
+                long ex = land.Exact[s] + item.Exact[s];
+                if (ex > bestExact)
+                {
+                    bestIdx = s;
+                    bestExact = ex;
+                    bestCount = land.Counted[s] + item.Counted[s];
+                }
+            }
+            string summary = $"Tiles evaluated: {bestCount} (land {land.Counted[bestIdx]} + item {item.Counted[bestIdx]})\n" +
+                             $"Unique colors: land {landUnique.Count}, item {itemUnique.Count}\n\n" +
+                             $"Best: {RadarColorAveraging.DisplayName(strategies[bestIdx])}\n" +
+                             $"  land : {land.Exact[bestIdx]}/{land.Counted[bestIdx]} " +
+                             $"({(land.Counted[bestIdx] == 0 ? 0 : 100.0 * land.Exact[bestIdx] / land.Counted[bestIdx]):F2}%)\n" +
+                             $"  item : {item.Exact[bestIdx]}/{item.Counted[bestIdx]} " +
+                             $"({(item.Counted[bestIdx] == 0 ? 0 : 100.0 * item.Exact[bestIdx] / item.Counted[bestIdx]):F2}%)\n\n" +
+                             $"Full report: {outPath}";
+            MessageBox.Show(FindForm(), summary, "Algorithm benchmark");
+        }
+
+        private sealed class BenchStats
+        {
+            public readonly long[] Exact;
+            public readonly long[] Counted;
+            public readonly long[] SumAbsR;
+            public readonly long[] SumAbsG;
+            public readonly long[] SumAbsB;
+            public readonly int[] MaxAbsR;
+            public readonly int[] MaxAbsG;
+            public readonly int[] MaxAbsB;
+
+            public BenchStats(int n)
+            {
+                Exact = new long[n];
+                Counted = new long[n];
+                SumAbsR = new long[n]; SumAbsG = new long[n]; SumAbsB = new long[n];
+                MaxAbsR = new int[n]; MaxAbsG = new int[n]; MaxAbsB = new int[n];
+            }
+
+            public void Tally(ushort target, ushort got, int s)
+            {
+                Counted[s]++;
+                if (got == target) Exact[s]++;
+                HueHelpers.HueExtract5(target, out int tr, out int tg, out int tb);
+                HueHelpers.HueExtract5(got, out int gr, out int gg, out int gb);
+                int dr = Math.Abs(tr - gr), dg = Math.Abs(tg - gg), db = Math.Abs(tb - gb);
+                SumAbsR[s] += dr; SumAbsG[s] += dg; SumAbsB[s] += db;
+                if (dr > MaxAbsR[s]) MaxAbsR[s] = dr;
+                if (dg > MaxAbsG[s]) MaxAbsG[s] = dg;
+                if (db > MaxAbsB[s]) MaxAbsB[s] = db;
+            }
+
+            public void WriteRow(StreamWriter sw, string label, RadarAveragingStrategy strat, int s)
+            {
+                long c = Counted[s];
+                if (c == 0) { sw.WriteLine($"{label};{strat};0;0;0;0;0;0;0;0;0"); return; }
+                double pct = 100.0 * Exact[s] / c;
+                double mr = (double)SumAbsR[s] / c, mg = (double)SumAbsG[s] / c, mb = (double)SumAbsB[s] / c;
+                sw.WriteLine(
+                    $"{label};{strat};{c};{Exact[s]};{pct:F2};{mr:F3};{mg:F3};{mb:F3};{MaxAbsR[s]};{MaxAbsG[s]};{MaxAbsB[s]}");
+            }
+
+            public static void WriteCombinedRow(StreamWriter sw, string label, RadarAveragingStrategy strat, int s, BenchStats a, BenchStats b)
+            {
+                long c = a.Counted[s] + b.Counted[s];
+                if (c == 0) { sw.WriteLine($"{label};{strat};0;0;0;0;0;0;0;0;0"); return; }
+                long ex = a.Exact[s] + b.Exact[s];
+                double pct = 100.0 * ex / c;
+                double mr = (double)(a.SumAbsR[s] + b.SumAbsR[s]) / c;
+                double mg = (double)(a.SumAbsG[s] + b.SumAbsG[s]) / c;
+                double mb = (double)(a.SumAbsB[s] + b.SumAbsB[s]) / c;
+                int xr = Math.Max(a.MaxAbsR[s], b.MaxAbsR[s]);
+                int xg = Math.Max(a.MaxAbsG[s], b.MaxAbsG[s]);
+                int xb = Math.Max(a.MaxAbsB[s], b.MaxAbsB[s]);
+                sw.WriteLine($"{label};{strat};{c};{ex};{pct:F2};{mr:F3};{mg:F3};{mb:F3};{xr};{xg};{xb}");
+            }
+        }
+
+        // Minimal modal progress indicator for the benchmark; nothing fancy.
+        private sealed class ProgressBarForm : Form
+        {
+            public ProgressBarForm(string title, string label)
+            {
+                Text = title;
+                FormBorderStyle = FormBorderStyle.FixedDialog;
+                ControlBox = false;
+                StartPosition = FormStartPosition.CenterParent;
+                Size = new Size(320, 90);
+                var lbl = new Label { Text = label, AutoSize = true, Location = new Point(12, 14) };
+                Controls.Add(lbl);
+            }
+        }
+#endif
     }
 }

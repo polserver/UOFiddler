@@ -149,54 +149,6 @@ namespace Ultima
             return List[0];
         }
 
-        /// <summary>
-        /// Converts RGB value to Hue color
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        public static ushort ColorToHue(Color color)
-        {
-            const double scale = 31.0 / 255;
-
-            ushort origRed = color.R;
-            var newRed = (ushort)(origRed * scale);
-            if (newRed == 0 && origRed != 0)
-            {
-                newRed = 1;
-            }
-
-            ushort origGreen = color.G;
-            var newGreen = (ushort)(origGreen * scale);
-            if (newGreen == 0 && origGreen != 0)
-            {
-                newGreen = 1;
-            }
-
-            ushort origBlue = color.B;
-            var newBlue = (ushort)(origBlue * scale);
-            if (newBlue == 0 && origBlue != 0)
-            {
-                newBlue = 1;
-            }
-
-            return (ushort)((newRed << 10) | (newGreen << 5) | newBlue);
-        }
-
-        public static int HueToColorR(ushort hue)
-        {
-            return ((hue & 0x7c00) >> 10) * (255 / 31);
-        }
-
-        public static int HueToColorG(ushort hue)
-        {
-            return ((hue & 0x3e0) >> 5) * (255 / 31);
-        }
-
-        public static int HueToColorB(ushort hue)
-        {
-            return (hue & 0x1f) * (255 / 31);
-        }
-
         public static unsafe void ApplyTo(Bitmap bmp, ushort[] colors, bool onlyHueGrayPixels)
         {
             BitmapData bd = bmp.LockBits(
@@ -334,7 +286,15 @@ namespace Ultima
             Colors = new ushort[32];
             for (int i = 0; i < 32; ++i)
             {
-                Colors[i] = mulStruct.colors[i];
+                ushort c = mulStruct.colors[i];
+                // Clamp c == 0 or any value with the high bit set to 1. The high bit is a
+                // flag in this format, never part of a valid color value.
+                if (c == 0 || c > 0x7fff)
+                {
+                    c = 1;
+                }
+
+                Colors[i] = c;
             }
 
             TableStart = mulStruct.tableStart;
