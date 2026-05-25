@@ -196,7 +196,6 @@ namespace Ultima
                 }
             }
             ConvertList();
-            reader.Close();
         }
 
         public MultiComponentList(string fileName, Multis.ImportType type)

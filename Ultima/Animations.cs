@@ -23,6 +23,13 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
+            _fileIndex?.Dispose();
+            _fileIndex2?.Dispose();
+            _fileIndex3?.Dispose();
+            _fileIndex4?.Dispose();
+            _fileIndex5?.Dispose();
+            _fileIndex6?.Dispose();
+
             _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
             _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
             _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
@@ -154,7 +161,10 @@ namespace Ultima
 
             bool flip = direction > 4;
 
-            using (var bin = new BinaryReader(stream))
+            // leaveOpen: stream is owned by the shared FileIndex; disposing the
+            // BinaryReader must not close it, or the next FileIndex.Seek pays a
+            // full re-open.
+            using (var bin = new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true))
             {
                 var palette = new ushort[PaletteCapacity];
 
@@ -310,8 +320,6 @@ namespace Ultima
             Stream stream = fileIndex.Seek(index, out int length, out int _, out bool _);
 
             bool def = !((stream == null) || (length == 0));
-
-            stream?.Close();
 
             return def;
         }

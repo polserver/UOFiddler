@@ -6,7 +6,7 @@ using Ultima.Helpers;
 
 namespace Ultima
 {
-    public sealed class FileIndex
+    public sealed class FileIndex : IDisposable
     {
         public IFileAccessor FileAccessor { get; }
 
@@ -249,19 +249,15 @@ namespace Ultima
                 return null;
             }
 
-            if ((FileAccessor.Stream?.CanRead != true) || (!FileAccessor.Stream.CanSeek))
-            {
-                FileAccessor.Stream = _mulPath == null ? null : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            }
-
-            if (FileAccessor.Stream == null)
+            FileStream stream = EnsureOpen();
+            if (stream == null)
             {
                 length = extra = 0;
                 patched = false;
                 return null;
             }
 
-            if (FileAccessor.Stream.Length < e.Lookup)
+            if (stream.Length < e.Lookup)
             {
                 length = extra = 0;
                 patched = false;
@@ -270,8 +266,8 @@ namespace Ultima
 
             patched = false;
 
-            FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
-            return FileAccessor.Stream;
+            stream.Seek(e.Lookup, SeekOrigin.Begin);
+            return stream;
         }
 
         public Stream Seek(int index, ref IEntry entry, out bool patched)
@@ -318,18 +314,14 @@ namespace Ultima
                 return null;
             }
 
-            if ((FileAccessor.Stream?.CanRead != true) || (!FileAccessor.Stream.CanSeek))
-            {
-                FileAccessor.Stream = _mulPath == null ? null : new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            }
-
-            if (FileAccessor.Stream == null)
+            FileStream stream = EnsureOpen();
+            if (stream == null)
             {
                 patched = false;
                 return null;
             }
 
-            if (FileAccessor.Stream.Length < e.Lookup)
+            if (stream.Length < e.Lookup)
             {
                 patched = false;
                 return null;
@@ -337,8 +329,48 @@ namespace Ultima
 
             patched = false;
 
-            FileAccessor.Stream.Seek(e.Lookup, SeekOrigin.Begin);
-            return FileAccessor.Stream;
+            stream.Seek(e.Lookup, SeekOrigin.Begin);
+            return stream;
+        }
+
+        /// <summary>
+        /// Returns the cached FileAccessor.Stream, re-opening it only when
+        /// genuinely required (null or disposed). Replaces the per-call
+        /// CanRead/CanSeek probe that previously re-instantiated the
+        /// FileStream every time a downstream caller had Close()'d it.
+        /// </summary>
+        private FileStream EnsureOpen()
+        {
+            FileStream stream = FileAccessor.Stream;
+            if (stream != null && stream.CanRead && stream.CanSeek)
+            {
+                return stream;
+            }
+
+            if (_mulPath == null)
+            {
+                FileAccessor.Stream = null;
+                return null;
+            }
+
+            stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            FileAccessor.Stream = stream;
+            return stream;
+        }
+
+        /// <summary>
+        /// Releases the underlying .mul / .uop FileStream so the next access
+        /// re-opens fresh. Additive — existing code paths that ignore the
+        /// disposable contract keep working because EnsureOpen handles a
+        /// disposed FileAccessor.Stream gracefully.
+        /// </summary>
+        public void Dispose()
+        {
+            FileAccessor?.Stream?.Dispose();
+            if (FileAccessor != null)
+            {
+                FileAccessor.Stream = null;
+            }
         }
 
         public bool Valid(int index, out int length, out int extra, out bool patched)
@@ -389,12 +421,15 @@ namespace Ultima
                 return false;
             }
 
-            if ((FileAccessor.Stream?.CanRead != true) || (!FileAccessor.Stream.CanSeek))
+            FileStream stream = EnsureOpen();
+            if (stream == null)
             {
-                FileAccessor.Stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                length = extra = 0;
+                patched = false;
+                return false;
             }
 
-            if (FileAccessor.Stream.Length < e.Lookup)
+            if (stream.Length < e.Lookup)
             {
                 length = extra = 0;
                 patched = false;
@@ -600,7 +635,9 @@ namespace Ultima
             var fileInfo = new FileInfo(path);
             string uopPattern = fileInfo.Name.Replace(fileInfo.Extension, "").ToLowerInvariant();
 
-            using (var br = new BinaryReader(Stream))
+            // leaveOpen: this ctor caches Stream on the instance for later
+            // FileIndex.Seek calls; disposing the BinaryReader must not close it.
+            using (var br = new BinaryReader(Stream, System.Text.Encoding.UTF8, leaveOpen: true))
             {
                 br.BaseStream.Seek(0, SeekOrigin.Begin);
 

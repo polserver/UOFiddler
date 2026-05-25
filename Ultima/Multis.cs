@@ -76,13 +76,15 @@ namespace Ultima
                     return MultiComponentList.Empty;
                 }
 
+                // leaveOpen: stream is owned by the shared FileIndex; the
+                // BinaryReader is throwaway and must not close it.
                 if (Art.IsUOAHS())
                 {
-                    return new MultiComponentList(new BinaryReader(stream), length / 16, true);
+                    return new MultiComponentList(new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true), length / 16, true);
                 }
                 else
                 {
-                    return new MultiComponentList(new BinaryReader(stream), length / 12, false);
+                    return new MultiComponentList(new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true), length / 12, false);
                 }
             }
             catch

@@ -21,6 +21,24 @@ namespace Ultima
         public static bool CacheData { get; set; } = true;
 
         /// <summary>
+        /// Initial LRU capacity for the Art read cache (statics + land
+        /// tiles share the same cache). Default 4096 — bounds the worst-case
+        /// working set to a few hundred MB of bitmaps even after a full
+        /// 0x14000-id scan, while keeping recent thumbnails warm. Reading
+        /// happens at static-ctor time so set this before first use, or call
+        /// <see cref="Ultima.Art.SetCacheCapacity"/> at runtime.
+        /// </summary>
+        public static int CacheCapacityArt { get; set; } = 4096;
+
+        /// <summary>
+        /// Initial LRU capacity for the Gumps read cache. Default 2048 —
+        /// gumps are larger on average than statics, so the cap is lower
+        /// to keep total memory comparable. Adjust via
+        /// <see cref="Ultima.Gumps.SetCacheCapacity"/> at runtime.
+        /// </summary>
+        public static int CacheCapacityGumps { get; set; } = 2048;
+
+        /// <summary>
         /// Contains the path infos
         /// </summary>
         public static Dictionary<string, string> MulPath { get; set; }

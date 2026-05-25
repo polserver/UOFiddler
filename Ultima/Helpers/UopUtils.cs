@@ -126,6 +126,53 @@ namespace Ultima.Helpers
         }
 
         /// <summary>
+        /// Decompresses zlib UOP-entry bytes into a caller-supplied buffer
+        /// instead of allocating a fresh byte[]. Pair with ArrayPool to make
+        /// per-call allocations effectively zero on the hot decode paths.
+        ///
+        /// <paramref name="destinationBuffer"/> must be at least as large as
+        /// the entry's declared decompressed length (see Entry6D.DecompressedLength).
+        /// Returns false if decompression fails OR the destination is too
+        /// small to hold the full payload — in the latter case the caller
+        /// should retry with a larger buffer.
+        /// </summary>
+        public static bool TryDecompressInto(byte[] compressedData, int compressedOffset, int compressedLength, byte[] destinationBuffer, out int decompressedLength)
+        {
+            decompressedLength = 0;
+            if (compressedData == null || compressedLength <= 0 || destinationBuffer == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                using var compressedStream = new MemoryStream(compressedData, compressedOffset, compressedLength, writable: false);
+                using var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, leaveOpen: false);
+
+                int total = 0;
+                int read;
+                while (total < destinationBuffer.Length &&
+                       (read = zlibStream.Read(destinationBuffer, total, destinationBuffer.Length - total)) > 0)
+                {
+                    total += read;
+                }
+
+                // If the stream still has bytes after we filled the destination, the buffer was too small.
+                if (total == destinationBuffer.Length && zlibStream.ReadByte() != -1)
+                {
+                    return false;
+                }
+
+                decompressedLength = total;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Method for compressing zlib byte arrays inside .uop
         /// </summary>
         /// <returns>compressed byte[] data</returns>

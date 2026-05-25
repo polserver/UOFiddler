@@ -405,7 +405,10 @@ namespace Ultima
 
             _idxExtra = extra;
 
-            using (var bin = new BinaryReader(stream))
+            // leaveOpen: stream is owned by the shared FileIndex; disposing the
+            // BinaryReader must not close it, or the next FileIndex.Seek pays a
+            // full re-open.
+            using (var bin = new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true))
             {
                 for (int i = 0; i < PaletteCapacity; ++i)
                 {
@@ -430,8 +433,6 @@ namespace Ultima
                     Frames.Add(new FrameEdit(bin));
                 }
             }
-
-            stream.Close();
         }
 
         public AnimIdx(BinaryReader bin, int extra)

@@ -19,14 +19,26 @@ namespace Ultima.Helpers
 
         public static byte[] Decompress(byte[] buffer)
         {
+            return Decompress(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        /// Decompresses a slice of <paramref name="buffer"/>. Lets callers pass
+        /// pooled buffers that may be larger than the actual payload — the
+        /// original Decompress(byte[]) overload reads BaseStream.Length, which
+        /// would walk into uninitialized tail bytes when the input is pooled.
+        /// </summary>
+        public static byte[] Decompress(byte[] buffer, int offset, int length)
+        {
             byte[] output;
 
-            using (var reader = new BinaryReader(new MemoryStream(buffer)))
+            using (var ms = new MemoryStream(buffer, offset, length, writable: false))
+            using (var reader = new BinaryReader(ms))
             {
                 var header = reader.ReadUInt32();
                 uint dataLength = header ^ 0x8E2C9A3D;
 
-                var list = reader.ReadBytes((int)(reader.BaseStream.Length - 4));
+                var list = reader.ReadBytes(length - 4);
                 output = InternalDecompress(MoveToFrontCoding.Decode(list));
 
                 if (output.Length != dataLength)

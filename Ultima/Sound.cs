@@ -132,7 +132,6 @@ namespace Ultima
 
             stream.ReadExactly(stringBuffer, 0, 32);
             stream.ReadExactly(buffer, 0, length);
-            stream.Close();
 
             var resultBuffer = new byte[buffer.Length + (waveHeader.Length << 2)];
 
@@ -234,7 +233,6 @@ namespace Ultima
 
             var stringBuffer = new byte[32];
             stream.ReadExactly(stringBuffer, 0, 32);
-            stream.Close();
             name = Encoding.ASCII.GetString(stringBuffer); // seems that the null terminator's not being properly recognized :/
             if (name.IndexOf('\0') > 0)
             {
@@ -286,7 +284,6 @@ namespace Ultima
                     return 0;
                 }
 
-                stream.Close();
                 length -= 32; // mulheaderlength
                 len = length;
             }

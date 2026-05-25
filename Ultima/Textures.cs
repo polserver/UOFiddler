@@ -1,8 +1,10 @@
+using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Security.Cryptography;
+using Ultima.Helpers;
 
 namespace Ultima
 {
@@ -15,7 +17,6 @@ namespace Ultima
 
         private struct Checksums
         {
-            public byte[] Checksum;
             public int Position;
             public int Length;
             public int Extra;
@@ -130,43 +131,52 @@ namespace Ultima
 
             int size = extra == 0 ? 64 : 128;
 
-            var bmp = new Bitmap(size, size, PixelFormat.Format16bppArgb1555);
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-            var line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
             int max = size * size * 2;
 
-            byte[] streamBuffer = new byte[max];
-
-            stream.ReadExactly(streamBuffer, 0, max);
-
-            fixed (byte* data = streamBuffer)
+            byte[] streamBuffer = ArrayPool<byte>.Shared.Rent(max);
+            try
             {
-                var binData = (ushort*)data;
-                for (int y = 0; y < size; ++y, line += delta)
-                {
-                    ushort* cur = line;
-                    ushort* end = cur + size;
+                stream.ReadExactly(streamBuffer, 0, max);
 
-                    while (cur < end)
+                var bmp = new Bitmap(size, size, PixelFormat.Format16bppArgb1555);
+                BitmapData bd = bmp.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+                try
+                {
+                    var line = (ushort*)bd.Scan0;
+                    int delta = bd.Stride >> 1;
+
+                    fixed (byte* data = streamBuffer)
                     {
-                        *cur++ = (ushort)(*binData++ ^ 0x8000);
+                        var binData = (ushort*)data;
+                        for (int y = 0; y < size; ++y, line += delta)
+                        {
+                            ushort* cur = line;
+                            ushort* end = cur + size;
+
+                            while (cur < end)
+                            {
+                                *cur++ = (ushort)(*binData++ ^ 0x8000);
+                            }
+                        }
                     }
                 }
+                finally
+                {
+                    bmp.UnlockBits(bd);
+                }
+
+                if (!Files.CacheData)
+                {
+                    return _cache[index] = bmp;
+                }
+
+                return bmp;
             }
-
-            bmp.UnlockBits(bd);
-
-            stream.Close();
-
-            if (!Files.CacheData)
+            finally
             {
-                return _cache[index] = bmp;
+                ArrayPool<byte>.Shared.Return(streamBuffer);
             }
-
-            return bmp;
         }
 
         public static unsafe void Save(string path)
@@ -174,7 +184,9 @@ namespace Ultima
             string idx = Path.Combine(path, "texidx.mul");
             string mul = Path.Combine(path, "texmaps.mul");
 
-            List<Checksums> checksumList = new List<Checksums>();
+            // M3.5: xxHash128-keyed dedup index, replacing the old
+            // List<Checksums>+SHA256-bytes layout and its O(n²) linear scan.
+            Dictionary<UInt128, Checksums> checksums = new Dictionary<UInt128, Checksums>();
 
             var memIdx = new MemoryStream();
             var memMul = new MemoryStream();
@@ -198,55 +210,52 @@ namespace Ultima
                     }
                     else
                     {
-                        byte[] newChecksum;
-                        using (var sha = SHA256.Create())
-                        using (var ms = new MemoryStream())
-                        {
-                            bmp.Save(ms, ImageFormat.Bmp);
-                            newChecksum = sha.ComputeHash(ms.ToArray());
-                        }
-
-                        if (CompareSaveImages(checksumList, newChecksum, out Checksums sum))
-                        {
-                            binIdx.Write(sum.Position); // lookup
-                            binIdx.Write(sum.Length); // length
-                            binIdx.Write(sum.Extra); // extra
-
-                            continue;
-                        }
-
                         BitmapData bd = bmp.LockBits(
                             new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
                             PixelFormat.Format16bppArgb1555);
-                        var line = (ushort*)bd.Scan0;
-                        int delta = bd.Stride >> 1;
-
-                        binIdx.Write((int)binMul.BaseStream.Position); // lookup
-                        var length = (int)binMul.BaseStream.Position;
-
-                        for (int y = 0; y < bmp.Height; ++y, line += delta)
+                        try
                         {
-                            ushort* cur = line;
-                            for (int x = 0; x < bmp.Width; ++x)
+                            UInt128 hash = bd.Hash128();
+                            if (checksums.TryGetValue(hash, out Checksums existing))
                             {
-                                binMul.Write((ushort)(cur[x] ^ 0x8000));
+                                binIdx.Write(existing.Position); // lookup
+                                binIdx.Write(existing.Length); // length
+                                binIdx.Write(existing.Extra); // extra
+                                continue;
                             }
+
+                            var line = (ushort*)bd.Scan0;
+                            int delta = bd.Stride >> 1;
+
+                            binIdx.Write((int)binMul.BaseStream.Position); // lookup
+                            var length = (int)binMul.BaseStream.Position;
+
+                            for (int y = 0; y < bmp.Height; ++y, line += delta)
+                            {
+                                ushort* cur = line;
+                                for (int x = 0; x < bmp.Width; ++x)
+                                {
+                                    binMul.Write((ushort)(cur[x] ^ 0x8000));
+                                }
+                            }
+
+                            int start = length;
+                            length = (int)binMul.BaseStream.Position - length;
+                            binIdx.Write(length);
+                            var extra = GetExtraFlag(length);
+                            binIdx.Write(extra);
+
+                            checksums[hash] = new Checksums
+                            {
+                                Position = start,
+                                Length = length,
+                                Extra = extra
+                            };
                         }
-
-                        int start = length;
-                        length = (int)binMul.BaseStream.Position - length;
-                        binIdx.Write(length);
-                        var extra = GetExtraFlag(length);
-                        binIdx.Write(extra);
-                        bmp.UnlockBits(bd);
-
-                        checksumList.Add(new Checksums
+                        finally
                         {
-                            Position = start,
-                            Length = length,
-                            Checksum = newChecksum,
-                            Extra = extra
-                        });
+                            bmp.UnlockBits(bd);
+                        }
                     }
                 }
 
@@ -267,40 +276,5 @@ namespace Ultima
             return length == 0x8000 ? 1 : 0;
         }
 
-        private static bool CompareSaveImages(IReadOnlyList<Checksums> checksumList, IReadOnlyList<byte> newChecksum, out Checksums sum)
-        {
-            sum = new Checksums();
-            for (int i = 0; i < checksumList.Count; ++i)
-            {
-                byte[] cmp = checksumList[i].Checksum;
-                if ((cmp == null) || (newChecksum == null) || (cmp.Length != newChecksum.Count))
-                {
-                    return false;
-                }
-
-                bool valid = true;
-
-                for (int j = 0; j < cmp.Length; ++j)
-                {
-                    if (cmp[j] == newChecksum[j])
-                    {
-                        continue;
-                    }
-
-                    valid = false;
-                    break;
-                }
-
-                if (!valid)
-                {
-                    continue;
-                }
-
-                sum = checksumList[i];
-                return true;
-            }
-
-            return false;
-        }
     }
 }

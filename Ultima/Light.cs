@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -9,7 +10,6 @@ namespace Ultima
         private static FileIndex _fileIndex = new FileIndex("lightidx.mul", "light.mul", 100, -1);
         private static Bitmap[] _cache = new Bitmap[100];
         private static bool[] _removed = new bool[100];
-        private static byte[] _streamBuffer;
 
         /// <summary>
         /// ReReads light.mul
@@ -63,8 +63,6 @@ namespace Ultima
                 return false;
             }
 
-            stream.Close();
-
             int width = (extra & 0xFFFF);
             int height = ((extra >> 16) & 0xFFFF);
 
@@ -110,8 +108,7 @@ namespace Ultima
             width = (extra & 0xFFFF);
             height = ((extra >> 16) & 0xFFFF);
             var buffer = new byte[length];
-            _ = stream.Read(buffer, 0, length);
-            stream.Close();
+            stream.ReadExactly(buffer, 0, length);
 
             return buffer;
         }
@@ -142,44 +139,52 @@ namespace Ultima
             int width = (extra & 0xFFFF);
             int height = ((extra >> 16) & 0xFFFF);
 
-            if (_streamBuffer == null || _streamBuffer.Length < length)
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
+            try
             {
-                _streamBuffer = new byte[length];
-            }
+                stream.ReadExactly(buffer, 0, length);
 
-            _ = stream.Read(_streamBuffer, 0, length);
+                var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
+                BitmapData bd = bmp.LockBits(
+                    new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
 
-            var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
-            BitmapData bd = bmp.LockBits(
-                new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-            var line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
-            fixed (byte* data = _streamBuffer)
-            {
-                var bindat = (sbyte*)data;
-                for (int y = 0; y < height; ++y, line += delta)
+                try
                 {
-                    ushort* cur = line;
-                    ushort* end = cur + width;
+                    var line = (ushort*)bd.Scan0;
+                    int delta = bd.Stride >> 1;
 
-                    while (cur < end)
+                    fixed (byte* data = buffer)
                     {
-                        sbyte value = *bindat++;
-                        *cur++ = (ushort)(((0x1f + value) << 10) + ((0x1F + value) << 5) + (0x1F + value));
+                        var bindat = (sbyte*)data;
+                        for (int y = 0; y < height; ++y, line += delta)
+                        {
+                            ushort* cur = line;
+                            ushort* end = cur + width;
+
+                            while (cur < end)
+                            {
+                                sbyte value = *bindat++;
+                                *cur++ = (ushort)(((0x1f + value) << 10) + ((0x1F + value) << 5) + (0x1F + value));
+                            }
+                        }
                     }
                 }
-            }
+                finally
+                {
+                    bmp.UnlockBits(bd);
+                }
 
-            bmp.UnlockBits(bd);
-            stream.Close();
-            if (!Files.CacheData)
+                if (!Files.CacheData)
+                {
+                    return _cache[index] = bmp;
+                }
+
+                return bmp;
+            }
+            finally
             {
-                return _cache[index] = bmp;
+                ArrayPool<byte>.Shared.Return(buffer);
             }
-
-            return bmp;
         }
 
         public static unsafe void Save(string path)
