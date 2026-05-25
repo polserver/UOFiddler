@@ -320,7 +320,7 @@
             // 
             // SelectFileToolStripComboBox
             // 
-            SelectFileToolStripComboBox.Items.AddRange(new object[] { "Choose anim file", "anim", "anim2", "anim3", "anim4", "anim5" });
+            SelectFileToolStripComboBox.Items.AddRange(new object[] { "Choose anim file", "anim", "anim2", "anim3", "anim4", "anim5", "anim6" });
             SelectFileToolStripComboBox.Name = "SelectFileToolStripComboBox";
             SelectFileToolStripComboBox.Size = new System.Drawing.Size(140, 25);
             SelectFileToolStripComboBox.SelectedIndexChanged += OnAnimChanged;

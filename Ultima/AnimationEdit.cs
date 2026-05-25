@@ -12,12 +12,14 @@ namespace Ultima
         private static FileIndex _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
         private static FileIndex _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
         private static FileIndex _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
+        private static FileIndex _fileIndex6 = new FileIndex("Anim6.idx", "Anim6.mul", -1);
 
         private static AnimIdx[] _animCache;
         private static AnimIdx[] _animCache2;
         private static AnimIdx[] _animCache3;
         private static AnimIdx[] _animCache4;
         private static AnimIdx[] _animCache5;
+        private static AnimIdx[] _animCache6;
 
         static AnimationEdit()
         {
@@ -50,6 +52,11 @@ namespace Ultima
             {
                 _animCache5 = new AnimIdx[_fileIndex5.IdxLength / 12];
             }
+
+            if (_fileIndex6.IdxLength > 0)
+            {
+                _animCache6 = new AnimIdx[_fileIndex6.IdxLength / 12];
+            }
         }
 
         /// <summary>
@@ -62,6 +69,7 @@ namespace Ultima
             _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
             _fileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", -1);
             _fileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", -1);
+            _fileIndex6 = new FileIndex("Anim6.idx", "Anim6.mul", -1);
 
             InitializeCache();
         }
@@ -148,6 +156,22 @@ namespace Ultima
                     }
 
                     break;
+                case 6:
+                    fileIndex = _fileIndex6;
+                    if (body < 200)
+                    {
+                        index = body * 110;
+                    }
+                    else if (body < 400)
+                    {
+                        index = 22000 + ((body - 200) * 65);
+                    }
+                    else
+                    {
+                        index = 35000 + ((body - 400) * 175);
+                    }
+
+                    break;
             }
 
             index += action * 5;
@@ -176,6 +200,8 @@ namespace Ultima
                     return _animCache4;
                 case 5:
                     return _animCache5;
+                case 6:
+                    return _animCache6;
                 default:
                     return _animCache;
             }
@@ -315,6 +341,11 @@ namespace Ultima
                     filename = "anim5";
                     cache = _animCache5;
                     fileIndex = _fileIndex5;
+                    break;
+                case 6:
+                    filename = "anim6";
+                    cache = _animCache6;
+                    fileIndex = _fileIndex6;
                     break;
             }
 

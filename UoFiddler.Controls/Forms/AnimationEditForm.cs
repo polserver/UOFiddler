@@ -382,12 +382,24 @@ namespace UoFiddler.Controls.Forms
 
         private void OnAnimChanged(object sender, EventArgs e)
         {
-            if (SelectFileToolStripComboBox.SelectedIndex == _fileType)
+            int selected = SelectFileToolStripComboBox.SelectedIndex;
+            if (selected == _fileType)
             {
                 return;
             }
 
-            _fileType = SelectFileToolStripComboBox.SelectedIndex;
+            if (selected >= 1 && Files.GetFilePath($"anim{(selected == 1 ? "" : selected.ToString())}.mul") == null)
+            {
+                MessageBox.Show(
+                    $"anim{(selected == 1 ? "" : selected.ToString())}.mul is not present in the client directory.",
+                    "File not found",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                SelectFileToolStripComboBox.SelectedIndex = _fileType;
+                return;
+            }
+
+            _fileType = selected;
             OnLoad(this, EventArgs.Empty);
         }
 
