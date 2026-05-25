@@ -179,7 +179,7 @@ namespace UoFiddler.Controls.UserControls
             }
             else if (modified)
             {
-                textColor = Color.Blue;
+                textColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
             }
             else
             {

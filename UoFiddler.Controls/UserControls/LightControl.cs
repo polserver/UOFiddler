@@ -269,13 +269,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedInsert(object sender, EventArgs e)
         {
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 99))
             {
-                InsertText.ForeColor = Ultima.Light.TestLight(index) ? Color.Red : Color.Black;
+                InsertText.ForeColor = Ultima.Light.TestLight(index) ? invalidColor : SystemColors.ControlText;
             }
             else
             {
-                InsertText.ForeColor = Color.Red;
+                InsertText.ForeColor = invalidColor;
             }
         }
 
@@ -403,13 +404,14 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             if (Utils.ConvertStringToInt(LandTileText.Text, out int index, 0, 0x3FFF))
             {
-                LandTileText.ForeColor = !Ultima.Art.IsValidLand(index) ? Color.Red : Color.Black;
+                LandTileText.ForeColor = !Ultima.Art.IsValidLand(index) ? invalidColor : SystemColors.ControlText;
             }
             else
             {
-                LandTileText.ForeColor = Color.Red;
+                LandTileText.ForeColor = invalidColor;
             }
         }
 
@@ -442,13 +444,14 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             if (Utils.ConvertStringToInt(LightTileText.Text, out int index, 0, Ultima.Art.GetMaxItemId()))
             {
-                LightTileText.ForeColor = !Ultima.Art.IsValidStatic(index) ? Color.Red : Color.Black;
+                LightTileText.ForeColor = !Ultima.Art.IsValidStatic(index) ? invalidColor : SystemColors.ControlText;
             }
             else
             {
-                LightTileText.ForeColor = Color.Red;
+                LightTileText.ForeColor = invalidColor;
             }
         }
 

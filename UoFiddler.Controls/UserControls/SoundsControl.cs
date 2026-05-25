@@ -103,7 +103,7 @@ namespace UoFiddler.Controls.UserControls
 
                         if (translated)
                         {
-                            item.ForeColor = Color.Blue;
+                            item.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
                             item.Font = new Font(Font, FontStyle.Underline);
                         }
 
@@ -114,7 +114,7 @@ namespace UoFiddler.Controls.UserControls
                         cache.Add(new ListViewItem($"0x{i:X3} ")
                         {
                             Tag = i,
-                            ForeColor = Color.Red
+                            ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red
                         });
                     }
                 }
@@ -470,7 +470,7 @@ namespace UoFiddler.Controls.UserControls
             else
             {
                 selected.Text = $"0x{id + _soundIdOffset:X3}";
-                selected.ForeColor = Color.Red;
+                selected.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
                 selected.Font = Font;
             }
 

@@ -66,7 +66,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if (string.Equals("Misc", group.Name))
                 {
-                    groupNode.ForeColor = Color.Blue;
+                    groupNode.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
                 }
 
                 for (int i = 0; i < SkillGroups.SkillList.Count; ++i)

@@ -319,13 +319,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedInsert(object sender, EventArgs e)
         {
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, 0x3FFF))
             {
-                InsertText.ForeColor = Textures.TestTexture(index) ? Color.Red : Color.Black;
+                InsertText.ForeColor = Textures.TestTexture(index) ? invalidColor : SystemColors.ControlText;
             }
             else
             {
-                InsertText.ForeColor = Color.Red;
+                InsertText.ForeColor = invalidColor;
             }
         }
 

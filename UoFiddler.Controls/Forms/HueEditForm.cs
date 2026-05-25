@@ -296,9 +296,10 @@ namespace UoFiddler.Controls.Forms
 
         private void OnTextChangedArt(object sender, EventArgs e)
         {
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             TextBoxArt.ForeColor = Utils.ConvertStringToInt(TextBoxArt.Text, out int index, 0, Art.GetMaxItemId())
-                ? Art.IsValidStatic(index) ? Color.Black : Color.Red
-                : Color.Red;
+                ? Art.IsValidStatic(index) ? SystemColors.ControlText : invalidColor
+                : invalidColor;
         }
 
         private void OnKeyDownArt(object sender, KeyEventArgs e)
@@ -327,9 +328,10 @@ namespace UoFiddler.Controls.Forms
 
         private void OnTextChangedAnim(object sender, EventArgs e)
         {
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             TextBoxAnim.ForeColor = Utils.ConvertStringToInt(TextBoxAnim.Text, out int index, 1, 10000)
-                ? Animations.IsActionDefined(index, 0, 0) ? Color.Black : Color.Red
-                : Color.Red;
+                ? Animations.IsActionDefined(index, 0, 0) ? SystemColors.ControlText : invalidColor
+                : invalidColor;
         }
 
         private void OnKeyDownAnim(object sender, KeyEventArgs e)
@@ -367,13 +369,14 @@ namespace UoFiddler.Controls.Forms
 
         private void OnTextChangedGump(object sender, EventArgs e)
         {
+            Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             if (Utils.ConvertStringToInt(TextBoxGump.Text, out int index, 0, 0xFFFE))
             {
-                TextBoxGump.ForeColor = Gumps.IsValidIndex(index) ? Color.Black : Color.Red;
+                TextBoxGump.ForeColor = Gumps.IsValidIndex(index) ? SystemColors.ControlText : invalidColor;
             }
             else
             {
-                TextBoxGump.ForeColor = Color.Red;
+                TextBoxGump.ForeColor = invalidColor;
             }
         }
 

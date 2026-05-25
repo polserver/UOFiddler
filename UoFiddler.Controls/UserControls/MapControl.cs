@@ -1089,7 +1089,9 @@ namespace UoFiddler.Controls.UserControls
 
             OverlayObject o = (OverlayObject)OverlayObjectTree.SelectedNode.Tag;
             o.Visible = !o.Visible;
-            OverlayObjectTree.SelectedNode.ForeColor = !o.Visible ? Color.Red : Color.Black;
+            OverlayObjectTree.SelectedNode.ForeColor = !o.Visible
+                ? (Options.DarkMode ? Color.OrangeRed : Color.Red)
+                : SystemColors.ControlText;
 
             OverlayObjectTree.Invalidate();
             pictureBox.Invalidate();
