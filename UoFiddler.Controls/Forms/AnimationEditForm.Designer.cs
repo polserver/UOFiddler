@@ -96,6 +96,8 @@
             numericUpDownGreen = new System.Windows.Forms.NumericUpDown();
             LockColorControlsCheckBox = new System.Windows.Forms.CheckBox();
             AnimationEditPage = new System.Windows.Forms.TabPage();
+            GalleryPage = new System.Windows.Forms.TabPage();
+            GalleryTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             AnimationTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             AnimationEditToolStrip = new System.Windows.Forms.ToolStrip();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -344,6 +346,7 @@
             // 
             AnimationTabControl.Controls.Add(FramePage);
             AnimationTabControl.Controls.Add(AnimationEditPage);
+            AnimationTabControl.Controls.Add(GalleryPage);
             AnimationTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             AnimationTabControl.Location = new System.Drawing.Point(4, 3);
             AnimationTabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -858,9 +861,41 @@
             AnimationEditPage.TabIndex = 1;
             AnimationEditPage.Text = "Preview/Edit";
             AnimationEditPage.UseVisualStyleBackColor = true;
-            // 
+            //
+            // GalleryPage
+            //
+            GalleryPage.Controls.Add(GalleryTileView);
+            GalleryPage.Location = new System.Drawing.Point(4, 24);
+            GalleryPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GalleryPage.Name = "GalleryPage";
+            GalleryPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GalleryPage.Size = new System.Drawing.Size(827, 565);
+            GalleryPage.TabIndex = 2;
+            GalleryPage.Text = "Gallery";
+            GalleryPage.UseVisualStyleBackColor = true;
+            //
+            // GalleryTileView
+            //
+            GalleryTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            GalleryTileView.Location = new System.Drawing.Point(4, 3);
+            GalleryTileView.MultiSelect = false;
+            GalleryTileView.Name = "GalleryTileView";
+            GalleryTileView.Size = new System.Drawing.Size(819, 559);
+            GalleryTileView.TabIndex = 0;
+            GalleryTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
+            GalleryTileView.TileBorderColor = System.Drawing.Color.Gray;
+            GalleryTileView.TileBorderWidth = 1F;
+            GalleryTileView.TileFocusColor = System.Drawing.Color.DarkBlue;
+            GalleryTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
+            GalleryTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            GalleryTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            GalleryTileView.TileSize = new System.Drawing.Size(81, 110);
+            GalleryTileView.VirtualListSize = 0;
+            GalleryTileView.DrawItem += GalleryTileViewDrawItem;
+            GalleryTileView.MouseDoubleClick += GalleryTileViewMouseDoubleClick;
+            //
             // AnimationTableLayoutPanel
-            // 
+            //
             AnimationTableLayoutPanel.ColumnCount = 2;
             AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 198F));
@@ -1371,9 +1406,9 @@
             ExportAllToVDToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             ExportAllToVDToolStripMenuItem.Text = "Export All Valid To VD";
             ExportAllToVDToolStripMenuItem.Click += OnClickExportAllToVD;
-            // 
+            //
             // AnimationTimer
-            // 
+            //
             AnimationTimer.Tick += AnimationTimer_Tick;
             // 
             // AnimationEditForm
@@ -1503,6 +1538,8 @@
         private System.Windows.Forms.TabControl AnimationTabControl;
         private System.Windows.Forms.TabPage FramePage;
         private System.Windows.Forms.TabPage AnimationEditPage;
+        private System.Windows.Forms.TabPage GalleryPage;
+        private UoFiddler.Controls.UserControls.TileView.TileViewControl GalleryTileView;
         private System.Windows.Forms.ToolStripMenuItem textToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tiffToolStripMenuItem;
         private System.Windows.Forms.ToolStrip AnimationFileToolStrip;

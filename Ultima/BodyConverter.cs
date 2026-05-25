@@ -16,6 +16,14 @@ namespace Ultima
         public static int[] Table4 { get; private set; }
         public static int[] Table5 { get; private set; }
 
+        // Reverse maps: in-file body id → server body id (first match wins,
+        // matching the historical linear-scan behavior of GetTrueBody).
+        private static Dictionary<int, int> _reverse1;
+        private static Dictionary<int, int> _reverse2;
+        private static Dictionary<int, int> _reverse3;
+        private static Dictionary<int, int> _reverse4;
+        private static Dictionary<int, int> _reverse5;
+
         static BodyConverter()
         {
             Initialize();
@@ -219,6 +227,31 @@ namespace Ultima
             {
                 Table5[list5[i]] = list5[i + 1];
             }
+
+            _reverse1 = BuildReverse(list1);
+            _reverse2 = BuildReverse(list2);
+            _reverse3 = BuildReverse(list3);
+            _reverse4 = BuildReverse(list4);
+            _reverse5 = BuildReverse(list5);
+        }
+
+        private static Dictionary<int, int> BuildReverse(List<int> pairs)
+        {
+            // pairs is [server0, inFile0, server1, inFile1, ...] from the
+            // forward-table population pass. Insert in order so first server
+            // body to claim an in-file id wins — matches the historical
+            // linear-scan-from-zero behavior of GetTrueBody.
+            var map = new Dictionary<int, int>(pairs.Count / 2);
+            for (int i = 0; i < pairs.Count; i += 2)
+            {
+                int serverBody = pairs[i];
+                int inFile = pairs[i + 1];
+                if (!map.ContainsKey(inFile))
+                {
+                    map[inFile] = serverBody;
+                }
+            }
+            return map;
         }
 
         /// <summary>
@@ -360,85 +393,28 @@ namespace Ultima
         /// <returns></returns>
         public static int GetTrueBody(int fileType, int index)
         {
-            switch (fileType)
+            if (index < 0)
             {
-                case 1:
-                default:
-                {
-                    return index;
-                }
-                case 2:
-                {
-                    if (Table1 != null && index >= 0)
-                    {
-                        for (int i = 0; i < Table1.Length; ++i)
-                        {
-                            if (Table1[i] == index)
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case 3:
-                {
-                    if (Table2 != null && index >= 0)
-                    {
-                        for (int i = 0; i < Table2.Length; ++i)
-                        {
-                            if (Table2[i] == index)
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case 4:
-                {
-                    if (Table3 != null && index >= 0)
-                    {
-                        for (int i = 0; i < Table3.Length; ++i)
-                        {
-                            if (Table3[i] == index)
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case 5:
-                {
-                    if (Table4 != null && index >= 0)
-                    {
-                        for (int i = 0; i < Table4.Length; ++i)
-                        {
-                            if (Table4[i] == index)
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case 6:
-                {
-                    if (Table5 != null && index >= 0)
-                    {
-                        for (int i = 0; i < Table5.Length; ++i)
-                        {
-                            if (Table5[i] == index)
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                    break;
-                }
+                return -1;
             }
-            return -1;
+
+            Dictionary<int, int> map = fileType switch
+            {
+                1 => null,           // anim.mul: server id == in-file id
+                2 => _reverse1,
+                3 => _reverse2,
+                4 => _reverse3,
+                5 => _reverse4,
+                6 => _reverse5,
+                _ => null
+            };
+
+            if (fileType == 1)
+            {
+                return index;
+            }
+
+            return map != null && map.TryGetValue(index, out int serverBody) ? serverBody : -1;
         }
     }
 }

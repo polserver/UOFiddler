@@ -526,9 +526,9 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    int type = Animations.GetUopAnimationType(body);
-                    bool isEquip = type == 4;
-                    int actionType = isEquip ? 3 : (type < 0 || type >= GetActionNames.Length ? 0 : type);
+                    int type = (int)MobTypes.GetTypeOrDefault(body);
+                    bool isEquip = type == (int)MobType.Equipment;
+                    int actionType = isEquip ? (int)MobType.Human : (type < 0 || type >= GetActionNames.Length ? 0 : type);
                     if (!isEquip && (type < 0 || type >= GetActionNames.Length))
                     {
                         type = 0;
@@ -633,7 +633,7 @@ namespace UoFiddler.Controls.UserControls
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Far;
 
-            e.Graphics.DrawString($"({graphic})", listView.Font, Brushes.Black,
+            e.Graphics.DrawString($"({graphic})", listView.Font, SystemBrushes.ControlText,
                 new RectangleF(tileRect.X, tileRect.Y, tileRect.Width, tileRect.Height), stringFormat);
 
             e.Graphics.Clip = previousClip;
@@ -710,9 +710,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);
-            TextRenderer.DrawText(e.Graphics, e.Item.Text, listView1.Font, e.Bounds, Color.Black, TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
+            TextRenderer.DrawText(e.Graphics, e.Item.Text, listView1.Font, e.Bounds, SystemColors.ControlText, TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
 
-            using (var pen = new Pen(Color.Black))
+            using (var pen = new Pen(SystemColors.ControlText))
             {
                 e.Graphics.DrawRectangle(pen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
             }

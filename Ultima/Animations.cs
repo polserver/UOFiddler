@@ -242,9 +242,6 @@ namespace Ultima
 
         private static void LoadTable()
         {
-            // TODO: check why it was fixed at max 1697. Probably old code for anim.mul?
-            //int count = 400 + ((_fileIndex.Index.Length - 35000) / 175);
-
             _table = new int[_maxAnimationValue + 1];
 
             for (int i = 0; i < _table.Length; ++i)
@@ -345,77 +342,75 @@ namespace Ultima
         }
 
         /// <summary>
-        /// Action count of given Body in given anim file
+        /// Action count of given Body in given anim file.
+        /// When <c>mobtypes.txt</c> is loaded, the count is taken from the
+        /// body's mobtype category; otherwise falls back to the historical
+        /// body-id range heuristic.
         /// </summary>
         /// <param name="body"></param>
         /// <param name="fileType"></param>
         /// <returns></returns>
         public static int GetAnimLength(int body, int fileType)
         {
-            int length;
+            if (MobTypes.IsLoaded)
+            {
+                return MobTypes.GetActionCount(GetBodyMobType(body, fileType));
+            }
+
+            return GetAnimLengthLegacy(body, fileType);
+        }
+
+        /// <summary>
+        /// Returns the mobtype category for a body in the given file. When
+        /// <c>mobtypes.txt</c> is loaded, the server body id is recovered via
+        /// <see cref="BodyConverter.GetTrueBody"/> for anim2..anim6 reverse
+        /// lookup; falls back to the legacy id-range heuristic if either the
+        /// reverse-mapping or the mobtypes lookup misses.
+        /// </summary>
+        public static MobType GetBodyMobType(int body, int fileType)
+        {
+            if (MobTypes.IsLoaded)
+            {
+                // For anim.mul (fileType=1) in-file id == server id.
+                // For anim2..6 reverse-lookup bodyconv.def to find the server id.
+                int serverBody = fileType == 1 ? body : BodyConverter.GetTrueBody(fileType, body);
+                if (serverBody >= 0 && MobTypes.TryGet(serverBody, out MobType mt, out _))
+                {
+                    return mt;
+                }
+            }
+
+            return LegacyRangeToMobType(body, fileType);
+        }
+
+        private static MobType LegacyRangeToMobType(int body, int fileType)
+        {
             switch (fileType)
             {
-                case 1:
-                default:
-                    if (body < 200)
-                    {
-                        length = 22; // high
-                    }
-                    else if (body < 400)
-                    {
-                        length = 13; // low
-                    }
-                    else
-                    {
-                        length = 35; // people
-                    }
-
-                    break;
                 case 2:
-                    if (body < 200)
-                    {
-                        length = 22; // high
-                    }
-                    else
-                    {
-                        length = 13; // low
-                    }
-
-                    break;
+                    return body < 200 ? MobType.Monster : MobType.Animal;
                 case 3:
                     if (body < 300)
                     {
-                        length = 13;
+                        return MobType.Animal;
                     }
-                    else if (body < 400)
-                    {
-                        length = 22;
-                    }
-                    else
-                    {
-                        length = 35;
-                    }
-
-                    break;
+                    return body < 400 ? MobType.Monster : MobType.Human;
+                case 1:
                 case 4:
                 case 5:
                 case 6:
+                default:
                     if (body < 200)
                     {
-                        length = 22;
+                        return MobType.Monster;
                     }
-                    else if (body < 400)
-                    {
-                        length = 13;
-                    }
-                    else
-                    {
-                        length = 35;
-                    }
-
-                    break;
+                    return body < 400 ? MobType.Animal : MobType.Human;
             }
-            return length;
+        }
+
+        private static int GetAnimLengthLegacy(int body, int fileType)
+        {
+            return MobTypes.GetActionCount(LegacyRangeToMobType(body, fileType));
         }
 
         /// <summary>

@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using Ultima.Helpers;
@@ -25,7 +24,6 @@ namespace Ultima
 
         private static FileStream[] _uopFiles = new FileStream[6];
         private static readonly Dictionary<ulong, UopEntry> _hashTable = new();
-        private static readonly Dictionary<int, MobTypeInfo> _mobTypes = new();
         private static readonly Dictionary<int, int[]> _sequenceReplacements = new();
         private static bool _isLoaded;
 
@@ -36,12 +34,6 @@ namespace Ultima
             public int CompressedSize;
             public int DecompressedSize;
             public short CompressionFlag;
-        }
-
-        internal struct MobTypeInfo
-        {
-            public int Type;
-            public uint Flags;
         }
 
         static AnimationsUopLoader()
@@ -63,7 +55,6 @@ namespace Ultima
 
             _uopFiles = new FileStream[6];
             _hashTable.Clear();
-            _mobTypes.Clear();
             _sequenceReplacements.Clear();
             _isLoaded = false;
 
@@ -73,7 +64,7 @@ namespace Ultima
         private static void Initialize()
         {
             LoadUopFiles();
-            LoadMobTypes();
+            MobTypes.Reload();
             LoadAnimationSequence();
             _isLoaded = _uopFiles.Any(f => f != null);
         }
@@ -159,83 +150,6 @@ namespace Ultima
                 reader.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
             }
             while (true);
-        }
-
-        private static void LoadMobTypes()
-        {
-            string path = Files.GetFilePath("mobtypes.txt");
-            if (path == null)
-            {
-                return;
-            }
-
-            string[] typeNames =
-            {
-                "monster",
-                "sea_monster",
-                "animal",
-                "human",
-                "equipment"
-            };
-
-            try
-            {
-                foreach (string rawLine in File.ReadLines(path))
-                {
-                    string line = rawLine.Trim();
-                    if (line.Length == 0 || line[0] == '#' || !char.IsDigit(line[0]))
-                    {
-                        continue;
-                    }
-
-                    string[] parts = line.Split(new[] { '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length < 3)
-                    {
-                        continue;
-                    }
-
-                    if (!int.TryParse(parts[0], out int id))
-                    {
-                        continue;
-                    }
-
-                    string typeName = parts[1].ToLowerInvariant();
-
-                    string flagStr = parts[2];
-                    int commentIdx = flagStr.IndexOf('#');
-                    if (commentIdx == 0)
-                    {
-                        continue;
-                    }
-
-                    if (commentIdx > 0)
-                    {
-                        flagStr = flagStr.Substring(0, commentIdx).Trim();
-                    }
-
-                    flagStr = flagStr.Replace("0x", "").Replace("0X", "");
-                    if (!uint.TryParse(flagStr, NumberStyles.HexNumber, null, out uint flags))
-                    {
-                        continue;
-                    }
-
-                    int typeIdx = Array.IndexOf(typeNames, typeName);
-                    if (typeIdx < 0)
-                    {
-                        continue;
-                    }
-
-                    _mobTypes[id] = new MobTypeInfo
-                    {
-                        Type = typeIdx,
-                        Flags = 0x80000000u | flags,
-                    };
-                }
-            }
-            catch
-            {
-                // mobtypes.txt is optional; parsing failures are non-fatal
-            }
         }
 
         private static void LoadAnimationSequence()
@@ -393,12 +307,15 @@ namespace Ultima
                 return false;
             }
 
-            return _mobTypes.TryGetValue(body, out var info) && (info.Flags & 0x10000u) != 0;
+            // Preserved-as-was: 0x10000u UOP-marker bit. Originating from a
+            // sentinel in mobtypes.txt flags; pre-existing behavior was to
+            // gate UOP-body detection on this bit. Not in scope to revise.
+            return (MobTypes.GetFlags(body) & 0x10000u) != 0;
         }
 
         public static int GetAnimationType(int body)
         {
-            return _mobTypes.TryGetValue(body, out var info) ? info.Type : 0;
+            return MobTypes.TryGet(body, out MobType type, out _) ? (int)type : 0;
         }
 
         public static bool IsActionDefined(int body, int action)
@@ -434,17 +351,14 @@ namespace Ultima
 
         public static IEnumerable<int> GetAllUopBodyIds()
         {
-            return _mobTypes
-                .Where(kv => (kv.Value.Flags & 0x10000u) != 0)
-                .Select(kv => kv.Key)
+            return MobTypes.GetDefinedBodies()
+                .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
                 .OrderBy(id => id);
         }
 
         public static IEnumerable<int> GetAllMobTypeBodyIds()
         {
-            return _mobTypes
-                .Keys
-                .OrderBy(id => id);
+            return MobTypes.GetDefinedBodies().OrderBy(id => id);
         }
 
         public static string GetUopFileName(int body)
