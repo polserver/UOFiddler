@@ -66,6 +66,7 @@ namespace UoFiddler.Controls.Forms
             Selected = 0;
             SecondSelected = -1;
 
+            pictureBoxPreview.BackColor = Options.PreviewBackgroundColor;
             pictureBoxPreview.Image = new Bitmap(pictureBoxPreview.Width, pictureBoxPreview.Height);
         }
 
@@ -416,7 +417,7 @@ namespace UoFiddler.Controls.Forms
                 Hues.ApplyTo(bmp, _colors, hueOnlyGreyToolStripMenuItem.Checked);
                 using (Graphics g = Graphics.FromImage(pictureBoxPreview.Image))
                 {
-                    g.Clear(Color.White);
+                    g.Clear(Options.PreviewBackgroundColor);
                     int x = (pictureBoxPreview.Image.Width / 2) - (bmp.Width / 2);
                     int y = (pictureBoxPreview.Image.Height / 2) - (bmp.Height / 2);
                     g.DrawImage(bmp, x, y);
