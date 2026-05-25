@@ -835,16 +835,26 @@ namespace UoFiddler.Controls.UserControls
 
         private void PreLoaderDoWork(object sender, DoWorkEventArgs e)
         {
-            for (int i = 0; i < Gumps.GetCount(); ++i)
+            int total = Gumps.GetCount();
+            int reportEvery = Math.Max(1, total / 200);
+            int sinceReport = 0;
+            int done = 0;
+            for (int i = 0; i < total; ++i)
             {
                 Gumps.GetGump(i);
-                PreLoader.ReportProgress(1);
+                ++done;
+                if (++sinceReport >= reportEvery)
+                {
+                    sinceReport = 0;
+                    PreLoader.ReportProgress(done);
+                }
             }
+            PreLoader.ReportProgress(done);
         }
 
         private void PreLoaderProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            ProgressBar.PerformStep();
+            ProgressBar.Value = Math.Min(ProgressBar.Maximum, Math.Max(ProgressBar.Minimum, e.ProgressPercentage));
         }
 
         private void PreLoaderCompleted(object sender, RunWorkerCompletedEventArgs e)

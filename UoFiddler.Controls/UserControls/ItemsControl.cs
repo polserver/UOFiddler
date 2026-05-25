@@ -877,16 +877,26 @@ namespace UoFiddler.Controls.UserControls
 
         private void PreLoaderDoWork(object sender, DoWorkEventArgs e)
         {
+            int total = _itemList.Count;
+            int reportEvery = Math.Max(1, total / 200);
+            int sinceReport = 0;
+            int done = 0;
             foreach (int item in _itemList)
             {
                 Art.GetStatic(item);
-                PreLoader.ReportProgress(1);
+                ++done;
+                if (++sinceReport >= reportEvery)
+                {
+                    sinceReport = 0;
+                    PreLoader.ReportProgress(done);
+                }
             }
+            PreLoader.ReportProgress(done);
         }
 
         private void PreLoaderProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            ProgressBar.PerformStep();
+            ProgressBar.Value = Math.Min(ProgressBar.Maximum, Math.Max(ProgressBar.Minimum, e.ProgressPercentage));
         }
 
         private void PreLoaderCompleted(object sender, RunWorkerCompletedEventArgs e)
