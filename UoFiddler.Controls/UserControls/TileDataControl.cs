@@ -230,19 +230,27 @@ namespace UoFiddler.Controls.UserControls
 
         public bool IsLoaded { get; private set; }
 
-        private int? _reselectGraphic;
-        private bool? _reselectGraphicLand;
-
         public static void Select(int graphic, bool land)
         {
-            if (!_refMarker.IsLoaded)
+            if (_refMarker == null)
             {
-                _refMarker.OnLoad(_refMarker, EventArgs.Empty);
-                _refMarker._reselectGraphic = graphic;
-                _refMarker._reselectGraphicLand = land;
+                return;
             }
 
-            SearchGraphic(graphic, land);
+            // Activate the outer TileData TabPage so the virtual ListView is on
+            // a visible tab before we set selection — assigning SelectedIndices
+            // on a VirtualMode ListView whose parent TabPage hasn't been shown
+            // does not stick across the later tab activation.
+            TabPageNavigator.ActivateOwningTabPage(_refMarker);
+
+            if (_refMarker.IsHandleCreated)
+            {
+                _refMarker.BeginInvoke(new Action(() => SearchGraphic(graphic, land)));
+            }
+            else
+            {
+                SearchGraphic(graphic, land);
+            }
         }
 
         public static bool SearchGraphic(int graphic, bool land)
@@ -534,14 +542,6 @@ namespace UoFiddler.Controls.UserControls
             if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
             {
                 return;
-            }
-
-            if (_reselectGraphic != null && _reselectGraphicLand != null)
-            {
-                SearchGraphic(_reselectGraphic.Value, _reselectGraphicLand.Value);
-
-                _reselectGraphic = null;
-                _reselectGraphicLand = null;
             }
 
             if (IsLoaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))

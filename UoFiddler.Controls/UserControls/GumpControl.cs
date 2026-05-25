@@ -853,10 +853,17 @@ namespace UoFiddler.Controls.UserControls
 
         internal static void Select(int gumpId)
         {
+            if (_refMarker == null)
+            {
+                return;
+            }
+
             if (!_refMarker._loaded)
             {
                 _refMarker.OnLoad(EventArgs.Empty);
             }
+
+            TabPageNavigator.ActivateOwningTabPage(_refMarker);
 
             Search(gumpId);
         }

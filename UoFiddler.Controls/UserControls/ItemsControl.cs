@@ -105,6 +105,11 @@ namespace UoFiddler.Controls.UserControls
         /// <returns></returns>
         public static bool SearchGraphic(int graphic)
         {
+            if (RefMarker == null)
+            {
+                return false;
+            }
+
             if (!RefMarker.IsLoaded)
             {
                 RefMarker.OnLoad(RefMarker, EventArgs.Empty);
@@ -115,9 +120,22 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
-            // we have to invalidate focus so it will scroll to item
-            RefMarker.ItemsTileView.FocusIndex = -1;
-            RefMarker.SelectedGraphicId = graphic;
+            TabPageNavigator.ActivateOwningTabPage(RefMarker);
+
+            if (RefMarker.IsHandleCreated)
+            {
+                RefMarker.BeginInvoke(new Action(() =>
+                {
+                    // we have to invalidate focus so it will scroll to item
+                    RefMarker.ItemsTileView.FocusIndex = -1;
+                    RefMarker.SelectedGraphicId = graphic;
+                }));
+            }
+            else
+            {
+                RefMarker.ItemsTileView.FocusIndex = -1;
+                RefMarker.SelectedGraphicId = graphic;
+            }
 
             return true;
         }

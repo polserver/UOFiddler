@@ -732,6 +732,8 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(_refMarker, EventArgs.Empty);
             }
 
+            TabPageNavigator.ActivateOwningTabPage(_refMarker);
+
             foreach (TreeNode node in _refMarker.treeView1.Nodes)
             {
                 if ((int)node.Tag != graphic)

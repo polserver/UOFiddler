@@ -385,11 +385,30 @@ namespace UoFiddler.Controls.UserControls
 
         public static void Select(int graphic, bool land)
         {
+            if (_refMarker == null)
+            {
+                return;
+            }
+
             if (!_refMarker.IsLoaded)
             {
                 _refMarker.OnLoad(_refMarker, EventArgs.Empty);
             }
 
+            TabPageNavigator.ActivateOwningTabPage(_refMarker);
+
+            if (_refMarker.IsHandleCreated)
+            {
+                _refMarker.BeginInvoke(new Action(() => ApplySelect(graphic, land)));
+            }
+            else
+            {
+                ApplySelect(graphic, land);
+            }
+        }
+
+        private static void ApplySelect(int graphic, bool land)
+        {
             if (land)
             {
                 int pos = Array.IndexOf(_refMarker._landIndices, graphic);

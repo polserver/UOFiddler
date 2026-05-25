@@ -54,6 +54,11 @@ namespace UoFiddler.Controls.UserControls
 
         public static bool Select(int textureId)
         {
+            if (_refMarker == null)
+            {
+                return false;
+            }
+
             if (!_refMarker._loaded)
             {
                 _refMarker.OnLoad(_refMarker, EventArgs.Empty);
@@ -64,9 +69,23 @@ namespace UoFiddler.Controls.UserControls
                 return false;
             }
 
-            // Reset focus index to ensure the view scrolls to the selected texture
-            _refMarker.TextureTileView.FocusIndex = -1;
-            _refMarker.SelectedTextureId = textureId;
+            TabPageNavigator.ActivateOwningTabPage(_refMarker);
+
+            if (_refMarker.IsHandleCreated)
+            {
+                _refMarker.BeginInvoke(new Action(() =>
+                {
+                    // Reset focus index to ensure the view scrolls to the selected texture
+                    _refMarker.TextureTileView.FocusIndex = -1;
+                    _refMarker.SelectedTextureId = textureId;
+                }));
+            }
+            else
+            {
+                _refMarker.TextureTileView.FocusIndex = -1;
+                _refMarker.SelectedTextureId = textureId;
+            }
+
             return true;
         }
 
