@@ -31,8 +31,11 @@ namespace UoFiddler.Controls.UserControls
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             MainPictureBox.FrameChanged += MainPictureBox_FrameChanged;
+
+            _refMarker = this;
         }
 
+        private static AnimDataControl _refMarker;
         private static bool _loaded;
         private Animdata.AnimdataEntry _selAnimdataEntry;
         private int _currentSelect;
@@ -160,6 +163,7 @@ namespace UoFiddler.Controls.UserControls
                 MainPictureBox.Reset();
                 animateToolStripMenuItem.Checked = false;
                 showFrameBoundsToolStripMenuItem.Checked = false;
+                _loaded = false;
                 OnLoad(this, EventArgs.Empty);
             }
         }
@@ -167,6 +171,11 @@ namespace UoFiddler.Controls.UserControls
         private void OnLoad(object sender, EventArgs e)
         {
             if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
+            {
+                return;
+            }
+
+            if (_loaded)
             {
                 return;
             }
@@ -689,6 +698,54 @@ namespace UoFiddler.Controls.UserControls
         {
             MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
             showFrameBoundsToolStripMenuItem.Checked = MainPictureBox.ShowFrameBounds;
+        }
+
+        private void SearchByIdToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!Utils.ConvertStringToInt(searchByIdToolStripTextBox.Text, out int indexValue, 0, Art.GetMaxItemId()))
+            {
+                return;
+            }
+
+            foreach (TreeNode node in treeView1.Nodes)
+            {
+                if ((int)node.Tag != indexValue)
+                {
+                    continue;
+                }
+
+                treeView1.SelectedNode = node;
+                node.EnsureVisible();
+                return;
+            }
+        }
+
+        public static bool Select(int graphic)
+        {
+            if (_refMarker == null)
+            {
+                return false;
+            }
+
+            if (!_loaded)
+            {
+                _refMarker.OnLoad(_refMarker, EventArgs.Empty);
+            }
+
+            foreach (TreeNode node in _refMarker.treeView1.Nodes)
+            {
+                if ((int)node.Tag != graphic)
+                {
+                    continue;
+                }
+
+                _refMarker.treeView1.SelectedNode = node;
+                node.EnsureVisible();
+                _refMarker.treeView1.Focus();
+                return true;
+            }
+
+            return false;
         }
     }
 

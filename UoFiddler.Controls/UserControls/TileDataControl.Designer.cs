@@ -52,6 +52,7 @@ namespace UoFiddler.Controls.UserControls
             toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             selectInGumpsTabMaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             selectInGumpsTabFemaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            selectInAnimDataTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pictureBoxItem = new System.Windows.Forms.PictureBox();
             splitContainer3 = new System.Windows.Forms.SplitContainer();
             nameLabel = new System.Windows.Forms.Label();
@@ -246,7 +247,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // ItemsContextMenuStrip
             // 
-            ItemsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { selectInItemsToolStripMenuItem, selectRadarColorToolStripMenuItem, toolStripSeparator3, selectInGumpsTabMaleToolStripMenuItem, selectInGumpsTabFemaleToolStripMenuItem });
+            ItemsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { selectInItemsToolStripMenuItem, selectRadarColorToolStripMenuItem, toolStripSeparator3, selectInGumpsTabMaleToolStripMenuItem, selectInGumpsTabFemaleToolStripMenuItem, selectInAnimDataTabToolStripMenuItem });
             ItemsContextMenuStrip.Name = "contextMenuStrip1";
             ItemsContextMenuStrip.Size = new System.Drawing.Size(201, 98);
             ItemsContextMenuStrip.Opening += ItemsContextMenuStrip_Opening;
@@ -283,6 +284,13 @@ namespace UoFiddler.Controls.UserControls
             selectInGumpsTabFemaleToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             selectInGumpsTabFemaleToolStripMenuItem.Text = "Select in Gumps (F)";
             selectInGumpsTabFemaleToolStripMenuItem.Click += SelectInGumpsTabFemaleToolStripMenuItem_Click;
+            //
+            // selectInAnimDataTabToolStripMenuItem
+            //
+            selectInAnimDataTabToolStripMenuItem.Name = "selectInAnimDataTabToolStripMenuItem";
+            selectInAnimDataTabToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            selectInAnimDataTabToolStripMenuItem.Text = "Select in AnimData tab";
+            selectInAnimDataTabToolStripMenuItem.Click += SelectInAnimDataTabToolStripMenuItem_Click;
             // 
             // pictureBoxItem
             //
@@ -1200,6 +1208,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabMaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInGumpsTabFemaleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectInAnimDataTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setTexturesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem setTextureOnDoubleClickToolStripMenuItem;

@@ -1731,6 +1731,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
                 selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
+                selectInAnimDataTabToolStripMenuItem.Enabled = false;
             }
             else
             {
@@ -1749,7 +1750,21 @@ namespace UoFiddler.Controls.UserControls
                     selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
                     selectInGumpsTabFemaleToolStripMenuItem.Enabled = false;
                 }
+
+                selectInAnimDataTabToolStripMenuItem.Enabled =
+                    Animdata.GetAnimData((int)selectedItemTag) != null;
             }
+        }
+
+        private void SelectInAnimDataTabToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedItemTag = treeViewItem.SelectedNode?.Tag;
+            if (selectedItemTag is null || (int)selectedItemTag <= 0)
+            {
+                return;
+            }
+
+            AnimDataControl.Select((int)selectedItemTag);
         }
 
         /// <summary>

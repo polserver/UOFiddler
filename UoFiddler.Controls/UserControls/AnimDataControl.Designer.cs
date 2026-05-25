@@ -41,6 +41,9 @@ namespace UoFiddler.Controls.UserControls
         {
             components = new System.ComponentModel.Container();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
+            searchToolStrip = new System.Windows.Forms.ToolStrip();
+            searchByIdToolStripLabel = new System.Windows.Forms.ToolStripLabel();
+            searchByIdToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             treeView1 = new System.Windows.Forms.TreeView();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +83,7 @@ namespace UoFiddler.Controls.UserControls
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            searchToolStrip.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
@@ -103,8 +107,9 @@ namespace UoFiddler.Controls.UserControls
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
-            // 
+            //
             splitContainer1.Panel1.Controls.Add(treeView1);
+            splitContainer1.Panel1.Controls.Add(searchToolStrip);
             // 
             // splitContainer1.Panel2
             // 
@@ -113,16 +118,38 @@ namespace UoFiddler.Controls.UserControls
             splitContainer1.SplitterDistance = 235;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
-            // 
+            //
+            // searchToolStrip
+            //
+            searchToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            searchToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { searchByIdToolStripLabel, searchByIdToolStripTextBox });
+            searchToolStrip.Location = new System.Drawing.Point(0, 0);
+            searchToolStrip.Name = "searchToolStrip";
+            searchToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            searchToolStrip.Size = new System.Drawing.Size(235, 25);
+            searchToolStrip.TabIndex = 1;
+            //
+            // searchByIdToolStripLabel
+            //
+            searchByIdToolStripLabel.Name = "searchByIdToolStripLabel";
+            searchByIdToolStripLabel.Size = new System.Drawing.Size(39, 22);
+            searchByIdToolStripLabel.Text = "Index:";
+            //
+            // searchByIdToolStripTextBox
+            //
+            searchByIdToolStripTextBox.Name = "searchByIdToolStripTextBox";
+            searchByIdToolStripTextBox.Size = new System.Drawing.Size(100, 25);
+            searchByIdToolStripTextBox.KeyUp += SearchByIdToolStripTextBox_KeyUp;
+            //
             // treeView1
-            // 
+            //
             treeView1.ContextMenuStrip = contextMenuStrip1;
             treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             treeView1.HideSelection = false;
-            treeView1.Location = new System.Drawing.Point(0, 0);
+            treeView1.Location = new System.Drawing.Point(0, 25);
             treeView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             treeView1.Name = "treeView1";
-            treeView1.Size = new System.Drawing.Size(235, 587);
+            treeView1.Size = new System.Drawing.Size(235, 562);
             treeView1.TabIndex = 0;
             treeView1.AfterSelect += AfterNodeSelect;
             treeView1.NodeMouseClick += OnClickNode;
@@ -491,9 +518,12 @@ namespace UoFiddler.Controls.UserControls
             Size = new System.Drawing.Size(857, 587);
             Load += OnLoad;
             splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            searchToolStrip.ResumeLayout(false);
+            searchToolStrip.PerformLayout();
             contextMenuStrip1.ResumeLayout(false);
             splitContainer2.Panel1.ResumeLayout(false);
             splitContainer2.Panel2.ResumeLayout(false);
@@ -552,5 +582,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem exportAsAnimatedGifToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showFrameBoundsToolStripMenuItem;
         private AnimatedPictureBox MainPictureBox;
+        private System.Windows.Forms.ToolStrip searchToolStrip;
+        private System.Windows.Forms.ToolStripLabel searchByIdToolStripLabel;
+        private System.Windows.Forms.ToolStripTextBox searchByIdToolStripTextBox;
     }
 }
