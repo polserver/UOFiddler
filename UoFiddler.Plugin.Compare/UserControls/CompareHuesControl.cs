@@ -44,6 +44,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private bool _hue2Loaded;
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly HashSet<int> _multiSelected = new HashSet<int>();
+        private int _multiSelectAnchor = -1;
         private bool _multiSelectEnabled;
         private bool _loaded;
 
@@ -284,6 +285,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             if (!_multiSelectEnabled)
             {
                 _multiSelected.Clear();
+                _multiSelectAnchor = -1;
             }
             PaintBox1();
             if (_hue2Loaded)
@@ -304,6 +306,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             _multiSelected.Clear();
             _selected = index;
+            _multiSelectAnchor = index;
             PaintBox1();
             if (_hue2Loaded)
             {
@@ -323,17 +326,30 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             if (_multiSelectEnabled)
             {
-                bool inCheckBox = e.X < CheckBoxColumnWidth;
-                if (inCheckBox || (Control.ModifierKeys & Keys.Control) == Keys.Control)
+                Keys mods = Control.ModifierKeys;
+
+                // Shift (with or without Ctrl) applies the clicked row's resulting state to the whole
+                // range from the anchor, so a contiguous block can be selected or deselected in one action.
+                if ((mods & Keys.Shift) == Keys.Shift)
+                {
+                    int anchor = _multiSelectAnchor >= 0 && _multiSelectAnchor < Hues.List.Length
+                        ? _multiSelectAnchor
+                        : index;
+                    bool select = !_multiSelected.Contains(index);
+                    SetRangeSelection(anchor, index, select);
+                }
+                else if (e.X < CheckBoxColumnWidth || (mods & Keys.Control) == Keys.Control)
                 {
                     if (!_multiSelected.Remove(index))
                     {
                         _multiSelected.Add(index);
                     }
+                    _multiSelectAnchor = index;
                 }
                 else
                 {
                     _selected = index;
+                    _multiSelectAnchor = index;
                 }
             }
             else
@@ -345,6 +361,29 @@ namespace UoFiddler.Plugin.Compare.UserControls
             if (_hue2Loaded)
             {
                 PaintBox2();
+            }
+        }
+
+        private void SetRangeSelection(int fromIndex, int toIndex, bool select)
+        {
+            int start = Math.Min(fromIndex, toIndex);
+            int end = Math.Max(fromIndex, toIndex);
+
+            for (int i = start; i <= end; i++)
+            {
+                if (i < 0 || i >= Hues.List.Length)
+                {
+                    continue;
+                }
+
+                if (select)
+                {
+                    _multiSelected.Add(i);
+                }
+                else
+                {
+                    _multiSelected.Remove(i);
+                }
             }
         }
 
