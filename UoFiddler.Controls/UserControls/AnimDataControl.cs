@@ -146,6 +146,12 @@ namespace UoFiddler.Controls.UserControls
                     Hue hueObject = Hues.List[_customHue - 1];
                     hueObject.ApplyTo(frame, _hueOnlyGray);
                 }
+                else
+                {
+                    // Art.GetStatic returns cache-owned bitmaps; clone so the
+                    // picture box can own and dispose its frames safely.
+                    frame = new Bitmap(frame);
+                }
 
                 frames.Add(new AnimatedFrame(frame, center));
             }

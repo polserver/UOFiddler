@@ -878,7 +878,7 @@ namespace Ultima
             int done = 0;
             int reportEvery = Math.Max(1, total / 200);
             int nextReport = reportEvery;
-            object reportLock = new object();
+            Lock reportLock = new();
 
             var options = new ParallelOptions { MaxDegreeOfParallelism = parallelism };
 

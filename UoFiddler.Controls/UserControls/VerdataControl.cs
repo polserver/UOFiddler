@@ -322,8 +322,10 @@ namespace UoFiddler.Controls.UserControls
             int dir = trackBarDirection.Value;
 
             int hue = 0;
+            // GetAnimation returns cache-owned bitmaps; clone so the picture box
+            // can own and dispose its frames without corrupting the cache.
             var frames = Animations.GetAnimation(_currentAnimBody, action, dir, ref hue, false, false)
-                ?.Select(f => new AnimatedFrame(f.Bitmap, f.Center)).ToList();
+                ?.Select(f => new AnimatedFrame(new Bitmap(f.Bitmap), f.Center)).ToList();
 
             bool wasAnimating = animatedPictureBox.Animate;
             animatedPictureBox.Animate = false;

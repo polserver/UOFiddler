@@ -222,7 +222,7 @@ namespace Ultima
                 while (true);
 
                 // Scan all plausible body IDs for sequence entries
-                for (int animId = 0; animId < Animations._maxAnimationValue; animId++)
+                for (int animId = 0; animId < Animations.MaxAnimationValue; animId++)
                 {
                     ulong hash = UopUtils.HashFileName($"build/animationsequence/{animId:D8}.bin");
                     if (!seqEntries.TryGetValue(hash, out var entry))
@@ -393,6 +393,14 @@ namespace Ultima
                 return null;
             }
 
+            // UOP path leaves `hue` unchanged for the caller, so the key uses
+            // the raw input hue and the hit path does not touch `hue`.
+            long cacheKey = Animations.BuildAnimationKey(body, action, direction, 0, firstFrame, hue, isUop: true);
+            if (Animations.Cache.TryGet(cacheKey, out AnimationFrame[] cachedFrames))
+            {
+                return cachedFrames;
+            }
+
             int resolved = GetResolvedAction(body, action);
             ulong hash = UopUtils.HashFileName($"build/animationlegacyframe/{body:D6}/{resolved:D2}.bin");
 
@@ -430,12 +438,13 @@ namespace Ultima
                 }
             }
 
-            if (firstFrame && frames.Length > 1)
-            {
-                return new[] { frames[0] };
-            }
+            AnimationFrame[] result = firstFrame && frames.Length > 1
+                ? new[] { frames[0] }
+                : frames;
 
-            return frames;
+            Animations.Cache.Set(cacheKey, result);
+
+            return result;
         }
 
         private static byte[] ReadEntryData(UopEntry entry)

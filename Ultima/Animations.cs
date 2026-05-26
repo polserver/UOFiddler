@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Ultima.Caching;
 
 namespace Ultima
 {
@@ -8,6 +9,40 @@ namespace Ultima
     {
         public const int _maxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
         public static readonly int PaletteCapacity = 0x100;
+
+        // LRU decode cache shared by the MUL and UOP paths. Bitmaps it returns
+        // are cache-owned and borrowed by callers — do NOT dispose them; clone
+        // first if you need an owned copy (e.g. to feed AnimatedPictureBox).
+        private static LruAnimationCache _cache = new LruAnimationCache(Files.CacheCapacityAnimations);
+
+        internal static LruAnimationCache Cache => _cache;
+
+        /// <summary>
+        /// Override the LRU cap for the animation decode cache. Lower values
+        /// bound the working set on memory-constrained machines at the cost of
+        /// more re-decodes during long browsing sessions.
+        /// </summary>
+        public static void SetCacheCapacity(int capacity)
+        {
+            _cache.SetCapacity(capacity);
+        }
+
+        /// <summary>
+        /// Packs the parameters that uniquely identify a decoded frame set into
+        /// a single cache key. For the MUL path pass the post-Translate body,
+        /// fileType and resolved hue; for the UOP path pass the raw body with
+        /// <paramref name="isUop"/> set (fileType is irrelevant there).
+        /// </summary>
+        internal static long BuildAnimationKey(int body, int action, int direction, int fileType, bool firstFrame, int hue, bool isUop)
+        {
+            return ((long)(body & 0xFFFFF))
+                 | ((long)(action & 0x7F) << 20)
+                 | ((long)(direction & 0x7) << 27)
+                 | ((long)(fileType & 0x7) << 30)
+                 | ((firstFrame ? 1L : 0L) << 33)
+                 | ((long)(hue & 0xFFFF) << 34)
+                 | ((isUop ? 1L : 0L) << 50);
+        }
 
         private static FileIndex _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
         private static FileIndex _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
@@ -29,6 +64,8 @@ namespace Ultima
             _fileIndex4?.Dispose();
             _fileIndex5?.Dispose();
             _fileIndex6?.Dispose();
+
+            _cache?.Clear();
 
             _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
             _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
@@ -71,6 +108,16 @@ namespace Ultima
             }
 
             int fileType = BodyConverter.Convert(ref body);
+
+            // Key off the post-Translate inputs; the decode below mutates `hue`
+            // into its resolved index, so reproduce that on a cache hit.
+            int lookupHue = hue;
+            long cacheKey = BuildAnimationKey(body, action, direction, fileType, firstFrame, lookupHue, isUop: false);
+            if (_cache.TryGet(cacheKey, out AnimationFrame[] cachedFrames))
+            {
+                hue = (lookupHue & 0x3FFF) - 1;
+                return cachedFrames;
+            }
 
             GetFileIndex(body, action, direction, fileType, out FileIndex fileIndex, out int index);
 
@@ -145,6 +192,8 @@ namespace Ultima
             }
 
             memoryStream.Close();
+
+            _cache.Set(cacheKey, frames);
 
             return frames;
         }

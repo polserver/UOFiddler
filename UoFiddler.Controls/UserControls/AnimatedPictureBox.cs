@@ -41,6 +41,14 @@ namespace UoFiddler.Controls.UserControls
             get => _frames;
             set
             {
+                if (!ReferenceEquals(value, _frames) && _frames != null)
+                {
+                    foreach (var frame in _frames)
+                    {
+                        frame.Bitmap?.Dispose();
+                    }
+                }
+
                 _frameIndex = 0;
                 _frames = value ?? [];
 

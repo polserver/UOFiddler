@@ -318,8 +318,10 @@ namespace UoFiddler.Controls.UserControls
             int hue = _customHue;
             bool preserveHue = hue != 0;
 
+            // GetAnimation returns cache-owned bitmaps; clone them so the
+            // picture box can own and dispose its frames without corrupting the cache.
             MainPictureBox.Frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, preserveHue, false)
-                ?.Select(animation => new AnimatedFrame(animation.Bitmap, animation.Center)).ToList();
+                ?.Select(animation => new AnimatedFrame(new Bitmap(animation.Bitmap), animation.Center)).ToList();
 
             if (!preserveHue)
             {
@@ -611,6 +613,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int hue = 0;
+            // Cache-owned bitmap — borrowed for drawing only, never disposed here.
             Bitmap bmp = Animations.GetAnimation(graphic, 0, 1, ref hue, false, true)?[0].Bitmap;
             if (bmp != null)
             {

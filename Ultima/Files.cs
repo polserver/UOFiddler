@@ -39,6 +39,16 @@ namespace Ultima
         public static int CacheCapacityGumps { get; set; } = 2048;
 
         /// <summary>
+        /// Initial LRU capacity for the Animations frame cache (the only major
+        /// file format previously without a decode cache). Counts whole
+        /// AnimationFrame[] entries — thumbnails are 1 frame, player directions
+        /// a handful. Default 1024 keeps the visible grid + scroll working set
+        /// warm. Adjust via <see cref="Ultima.Animations.SetCacheCapacity"/> at
+        /// runtime.
+        /// </summary>
+        public static int CacheCapacityAnimations { get; set; } = 1024;
+
+        /// <summary>
         /// Contains the path infos
         /// </summary>
         public static Dictionary<string, string> MulPath { get; set; }
