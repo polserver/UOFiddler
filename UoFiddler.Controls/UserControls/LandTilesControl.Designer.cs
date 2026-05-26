@@ -417,7 +417,7 @@ namespace UoFiddler.Controls.UserControls
             LandTilesTileView.FocusIndex = -1;
             LandTilesTileView.Location = new System.Drawing.Point(0, 0);
             LandTilesTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            LandTilesTileView.MultiSelect = false;
+            LandTilesTileView.MultiSelect = true;
             LandTilesTileView.Name = "LandTilesTileView";
             LandTilesTileView.Size = new System.Drawing.Size(716, 354);
             LandTilesTileView.TabIndex = 9;

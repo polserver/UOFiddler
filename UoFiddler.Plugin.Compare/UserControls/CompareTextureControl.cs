@@ -53,7 +53,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewOrg.VirtualListSize = _displayIndices.Count;
             tileViewSec.VirtualListSize = 0;
 
-            tileViewSec.MultiSelect = true;
             tileViewSec.SelectedIndices.CollectionChanged += OnSecSelectedIndicesChanged;
             contextMenuStrip1.Opening += (s, ev) =>
             {
@@ -74,11 +73,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tv.TileMargin = new Padding(0);
             tv.TilePadding = new Padding(0);
             tv.TileBorderWidth = 0f;
+            tv.TileFocusColor = Color.Transparent;
+            tv.TileHighlightColor = Options.TileSelectionColor;
+            tv.TileHighLightOpacity = 0.4;
         }
 
         private void OnChangeMultiSelect(object sender, EventArgs e)
         {
             tileViewSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            tileViewSec.MultiSelect = chkMultiSelect.Checked;
             if (!chkMultiSelect.Checked)
             {
                 tileViewSec.SelectedIndices.Clear();
@@ -150,9 +153,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void DrawListItem(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            if (focused)
             {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+                using var highlightBrush = new SolidBrush(Options.TileSelectionColor);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
             else
             {
@@ -169,6 +174,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             else if (tileViewSec.VirtualListSize > 0 && !Compare(i))
             {
                 fontBrush = Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue;
+            }
+
+            if (focused)
+            {
+                fontBrush = CompareColors.ContrastBrush(Options.TileSelectionColor);
             }
 
             string label = $"0x{i:X}";
@@ -237,6 +247,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string file2 = Path.Combine(path, "texidx.mul");
             if (File.Exists(file) && File.Exists(file2))
             {
+                if (CompareFiles.IsLoadedClientFile(file, "texmaps.mul") || CompareFiles.IsLoadedClientFile(file2, "texidx.mul"))
+                {
+                    MessageBox.Show(
+                        "The selected files are the same as the currently loaded texture files.\n\n" +
+                        "Choose a different directory to compare against.",
+                        "Same File",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 SecondTexture.SetFileIndex(file2, file);
                 LoadSecond();
             }

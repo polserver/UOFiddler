@@ -158,6 +158,7 @@ namespace UoFiddler.Controls.UserControls
             tileViewItem.Name = "tileViewItem";
             tileViewItem.Size = new System.Drawing.Size(259, 289);
             tileViewItem.TabIndex = 0;
+            tileViewItem.MultiSelect = true;
             tileViewItem.ShowCheckBoxes = true;
             tileViewItem.TileHighLightOpacity = 0D;
             tileViewItem.FocusSelectionChanged += OnItemFocusChanged;
@@ -208,6 +209,7 @@ namespace UoFiddler.Controls.UserControls
             tileViewLand.Name = "tileViewLand";
             tileViewLand.Size = new System.Drawing.Size(228, 164);
             tileViewLand.TabIndex = 0;
+            tileViewLand.MultiSelect = true;
             tileViewLand.ShowCheckBoxes = true;
             tileViewLand.TileHighLightOpacity = 0D;
             tileViewLand.FocusSelectionChanged += OnLandFocusChanged;

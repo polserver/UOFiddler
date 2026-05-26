@@ -19,6 +19,7 @@ using System.Numerics;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Plugin.Compare.Classes;
 
 namespace UoFiddler.Plugin.Compare.UserControls
 {
@@ -622,6 +623,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnClickLoad(object sender, EventArgs e)
         {
+            string path = toolStripTextBox1.Text;
+            if (Directory.Exists(path)
+                && CompareFiles.IsLoadedClientFile(Path.Combine(path, $"map{_currentMapId}.mul"), $"map{_currentMapId}.mul"))
+            {
+                MessageBox.Show(
+                    "The selected directory contains the same map file that is currently loaded.\n\n" +
+                    "Choose a different directory to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             ChangeMap();
         }
 

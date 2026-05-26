@@ -41,8 +41,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ConfigureTileView(tileViewItemSec);
             PopulateOrgOnly(isLand: true);
 
-            tileViewSec.MultiSelect = true;
-            tileViewItemSec.MultiSelect = true;
             tileViewSec.SelectedIndices.CollectionChanged += OnLandSecSelectedIndicesChanged;
             tileViewItemSec.SelectedIndices.CollectionChanged += OnItemSecSelectedIndicesChanged;
             contextMenuStripSec.Opening += (s, ev) =>
@@ -64,12 +62,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tv.TileMargin = new Padding(0);
             tv.TilePadding = new Padding(0);
             tv.TileBorderWidth = 0f;
+            tv.TileFocusColor = Color.Transparent;
+            tv.TileHighlightColor = Options.TileSelectionColor;
+            tv.TileHighLightOpacity = 0.4;
         }
 
         private void OnChangeMultiSelect(object sender, EventArgs e)
         {
             tileViewSec.ShowCheckBoxes = chkMultiSelect.Checked;
             tileViewItemSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            tileViewSec.MultiSelect = chkMultiSelect.Checked;
+            tileViewItemSec.MultiSelect = chkMultiSelect.Checked;
             if (!chkMultiSelect.Checked)
             {
                 tileViewSec.SelectedIndices.Clear();
@@ -245,7 +248,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
             if (focused)
             {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+                using var highlightBrush = new SolidBrush(Options.TileSelectionColor);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
             else
             {
@@ -274,9 +278,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 ? $"0x{displayId:X4} ({displayId})"
                 : $"0x{displayId:X4} ({displayId}) {name}";
 
-            Brush fontBrush = SecondRadarCol.IsLoaded && IsDifferent(idx)
-                ? (Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue)
-                : Brushes.Gray;
+            Brush fontBrush = focused
+                ? CompareColors.ContrastBrush(Options.TileSelectionColor)
+                : SecondRadarCol.IsLoaded && IsDifferent(idx)
+                    ? (Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue)
+                    : Brushes.Gray;
 
             int textX = swatchX + SwatchSize + SwatchGap;
             float textY = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(text, e.Font).Height) / 2f;
@@ -460,6 +466,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string path = textBoxSecondFile.Text?.Trim();
             if (string.IsNullOrEmpty(path))
             {
+                return;
+            }
+
+            if (CompareFiles.IsLoadedClientFile(path, "radarcol.mul"))
+            {
+                MessageBox.Show(
+                    "The selected file is the same as the currently loaded radarcol.mul.\n\n" +
+                    "Choose a different file to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 

@@ -259,6 +259,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            if (CompareFiles.IsLoadedClientFile(file, "hues.mul"))
+            {
+                MessageBox.Show(
+                    "The selected file is the same as the currently loaded hues.mul.\n\n" +
+                    "Choose a different directory to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             SecondHue.Initialize(file);
             _hue2Loaded = true;
             vScrollBar.Value = 0;

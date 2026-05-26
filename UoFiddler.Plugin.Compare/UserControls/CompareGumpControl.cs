@@ -67,7 +67,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             if (!_loaded)
             {
-                tileView2.MultiSelect = true;
                 tileView2.SelectedIndices.CollectionChanged += OnSecSelectedIndicesChanged;
                 contextMenuStrip1.Opening += (s, ev) =>
                 {
@@ -91,11 +90,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tv.TileMargin = new Padding(0);
             tv.TilePadding = new Padding(0);
             tv.TileBorderWidth = 0f;
+            tv.TileFocusColor = Color.Transparent;
+            tv.TileHighlightColor = Options.TileSelectionColor;
+            tv.TileHighLightOpacity = 0.4;
         }
 
         private void OnChangeMultiSelect(object sender, EventArgs e)
         {
             tileView2.ShowCheckBoxes = chkMultiSelect.Checked;
+            tileView2.MultiSelect = chkMultiSelect.Checked;
             if (!chkMultiSelect.Checked)
             {
                 tileView2.SelectedIndices.Clear();
@@ -173,9 +176,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void DrawGumpItem(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            if (focused)
             {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+                using var highlightBrush = new SolidBrush(Options.TileSelectionColor);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
             else
             {
@@ -207,6 +212,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             else
             {
                 fontBrush = Options.DarkMode ? Brushes.OrangeRed : Brushes.Red;
+            }
+
+            if (focused)
+            {
+                fontBrush = CompareColors.ContrastBrush(Options.TileSelectionColor);
             }
 
             string label = $"0x{i:X}";
@@ -304,6 +314,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     out string resolvedIdx, out string resolvedMul, out string resolvedUop, out string error))
             {
                 MessageBox.Show(error, "Missing Files", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (CompareFiles.IsLoadedClientFile(resolvedMul, "gumpart.mul") || CompareFiles.IsLoadedClientFile(resolvedUop, "gumpartLegacyMUL.uop"))
+            {
+                MessageBox.Show(
+                    "The selected files are the same as the currently loaded gump files.\n\n" +
+                    "Choose a different directory to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 

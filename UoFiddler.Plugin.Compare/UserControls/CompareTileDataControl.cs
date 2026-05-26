@@ -101,8 +101,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             BuildRulesPanel();
             SetInnerSplitterPositions();
 
-            tileViewLandSec.MultiSelect = true;
-            tileViewItemSec.MultiSelect = true;
             tileViewLandSec.SelectedIndices.CollectionChanged += OnLandSecSelectedIndicesChanged;
             tileViewItemSec.SelectedIndices.CollectionChanged += OnItemSecSelectedIndicesChanged;
         }
@@ -115,12 +113,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tv.TileMargin = new Padding(0);
             tv.TilePadding = new Padding(0);
             tv.TileBorderWidth = 0f;
+            tv.TileFocusColor = Color.Transparent;
+            tv.TileHighlightColor = Options.TileSelectionColor;
+            tv.TileHighLightOpacity = 0.4;
         }
 
         private void OnChangeMultiSelect(object sender, EventArgs e)
         {
             tileViewLandSec.ShowCheckBoxes = chkMultiSelect.Checked;
             tileViewItemSec.ShowCheckBoxes = chkMultiSelect.Checked;
+            tileViewLandSec.MultiSelect = chkMultiSelect.Checked;
+            tileViewItemSec.MultiSelect = chkMultiSelect.Checked;
             if (!chkMultiSelect.Checked)
             {
                 tileViewLandSec.SelectedIndices.Clear();
@@ -432,6 +435,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            if (CompareFiles.IsLoadedClientFile(tileFile, "tiledata.mul"))
+            {
+                MessageBox.Show(
+                    "The selected file is the same as the currently loaded tiledata.mul.\n\n" +
+                    "Choose a different directory to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             string mulFile = Path.Combine(path, "art.mul");
             string idxFile = Path.Combine(path, "artidx.mul");
             string uopFile = Path.Combine(path, "artLegacyMUL.uop");
@@ -723,16 +737,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void DrawLandItem(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            if (focused)
             {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+                using var highlightBrush = new SolidBrush(Options.TileSelectionColor);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
             else
             {
                 e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
             }
 
-            Brush brush = GetLandBrush(i, isSecondary);
+            Brush brush = focused ? CompareColors.ContrastBrush(Options.TileSelectionColor) : GetLandBrush(i, isSecondary);
             string label = GetLandLabel(i, isSecondary);
 
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, e.Font).Height) / 2f;
@@ -804,16 +820,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void DrawItemEntry(TileViewControl.DrawTileListItemEventArgs e, int i, bool isSecondary)
         {
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            if (focused)
             {
-                e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds);
+                using var highlightBrush = new SolidBrush(Options.TileSelectionColor);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
             else
             {
                 e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
             }
 
-            Brush brush = GetItemBrush(i);
+            Brush brush = focused ? CompareColors.ContrastBrush(Options.TileSelectionColor) : GetItemBrush(i);
             string label = GetItemLabel(i, isSecondary);
 
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, e.Font).Height) / 2f;

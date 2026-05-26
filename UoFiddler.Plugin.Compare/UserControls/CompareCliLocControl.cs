@@ -16,6 +16,7 @@ using System.IO;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Plugin.Compare.Classes;
 
 namespace UoFiddler.Plugin.Compare.UserControls
 {
@@ -52,6 +53,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            if (CompareFiles.IsSamePath(path, textBox2.Text))
+            {
+                MessageBox.Show(
+                    "Both sides point to the same cliloc file.\n\n" +
+                    "Choose a different file to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             _cliloc1 = new StringList("1", path, false);
             _cliloc1.Entries.Sort(new StringList.NumberComparer(false));
 
@@ -71,6 +83,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             string path = textBox2.Text;
             if (!File.Exists(path))
             {
+                return;
+            }
+
+            if (CompareFiles.IsSamePath(path, textBox1.Text))
+            {
+                MessageBox.Show(
+                    "Both sides point to the same cliloc file.\n\n" +
+                    "Choose a different file to compare against.",
+                    "Same File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 

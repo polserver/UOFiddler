@@ -23,6 +23,8 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private int _focusIndex = -1;
 
+        private int _selectionAnchorIndex = -1;
+
         /// <summary>
         /// Get or Set SelectedIndex, setting this property to -1 will remove selection, -2 is reserved for "do nothing".
         /// </summary>
@@ -163,6 +165,7 @@ namespace UoFiddler.Controls.UserControls.TileView
                 }
 
                 SelectedIndices.Clear();
+                _selectionAnchorIndex = -1;
                 _cachedIndices.Clear();
                 UpdateAutoScrollSize();
             }
@@ -367,16 +370,44 @@ namespace UoFiddler.Controls.UserControls.TileView
             {
                 int idx = GetIndexAtLocation(e.Location);
 
-                if (_showCheckBoxes && idx >= 0 && e.Button == MouseButtons.Left && IsInCheckBoxRegion(e.Location, idx))
+                if (_showCheckBoxes && idx >= 0 && e.Button == MouseButtons.Left)
                 {
-                    if (SelectedIndices.Contains(idx))
+                    Keys mods = ModifierKeys;
+
+                    // Shift (with or without Ctrl) applies the clicked row's resulting state to the whole
+                    // range from the anchor, so a contiguous block can be checked or unchecked in one
+                    // action. The anchor is the last row that was clicked/focused.
+                    if ((mods & Keys.Shift) == Keys.Shift)
                     {
-                        SelectedIndices.Remove(idx);
+                        int anchor = _selectionAnchorIndex >= 0 && _selectionAnchorIndex < _virtualListSize
+                            ? _selectionAnchorIndex
+                            : idx;
+                        bool select = !SelectedIndices.Contains(idx);
+                        SetRangeSelection(anchor, idx, select);
+                        FocusIndex = idx;
+                        return;
                     }
-                    else
+
+                    // Ctrl-click anywhere on the row, or a click directly on the checkbox, toggles that row.
+                    if ((mods & Keys.Control) == Keys.Control || IsInCheckBoxRegion(e.Location, idx))
                     {
-                        SelectedIndices.Add(idx);
+                        if (SelectedIndices.Contains(idx))
+                        {
+                            SelectedIndices.Remove(idx);
+                        }
+                        else
+                        {
+                            SelectedIndices.Add(idx);
+                        }
+                        _selectionAnchorIndex = idx;
+                        FocusIndex = idx;
+                        return;
                     }
+
+                    // Plain click on the row body moves focus and sets the anchor for a later Shift range,
+                    // keeping the current checkbox selection.
+                    _selectionAnchorIndex = idx;
+                    FocusIndex = idx;
                     return;
                 }
 
@@ -527,7 +558,20 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private void SelectIndex(int index)
         {
-            switch (ModifierKeys)
+            Keys modifiers = ModifierKeys;
+
+            // Range selection: Shift extends from the anchor. Ctrl+Shift adds the range to the
+            // existing selection, plain Shift replaces it. The anchor is left untouched so further
+            // Shift-clicks keep extending from the same starting point.
+            if (_multiSelect && (modifiers & Keys.Shift) == Keys.Shift)
+            {
+                int anchor = _selectionAnchorIndex >= 0 ? _selectionAnchorIndex : index;
+                bool additive = (modifiers & Keys.Control) == Keys.Control;
+                SelectRange(anchor, index, additive);
+                return;
+            }
+
+            switch (modifiers)
             {
                 case Keys.Control:
                     if (_multiSelect)
@@ -550,6 +594,8 @@ namespace UoFiddler.Controls.UserControls.TileView
                         }
                     }
 
+                    _selectionAnchorIndex = index;
+
                     break;
                 default:
                     // When the checkbox column is visible, the selection set is owned by the checkboxes;
@@ -565,7 +611,52 @@ namespace UoFiddler.Controls.UserControls.TileView
                         SelectedIndices.Add(index);
                     }
 
+                    _selectionAnchorIndex = index;
+
                     break;
+            }
+        }
+
+        private void SelectRange(int fromIndex, int toIndex, bool additive)
+        {
+            if (!additive)
+            {
+                SelectedIndices.Clear();
+            }
+
+            int start = Math.Min(fromIndex, toIndex);
+            int end = Math.Max(fromIndex, toIndex);
+
+            for (int i = start; i <= end; ++i)
+            {
+                if (!SelectedIndices.Contains(i))
+                {
+                    SelectedIndices.Add(i);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Forces every index in the inclusive range to the given selected state, leaving items
+        /// outside the range untouched. Used by checkbox-mode Shift selection so a range can be
+        /// both checked and unchecked.
+        /// </summary>
+        private void SetRangeSelection(int fromIndex, int toIndex, bool select)
+        {
+            int start = Math.Min(fromIndex, toIndex);
+            int end = Math.Max(fromIndex, toIndex);
+
+            for (int i = start; i <= end; ++i)
+            {
+                bool contains = SelectedIndices.Contains(i);
+                if (select && !contains)
+                {
+                    SelectedIndices.Add(i);
+                }
+                else if (!select && contains)
+                {
+                    SelectedIndices.Remove(i);
+                }
             }
         }
 

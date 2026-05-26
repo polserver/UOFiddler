@@ -316,7 +316,7 @@ namespace UoFiddler.Controls.UserControls
             TextureTileView.FocusIndex = -1;
             TextureTileView.Location = new System.Drawing.Point(0, 0);
             TextureTileView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            TextureTileView.MultiSelect = false;
+            TextureTileView.MultiSelect = true;
             TextureTileView.Name = "TextureTileView";
             TextureTileView.Size = new System.Drawing.Size(675, 347);
             TextureTileView.TabIndex = 6;

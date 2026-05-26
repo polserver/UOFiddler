@@ -111,9 +111,13 @@ namespace UoFiddler.Controls.UserControls
             tv.TilePadding = new Padding(0);
             tv.TileBorderWidth = 0f;
             // Suppress the default focus-rectangle (DarkRed 1px outline). DrawRow already
-            // renders a SystemBrushes.Highlight fill for the focused row, so the extra
-            // border just adds a red line at the row edges.
+            // renders a highlight fill for the focused row, so the extra border just adds a
+            // red line at the row edges.
             tv.TileFocusColor = Color.Transparent;
+            // Mark checked (multi-selected) rows with the configured selection color, matching
+            // the Items/LandTiles tabs.
+            tv.TileHighlightColor = Options.TileSelectionColor;
+            tv.TileHighLightOpacity = 0.4;
         }
 
         private void OnTileViewSizeChanged(object sender, EventArgs e)
@@ -164,14 +168,21 @@ namespace UoFiddler.Controls.UserControls
         private const int SwatchSize = 12;
         private const int SwatchGap = 4;
 
+        // Perceived-luminance test so focused-row text/border stays readable on any selection color.
+        private static bool IsDarkColor(Color c) => (0.299 * c.R + 0.587 * c.G + 0.114 * c.B) < 128;
+
         private static void DrawRow(TileView.TileViewControl.DrawTileListItemEventArgs e, int graphic, string name, bool modified, ushort radarHue)
         {
             bool focused = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
 
+            Color highlightColor = Options.TileSelectionColor;
+            Color highlightTextColor = IsDarkColor(highlightColor) ? Color.White : Color.Black;
+
             // Row background.
             if (focused)
             {
-                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                using var highlightBrush = new SolidBrush(highlightColor);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
             else
             {
@@ -187,7 +198,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 e.Graphics.FillRectangle(swatchBrush, swatchRect);
             }
-            using (var swatchBorder = new Pen(focused ? SystemColors.HighlightText : SystemColors.ControlDark))
+            using (var swatchBorder = new Pen(focused ? highlightTextColor : SystemColors.ControlDark))
             {
                 e.Graphics.DrawRectangle(swatchBorder, swatchRect);
             }
@@ -196,7 +207,7 @@ namespace UoFiddler.Controls.UserControls
             Color textColor;
             if (focused)
             {
-                textColor = SystemColors.HighlightText;
+                textColor = highlightTextColor;
             }
             else if (modified)
             {

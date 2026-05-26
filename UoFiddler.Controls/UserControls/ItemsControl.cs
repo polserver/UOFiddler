@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -507,6 +508,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickReplace(object sender, EventArgs e)
         {
+            if (ItemsTileView.SelectedIndices.Count > 1)
+            {
+                ReplaceMultipleSelected();
+                return;
+            }
+
             if (_selectedGraphicId < 0)
             {
                 return;
@@ -562,29 +569,132 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void OnClickRemove(object sender, EventArgs e)
+        private void ReplaceMultipleSelected()
         {
-            if (!Art.IsValidStatic(_selectedGraphicId))
+            var ids = GetSelectedGraphicIds();
+            if (ids.Count == 0)
             {
                 return;
             }
 
-            DialogResult result = MessageBox.Show($"Are you sure to remove 0x{_selectedGraphicId:X}", "Save",
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = $"Choose {ids.Count} image files to replace selected items";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp;*.png)|*.tif;*.tiff;*.bmp;*.png";
+
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var files = dialog.FileNames.OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase).ToArray();
+
+                if (files.Length != ids.Count)
+                {
+                    MessageBox.Show(
+                        $"Selected {ids.Count} items but chose {files.Length} images.\n\nNo changes made.",
+                        "Selection Mismatch",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Load and validate all images first; abort the whole batch on any failure so no partial writes happen.
+                var bitmaps = new List<Bitmap>(ids.Count);
+                try
+                {
+                    for (int i = 0; i < ids.Count; ++i)
+                    {
+                        using (var bmpTemp = new Bitmap(files[i]))
+                        {
+                            Bitmap bitmap = new Bitmap(bmpTemp);
+
+                            if (files[i].Contains(".bmp"))
+                            {
+                                bitmap = Utils.ConvertBmp(bitmap);
+                            }
+
+                            if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                            {
+                                bitmap.Dispose();
+                                MessageBox.Show(
+                                    $"Image is too large for MUL format!\n\n" +
+                                    $"File: {Path.GetFileName(files[i])}\n" +
+                                    $"Encoded size: {estimatedSize:N0} ushorts\n" +
+                                    $"Maximum allowed: 65,535 ushorts\n\n" +
+                                    $"No changes made.",
+                                    "Image Too Large",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                                return;
+                            }
+
+                            bitmaps.Add(bitmap);
+                        }
+                    }
+                }
+                catch
+                {
+                    foreach (var bmp in bitmaps)
+                    {
+                        bmp.Dispose();
+                    }
+                    throw;
+                }
+
+                for (int i = 0; i < ids.Count; ++i)
+                {
+                    Art.ReplaceStatic(ids[i], bitmaps[i]);
+                    ControlEvents.FireItemChangeEvent(this, ids[i]);
+                }
+
+                ItemsTileView.Invalidate();
+                UpdateToolStripLabels(_selectedGraphicId);
+                UpdateDetail(_selectedGraphicId);
+
+                Options.ChangedUltimaClass["Art"] = true;
+            }
+        }
+
+        private void OnClickRemove(object sender, EventArgs e)
+        {
+            var ids = GetSelectedGraphicIds().Where(Art.IsValidStatic).ToList();
+            if (ids.Count == 0)
+            {
+                return;
+            }
+
+            string prompt = ids.Count == 1
+                ? $"Are you sure to remove 0x{ids[0]:X}"
+                : $"Are you sure to remove {ids.Count} items?";
+
+            DialogResult result = MessageBox.Show(prompt, "Save",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
                 return;
             }
 
-            Art.RemoveStatic(_selectedGraphicId);
-            ControlEvents.FireItemChangeEvent(this, _selectedGraphicId);
+            foreach (int id in ids)
+            {
+                Art.RemoveStatic(id);
+                ControlEvents.FireItemChangeEvent(this, id);
+
+                if (!_showFreeSlots)
+                {
+                    _itemList.Remove(id);
+                }
+            }
+
+            ItemsTileView.SelectedIndices.Clear();
 
             if (!_showFreeSlots)
             {
-                _itemList.Remove(_selectedGraphicId);
                 ItemsTileView.VirtualListSize = _itemList.Count;
-                var moveToIndex = --_selectedGraphicId;
-                SelectedGraphicId = moveToIndex <= 0 ? 0 : _selectedGraphicId; // TODO: get last index visible instead just curr -1
+                int moveToId = ids[0] - 1;
+                SelectedGraphicId = moveToId <= 0 ? 0 : moveToId; // TODO: get last index visible instead just curr -1
             }
             ItemsTileView.Invalidate();
 
@@ -719,42 +829,61 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            if (_selectedGraphicId == -1)
-            {
-                return;
-            }
-
-            ExportItemImage(_selectedGraphicId, ImageFormat.Bmp);
+            ExportSelected(ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            if (_selectedGraphicId == -1)
-            {
-                return;
-            }
-
-            ExportItemImage(_selectedGraphicId, ImageFormat.Tiff);
+            ExportSelected(ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            if (_selectedGraphicId == -1)
-            {
-                return;
-            }
-
-            ExportItemImage(_selectedGraphicId, ImageFormat.Jpeg);
+            ExportSelected(ImageFormat.Jpeg);
         }
 
         private void Extract_Image_ClickPng(object sender, EventArgs e)
         {
-            if (_selectedGraphicId == -1)
+            ExportSelected(ImageFormat.Png);
+        }
+
+        private void ExportSelected(ImageFormat imageFormat)
+        {
+            var ids = GetSelectedGraphicIds().Where(Art.IsValidStatic).ToList();
+            if (ids.Count == 0)
             {
                 return;
             }
 
-            ExportItemImage(_selectedGraphicId, ImageFormat.Png);
+            if (ids.Count == 1)
+            {
+                ExportItemImage(ids[0], imageFormat);
+                return;
+            }
+
+            ExportMultipleItemImages(ids, imageFormat);
+        }
+
+        private void ExportMultipleItemImages(List<int> ids, ImageFormat imageFormat)
+        {
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
+            foreach (int index in ids)
+            {
+                var artBitmap = Art.GetStatic(index);
+                if (artBitmap is null)
+                {
+                    continue;
+                }
+
+                string fileName = Path.Combine(Options.OutputPath, $"Item {Utils.FormatExportId(index)}.{fileExtension}");
+                using (Bitmap bit = new Bitmap(artBitmap))
+                {
+                    bit.Save(fileName, imageFormat);
+                }
+            }
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"{ids.Count} items saved successfully.");
         }
 
         private static void ExportItemImage(int index, ImageFormat imageFormat)
@@ -993,6 +1122,23 @@ namespace UoFiddler.Controls.UserControls
             UpdateSelection(e.FocusedItemIndex);
         }
 
+        /// <summary>
+        /// Resolves the current tile selection to a sorted list of graphic IDs.
+        /// </summary>
+        private List<int> GetSelectedGraphicIds()
+        {
+            var ids = new List<int>();
+            foreach (int idx in ItemsTileView.SelectedIndices)
+            {
+                if (idx >= 0 && idx < _itemList.Count)
+                {
+                    ids.Add(_itemList[idx]);
+                }
+            }
+            ids.Sort();
+            return ids;
+        }
+
         private void UpdateSelection(int itemIndex)
         {
             if (_itemList.Count == 0)
@@ -1076,6 +1222,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void TileViewContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
+            int selectedCount = ItemsTileView.SelectedIndices.Count;
+            removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
+            extractToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
+
             if (SelectedGraphicId <= 0)
             {
                 selectInGumpsTabMaleToolStripMenuItem.Enabled = false;
