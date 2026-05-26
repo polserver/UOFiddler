@@ -832,69 +832,69 @@ namespace UoFiddler.Plugin.Compare.UserControls
             int height = _currentMap.Height >> 3;
             var masks = new ulong[width * height];
 
-            Cursor.Current = Cursors.WaitCursor;
-
-            for (int x = 0; x < width; ++x)
+            using (new WaitCursorScope(this))
             {
-                for (int y = 0; y < height; ++y)
+                for (int x = 0; x < width; ++x)
                 {
-                    Tile[] customTiles = _currentMap.Tiles.GetLandBlock(x, y);
-                    Tile[] origTiles = _originalMap.Tiles.GetLandBlock(x, y);
-
-                    HuedTile[][][] customStatics = _currentMap.Tiles.GetStaticBlock(x, y);
-                    HuedTile[][][] origStatics = _originalMap.Tiles.GetStaticBlock(x, y);
-
-                    ulong mask = 0;
-                    for (int xb = 0; xb < 8; xb++)
+                    for (int y = 0; y < height; ++y)
                     {
-                        HuedTile[][] customCol = customStatics[xb];
-                        HuedTile[][] origCol = origStatics[xb];
-                        for (int yb = 0; yb < 8; yb++)
-                        {
-                            int tileIdx = (yb << 3) + xb;
-                            bool isDiff;
+                        Tile[] customTiles = _currentMap.Tiles.GetLandBlock(x, y);
+                        Tile[] origTiles = _originalMap.Tiles.GetLandBlock(x, y);
 
-                            if (customTiles[tileIdx].Id != origTiles[tileIdx].Id
-                             || customTiles[tileIdx].Z != origTiles[tileIdx].Z)
+                        HuedTile[][][] customStatics = _currentMap.Tiles.GetStaticBlock(x, y);
+                        HuedTile[][][] origStatics = _originalMap.Tiles.GetStaticBlock(x, y);
+
+                        ulong mask = 0;
+                        for (int xb = 0; xb < 8; xb++)
+                        {
+                            HuedTile[][] customCol = customStatics[xb];
+                            HuedTile[][] origCol = origStatics[xb];
+                            for (int yb = 0; yb < 8; yb++)
                             {
-                                isDiff = true;
-                            }
-                            else if (customCol[yb].Length != origCol[yb].Length)
-                            {
-                                isDiff = true;
-                            }
-                            else
-                            {
-                                isDiff = false;
-                                HuedTile[] cs = customCol[yb];
-                                HuedTile[] os = origCol[yb];
-                                for (int i = 0; i < cs.Length; i++)
+                                int tileIdx = (yb << 3) + xb;
+                                bool isDiff;
+
+                                if (customTiles[tileIdx].Id != origTiles[tileIdx].Id
+                                 || customTiles[tileIdx].Z != origTiles[tileIdx].Z)
                                 {
-                                    if (cs[i].Id != os[i].Id
-                                        || cs[i].Z != os[i].Z
-                                        || cs[i].Hue != os[i].Hue)
+                                    isDiff = true;
+                                }
+                                else if (customCol[yb].Length != origCol[yb].Length)
+                                {
+                                    isDiff = true;
+                                }
+                                else
+                                {
+                                    isDiff = false;
+                                    HuedTile[] cs = customCol[yb];
+                                    HuedTile[] os = origCol[yb];
+                                    for (int i = 0; i < cs.Length; i++)
                                     {
-                                        isDiff = true;
-                                        break;
+                                        if (cs[i].Id != os[i].Id
+                                            || cs[i].Z != os[i].Z
+                                            || cs[i].Hue != os[i].Hue)
+                                        {
+                                            isDiff = true;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            if (isDiff)
-                            {
-                                mask |= 1UL << ((xb << 3) | yb);
+                                if (isDiff)
+                                {
+                                    mask |= 1UL << ((xb << 3) | yb);
+                                }
                             }
                         }
+
+                        masks[x * height + y] = mask;
                     }
-
-                    masks[x * height + y] = mask;
                 }
-            }
 
-            _diffMasks = masks;
-            _diffWidthBlocks = width;
-            _diffHeightBlocks = height;
-            Cursor.Current = Cursors.Default;
+                _diffMasks = masks;
+                _diffWidthBlocks = width;
+                _diffHeightBlocks = height;
+            }
         }
 
         private void HandleScroll(object sender, ScrollEventArgs e)

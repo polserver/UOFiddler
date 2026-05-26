@@ -269,95 +269,95 @@ namespace UoFiddler.Plugin.MassImport.Forms
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            OutputBox.Clear();
-
-            Dictionary<string, bool> changedUltimaClass = new Dictionary<string, bool>
+            using (new WaitCursorScope(this))
             {
-                {"Animations", false},
-                {"Animdata", false},
-                {"Art", false},
-                {"ASCIIFont", false},
-                {"UnicodeFont", false},
-                {"Gumps", false},
-                {"Hues", false},
-                {"Light", false},
-                {"Map", false},
-                {"Multis", false},
-                {"Skills", false},
-                {"Sound", false},
-                {"Speech", false},
-                {"CliLoc", false},
-                {"Texture", false},
-                {"TileData", false},
-                {"RadarColor", false}
-            };
+                OutputBox.Clear();
 
-            OutputBox.AppendText("Importing");
-
-            foreach (ImportEntry entry in _importList)
-            {
-                if (!entry.Valid)
+                Dictionary<string, bool> changedUltimaClass = new Dictionary<string, bool>
                 {
-                    continue;
-                }
+                    {"Animations", false},
+                    {"Animdata", false},
+                    {"Art", false},
+                    {"ASCIIFont", false},
+                    {"UnicodeFont", false},
+                    {"Gumps", false},
+                    {"Hues", false},
+                    {"Light", false},
+                    {"Map", false},
+                    {"Multis", false},
+                    {"Skills", false},
+                    {"Sound", false},
+                    {"Speech", false},
+                    {"CliLoc", false},
+                    {"Texture", false},
+                    {"TileData", false},
+                    {"RadarColor", false}
+                };
 
-                try
-                {
-                    OutputBox.AppendText(".");
-                    entry.Import(checkBoxDirectSave.Checked, ref changedUltimaClass);
-                }
-                catch (Exception ex)
-                {
-                    OutputBox.AppendText(
-                        $"{Environment.NewLine}Error importing {entry.Name} (index {entry.Index}): {ex.Message}{Environment.NewLine}");
-                }
-            }
+                OutputBox.AppendText("Importing");
 
-            OutputBox.AppendText($"Done{Environment.NewLine}");
-
-            if (checkBoxDirectSave.Checked)
-            {
-                if (changedUltimaClass["Art"])
+                foreach (ImportEntry entry in _importList)
                 {
-                    OutputBox.AppendText($"Saving Items/LandTiles..{Environment.NewLine}");
-                    Ultima.Art.Save(Options.OutputPath);
-                }
+                    if (!entry.Valid)
+                    {
+                        continue;
+                    }
 
-                if (changedUltimaClass["Texture"])
-                {
-                    OutputBox.AppendText($"Saving Textures..{Environment.NewLine}");
-                    Ultima.Textures.Save(Options.OutputPath);
-                }
-
-                if (changedUltimaClass["Gumps"])
-                {
-                    OutputBox.AppendText($"Saving Gumps..{Environment.NewLine}");
-                    Ultima.Gumps.Save(Options.OutputPath);
-                }
-
-                if (changedUltimaClass["TileData"])
-                {
-                    OutputBox.AppendText($"Saving TileData..{Environment.NewLine}");
-                    Ultima.TileData.SaveTileData(Path.Combine(Options.OutputPath, "tiledata.mul"));
-                }
-
-                if (changedUltimaClass["Hues"])
-                {
-                    OutputBox.AppendText($"Saving Hues..{Environment.NewLine}");
-                    Ultima.Hues.Save(Options.OutputPath);
-                }
-
-                if (changedUltimaClass["Multis"])
-                {
-                    OutputBox.AppendText($"Saving Multis..{Environment.NewLine}");
-                    Ultima.Multis.Save(Options.OutputPath);
+                    try
+                    {
+                        OutputBox.AppendText(".");
+                        entry.Import(checkBoxDirectSave.Checked, ref changedUltimaClass);
+                    }
+                    catch (Exception ex)
+                    {
+                        OutputBox.AppendText(
+                            $"{Environment.NewLine}Error importing {entry.Name} (index {entry.Index}): {ex.Message}{Environment.NewLine}");
+                    }
                 }
 
                 OutputBox.AppendText($"Done{Environment.NewLine}");
-            }
 
-            Cursor.Current = Cursors.Default;
+                if (checkBoxDirectSave.Checked)
+                {
+                    if (changedUltimaClass["Art"])
+                    {
+                        OutputBox.AppendText($"Saving Items/LandTiles..{Environment.NewLine}");
+                        Ultima.Art.Save(Options.OutputPath);
+                    }
+
+                    if (changedUltimaClass["Texture"])
+                    {
+                        OutputBox.AppendText($"Saving Textures..{Environment.NewLine}");
+                        Ultima.Textures.Save(Options.OutputPath);
+                    }
+
+                    if (changedUltimaClass["Gumps"])
+                    {
+                        OutputBox.AppendText($"Saving Gumps..{Environment.NewLine}");
+                        Ultima.Gumps.Save(Options.OutputPath);
+                    }
+
+                    if (changedUltimaClass["TileData"])
+                    {
+                        OutputBox.AppendText($"Saving TileData..{Environment.NewLine}");
+                        Ultima.TileData.SaveTileData(Path.Combine(Options.OutputPath, "tiledata.mul"));
+                    }
+
+                    if (changedUltimaClass["Hues"])
+                    {
+                        OutputBox.AppendText($"Saving Hues..{Environment.NewLine}");
+                        Ultima.Hues.Save(Options.OutputPath);
+                    }
+
+                    if (changedUltimaClass["Multis"])
+                    {
+                        OutputBox.AppendText($"Saving Multis..{Environment.NewLine}");
+                        Ultima.Multis.Save(Options.OutputPath);
+                    }
+
+                    OutputBox.AppendText($"Done{Environment.NewLine}");
+                }
+            }
         }
     }
 }

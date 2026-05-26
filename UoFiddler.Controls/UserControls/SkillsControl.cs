@@ -48,36 +48,37 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Skills"] = true;
-
-            _source.DataSource = Skills.SkillEntries;
-            dataGridView1.DataSource = _source;
-            dataGridView1.Invalidate();
-
-            if (dataGridView1.Columns.Count > 0)
+            using (new WaitCursorScope(this))
             {
-                dataGridView1.Columns[0].MinimumWidth = 40;
-                dataGridView1.Columns[0].FillWeight = 10.82822F;
-                dataGridView1.Columns[0].ReadOnly = true;
-                dataGridView1.Columns[0].HeaderText = "ID";
-                dataGridView1.Columns[1].MinimumWidth = 60;
-                dataGridView1.Columns[1].FillWeight = 10.80126F;
-                dataGridView1.Columns[1].ReadOnly = false;
-                dataGridView1.Columns[1].HeaderText = "is Action";
-                dataGridView1.Columns[2].FillWeight = 54.86799F;
-                dataGridView1.Columns[2].ReadOnly = false;
-                dataGridView1.Columns[3].Visible = false; // extraFlag
-            }
+                Options.LoadedUltimaClass["Skills"] = true;
 
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                _source.ListChanged += Source_ListChanged;
-            }
+                _source.DataSource = Skills.SkillEntries;
+                dataGridView1.DataSource = _source;
+                dataGridView1.Invalidate();
 
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
+                if (dataGridView1.Columns.Count > 0)
+                {
+                    dataGridView1.Columns[0].MinimumWidth = 40;
+                    dataGridView1.Columns[0].FillWeight = 10.82822F;
+                    dataGridView1.Columns[0].ReadOnly = true;
+                    dataGridView1.Columns[0].HeaderText = "ID";
+                    dataGridView1.Columns[1].MinimumWidth = 60;
+                    dataGridView1.Columns[1].FillWeight = 10.80126F;
+                    dataGridView1.Columns[1].ReadOnly = false;
+                    dataGridView1.Columns[1].HeaderText = "is Action";
+                    dataGridView1.Columns[2].FillWeight = 54.86799F;
+                    dataGridView1.Columns[2].ReadOnly = false;
+                    dataGridView1.Columns[3].Visible = false; // extraFlag
+                }
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    _source.ListChanged += Source_ListChanged;
+                }
+
+                _loaded = true;
+            }
         }
 
         private static void Source_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)

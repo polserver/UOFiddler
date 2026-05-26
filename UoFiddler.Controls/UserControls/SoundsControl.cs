@@ -77,75 +77,75 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Sound"] = true;
-
-            int? oldItem = null;
-
-            if (listView.SelectedItems.Count > 0)
+            using (new WaitCursorScope(this))
             {
-                oldItem = (int)listView.SelectedItems[0].Tag;
-            }
+                Options.LoadedUltimaClass["Sound"] = true;
 
-            listView.BeginUpdate();
-            try
-            {
-                listView.Items.Clear();
+                int? oldItem = null;
 
-                _soundIdOffset = GetSoundIdOffset();
-
-                var cache = new List<ListViewItem>();
-                for (int i = 0; i < _soundsLength; ++i)
+                if (listView.SelectedItems.Count > 0)
                 {
-                    if (Sounds.IsValidSound(i, out string name, out bool translated))
-                    {
-                        var item = new ListViewItem($"0x{i + _soundIdOffset:X3} {name}") { Tag = i };
-
-                        if (translated)
-                        {
-                            item.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
-                            item.Font = new Font(Font, FontStyle.Underline);
-                        }
-
-                        cache.Add(item);
-                    }
-                    else if (showFreeSlotsToolStripMenuItem.Checked)
-                    {
-                        cache.Add(new ListViewItem($"0x{i:X3} ")
-                        {
-                            Tag = i,
-                            ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red
-                        });
-                    }
+                    oldItem = (int)listView.SelectedItems[0].Tag;
                 }
 
-                listView.Items.AddRange(cache.ToArray());
-            }
-            finally
-            {
-                listView.EndUpdate();
-            }
+                listView.BeginUpdate();
+                try
+                {
+                    listView.Items.Clear();
 
-            if (listView.Items.Count > 0)
-            {
-                listView.Items[0].Selected = true;
-                listView.Items[0].EnsureVisible();
-            }
+                    _soundIdOffset = GetSoundIdOffset();
 
-            _sp = new System.Media.SoundPlayer();
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
+                    var cache = new List<ListViewItem>();
+                    for (int i = 0; i < _soundsLength; ++i)
+                    {
+                        if (Sounds.IsValidSound(i, out string name, out bool translated))
+                        {
+                            var item = new ListViewItem($"0x{i + _soundIdOffset:X3} {name}") { Tag = i };
 
-            _loaded = true;
-            _playing = false;
+                            if (translated)
+                            {
+                                item.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
+                                item.Font = new Font(Font, FontStyle.Underline);
+                            }
 
-            Cursor.Current = Cursors.Default;
+                            cache.Add(item);
+                        }
+                        else if (showFreeSlotsToolStripMenuItem.Checked)
+                        {
+                            cache.Add(new ListViewItem($"0x{i:X3} ")
+                            {
+                                Tag = i,
+                                ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red
+                            });
+                        }
+                    }
 
-            if (oldItem != null)
-            {
-                SearchId(oldItem.Value);
+                    listView.Items.AddRange(cache.ToArray());
+                }
+                finally
+                {
+                    listView.EndUpdate();
+                }
+
+                if (listView.Items.Count > 0)
+                {
+                    listView.Items[0].Selected = true;
+                    listView.Items[0].EnsureVisible();
+                }
+
+                _sp = new System.Media.SoundPlayer();
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
+                _playing = false;
+
+                if (oldItem != null)
+                {
+                    SearchId(oldItem.Value);
+                }
             }
         }
 
@@ -434,11 +434,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            string path = Options.OutputPath;
-            Sounds.Save(path);
-            Cursor.Current = Cursors.Default;
-            Options.ChangedUltimaClass["Sound"] = false;
+            using (new WaitCursorScope(this))
+            {
+                string path = Options.OutputPath;
+                Sounds.Save(path);
+                Options.ChangedUltimaClass["Sound"] = false;
+            }
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }

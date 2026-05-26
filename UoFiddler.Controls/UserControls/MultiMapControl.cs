@@ -272,28 +272,28 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-
-            multiMapToolStripMenuItem.Checked =
-                facet00ToolStripMenuItem.Checked =
-                facet01ToolStripMenuItem.Checked =
-                facet02ToolStripMenuItem.Checked =
-                facet03ToolStripMenuItem.Checked =
-                facet04ToolStripMenuItem.Checked =
-                facet05ToolStripMenuItem.Checked = false;
-
-            strip.Checked = true;
-
-            pictureBox.Image = (int)strip.Tag == -1
-                ? Ultima.MultiMap.GetMultiMap()
-                : Ultima.MultiMap.GetFacetImage((int)strip.Tag);
-
-            if (pictureBox.Image != null)
+            using (new WaitCursorScope(this))
             {
-                DisplayScrollBars();
-                SetScrollBarValues();
+                multiMapToolStripMenuItem.Checked =
+                    facet00ToolStripMenuItem.Checked =
+                    facet01ToolStripMenuItem.Checked =
+                    facet02ToolStripMenuItem.Checked =
+                    facet03ToolStripMenuItem.Checked =
+                    facet04ToolStripMenuItem.Checked =
+                    facet05ToolStripMenuItem.Checked = false;
+
+                strip.Checked = true;
+
+                pictureBox.Image = (int)strip.Tag == -1
+                    ? Ultima.MultiMap.GetMultiMap()
+                    : Ultima.MultiMap.GetFacetImage((int)strip.Tag);
+
+                if (pictureBox.Image != null)
+                {
+                    DisplayScrollBars();
+                    SetScrollBarValues();
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickGenerateRLE(object sender, EventArgs e)
@@ -308,36 +308,31 @@ namespace UoFiddler.Controls.UserControls
 
                 try
                 {
-                    Cursor.Current = Cursors.WaitCursor;
-
-                    Bitmap image = new Bitmap(dialog.FileName);
-
-                    if (image.Height != 2048 || image.Width != 2560)
+                    using (new WaitCursorScope(this))
                     {
-                        MessageBox.Show("Invalid image height or width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                        return;
+                        Bitmap image = new Bitmap(dialog.FileName);
+
+                        if (image.Height != 2048 || image.Width != 2560)
+                        {
+                            MessageBox.Show("Invalid image height or width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                            return;
+                        }
+
+                        string path = Options.OutputPath;
+                        string fileName = Path.Combine(path, "MultiMap.rle");
+                        using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+                        {
+                            BinaryWriter bin = new BinaryWriter(fs, Encoding.Unicode);
+                            Ultima.MultiMap.SaveMultiMap(image, bin);
+                        }
+
+                        FileSavedDialog.Show(FindForm(), fileName, "MultiMap saved successfully.");
                     }
-
-                    string path = Options.OutputPath;
-                    string fileName = Path.Combine(path, "MultiMap.rle");
-                    using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
-                    {
-                        BinaryWriter bin = new BinaryWriter(fs, Encoding.Unicode);
-                        Ultima.MultiMap.SaveMultiMap(image, bin);
-                    }
-
-                    Cursor.Current = Cursors.Default;
-
-                    FileSavedDialog.Show(FindForm(), fileName, "MultiMap saved successfully.");
                 }
                 catch (FileNotFoundException)
                 {
                     MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
-                }
-                finally
-                {
-                    Cursor.Current = Cursors.Default;
                 }
             }
         }
@@ -354,25 +349,20 @@ namespace UoFiddler.Controls.UserControls
 
                 try
                 {
-                    Cursor.Current = Cursors.WaitCursor;
+                    using (new WaitCursorScope(this))
+                    {
+                        Bitmap image = new Bitmap(dialog.FileName);
+                        string path = Options.OutputPath;
+                        string fileName = Path.Combine(path, "facet.mul");
+                        Ultima.MultiMap.SaveFacetImage(fileName, image);
 
-                    Bitmap image = new Bitmap(dialog.FileName);
-                    string path = Options.OutputPath;
-                    string fileName = Path.Combine(path, "facet.mul");
-                    Ultima.MultiMap.SaveFacetImage(fileName, image);
-
-                    Cursor.Current = Cursors.Default;
-
-                    FileSavedDialog.Show(FindForm(), fileName, "Facet saved successfully.");
+                        FileSavedDialog.Show(FindForm(), fileName, "Facet saved successfully.");
+                    }
                 }
                 catch (FileNotFoundException)
                 {
                     MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
-                }
-                finally
-                {
-                    Cursor.Current = Cursors.Default;
                 }
             }
         }

@@ -200,51 +200,52 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["TileData"] = true;
-            Options.LoadedUltimaClass["Art"] = true;
-            Options.LoadedUltimaClass["Animdata"] = true;
-            Options.LoadedUltimaClass["Hues"] = true;
-
-            if (!IsLoaded) // only once
+            using (new WaitCursorScope(this))
             {
-                Plugin.PluginEvents.FireModifyItemShowContextMenuEvent(TileViewContextMenuStrip);
-            }
+                Options.LoadedUltimaClass["TileData"] = true;
+                Options.LoadedUltimaClass["Art"] = true;
+                Options.LoadedUltimaClass["Animdata"] = true;
+                Options.LoadedUltimaClass["Hues"] = true;
 
-            UpdateTileView();
-
-            _showFreeSlots = false;
-            showFreeSlotsToolStripMenuItem.Checked = false;
-
-            var prevSelected = SelectedGraphicId;
-
-            int staticLength = Art.GetMaxItemId();
-            _itemList = new List<int>(staticLength);
-            for (int i = 0; i <= staticLength; ++i)
-            {
-                if (Art.IsValidStatic(i))
+                if (!IsLoaded) // only once
                 {
-                    _itemList.Add(i);
+                    Plugin.PluginEvents.FireModifyItemShowContextMenuEvent(TileViewContextMenuStrip);
                 }
+
+                UpdateTileView();
+
+                _showFreeSlots = false;
+                showFreeSlotsToolStripMenuItem.Checked = false;
+
+                var prevSelected = SelectedGraphicId;
+
+                int staticLength = Art.GetMaxItemId();
+                _itemList = new List<int>(staticLength);
+                for (int i = 0; i <= staticLength; ++i)
+                {
+                    if (Art.IsValidStatic(i))
+                    {
+                        _itemList.Add(i);
+                    }
+                }
+
+                ItemsTileView.VirtualListSize = _itemList.Count;
+
+                if (prevSelected >= 0)
+                {
+                    SelectedGraphicId = _itemList.Contains(prevSelected) ? prevSelected : 0;
+                }
+
+                if (!IsLoaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    ControlEvents.ItemChangeEvent += OnItemChangeEvent;
+                    ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
+                    ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+                }
+
+                IsLoaded = true;
             }
-
-            ItemsTileView.VirtualListSize = _itemList.Count;
-
-            if (prevSelected >= 0)
-            {
-                SelectedGraphicId = _itemList.Contains(prevSelected) ? prevSelected : 0;
-            }
-
-            if (!IsLoaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                ControlEvents.ItemChangeEvent += OnItemChangeEvent;
-                ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
-                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
-            }
-
-            IsLoaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         /// <summary>
@@ -780,11 +781,13 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            ProgressBarDialog barDialog = new ProgressBarDialog(Art.GetIdxLength(), "Save");
-            Art.Save(Options.OutputPath);
-            barDialog.Dispose();
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                ProgressBarDialog barDialog = new ProgressBarDialog(Art.GetIdxLength(), "Save");
+                Art.Save(Options.OutputPath);
+                barDialog.Dispose();
+            }
+
             Options.ChangedUltimaClass["Art"] = false;
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
@@ -954,36 +957,35 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Cursor.Current = Cursors.WaitCursor;
-
-                using (new ProgressBarDialog(_itemList.Count, $"Export to {fileExtension}", false))
+                using (new WaitCursorScope(this))
                 {
-                    foreach (var artItemIndex in _itemList)
+                    using (new ProgressBarDialog(_itemList.Count, $"Export to {fileExtension}", false))
                     {
-                        ControlEvents.FireProgressChangeEvent();
-                        Application.DoEvents();
-
-                        int index = artItemIndex;
-                        if (index < 0)
+                        foreach (var artItemIndex in _itemList)
                         {
-                            continue;
-                        }
+                            ControlEvents.FireProgressChangeEvent();
+                            Application.DoEvents();
 
-                        string fileName = Path.Combine(dialog.SelectedPath, $"Item {Utils.FormatExportId(index)}.{fileExtension}");
-                        var artBitmap = Art.GetStatic(index);
-                        if (artBitmap is null)
-                        {
-                            continue;
-                        }
+                            int index = artItemIndex;
+                            if (index < 0)
+                            {
+                                continue;
+                            }
 
-                        using (Bitmap bit = new Bitmap(artBitmap))
-                        {
-                            bit.Save(fileName, imageFormat);
+                            string fileName = Path.Combine(dialog.SelectedPath, $"Item {Utils.FormatExportId(index)}.{fileExtension}");
+                            var artBitmap = Art.GetStatic(index);
+                            if (artBitmap is null)
+                            {
+                                continue;
+                            }
+
+                            using (Bitmap bit = new Bitmap(artBitmap))
+                            {
+                                bit.Save(fileName, imageFormat);
+                            }
                         }
                     }
                 }
-
-                Cursor.Current = Cursors.Default;
 
                 FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All items saved successfully.");
             }

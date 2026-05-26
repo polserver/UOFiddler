@@ -170,49 +170,51 @@ namespace UoFiddler.Controls.Forms
 
         private void SetCheckedForAll(bool value)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            _suppressEvents = true;
-            changesListView.BeginUpdate();
-            try
+            using (new WaitCursorScope(this))
             {
-                foreach (var row in _rows)
+                _suppressEvents = true;
+                changesListView.BeginUpdate();
+                try
                 {
-                    row.Item.Checked = value;
-                    row.Checked = value;
-                }
-            }
-            finally
-            {
-                changesListView.EndUpdate();
-                _suppressEvents = false;
-            }
-            UpdateSummary();
-            Cursor.Current = Cursors.Default;
-        }
-
-        private void SetCheckedForKind(TileDataSyncKind kind, bool value)
-        {
-            Cursor.Current = Cursors.WaitCursor;
-            _suppressEvents = true;
-            changesListView.BeginUpdate();
-            try
-            {
-                foreach (var row in _rows)
-                {
-                    if (row.Change.Kind == kind)
+                    foreach (var row in _rows)
                     {
                         row.Item.Checked = value;
                         row.Checked = value;
                     }
                 }
+                finally
+                {
+                    changesListView.EndUpdate();
+                    _suppressEvents = false;
+                }
+                UpdateSummary();
             }
-            finally
+        }
+
+        private void SetCheckedForKind(TileDataSyncKind kind, bool value)
+        {
+            using (new WaitCursorScope(this))
             {
-                changesListView.EndUpdate();
-                _suppressEvents = false;
+                _suppressEvents = true;
+                changesListView.BeginUpdate();
+                try
+                {
+                    foreach (var row in _rows)
+                    {
+                        if (row.Change.Kind == kind)
+                        {
+                            row.Item.Checked = value;
+                            row.Checked = value;
+                        }
+                    }
+                }
+                finally
+                {
+                    changesListView.EndUpdate();
+                    _suppressEvents = false;
+                }
+                UpdateSummary();
             }
-            UpdateSummary();
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnCheckAll(object sender, EventArgs e)

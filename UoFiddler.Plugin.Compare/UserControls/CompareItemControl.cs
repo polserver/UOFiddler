@@ -362,30 +362,31 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int maxId = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
-            _displayIndices.Clear();
-            if (checkBox1.Checked)
+            using (new WaitCursorScope(this))
             {
-                for (int i = 0; i < maxId; i++)
+                int maxId = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
+                _displayIndices.Clear();
+                if (checkBox1.Checked)
                 {
-                    if (!Compare(i))
+                    for (int i = 0; i < maxId; i++)
+                    {
+                        if (!Compare(i))
+                        {
+                            _displayIndices.Add(i);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < maxId; i++)
                     {
                         _displayIndices.Add(i);
                     }
                 }
-            }
-            else
-            {
-                for (int i = 0; i < maxId; i++)
-                {
-                    _displayIndices.Add(i);
-                }
-            }
 
-            tileViewOrg.VirtualListSize = _displayIndices.Count;
-            tileViewSec.VirtualListSize = _displayIndices.Count;
-            Cursor.Current = Cursors.Default;
+                tileViewOrg.VirtualListSize = _displayIndices.Count;
+                tileViewSec.VirtualListSize = _displayIndices.Count;
+            }
         }
 
         private void ExportAsBmp(object sender, EventArgs e)
@@ -473,61 +474,62 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int maxId = Art.GetMaxItemId() + 1;
-            int lastCopiedId = -1;
-            bool changed = false;
-
-            foreach (int focusIdx in targets)
+            using (new WaitCursorScope(this))
             {
-                if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
+                int maxId = Art.GetMaxItemId() + 1;
+                int lastCopiedId = -1;
+                bool changed = false;
+
+                foreach (int focusIdx in targets)
                 {
-                    continue;
-                }
-
-                int i = _displayIndices[focusIdx];
-                if (!SecondArt.IsValidStatic(i) || i >= maxId)
-                {
-                    continue;
-                }
-
-                Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
-                Art.ReplaceStatic(i, copy);
-                ControlEvents.FireItemChangeEvent(this, i);
-                _compare[i] = true;
-                lastCopiedId = i;
-                changed = true;
-            }
-
-            if (changed)
-            {
-                Options.ChangedUltimaClass["Art"] = true;
-            }
-
-            if (checkBox1.Checked && changed)
-            {
-                foreach (int idx in targets.OrderByDescending(x => x))
-                {
-                    if (idx >= 0 && idx < _displayIndices.Count)
+                    if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
                     {
-                        _displayIndices.RemoveAt(idx);
+                        continue;
                     }
-                }
-                tileViewOrg.VirtualListSize = _displayIndices.Count;
-                tileViewSec.VirtualListSize = _displayIndices.Count;
-            }
-            else
-            {
-                tileViewSec.SelectedIndices.Clear();
-            }
 
-            tileViewOrg.Invalidate();
-            tileViewSec.Invalidate();
-            if (lastCopiedId >= 0)
-            {
-                pictureBoxOrg.BackgroundImage = Art.IsValidStatic(lastCopiedId) ? Art.GetStatic(lastCopiedId) : null;
+                    int i = _displayIndices[focusIdx];
+                    if (!SecondArt.IsValidStatic(i) || i >= maxId)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
+                    Art.ReplaceStatic(i, copy);
+                    ControlEvents.FireItemChangeEvent(this, i);
+                    _compare[i] = true;
+                    lastCopiedId = i;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    Options.ChangedUltimaClass["Art"] = true;
+                }
+
+                if (checkBox1.Checked && changed)
+                {
+                    foreach (int idx in targets.OrderByDescending(x => x))
+                    {
+                        if (idx >= 0 && idx < _displayIndices.Count)
+                        {
+                            _displayIndices.RemoveAt(idx);
+                        }
+                    }
+                    tileViewOrg.VirtualListSize = _displayIndices.Count;
+                    tileViewSec.VirtualListSize = _displayIndices.Count;
+                }
+                else
+                {
+                    tileViewSec.SelectedIndices.Clear();
+                }
+
+                tileViewOrg.Invalidate();
+                tileViewSec.Invalidate();
+                if (lastCopiedId >= 0)
+                {
+                    pictureBoxOrg.BackgroundImage = Art.IsValidStatic(lastCopiedId) ? Art.GetStatic(lastCopiedId) : null;
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnDoubleClickSec(object sender, MouseEventArgs e)
@@ -546,40 +548,41 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int maxId = Art.GetMaxItemId() + 1;
-            for (int i = 0; i < maxId; i++)
+            using (new WaitCursorScope(this))
             {
-                if (!SecondArt.IsValidStatic(i) || Compare(i))
-                {
-                    continue;
-                }
-
-                Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
-                Art.ReplaceStatic(i, copy);
-                ControlEvents.FireItemChangeEvent(this, i);
-                _compare[i] = true;
-            }
-
-            Options.ChangedUltimaClass["Art"] = true;
-
-            if (checkBox1.Checked)
-            {
-                _displayIndices.Clear();
+                int maxId = Art.GetMaxItemId() + 1;
                 for (int i = 0; i < maxId; i++)
                 {
-                    if (!Compare(i))
+                    if (!SecondArt.IsValidStatic(i) || Compare(i))
                     {
-                        _displayIndices.Add(i);
+                        continue;
                     }
-                }
-                tileViewOrg.VirtualListSize = _displayIndices.Count;
-                tileViewSec.VirtualListSize = _displayIndices.Count;
-            }
 
-            tileViewOrg.Invalidate();
-            tileViewSec.Invalidate();
-            Cursor.Current = Cursors.Default;
+                    Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
+                    Art.ReplaceStatic(i, copy);
+                    ControlEvents.FireItemChangeEvent(this, i);
+                    _compare[i] = true;
+                }
+
+                Options.ChangedUltimaClass["Art"] = true;
+
+                if (checkBox1.Checked)
+                {
+                    _displayIndices.Clear();
+                    for (int i = 0; i < maxId; i++)
+                    {
+                        if (!Compare(i))
+                        {
+                            _displayIndices.Add(i);
+                        }
+                    }
+                    tileViewOrg.VirtualListSize = _displayIndices.Count;
+                    tileViewSec.VirtualListSize = _displayIndices.Count;
+                }
+
+                tileViewOrg.Invalidate();
+                tileViewSec.Invalidate();
+            }
         }
 
         private void OnClickBrowse(object sender, EventArgs e)

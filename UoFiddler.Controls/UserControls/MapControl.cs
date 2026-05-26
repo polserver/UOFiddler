@@ -141,24 +141,25 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            LoadMapOverlays();
-            Options.LoadedUltimaClass["Map"] = true;
-            Options.LoadedUltimaClass["RadarColor"] = true;
+            using (new WaitCursorScope(this))
+            {
+                LoadMapOverlays();
+                Options.LoadedUltimaClass["Map"] = true;
+                Options.LoadedUltimaClass["RadarColor"] = true;
 
-            CurrentMap = Map.Felucca;
-            feluccaToolStripMenuItem.Checked = true;
-            trammelToolStripMenuItem.Checked = false;
-            ilshenarToolStripMenuItem.Checked = false;
-            malasToolStripMenuItem.Checked = false;
-            tokunoToolStripMenuItem.Checked = false;
-            PreloadMap.Visible = true;
-            ChangeMapNames();
-            ZoomLabel.Text = $"Zoom: {Zoom}";
-            SetScrollBarValues();
-            Refresh();
-            pictureBox.Invalidate();
-            Cursor.Current = Cursors.Default;
+                CurrentMap = Map.Felucca;
+                feluccaToolStripMenuItem.Checked = true;
+                trammelToolStripMenuItem.Checked = false;
+                ilshenarToolStripMenuItem.Checked = false;
+                malasToolStripMenuItem.Checked = false;
+                tokunoToolStripMenuItem.Checked = false;
+                PreloadMap.Visible = true;
+                ChangeMapNames();
+                ZoomLabel.Text = $"Zoom: {Zoom}";
+                SetScrollBarValues();
+                Refresh();
+                pictureBox.Invalidate();
+            }
 
             if (!_loaded)
             {
@@ -1005,12 +1006,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void ExtractMapImage(ImageFormat imageFormat)
         {
-            Cursor.Current = Cursors.WaitCursor;
-
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{Options.MapNames[_currentMapId]}.{fileExtension}");
 
-            try
+            using (new WaitCursorScope(this))
             {
                 Bitmap extract;
 
@@ -1040,10 +1039,6 @@ namespace UoFiddler.Controls.UserControls
                     g.Save();
                 }
                 extract.Save(fileName, imageFormat);
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
             }
 
             FileSavedDialog.Show(FindForm(), fileName, "Map saved successfully.");
@@ -1315,20 +1310,22 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickDefragStatics(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Map.DefragStatics(Options.OutputPath,
-                CurrentMap, CurrentMap.Width, CurrentMap.Height, false);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                Map.DefragStatics(Options.OutputPath,
+                    CurrentMap, CurrentMap.Width, CurrentMap.Height, false);
+            }
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Statics saved successfully.");
         }
 
         private void OnClickDefragRemoveStatics(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Map.DefragStatics(Options.OutputPath,
-                CurrentMap, CurrentMap.Width, CurrentMap.Height, true);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                Map.DefragStatics(Options.OutputPath,
+                    CurrentMap, CurrentMap.Width, CurrentMap.Height, true);
+            }
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Statics saved successfully.");
         }
 
@@ -1350,26 +1347,29 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickRewriteMap(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Map.RewriteMap(Options.OutputPath,
-                _currentMapId, CurrentMap.Width, CurrentMap.Height);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                Map.RewriteMap(Options.OutputPath,
+                    _currentMapId, CurrentMap.Width, CurrentMap.Height);
+            }
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
 
         private void OnClickReportInvisStatics(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            CurrentMap.ReportInvisibleStatics(Options.OutputPath);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                CurrentMap.ReportInvisibleStatics(Options.OutputPath);
+            }
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
         }
 
         private void OnClickReportInvalidMapIDs(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            CurrentMap.ReportInvalidMapIDs(Options.OutputPath);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                CurrentMap.ReportInvalidMapIDs(Options.OutputPath);
+            }
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
         }
 

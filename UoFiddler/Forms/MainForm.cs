@@ -147,97 +147,96 @@ namespace UoFiddler.Forms
 
         private void ReloadFiles(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-
-            Verdata.Initialize();
-
-            if (Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"])
+            using (new WaitCursorScope(this))
             {
-                // Looks like we have to reload art first to have proper tiledata loading
-                // and order here is important
-                Art.Reload();
-                TileData.Initialize();
+                Verdata.Initialize();
+
+                if (Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"])
+                {
+                    // Looks like we have to reload art first to have proper tiledata loading
+                    // and order here is important
+                    Art.Reload();
+                    TileData.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["Hues"])
+                {
+                    Hues.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["ASCIIFont"])
+                {
+                    AsciiText.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["UnicodeFont"])
+                {
+                    UnicodeFonts.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["Animdata"])
+                {
+                    Animdata.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["Light"])
+                {
+                    Light.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["Skills"])
+                {
+                    Skills.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["Sound"])
+                {
+                    Sounds.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["Texture"])
+                {
+                    Textures.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["Gumps"])
+                {
+                    Gumps.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["Animations"])
+                {
+                    Animations.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["RadarColor"])
+                {
+                    RadarCol.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["Map"])
+                {
+                    MapHelper.CheckForNewMapSize();
+                    Map.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["Multis"])
+                {
+                    Multis.Reload();
+                }
+
+                if (Options.LoadedUltimaClass["Speech"])
+                {
+                    SpeechList.Initialize();
+                }
+
+                if (Options.LoadedUltimaClass["AnimationEdit"])
+                {
+                    AnimationEdit.Reload();
+                }
+
+                ControlEvents.FireFilePathChangeEvent();
             }
-
-            if (Options.LoadedUltimaClass["Hues"])
-            {
-                Hues.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["ASCIIFont"])
-            {
-                AsciiText.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["UnicodeFont"])
-            {
-                UnicodeFonts.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["Animdata"])
-            {
-                Animdata.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["Light"])
-            {
-                Light.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Skills"])
-            {
-                Skills.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Sound"])
-            {
-                Sounds.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["Texture"])
-            {
-                Textures.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Gumps"])
-            {
-                Gumps.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Animations"])
-            {
-                Animations.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["RadarColor"])
-            {
-                RadarCol.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["Map"])
-            {
-                MapHelper.CheckForNewMapSize();
-                Map.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Multis"])
-            {
-                Multis.Reload();
-            }
-
-            if (Options.LoadedUltimaClass["Speech"])
-            {
-                SpeechList.Initialize();
-            }
-
-            if (Options.LoadedUltimaClass["AnimationEdit"])
-            {
-                AnimationEdit.Reload();
-            }
-
-            ControlEvents.FireFilePathChangeEvent();
-
-            Cursor.Current = Cursors.Default;
         }
 
         /// <summary>

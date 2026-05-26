@@ -259,7 +259,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void OnClickShowOnlyDiff(object sender, EventArgs e)
         {
             _showOnlyDiff = !_showOnlyDiff;
-            BuildList();
+            using (new WaitCursorScope(this))
+            {
+                BuildList();
+            }
         }
 
         private void OnClickFindNextDiff(object sender, EventArgs e)

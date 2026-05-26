@@ -181,8 +181,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void PopulateSection(bool isLand, bool showDiffOnly)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            try
+            using (new WaitCursorScope(this))
             {
                 int totalCount = Math.Max(RadarCol.Colors?.Length ?? 0,
                                            SecondRadarCol.IsLoaded ? SecondRadarCol.Length : 0);
@@ -208,10 +207,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 var secView = isLand ? tileViewSec : tileViewItemSec;
                 orgView.VirtualListSize = indices.Count;
                 secView.VirtualListSize = SecondRadarCol.IsLoaded ? indices.Count : 0;
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -480,19 +475,20 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            bool ok = SecondRadarCol.Initialize(path);
-            Cursor.Current = Cursors.Default;
-
-            if (!ok)
+            using (new WaitCursorScope(this))
             {
-                MessageBox.Show("Failed to load the selected radarcol.mul file.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+                bool ok = SecondRadarCol.Initialize(path);
 
-            _compare.Clear();
-            PopulateSection(IsLandSection, checkBoxShowDiff.Checked);
+                if (!ok)
+                {
+                    MessageBox.Show("Failed to load the selected radarcol.mul file.", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                _compare.Clear();
+                PopulateSection(IsLandSection, checkBoxShowDiff.Checked);
+            }
         }
 
         private void OnChangeShowDiff(object sender, EventArgs e)
@@ -548,47 +544,48 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int lastIdx = -1;
-            bool changed = false;
-
-            foreach (int focusIdx in targets)
+            using (new WaitCursorScope(this))
             {
-                if (focusIdx < 0 || focusIdx >= indices.Count)
-                {
-                    continue;
-                }
+                int lastIdx = -1;
+                bool changed = false;
 
-                int idx = indices[focusIdx];
-                CopySecToOrg(idx);
-                lastIdx = idx;
-                changed = true;
-            }
-
-            if (checkBoxShowDiff.Checked && changed)
-            {
-                foreach (int displayIdx in targets.OrderByDescending(x => x))
+                foreach (int focusIdx in targets)
                 {
-                    if (displayIdx >= 0 && displayIdx < indices.Count)
+                    if (focusIdx < 0 || focusIdx >= indices.Count)
                     {
-                        indices.RemoveAt(displayIdx);
+                        continue;
                     }
-                }
-                orgView.VirtualListSize = indices.Count;
-                secView.VirtualListSize = indices.Count;
-            }
-            else
-            {
-                secView.SelectedIndices.Clear();
-            }
 
-            orgView.Invalidate();
-            secView.Invalidate();
-            if (lastIdx >= 0)
-            {
-                UpdateDetailPanel(lastIdx);
+                    int idx = indices[focusIdx];
+                    CopySecToOrg(idx);
+                    lastIdx = idx;
+                    changed = true;
+                }
+
+                if (checkBoxShowDiff.Checked && changed)
+                {
+                    foreach (int displayIdx in targets.OrderByDescending(x => x))
+                    {
+                        if (displayIdx >= 0 && displayIdx < indices.Count)
+                        {
+                            indices.RemoveAt(displayIdx);
+                        }
+                    }
+                    orgView.VirtualListSize = indices.Count;
+                    secView.VirtualListSize = indices.Count;
+                }
+                else
+                {
+                    secView.SelectedIndices.Clear();
+                }
+
+                orgView.Invalidate();
+                secView.Invalidate();
+                if (lastIdx >= 0)
+                {
+                    UpdateDetailPanel(lastIdx);
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickCopy1To2(object sender, EventArgs e)

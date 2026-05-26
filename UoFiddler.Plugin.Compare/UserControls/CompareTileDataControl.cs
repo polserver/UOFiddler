@@ -676,22 +676,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            if (IsLandTab)
+            using (new WaitCursorScope(this))
             {
-                RefreshLandLists();
+                if (IsLandTab)
+                {
+                    RefreshLandLists();
+                }
+                else
+                {
+                    RefreshItemLists();
+                }
             }
-            else
-            {
-                RefreshItemLists();
-            }
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnTabChanged(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            try
+            using (new WaitCursorScope(this))
             {
                 if (chkShowDiff.Checked && _secondTileData != null)
                 {
@@ -704,10 +704,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         RefreshItemLists();
                     }
                 }
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -1192,45 +1188,46 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int lastId = -1;
-
-            foreach (int focusIdx in targets)
+            using (new WaitCursorScope(this))
             {
-                if (focusIdx < 0 || focusIdx >= _landDisplayIndices.Count)
-                {
-                    continue;
-                }
+                int lastId = -1;
 
-                int id = _landDisplayIndices[focusIdx];
-                CopyLandEntry(id);
-                lastId = id;
-            }
-
-            if (chkShowDiff.Checked && lastId >= 0)
-            {
-                foreach (int displayIdx in targets.OrderByDescending(x => x))
+                foreach (int focusIdx in targets)
                 {
-                    if (displayIdx >= 0 && displayIdx < _landDisplayIndices.Count)
+                    if (focusIdx < 0 || focusIdx >= _landDisplayIndices.Count)
                     {
-                        _landDisplayIndices.RemoveAt(displayIdx);
+                        continue;
                     }
-                }
-                tileViewLandOrg.VirtualListSize = _landDisplayIndices.Count;
-                tileViewLandSec.VirtualListSize = _landDisplayIndices.Count;
-            }
-            else
-            {
-                tileViewLandSec.SelectedIndices.Clear();
-            }
 
-            tileViewLandOrg.Invalidate();
-            tileViewLandSec.Invalidate();
-            if (lastId >= 0)
-            {
-                UpdateLandDetail(lastId);
+                    int id = _landDisplayIndices[focusIdx];
+                    CopyLandEntry(id);
+                    lastId = id;
+                }
+
+                if (chkShowDiff.Checked && lastId >= 0)
+                {
+                    foreach (int displayIdx in targets.OrderByDescending(x => x))
+                    {
+                        if (displayIdx >= 0 && displayIdx < _landDisplayIndices.Count)
+                        {
+                            _landDisplayIndices.RemoveAt(displayIdx);
+                        }
+                    }
+                    tileViewLandOrg.VirtualListSize = _landDisplayIndices.Count;
+                    tileViewLandSec.VirtualListSize = _landDisplayIndices.Count;
+                }
+                else
+                {
+                    tileViewLandSec.SelectedIndices.Clear();
+                }
+
+                tileViewLandOrg.Invalidate();
+                tileViewLandSec.Invalidate();
+                if (lastId >= 0)
+                {
+                    UpdateLandDetail(lastId);
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickCopyLandAllDiff(object sender, EventArgs e)
@@ -1240,24 +1237,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int total = Math.Max(TileData.LandTable.Length, _secondTileData.LandTable.Length);
-            for (int i = 0; i < total; i++)
+            using (new WaitCursorScope(this))
             {
-                if (!CompareLand(i) && i < _secondTileData.LandTable.Length)
+                int total = Math.Max(TileData.LandTable.Length, _secondTileData.LandTable.Length);
+                for (int i = 0; i < total; i++)
                 {
-                    CopyLandEntry(i);
+                    if (!CompareLand(i) && i < _secondTileData.LandTable.Length)
+                    {
+                        CopyLandEntry(i);
+                    }
                 }
-            }
 
-            if (chkShowDiff.Checked)
-            {
-                RefreshLandLists();
-            }
+                if (chkShowDiff.Checked)
+                {
+                    RefreshLandLists();
+                }
 
-            Cursor.Current = Cursors.Default;
-            tileViewLandOrg.Invalidate();
-            tileViewLandSec.Invalidate();
+                tileViewLandOrg.Invalidate();
+                tileViewLandSec.Invalidate();
+            }
         }
 
         private void CopyLandEntry(int id)
@@ -1286,45 +1284,46 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int lastId = -1;
-
-            foreach (int focusIdx in targets)
+            using (new WaitCursorScope(this))
             {
-                if (focusIdx < 0 || focusIdx >= _itemDisplayIndices.Count)
-                {
-                    continue;
-                }
+                int lastId = -1;
 
-                int id = _itemDisplayIndices[focusIdx];
-                CopyItemEntry(id);
-                lastId = id;
-            }
-
-            if (chkShowDiff.Checked && lastId >= 0)
-            {
-                foreach (int displayIdx in targets.OrderByDescending(x => x))
+                foreach (int focusIdx in targets)
                 {
-                    if (displayIdx >= 0 && displayIdx < _itemDisplayIndices.Count)
+                    if (focusIdx < 0 || focusIdx >= _itemDisplayIndices.Count)
                     {
-                        _itemDisplayIndices.RemoveAt(displayIdx);
+                        continue;
                     }
-                }
-                tileViewItemOrg.VirtualListSize = _itemDisplayIndices.Count;
-                tileViewItemSec.VirtualListSize = _itemDisplayIndices.Count;
-            }
-            else
-            {
-                tileViewItemSec.SelectedIndices.Clear();
-            }
 
-            tileViewItemOrg.Invalidate();
-            tileViewItemSec.Invalidate();
-            if (lastId >= 0)
-            {
-                UpdateItemDetail(lastId);
+                    int id = _itemDisplayIndices[focusIdx];
+                    CopyItemEntry(id);
+                    lastId = id;
+                }
+
+                if (chkShowDiff.Checked && lastId >= 0)
+                {
+                    foreach (int displayIdx in targets.OrderByDescending(x => x))
+                    {
+                        if (displayIdx >= 0 && displayIdx < _itemDisplayIndices.Count)
+                        {
+                            _itemDisplayIndices.RemoveAt(displayIdx);
+                        }
+                    }
+                    tileViewItemOrg.VirtualListSize = _itemDisplayIndices.Count;
+                    tileViewItemSec.VirtualListSize = _itemDisplayIndices.Count;
+                }
+                else
+                {
+                    tileViewItemSec.SelectedIndices.Clear();
+                }
+
+                tileViewItemOrg.Invalidate();
+                tileViewItemSec.Invalidate();
+                if (lastId >= 0)
+                {
+                    UpdateItemDetail(lastId);
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnClickCopyItemAllDiff(object sender, EventArgs e)
@@ -1334,24 +1333,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int total = Math.Max(TileData.ItemTable.Length, _secondTileData.ItemTable.Length);
-            for (int i = 0; i < total; i++)
+            using (new WaitCursorScope(this))
             {
-                if (!CompareItem(i) && i < _secondTileData.ItemTable.Length)
+                int total = Math.Max(TileData.ItemTable.Length, _secondTileData.ItemTable.Length);
+                for (int i = 0; i < total; i++)
                 {
-                    CopyItemEntry(i);
+                    if (!CompareItem(i) && i < _secondTileData.ItemTable.Length)
+                    {
+                        CopyItemEntry(i);
+                    }
                 }
-            }
 
-            if (chkShowDiff.Checked)
-            {
-                RefreshItemLists();
-            }
+                if (chkShowDiff.Checked)
+                {
+                    RefreshItemLists();
+                }
 
-            Cursor.Current = Cursors.Default;
-            tileViewItemOrg.Invalidate();
-            tileViewItemSec.Invalidate();
+                tileViewItemOrg.Invalidate();
+                tileViewItemSec.Invalidate();
+            }
         }
 
         private void OnDoubleClickItemSec(object sender, MouseEventArgs e)
@@ -1438,8 +1438,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             _options.IgnoredFlags = mask;
 
-            Cursor.Current = Cursors.WaitCursor;
-            try
+            using (new WaitCursorScope(this))
             {
                 InvalidateCompareCache();
                 if (IsLandTab)
@@ -1450,10 +1449,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 {
                     RefreshItemLists();
                 }
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
             }
         }
 

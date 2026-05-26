@@ -302,29 +302,30 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            _displayIndices.Clear();
-            if (checkBox1.Checked)
+            using (new WaitCursorScope(this))
             {
-                for (int i = 0; i < 0x4000; i++)
+                _displayIndices.Clear();
+                if (checkBox1.Checked)
                 {
-                    if (!Compare(i))
+                    for (int i = 0; i < 0x4000; i++)
+                    {
+                        if (!Compare(i))
+                        {
+                            _displayIndices.Add(i);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 0x4000; i++)
                     {
                         _displayIndices.Add(i);
                     }
                 }
-            }
-            else
-            {
-                for (int i = 0; i < 0x4000; i++)
-                {
-                    _displayIndices.Add(i);
-                }
-            }
 
-            tileViewOrg.VirtualListSize = _displayIndices.Count;
-            tileViewSec.VirtualListSize = _displayIndices.Count;
-            Cursor.Current = Cursors.Default;
+                tileViewOrg.VirtualListSize = _displayIndices.Count;
+                tileViewSec.VirtualListSize = _displayIndices.Count;
+            }
         }
 
         private void ExportAsBmp(object sender, EventArgs e)
@@ -424,60 +425,61 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int lastCopiedId = -1;
-            bool changed = false;
-
-            foreach (int focusIdx in targets)
+            using (new WaitCursorScope(this))
             {
-                if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
+                int lastCopiedId = -1;
+                bool changed = false;
+
+                foreach (int focusIdx in targets)
                 {
-                    continue;
-                }
-
-                int i = _displayIndices[focusIdx];
-                if (!SecondTexture.IsValidTexture(i))
-                {
-                    continue;
-                }
-
-                Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
-                Textures.Replace(i, copy);
-                ControlEvents.FireTextureChangeEvent(this, i);
-                _compare[i] = true;
-                lastCopiedId = i;
-                changed = true;
-            }
-
-            if (changed)
-            {
-                Options.ChangedUltimaClass["Texture"] = true;
-            }
-
-            if (checkBox1.Checked && changed)
-            {
-                foreach (int idx in targets.OrderByDescending(x => x))
-                {
-                    if (idx >= 0 && idx < _displayIndices.Count)
+                    if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
                     {
-                        _displayIndices.RemoveAt(idx);
+                        continue;
                     }
-                }
-                tileViewOrg.VirtualListSize = _displayIndices.Count;
-                tileViewSec.VirtualListSize = _displayIndices.Count;
-            }
-            else
-            {
-                tileViewSec.SelectedIndices.Clear();
-            }
 
-            tileViewOrg.Invalidate();
-            tileViewSec.Invalidate();
-            if (lastCopiedId >= 0)
-            {
-                pictureBoxOrg.BackgroundImage = Textures.TestTexture(lastCopiedId) ? Textures.GetTexture(lastCopiedId) : null;
+                    int i = _displayIndices[focusIdx];
+                    if (!SecondTexture.IsValidTexture(i))
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
+                    Textures.Replace(i, copy);
+                    ControlEvents.FireTextureChangeEvent(this, i);
+                    _compare[i] = true;
+                    lastCopiedId = i;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    Options.ChangedUltimaClass["Texture"] = true;
+                }
+
+                if (checkBox1.Checked && changed)
+                {
+                    foreach (int idx in targets.OrderByDescending(x => x))
+                    {
+                        if (idx >= 0 && idx < _displayIndices.Count)
+                        {
+                            _displayIndices.RemoveAt(idx);
+                        }
+                    }
+                    tileViewOrg.VirtualListSize = _displayIndices.Count;
+                    tileViewSec.VirtualListSize = _displayIndices.Count;
+                }
+                else
+                {
+                    tileViewSec.SelectedIndices.Clear();
+                }
+
+                tileViewOrg.Invalidate();
+                tileViewSec.Invalidate();
+                if (lastCopiedId >= 0)
+                {
+                    pictureBoxOrg.BackgroundImage = Textures.TestTexture(lastCopiedId) ? Textures.GetTexture(lastCopiedId) : null;
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
 
         private void CopyToLeft_Click(object sender, MouseEventArgs e)

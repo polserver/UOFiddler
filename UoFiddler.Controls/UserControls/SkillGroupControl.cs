@@ -50,61 +50,62 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["SkillGrp"] = true;
-
-            treeView1.BeginUpdate();
-            treeView1.Nodes.Clear();
-            List<TreeNode> cache = new List<TreeNode>();
-
-            foreach (SkillGroup group in SkillGroups.List)
+            using (new WaitCursorScope(this))
             {
-                TreeNode groupNode = new TreeNode
+                Options.LoadedUltimaClass["SkillGrp"] = true;
+
+                treeView1.BeginUpdate();
+                treeView1.Nodes.Clear();
+                List<TreeNode> cache = new List<TreeNode>();
+
+                foreach (SkillGroup group in SkillGroups.List)
                 {
-                    Text = group.Name
-                };
-
-                if (string.Equals("Misc", group.Name))
-                {
-                    groupNode.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
-                }
-
-                for (int i = 0; i < SkillGroups.SkillList.Count; ++i)
-                {
-                    if (SkillGroups.SkillList[i] != cache.Count)
+                    TreeNode groupNode = new TreeNode
                     {
-                        continue;
-                    }
-
-                    var skillInfo = Skills.GetSkill(i);
-
-                    if (skillInfo == null)
-                    {
-                        continue;
-                    }
-
-                    TreeNode skillNode = new TreeNode
-                    {
-                        Text = skillInfo.Name,
-                        Tag = i
+                        Text = group.Name
                     };
 
-                    groupNode.Nodes.Add(skillNode);
+                    if (string.Equals("Misc", group.Name))
+                    {
+                        groupNode.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
+                    }
+
+                    for (int i = 0; i < SkillGroups.SkillList.Count; ++i)
+                    {
+                        if (SkillGroups.SkillList[i] != cache.Count)
+                        {
+                            continue;
+                        }
+
+                        var skillInfo = Skills.GetSkill(i);
+
+                        if (skillInfo == null)
+                        {
+                            continue;
+                        }
+
+                        TreeNode skillNode = new TreeNode
+                        {
+                            Text = skillInfo.Name,
+                            Tag = i
+                        };
+
+                        groupNode.Nodes.Add(skillNode);
+                    }
+
+                    cache.Add(groupNode);
                 }
 
-                cache.Add(groupNode);
+                treeView1.Nodes.AddRange(cache.ToArray());
+                treeView1.EndUpdate();
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
             }
-
-            treeView1.Nodes.AddRange(cache.ToArray());
-            treeView1.EndUpdate();
-
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
-
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()

@@ -180,78 +180,79 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Animdata"] = true;
-            Options.LoadedUltimaClass["TileData"] = true;
-            Options.LoadedUltimaClass["Art"] = true;
-
-            treeView1.BeginUpdate();
-            treeView1.Nodes.Clear();
-
-            treeView1.TreeViewNodeSorter = new AnimdataSorter();
-
-            foreach (int id in Animdata.AnimData.Keys)
+            using (new WaitCursorScope(this))
             {
-                Animdata.AnimdataEntry animdataEntry = Animdata.AnimData[id];
-                
-                TreeNode node = new TreeNode
-                {
-                    Tag = id,
-                    Text = $"0x{id:X4} {TileData.ItemTable[id].Name}"
-                };
+                Options.LoadedUltimaClass["Animdata"] = true;
+                Options.LoadedUltimaClass["TileData"] = true;
+                Options.LoadedUltimaClass["Art"] = true;
 
-                if (!Art.IsValidStatic(id))
-                {
-                    node.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
-                }
-                else if ((TileData.ItemTable[id].Flags & TileFlag.Animation) == 0)
-                {
-                    node.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
-                }
+                treeView1.BeginUpdate();
+                treeView1.Nodes.Clear();
 
-                // TODO: find a better approach to this
-                // we need to fix invalid entries as there cannot be more than 64 frames
-                if (animdataEntry.FrameCount > 64)
-                {
-                    animdataEntry.FrameCount = 64;
-                    Options.ChangedUltimaClass["Animdata"] = true;
-                }
+                treeView1.TreeViewNodeSorter = new AnimdataSorter();
 
-                treeView1.Nodes.Add(node);
-
-                for (int i = 0; i < animdataEntry.FrameCount; ++i)
+                foreach (int id in Animdata.AnimData.Keys)
                 {
-                    int frame = id + animdataEntry.FrameData[i];
-                    if (Art.IsValidStatic(frame))
+                    Animdata.AnimdataEntry animdataEntry = Animdata.AnimData[id];
+
+                    TreeNode node = new TreeNode
                     {
-                        TreeNode subNode = new TreeNode
+                        Tag = id,
+                        Text = $"0x{id:X4} {TileData.ItemTable[id].Name}"
+                    };
+
+                    if (!Art.IsValidStatic(id))
+                    {
+                        node.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
+                    }
+                    else if ((TileData.ItemTable[id].Flags & TileFlag.Animation) == 0)
+                    {
+                        node.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
+                    }
+
+                    // TODO: find a better approach to this
+                    // we need to fix invalid entries as there cannot be more than 64 frames
+                    if (animdataEntry.FrameCount > 64)
+                    {
+                        animdataEntry.FrameCount = 64;
+                        Options.ChangedUltimaClass["Animdata"] = true;
+                    }
+
+                    treeView1.Nodes.Add(node);
+
+                    for (int i = 0; i < animdataEntry.FrameCount; ++i)
+                    {
+                        int frame = id + animdataEntry.FrameData[i];
+                        if (Art.IsValidStatic(frame))
                         {
-                            Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}"
-                        };
-                        node.Nodes.Add(subNode);
-                    }
-                    else
-                    {
-                        break;
+                            TreeNode subNode = new TreeNode
+                            {
+                                Text = $"0x{frame:X4} {TileData.ItemTable[frame].Name}"
+                            };
+                            node.Nodes.Add(subNode);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
+
+                treeView1.EndUpdate();
+
+                if (treeView1.Nodes.Count > 0)
+                {
+                    treeView1.SelectedNode = treeView1.Nodes[0];
+                    _currentSelect = (int)treeView1.Nodes[0].Tag;
+                }
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
             }
-
-            treeView1.EndUpdate();
-
-            if (treeView1.Nodes.Count > 0)
-            {
-                treeView1.SelectedNode = treeView1.Nodes[0];
-                _currentSelect = (int)treeView1.Nodes[0].Tag;
-            }
-
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
-
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()
@@ -564,10 +565,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Animdata.Save(Options.OutputPath);
-            Cursor.Current = Cursors.Default;
-            Options.ChangedUltimaClass["Animdata"] = false;
+            using (new WaitCursorScope(this))
+            {
+                Animdata.Save(Options.OutputPath);
+                Options.ChangedUltimaClass["Animdata"] = false;
+            }
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "File saved successfully.");
         }

@@ -56,41 +56,42 @@ namespace UoFiddler.Controls.UserControls
 
             pictureBoxPreview.BackColor = Options.DarkMode ? Color.LightGray : Color.White;
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Light"] = true;
-
-            listViewLights.BeginUpdate();
-            try
+            using (new WaitCursorScope(this))
             {
-                listViewLights.Items.Clear();
-                for (int i = 0; i < Ultima.Light.GetCount(); ++i)
+                Options.LoadedUltimaClass["Light"] = true;
+
+                listViewLights.BeginUpdate();
+                try
                 {
-                    if (!Ultima.Light.TestLight(i))
+                    listViewLights.Items.Clear();
+                    for (int i = 0; i < Ultima.Light.GetCount(); ++i)
                     {
-                        continue;
+                        if (!Ultima.Light.TestLight(i))
+                        {
+                            continue;
+                        }
+
+                        listViewLights.Items.Add(new ListViewItem(i.ToString()) { Tag = i });
                     }
-
-                    listViewLights.Items.Add(new ListViewItem(i.ToString()) { Tag = i });
                 }
-            }
-            finally
-            {
-                listViewLights.EndUpdate();
-            }
+                finally
+                {
+                    listViewLights.EndUpdate();
+                }
 
-            if (listViewLights.Items.Count > 0)
-            {
-                listViewLights.Items[0].Selected = true;
-                listViewLights.Items[0].EnsureVisible();
-            }
+                if (listViewLights.Items.Count > 0)
+                {
+                    listViewLights.Items[0].Selected = true;
+                    listViewLights.Items[0].EnsureVisible();
+                }
 
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
 
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
+                _loaded = true;
+            }
         }
 
         private void OnFilePathChangeEvent()

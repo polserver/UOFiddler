@@ -176,33 +176,33 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Animations"] = true;
-            Options.LoadedUltimaClass["Hues"] = true;
-            TreeViewMobs.TreeViewNodeSorter = new GraphicSorter();
-            if (!LoadXml())
+            using (new WaitCursorScope(this))
             {
-                Cursor.Current = Cursors.Default;
-                return;
+                Options.LoadedUltimaClass["Animations"] = true;
+                Options.LoadedUltimaClass["Hues"] = true;
+                TreeViewMobs.TreeViewNodeSorter = new GraphicSorter();
+                if (!LoadXml())
+                {
+                    return;
+                }
+
+                LoadListView();
+
+                _currentSelect = 0;
+                _currentSelectAction = 0;
+                if (TreeViewMobs.Nodes[0].Nodes.Count > 0)
+                {
+                    TreeViewMobs.SelectedNode = TreeViewMobs.Nodes[0].Nodes[0];
+                }
+
+                FacingBar.Value = (_facing + 3) & 7;
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
             }
-
-            LoadListView();
-
-            _currentSelect = 0;
-            _currentSelectAction = 0;
-            if (TreeViewMobs.Nodes[0].Nodes.Count > 0)
-            {
-                TreeViewMobs.SelectedNode = TreeViewMobs.Nodes[0].Nodes[0];
-            }
-
-            FacingBar.Value = (_facing + 3) & 7;
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
-
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()

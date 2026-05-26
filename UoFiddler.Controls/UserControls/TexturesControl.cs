@@ -114,30 +114,30 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Texture"] = true;
-
-            for (int i = 0; i < Textures.GetIdxLength(); ++i)
+            using (new WaitCursorScope(this))
             {
-                if (Textures.TestTexture(i))
+                Options.LoadedUltimaClass["Texture"] = true;
+
+                for (int i = 0; i < Textures.GetIdxLength(); ++i)
                 {
-                    _textureList.Add(i);
+                    if (Textures.TestTexture(i))
+                    {
+                        _textureList.Add(i);
+                    }
                 }
+
+                TextureTileView.VirtualListSize = _textureList.Count;
+
+                UpdateTileView();
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    ControlEvents.TextureChangeEvent += OnTextureChangeEvent;
+                }
+
+                _loaded = true;
             }
-
-            TextureTileView.VirtualListSize = _textureList.Count;
-
-            UpdateTileView();
-
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                ControlEvents.TextureChangeEvent += OnTextureChangeEvent;
-            }
-
-            _loaded = true;
-
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnTextureChangeEvent(object sender, int index)
@@ -515,9 +515,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Textures.Save(Options.OutputPath);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                Textures.Save(Options.OutputPath);
+            }
+
             Options.ChangedUltimaClass["Texture"] = false;
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
@@ -728,29 +730,28 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Cursor.Current = Cursors.WaitCursor;
-
-                foreach (var index in _textureList)
+                using (new WaitCursorScope(this))
                 {
-                    if (!Textures.TestTexture(index))
+                    foreach (var index in _textureList)
                     {
-                        continue;
-                    }
+                        if (!Textures.TestTexture(index))
+                        {
+                            continue;
+                        }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Texture {Utils.FormatExportId(index)}.{fileExtension}");
-                    var texture = Textures.GetTexture(index);
-                    if (texture is null)
-                    {
-                        continue;
-                    }
+                        string fileName = Path.Combine(dialog.SelectedPath, $"Texture {Utils.FormatExportId(index)}.{fileExtension}");
+                        var texture = Textures.GetTexture(index);
+                        if (texture is null)
+                        {
+                            continue;
+                        }
 
-                    using (Bitmap bit = new Bitmap(texture))
-                    {
-                        bit.Save(fileName, imageFormat);
+                        using (Bitmap bit = new Bitmap(texture))
+                        {
+                            bit.Save(fileName, imageFormat);
+                        }
                     }
                 }
-
-                Cursor.Current = Cursors.Default;
 
                 MessageBox.Show($"All textures saved to {dialog.SelectedPath}", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);

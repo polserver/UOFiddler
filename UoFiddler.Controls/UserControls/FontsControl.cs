@@ -84,71 +84,72 @@ namespace UoFiddler.Controls.UserControls
 
             FontsTileView.BackColor = Options.DarkMode ? Color.LightGray : Color.White;
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["ASCIIFont"] = true;
-            Options.LoadedUltimaClass["UnicodeFont"] = true;
-
-            treeView.BeginUpdate();
-            try
+            using (new WaitCursorScope(this))
             {
-                treeView.Nodes.Clear();
+                Options.LoadedUltimaClass["ASCIIFont"] = true;
+                Options.LoadedUltimaClass["UnicodeFont"] = true;
 
-                TreeNode node = new TreeNode("ASCII")
+                treeView.BeginUpdate();
+                try
                 {
-                    Tag = 0
-                };
-                treeView.Nodes.Add(node);
+                    treeView.Nodes.Clear();
 
-                for (int i = 0; i < AsciiText.Fonts.Length; ++i)
-                {
-                    node = new TreeNode(i.ToString())
+                    TreeNode node = new TreeNode("ASCII")
                     {
-                        Tag = i
-                    };
-                    treeView.Nodes[0].Nodes.Add(node);
-                }
-
-                if (LoadUnicodeFontsCheckBox.Checked)
-                {
-                    node = new TreeNode("Unicode")
-                    {
-                        Tag = 1
+                        Tag = 0
                     };
                     treeView.Nodes.Add(node);
 
-                    for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
+                    for (int i = 0; i < AsciiText.Fonts.Length; ++i)
                     {
-                        if (UnicodeFonts.Fonts[i] == null)
-                        {
-                            continue;
-                        }
-
                         node = new TreeNode(i.ToString())
                         {
                             Tag = i
                         };
-                        treeView.Nodes[1].Nodes.Add(node);
+                        treeView.Nodes[0].Nodes.Add(node);
                     }
+
+                    if (LoadUnicodeFontsCheckBox.Checked)
+                    {
+                        node = new TreeNode("Unicode")
+                        {
+                            Tag = 1
+                        };
+                        treeView.Nodes.Add(node);
+
+                        for (int i = 0; i < UnicodeFonts.Fonts.Length; ++i)
+                        {
+                            if (UnicodeFonts.Fonts[i] == null)
+                            {
+                                continue;
+                            }
+
+                            node = new TreeNode(i.ToString())
+                            {
+                                Tag = i
+                            };
+                            treeView.Nodes[1].Nodes.Add(node);
+                        }
+                    }
+
+                    treeView.ExpandAll();
+                }
+                finally
+                {
+                    treeView.EndUpdate();
                 }
 
-                treeView.ExpandAll();
+                treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
+
+                UpdateTileView();
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
             }
-            finally
-            {
-                treeView.EndUpdate();
-            }
-
-            treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
-
-            UpdateTileView();
-
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
-
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()

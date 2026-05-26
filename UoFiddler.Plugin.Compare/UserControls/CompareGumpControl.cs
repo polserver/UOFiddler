@@ -40,46 +40,47 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Gumps"] = true;
-
-            ConfigureTileView(tileView1);
-            ConfigureTileView(tileView2);
-
-            _displayIndices.Clear();
-            for (int i = 0; i < 0x10000; i++)
+            using (new WaitCursorScope(this))
             {
-                _displayIndices.Add(i);
-            }
+                Options.LoadedUltimaClass["Gumps"] = true;
 
-            tileView1.VirtualListSize = _displayIndices.Count;
-            tileView2.VirtualListSize = 0;
+                ConfigureTileView(tileView1);
+                ConfigureTileView(tileView2);
 
-            if (_displayIndices.Count > 0)
-            {
-                tileView1.FocusIndex = 0;
-            }
-
-            if (comboBoxFileMode.SelectedIndex < 0)
-            {
-                comboBoxFileMode.SelectedIndex = 0;
-            }
-
-            if (!_loaded)
-            {
-                tileView2.SelectedIndices.CollectionChanged += OnSecSelectedIndicesChanged;
-                contextMenuStrip1.Opening += (s, ev) =>
+                _displayIndices.Clear();
+                for (int i = 0; i < 0x10000; i++)
                 {
-                    int count = tileView2.SelectedIndices.Count;
-                    copyGump2To1ToolStripMenuItem.Text = tileView2.ShowCheckBoxes && count > 1
-                        ? $"Copy {count} Gumps to left"
-                        : "Copy Gump to left";
-                };
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
+                    _displayIndices.Add(i);
+                }
 
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
+                tileView1.VirtualListSize = _displayIndices.Count;
+                tileView2.VirtualListSize = 0;
+
+                if (_displayIndices.Count > 0)
+                {
+                    tileView1.FocusIndex = 0;
+                }
+
+                if (comboBoxFileMode.SelectedIndex < 0)
+                {
+                    comboBoxFileMode.SelectedIndex = 0;
+                }
+
+                if (!_loaded)
+                {
+                    tileView2.SelectedIndices.CollectionChanged += OnSecSelectedIndicesChanged;
+                    contextMenuStrip1.Opening += (s, ev) =>
+                    {
+                        int count = tileView2.SelectedIndices.Count;
+                        copyGump2To1ToolStripMenuItem.Text = tileView2.ShowCheckBoxes && count > 1
+                            ? $"Copy {count} Gumps to left"
+                            : "Copy Gump to left";
+                    };
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
+            }
         }
 
         // TileViewControl exposes TileSize/Margin/Padding/Border with DesignerSerializationVisibility.Hidden,
@@ -328,8 +329,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            SecondGump.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
-            LoadSecond();
+            using (new WaitCursorScope(this))
+            {
+                SecondGump.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
+                LoadSecond();
+            }
         }
 
         private void LoadSecond()
@@ -385,29 +389,30 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            _displayIndices.Clear();
-            if (checkBox1.Checked)
+            using (new WaitCursorScope(this))
             {
-                for (int i = 0; i < 0x10000; i++)
+                _displayIndices.Clear();
+                if (checkBox1.Checked)
                 {
-                    if (!Compare(i))
+                    for (int i = 0; i < 0x10000; i++)
+                    {
+                        if (!Compare(i))
+                        {
+                            _displayIndices.Add(i);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 0x10000; i++)
                     {
                         _displayIndices.Add(i);
                     }
                 }
-            }
-            else
-            {
-                for (int i = 0; i < 0x10000; i++)
-                {
-                    _displayIndices.Add(i);
-                }
-            }
 
-            tileView1.VirtualListSize = _displayIndices.Count;
-            tileView2.VirtualListSize = _displayIndices.Count;
-            Cursor.Current = Cursors.Default;
+                tileView1.VirtualListSize = _displayIndices.Count;
+                tileView2.VirtualListSize = _displayIndices.Count;
+            }
         }
 
         private void Export_Bmp(object sender, EventArgs e)
@@ -502,60 +507,61 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            int lastCopiedId = -1;
-            bool changed = false;
-
-            foreach (int focusIdx in targets)
+            using (new WaitCursorScope(this))
             {
-                if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
+                int lastCopiedId = -1;
+                bool changed = false;
+
+                foreach (int focusIdx in targets)
                 {
-                    continue;
-                }
-
-                int i = _displayIndices[focusIdx];
-                if (!SecondGump.IsValidIndex(i))
-                {
-                    continue;
-                }
-
-                Bitmap copy = new Bitmap(SecondGump.GetGump(i));
-                Gumps.ReplaceGump(i, copy);
-                ControlEvents.FireGumpChangeEvent(this, i);
-                _compare[i] = true;
-                lastCopiedId = i;
-                changed = true;
-            }
-
-            if (changed)
-            {
-                Options.ChangedUltimaClass["Gumps"] = true;
-            }
-
-            if (checkBox1.Checked && changed)
-            {
-                foreach (int idx in targets.OrderByDescending(x => x))
-                {
-                    if (idx >= 0 && idx < _displayIndices.Count)
+                    if (focusIdx < 0 || focusIdx >= _displayIndices.Count)
                     {
-                        _displayIndices.RemoveAt(idx);
+                        continue;
                     }
-                }
-                tileView1.VirtualListSize = _displayIndices.Count;
-                tileView2.VirtualListSize = _displayIndices.Count;
-            }
-            else
-            {
-                tileView2.SelectedIndices.Clear();
-            }
 
-            tileView1.Invalidate();
-            tileView2.Invalidate();
-            if (lastCopiedId >= 0)
-            {
-                UpdatePictureBox(pictureBox1, lastCopiedId, isSecondary: false);
+                    int i = _displayIndices[focusIdx];
+                    if (!SecondGump.IsValidIndex(i))
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(SecondGump.GetGump(i));
+                    Gumps.ReplaceGump(i, copy);
+                    ControlEvents.FireGumpChangeEvent(this, i);
+                    _compare[i] = true;
+                    lastCopiedId = i;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    Options.ChangedUltimaClass["Gumps"] = true;
+                }
+
+                if (checkBox1.Checked && changed)
+                {
+                    foreach (int idx in targets.OrderByDescending(x => x))
+                    {
+                        if (idx >= 0 && idx < _displayIndices.Count)
+                        {
+                            _displayIndices.RemoveAt(idx);
+                        }
+                    }
+                    tileView1.VirtualListSize = _displayIndices.Count;
+                    tileView2.VirtualListSize = _displayIndices.Count;
+                }
+                else
+                {
+                    tileView2.SelectedIndices.Clear();
+                }
+
+                tileView1.Invalidate();
+                tileView2.Invalidate();
+                if (lastCopiedId >= 0)
+                {
+                    UpdatePictureBox(pictureBox1, lastCopiedId, isSecondary: false);
+                }
             }
-            Cursor.Current = Cursors.Default;
         }
     }
 }

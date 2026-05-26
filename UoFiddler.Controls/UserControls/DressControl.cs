@@ -238,43 +238,44 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["TileData"] = true;
-            Options.LoadedUltimaClass["Art"] = true;
-            Options.LoadedUltimaClass["Hues"] = true;
-            Options.LoadedUltimaClass["Animations"] = true;
-            Options.LoadedUltimaClass["Gumps"] = true;
-
-            checkBoxGargoyle.Visible = Art.IsUOAHS();
-
-            extractAnimationToolStripMenuItem.Visible = false;
-            DressPic.Image = new Bitmap(DressPic.Width, DressPic.Height);
-            pictureBoxDress.Image = new Bitmap(pictureBoxDress.Width, pictureBoxDress.Height);
-
-            checkedListBoxWear.BeginUpdate();
-            checkedListBoxWear.Items.Clear();
-            for (int i = 0; i < _layers.Length; ++i)
+            using (new WaitCursorScope(this))
             {
-                _layers[i] = 0;
-                checkedListBoxWear.Items.Add($"0x{i:X2}", true);
-                _layerVisible[i] = true;
+                Options.LoadedUltimaClass["TileData"] = true;
+                Options.LoadedUltimaClass["Art"] = true;
+                Options.LoadedUltimaClass["Hues"] = true;
+                Options.LoadedUltimaClass["Animations"] = true;
+                Options.LoadedUltimaClass["Gumps"] = true;
+
+                checkBoxGargoyle.Visible = Art.IsUOAHS();
+
+                extractAnimationToolStripMenuItem.Visible = false;
+                DressPic.Image = new Bitmap(DressPic.Width, DressPic.Height);
+                pictureBoxDress.Image = new Bitmap(pictureBoxDress.Width, pictureBoxDress.Height);
+
+                checkedListBoxWear.BeginUpdate();
+                checkedListBoxWear.Items.Clear();
+                for (int i = 0; i < _layers.Length; ++i)
+                {
+                    _layers[i] = 0;
+                    checkedListBoxWear.Items.Add($"0x{i:X2}", true);
+                    _layerVisible[i] = true;
+                }
+                checkedListBoxWear.EndUpdate();
+
+                checkBoxHuman.Checked = true;
+                checkBoxElve.Checked = false;
+                checkBoxGargoyle.Checked = false;
+                checkBoxfemale.Checked = false;
+
+                groupBoxAnimate.Visible = false;
+                animateToolStripMenuItem.Visible = false;
+                FacingBar.Value = (_facing + 3) & 7;
+                ActionBar.Value = _action;
+                toolTip1.SetToolTip(FacingBar, FacingBar.Value.ToString());
+                BuildDressList();
+                DrawPaperdoll();
+                _loaded = true;
             }
-            checkedListBoxWear.EndUpdate();
-
-            checkBoxHuman.Checked = true;
-            checkBoxElve.Checked = false;
-            checkBoxGargoyle.Checked = false;
-            checkBoxfemale.Checked = false;
-
-            groupBoxAnimate.Visible = false;
-            animateToolStripMenuItem.Visible = false;
-            FacingBar.Value = (_facing + 3) & 7;
-            ActionBar.Value = _action;
-            toolTip1.SetToolTip(FacingBar, FacingBar.Value.ToString());
-            BuildDressList();
-            DrawPaperdoll();
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()

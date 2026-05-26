@@ -108,23 +108,24 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["Gumps"] = true;
-            _showFreeSlots = false;
-            showFreeSlotsToolStripMenuItem.Checked = false;
-
-            PopulateListBox(true);
-            LoadGumpXml();
-
-            if (!_loaded)
+            using (new WaitCursorScope(this))
             {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                ControlEvents.GumpChangeEvent += OnGumpChangeEvent;
-                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
-            }
+                Options.LoadedUltimaClass["Gumps"] = true;
+                _showFreeSlots = false;
+                showFreeSlotsToolStripMenuItem.Checked = false;
 
-            _loaded = true;
-            Cursor.Current = Cursors.Default;
+                PopulateListBox(true);
+                LoadGumpXml();
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    ControlEvents.GumpChangeEvent += OnGumpChangeEvent;
+                    ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+                }
+
+                _loaded = true;
+            }
         }
 
         private void PopulateListBox(bool showOnlyValid)
@@ -559,11 +560,13 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            ProgressBarDialog barDialog = new ProgressBarDialog(Gumps.GetCount(), "Save");
-            Gumps.Save(Options.OutputPath);
-            barDialog.Dispose();
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                ProgressBarDialog barDialog = new ProgressBarDialog(Gumps.GetCount(), "Save");
+                Gumps.Save(Options.OutputPath);
+                barDialog.Dispose();
+            }
+
             Options.ChangedUltimaClass["Gumps"] = false;
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
@@ -783,30 +786,29 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Cursor.Current = Cursors.WaitCursor;
-
-                for (int i = 0; i < listBox.Items.Count; ++i)
+                using (new WaitCursorScope(this))
                 {
-                    int index = int.Parse(listBox.Items[i].ToString());
-                    if (index < 0)
+                    for (int i = 0; i < listBox.Items.Count; ++i)
                     {
-                        continue;
-                    }
+                        int index = int.Parse(listBox.Items[i].ToString());
+                        if (index < 0)
+                        {
+                            continue;
+                        }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Gump {Utils.FormatExportId(index)}.{fileExtension}");
-                    var gump = Gumps.GetGump(index);
-                    if (gump is null)
-                    {
-                        continue;
-                    }
+                        string fileName = Path.Combine(dialog.SelectedPath, $"Gump {Utils.FormatExportId(index)}.{fileExtension}");
+                        var gump = Gumps.GetGump(index);
+                        if (gump is null)
+                        {
+                            continue;
+                        }
 
-                    using (Bitmap bit = new Bitmap(gump))
-                    {
-                        bit.Save(fileName, imageFormat);
+                        using (Bitmap bit = new Bitmap(gump))
+                        {
+                            bit.Save(fileName, imageFormat);
+                        }
                     }
                 }
-
-                Cursor.Current = Cursors.Default;
 
                 FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Gumps saved successfully.");
             }

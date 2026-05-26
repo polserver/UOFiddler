@@ -237,32 +237,31 @@ namespace UoFiddler.Controls.UserControls
 
             ApplyDarkModeIfNeeded();
 
-            Cursor.Current = Cursors.WaitCursor;
-
-            Options.LoadedUltimaClass["TileData"] = true;
-            Options.LoadedUltimaClass["Art"] = true;
-            Options.LoadedUltimaClass["Multis"] = true;
-            Options.LoadedUltimaClass["Hues"] = true;
-
-            RebuildMulIds(includeEmpty: false);
-
-            if (_mulIds.Length > 0)
+            using (new WaitCursorScope(this))
             {
-                SelectMulRow(0);
+                Options.LoadedUltimaClass["TileData"] = true;
+                Options.LoadedUltimaClass["Art"] = true;
+                Options.LoadedUltimaClass["Multis"] = true;
+                Options.LoadedUltimaClass["Hues"] = true;
+
+                RebuildMulIds(includeEmpty: false);
+
+                if (_mulIds.Length > 0)
+                {
+                    SelectMulRow(0);
+                }
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    ControlEvents.MultiChangeEvent += OnMultiChangeEvent;
+                    ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+                }
+
+                _loaded = true;
+
+                LoadUopTree();
             }
-
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                ControlEvents.MultiChangeEvent += OnMultiChangeEvent;
-                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
-            }
-
-            _loaded = true;
-
-            LoadUopTree();
-
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()

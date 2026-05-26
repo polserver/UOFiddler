@@ -668,15 +668,9 @@ namespace UoFiddler.Controls.Forms
             }
 
             _fileType = selected;
-            Cursor previous = Cursor.Current;
-            Cursor.Current = Cursors.WaitCursor;
-            try
+            using (new WaitCursorScope(this))
             {
                 OnLoad(this, EventArgs.Empty);
-            }
-            finally
-            {
-                Cursor.Current = previous;
             }
         }
 

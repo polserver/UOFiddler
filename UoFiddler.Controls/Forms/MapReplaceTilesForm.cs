@@ -33,50 +33,50 @@ namespace UoFiddler.Controls.Forms
 
         private void OnReplace(object sender, EventArgs e)
         {
-            try
+            using (new WaitCursorScope(this))
             {
-                Cursor.Current = Cursors.WaitCursor;
-
-                button2.Enabled = false;
-
-                richTextBox1.Text = string.Empty;
-                richTextBox1.AppendText("Replacement start...\r\n");
-
-                string file = textBox1.Text;
-                if (string.IsNullOrEmpty(file))
+                try
                 {
-                    richTextBox1.AppendText("Please specify XML file with replacements.\r\n");
-                    return;
-                }
+                    button2.Enabled = false;
 
-                if (!File.Exists(file))
+                    richTextBox1.Text = string.Empty;
+                    richTextBox1.AppendText("Replacement start...\r\n");
+
+                    string file = textBox1.Text;
+                    if (string.IsNullOrEmpty(file))
+                    {
+                        richTextBox1.AppendText("Please specify XML file with replacements.\r\n");
+                        return;
+                    }
+
+                    if (!File.Exists(file))
+                    {
+                        richTextBox1.AppendText("Specified file does not exist.\r\n");
+                        return;
+                    }
+
+                    if (!LoadFile(file))
+                    {
+                        richTextBox1.AppendText("Could not load replacement file.\r\n");
+                        return;
+                    }
+
+                    string path = Options.OutputPath;
+
+                    richTextBox1.AppendText("Replacing map tiles...\r\n");
+                    ReplaceMap(path, _map.FileIndex, _map.Width, _map.Height);
+
+                    richTextBox1.AppendText("Replacing static tiles...\r\n");
+                    ReplaceStatic(path, _map.FileIndex, _map.Width, _map.Height);
+
+                    richTextBox1.AppendText("Done.");
+
+                    FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+                }
+                finally
                 {
-                    richTextBox1.AppendText("Specified file does not exist.\r\n");
-                    return;
+                    button2.Enabled = true;
                 }
-
-                if (!LoadFile(file))
-                {
-                    richTextBox1.AppendText("Could not load replacement file.\r\n");
-                    return;
-                }
-
-                string path = Options.OutputPath;
-
-                richTextBox1.AppendText("Replacing map tiles...\r\n");
-                ReplaceMap(path, _map.FileIndex, _map.Width, _map.Height);
-
-                richTextBox1.AppendText("Replacing static tiles...\r\n");
-                ReplaceStatic(path, _map.FileIndex, _map.Width, _map.Height);
-
-                richTextBox1.AppendText("Done.");
-
-                FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
-            }
-            finally
-            {
-                button2.Enabled = true;
-                Cursor.Current = Cursors.Default;
             }
         }
 

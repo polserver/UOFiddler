@@ -98,40 +98,40 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            _sortOrder = SortOrder.Ascending;
-            _sortColumn = 0;
-            LangComboBox.SelectedIndex = 0;
-            Lang = 0;
-            _cliloc.Entries.Sort(new StringList.NumberComparer(false));
-            _source.DataSource = _cliloc.Entries;
-            dataGridView1.DataSource = _source;
-            if (dataGridView1.Columns.Count > 0)
+            using (new WaitCursorScope(this))
             {
-                dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
-                dataGridView1.Columns[0].Width = 60;
-                dataGridView1.Columns[1].HeaderCell.SortGlyphDirection = SortOrder.None;
-                dataGridView1.Columns[2].HeaderCell.SortGlyphDirection = SortOrder.None;
-                dataGridView1.Columns[2].Width = 60;
-                dataGridView1.Columns[2].ReadOnly = true;
+                _sortOrder = SortOrder.Ascending;
+                _sortColumn = 0;
+                LangComboBox.SelectedIndex = 0;
+                Lang = 0;
+                _cliloc.Entries.Sort(new StringList.NumberComparer(false));
+                _source.DataSource = _cliloc.Entries;
+                dataGridView1.DataSource = _source;
+                if (dataGridView1.Columns.Count > 0)
+                {
+                    dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                    dataGridView1.Columns[0].Width = 60;
+                    dataGridView1.Columns[1].HeaderCell.SortGlyphDirection = SortOrder.None;
+                    dataGridView1.Columns[2].HeaderCell.SortGlyphDirection = SortOrder.None;
+                    dataGridView1.Columns[2].Width = 60;
+                    dataGridView1.Columns[2].ReadOnly = true;
+                }
+                dataGridView1.Invalidate();
+                LangComboBox.Items[2] = Files.GetFilePath("cliloc.custom1") != null
+                    ? $"Custom 1 ({Path.GetExtension(Files.GetFilePath("cliloc.custom1"))})"
+                    : "Custom 1";
+
+                LangComboBox.Items[3] = Files.GetFilePath("cliloc.custom2") != null
+                    ? $"Custom 2 ({Path.GetExtension(Files.GetFilePath("cliloc.custom2"))})"
+                    : "Custom 2";
+
+                if (!_loaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                }
+
+                _loaded = true;
             }
-            dataGridView1.Invalidate();
-            LangComboBox.Items[2] = Files.GetFilePath("cliloc.custom1") != null
-                ? $"Custom 1 ({Path.GetExtension(Files.GetFilePath("cliloc.custom1"))})"
-                : "Custom 1";
-
-            LangComboBox.Items[3] = Files.GetFilePath("cliloc.custom2") != null
-                ? $"Custom 2 ({Path.GetExtension(Files.GetFilePath("cliloc.custom2"))})"
-                : "Custom 2";
-
-            if (!_loaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-            }
-
-            _loaded = true;
-
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()
@@ -660,11 +660,10 @@ namespace UoFiddler.Controls.UserControls
         {
             Cursor.Current = Cursors.WaitCursor;
 
-            List<TileDataSyncChange> changes;
             TileDataSyncPreviewForm preview;
             try
             {
-                changes = BuildTileDataSyncPlan();
+                List<TileDataSyncChange> changes = BuildTileDataSyncPlan();
 
                 if (changes.Count == 0)
                 {
@@ -696,15 +695,10 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Cursor.Current = Cursors.WaitCursor;
                 int added, updated, removed;
-                try
+                using (new WaitCursorScope(this))
                 {
                     ApplyTileDataSyncPlan(accepted, out added, out updated, out removed);
-                }
-                finally
-                {
-                    Cursor.Current = Cursors.Default;
                 }
 
                 if (added + updated + removed > 0)

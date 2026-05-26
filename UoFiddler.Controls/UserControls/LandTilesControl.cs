@@ -172,34 +172,35 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Options.LoadedUltimaClass["TileData"] = true;
-            Options.LoadedUltimaClass["Art"] = true;
-
-            _showFreeSlots = false;
-            showFreeSlotsToolStripMenuItem.Checked = false;
-
-            for (int i = 0; i < _landTileMax; ++i)
+            using (new WaitCursorScope(this))
             {
-                if (Art.IsValidLand(i))
+                Options.LoadedUltimaClass["TileData"] = true;
+                Options.LoadedUltimaClass["Art"] = true;
+
+                _showFreeSlots = false;
+                showFreeSlotsToolStripMenuItem.Checked = false;
+
+                for (int i = 0; i < _landTileMax; ++i)
                 {
-                    _tileList.Add(i);
+                    if (Art.IsValidLand(i))
+                    {
+                        _tileList.Add(i);
+                    }
                 }
+
+                LandTilesTileView.VirtualListSize = _tileList.Count;
+                UpdateTileView();
+
+                if (!IsLoaded)
+                {
+                    ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    ControlEvents.LandTileChangeEvent += OnLandTileChangeEvent;
+                    ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
+                    ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+                }
+
+                IsLoaded = true;
             }
-
-            LandTilesTileView.VirtualListSize = _tileList.Count;
-            UpdateTileView();
-
-            if (!IsLoaded)
-            {
-                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
-                ControlEvents.LandTileChangeEvent += OnLandTileChangeEvent;
-                ControlEvents.TileDataChangeEvent += OnTileDataChangeEvent;
-                ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
-            }
-
-            IsLoaded = true;
-            Cursor.Current = Cursors.Default;
         }
 
         private void OnFilePathChangeEvent()
@@ -635,9 +636,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-            Art.Save(Options.OutputPath);
-            Cursor.Current = Cursors.Default;
+            using (new WaitCursorScope(this))
+            {
+                Art.Save(Options.OutputPath);
+            }
             Options.ChangedUltimaClass["Art"] = false;
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
         }
@@ -796,29 +798,28 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                Cursor.Current = Cursors.WaitCursor;
-
-                foreach (var index in _tileList)
+                using (new WaitCursorScope(this))
                 {
-                    if (!Art.IsValidLand(index))
+                    foreach (var index in _tileList)
                     {
-                        continue;
-                    }
+                        if (!Art.IsValidLand(index))
+                        {
+                            continue;
+                        }
 
-                    string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {Utils.FormatExportId(index)}.{fileExtension}");
-                    var landTile = Art.GetLand(index);
-                    if (landTile is null)
-                    {
-                        continue;
-                    }
+                        string fileName = Path.Combine(dialog.SelectedPath, $"Landtile {Utils.FormatExportId(index)}.{fileExtension}");
+                        var landTile = Art.GetLand(index);
+                        if (landTile is null)
+                        {
+                            continue;
+                        }
 
-                    using (Bitmap bit = new Bitmap(landTile))
-                    {
-                        bit.Save(fileName, imageFormat);
+                        using (Bitmap bit = new Bitmap(landTile))
+                        {
+                            bit.Save(fileName, imageFormat);
+                        }
                     }
                 }
-
-                Cursor.Current = Cursors.Default;
 
                 FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All land tiles saved successfully.");
             }
