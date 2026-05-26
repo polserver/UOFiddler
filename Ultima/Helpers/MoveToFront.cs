@@ -27,8 +27,18 @@ namespace Ultima.Helpers
         // complexity : O(256*N) -> O(N)
         public static byte[] Decode(byte[] input)
         {
-            Span<byte> symbols = stackalloc byte[256];
             byte[] output = new byte[input.Length];
+            Decode(input, output);
+            return output;
+        }
+
+        /// <summary>
+        /// MTF-decodes <paramref name="input"/> into <paramref name="output"/>.
+        /// <paramref name="output"/> must be at least <paramref name="input"/>.Length long.
+        /// </summary>
+        public static void Decode(ReadOnlySpan<byte> input, Span<byte> output)
+        {
+            Span<byte> symbols = stackalloc byte[256];
 
             for (int i = 0; i < 256; i++)
             {
@@ -42,8 +52,6 @@ namespace Ultima.Helpers
 
                 MoveToFront(symbols, ind);
             }
-
-            return output;
         }
 
         // params : array, element to move

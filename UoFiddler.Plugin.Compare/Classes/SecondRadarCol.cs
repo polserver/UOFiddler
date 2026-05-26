@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -30,11 +31,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var colors = new ushort[fs.Length / 2];
-                    var buffer = new byte[(int)fs.Length];
-                    fs.ReadExactly(buffer, 0, (int)fs.Length);
-                    GCHandle gc = GCHandle.Alloc(colors, GCHandleType.Pinned);
-                    Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)fs.Length);
-                    gc.Free();
+                    fs.ReadExactly(MemoryMarshal.AsBytes(colors.AsSpan()));
                     _colors = colors;
                 }
             }

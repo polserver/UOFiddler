@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Ultima;
 
 namespace UoFiddler.Plugin.Compare.Classes
@@ -20,8 +21,6 @@ namespace UoFiddler.Plugin.Compare.Classes
             {
                 using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    BinaryReader bin = new BinaryReader(fs);
-
                     int blockCount = (int)fs.Length / 708;
 
                     if (blockCount > 375)
@@ -29,13 +28,24 @@ namespace UoFiddler.Plugin.Compare.Classes
                         blockCount = 375;
                     }
 
+                    // Disk layout per HueDataMul: 32 ushorts (64) + 2 ushorts (4) + 20-byte name = 88 bytes.
+                    // Each block = 4-byte header + 8 * 88 = 708 bytes.
+                    const int hueDataSize = 88;
+                    const int blockSize = 4 + 8 * hueDataSize;
+                    var buffer = new byte[blockCount * blockSize];
+                    fs.ReadExactly(buffer, 0, buffer.Length);
+                    ReadOnlySpan<byte> bufferSpan = buffer;
+
+                    int cursor = 0;
                     for (int i = 0; i < blockCount; ++i)
                     {
-                        bin.ReadInt32();
+                        // 4-byte header per block is unused on the Compare side.
+                        cursor += 4;
 
                         for (int j = 0; j < 8; ++j, ++index)
                         {
-                            List[index] = new Hue(index, bin);
+                            List[index] = new Hue(index, bufferSpan.Slice(cursor, hueDataSize));
+                            cursor += hueDataSize;
                         }
                     }
                 }

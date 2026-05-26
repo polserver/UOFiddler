@@ -835,21 +835,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void PreLoaderDoWork(object sender, DoWorkEventArgs e)
         {
-            int total = Gumps.GetCount();
-            int reportEvery = Math.Max(1, total / 200);
-            int sinceReport = 0;
-            int done = 0;
-            for (int i = 0; i < total; ++i)
-            {
-                Gumps.GetGump(i);
-                ++done;
-                if (++sinceReport >= reportEvery)
-                {
-                    sinceReport = 0;
-                    PreLoader.ReportProgress(done);
-                }
-            }
-            PreLoader.ReportProgress(done);
+            Gumps.PreloadParallel(0, done => PreLoader.ReportProgress(done));
         }
 
         private void PreLoaderProgressChanged(object sender, ProgressChangedEventArgs e)

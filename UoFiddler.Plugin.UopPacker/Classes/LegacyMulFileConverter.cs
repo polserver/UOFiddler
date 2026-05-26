@@ -513,7 +513,20 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                         if (offsets[i].CompressionFlag == (short)CompressionFlag.Mythic)
                         {
-                            chunkData = MythicDecompress.Decompress(chunkData);
+                            uint mythicLen = MythicDecompress.PeekDecompressedLength(chunkData);
+                            if (mythicLen == 0 || mythicLen > int.MaxValue)
+                            {
+                                throw new InvalidDataException(
+                                    $"Mythic header reports invalid decompressed length {mythicLen} for chunk {chunkId}.");
+                            }
+
+                            byte[] mythicOutput = new byte[mythicLen];
+                            if (!MythicDecompress.TryDecompress(chunkData, mythicOutput, out _))
+                            {
+                                throw new InvalidDataException(
+                                    $"Mythic decompression failed for chunk {chunkId}.");
+                            }
+                            chunkData = mythicOutput;
                         }
 
                         if (type == FileType.MapLegacyMul)

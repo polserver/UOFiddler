@@ -9,6 +9,8 @@
  *
  ***************************************************************************/
 
+using System;
+using System.Buffers;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -197,38 +199,73 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             if (entry.Flag >= SecondCompressionFlag.Zlib)
             {
-                byte[] compressed = new byte[length];
-                System.Buffer.BlockCopy(_streamBuffer, 0, compressed, 0, length);
-
-                var result = UopUtils.Decompress(compressed);
-                if (!result.success)
+                int decSize = entry.DecompressedLength;
+                if (decSize <= 8)
                 {
                     width = height = -1;
                     return 0;
                 }
 
-                byte[] decompressed = entry.Flag == SecondCompressionFlag.Mythic
-                    ? MythicDecompress.Decompress(result.data)
-                    : result.data;
-
-                if (decompressed == null || decompressed.Length < 8)
+                byte[] zlibBuf = ArrayPool<byte>.Shared.Rent(decSize);
+                byte[] mythicBuf = null;
+                try
                 {
-                    width = height = -1;
-                    return 0;
+                    if (!UopUtils.TryDecompressInto(_streamBuffer, 0, length, zlibBuf, out int zlibLen))
+                    {
+                        width = height = -1;
+                        return 0;
+                    }
+
+                    byte[] payload;
+                    int payloadLength;
+
+                    if (entry.Flag == SecondCompressionFlag.Mythic)
+                    {
+                        uint mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
+                        if (mythicLen <= 8 || mythicLen > int.MaxValue)
+                        {
+                            width = height = -1;
+                            return 0;
+                        }
+
+                        mythicBuf = ArrayPool<byte>.Shared.Rent((int)mythicLen);
+                        if (!MythicDecompress.TryDecompress(
+                                zlibBuf.AsSpan(0, zlibLen), mythicBuf.AsSpan(0, (int)mythicLen), out _))
+                        {
+                            width = height = -1;
+                            return 0;
+                        }
+
+                        payload = mythicBuf;
+                        payloadLength = (int)mythicLen;
+                    }
+                    else
+                    {
+                        payload = zlibBuf;
+                        payloadLength = zlibLen;
+                    }
+
+                    width = (payload[3] << 24) | (payload[2] << 16) | (payload[1] << 8) | payload[0];
+                    height = (payload[7] << 24) | (payload[6] << 16) | (payload[5] << 8) | payload[4];
+                    entry.Extra1 = width;
+                    entry.Extra2 = height;
+
+                    int rleLen = payloadLength - 8;
+                    if (_streamBuffer.Length < rleLen)
+                    {
+                        _streamBuffer = new byte[rleLen];
+                    }
+                    System.Buffer.BlockCopy(payload, 8, _streamBuffer, 0, rleLen);
+                    return rleLen;
                 }
-
-                width = (decompressed[3] << 24) | (decompressed[2] << 16) | (decompressed[1] << 8) | decompressed[0];
-                height = (decompressed[7] << 24) | (decompressed[6] << 16) | (decompressed[5] << 8) | decompressed[4];
-                entry.Extra1 = width;
-                entry.Extra2 = height;
-
-                int rleLen = decompressed.Length - 8;
-                if (_streamBuffer.Length < rleLen)
+                finally
                 {
-                    _streamBuffer = new byte[rleLen];
+                    if (mythicBuf != null)
+                    {
+                        ArrayPool<byte>.Shared.Return(mythicBuf);
+                    }
+                    ArrayPool<byte>.Shared.Return(zlibBuf);
                 }
-                System.Buffer.BlockCopy(decompressed, 8, _streamBuffer, 0, rleLen);
-                return rleLen;
             }
 
             width = entry.Extra1;

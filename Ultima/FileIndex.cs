@@ -20,6 +20,13 @@ namespace Ultima
 
         private readonly string _mulPath;
 
+        /// <summary>
+        /// Absolute path to the .mul or .uop file backing this index, or null
+        /// if no client file was located. Exposed so parallel preloaders can
+        /// open their own per-thread FileStreams (FileShare.Read).
+        /// </summary>
+        public string MulPath => _mulPath;
+
         public FileIndex(string idxFile, string mulFile, int length, int file) : this(idxFile, mulFile, null, length,
             file, ".dat", -1, false)
         {
@@ -40,12 +47,12 @@ namespace Ultima
 
             if (Files.MulPath.Count > 0)
             {
-                idxPath = Files.MulPath[idxFile.ToLower()];
-                _mulPath = Files.MulPath[mulFile.ToLower()];
+                idxPath = Files.MulPath[idxFile];
+                _mulPath = Files.MulPath[mulFile];
 
-                if (!string.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile.ToLower()))
+                if (!string.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile))
                 {
-                    uopPath = Files.MulPath[uopFile.ToLower()];
+                    uopPath = Files.MulPath[uopFile];
                 }
 
                 if (string.IsNullOrEmpty(idxPath))
@@ -145,8 +152,8 @@ namespace Ultima
 
             if (Files.MulPath.Count > 0)
             {
-                idxPath = Files.MulPath[idxFile.ToLower()];
-                _mulPath = Files.MulPath[mulFile.ToLower()];
+                idxPath = Files.MulPath[idxFile];
+                _mulPath = Files.MulPath[mulFile];
                 if (string.IsNullOrEmpty(idxPath))
                 {
                     idxPath = null;
@@ -557,11 +564,10 @@ namespace Ultima
                 Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
                 var count = (int)(index.Length / 12);
                 IdxLength = index.Length;
-                GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
-                var buffer = new byte[index.Length];
-                index.ReadExactly(buffer, 0, (int)index.Length);
-                Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(IdxLength, Index.Length * 12));
-                gc.Free();
+
+                int readLen = (int)Math.Min(IdxLength, (long)Index.Length * 12);
+                index.ReadExactly(MemoryMarshal.AsBytes(Index.AsSpan()).Slice(0, readLen));
+
                 for (int i = count; i < Index.Length; ++i)
                 {
                     Index[i].Lookup = -1;
@@ -579,11 +585,7 @@ namespace Ultima
                 var count = (int)(index.Length / 12);
                 IdxLength = index.Length;
                 Index = new Entry3D[count];
-                GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
-                var buffer = new byte[index.Length];
-                index.ReadExactly(buffer, 0, (int)index.Length);
-                Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)index.Length);
-                gc.Free();
+                index.ReadExactly(MemoryMarshal.AsBytes(Index.AsSpan()));
             }
         }
 

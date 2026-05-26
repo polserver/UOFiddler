@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Ultima.Caching;
 using Ultima.Helpers;
 
@@ -172,37 +174,79 @@ namespace Ultima
                     throw new InvalidOperationException("Verdata.mul is not supported for compressed UOP");
                 }
 
-                if (_streamBuffer == null || _streamBuffer.Length < entry.Length)
-                {
-                    _streamBuffer = new byte[entry.Length];
-                }
-
-                stream.ReadExactly(_streamBuffer, 0, entry.Length);
-
-                var result = UopUtils.Decompress(_streamBuffer);
-                if (result.success is false)
+                int compLen = entry.Length;
+                int decSize = entry.DecompressedLength;
+                if (decSize <= 8)
                 {
                     return null;
                 }
 
-                if (entry.Flag == CompressionFlag.Mythic)
+                byte[] rented = ArrayPool<byte>.Shared.Rent(compLen);
+                byte[] zlibBuf = ArrayPool<byte>.Shared.Rent(decSize);
+                byte[] mythicBuf = null;
+                try
                 {
-                    _streamBuffer = MythicDecompress.Decompress(result.data);
-                }
+                    stream.ReadExactly(rented, 0, compLen);
 
-                using (BinaryReader reader = new BinaryReader(new MemoryStream(_streamBuffer)))
+                    if (!UopUtils.TryDecompressInto(rented, 0, compLen, zlibBuf, out int zlibLen))
+                    {
+                        return null;
+                    }
+
+                    byte[] payload;
+                    int payloadLength;
+
+                    if (entry.Flag == CompressionFlag.Mythic)
+                    {
+                        uint mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
+                        if (mythicLen <= 8 || mythicLen > int.MaxValue)
+                        {
+                            return null;
+                        }
+
+                        mythicBuf = ArrayPool<byte>.Shared.Rent((int)mythicLen);
+                        if (!MythicDecompress.TryDecompress(
+                                zlibBuf.AsSpan(0, zlibLen), mythicBuf.AsSpan(0, (int)mythicLen), out _))
+                        {
+                            return null;
+                        }
+
+                        payload = mythicBuf;
+                        payloadLength = (int)mythicLen;
+                    }
+                    else
+                    {
+                        payload = zlibBuf;
+                        payloadLength = zlibLen;
+                    }
+
+                    width = (payload[3] << 24) | (payload[2] << 16) | (payload[1] << 8) | payload[0];
+                    height = (payload[7] << 24) | (payload[6] << 16) | (payload[5] << 8) | payload[4];
+                    entry.Extra1 = width;
+                    entry.Extra2 = height;
+
+                    if (width <= 0 || height <= 0)
+                    {
+                        return null;
+                    }
+
+                    // Returned array holds the payload without the 8-byte header.
+                    int resultLen = payloadLength - 8;
+                    byte[] result = new byte[resultLen];
+                    Buffer.BlockCopy(payload, 8, result, 0, resultLen);
+
+                    return result;
+                }
+                finally
                 {
-                    byte[] extra = reader.ReadBytes(8);
+                    if (mythicBuf != null)
+                    {
+                        ArrayPool<byte>.Shared.Return(mythicBuf);
+                    }
 
-                    width = (extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0];
-                    height = (extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4];
-
-                    // TODO: Tbh, whole code needs to be reworked with readers, as we're doing useless work here just re-reading everything but 8 first bytes
-                    _streamBuffer = reader.ReadBytes(_streamBuffer.Length - 8);
+                    ArrayPool<byte>.Shared.Return(zlibBuf);
+                    ArrayPool<byte>.Shared.Return(rented);
                 }
-
-                entry.Extra1 = width;
-                entry.Extra2 = height;
             }
 
             width = entry.Extra1;
@@ -211,11 +255,6 @@ namespace Ultima
             if (width <= 0 || height <= 0)
             {
                 return null;
-            }
-
-            if (entry.Flag == CompressionFlag.Mythic)
-            {
-                return _streamBuffer;
             }
 
             var length = entry.Length;
@@ -459,6 +498,7 @@ namespace Ultima
 
             byte[] rented = ArrayPool<byte>.Shared.Rent(length);
             byte[] zlibBuf = null;
+            byte[] mythicBuf = null;
             try
             {
                 stream.ReadExactly(rented, 0, length);
@@ -484,8 +524,20 @@ namespace Ultima
 
                     if (entry.Flag == CompressionFlag.Mythic)
                     {
-                        // Mythic still allocates the final byte[]; that's the next lever.
-                        data = MythicDecompress.Decompress(zlibBuf, 0, zlibLen);
+                        uint mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
+                        if (mythicLen <= 8 || mythicLen > int.MaxValue)
+                        {
+                            return false;
+                        }
+
+                        mythicBuf = ArrayPool<byte>.Shared.Rent((int)mythicLen);
+                        if (!MythicDecompress.TryDecompress(
+                                zlibBuf.AsSpan(0, zlibLen), mythicBuf.AsSpan(0, (int)mythicLen), out _))
+                        {
+                            return false;
+                        }
+
+                        data = mythicBuf;
                     }
                     else
                     {
@@ -544,6 +596,10 @@ namespace Ultima
             }
             finally
             {
+                if (mythicBuf != null)
+                {
+                    ArrayPool<byte>.Shared.Return(mythicBuf);
+                }
                 if (zlibBuf != null)
                 {
                     ArrayPool<byte>.Shared.Return(zlibBuf);
@@ -643,6 +699,7 @@ namespace Ultima
 
             byte[] rented = ArrayPool<byte>.Shared.Rent(length);
             byte[] zlibBuf = null;
+            byte[] mythicBuf = null;
             try
             {
                 stream.ReadExactly(rented, 0, length);
@@ -670,8 +727,20 @@ namespace Ultima
 
                     if (entry.Flag == CompressionFlag.Mythic)
                     {
-                        // Mythic still allocates the final byte[]; that's the next lever.
-                        data = MythicDecompress.Decompress(zlibBuf, 0, zlibLen);
+                        uint mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
+                        if (mythicLen <= 8 || mythicLen > int.MaxValue)
+                        {
+                            return null;
+                        }
+
+                        mythicBuf = ArrayPool<byte>.Shared.Rent((int)mythicLen);
+                        if (!MythicDecompress.TryDecompress(
+                                zlibBuf.AsSpan(0, zlibLen), mythicBuf.AsSpan(0, (int)mythicLen), out _))
+                        {
+                            return null;
+                        }
+
+                        data = mythicBuf;
                     }
                     else
                     {
@@ -756,10 +825,259 @@ namespace Ultima
             }
             finally
             {
+                if (mythicBuf != null)
+                {
+                    ArrayPool<byte>.Shared.Return(mythicBuf);
+                }
+
                 if (zlibBuf != null)
                 {
                     ArrayPool<byte>.Shared.Return(zlibBuf);
                 }
+
+                ArrayPool<byte>.Shared.Return(rented);
+            }
+        }
+
+        /// <summary>
+        /// Preloads all gumps in parallel, populating the LRU bitmap cache.
+        /// Each worker opens its own FileStream against the .uop / .mul so the
+        /// expensive part — zlib + Mythic decompression and RLE decode — runs
+        /// concurrently across CPU cores. Per-bitmap work is unchanged; only
+        /// the orchestration is parallel.
+        ///
+        /// Set <paramref name="parallelism"/> to 0 to use ProcessorCount.
+        /// <paramref name="progressCallback"/> is invoked from worker threads
+        /// with the cumulative count of completed gumps; the caller is
+        /// responsible for marshalling to the UI thread if needed.
+        /// </summary>
+        public static void PreloadParallel(int parallelism, Action<int> progressCallback)
+        {
+            if (_fileIndex?.FileAccessor == null)
+            {
+                return;
+            }
+
+            string mulPath = _fileIndex.MulPath;
+            if (string.IsNullOrEmpty(mulPath) || !File.Exists(mulPath))
+            {
+                return;
+            }
+
+            int total = _indexLength;
+            if (total <= 0)
+            {
+                return;
+            }
+
+            if (parallelism <= 0)
+            {
+                parallelism = Environment.ProcessorCount;
+            }
+
+            int done = 0;
+            int reportEvery = Math.Max(1, total / 200);
+            int nextReport = reportEvery;
+            object reportLock = new object();
+
+            var options = new ParallelOptions { MaxDegreeOfParallelism = parallelism };
+
+            Parallel.For(
+                0, total, options,
+                localInit: () => new FileStream(mulPath, FileMode.Open, FileAccess.Read, FileShare.Read),
+                body: (index, _, stream) =>
+                {
+                    DecodeAndCacheOne(index, stream);
+
+                    int doneNow = Interlocked.Increment(ref done);
+                    if (progressCallback != null && doneNow >= Volatile.Read(ref nextReport))
+                    {
+                        bool shouldReport = false;
+                        lock (reportLock)
+                        {
+                            if (doneNow >= nextReport)
+                            {
+                                nextReport = doneNow + reportEvery;
+                                shouldReport = true;
+                            }
+                        }
+
+                        if (shouldReport)
+                        {
+                            progressCallback(doneNow);
+                        }
+                    }
+
+                    return stream;
+                },
+                localFinally: stream => stream?.Dispose()
+            );
+
+            progressCallback?.Invoke(total);
+        }
+
+        private static unsafe void DecodeAndCacheOne(int index, FileStream stream)
+        {
+            if (_removed[index] || _replaced.ContainsKey(index))
+            {
+                return;
+            }
+
+            // Cheap precheck — if the cache already has it (e.g. from a prior
+            // single-shot GetGump), don't redecode.
+            if (_cache.TryGet(index, out _))
+            {
+                return;
+            }
+
+            IEntry entry = _fileIndex[index];
+            if (entry == null || entry.Lookup < 0 || entry.Extra1 == -1)
+            {
+                return;
+            }
+
+            int length = entry.Length & 0x7FFFFFFF;
+            if (length <= 0)
+            {
+                return;
+            }
+
+            byte[] rented = ArrayPool<byte>.Shared.Rent(length);
+            byte[] zlibBuf = null;
+            byte[] mythicBuf = null;
+            try
+            {
+                stream.Seek(entry.Lookup, SeekOrigin.Begin);
+                stream.ReadExactly(rented, 0, length);
+
+                byte[] data = rented;
+                int dataOffset = 0;
+                uint width = (uint)entry.Extra1;
+                uint height = (uint)entry.Extra2;
+
+                if (entry.Flag >= CompressionFlag.Zlib)
+                {
+                    int decSize = entry.DecompressedLength;
+                    if (decSize <= 8)
+                    {
+                        return;
+                    }
+
+                    zlibBuf = ArrayPool<byte>.Shared.Rent(decSize);
+                    if (!UopUtils.TryDecompressInto(rented, 0, length, zlibBuf, out int zlibLen))
+                    {
+                        return;
+                    }
+
+                    if (entry.Flag == CompressionFlag.Mythic)
+                    {
+                        uint mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
+                        if (mythicLen <= 8 || mythicLen > int.MaxValue)
+                        {
+                            return;
+                        }
+
+                        mythicBuf = ArrayPool<byte>.Shared.Rent((int)mythicLen);
+                        if (!MythicDecompress.TryDecompress(
+                                zlibBuf.AsSpan(0, zlibLen), mythicBuf.AsSpan(0, (int)mythicLen), out _))
+                        {
+                            return;
+                        }
+
+                        data = mythicBuf;
+                    }
+                    else
+                    {
+                        data = zlibBuf;
+                    }
+
+                    width = (uint)(data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
+                    height = (uint)(data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24));
+                    dataOffset = 8;
+                }
+
+                if (width == 0 || height == 0 || width > 0xFFFF || height > 0xFFFF)
+                {
+                    return;
+                }
+
+                Bitmap bmp;
+                try
+                {
+                    bmp = new Bitmap((int)width, (int)height, PixelFormat.Format16bppArgb1555);
+                }
+                catch
+                {
+                    return;
+                }
+
+                BitmapData bd = bmp.LockBits(
+                    new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                try
+                {
+                    fixed (byte* dataPtr = data)
+                    {
+                        byte* basePtr = dataPtr + dataOffset;
+                        var lookup = (int*)basePtr;
+                        var dat = (ushort*)basePtr;
+
+                        var line = (ushort*)bd.Scan0;
+                        int delta = bd.Stride >> 1;
+
+                        for (int y = 0; y < (int)height; ++y, line += delta)
+                        {
+                            int count = (*lookup++ * 2);
+
+                            ushort* cur = line;
+                            ushort* end = line + bd.Width;
+
+                            while (cur < end)
+                            {
+                                ushort color = dat[count++];
+                                ushort* next = cur + dat[count++];
+
+                                if (color == 0)
+                                {
+                                    cur = next;
+                                }
+                                else
+                                {
+                                    color ^= 0x8000;
+                                    while (cur < next)
+                                    {
+                                        *cur++ = color;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    bmp.UnlockBits(bd);
+                }
+
+                if (Files.CacheData)
+                {
+                    _cache.Set(index, bmp);
+                }
+            }
+            catch
+            {
+                // Skip this index; preload should not abort the whole sweep.
+            }
+            finally
+            {
+                if (mythicBuf != null)
+                {
+                    ArrayPool<byte>.Shared.Return(mythicBuf);
+                }
+
+                if (zlibBuf != null)
+                {
+                    ArrayPool<byte>.Shared.Return(zlibBuf);
+                }
+
                 ArrayPool<byte>.Shared.Return(rented);
             }
         }

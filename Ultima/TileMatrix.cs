@@ -239,11 +239,9 @@ namespace Ultima
             {
                 _statics = new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-                GCHandle gc = GCHandle.Alloc(_staticIndex, GCHandleType.Pinned);
-                var buffer = new byte[index.Length];
-                index.ReadExactly(buffer, 0, (int)index.Length);
-                Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(index.Length, BlockHeight * BlockWidth * 12));
-                gc.Free();
+                int readLen = (int)Math.Min(index.Length, (long)BlockHeight * BlockWidth * 12);
+                index.ReadExactly(MemoryMarshal.AsBytes(_staticIndex.AsSpan()).Slice(0, readLen));
+
                 for (var i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
                 {
                     _staticIndex[i].Lookup = -1;
@@ -294,53 +292,47 @@ namespace Ultima
                 _buffer = new byte[length];
             }
 
-            GCHandle gc = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
-            try
+            _statics.ReadExactly(_buffer, 0, length);
+
+            if (_lists == null)
             {
-                _statics.ReadExactly(_buffer, 0, length);
-
-                if (_lists == null)
-                {
-                    _lists = new HuedTileList[8][];
-
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        _lists[i] = new HuedTileList[8];
-
-                        for (int j = 0; j < 8; ++j)
-                        {
-                            _lists[i][j] = new HuedTileList();
-                        }
-                    }
-                }
-
-                HuedTileList[][] lists = _lists;
-
-                for (int i = 0; i < count; ++i)
-                {
-                    var ptr = new IntPtr((long)gc.AddrOfPinnedObject() + (i * sizeof(StaticTile)));
-                    var cur = (StaticTile)Marshal.PtrToStructure(ptr, typeof(StaticTile));
-                    lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemId(cur.Id), cur.Hue, cur.Z);
-                }
-
-                var tiles = new HuedTile[8][][];
+                _lists = new HuedTileList[8][];
 
                 for (int i = 0; i < 8; ++i)
                 {
-                    tiles[i] = new HuedTile[8][];
+                    _lists[i] = new HuedTileList[8];
 
                     for (int j = 0; j < 8; ++j)
                     {
-                        tiles[i][j] = lists[i][j].ToArray();
+                        _lists[i][j] = new HuedTileList();
                     }
                 }
+            }
 
-                return tiles;
-            }
-            finally
+            HuedTileList[][] lists = _lists;
+
+            ReadOnlySpan<StaticTile> staticTiles = MemoryMarshal.Cast<byte, StaticTile>(
+                _buffer.AsSpan(0, count * sizeof(StaticTile)));
+
+            for (int i = 0; i < count; ++i)
             {
-                gc.Free();
+                StaticTile cur = staticTiles[i];
+                lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemId(cur.Id), cur.Hue, cur.Z);
             }
+
+            var tiles = new HuedTile[8][][];
+
+            for (int i = 0; i < 8; ++i)
+            {
+                tiles[i] = new HuedTile[8][];
+
+                for (int j = 0; j < 8; ++j)
+                {
+                    tiles[i][j] = lists[i][j].ToArray();
+                }
+            }
+
+            return tiles;
         }
 
         /*
@@ -488,22 +480,7 @@ namespace Ultima
 
             _map.Seek(offset, SeekOrigin.Begin);
 
-            GCHandle gc = GCHandle.Alloc(tiles, GCHandleType.Pinned);
-            try
-            {
-                if (_buffer == null || _buffer.Length < 192)
-                {
-                    _buffer = new byte[192];
-                }
-
-                _map.ReadExactly(_buffer, 0, 192);
-
-                Marshal.Copy(_buffer, 0, gc.AddrOfPinnedObject(), 192);
-            }
-            finally
-            {
-                gc.Free();
-            }
+            _map.ReadExactly(MemoryMarshal.AsBytes(tiles.AsSpan()));
 
             return tiles;
         }

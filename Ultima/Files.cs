@@ -201,7 +201,7 @@ namespace Ultima
         /// </summary>
         public static void LoadMulPath()
         {
-            MulPath = new Dictionary<string, string>();
+            MulPath = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             RootDir = Directory ?? string.Empty;
 
             foreach (string file in _uoFiles)
@@ -276,9 +276,9 @@ namespace Ultima
 
             string path = string.Empty;
 
-            if (MulPath.ContainsKey(file.ToLower()))
+            if (MulPath.TryGetValue(file, out string mapped))
             {
-                path = MulPath[file.ToLower()];
+                path = mapped;
             }
 
             if (string.IsNullOrEmpty(path))

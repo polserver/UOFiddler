@@ -14,7 +14,6 @@ namespace Ultima
         private readonly int _blockWidth;
         private readonly int _blockHeight;
 
-        private static byte[] _buffer;
         private static StaticTile[] _tileBuffer = new StaticTile[128];
 
         public bool IsLandBlockPatched(int x, int y)
@@ -185,22 +184,7 @@ namespace Ultima
 
                     var tiles = new Tile[64];
 
-                    GCHandle gc = GCHandle.Alloc(tiles, GCHandleType.Pinned);
-                    try
-                    {
-                        if (_buffer == null || _buffer.Length < 192)
-                        {
-                            _buffer = new byte[192];
-                        }
-
-                        fsData.ReadExactly(_buffer, 0, 192);
-
-                        Marshal.Copy(_buffer, 0, gc.AddrOfPinnedObject(), 192);
-                    }
-                    finally
-                    {
-                        gc.Free();
-                    }
+                    fsData.ReadExactly(MemoryMarshal.AsBytes(tiles.AsSpan()));
 
                     if (LandBlocks[x] == null)
                     {
@@ -269,47 +253,32 @@ namespace Ultima
 
                     StaticTile[] staTiles = _tileBuffer;
 
-                    GCHandle gc = GCHandle.Alloc(staTiles, GCHandleType.Pinned);
-                    try
+                    fsData.ReadExactly(MemoryMarshal.AsBytes(staTiles.AsSpan(0, tileCount)));
+
+                    for (int j = 0; j < tileCount; ++j)
                     {
-                        if (_buffer == null || _buffer.Length < length)
-                        {
-                            _buffer = new byte[length];
-                        }
-
-                        fsData.ReadExactly(_buffer, 0, length);
-
-                        Marshal.Copy(_buffer, 0, gc.AddrOfPinnedObject(), length);
-
-                        for (int j = 0; j < tileCount; ++j)
-                        {
-                            StaticTile cur = staTiles[j];
-                            lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemId(cur.Id), cur.Hue, cur.Z);
-                        }
-
-                        var tiles = new HuedTile[8][][];
-
-                        for (int x = 0; x < 8; ++x)
-                        {
-                            tiles[x] = new HuedTile[8][];
-
-                            for (int y = 0; y < 8; ++y)
-                            {
-                                tiles[x][y] = lists[x][y].ToArray();
-                            }
-                        }
-
-                        if (StaticBlocks[blockX] == null)
-                        {
-                            StaticBlocks[blockX] = new HuedTile[matrix.BlockHeight][][][];
-                        }
-
-                        StaticBlocks[blockX][blockY] = tiles;
+                        StaticTile cur = staTiles[j];
+                        lists[cur.X & 0x7][cur.Y & 0x7].Add(Art.GetLegalItemId(cur.Id), cur.Hue, cur.Z);
                     }
-                    finally
+
+                    var tiles = new HuedTile[8][][];
+
+                    for (int x = 0; x < 8; ++x)
                     {
-                        gc.Free();
+                        tiles[x] = new HuedTile[8][];
+
+                        for (int y = 0; y < 8; ++y)
+                        {
+                            tiles[x][y] = lists[x][y].ToArray();
+                        }
                     }
+
+                    if (StaticBlocks[blockX] == null)
+                    {
+                        StaticBlocks[blockX] = new HuedTile[matrix.BlockHeight][][][];
+                    }
+
+                    StaticBlocks[blockX][blockY] = tiles;
                 }
 
                 return count;

@@ -13,7 +13,9 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Numerics;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -26,6 +28,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            pictureBox.MouseWheel += OnMouseWheel;
         }
 
         private bool _loaded;
@@ -36,8 +39,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private Map _originalMap;
         private int _currentMapId;
         private Bitmap _map;
+        private Bitmap _renderBuffer;
+        private Bitmap _zoomBuffer;
+        private Graphics _zoomBufferGraphics;
         private static double _zoom = 1;
-        private bool[][][][] _diffs;
+        // One ulong per 8x8 block: bit (xb<<3 | yb) is set when that tile differs.
+        // Flat 1D, indexed as blockX * _diffHeightBlocks + blockY.
+        private ulong[] _diffMasks;
+        private int _diffWidthBlocks;
+        private int _diffHeightBlocks;
+        private readonly System.Diagnostics.Stopwatch _dragRepaintTimer = new System.Diagnostics.Stopwatch();
+        private System.Windows.Forms.Timer _dragTrailTimer;
+        private bool _dragInvalidatePending;
+        private double _dragAccumX;
+        private double _dragAccumY;
+        private const int DragRepaintIntervalMs = 16;
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -128,6 +144,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 _moving = true;
                 _movingPoint.X = e.X;
                 _movingPoint.Y = e.Y;
+                _dragAccumX = 0;
+                _dragAccumY = 0;
                 Cursor = Cursors.Hand;
             }
             else
@@ -150,16 +168,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 toolTip1.RemoveAll();
 
-                int deltaX = (int)(-1 * (e.X - _movingPoint.X) / _zoom);
-                int deltaY = (int)(-1 * (e.Y - _movingPoint.Y) / _zoom);
+                // Accumulate the fractional part of the drag so high-zoom drags (where 1 mouse pixel
+                // is less than 1 tile) don't lose precision.
+                _dragAccumX += -(e.X - _movingPoint.X) / _zoom;
+                _dragAccumY += -(e.Y - _movingPoint.Y) / _zoom;
+
+                int deltaX = (int)_dragAccumX;
+                int deltaY = (int)_dragAccumY;
+                _dragAccumX -= deltaX;
+                _dragAccumY -= deltaY;
 
                 _movingPoint.X = e.X;
                 _movingPoint.Y = e.Y;
 
-                hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
-                vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
-
-                pictureBox.Invalidate();
+                if (deltaX != 0 || deltaY != 0)
+                {
+                    hScrollBar.Value = Math.Max(0, Math.Min(hScrollBar.Maximum, hScrollBar.Value + deltaX));
+                    vScrollBar.Value = Math.Max(0, Math.Min(vScrollBar.Maximum, vScrollBar.Value + deltaY));
+                    RequestDragRepaint();
+                }
             }
             else if (_zoom >= 2 && _currentMap != null)
             {
@@ -270,104 +297,58 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            if (showMap1ToolStripMenuItem.Checked)
+            Map drawMap = showMap1ToolStripMenuItem.Checked ? _originalMap : _currentMap;
+            if (drawMap == null)
             {
-                _map = _originalMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                   (int)((e.ClipRectangle.Width / _zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / _zoom) + 8) >> 3,
-                   true);
-            }
-            else
-            {
-                _map = _currentMap.GetImage(hScrollBar.Value >> 3, vScrollBar.Value >> 3,
-                   (int)((e.ClipRectangle.Width / _zoom) + 8) >> 3, (int)((e.ClipRectangle.Height / _zoom) + 8) >> 3,
-                   true);
+                return;
             }
 
-            if (_currentMap != null && showDifferencesToolStripMenuItem.Checked)
+            int blockX = hScrollBar.Value >> 3;
+            int blockY = vScrollBar.Value >> 3;
+            // +16 (2 blocks of padding) so the sub-block scroll offset never reveals empty space
+            // along the right/bottom edge of the viewport.
+            int widthBlocks = ((int)Math.Ceiling(e.ClipRectangle.Width / _zoom) + 16) >> 3;
+            int heightBlocks = ((int)Math.Ceiling(e.ClipRectangle.Height / _zoom) + 16) >> 3;
+
+            int bufferPixelW = widthBlocks << 3;
+            int bufferPixelH = heightBlocks << 3;
+            _map = EnsureRenderBuffer(bufferPixelW, bufferPixelH);
+
+            drawMap.GetImage(blockX, blockY, widthBlocks, heightBlocks, _map, true);
+
+            if (_currentMap != null && showDifferencesToolStripMenuItem.Checked && _diffMasks != null)
             {
-                using (Graphics mapg = Graphics.FromImage(_map))
-                {
-                    int maxx = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
-                    int maxy = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
-                    if (maxx > _originalMap.Width >> 3)
-                    {
-                        maxx = _originalMap.Width >> 3;
-                    }
-
-                    if (maxy > _originalMap.Height >> 3)
-                    {
-                        maxy = _originalMap.Height >> 3;
-                    }
-
-                    int gx = 0;
-                    for (int x = hScrollBar.Value >> 3; x < maxx; x++, gx += 8)
-                    {
-                        int gy = 0;
-                        for (int y = vScrollBar.Value >> 3; y < maxy; y++, gy += 8)
-                        {
-                            for (int xb = 0; xb < 8; xb++)
-                            {
-                                for (int yb = 0; yb < 8; yb++)
-                                {
-                                    if (_diffs[x][y][xb][yb])
-                                    {
-                                        mapg.DrawRectangle(Pens.Red, gx + xb, gy + yb, 1, 1);
-                                        mapg.DrawRectangle(Pens.Red, gx + xb, 0, 1, 2);
-                                        mapg.DrawRectangle(Pens.Red, 0, gy + yb, 2, 1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    mapg.Save();
-                }
+                DrawDiffOverlay(blockX, blockY, widthBlocks, heightBlocks);
             }
 
             if (markDiffToolStripMenuItem.Checked)
             {
-                Map drawMap = showMap1ToolStripMenuItem.Checked
-                    ? _originalMap
-                    : _currentMap;
-
-                if (drawMap != null)
+                int count = drawMap.Tiles.Patch.LandBlocksCount + drawMap.Tiles.Patch.StaticBlocksCount;
+                if (count > 0)
                 {
-                    int count = drawMap.Tiles.Patch.LandBlocksCount + drawMap.Tiles.Patch.StaticBlocksCount;
-                    if (count > 0)
+                    using (Graphics graphics = Graphics.FromImage(_map))
                     {
-                        using (Graphics graphics = Graphics.FromImage(_map))
+                        int maxX = Math.Min(blockX + widthBlocks, drawMap.Width >> 3);
+                        int maxY = Math.Min(blockY + heightBlocks, drawMap.Height >> 3);
+
+                        int gx = 0;
+                        for (int x = blockX; x < maxX; x++, gx += 8)
                         {
-                            int maxX = ((int)((e.ClipRectangle.Width / _zoom) + 8) >> 3) + (hScrollBar.Value >> 3);
-                            int maxY = ((int)((e.ClipRectangle.Height / _zoom) + 8) >> 3) + (vScrollBar.Value >> 3);
-
-                            if (maxX > drawMap.Width >> 3)
+                            int gy = 0;
+                            for (int y = blockY; y < maxY; y++, gy += 8)
                             {
-                                maxX = drawMap.Width >> 3;
-                            }
-
-                            if (maxY > drawMap.Height >> 3)
-                            {
-                                maxY = drawMap.Height >> 3;
-                            }
-
-                            int gx = 0;
-                            for (int x = hScrollBar.Value >> 3; x < maxX; x++, gx += 8)
-                            {
-                                int gy = 0;
-                                for (int y = vScrollBar.Value >> 3; y < maxY; y++, gy += 8)
+                                if (drawMap.Tiles.Patch.IsLandBlockPatched(x, y))
                                 {
-                                    if (drawMap.Tiles.Patch.IsLandBlockPatched(x, y))
-                                    {
-                                        graphics.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
-                                        graphics.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
-                                        graphics.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
-                                    }
+                                    graphics.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
+                                    graphics.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
+                                    graphics.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
+                                }
 
-                                    if (drawMap.Tiles.Patch.IsStaticBlockPatched(x, y))
-                                    {
-                                        graphics.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
-                                        graphics.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
-                                        graphics.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
-                                    }
+                                if (drawMap.Tiles.Patch.IsStaticBlockPatched(x, y))
+                                {
+                                    graphics.FillRectangle(Brushes.Azure, gx, gy, 8, 8);
+                                    graphics.FillRectangle(Brushes.Azure, gx, 0, 8, 2);
+                                    graphics.FillRectangle(Brushes.Azure, 0, gy, 2, 8);
                                 }
                             }
                         }
@@ -375,22 +356,122 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
             }
 
-            ZoomMap(ref _map);
+            Bitmap toDraw = Math.Abs(_zoom - 1.0) < 1e-6 ? _map : ZoomMap(_map, _zoom);
 
-            e.Graphics.DrawImageUnscaledAndClipped(_map, e.ClipRectangle);
+            // The render buffer starts at the block boundary (blockX * 8). Shift the draw position
+            // by the sub-block portion of the scroll so viewport pixel 0 maps to the exact tile
+            // the scrollbar points at.
+            int subTileX = hScrollBar.Value - (blockX << 3);
+            int subTileY = vScrollBar.Value - (blockY << 3);
+            int drawOffsetX = (int)Math.Round(subTileX * _zoom);
+            int drawOffsetY = (int)Math.Round(subTileY * _zoom);
+
+            e.Graphics.DrawImageUnscaled(toDraw, -drawOffsetX, -drawOffsetY);
         }
 
-        private void ZoomMap(ref Bitmap bmp0)
+        /// <summary>
+        /// Writes the red "diff" markers onto <see cref="_map"/> by locking its
+        /// pixel buffer once and writing 16bpp pixels directly. Replaces the
+        /// per-tile Graphics.DrawRectangle path that dominated drag/scroll cost
+        /// when "Show Differences" was enabled.
+        /// </summary>
+        private unsafe void DrawDiffOverlay(int blockX, int blockY, int widthBlocks, int heightBlocks)
         {
-            Bitmap bmp1 = new Bitmap((int)(_map.Width * _zoom), (int)(_map.Height * _zoom));
-            using (Graphics graph = Graphics.FromImage(bmp1))
+            int maxX = Math.Min(blockX + widthBlocks, _diffWidthBlocks);
+            int maxY = Math.Min(blockY + heightBlocks, _diffHeightBlocks);
+            if (maxX <= blockX || maxY <= blockY)
             {
-                graph.InterpolationMode = InterpolationMode.NearestNeighbor;
-                graph.PixelOffsetMode = PixelOffsetMode.Half;
-                graph.DrawImage(bmp0, new Rectangle(0, 0, bmp1.Width, bmp1.Height));
+                return;
             }
 
-            bmp0 = bmp1;
+            BitmapData bd = _map.LockBits(
+                new Rectangle(0, 0, _map.Width, _map.Height),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format16bppRgb555);
+            try
+            {
+                ushort* basePtr = (ushort*)bd.Scan0;
+                int stride = bd.Stride >> 1; // pixels per row
+                const ushort red = 0x7C00;   // R=31, G=0, B=0 in 5-5-5
+                int mapHeightBlocks = _diffHeightBlocks;
+
+                int gx = 0;
+                for (int x = blockX; x < maxX; x++, gx += 8)
+                {
+                    int colBase = x * mapHeightBlocks;
+                    int gy = 0;
+                    for (int y = blockY; y < maxY; y++, gy += 8)
+                    {
+                        ulong mask = _diffMasks[colBase + y];
+                        if (mask == 0)
+                        {
+                            continue;
+                        }
+
+                        while (mask != 0)
+                        {
+                            int bit = BitOperations.TrailingZeroCount(mask);
+                            mask &= mask - 1; // clear lowest set bit
+                            int xb = bit >> 3;
+                            int yb = bit & 7;
+
+                            int px = gx + xb;
+                            int py = gy + yb;
+
+                            // 1x1 tile pixel
+                            basePtr[py * stride + px] = red;
+                            // Top-edge column marker (1 col wide, 2 rows tall)
+                            basePtr[px] = red;
+                            basePtr[stride + px] = red;
+                            // Left-edge row marker (2 cols wide, 1 row tall)
+                            basePtr[py * stride + 0] = red;
+                            basePtr[py * stride + 1] = red;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _map.UnlockBits(bd);
+            }
+        }
+
+        private Bitmap EnsureRenderBuffer(int pixelWidth, int pixelHeight)
+        {
+            if (_renderBuffer != null
+                && _renderBuffer.Width == pixelWidth
+                && _renderBuffer.Height == pixelHeight)
+            {
+                return _renderBuffer;
+            }
+
+            _renderBuffer?.Dispose();
+            _renderBuffer = new Bitmap(pixelWidth, pixelHeight, PixelFormat.Format16bppRgb555);
+            return _renderBuffer;
+        }
+
+        private Bitmap ZoomMap(Bitmap source, double effectiveZoom)
+        {
+            int targetWidth = (int)(source.Width * effectiveZoom);
+            int targetHeight = (int)(source.Height * effectiveZoom);
+
+            if (targetWidth <= 0 || targetHeight <= 0)
+            {
+                return source;
+            }
+
+            if (_zoomBuffer == null || _zoomBuffer.Width != targetWidth || _zoomBuffer.Height != targetHeight)
+            {
+                _zoomBufferGraphics?.Dispose();
+                _zoomBuffer?.Dispose();
+                _zoomBuffer = new Bitmap(targetWidth, targetHeight, PixelFormat.Format32bppArgb);
+                _zoomBufferGraphics = Graphics.FromImage(_zoomBuffer);
+                _zoomBufferGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                _zoomBufferGraphics.PixelOffsetMode = PixelOffsetMode.Half;
+            }
+
+            _zoomBufferGraphics.DrawImage(source, new Rectangle(0, 0, targetWidth, targetHeight));
+            return _zoomBuffer;
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -450,8 +531,42 @@ namespace UoFiddler.Plugin.Compare.UserControls
             vScrollBar.Value = 0;
         }
 
+        private const double MinZoom = 0.25;
+        private const double MaxZoom = 4;
+
+        private void OnMouseWheel(object sender, MouseEventArgs e)
+        {
+            // Position-from-cursor for DoZoom's recenter math; mirrors what the
+            // context-menu opening handler does so wheel and right-click+zoom
+            // land at the same place.
+            UpdateCurrentPointFromMouse();
+
+            if (e.Delta > 0)
+            {
+                OnZoomPlus(sender, EventArgs.Empty);
+            }
+            else if (e.Delta < 0)
+            {
+                OnZoomMinus(sender, EventArgs.Empty);
+            }
+        }
+
+        private void UpdateCurrentPointFromMouse()
+        {
+            _currentPoint = pictureBox.PointToClient(MousePosition);
+            _currentPoint.X = (int)(_currentPoint.X / _zoom);
+            _currentPoint.Y = (int)(_currentPoint.Y / _zoom);
+            _currentPoint.X += hScrollBar.Value;
+            _currentPoint.Y += vScrollBar.Value;
+        }
+
         private void OnZoomPlus(object sender, EventArgs e)
         {
+            if (_zoom * 2 > MaxZoom)
+            {
+                return;
+            }
+
             _zoom *= 2;
 
             DoZoom();
@@ -459,6 +574,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnZoomMinus(object sender, EventArgs e)
         {
+            if (_zoom / 2 < MinZoom)
+            {
+                return;
+            }
+
             _zoom /= 2;
 
             DoZoom();
@@ -484,13 +604,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnOpeningContext(object sender, CancelEventArgs e)
         {
-            _currentPoint = pictureBox.PointToClient(MousePosition);
-
-            _currentPoint.X = (int)(_currentPoint.X / _zoom);
-            _currentPoint.Y = (int)(_currentPoint.Y / _zoom);
-
-            _currentPoint.X += hScrollBar.Value;
-            _currentPoint.Y += vScrollBar.Value;
+            UpdateCurrentPointFromMouse();
         }
 
         private void OnClickBrowseLoc(object sender, EventArgs e)
@@ -677,99 +791,139 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private bool BlockDiff(int x, int y)
         {
-            if (_diffs == null)
+            if (_diffMasks == null)
             {
                 return false;
             }
 
-            if (x < 0 || y < 0 || x >= _diffs.GetLength(0) || y >= _diffs[x].GetLength(0))
+            if (x < 0 || y < 0 || x >= _diffWidthBlocks || y >= _diffHeightBlocks)
             {
                 return false;
             }
 
-            for (int xb = 0; xb < 8; xb++)
-            {
-                for (int yb = 0; yb < 8; yb++)
-                {
-                    if (_diffs[x][y][xb][yb])
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return _diffMasks[x * _diffHeightBlocks + y] != 0;
         }
 
         private void CalculateDiffs()
         {
-            int width = _currentMap.Width >> 3;
-            int height = _currentMap.Height >> 3;
-
-            _diffs = new bool[width][][][];
-
             if (_currentMap == null || _originalMap == null)
             {
+                _diffMasks = null;
+                _diffWidthBlocks = 0;
+                _diffHeightBlocks = 0;
                 return;
             }
+
+            int width = _currentMap.Width >> 3;
+            int height = _currentMap.Height >> 3;
+            var masks = new ulong[width * height];
 
             Cursor.Current = Cursors.WaitCursor;
 
             for (int x = 0; x < width; ++x)
             {
-                _diffs[x] = new bool[height][][];
-
                 for (int y = 0; y < height; ++y)
                 {
-                    _diffs[x][y] = new bool[8][];
-
                     Tile[] customTiles = _currentMap.Tiles.GetLandBlock(x, y);
                     Tile[] origTiles = _originalMap.Tiles.GetLandBlock(x, y);
 
                     HuedTile[][][] customStatics = _currentMap.Tiles.GetStaticBlock(x, y);
                     HuedTile[][][] origStatics = _originalMap.Tiles.GetStaticBlock(x, y);
 
+                    ulong mask = 0;
                     for (int xb = 0; xb < 8; xb++)
                     {
-                        _diffs[x][y][xb] = new bool[8];
-
+                        HuedTile[][] customCol = customStatics[xb];
+                        HuedTile[][] origCol = origStatics[xb];
                         for (int yb = 0; yb < 8; yb++)
                         {
-                            if (customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Id != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Id
-                             || customTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z != origTiles[((yb & 0x7) << 3) + (xb & 0x7)].Z)
+                            int tileIdx = (yb << 3) + xb;
+                            bool isDiff;
+
+                            if (customTiles[tileIdx].Id != origTiles[tileIdx].Id
+                             || customTiles[tileIdx].Z != origTiles[tileIdx].Z)
                             {
-                                _diffs[x][y][xb][yb] = true;
+                                isDiff = true;
+                            }
+                            else if (customCol[yb].Length != origCol[yb].Length)
+                            {
+                                isDiff = true;
                             }
                             else
                             {
-                                if (customStatics[xb][yb].Length != origStatics[xb][yb].Length)
+                                isDiff = false;
+                                HuedTile[] cs = customCol[yb];
+                                HuedTile[] os = origCol[yb];
+                                for (int i = 0; i < cs.Length; i++)
                                 {
-                                    _diffs[x][y][xb][yb] = true;
-                                }
-                                else
-                                {
-                                    for (int i = 0; i < customStatics[xb][yb].Length; i++)
+                                    if (cs[i].Id != os[i].Id
+                                        || cs[i].Z != os[i].Z
+                                        || cs[i].Hue != os[i].Hue)
                                     {
-                                        if (customStatics[xb][yb][i].Id != origStatics[xb][yb][i].Id
-                                            || customStatics[xb][yb][i].Z != origStatics[xb][yb][i].Z
-                                            || customStatics[xb][yb][i].Hue != origStatics[xb][yb][i].Hue)
-                                        {
-                                            _diffs[x][y][xb][yb] = true;
-
-                                            break;
-                                        }
+                                        isDiff = true;
+                                        break;
                                     }
                                 }
                             }
+
+                            if (isDiff)
+                            {
+                                mask |= 1UL << ((xb << 3) | yb);
+                            }
                         }
                     }
+
+                    masks[x * height + y] = mask;
                 }
             }
 
+            _diffMasks = masks;
+            _diffWidthBlocks = width;
+            _diffHeightBlocks = height;
             Cursor.Current = Cursors.Default;
         }
 
         private void HandleScroll(object sender, ScrollEventArgs e)
         {
+            pictureBox.Invalidate();
+        }
+
+        private void RequestDragRepaint()
+        {
+            if (!_dragRepaintTimer.IsRunning || _dragRepaintTimer.ElapsedMilliseconds >= DragRepaintIntervalMs)
+            {
+                _dragInvalidatePending = false;
+                _dragRepaintTimer.Restart();
+                pictureBox.Invalidate();
+                return;
+            }
+
+            // Coalesce into a trailing-edge repaint so the final position always lands on screen.
+            if (_dragInvalidatePending)
+            {
+                return;
+            }
+
+            _dragInvalidatePending = true;
+            if (_dragTrailTimer == null)
+            {
+                _dragTrailTimer = new System.Windows.Forms.Timer { Interval = DragRepaintIntervalMs };
+                _dragTrailTimer.Tick += OnDragTrailTick;
+            }
+            _dragTrailTimer.Stop();
+            _dragTrailTimer.Interval = Math.Max(1, DragRepaintIntervalMs - (int)_dragRepaintTimer.ElapsedMilliseconds);
+            _dragTrailTimer.Start();
+        }
+
+        private void OnDragTrailTick(object sender, EventArgs e)
+        {
+            _dragTrailTimer.Stop();
+            if (!_dragInvalidatePending)
+            {
+                return;
+            }
+            _dragInvalidatePending = false;
+            _dragRepaintTimer.Restart();
             pictureBox.Invalidate();
         }
     }

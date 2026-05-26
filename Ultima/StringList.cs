@@ -1,4 +1,6 @@
 using System;
+using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -24,7 +26,6 @@ namespace Ultima
 
         private Dictionary<int, string> _stringTable;
         private Dictionary<int, StringEntry> _entryTable;
-        private static byte[] _buffer = new byte[1024];
 
         /// <summary>
         /// Initialize <see cref="StringList"/> of Language
@@ -134,95 +135,107 @@ namespace Ultima
                 EntryTable = new Dictionary<int, StringEntry>(),
             };
 
-            byte[] clilocData;
+            byte[] rented = null;
             try
             {
-                clilocData = decompress ? MythicDecompress.Decompress(buffer) : buffer;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMessage = $"decompression failed: {ex.Message}";
+                ReadOnlySpan<byte> data;
+
+                if (decompress)
+                {
+                    uint expectedLen = MythicDecompress.PeekDecompressedLength(buffer);
+                    if (expectedLen == 0 || expectedLen > int.MaxValue)
+                    {
+                        result.ErrorMessage = "decompression failed: invalid header.";
+                        return result;
+                    }
+
+                    rented = ArrayPool<byte>.Shared.Rent((int)expectedLen);
+                    if (!MythicDecompress.TryDecompress(buffer, rented.AsSpan(0, (int)expectedLen), out int written))
+                    {
+                        result.ErrorMessage = "decompression failed.";
+                        return result;
+                    }
+
+                    data = rented.AsSpan(0, written);
+                }
+                else
+                {
+                    data = buffer;
+                }
+
+                // Header is 4 + 2 bytes.
+                if (data.Length < 6)
+                {
+                    result.ErrorMessage = $"file is {data.Length} bytes, smaller than the 6-byte header.";
+                    return result;
+                }
+
+                result.Header1 = BinaryPrimitives.ReadInt32LittleEndian(data);
+                result.Header2 = BinaryPrimitives.ReadInt16LittleEndian(data.Slice(4));
+
+                int cursor = 6;
+                int lastNumber = -1;
+                while (cursor < data.Length)
+                {
+                    int entryStart = cursor;
+                    int remaining = data.Length - cursor;
+
+                    // Each entry header is 4 (number) + 1 (flag) + 2 (length) = 7 bytes.
+                    if (remaining < 7)
+                    {
+                        result.ErrorMessage =
+                            $"unexpected {remaining} trailing byte(s) at offset 0x{entryStart:X} after entry #{lastNumber}; " +
+                            $"need 7 bytes for the next entry header.";
+                        return result;
+                    }
+
+                    int number = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(cursor));
+                    byte flag = data[cursor + 4];
+                    // Writer emits ushort; reading as signed Int16 truncates strings ≥32768 bytes to a negative length.
+                    int length = BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(cursor + 5));
+                    cursor += 7;
+
+                    int bodyRemaining = data.Length - cursor;
+                    if (length > bodyRemaining)
+                    {
+                        result.ErrorMessage =
+                            $"entry #{number} at offset 0x{entryStart:X} declares length {length}, " +
+                            $"but only {bodyRemaining} byte(s) remain in the file " +
+                            $"(previous entry was #{lastNumber}, parsed {result.EntriesParsed} so far).";
+                        return result;
+                    }
+
+                    string text;
+                    try
+                    {
+                        text = Encoding.UTF8.GetString(data.Slice(cursor, length));
+                    }
+                    catch (Exception ex)
+                    {
+                        result.ErrorMessage =
+                            $"entry #{number} at offset 0x{entryStart:X} has {length} body bytes that are not valid UTF-8: {ex.Message}";
+                        return result;
+                    }
+                    cursor += length;
+
+                    var se = new StringEntry(number, text, flag);
+                    result.Entries.Add(se);
+                    result.StringTable[number] = text;
+                    result.EntryTable[number] = se;
+                    result.EntriesParsed++;
+                    lastNumber = number;
+                }
+
+                result.Success = true;
                 return result;
             }
-
-            // Header is 4 + 2 bytes.
-            if (clilocData.Length < 6)
+            finally
             {
-                result.ErrorMessage = $"file is {clilocData.Length} bytes, smaller than the 6-byte header.";
-                return result;
+                if (rented != null)
+                {
+                    ArrayPool<byte>.Shared.Return(rented);
+                }
             }
-
-            using var stream = new MemoryStream(clilocData);
-            using var reader = new BinaryReader(stream);
-            result.Header1 = reader.ReadInt32();
-            result.Header2 = reader.ReadInt16();
-
-            int lastNumber = -1;
-            while (stream.Position < stream.Length)
-            {
-                long entryStart = stream.Position;
-                long remaining = stream.Length - entryStart;
-
-                // Each entry header is 4 (number) + 1 (flag) + 2 (length) = 7 bytes.
-                if (remaining < 7)
-                {
-                    result.ErrorMessage =
-                        $"unexpected {remaining} trailing byte(s) at offset 0x{entryStart:X} after entry #{lastNumber}; " +
-                        $"need 7 bytes for the next entry header.";
-                    return result;
-                }
-
-                int number = reader.ReadInt32();
-                byte flag = reader.ReadByte();
-                // Writer emits ushort; reading as signed Int16 truncates strings ≥32768 bytes to a negative length.
-                int length = reader.ReadUInt16();
-
-                long bodyRemaining = stream.Length - stream.Position;
-                if (length > bodyRemaining)
-                {
-                    result.ErrorMessage =
-                        $"entry #{number} at offset 0x{entryStart:X} declares length {length}, " +
-                        $"but only {bodyRemaining} byte(s) remain in the file " +
-                        $"(previous entry was #{lastNumber}, parsed {result.EntriesParsed} so far).";
-                    return result;
-                }
-
-                if (length > _buffer.Length)
-                {
-                    _buffer = new byte[(length + 1023) & ~1023];
-                }
-
-                int read = reader.Read(_buffer, 0, length);
-                if (read != length)
-                {
-                    result.ErrorMessage =
-                        $"entry #{number} at offset 0x{entryStart:X} expected {length} body byte(s) " +
-                        $"but only {read} were available.";
-                    return result;
-                }
-
-                string text;
-                try
-                {
-                    text = Encoding.UTF8.GetString(_buffer, 0, length);
-                }
-                catch (Exception ex)
-                {
-                    result.ErrorMessage =
-                        $"entry #{number} at offset 0x{entryStart:X} has {length} body bytes that are not valid UTF-8: {ex.Message}";
-                    return result;
-                }
-
-                var se = new StringEntry(number, text, flag);
-                result.Entries.Add(se);
-                result.StringTable[number] = text;
-                result.EntryTable[number] = se;
-                result.EntriesParsed++;
-                lastNumber = number;
-            }
-
-            result.Success = true;
-            return result;
         }
 
         /// <summary>

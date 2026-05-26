@@ -9,6 +9,7 @@
 //  *
 //  ***************************************************************************/
 
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -39,6 +40,22 @@ namespace Ultima.Helpers
             }
 
             return Encoding.ASCII.GetString(buffer, 0, count);
+        }
+
+        /// <summary>
+        /// Reads a NUL-padded ASCII name from the start of <paramref name="buffer"/>,
+        /// up to 20 bytes. Lets callers avoid pinning + Marshal.PtrToStructure.
+        /// </summary>
+        public static string ReadNameString(ReadOnlySpan<byte> buffer)
+        {
+            int max = Math.Min(20, buffer.Length);
+            int count = 0;
+            while (count < max && buffer[count] != 0)
+            {
+                count++;
+            }
+
+            return Encoding.ASCII.GetString(buffer.Slice(0, count));
         }
 
         public static int ConvertStringToInt(string text)

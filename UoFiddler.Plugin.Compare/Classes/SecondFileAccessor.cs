@@ -121,11 +121,8 @@ namespace UoFiddler.Plugin.Compare.Classes
                 int count = (int)(idx.Length / 12);
                 IdxLength = idx.Length;
 
-                GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
-                byte[] buffer = new byte[idx.Length];
-                idx.ReadExactly(buffer, 0, (int)idx.Length);
-                Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(IdxLength, Index.Length * 12L));
-                gc.Free();
+                int readLen = (int)Math.Min(IdxLength, (long)Index.Length * 12);
+                idx.ReadExactly(MemoryMarshal.AsBytes(Index.AsSpan()).Slice(0, readLen));
 
                 for (int i = count; i < Index.Length; ++i)
                 {

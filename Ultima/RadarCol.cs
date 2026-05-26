@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -42,11 +43,7 @@ namespace Ultima
                 using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     Colors = new ushort[fs.Length / 2];
-                    GCHandle gc = GCHandle.Alloc(Colors, GCHandleType.Pinned);
-                    var buffer = new byte[(int)fs.Length];
-                    fs.ReadExactly(buffer, 0, (int)fs.Length);
-                    Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)fs.Length);
-                    gc.Free();
+                    fs.ReadExactly(MemoryMarshal.AsBytes(Colors.AsSpan()));
                 }
             }
             else
