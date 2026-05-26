@@ -63,8 +63,8 @@ namespace UoFiddler.Controls.Classes
 
                     if (showFrameBounds)
                     {
-                        g.FillRectangle(new SolidBrush(Color.Red), new Rectangle(drawCenter, new Size(3, 3)));
-                        g.DrawRectangle(new Pen(Color.Red), new Rectangle(location, new Size(frame.Bitmap.Width - 1, frame.Bitmap.Height - 1)));
+                        g.FillRectangle(Brushes.Red, new Rectangle(drawCenter, new Size(3, 3)));
+                        g.DrawRectangle(Pens.Red, new Rectangle(location, new Size(frame.Bitmap.Width - 1, frame.Bitmap.Height - 1)));
                     }
 
                     gif.AddFrame(target, delay: -1, quality: GifQuality.Bit8);

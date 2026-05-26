@@ -881,6 +881,15 @@ namespace UoFiddler.Controls.UserControls.TileView
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _tileBorder?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         public class ListViewFocusedItemSelectionChangedEventArgs : EventArgs
         {
             public int FocusedItemIndex { get; }

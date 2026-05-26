@@ -248,7 +248,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             else
             {
-                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
+                using var backBrush = new SolidBrush(e.BackColor);
+                e.Graphics.FillRectangle(backBrush, e.Bounds);
             }
 
             // Color swatch.

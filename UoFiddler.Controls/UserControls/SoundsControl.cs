@@ -37,6 +37,10 @@ namespace UoFiddler.Controls.UserControls
 
         private int _soundIdOffset;
 
+        // Shared underline font for translated entries — one instance reused
+        // across all list items, recreated each reload (the control Font may change).
+        private Font _underlineFont;
+
         public SoundsControl()
         {
             InitializeComponent();
@@ -95,6 +99,9 @@ namespace UoFiddler.Controls.UserControls
 
                     _soundIdOffset = GetSoundIdOffset();
 
+                    _underlineFont?.Dispose();
+                    _underlineFont = new Font(Font, FontStyle.Underline);
+
                     var cache = new List<ListViewItem>();
                     for (int i = 0; i < _soundsLength; ++i)
                     {
@@ -105,7 +112,7 @@ namespace UoFiddler.Controls.UserControls
                             if (translated)
                             {
                                 item.ForeColor = Options.DarkMode ? Color.CornflowerBlue : Color.Blue;
-                                item.Font = new Font(Font, FontStyle.Underline);
+                                item.Font = _underlineFont;
                             }
 
                             cache.Add(item);

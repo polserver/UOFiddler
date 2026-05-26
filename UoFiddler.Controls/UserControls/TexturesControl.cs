@@ -657,16 +657,15 @@ namespace UoFiddler.Controls.UserControls
             Size defaultTileSize = new Size(defaultTileWidth, defaultTileWidth);
             Rectangle tileRectangle = new Rectangle(itemPoint, defaultTileSize);
 
-            var previousClip = e.Graphics.Clip;
+            using var previousClip = e.Graphics.Clip;
 
-            e.Graphics.Clip = new Region(tileRectangle);
+            using var clipRegion = new Region(tileRectangle);
+            e.Graphics.Clip = clipRegion;
 
             Bitmap bitmap = Textures.GetTexture(_textureList[e.Index], out bool patched);
 
             if (bitmap == null)
             {
-                e.Graphics.Clip = new Region(tileRectangle);
-
                 tileRectangle.X += 5;
                 tileRectangle.Y += 5;
 

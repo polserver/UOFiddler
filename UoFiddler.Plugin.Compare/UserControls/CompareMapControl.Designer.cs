@@ -28,6 +28,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 components.Dispose();
             }
+            if (disposing)
+            {
+                _zoomBufferGraphics?.Dispose();
+                _zoomBuffer?.Dispose();
+                _renderBuffer?.Dispose();
+                _zoomBufferGraphics = null;
+                _zoomBuffer = null;
+                _renderBuffer = null;
+            }
             base.Dispose(disposing);
         }
 

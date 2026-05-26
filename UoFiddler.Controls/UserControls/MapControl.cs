@@ -1011,23 +1011,16 @@ namespace UoFiddler.Controls.UserControls
 
             using (new WaitCursorScope(this))
             {
-                Bitmap extract;
-
                 // Use altitude-aware rendering if mode is not Normal
-                if (_altitudeMode != MapAltitudeMode.Normal)
-                {
-                    extract = CurrentMap.GetImageWithAltitude(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
-                        showStaticsToolStripMenuItem1.Checked, _altitudeMode);
-                }
-                else
-                {
-                    extract = CurrentMap.GetImage(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
+                using Bitmap extract = _altitudeMode != MapAltitudeMode.Normal
+                    ? CurrentMap.GetImageWithAltitude(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
+                        showStaticsToolStripMenuItem1.Checked, _altitudeMode)
+                    : CurrentMap.GetImage(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
                         showStaticsToolStripMenuItem1.Checked);
-                }
 
                 if (showMarkersToolStripMenuItem.Checked)
                 {
-                    Graphics g = Graphics.FromImage(extract);
+                    using Graphics g = Graphics.FromImage(extract);
                     foreach (TreeNode obj in OverlayObjectTree.Nodes[_currentMapId].Nodes)
                     {
                         OverlayObject o = (OverlayObject)obj.Tag;
@@ -1684,7 +1677,10 @@ namespace UoFiddler.Controls.UserControls
         private readonly Color _col;
         private readonly Pen _pen;
         private readonly Brush _brush;
-        private static Brush _background;
+        // Shared, immutable label backdrop — created once and never disposed
+        // per-instance (it was previously static yet reallocated/disposed per
+        // marker, which leaked brushes and could dispose one still in use).
+        private static readonly Brush _background = new SolidBrush(Color.FromArgb(100, Color.White));
 
         public OverlayCursor(Point location, int m, string t, Color c)
         {
@@ -1695,7 +1691,6 @@ namespace UoFiddler.Controls.UserControls
             Visible = true;
             _brush = new SolidBrush(_col);
             _pen = new Pen(_brush);
-            _background = new SolidBrush(Color.FromArgb(100, Color.White));
         }
 
         public override bool IsVisible(Rectangle bounds, int m, int hScrollBar, int vScrollBar, double zoom)
@@ -1747,7 +1742,6 @@ namespace UoFiddler.Controls.UserControls
         {
             _pen?.Dispose();
             _brush?.Dispose();
-            _background?.Dispose();
         }
     }
 }

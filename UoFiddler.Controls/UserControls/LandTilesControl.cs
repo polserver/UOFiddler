@@ -848,9 +848,10 @@ namespace UoFiddler.Controls.UserControls
             Size itemSize = new Size(fixedTileSize, fixedTileSize);
             Rectangle itemRec = new Rectangle(itemPoint, itemSize);
 
-            var previousClip = e.Graphics.Clip;
+            using var previousClip = e.Graphics.Clip;
 
-            e.Graphics.Clip = new Region(itemRec);
+            using var clipRegion = new Region(itemRec);
+            e.Graphics.Clip = clipRegion;
 
             var selected = LandTilesTileView.SelectedIndices.Contains(e.Index);
             if (!selected)
@@ -862,8 +863,6 @@ namespace UoFiddler.Controls.UserControls
 
             if (bitmap == null)
             {
-                e.Graphics.Clip = new Region(itemRec);
-
                 itemRec.X += 5;
                 itemRec.Y += 5;
 

@@ -1046,9 +1046,10 @@ namespace UoFiddler.Controls.UserControls
 
             Rectangle rect = new Rectangle(itemPoint, ItemsTileView.TileSize);
 
-            var previousClip = e.Graphics.Clip;
+            using var previousClip = e.Graphics.Clip;
 
-            e.Graphics.Clip = new Region(rect);
+            using var clipRegion = new Region(rect);
+            e.Graphics.Clip = clipRegion;
 
             var selected = ItemsTileView.SelectedIndices.Contains(e.Index);
             if (!selected)
@@ -1059,8 +1060,6 @@ namespace UoFiddler.Controls.UserControls
             var bitmap = Art.GetStatic(_itemList[e.Index], out bool patched);
             if (bitmap == null)
             {
-                e.Graphics.Clip = new Region(rect);
-
                 rect.X += 5;
                 rect.Y += 5;
 

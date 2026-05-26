@@ -2033,7 +2033,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     Size size = new Size(_drawTileSizeWidth - 1, _drawTileSizeHeight - 1);
                     Rectangle rect = new Rectangle(loc, size);
 
-                    e.Graphics.Clip = new Region(rect);
+                    e.Graphics.SetClip(rect);
 
                     if (index == _drawTile.Id)
                     {

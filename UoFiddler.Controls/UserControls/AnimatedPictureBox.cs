@@ -236,7 +236,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (_showFrameBounds)
             {
-                e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(location, frame.Bitmap.Size));
+                using var boundsPen = new Pen(Color.Red);
+                e.Graphics.DrawRectangle(boundsPen, new Rectangle(location, frame.Bitmap.Size));
             }
         }
 

@@ -603,8 +603,9 @@ namespace UoFiddler.Controls.UserControls
             int graphic = _listViewGraphics[e.Index];
             Point itemPoint = new Point(e.Bounds.X + listView.TilePadding.Left, e.Bounds.Y + listView.TilePadding.Top);
             Rectangle tileRect = new Rectangle(itemPoint, listView.TileSize);
-            var previousClip = e.Graphics.Clip;
-            e.Graphics.Clip = new Region(tileRect);
+            using var previousClip = e.Graphics.Clip;
+            using var clipRegion = new Region(tileRect);
+            e.Graphics.Clip = clipRegion;
 
             if (!listView.SelectedIndices.Contains(e.Index))
             {
@@ -709,7 +710,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (listView1.SelectedItems.Contains(e.Item))
             {
-                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Highlight), e.Bounds);
+                using var highlightBrush = new SolidBrush(SystemColors.Highlight);
+                e.Graphics.FillRectangle(highlightBrush, e.Bounds);
             }
 
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, width, height);

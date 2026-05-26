@@ -463,8 +463,9 @@ namespace UoFiddler.Controls.Forms
             int body = _galleryBodies[e.Index];
             Point itemPoint = new Point(e.Bounds.X + GalleryTileView.TilePadding.Left, e.Bounds.Y + GalleryTileView.TilePadding.Top);
             Rectangle tileRect = new Rectangle(itemPoint, GalleryTileView.TileSize);
-            var previousClip = e.Graphics.Clip;
-            e.Graphics.Clip = new Region(tileRect);
+            using var previousClip = e.Graphics.Clip;
+            using var clipRegion = new Region(tileRect);
+            e.Graphics.Clip = clipRegion;
 
             if (!GalleryTileView.SelectedIndices.Contains(e.Index))
             {
@@ -643,7 +644,10 @@ namespace UoFiddler.Controls.Forms
             Bitmap[] currentBits = edit.GetFrames();
             Bitmap bmp = currentBits[(int)e.Item.Tag];
             var penColor = FramesListView.SelectedItems.Contains(e.Item) ? Color.Red : Color.Gray;
-            e.Graphics.DrawRectangle(new Pen(penColor), e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            using (var borderPen = new Pen(penColor))
+            {
+                e.Graphics.DrawRectangle(borderPen, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+            }
             e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, bmp.Width,  bmp.Height);
             e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
         }

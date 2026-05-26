@@ -7,7 +7,7 @@ namespace Ultima
 {
     public static class Animations
     {
-        public const int _maxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
+        public const int MaxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
         public static readonly int PaletteCapacity = 0x100;
 
         // LRU decode cache shared by the MUL and UOP paths. Bitmaps it returns
@@ -301,7 +301,7 @@ namespace Ultima
 
         private static void LoadTable()
         {
-            _table = new int[_maxAnimationValue + 1];
+            _table = new int[MaxAnimationValue + 1];
 
             for (int i = 0; i < _table.Length; ++i)
             {

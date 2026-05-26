@@ -186,7 +186,8 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
+                using var backBrush = new SolidBrush(e.BackColor);
+                e.Graphics.FillRectangle(backBrush, e.Bounds);
             }
 
             // Color swatch — a small filled rectangle showing this row's radar color.

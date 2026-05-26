@@ -741,7 +741,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             else
             {
-                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
+                using var backBrush = new SolidBrush(e.BackColor);
+                e.Graphics.FillRectangle(backBrush, e.Bounds);
             }
 
             Brush brush = focused ? CompareColors.ContrastBrush(Options.TileSelectionColor) : GetLandBrush(i, isSecondary);
@@ -824,7 +825,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             else
             {
-                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
+                using var backBrush = new SolidBrush(e.BackColor);
+                e.Graphics.FillRectangle(backBrush, e.Bounds);
             }
 
             Brush brush = focused ? CompareColors.ContrastBrush(Options.TileSelectionColor) : GetItemBrush(i);
