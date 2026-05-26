@@ -755,6 +755,7 @@ namespace UoFiddler.Controls.UserControls
             int selectedCount = LandTilesTileView.SelectedIndices.Count;
             removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
             exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
+            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
 
             bool hasTexture = _selectedGraphicId >= 0
                 && TileData.LandTable[_selectedGraphicId].TextureId != 0

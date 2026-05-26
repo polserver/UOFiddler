@@ -937,6 +937,7 @@ namespace UoFiddler.Controls.UserControls
             int selectedCount = TextureTileView.SelectedIndices.Count;
             removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
             exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
+            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
 
             bool hasLandTile = _selectedTextureId >= 0
                 && _selectedTextureId < 0x4000
