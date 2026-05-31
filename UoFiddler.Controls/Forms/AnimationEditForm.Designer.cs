@@ -1322,6 +1322,8 @@
             GalleryTileView.Name = "GalleryTileView";
             GalleryTileView.Size = new System.Drawing.Size(819, 559);
             GalleryTileView.TabIndex = 0;
+            GalleryTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            GalleryTileView.TileSize = new System.Drawing.Size(81, 110);
             GalleryTileView.DrawItem += GalleryTileViewDrawItem;
             GalleryTileView.MouseDoubleClick += GalleryTileViewMouseDoubleClick;
             // 
