@@ -149,6 +149,7 @@ namespace UoFiddler.Controls.UserControls
             TreeViewMobs.TabIndex = 0;
             TreeViewMobs.AfterSelect += TreeViewMobs_AfterSelect;
             TreeViewMobs.BeforeExpand += TreeViewMobs_BeforeExpand;
+            TreeViewMobs.NodeMouseHover += TreeViewMobs_NodeMouseHover;
             //
             // searchToolStrip
             //

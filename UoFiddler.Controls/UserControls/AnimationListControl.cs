@@ -188,23 +188,27 @@ namespace UoFiddler.Controls.UserControls
                 Options.LoadedUltimaClass["Animations"] = true;
                 Options.LoadedUltimaClass["Hues"] = true;
                 // Keep the sorter detached while populating - assigning it up front makes every
-                // node insertion re-sort its siblings (O(n^2) over hundreds of bodies). Sort once
-                // at the end instead.
+                // node insertion re-sort its siblings (O(n^2) over hundreds of bodies). The body
+                // lists are pre-sorted by graphic in-memory before they are attached, so the native
+                // TreeView.Sort() is only needed for the alphabetical view.
                 TreeViewMobs.TreeViewNodeSorter = null;
                 if (!LoadXml())
                 {
                     return;
                 }
 
-                TreeViewMobs.BeginUpdate();
-                try
+                if (_sortAlpha)
                 {
-                    TreeViewMobs.TreeViewNodeSorter = !_sortAlpha ? new GraphicSorter() : (IComparer)new AlphaSorter();
-                    TreeViewMobs.Sort();
-                }
-                finally
-                {
-                    TreeViewMobs.EndUpdate();
+                    TreeViewMobs.BeginUpdate();
+                    try
+                    {
+                        TreeViewMobs.TreeViewNodeSorter = new AlphaSorter();
+                        TreeViewMobs.Sort();
+                    }
+                    finally
+                    {
+                        TreeViewMobs.EndUpdate();
+                    }
                 }
 
                 LoadListView();
@@ -266,8 +270,7 @@ namespace UoFiddler.Controls.UserControls
             int firstAction = GetFirstDefinedAction(graphic, type);
             TreeNode nodeParent = new TreeNode(name)
             {
-                Tag = new[] { graphic, type, firstAction },
-                ToolTipText = Animations.GetFileName(graphic)
+                Tag = new[] { graphic, type, firstAction }
             };
 
             TreeViewMobs.Nodes[type == (int)MobType.Equipment ? 1 : 0].Nodes.Add(nodeParent);
@@ -441,15 +444,23 @@ namespace UoFiddler.Controls.UserControls
                 dom.Load(fileName);
 
                 XmlElement xMobs = dom["Graphics"];
-                List<TreeNode> nodes = new List<TreeNode>();
-                TreeNode node;
 
-                TreeNode rootNode = new TreeNode("Mobs")
+                TreeNode mobsRoot = new TreeNode("Mobs")
                 {
                     Name = "Mobs",
                     Tag = -1
                 };
-                nodes.Add(rootNode);
+                TreeNode equipRoot = new TreeNode("Equipment")
+                {
+                    Name = "Equipment",
+                    Tag = -2
+                };
+
+                // Bodies are collected detached and sorted by graphic in-memory before being attached
+                // once per root (see below). This avoids the native TreeView.Sort() over thousands of
+                // nodes that the managed GraphicSorter would otherwise drive on every load.
+                var mobNodes = new List<TreeNode>();
+                var equipNodes = new List<TreeNode>();
 
                 foreach (XmlElement xMob in xMobs.SelectNodes("Mob"))
                 {
@@ -463,21 +474,13 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     int firstAction = GetFirstDefinedAction(value, type);
-                    node = new TreeNode($"{name} (0x{value:X})")
+                    var node = new TreeNode($"{name} (0x{value:X})")
                     {
-                        Tag = new[] { value, type, firstAction },
-                        ToolTipText = Animations.GetFileName(value)
+                        Tag = new[] { value, type, firstAction }
                     };
-                    rootNode.Nodes.Add(node);
+                    mobNodes.Add(node);
                     AddActionPlaceholder(node, firstAction);
                 }
-
-                rootNode = new TreeNode("Equipment")
-                {
-                    Name = "Equipment",
-                    Tag = -2
-                };
-                nodes.Add(rootNode);
 
                 foreach (XmlElement xMob in xMobs.SelectNodes("Equip"))
                 {
@@ -491,16 +494,21 @@ namespace UoFiddler.Controls.UserControls
                     }
 
                     int firstAction = GetFirstDefinedAction(value, type);
-                    node = new TreeNode(name)
+                    var node = new TreeNode(name)
                     {
-                        Tag = new[] { value, type, firstAction },
-                        ToolTipText = Animations.GetFileName(value)
+                        Tag = new[] { value, type, firstAction }
                     };
-                    rootNode.Nodes.Add(node);
+                    equipNodes.Add(node);
                     AddActionPlaceholder(node, firstAction);
                 }
-                TreeViewMobs.Nodes.AddRange(nodes.ToArray());
-                nodes.Clear();
+
+                LoadFromMobTypes(mobNodes, equipNodes);
+
+                mobNodes.Sort(CompareNodeByGraphic);
+                equipNodes.Sort(CompareNodeByGraphic);
+                mobsRoot.Nodes.AddRange(mobNodes.ToArray());
+                equipRoot.Nodes.AddRange(equipNodes.ToArray());
+                TreeViewMobs.Nodes.AddRange(new[] { mobsRoot, equipRoot });
             }
             finally
             {
@@ -517,22 +525,31 @@ namespace UoFiddler.Controls.UserControls
                     MessageBoxIcon.Warning);
             }
 
-            LoadFromMobTypes();
-
             return true;
         }
 
-        private void LoadFromMobTypes()
+        /// <summary>
+        /// Appends the mobtypes.txt/UOP bodies that are not already present in <paramref name="mobNodes"/>
+        /// or <paramref name="equipNodes"/> to the appropriate list. The nodes are left detached - the
+        /// caller sorts and attaches them. A HashSet of the already-defined graphics is built once so the
+        /// duplicate check is O(1) per body instead of an O(n) scan (the loop runs over thousands of
+        /// bodies). Action nodes are added lazily on expand.
+        /// </summary>
+        private void LoadFromMobTypes(List<TreeNode> mobNodes, List<TreeNode> equipNodes)
         {
-            // Build the new body nodes detached and AddRange them once per root. Adding nodes one at a
-            // time to the already-attached roots churns the native control (and would re-sort on every
-            // insert if a sorter were assigned). Action nodes are added lazily on expand.
-            var mobNodes = new List<TreeNode>();
-            var equipNodes = new List<TreeNode>();
+            var definedGraphics = new HashSet<int>(mobNodes.Count + equipNodes.Count);
+            foreach (TreeNode node in mobNodes)
+            {
+                definedGraphics.Add(((int[])node.Tag)[0]);
+            }
+            foreach (TreeNode node in equipNodes)
+            {
+                definedGraphics.Add(((int[])node.Tag)[0]);
+            }
 
             foreach (int body in Animations.GetAllUopBodies())
             {
-                if (IsAlreadyDefined(body))
+                if (definedGraphics.Contains(body))
                 {
                     continue;
                 }
@@ -549,24 +566,22 @@ namespace UoFiddler.Controls.UserControls
                 int firstAction = GetFirstDefinedAction(body, type);
                 TreeNode nodeParent = new TreeNode($"{name} (0x{body:X})")
                 {
-                    Tag = new[] { body, type, firstAction },
-                    ToolTipText = Animations.GetFileName(body)
+                    Tag = new[] { body, type, firstAction }
                 };
                 AddActionPlaceholder(nodeParent, firstAction);
 
                 (isEquip ? equipNodes : mobNodes).Add(nodeParent);
             }
+        }
 
-            TreeViewMobs.BeginUpdate();
-            try
-            {
-                TreeViewMobs.Nodes[0].Nodes.AddRange(mobNodes.ToArray());
-                TreeViewMobs.Nodes[1].Nodes.AddRange(equipNodes.ToArray());
-            }
-            finally
-            {
-                TreeViewMobs.EndUpdate();
-            }
+        /// <summary>
+        /// Orders body nodes by their graphic id (Tag[0]) - the default (non-alphabetical) tree order.
+        /// Used to pre-sort the detached body lists in-memory before they are attached, avoiding a native
+        /// TreeView.Sort() driven by the managed <see cref="GraphicSorter"/> over the whole tree.
+        /// </summary>
+        private static int CompareNodeByGraphic(TreeNode x, TreeNode y)
+        {
+            return ((int[])x.Tag)[0].CompareTo(((int[])y.Tag)[0]);
         }
 
         private void AddUopActionNodes(TreeNode parent, int body, int actionType)
@@ -686,6 +701,20 @@ namespace UoFiddler.Controls.UserControls
             {
                 node.Nodes.Clear();
                 PopulateActionNodes(node);
+            }
+        }
+
+        /// <summary>
+        /// Computes the body's source file name for the tooltip lazily on first hover. Building it for
+        /// every node up front is expensive (the UOP path probes up to <see cref="Animations.MaxAnimActions"/>
+        /// hashes per body), yet the tooltip is only ever shown on hover. Only body nodes carry an int[]
+        /// Tag; root and action nodes are skipped. The result is cached on the node so the lookup runs once.
+        /// </summary>
+        private void TreeViewMobs_NodeMouseHover(object sender, TreeNodeMouseHoverEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.Node.ToolTipText) && e.Node.Tag is int[] tag)
+            {
+                e.Node.ToolTipText = Animations.GetFileName(tag[0]);
             }
         }
 
