@@ -135,6 +135,10 @@ namespace UoFiddler.Controls.UserControls
             }
         };
 
+        // Tag of the throwaway child node added under a body so the expander ([+]) shows. The real
+        // action nodes replace it the first time the body is expanded (see TreeViewMobs_BeforeExpand).
+        private const int PlaceholderActionTag = -1;
+
         private int _currentSelect;
         private int _currentSelectAction;
         private int _customHue;
@@ -183,10 +187,24 @@ namespace UoFiddler.Controls.UserControls
             {
                 Options.LoadedUltimaClass["Animations"] = true;
                 Options.LoadedUltimaClass["Hues"] = true;
-                TreeViewMobs.TreeViewNodeSorter = new GraphicSorter();
+                // Keep the sorter detached while populating - assigning it up front makes every
+                // node insertion re-sort its siblings (O(n^2) over hundreds of bodies). Sort once
+                // at the end instead.
+                TreeViewMobs.TreeViewNodeSorter = null;
                 if (!LoadXml())
                 {
                     return;
+                }
+
+                TreeViewMobs.BeginUpdate();
+                try
+                {
+                    TreeViewMobs.TreeViewNodeSorter = !_sortAlpha ? new GraphicSorter() : (IComparer)new AlphaSorter();
+                    TreeViewMobs.Sort();
+                }
+                finally
+                {
+                    TreeViewMobs.EndUpdate();
                 }
 
                 LoadListView();
@@ -244,43 +262,19 @@ namespace UoFiddler.Controls.UserControls
         {
             TreeViewMobs.BeginUpdate();
             TreeViewMobs.TreeViewNodeSorter = null;
+
+            int firstAction = GetFirstDefinedAction(graphic, type);
             TreeNode nodeParent = new TreeNode(name)
             {
-                Tag = new[] { graphic, type },
+                Tag = new[] { graphic, type, firstAction },
                 ToolTipText = Animations.GetFileName(graphic)
             };
 
-            if (type == 4)
-            {
-                TreeViewMobs.Nodes[1].Nodes.Add(nodeParent);
-                type = 3;
-            }
-            else
-            {
-                TreeViewMobs.Nodes[0].Nodes.Add(nodeParent);
-            }
+            TreeViewMobs.Nodes[type == (int)MobType.Equipment ? 1 : 0].Nodes.Add(nodeParent);
 
-            if (Animations.IsUopBody(graphic))
-            {
-                AddUopActionNodes(nodeParent, graphic, type);
-            }
-            else
-            {
-                for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
-                {
-                    if (!Animations.IsActionDefined(graphic, i, 0))
-                    {
-                        continue;
-                    }
-
-                    TreeNode node = new TreeNode($"{i} {GetActionNames[type][i]}")
-                    {
-                        Tag = i
-                    };
-
-                    nodeParent.Nodes.Add(node);
-                }
-            }
+            // The freshly added body is selected and scrolled into view immediately below, so build
+            // its action nodes now rather than deferring to the first expand.
+            PopulateActionNodes(nodeParent);
 
             TreeViewMobs.TreeViewNodeSorter = !_sortAlpha
                 ? new GraphicSorter()
@@ -380,9 +374,10 @@ namespace UoFiddler.Controls.UserControls
                 if (e.Node.Parent.Name == "Mobs" || e.Node.Parent.Name == "Equipment")
                 {
                     // Action 0 is not necessarily defined for this body (e.g. equipment such as
-                    // body 322). Default to the first defined action - the child nodes only exist
-                    // for defined actions and are sorted ascending by action index.
-                    _currentSelectAction = e.Node.Nodes.Count > 0 ? (int)e.Node.Nodes[0].Tag : 0;
+                    // body 322). Use the first defined action recorded in the node Tag so this works
+                    // whether or not the body has been expanded (action nodes are built lazily).
+                    int firstAction = ((int[])e.Node.Tag)[2];
+                    _currentSelectAction = firstAction >= 0 ? firstAction : 0;
                     CurrentSelect = ((int[])e.Node.Tag)[0];
                     if (e.Node.Parent.Name == "Mobs" && _displayType == 1)
                     {
@@ -448,7 +443,6 @@ namespace UoFiddler.Controls.UserControls
                 XmlElement xMobs = dom["Graphics"];
                 List<TreeNode> nodes = new List<TreeNode>();
                 TreeNode node;
-                TreeNode typeNode;
 
                 TreeNode rootNode = new TreeNode("Mobs")
                 {
@@ -468,26 +462,14 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
+                    int firstAction = GetFirstDefinedAction(value, type);
                     node = new TreeNode($"{name} (0x{value:X})")
                     {
-                        Tag = new[] { value, type },
+                        Tag = new[] { value, type, firstAction },
                         ToolTipText = Animations.GetFileName(value)
                     };
                     rootNode.Nodes.Add(node);
-
-                    for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
-                    {
-                        if (!Animations.IsActionDefined(value, i, 0))
-                        {
-                            continue;
-                        }
-
-                        typeNode = new TreeNode($"{i} {GetActionNames[type][i]}")
-                        {
-                            Tag = i
-                        };
-                        node.Nodes.Add(typeNode);
-                    }
+                    AddActionPlaceholder(node, firstAction);
                 }
 
                 rootNode = new TreeNode("Equipment")
@@ -508,26 +490,14 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
+                    int firstAction = GetFirstDefinedAction(value, type);
                     node = new TreeNode(name)
                     {
-                        Tag = new[] { value, type },
+                        Tag = new[] { value, type, firstAction },
                         ToolTipText = Animations.GetFileName(value)
                     };
                     rootNode.Nodes.Add(node);
-
-                    for (int i = 0; i < GetActionNames[type].GetLength(0); ++i)
-                    {
-                        if (!Animations.IsActionDefined(value, i, 0))
-                        {
-                            continue;
-                        }
-
-                        typeNode = new TreeNode($"{i} {GetActionNames[type][i]}")
-                        {
-                            Tag = i
-                        };
-                        node.Nodes.Add(typeNode);
-                    }
+                    AddActionPlaceholder(node, firstAction);
                 }
                 TreeViewMobs.Nodes.AddRange(nodes.ToArray());
                 nodes.Clear();
@@ -554,37 +524,44 @@ namespace UoFiddler.Controls.UserControls
 
         private void LoadFromMobTypes()
         {
+            // Build the new body nodes detached and AddRange them once per root. Adding nodes one at a
+            // time to the already-attached roots churns the native control (and would re-sort on every
+            // insert if a sorter were assigned). Action nodes are added lazily on expand.
+            var mobNodes = new List<TreeNode>();
+            var equipNodes = new List<TreeNode>();
+
+            foreach (int body in Animations.GetAllUopBodies())
+            {
+                if (IsAlreadyDefined(body))
+                {
+                    continue;
+                }
+
+                int type = (int)MobTypes.GetTypeOrDefault(body);
+                bool isEquip = type == (int)MobType.Equipment;
+                if (!isEquip && (type < 0 || type >= GetActionNames.Length))
+                {
+                    type = 0;
+                }
+
+                string name = $"Body 0x{body:X}";
+
+                int firstAction = GetFirstDefinedAction(body, type);
+                TreeNode nodeParent = new TreeNode($"{name} (0x{body:X})")
+                {
+                    Tag = new[] { body, type, firstAction },
+                    ToolTipText = Animations.GetFileName(body)
+                };
+                AddActionPlaceholder(nodeParent, firstAction);
+
+                (isEquip ? equipNodes : mobNodes).Add(nodeParent);
+            }
+
             TreeViewMobs.BeginUpdate();
             try
             {
-                foreach (int body in Animations.GetAllUopBodies())
-                {
-                    if (IsAlreadyDefined(body))
-                    {
-                        continue;
-                    }
-
-                    int type = (int)MobTypes.GetTypeOrDefault(body);
-                    bool isEquip = type == (int)MobType.Equipment;
-                    int actionType = isEquip ? (int)MobType.Human : (type < 0 || type >= GetActionNames.Length ? 0 : type);
-                    if (!isEquip && (type < 0 || type >= GetActionNames.Length))
-                    {
-                        type = 0;
-                    }
-
-                    string name = $"Body 0x{body:X}";
-
-                    TreeNode nodeParent = new TreeNode($"{name} (0x{body:X})")
-                    {
-                        Tag = new[] { body, type },
-                        ToolTipText = Animations.GetFileName(body)
-                    };
-
-                    TreeNode targetRoot = isEquip ? TreeViewMobs.Nodes[1] : TreeViewMobs.Nodes[0];
-                    targetRoot.Nodes.Add(nodeParent);
-
-                    AddUopActionNodes(nodeParent, body, actionType);
-                }
+                TreeViewMobs.Nodes[0].Nodes.AddRange(mobNodes.ToArray());
+                TreeViewMobs.Nodes[1].Nodes.AddRange(equipNodes.ToArray());
             }
             finally
             {
@@ -602,6 +579,144 @@ namespace UoFiddler.Controls.UserControls
                     : $"Action{i}";
 
                 parent.Nodes.Add(new TreeNode($"{i} {actionName}") { Tag = i });
+            }
+        }
+
+        /// <summary>
+        /// Maps a stored node type to a valid index into <see cref="GetActionNames"/>. Equipment (4)
+        /// has no action-name table of its own and falls back to Human (3); any out-of-range value
+        /// falls back to Monster (0).
+        /// </summary>
+        private int GetActionNameType(int type)
+        {
+            if (type == (int)MobType.Equipment)
+            {
+                return (int)MobType.Human;
+            }
+
+            return type < 0 || type >= GetActionNames.Length ? 0 : type;
+        }
+
+        /// <summary>
+        /// Returns the lowest action index defined for <paramref name="body"/>, or -1 if the body has
+        /// no animation. The scan early-exits on the first hit (animated bodies usually define action 0),
+        /// so it is far cheaper than enumerating every action - the full list is only built when a body
+        /// is expanded. The probe range matches what <see cref="PopulateActionNodes"/> builds: the
+        /// named-action table for MUL bodies, the UOP action cap for UOP bodies.
+        /// </summary>
+        private int GetFirstDefinedAction(int body, int type)
+        {
+            int limit = Animations.IsUopBody(body)
+                ? Animations.MaxAnimActions
+                : GetActionNames[GetActionNameType(type)].GetLength(0);
+
+            for (int i = 0; i < limit; ++i)
+            {
+                if (Animations.IsActionDefined(body, i, 0))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Adds a single placeholder child so the expander ([+]) shows for a body that has animations.
+        /// The placeholder is replaced with the real action nodes the first time the body is expanded
+        /// (see <see cref="TreeViewMobs_BeforeExpand"/>). A body with no defined action gets no
+        /// placeholder and therefore no expander.
+        /// </summary>
+        private static void AddActionPlaceholder(TreeNode bodyNode, int firstAction)
+        {
+            if (firstAction != -1)
+            {
+                bodyNode.Nodes.Add(new TreeNode { Tag = PlaceholderActionTag });
+            }
+        }
+
+        /// <summary>
+        /// Builds the action child nodes for a body node from its Tag. UOP bodies enumerate their
+        /// defined actions; MUL bodies use the named-action table. Called lazily on first expand and
+        /// eagerly by <see cref="AddGraphic"/> for the freshly added body.
+        /// </summary>
+        private void PopulateActionNodes(TreeNode bodyNode)
+        {
+            int graphic = ((int[])bodyNode.Tag)[0];
+            int actionType = GetActionNameType(((int[])bodyNode.Tag)[1]);
+
+            TreeViewMobs.BeginUpdate();
+            try
+            {
+                if (Animations.IsUopBody(graphic))
+                {
+                    AddUopActionNodes(bodyNode, graphic, actionType);
+                }
+                else
+                {
+                    for (int i = 0; i < GetActionNames[actionType].GetLength(0); ++i)
+                    {
+                        if (!Animations.IsActionDefined(graphic, i, 0))
+                        {
+                            continue;
+                        }
+
+                        bodyNode.Nodes.Add(new TreeNode($"{i} {GetActionNames[actionType][i]}") { Tag = i });
+                    }
+                }
+            }
+            finally
+            {
+                TreeViewMobs.EndUpdate();
+            }
+        }
+
+        private void TreeViewMobs_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            TreeNode node = e.Node;
+            // Only body nodes (direct children of the Mobs/Equipment roots) carry a placeholder. Replace
+            // it with the real action nodes on first expand; once built, leave the node alone.
+            if (node.Parent == null ||
+                (node.Parent.Name != "Mobs" && node.Parent.Name != "Equipment"))
+            {
+                return;
+            }
+
+            if (node.Nodes.Count == 1 && node.Nodes[0].Tag is int tag && tag == PlaceholderActionTag)
+            {
+                node.Nodes.Clear();
+                PopulateActionNodes(node);
+            }
+        }
+
+        private void SearchToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            string text = searchToolStripTextBox.Text;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return;
+            }
+
+            // A numeric value (decimal or 0x hex) searches by body id; anything else is a
+            // case-insensitive substring match against the displayed body name.
+            bool byId = Utils.ConvertStringToInt(text, out int id, 0, Animations.MaxAnimationValue);
+
+            foreach (TreeNode root in TreeViewMobs.Nodes)
+            {
+                foreach (TreeNode node in root.Nodes)
+                {
+                    bool match = byId
+                        ? ((int[])node.Tag)[0] == id
+                        : node.Text.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0;
+                    if (!match)
+                    {
+                        continue;
+                    }
+
+                    TreeViewMobs.SelectedNode = node;
+                    node.EnsureVisible();
+                    return;
+                }
             }
         }
 
@@ -647,9 +762,13 @@ namespace UoFiddler.Controls.UserControls
 
             int graphic = _listViewGraphics[e.Index];
             // Action 0 is not necessarily defined (e.g. equipment such as bodies 320/321). Use the first
-            // defined action - the child nodes only exist for defined actions and are sorted ascending.
-            TreeNode graphicNode = _listViewNodes[e.Index];
-            int action = graphicNode.Nodes.Count > 0 ? (int)graphicNode.Nodes[0].Tag : 0;
+            // defined action recorded in the node Tag so this works without expanding the body (action
+            // nodes are built lazily). A body with no animation (-1) falls back to 0 and simply draws nothing.
+            int action = ((int[])_listViewNodes[e.Index].Tag)[2];
+            if (action < 0)
+            {
+                action = 0;
+            }
             Point itemPoint = new Point(e.Bounds.X + listView.TilePadding.Left, e.Bounds.Y + listView.TilePadding.Top);
             Rectangle tileRect = new Rectangle(itemPoint, listView.TileSize);
             using var previousClip = e.Graphics.Clip;
@@ -912,14 +1031,15 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
-        /// Decides whether a body node should be persisted to Animationlist.xml. A node is kept only when it
-        /// actually has animation frames - represented by its child action nodes, which are added solely for
-        /// defined actions. This drops bodies with no animations (undefined bodies and paperdoll-only
-        /// equipment), which should not be written even when they have a mobtypes.txt entry.
+        /// Decides whether a body node should be persisted to Animationlist.xml. A node is kept only when
+        /// it actually has animation frames - recorded as the first-defined-action element of its Tag
+        /// (-1 means none). This works without expanding the node (action child nodes are built lazily)
+        /// and drops bodies with no animations (undefined bodies and paperdoll-only equipment), which
+        /// should not be written even when they have a mobtypes.txt entry.
         /// </summary>
         private static bool ShouldWriteNode(TreeNode node)
         {
-            return node.Nodes.Count > 0;
+            return ((int[])node.Tag)[2] != -1;
         }
 
         /// <summary>

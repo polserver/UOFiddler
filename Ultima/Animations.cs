@@ -8,6 +8,12 @@ namespace Ultima
     public static class Animations
     {
         public const int MaxAnimationValue = 2048; // bodyconv.def says it's maximum animation value so max bodyId?
+
+        // Upper bound on the action index for UOP bodies. Mirrors the UOP loader's internal
+        // scan range and is exposed so callers (e.g. the animation tree) can probe actions with
+        // an early-exit loop instead of enumerating the full set.
+        public const int MaxAnimActions = AnimationsUopLoader._maxAnimActions;
+
         public static readonly int PaletteCapacity = 0x100;
 
         // LRU decode cache shared by the MUL and UOP paths. Bitmaps it returns

@@ -42,6 +42,9 @@ namespace UoFiddler.Controls.UserControls
             components = new System.ComponentModel.Container();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             TreeViewMobs = new System.Windows.Forms.TreeView();
+            searchToolStrip = new System.Windows.Forms.ToolStrip();
+            searchToolStripLabel = new System.Windows.Forms.ToolStripLabel();
+            searchToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(components);
             removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tabControl1 = new System.Windows.Forms.TabControl();
@@ -89,6 +92,7 @@ namespace UoFiddler.Controls.UserControls
             HueLabel = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
+            searchToolStrip.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
@@ -117,8 +121,11 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer1.Panel1
             // 
+            // TreeViewMobs is added first (Dock=Fill) and the search ToolStrip last (Dock=Top) so the
+            // strip docks above the tree and the tree fills the remaining area.
             splitContainer1.Panel1.Controls.Add(TreeViewMobs);
-            // 
+            splitContainer1.Panel1.Controls.Add(searchToolStrip);
+            //
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(tabControl1);
@@ -141,7 +148,31 @@ namespace UoFiddler.Controls.UserControls
             TreeViewMobs.Size = new System.Drawing.Size(239, 400);
             TreeViewMobs.TabIndex = 0;
             TreeViewMobs.AfterSelect += TreeViewMobs_AfterSelect;
-            // 
+            TreeViewMobs.BeforeExpand += TreeViewMobs_BeforeExpand;
+            //
+            // searchToolStrip
+            //
+            searchToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            searchToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { searchToolStripLabel, searchToolStripTextBox });
+            searchToolStrip.Location = new System.Drawing.Point(0, 0);
+            searchToolStrip.Name = "searchToolStrip";
+            searchToolStrip.Size = new System.Drawing.Size(239, 25);
+            searchToolStrip.TabIndex = 1;
+            //
+            // searchToolStripLabel
+            //
+            searchToolStripLabel.Name = "searchToolStripLabel";
+            searchToolStripLabel.Size = new System.Drawing.Size(45, 22);
+            searchToolStripLabel.Text = "Search:";
+            //
+            // searchToolStripTextBox
+            //
+            searchToolStripTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            searchToolStripTextBox.Name = "searchToolStripTextBox";
+            searchToolStripTextBox.Size = new System.Drawing.Size(150, 25);
+            searchToolStripTextBox.ToolTipText = "Find a body by id (e.g. 0x190 or 400) or by name";
+            searchToolStripTextBox.KeyUp += SearchToolStripTextBox_KeyUp;
+            //
             // contextMenuStrip2
             // 
             contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { removeToolStripMenuItem });
@@ -576,6 +607,9 @@ namespace UoFiddler.Controls.UserControls
             Size = new System.Drawing.Size(740, 400);
             Load += OnLoad;
             splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel1.PerformLayout();
+            searchToolStrip.ResumeLayout(false);
+            searchToolStrip.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);
             splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
@@ -632,6 +666,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TreeView TreeViewMobs;
+        private System.Windows.Forms.ToolStrip searchToolStrip;
+        private System.Windows.Forms.ToolStripLabel searchToolStripLabel;
+        private System.Windows.Forms.ToolStripTextBox searchToolStripTextBox;
         private System.Windows.Forms.ToolStripMenuItem tryToFindNewGraphicsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifnoLoopingToolStripMenuItem;

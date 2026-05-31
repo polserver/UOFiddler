@@ -19,7 +19,7 @@ namespace Ultima
 {
     internal static class AnimationsUopLoader
     {
-        private const int _maxAnimActions = 80;
+        internal const int _maxAnimActions = 80;
         private const int _maxDirections = 5;
 
         private static FileStream[] _uopFiles = new FileStream[6];
