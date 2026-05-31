@@ -96,8 +96,6 @@
             numericUpDownGreen = new System.Windows.Forms.NumericUpDown();
             LockColorControlsCheckBox = new System.Windows.Forms.CheckBox();
             AnimationEditPage = new System.Windows.Forms.TabPage();
-            GalleryPage = new System.Windows.Forms.TabPage();
-            GalleryTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             AnimationTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             AnimationEditToolStrip = new System.Windows.Forms.ToolStrip();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -134,6 +132,8 @@
             SaveCoordinatesLabel1 = new System.Windows.Forms.Label();
             SetCoordinatesButton = new System.Windows.Forms.Button();
             SaveCoordinatesCheckBox = new System.Windows.Forms.CheckBox();
+            GalleryPage = new System.Windows.Forms.TabPage();
+            GalleryTileView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             panel1 = new System.Windows.Forms.Panel();
             ProgressBar = new System.Windows.Forms.ProgressBar();
             DirectionTrackBar = new System.Windows.Forms.TrackBar();
@@ -182,6 +182,7 @@
             ((System.ComponentModel.ISupportInitialize)RefXNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)RefYNumericUpDown).BeginInit();
             CoordinatesGroupBox.SuspendLayout();
+            GalleryPage.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DirectionTrackBar).BeginInit();
             StatusStrip.SuspendLayout();
@@ -252,7 +253,7 @@
             // asBmpToolStripMenuItem
             // 
             asBmpToolStripMenuItem.Name = "asBmpToolStripMenuItem";
-            asBmpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            asBmpToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             asBmpToolStripMenuItem.Tag = ".bmp";
             asBmpToolStripMenuItem.Text = "As Bmp";
             asBmpToolStripMenuItem.Click += OnClickExtractImages;
@@ -260,7 +261,7 @@
             // asTiffToolStripMenuItem
             // 
             asTiffToolStripMenuItem.Name = "asTiffToolStripMenuItem";
-            asTiffToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            asTiffToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             asTiffToolStripMenuItem.Tag = ".tiff";
             asTiffToolStripMenuItem.Text = "As Tiff";
             asTiffToolStripMenuItem.Click += OnClickExtractImages;
@@ -268,7 +269,7 @@
             // asJpgToolStripMenuItem
             // 
             asJpgToolStripMenuItem.Name = "asJpgToolStripMenuItem";
-            asJpgToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            asJpgToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             asJpgToolStripMenuItem.Tag = ".jpg";
             asJpgToolStripMenuItem.Text = "As Jpg";
             asJpgToolStripMenuItem.Click += OnClickExtractImages;
@@ -276,7 +277,7 @@
             // asPngToolStripMenuItem
             // 
             asPngToolStripMenuItem.Name = "asPngToolStripMenuItem";
-            asPngToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            asPngToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             asPngToolStripMenuItem.Tag = ".png";
             asPngToolStripMenuItem.Text = "As Png";
             asPngToolStripMenuItem.Click += OnClickExtractImages;
@@ -861,41 +862,9 @@
             AnimationEditPage.TabIndex = 1;
             AnimationEditPage.Text = "Preview/Edit";
             AnimationEditPage.UseVisualStyleBackColor = true;
-            //
-            // GalleryPage
-            //
-            GalleryPage.Controls.Add(GalleryTileView);
-            GalleryPage.Location = new System.Drawing.Point(4, 24);
-            GalleryPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            GalleryPage.Name = "GalleryPage";
-            GalleryPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            GalleryPage.Size = new System.Drawing.Size(827, 565);
-            GalleryPage.TabIndex = 2;
-            GalleryPage.Text = "Gallery";
-            GalleryPage.UseVisualStyleBackColor = true;
-            //
-            // GalleryTileView
-            //
-            GalleryTileView.Dock = System.Windows.Forms.DockStyle.Fill;
-            GalleryTileView.Location = new System.Drawing.Point(4, 3);
-            GalleryTileView.MultiSelect = false;
-            GalleryTileView.Name = "GalleryTileView";
-            GalleryTileView.Size = new System.Drawing.Size(819, 559);
-            GalleryTileView.TabIndex = 0;
-            GalleryTileView.TileBackgroundColor = System.Drawing.SystemColors.Window;
-            GalleryTileView.TileBorderColor = System.Drawing.Color.Gray;
-            GalleryTileView.TileBorderWidth = 1F;
-            GalleryTileView.TileFocusColor = System.Drawing.Color.DarkBlue;
-            GalleryTileView.TileHighlightColor = System.Drawing.SystemColors.Highlight;
-            GalleryTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
-            GalleryTileView.TilePadding = new System.Windows.Forms.Padding(1);
-            GalleryTileView.TileSize = new System.Drawing.Size(81, 110);
-            GalleryTileView.VirtualListSize = 0;
-            GalleryTileView.DrawItem += GalleryTileViewDrawItem;
-            GalleryTileView.MouseDoubleClick += GalleryTileViewMouseDoubleClick;
-            //
+            // 
             // AnimationTableLayoutPanel
-            //
+            // 
             AnimationTableLayoutPanel.ColumnCount = 2;
             AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             AnimationTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 198F));
@@ -1334,6 +1303,28 @@
             SaveCoordinatesCheckBox.UseVisualStyleBackColor = false;
             SaveCoordinatesCheckBox.CheckedChanged += CbSaveCoordinates_CheckedChanged;
             // 
+            // GalleryPage
+            // 
+            GalleryPage.Controls.Add(GalleryTileView);
+            GalleryPage.Location = new System.Drawing.Point(4, 24);
+            GalleryPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GalleryPage.Name = "GalleryPage";
+            GalleryPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GalleryPage.Size = new System.Drawing.Size(827, 565);
+            GalleryPage.TabIndex = 2;
+            GalleryPage.Text = "Gallery";
+            GalleryPage.UseVisualStyleBackColor = true;
+            // 
+            // GalleryTileView
+            // 
+            GalleryTileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            GalleryTileView.Location = new System.Drawing.Point(4, 3);
+            GalleryTileView.Name = "GalleryTileView";
+            GalleryTileView.Size = new System.Drawing.Size(819, 559);
+            GalleryTileView.TabIndex = 0;
+            GalleryTileView.DrawItem += GalleryTileViewDrawItem;
+            GalleryTileView.MouseDoubleClick += GalleryTileViewMouseDoubleClick;
+            // 
             // panel1
             // 
             panel1.Controls.Add(ProgressBar);
@@ -1406,9 +1397,9 @@
             ExportAllToVDToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             ExportAllToVDToolStripMenuItem.Text = "Export All Valid To VD";
             ExportAllToVDToolStripMenuItem.Click += OnClickExportAllToVD;
-            //
+            // 
             // AnimationTimer
-            //
+            // 
             AnimationTimer.Tick += AnimationTimer_Tick;
             // 
             // AnimationEditForm
@@ -1475,6 +1466,7 @@
             ((System.ComponentModel.ISupportInitialize)RefYNumericUpDown).EndInit();
             CoordinatesGroupBox.ResumeLayout(false);
             CoordinatesGroupBox.PerformLayout();
+            GalleryPage.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)DirectionTrackBar).EndInit();
             StatusStrip.ResumeLayout(false);

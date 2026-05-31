@@ -223,6 +223,16 @@ namespace Ultima
 
         public static bool IsActionDefined(int fileType, int body, int action)
         {
+            // Reject actions beyond the body's physical idx block before computing
+            // the index; otherwise index = base + action*5 crosses into the next
+            // body's records. Replaces a prior off-by-one GetAnimLength check
+            // (animCount < action) that both missed the boundary and used the
+            // now-clamped category count.
+            if (action < 0 || action >= Animations.GetActionCapacity(body, fileType))
+            {
+                return false;
+            }
+
             AnimIdx[] cache = GetCache(fileType);
 
             GetFileIndex(body, fileType, action, 0, out FileIndex fileIndex, out int index);
@@ -230,12 +240,6 @@ namespace Ultima
             if (cache?[index] != null)
             {
                 return cache[index].Frames?.Count > 0;
-            }
-
-            int animCount = Animations.GetAnimLength(body, fileType);
-            if (animCount < action)
-            {
-                return false;
             }
 
             bool valid = fileIndex.Valid(index, out int length, out int _, out bool _);

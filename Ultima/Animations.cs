@@ -77,6 +77,11 @@ namespace Ultima
             BodyConverter.Initialize();
             BodyTable.Initialize();
             AnimationsUopLoader.Reload();
+
+            // _table is derived from bodyconv.def + body.def and is built lazily/cached. The defs were
+            // just reloaded above, so drop the cache to force a rebuild from the current data - otherwise a
+            // stale table keeps applying the old body.def translation and ignores bodyconv.def mappings.
+            _table = null;
         }
 
         /// <summary>
@@ -334,6 +339,13 @@ namespace Ultima
             Translate(ref body);
             int fileType = BodyConverter.Convert(ref body);
 
+            // Guard against actions past the body's physical block (see
+            // GetActionCapacity) so we never probe another body's idx records.
+            if (action < 0 || action >= GetActionCapacity(body, fileType))
+            {
+                return false;
+            }
+
             GetFileIndex(body, action, direction, fileType, out FileIndex fileIndex, out int index);
 
             bool valid = fileIndex.Valid(index, out int length, out int _, out bool _);
@@ -364,6 +376,11 @@ namespace Ultima
         /// <returns></returns>
         public static bool IsAnimDefined(int body, int action, int dir, int fileType)
         {
+            if (action < 0 || action >= GetActionCapacity(body, fileType))
+            {
+                return false;
+            }
+
             GetFileIndex(body, action, dir, fileType, out FileIndex fileIndex, out int index);
 
             Stream stream = fileIndex.Seek(index, out int length, out int _, out bool _);
@@ -409,12 +426,61 @@ namespace Ultima
         /// <returns></returns>
         public static int GetAnimLength(int body, int fileType)
         {
+            // The physical idx block reserved for a body is fixed by the id-range
+            // stride used in GetFileIndex. Never report more actions than that
+            // block holds: callers iterate this count and read idx records at
+            // index + action*5, so a count larger than the block (e.g. a body
+            // classed HUMAN/35 in mobtypes.txt but sitting in a 110-record/
+            // 22-action id range) would walk into the next body's records.
+            int capacity = GetActionCapacity(body, fileType);
+
             if (MobTypes.IsLoaded)
             {
-                return MobTypes.GetActionCount(GetBodyMobType(body, fileType));
+                return System.Math.Min(MobTypes.GetActionCount(GetBodyMobType(body, fileType)), capacity);
             }
 
-            return GetAnimLengthLegacy(body, fileType);
+            return System.Math.Min(GetAnimLengthLegacy(body, fileType), capacity);
+        }
+
+        /// <summary>
+        /// Maximum number of action slots physically reserved for <paramref name="body"/>
+        /// in the given anim file. This is the idx stride (records per body) divided
+        /// by the 5 stored directions and mirrors the id-range branches in
+        /// <see cref="GetFileIndex"/> exactly. It is the hard upper bound for any
+        /// action index, independent of the body's mobtype category, and exists so
+        /// action enumeration can never cross a body boundary.
+        /// </summary>
+        public static int GetActionCapacity(int body, int fileType)
+        {
+            switch (fileType)
+            {
+                case 2:
+                    return body < 200 ? 22 : 13;
+                case 3:
+                    if (body < 300)
+                    {
+                        return 13;
+                    }
+
+                    return body < 400 ? 22 : 35;
+                case 5:
+                    if ((body < 200) && (body != 34))
+                    {
+                        return 22;
+                    }
+
+                    return body < 400 ? 13 : 35;
+                case 1:
+                case 4:
+                case 6:
+                default:
+                    if (body < 200)
+                    {
+                        return 22;
+                    }
+
+                    return body < 400 ? 13 : 35;
+            }
         }
 
         /// <summary>

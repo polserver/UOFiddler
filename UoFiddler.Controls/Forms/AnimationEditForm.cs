@@ -187,7 +187,7 @@ namespace UoFiddler.Controls.Forms
         // Color used for "invalid" (no frames) tree nodes and helpers. Bright
         // red is hard to read on a dark background; switch to OrangeRed in
         // dark mode (matches the convention used elsewhere in the app).
-        private static readonly Color _invalidColor = Options.DarkMode ? Color.OrangeRed : _invalidColor;
+        private static readonly Color _invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
 
         // In-file body ids shown in the gallery tab, populated alongside the tree.
         private readonly System.Collections.Generic.List<int> _galleryBodies = new();

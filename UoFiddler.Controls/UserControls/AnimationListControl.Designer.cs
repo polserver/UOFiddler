@@ -437,7 +437,7 @@ namespace UoFiddler.Controls.UserControls
             FacingBar.Scroll += OnScrollFacing;
             // 
             // tabPage2
-            // 
+            //
             tabPage2.Controls.Add(listView);
             tabPage2.Location = new System.Drawing.Point(4, 24);
             tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -473,7 +473,7 @@ namespace UoFiddler.Controls.UserControls
             listView.ItemSelectionChanged += SelectChanged_listView;
             listView.DrawItem += ListViewDrawItem;
             listView.MouseDoubleClick += ListView_DoubleClick;
-            // 
+            //
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { SettingsButton, GraphicLabel, BaseGraphicLabel, HueLabel });

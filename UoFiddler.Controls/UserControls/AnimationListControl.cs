@@ -144,6 +144,9 @@ namespace UoFiddler.Controls.UserControls
         private int _displayType;
         private bool _loaded;
         private readonly List<int> _listViewGraphics = new List<int>();
+        // Tree nodes backing each thumbnail, parallel to _listViewGraphics, so selection and per-tile
+        // rendering can map back to the correct node.
+        private readonly List<TreeNode> _listViewNodes = new List<TreeNode>();
 
         /// <summary>
         /// ReLoads if loaded
@@ -310,6 +313,7 @@ namespace UoFiddler.Controls.UserControls
         {
             if (_currentSelect == 0)
             {
+                ClearPicture();
                 return;
             }
 
@@ -318,19 +322,34 @@ namespace UoFiddler.Controls.UserControls
             int hue = _customHue;
             bool preserveHue = hue != 0;
 
-            // GetAnimation returns cache-owned bitmaps; clone them so the
-            // picture box can own and dispose its frames without corrupting the cache.
-            MainPictureBox.Frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, preserveHue, false)
-                ?.Select(animation => new AnimatedFrame(new Bitmap(animation.Bitmap), animation.Center)).ToList();
+            List<AnimatedFrame> frames = null;
+            try
+            {
+                // GetAnimation returns cache-owned bitmaps; clone them so the
+                // picture box can own and dispose its frames without corrupting the cache.
+                // Skip any frame without a bitmap so the projection below cannot throw on it.
+                frames = Animations.GetAnimation(_currentSelect, _currentSelectAction, _facing, ref hue, preserveHue, false)
+                    ?.Where(animation => animation?.Bitmap != null)
+                    .Select(animation => new AnimatedFrame(new Bitmap(animation.Bitmap), animation.Center)).ToList();
+            }
+            catch
+            {
+                frames = null;
+            }
+
+            MainPictureBox.Frames = frames;
+
+            if (MainPictureBox.FirstFrame == null)
+            {
+                // The selected entry has no animation frames — clear the right-hand side
+                // instead of leaving the previously shown animation on screen.
+                ClearPicture();
+                return;
+            }
 
             if (!preserveHue)
             {
                 _defHue = hue;
-            }
-
-            if (MainPictureBox.FirstFrame == null)
-            {
-                return;
             }
 
             BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
@@ -340,13 +359,30 @@ namespace UoFiddler.Controls.UserControls
             LoadListViewFrames();
         }
 
+        /// <summary>
+        /// Clears the right-hand preview: empties the animation picture box, the frame list and the
+        /// info labels. Used when the selected entry has no animation frames so nothing stale remains.
+        /// </summary>
+        private void ClearPicture()
+        {
+            MainPictureBox.Frames = null;
+            LoadListViewFrames();
+
+            BaseGraphicLabel.Text = "BaseGraphic:";
+            GraphicLabel.Text = "Graphic: ";
+            HueLabel.Text = "Hue:";
+        }
+
         private void TreeViewMobs_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Parent != null)
             {
                 if (e.Node.Parent.Name == "Mobs" || e.Node.Parent.Name == "Equipment")
                 {
-                    _currentSelectAction = 0;
+                    // Action 0 is not necessarily defined for this body (e.g. equipment such as
+                    // body 322). Default to the first defined action - the child nodes only exist
+                    // for defined actions and are sorted ascending by action index.
+                    _currentSelectAction = e.Node.Nodes.Count > 0 ? (int)e.Node.Nodes[0].Tag : 0;
                     CurrentSelect = ((int[])e.Node.Tag)[0];
                     if (e.Node.Parent.Name == "Mobs" && _displayType == 1)
                     {
@@ -572,11 +608,14 @@ namespace UoFiddler.Controls.UserControls
         private void LoadListView()
         {
             _listViewGraphics.Clear();
+            _listViewNodes.Clear();
             foreach (TreeNode node in TreeViewMobs.Nodes[_displayType].Nodes)
             {
                 _listViewGraphics.Add(((int[])node.Tag)[0]);
+                _listViewNodes.Add(node);
             }
             listView.VirtualListSize = _listViewGraphics.Count;
+            listView.Invalidate();
         }
 
         private void SelectChanged_listView(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -585,7 +624,13 @@ namespace UoFiddler.Controls.UserControls
             {
                 return;
             }
-            TreeViewMobs.SelectedNode = TreeViewMobs.Nodes[_displayType].Nodes[e.ItemIndex];
+
+            if (e.ItemIndex < 0 || e.ItemIndex >= _listViewNodes.Count)
+            {
+                return;
+            }
+
+            TreeViewMobs.SelectedNode = _listViewNodes[e.ItemIndex];
         }
 
         private void ListView_DoubleClick(object sender, MouseEventArgs e)
@@ -601,6 +646,10 @@ namespace UoFiddler.Controls.UserControls
             }
 
             int graphic = _listViewGraphics[e.Index];
+            // Action 0 is not necessarily defined (e.g. equipment such as bodies 320/321). Use the first
+            // defined action - the child nodes only exist for defined actions and are sorted ascending.
+            TreeNode graphicNode = _listViewNodes[e.Index];
+            int action = graphicNode.Nodes.Count > 0 ? (int)graphicNode.Nodes[0].Tag : 0;
             Point itemPoint = new Point(e.Bounds.X + listView.TilePadding.Left, e.Bounds.Y + listView.TilePadding.Top);
             Rectangle tileRect = new Rectangle(itemPoint, listView.TileSize);
             using var previousClip = e.Graphics.Clip;
@@ -615,7 +664,7 @@ namespace UoFiddler.Controls.UserControls
 
             int hue = 0;
             // Cache-owned bitmap — borrowed for drawing only, never disposed here.
-            Bitmap bmp = Animations.GetAnimation(graphic, 0, 1, ref hue, false, true)?[0].Bitmap;
+            Bitmap bmp = Animations.GetAnimation(graphic, action, 1, ref hue, false, true)?[0].Bitmap;
             if (bmp != null)
             {
                 int maxW = tileRect.Width;
@@ -796,56 +845,94 @@ namespace UoFiddler.Controls.UserControls
 
         private void RewriteXml(object sender, EventArgs e)
         {
-            TreeViewMobs.BeginUpdate();
-            try
-            {
-                TreeViewMobs.TreeViewNodeSorter = new GraphicSorter();
-                TreeViewMobs.Sort();
-            }
-            finally
-            {
-                TreeViewMobs.EndUpdate();
-            }
-
             string fileName = Path.Combine(Options.AppDataPath, "Animationlist.xml");
 
-            XmlDocument dom = new XmlDocument();
-            XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
-            dom.AppendChild(decl);
-            XmlElement sr = dom.CreateElement("Graphics");
-            XmlComment comment = dom.CreateComment("Entries in Mob tab");
-            sr.AppendChild(comment);
-            comment = dom.CreateComment("Name=Displayed name");
-            sr.AppendChild(comment);
-            comment = dom.CreateComment("body=Graphic");
-            sr.AppendChild(comment);
-            comment = dom.CreateComment("type=0:Monster, 1:Sea, 2:Animal, 3:Human/Equipment");
-            sr.AppendChild(comment);
-
-            XmlElement elem;
-            foreach (TreeNode node in TreeViewMobs.Nodes[0].Nodes)
+            using (new WaitCursorScope(this))
             {
-                elem = dom.CreateElement("Mob");
-                elem.SetAttribute("name", node.Text);
-                elem.SetAttribute("body", ((int[])node.Tag)[0].ToString());
-                elem.SetAttribute("type", ((int[])node.Tag)[1].ToString());
+                // Only the top-level body nodes are written, and only their graphic order matters.
+                // Sorting the live TreeView would recursively reorder every action child node and force a
+                // costly native re-layout/repaint, so sort lightweight in-memory snapshots instead.
+                // Stray bodies that are neither defined in mobtypes.txt nor have any animation frames are
+                // dropped so they are not persisted back into the XML.
+                var mobNodes = TreeViewMobs.Nodes[0].Nodes.Cast<TreeNode>()
+                    .Where(ShouldWriteNode)
+                    .OrderBy(node => ((int[])node.Tag)[0]).ToList();
+                var equipNodes = TreeViewMobs.Nodes[1].Nodes.Cast<TreeNode>()
+                    .Where(ShouldWriteNode)
+                    .OrderBy(node => ((int[])node.Tag)[0]).ToList();
 
-                sr.AppendChild(elem);
-            }
+                XmlDocument dom = new XmlDocument();
+                XmlDeclaration decl = dom.CreateXmlDeclaration("1.0", "utf-8", null);
+                dom.AppendChild(decl);
+                XmlElement sr = dom.CreateElement("Graphics");
+                XmlComment comment = dom.CreateComment("Entries in Mob tab");
+                sr.AppendChild(comment);
+                comment = dom.CreateComment("Name=Displayed name");
+                sr.AppendChild(comment);
+                comment = dom.CreateComment("body=Graphic");
+                sr.AppendChild(comment);
+                comment = dom.CreateComment("type=0:Monster, 1:Sea, 2:Animal, 3:Human/Equipment");
+                sr.AppendChild(comment);
 
-            foreach (TreeNode node in TreeViewMobs.Nodes[1].Nodes)
-            {
-                elem = dom.CreateElement("Equip");
-                elem.SetAttribute("name", node.Text);
-                elem.SetAttribute("body", ((int[])node.Tag)[0].ToString());
-                elem.SetAttribute("type", ((int[])node.Tag)[1].ToString());
-                sr.AppendChild(elem);
+                XmlElement elem;
+                foreach (TreeNode node in mobNodes)
+                {
+                    elem = dom.CreateElement("Mob");
+                    elem.SetAttribute("name", GetXmlName(node.Text, ((int[])node.Tag)[0]));
+                    elem.SetAttribute("body", ((int[])node.Tag)[0].ToString());
+                    elem.SetAttribute("type", NormalizeXmlType(((int[])node.Tag)[1]).ToString());
+
+                    sr.AppendChild(elem);
+                }
+
+                foreach (TreeNode node in equipNodes)
+                {
+                    elem = dom.CreateElement("Equip");
+                    elem.SetAttribute("name", GetXmlName(node.Text, ((int[])node.Tag)[0]));
+                    elem.SetAttribute("body", ((int[])node.Tag)[0].ToString());
+                    elem.SetAttribute("type", NormalizeXmlType(((int[])node.Tag)[1]).ToString());
+                    sr.AppendChild(elem);
+                }
+                dom.AppendChild(sr);
+                dom.Save(fileName);
             }
-            dom.AppendChild(sr);
-            dom.Save(fileName);
 
             MessageBox.Show("XML saved", "Rewrite", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
+        }
+
+        /// <summary>
+        /// Maps the internal node type to a value valid for Animationlist.xml.
+        /// Equipment (4) is stored under the &lt;Equip&gt; element and written as Human/Equipment (3);
+        /// only 0-3 are valid in the XML and any other value would be skipped on reload.
+        /// </summary>
+        private static int NormalizeXmlType(int type)
+        {
+            return type == (int)MobType.Equipment ? (int)MobType.Human : type;
+        }
+
+        /// <summary>
+        /// Decides whether a body node should be persisted to Animationlist.xml. A node is kept only when it
+        /// actually has animation frames - represented by its child action nodes, which are added solely for
+        /// defined actions. This drops bodies with no animations (undefined bodies and paperdoll-only
+        /// equipment), which should not be written even when they have a mobtypes.txt entry.
+        /// </summary>
+        private static bool ShouldWriteNode(TreeNode node)
+        {
+            return node.Nodes.Count > 0;
+        }
+
+        /// <summary>
+        /// Returns the display name without the trailing " (0x{body:X})" suffix that is appended for the
+        /// tree view. The body is already stored in its own attribute, so the hex value must not be saved
+        /// into the name (it would otherwise accumulate across repeated rewrite/reload cycles).
+        /// </summary>
+        private static string GetXmlName(string nodeText, int body)
+        {
+            string suffix = $" (0x{body:X})";
+            return nodeText.EndsWith(suffix, StringComparison.Ordinal)
+                ? nodeText.Substring(0, nodeText.Length - suffix.Length)
+                : nodeText;
         }
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
