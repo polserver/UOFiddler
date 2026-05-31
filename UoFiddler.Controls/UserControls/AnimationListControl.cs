@@ -586,6 +586,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void AddUopActionNodes(TreeNode parent, int body, int actionType)
         {
+            // UOP animations are not bounded by the legacy per-type group counts (Low=13, High=22,
+            // People=34): a UOP body can define action bins well past them (the client scans up to
+            // MaxAnimActions - "gargoyle is like 78"). List every defined UOP action, naming those within
+            // the type's table and falling back to a generic "ActionN" for the higher UOP-specific bins.
             var definedActions = Animations.GetUopDefinedActions(body);
             foreach (int i in definedActions)
             {
@@ -617,7 +621,8 @@ namespace UoFiddler.Controls.UserControls
         /// no animation. The scan early-exits on the first hit (animated bodies usually define action 0),
         /// so it is far cheaper than enumerating every action - the full list is only built when a body
         /// is expanded. The probe range matches what <see cref="PopulateActionNodes"/> builds: the
-        /// named-action table for MUL bodies, the UOP action cap for UOP bodies.
+        /// named-action table for MUL bodies, the full UOP action range for UOP bodies (which are not
+        /// bounded by the legacy per-type group counts).
         /// </summary>
         private int GetFirstDefinedAction(int body, int type)
         {
