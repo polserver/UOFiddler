@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.22.0
+    <value>Version 4.22.1
+- Fix animation edit form gallery tiles dimensions.
+
+Version 4.22.0
 - Added multi-select for compare plugins.
 - Animation edit form: add anim6.mul support and a gallery. Changed how animation files are loaded .
 - Optimized file loading times and memory usage across many controls.
