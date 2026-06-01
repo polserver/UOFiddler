@@ -110,13 +110,5 @@ namespace UoFiddler.Forms
         {
             button1.Enabled = comboBoxLoad.SelectedIndex != -1;
         }
-
-        private void LoadProfile_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (DialogResult == DialogResult.Cancel)
-            {
-                Application.Exit();
-            }
-        }
     }
 }

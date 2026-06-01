@@ -49,7 +49,10 @@ namespace UoFiddler
             try
             {
                 FiddlerAppContext fiddlerAppContext = new(serviceProvider);
-                Application.Run(fiddlerAppContext);
+                if (fiddlerAppContext.MainForm != null)
+                {
+                    Application.Run(fiddlerAppContext);
+                }
             }
             catch (Exception err)
             {

@@ -156,7 +156,6 @@ namespace UoFiddler.Forms
             this.Name = "LoadProfileForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Choose Profile";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LoadProfile_FormClosed);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
