@@ -35,6 +35,28 @@ namespace UoFiddler.Controls.Forms
         private static bool _drawEmpty;
         private static bool _drawFull;
         private static int _lastAddFilterIndex = 1;
+
+        private float _zoomFactor = 1.0f;
+
+        // Second-animation overlay state
+        private bool _secondAnimActivated;
+        private int _secondAnimId;
+        private int _secondAnimFileIndex = 1;        // 1..5 = anim..anim5 MUL (default = anim)
+        private int _secondAnimOpacity = 50;         // 0..100
+        private SecondAnimColorMode _secondAnimColorMode = SecondAnimColorMode.Original;
+        private Color _secondAnimCustomColor = Color.Magenta;
+        private bool _isSecondAnimInFront;
+        private bool _drawSecondAnimBox;
+
+        private enum SecondAnimColorMode
+        {
+            Original,
+            Green,
+            Magenta,
+            Cyan,
+            Red,
+            Custom
+        }
         private static readonly Color _whiteConvert = Color.FromArgb(255, 255, 255, 255);
 
         private static readonly Pen _blackUnDrawTransparent = new Pen(Color.FromArgb(0, 0, 0, 0), 1);
@@ -51,6 +73,14 @@ namespace UoFiddler.Controls.Forms
             Icon = Options.GetFiddlerIcon();
 
             SelectFileToolStripComboBox.SelectedIndex = 0;
+
+            // ComboBox.SelectedIndex is not serialized by the WinForms designer (it gets stripped
+            // from InitializeComponent whenever the form is opened in the designer), so the default
+            // selections are applied here in the constructor instead.
+            ZoomComboBox.SelectedIndex = 0;
+            SecondAnimFileComboBox.SelectedIndex = 0;
+            SecondAnimColorComboBox.SelectedIndex = 0;
+
             AnimationListTreeView.ShowNodeToolTips = true;
             FramesListView.MultiSelect = true;
 
@@ -634,6 +664,7 @@ namespace UoFiddler.Controls.Forms
                 FramesListView.EndUpdate();
             }
 
+            UpdateSecondAnimWarning();
             AnimationPictureBox.Invalidate();
             SetPaletteBox();
         }
@@ -693,19 +724,24 @@ namespace UoFiddler.Controls.Forms
 
         private void AnimationPictureBox_OnPaintFrame(object sender, PaintEventArgs e)
         {
-            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            if (edit == null)
-            {
-                return;
-            }
+            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
 
-            Bitmap[] currentBits = edit.GetFrames();
-
+            // Background and centre crosshair are drawn first, so both the primary
+            // animation and the overlay always paint above the crosshair lines.
             e.Graphics.Clear(Color.LightGray);
             e.Graphics.DrawLine(Pens.Black, new Point(_framePoint.X, 0), new Point(_framePoint.X, AnimationPictureBox.Height));
             e.Graphics.DrawLine(Pens.Black, new Point(0, _framePoint.Y), new Point(AnimationPictureBox.Width, _framePoint.Y));
 
-            if (currentBits?.Length > 0 && currentBits[FramesTrackBar.Value] != null)
+            if (_secondAnimActivated && !_isSecondAnimInFront)
+            {
+                DrawSecondAnimation(e.Graphics);
+            }
+
+            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            Bitmap[] currentBits = edit?.GetFrames();
+
+            if (edit != null && currentBits?.Length > 0 && FramesTrackBar.Value < currentBits.Length && currentBits[FramesTrackBar.Value] != null)
             {
                 int varW;
                 int varH;
@@ -733,18 +769,30 @@ namespace UoFiddler.Controls.Forms
                     varFh = currentBits[FramesTrackBar.Value].Height;
                 }
 
-                int x = _framePoint.X - edit.Frames[FramesTrackBar.Value].Center.X;
-                int y = _framePoint.Y - edit.Frames[FramesTrackBar.Value].Center.Y - currentBits[FramesTrackBar.Value].Height;
+                int x = _framePoint.X - (int)(edit.Frames[FramesTrackBar.Value].Center.X * _zoomFactor);
+                int y = _framePoint.Y - (int)(edit.Frames[FramesTrackBar.Value].Center.Y * _zoomFactor) - (int)(currentBits[FramesTrackBar.Value].Height * _zoomFactor);
+
+                int scaledW = (int)(currentBits[FramesTrackBar.Value].Width * _zoomFactor);
+                int scaledH = (int)(currentBits[FramesTrackBar.Value].Height * _zoomFactor);
+                int scaledFw = (int)(varFw * _zoomFactor);
+                int scaledFh = (int)(varFh * _zoomFactor);
+                int scaledEw = (int)(varW * _zoomFactor);
+                int scaledEh = (int)(varH * _zoomFactor);
 
                 using (var whiteTransparent = new SolidBrush(Color.FromArgb(160, 255, 255, 255)))
                 {
-                    e.Graphics.FillRectangle(whiteTransparent, new Rectangle(x, y, varFw, varFh));
+                    e.Graphics.FillRectangle(whiteTransparent, new Rectangle(x, y, scaledFw, scaledFh));
                 }
 
-                e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, varW, varH));
-                e.Graphics.DrawImage(currentBits[FramesTrackBar.Value], x, y);
+                e.Graphics.DrawRectangle(Pens.Red, new Rectangle(x, y, scaledEw, scaledEh));
+                e.Graphics.DrawImage(currentBits[FramesTrackBar.Value], new Rectangle(x, y, scaledW, scaledH));
 
                 //e.Graphics.DrawLine(Pens.Red, new Point(0, 335-(int)numericUpDown1.Value), new Point(animationPictureBox.Width, 335-(int)numericUpDown1.Value));
+            }
+
+            if (_secondAnimActivated && _isSecondAnimInFront)
+            {
+                DrawSecondAnimation(e.Graphics);
             }
 
             // Draw Reference Point Arrow
@@ -762,6 +810,229 @@ namespace UoFiddler.Controls.Forms
             e.Graphics.DrawPolygon(_blackUndraw, arrayPoints);
         }
         //End of Soulblighter Modification
+
+        private void OnZoomChanged(object sender, EventArgs e)
+        {
+            string text = ZoomComboBox.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            if (int.TryParse(text.TrimEnd('%').Trim(), out int percent) && percent > 0)
+            {
+                _zoomFactor = percent / 100.0f;
+                AnimationPictureBox.Invalidate();
+            }
+        }
+
+        private Color GetSecondAnimTintColor()
+        {
+            switch (_secondAnimColorMode)
+            {
+                case SecondAnimColorMode.Green: return Color.Lime;
+                case SecondAnimColorMode.Magenta: return Color.Magenta;
+                case SecondAnimColorMode.Cyan: return Color.Cyan;
+                case SecondAnimColorMode.Red: return Color.Red;
+                case SecondAnimColorMode.Custom: return _secondAnimCustomColor;
+                default: return Color.White;
+            }
+        }
+
+        private void DrawSecondAnimation(Graphics graphics)
+        {
+            if (!_secondAnimActivated || _secondAnimFileIndex < 1 || _secondAnimFileIndex > 5)
+            {
+                return;
+            }
+
+            // Action and direction follow the primary selection — equipment shares the human
+            // action set, so no action remapping is needed for the matching use case.
+            AnimIdx edit = AnimationEdit.GetAnimation(_secondAnimFileIndex, _secondAnimId, _currentAction, _currentDir);
+            Bitmap[] frames = edit?.GetFrames();
+            if (frames == null || frames.Length == 0)
+            {
+                return;
+            }
+
+            // Crash safety: wrap an out-of-range index (the overlay may have fewer frames
+            // than the primary animation) instead of indexing past the array.
+            int index = FramesTrackBar.Value;
+            if (index < 0 || index >= frames.Length)
+            {
+                index = 0;
+            }
+
+            Bitmap frame = frames[index];
+            if (frame == null)
+            {
+                return;
+            }
+
+            int centerX = edit.Frames[index].Center.X;
+            int centerY = edit.Frames[index].Center.Y;
+
+            int x = _framePoint.X - (int)(centerX * _zoomFactor);
+            int y = _framePoint.Y - (int)(centerY * _zoomFactor) - (int)(frame.Height * _zoomFactor);
+            int w = (int)(frame.Width * _zoomFactor);
+            int h = (int)(frame.Height * _zoomFactor);
+
+            float a = _secondAnimOpacity / 100f;
+            ColorMatrix matrix;
+            if (_secondAnimColorMode == SecondAnimColorMode.Original)
+            {
+                matrix = new ColorMatrix(new float[][]
+                {
+                    new float[] { 1, 0, 0, 0, 0 },
+                    new float[] { 0, 1, 0, 0, 0 },
+                    new float[] { 0, 0, 1, 0, 0 },
+                    new float[] { 0, 0, 0, a, 0 },
+                    new float[] { 0, 0, 0, 0, 1 }
+                });
+            }
+            else
+            {
+                // Colorize/hue: convert each source pixel to its luminance, then multiply by
+                // the tint colour. This keeps the original animation's shading and edges
+                // (light/dark detail is preserved) while shifting the hue, instead of flooding
+                // every pixel with one flat colour. Source alpha is kept and scaled by opacity.
+                Color tint = GetSecondAnimTintColor();
+                float tr = tint.R / 255f;
+                float tg = tint.G / 255f;
+                float tb = tint.B / 255f;
+                matrix = new ColorMatrix(new float[][]
+                {
+                    new float[] { 0.30f * tr, 0.30f * tg, 0.30f * tb, 0, 0 },
+                    new float[] { 0.59f * tr, 0.59f * tg, 0.59f * tb, 0, 0 },
+                    new float[] { 0.11f * tr, 0.11f * tg, 0.11f * tb, 0, 0 },
+                    new float[] { 0, 0, 0, a, 0 },
+                    new float[] { 0, 0, 0, 0, 1 }
+                });
+            }
+
+            using (var attr = new ImageAttributes())
+            {
+                attr.SetColorMatrix(matrix);
+                graphics.DrawImage(frame, new Rectangle(x, y, w, h),
+                    0, 0, frame.Width, frame.Height, GraphicsUnit.Pixel, attr);
+            }
+
+            if (_drawSecondAnimBox)
+            {
+                using (var cyanPen = new Pen(Color.Cyan, 1))
+                {
+                    graphics.DrawRectangle(cyanPen, x, y, w, h);
+                }
+            }
+        }
+
+        private void UpdateSecondAnimWarning()
+        {
+            if (!_secondAnimActivated || _secondAnimFileIndex < 1 || _secondAnimFileIndex > 5)
+            {
+                SecondAnimWarningLabel.Visible = false;
+                return;
+            }
+
+            int primaryCount = FramesTrackBar.Maximum + 1;
+
+            int overlayCount = 0;
+            AnimIdx overlay = AnimationEdit.GetAnimation(_secondAnimFileIndex, _secondAnimId, _currentAction, _currentDir);
+            Bitmap[] frames = overlay?.GetFrames();
+            if (frames != null)
+            {
+                overlayCount = frames.Length;
+            }
+
+            if (overlayCount > 0 && overlayCount != primaryCount)
+            {
+                SecondAnimWarningLabel.Text = $"Frame counts differ (primary {primaryCount} / overlay {overlayCount})";
+                SecondAnimWarningLabel.Visible = true;
+            }
+            else
+            {
+                SecondAnimWarningLabel.Visible = false;
+            }
+        }
+
+        private void SecondAnimCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _secondAnimActivated = SecondAnimCheckBox.Checked;
+            UpdateSecondAnimWarning();
+            AnimationPictureBox.Invalidate();
+        }
+
+        private void SecondAnimFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string sel = SecondAnimFileComboBox.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(sel))
+            {
+                return;
+            }
+
+            if (sel.Equals("anim", StringComparison.OrdinalIgnoreCase))
+            {
+                _secondAnimFileIndex = 1;
+            }
+            else if (sel.StartsWith("anim", StringComparison.OrdinalIgnoreCase)
+                     && int.TryParse(sel.Substring(4), out int idx))
+            {
+                _secondAnimFileIndex = idx;
+            }
+
+            UpdateSecondAnimWarning();
+            AnimationPictureBox.Invalidate();
+        }
+
+        private void SecondAnimIdNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            _secondAnimId = (int)SecondAnimIdNumericUpDown.Value;
+            UpdateSecondAnimWarning();
+            AnimationPictureBox.Invalidate();
+        }
+
+        private void SecondAnimColorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (SecondAnimColorComboBox.SelectedIndex)
+            {
+                case 1: _secondAnimColorMode = SecondAnimColorMode.Green; break;
+                case 2: _secondAnimColorMode = SecondAnimColorMode.Magenta; break;
+                case 3: _secondAnimColorMode = SecondAnimColorMode.Cyan; break;
+                case 4: _secondAnimColorMode = SecondAnimColorMode.Red; break;
+                case 5:
+                    _secondAnimColorMode = SecondAnimColorMode.Custom;
+                    using (var dialog = new ColorDialog { Color = _secondAnimCustomColor })
+                    {
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            _secondAnimCustomColor = dialog.Color;
+                        }
+                    }
+                    break;
+                default: _secondAnimColorMode = SecondAnimColorMode.Original; break;
+            }
+
+            AnimationPictureBox.Invalidate();
+        }
+
+        private void SecondAnimOpacityTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            _secondAnimOpacity = SecondAnimOpacityTrackBar.Value;
+            SecondAnimOpacityValueLabel.Text = _secondAnimOpacity + "%";
+            AnimationPictureBox.Invalidate();
+        }
+
+        private void SecondAnimInFrontCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _isSecondAnimInFront = SecondAnimInFrontCheckBox.Checked;
+            AnimationPictureBox.Invalidate();
+        }
+
+        private void SecondAnimBoxCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _drawSecondAnimBox = SecondAnimBoxCheckBox.Checked;
+            AnimationPictureBox.Invalidate();
+        }
 
         //Soulblighter Modification
         private void OnFrameCountBarChanged(object sender, EventArgs e)
