@@ -118,7 +118,26 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.21.0
+    <value>Version 4.22.0
+- Added multi-select for compare plugins.
+- Animation edit form: add anim6.mul support and a gallery. Changed how animation files are loaded .
+- Optimized file loading times and memory usage across many controls.
+- Replace TreeView with faster controls in TileData, Sounds, RadarCol, Multis, Light, and Dress tabs for quicker loading and scrolling.
+- "Select in..." cross-tab navigation now activates the target main tab and reliably selects the row (fixes TileData "Save Changes" silently failing). Same fix applied to Items, LandTiles, RadarCol, Textures, Gumps, AnimData.
+- Dark mode color fixes: replace hardcoded Color.Blue/Color.Red/Color.Black with theme-aware alternatives (CornflowerBlue, OrangeRed, SystemColors.ControlText) across SkillGroup, RadarCol, Sounds, Light, Textures, Gumps, Map, Hues, LandTiles, Items, and the Hue edit form.
+- Hue edit form preview now uses the configured preview background color instead of hardcoded white.
+- Improved radarcol color generation and control layout.
+- Compare map status strip menu moved to context menu under right mouse button for easier access. Added mouse wheel zoom.
+- Multi select possible for items, land tiles and textures.
+- Added filter to animation tab
+- Added gallery preview to animation editor
+- Improved load times for animation tab
+- Added second animation overlay to animation editor
+- Added zoom option to animation editor
+- Fixed application failure to exit when profile selection form was closed without any selection.
+- Fixed crash when exporting altitude map image with View markers enabled.
+
+Version 4.21.0
 - Fixed display order in tiledata - org comes first now.
 - Fixed refreshing of preview images in compare plugins.
 - Added jpg and png to export image in items, land, texture and gump compare plugins.
