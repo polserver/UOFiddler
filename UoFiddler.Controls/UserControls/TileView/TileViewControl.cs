@@ -217,7 +217,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Size _tileSize = new Size(256, 256);
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Size), "256, 256")]
         public Size TileSize
         {
             get => _tileSize;
@@ -230,7 +230,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Padding _tileMargin = new Padding(2, 2, 2, 2); // external
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Padding), "2, 2, 2, 2")]
         public Padding TileMargin
         {
             get => _tileMargin;
@@ -243,7 +243,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private Padding _tilePadding = new Padding(2, 2, 2, 2);
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Padding), "2, 2, 2, 2")]
         public Padding TilePadding
         {
             get => _tilePadding;
@@ -256,7 +256,7 @@ namespace UoFiddler.Controls.UserControls.TileView
 
         private readonly Pen _tileBorder = new Pen(Brushes.Black, 1.0f);
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(1.0f)]
         public float TileBorderWidth
         {
             get => _tileBorder.Width;
@@ -268,7 +268,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         }
 
         [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Color), "Black")]
         public Color TileBorderColor
         {
             get => _tileBorder.Color;
@@ -309,7 +309,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// Focused tile border and highlight color
         /// </summary>
         [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Color), "DarkRed")]
         public Color TileFocusColor
         {
             get => _tileFocusColor;
@@ -326,7 +326,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// Selected tile highlight color
         /// </summary>
         [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Color), "Highlight")]
         public Color TileHighlightColor
         {
             get => _tileHighlightColor;
@@ -346,7 +346,7 @@ namespace UoFiddler.Controls.UserControls.TileView
         /// Color of tile background
         /// </summary>
         [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(typeof(Color), "Window")]
         public Color TileBackgroundColor
         {
             get => _tileBackgroundColor;
