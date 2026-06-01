@@ -1487,11 +1487,18 @@
             // 
             // GalleryTileView
             // 
+            GalleryTileView.AutoScroll = true;
+            GalleryTileView.AutoScrollMinSize = new System.Drawing.Size(0, 120);
             GalleryTileView.Dock = System.Windows.Forms.DockStyle.Fill;
             GalleryTileView.Location = new System.Drawing.Point(4, 3);
             GalleryTileView.Name = "GalleryTileView";
             GalleryTileView.Size = new System.Drawing.Size(823, 729);
             GalleryTileView.TabIndex = 0;
+            GalleryTileView.TileBorderColor = System.Drawing.Color.Gray;
+            GalleryTileView.TileFocusColor = System.Drawing.Color.DarkBlue;
+            GalleryTileView.TileMargin = new System.Windows.Forms.Padding(2, 2, 0, 0);
+            GalleryTileView.TilePadding = new System.Windows.Forms.Padding(1);
+            GalleryTileView.TileSize = new System.Drawing.Size(81, 110);
             GalleryTileView.DrawItem += GalleryTileViewDrawItem;
             GalleryTileView.MouseDoubleClick += GalleryTileViewMouseDoubleClick;
             // 
