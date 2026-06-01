@@ -434,7 +434,7 @@
 		<None Include="Resources\staticPlayButton.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
 		<PackageReference Include="AnimatedGif" Version="1.0.5" />
 	</ItemGroup>
 </Project>
