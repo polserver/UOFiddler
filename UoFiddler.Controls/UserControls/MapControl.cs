@@ -1018,7 +1018,8 @@ namespace UoFiddler.Controls.UserControls
                     : CurrentMap.GetImage(0, 0, CurrentMap.Width >> 3, CurrentMap.Height >> 3,
                         showStaticsToolStripMenuItem1.Checked);
 
-                if (showMarkersToolStripMenuItem.Checked)
+                // Skip markers in altitude mode
+                if (showMarkersToolStripMenuItem.Checked && _altitudeMode != MapAltitudeMode.Altitude)
                 {
                     using Graphics g = Graphics.FromImage(extract);
                     foreach (TreeNode obj in OverlayObjectTree.Nodes[_currentMapId].Nodes)
