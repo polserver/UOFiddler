@@ -79,6 +79,12 @@ namespace UoFiddler.Controls.UserControls
             FacingBar = new System.Windows.Forms.TrackBar();
             tabPage2 = new System.Windows.Forms.TabPage();
             listView = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
+            contextMenuStrip4 = new System.Windows.Forms.ContextMenuStrip(components);
+            exportAllThumbnailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            asBmpToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            asTiffToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            asJpgToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            asPngToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             statusStrip1 = new System.Windows.Forms.StatusStrip();
             SettingsButton = new System.Windows.Forms.ToolStripDropDownButton();
             sortAlphaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -109,6 +115,7 @@ namespace UoFiddler.Controls.UserControls
             groupBoxSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)FacingBar).BeginInit();
             tabPage2.SuspendLayout();
+            contextMenuStrip4.SuspendLayout();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -481,9 +488,10 @@ namespace UoFiddler.Controls.UserControls
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // listView
-            // 
+            //
             listView.AutoScroll = true;
             listView.AutoScrollMinSize = new System.Drawing.Size(0, 116);
+            listView.ContextMenuStrip = contextMenuStrip4;
             listView.Dock = System.Windows.Forms.DockStyle.Fill;
             listView.FocusIndex = -1;
             listView.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -505,6 +513,47 @@ namespace UoFiddler.Controls.UserControls
             listView.ItemSelectionChanged += SelectChanged_listView;
             listView.DrawItem += ListViewDrawItem;
             listView.MouseDoubleClick += ListView_DoubleClick;
+            //
+            // contextMenuStrip4
+            //
+            contextMenuStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { exportAllThumbnailsToolStripMenuItem });
+            contextMenuStrip4.Name = "contextMenuStrip4";
+            contextMenuStrip4.Size = new System.Drawing.Size(180, 26);
+            //
+            // exportAllThumbnailsToolStripMenuItem
+            //
+            exportAllThumbnailsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem3, asTiffToolStripMenuItem3, asJpgToolStripMenuItem3, asPngToolStripMenuItem3 });
+            exportAllThumbnailsToolStripMenuItem.Name = "exportAllThumbnailsToolStripMenuItem";
+            exportAllThumbnailsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            exportAllThumbnailsToolStripMenuItem.Text = "Export All Thumbnails..";
+            //
+            // asBmpToolStripMenuItem3
+            //
+            asBmpToolStripMenuItem3.Name = "asBmpToolStripMenuItem3";
+            asBmpToolStripMenuItem3.Size = new System.Drawing.Size(115, 22);
+            asBmpToolStripMenuItem3.Text = "As Bmp";
+            asBmpToolStripMenuItem3.Click += OnClickExportAllThumbnailsBmp;
+            //
+            // asTiffToolStripMenuItem3
+            //
+            asTiffToolStripMenuItem3.Name = "asTiffToolStripMenuItem3";
+            asTiffToolStripMenuItem3.Size = new System.Drawing.Size(115, 22);
+            asTiffToolStripMenuItem3.Text = "As Tiff";
+            asTiffToolStripMenuItem3.Click += OnClickExportAllThumbnailsTiff;
+            //
+            // asJpgToolStripMenuItem3
+            //
+            asJpgToolStripMenuItem3.Name = "asJpgToolStripMenuItem3";
+            asJpgToolStripMenuItem3.Size = new System.Drawing.Size(115, 22);
+            asJpgToolStripMenuItem3.Text = "As Jpg";
+            asJpgToolStripMenuItem3.Click += OnClickExportAllThumbnailsJpg;
+            //
+            // asPngToolStripMenuItem3
+            //
+            asPngToolStripMenuItem3.Name = "asPngToolStripMenuItem3";
+            asPngToolStripMenuItem3.Size = new System.Drawing.Size(115, 22);
+            asPngToolStripMenuItem3.Text = "As Png";
+            asPngToolStripMenuItem3.Click += OnClickExportAllThumbnailsPng;
             //
             // statusStrip1
             // 
@@ -630,6 +679,7 @@ namespace UoFiddler.Controls.UserControls
             groupBoxSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)FacingBar).EndInit();
             tabPage2.ResumeLayout(false);
+            contextMenuStrip4.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ResumeLayout(false);
@@ -640,19 +690,25 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem asBMpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem asBmpToolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem asTiffToolStripMenuItem3;
         private System.Windows.Forms.ToolStripStatusLabel BaseGraphicLabel;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip4;
+        private System.Windows.Forms.ToolStripMenuItem exportAllThumbnailsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportFrameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractAnimationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractImageToolStripMenuItem;

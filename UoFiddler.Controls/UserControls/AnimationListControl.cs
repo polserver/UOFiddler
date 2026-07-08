@@ -1243,6 +1243,95 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void OnClickExportAllThumbnailsBmp(object sender, EventArgs e)
+        {
+            ExportAllThumbnails(ImageFormat.Bmp);
+        }
+
+        private void OnClickExportAllThumbnailsTiff(object sender, EventArgs e)
+        {
+            ExportAllThumbnails(ImageFormat.Tiff);
+        }
+
+        private void OnClickExportAllThumbnailsJpg(object sender, EventArgs e)
+        {
+            ExportAllThumbnails(ImageFormat.Jpeg);
+        }
+
+        private void OnClickExportAllThumbnailsPng(object sender, EventArgs e)
+        {
+            ExportAllThumbnails(ImageFormat.Png);
+        }
+
+        private void ExportAllThumbnails(ImageFormat imageFormat)
+        {
+            if (_listViewGraphics.Count == 0)
+            {
+                return;
+            }
+
+            string thumbnailPath = Path.Combine(Options.AppDataPath, "thumbnails");
+            if (!Directory.Exists(thumbnailPath))
+            {
+                Directory.CreateDirectory(thumbnailPath);
+            }
+
+            string what = _displayType == 1 ? "Equipment" : "Mob";
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+
+            using (new WaitCursorScope(this))
+            using (new ProgressBarDialog(_listViewGraphics.Count, $"Export to {fileExtension}", false))
+            {
+                for (int i = 0; i < _listViewGraphics.Count; ++i)
+                {
+                    ControlEvents.FireProgressChangeEvent();
+                    Application.DoEvents();
+
+                    int graphic = _listViewGraphics[i];
+                    int action = ((int[])_listViewNodes[i].Tag)[2];
+                    if (action < 0)
+                    {
+                        action = 0;
+                    }
+
+                    int hue = 0;
+                    // Cache-owned bitmap — clone before saving, never save/dispose it directly.
+                    Bitmap sourceBitmap = Animations.GetAnimation(graphic, action, 1, ref hue, false, true)?[0].Bitmap;
+                    if (sourceBitmap == null)
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.Combine(thumbnailPath, $"{what} {Utils.FormatExportId(graphic)}.{fileExtension}");
+
+                    if (imageFormat == ImageFormat.Png)
+                    {
+                        // Only Png preserves transparency - clone as-is instead of flattening onto white.
+                        using (Bitmap bit = new Bitmap(sourceBitmap))
+                        {
+                            bit.Save(fileName, imageFormat);
+                        }
+
+                        continue;
+                    }
+
+                    using (Bitmap newBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height))
+                    {
+                        using (Graphics newGraph = Graphics.FromImage(newBitmap))
+                        {
+                            newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
+                            newGraph.DrawImage(sourceBitmap, new Point(0, 0));
+                            newGraph.Save();
+                        }
+
+                        newBitmap.Save(fileName, imageFormat);
+                    }
+                }
+            }
+
+            FileSavedDialog.Show(FindForm(), thumbnailPath, "All thumbnails saved successfully.");
+        }
+
         private void ExportAnimatedGif(bool looping)
         {
             if (MainPictureBox.Frames == null)
