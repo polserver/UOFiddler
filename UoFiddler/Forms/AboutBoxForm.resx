@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.22.1
+    <value>Version 4.22.2
+- Add export option to thumbnail list in animation tab.
+
+Version 4.22.1
 - Fix animation edit form gallery tiles dimensions.
 
 Version 4.22.0
