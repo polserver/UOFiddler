@@ -138,6 +138,16 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             inidx.Enabled = inidxbtn.Enabled = !isMap;
             mulMapIndex.Enabled = isMap;
 
+            // Every entry of every shipped MultiCollection.uop is zlib compressed. Packing it uncompressed
+            // produces a file several times larger than the original, and Mythic is not a valid compression
+            // for this type at all, so the choice is fixed rather than merely defaulted.
+            if (isMulti)
+            {
+                compressionBox.SelectedItem = nameof(CompressionFlag.Zlib);
+            }
+
+            compressionBox.Enabled = !isMulti;
+
             inhousingbin.Visible = inhousingbinbtn.Visible = labelHousingBin.Visible = isMulti;
 
             // Previously-picked paths belong to the old type; clear them so the user can't accidentally
@@ -175,7 +185,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             string preview = idxName != null ? $"{mulName}, {idxName}" : mulName;
             if (isMulti)
             {
-                preview += ", housing.bin";
+                preview += $", housing.bin, {Path.GetFileName(MultiComponentSidecar.GetDefaultPath(mulName))}";
             }
             outputFilesLabel.Text = "Will create: " + preview;
         }
@@ -262,7 +272,13 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             if (fileType == FileType.MultiCollection)
             {
                 housingBin = inhousingbin.Text;
-                if (!string.IsNullOrWhiteSpace(housingBin) && !File.Exists(housingBin))
+                if (string.IsNullOrWhiteSpace(housingBin))
+                {
+                    MessageBox.Show("You must specify the input housing.bin. MultiCollection.uop is incomplete without it - extract it from the original UOP first.");
+                    return;
+                }
+
+                if (!File.Exists(housingBin))
                 {
                     MessageBox.Show("The input housing.bin does not exist");
                     return;
@@ -291,6 +307,12 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             if (compressionBox.SelectedItem != null)
             {
                 Enum.TryParse(compressionBox.SelectedItem.ToString(), out selectedCompressionMethod);
+            }
+
+            if (fileType == FileType.MultiCollection)
+            {
+                // Not negotiable: every entry of every shipped MultiCollection.uop is zlib compressed.
+                selectedCompressionMethod = CompressionFlag.Zlib;
             }
 
             bool succeeded = false;
@@ -471,6 +493,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 if (!string.IsNullOrEmpty(housingBinPath))
                 {
                     written.Add(Path.GetFileName(housingBinPath));
+                    written.Add(Path.GetFileName(MultiComponentSidecar.GetDefaultPath(outMulPath)));
                 }
 
                 FileSavedDialog.Show(FindForm(), outfolder.Text,

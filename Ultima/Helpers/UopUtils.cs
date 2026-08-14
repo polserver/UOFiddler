@@ -175,8 +175,15 @@ namespace Ultima.Helpers
         /// <summary>
         /// Method for compressing zlib byte arrays inside .uop
         /// </summary>
+        /// <param name="rawData">data to compress</param>
+        /// <param name="zlibLevel">
+        /// Raw zlib level 0-9, or null to use <see cref="CompressionLevel.Optimal"/>. The client's own
+        /// packer used stock zlib, i.e. level 6: re-compressing the 872 entries of the shipped
+        /// MultiCollection.uop at level 6 reproduces its 522 746 compressed bytes exactly, while
+        /// Optimal produces 5.6% more (and level 9 is still 2.4% more).
+        /// </param>
         /// <returns>compressed byte[] data</returns>
-        public static (bool success, byte[] compressedData) Compress(byte[] rawData)
+        public static (bool success, byte[] compressedData) Compress(byte[] rawData, int? zlibLevel = null)
         {
             if (rawData == null || rawData.Length == 0)
             {
@@ -187,10 +194,17 @@ namespace Ultima.Helpers
             {
                 using var dataStream = new MemoryStream(rawData);
                 using var resultStream = new MemoryStream();
-                using var zlibStream = new ZLibStream(resultStream, CompressionLevel.Optimal);
-                dataStream.CopyTo(zlibStream);
-                zlibStream.Flush();
-                zlibStream.Close();
+
+                // Keep feeding the compressor through CopyTo: its chunking affects deflate block
+                // boundaries, so switching to a single Write silently changes the output of every
+                // existing caller.
+                using (Stream zlibStream = zlibLevel.HasValue
+                           ? new ZLibStream(resultStream, new ZLibCompressionOptions { CompressionLevel = zlibLevel.Value }, leaveOpen: true)
+                           : new ZLibStream(resultStream, CompressionLevel.Optimal, leaveOpen: true))
+                {
+                    dataStream.CopyTo(zlibStream);
+                }
+
                 return (true, resultStream.ToArray());
             }
             catch (Exception)

@@ -3,8 +3,10 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using Microsoft.Extensions.Logging;
 using Ultima;
 using Ultima.Helpers;
+using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Plugin.UopPacker.Classes
 {
@@ -53,22 +55,97 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         // Sentinel Id used to mark a synthetic entry that should be written from housing.bin.
         private const int _housingBinSentinelId = -1;
 
+        /// <summary>
+        /// zlib level used for MultiCollection.uop entries, chosen to land as close as possible to the
+        /// size the client's own packer produced.
+        /// </summary>
+        /// <remarks>
+        /// The shipped file's 872 entries total 522 746 compressed bytes. .NET does not use stock zlib
+        /// (it ships zlib-ng), so its level mapping is not monotonic and does not reproduce stock zlib
+        /// byte for byte. Re-compressing those payloads through this runtime measures:
+        /// level 6 / <see cref="CompressionLevel.Optimal"/> 546 505 (+4.5%), level 9 /
+        /// <see cref="CompressionLevel.SmallestSize"/> 538 500 (+3.0%), level 8 525 894 (+0.6%),
+        /// and level 7 523 601 (+0.2%) - the closest available. Any level produces a valid file; this
+        /// only affects size, so it is safe to revisit if a future runtime shifts the mapping.
+        /// </remarks>
+        private const int _multiCollectionZlibLevel = 7;
+
         //
         // MUL -> UOP
         //
-        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag = CompressionFlag.None, string housingBinFile = "", IProgress<int> progress = null)
+        public static void ToUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag = CompressionFlag.None, string housingBinFile = "", IProgress<int> progress = null, string componentsFile = "")
         {
-            // Same for all UOP files
-            const long firstTable = 0x200;
+            if (type == FileType.MultiCollection)
+            {
+                if (compressionFlag == CompressionFlag.Mythic)
+                {
+                    throw new ArgumentException(
+                        "MultiCollection.uop does not support Mythic compression - the client only accepts stored (0) or zlib (1). Use Zlib.",
+                        nameof(compressionFlag));
+                }
+
+                if (string.IsNullOrWhiteSpace(housingBinFile) || !File.Exists(housingBinFile))
+                {
+                    throw new FileNotFoundException(
+                        "MultiCollection.uop must contain build/multicollection/housing.bin (the custom housing piece catalog). " +
+                        "Extract it from the original UOP first and pass it to the packer.",
+                        string.IsNullOrWhiteSpace(housingBinFile) ? "housing.bin" : housingBinFile);
+                }
+            }
+
+            MultiComponentSidecar.Table componentTable = type == FileType.MultiCollection
+                ? MultiComponentSidecar.Load(string.IsNullOrWhiteSpace(componentsFile)
+                    ? MultiComponentSidecar.GetDefaultPath(inFile)
+                    : componentsFile)
+                : null;
+
+            try
+            {
+                WriteUop(inFile, inFileIdx, outFile, type, typeIndex, compressionFlag, housingBinFile, progress, componentTable);
+            }
+            catch
+            {
+                // Never leave a half written UOP behind - it would look like a usable file.
+                TryDelete(outFile);
+                throw;
+            }
+
+            ReportComponentSidecarProblems(componentTable);
+        }
+
+        private static void TryDelete(string path)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (IOException)
+            {
+                // Nothing useful to do; the original failure is the one that matters.
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // As above.
+            }
+        }
+
+        private static void WriteUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag, string housingBinFile, IProgress<int> progress, MultiComponentSidecar.Table componentTable)
+        {
             const int tableSize = 0x64;
 
-#pragma warning disable 162
-            // Sanity, in case firstTable is customized by you!
-            if (firstTable < 0x28)
-            {
-                throw new Exception("At least 0x28 bytes are needed for the header.");
-            }
-#pragma warning restore 162
+            /*
+             * The shipped client files come in two shapes: version 4 with 100 entries per block and the
+             * first block right behind the 0x28 byte header (MultiCollection, gumpart, sound, tileart,
+             * AnimationSequence), and version 5 with 1000 entries per block and a large gap before the
+             * first block (art, maps). We only ever write 100 entry blocks, so anything using that layout
+             * has to declare version 4 as well - MultiCollection.uop in particular, which was previously
+             * written as a version 5 header with a version 4 body.
+             */
+            bool version4Layout = type == FileType.GumpartLegacyMul || type == FileType.MultiCollection;
+            long firstTable = version4Layout ? 0x28 : 0x200;
 
             using (BinaryReader reader = OpenInput(inFile))
             using (BinaryReader readerIdx = OpenInput(inFileIdx))
@@ -140,22 +217,19 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                 // File header
                 writer.Write(0x50594D); // MYP
-                writer.Write(type == FileType.GumpartLegacyMul ? 4 : 5); // version
+                writer.Write(version4Layout ? 4 : 5); // version
                 writer.Write(0xFD23EC43); // format timestamp?
-                writer.Write(type == FileType.GumpartLegacyMul ? (long)0x28 : firstTable); // first table
+                writer.Write(firstTable); // first table
                 writer.Write(tableSize); // table size
                 writer.Write(idxEntries.Count); // file count
-                writer.Write(0); // modified count?
-                writer.Write(0); // ?
-                writer.Write(0); // ?
+                writer.Write(0); // modified count? (wseq, version 5 only)
+                writer.Write(0); // ? (cseq, version 5 only)
+                writer.Write(0); // reserved
 
                 // Padding
-                if (type != FileType.GumpartLegacyMul)
+                for (long i = 0x28; i < firstTable; ++i)
                 {
-                    for (int i = 0x28; i < firstTable; ++i)
-                    {
-                        writer.Write((byte)0);
-                    }
+                    writer.Write((byte)0);
                 }
 
                 int tableCount = (int)Math.Ceiling((double)idxEntries.Count / tableSize);
@@ -199,6 +273,23 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         tableEntries[tableIdx].Offset = writer.BaseStream.Position;
                         tableEntries[tableIdx].DecompressedSize = data.Length;
                         tableEntries[tableIdx].CompressionFlag = (short)compressionFlag;
+                        tableEntries[tableIdx].HeaderLength = 0;
+
+                        /*
+                         * Every entry of every shipped version 4 UOP carries a 12 byte header block in front
+                         * of its payload, and the 32 bit hash field of the table entry is the Adler32 of those
+                         * 12 bytes - not of the payload (verified against 48897 entries across MultiCollection,
+                         * tileart, AnimationSequence, soundLegacyMUL and gumpartLegacyMUL). Reproduce that for
+                         * MultiCollection; the remaining types keep their old behaviour for now, which does not
+                         * match the shipped files either.
+                         */
+                        byte[] entryHeader = null;
+                        if (type == FileType.MultiCollection)
+                        {
+                            entryHeader = BuildEntryHeader();
+                            writer.Write(entryHeader);
+                            tableEntries[tableIdx].HeaderLength = entryHeader.Length;
+                        }
 
                         // hash 906142efe9fdb38a, which is file 0009834.tga (and no others, as 7.0.59.5) use a different name format (7 digits instead of 8);
                         //  if in newer versions more of these files will have adopted that format, someone should update this list of exceptions
@@ -218,17 +309,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                         if (type == FileType.MultiCollection && idxEntries[j].Id != _housingBinSentinelId)
                         {
-                            byte[] multiData = BuildMultiUopEntryFromMul(data, idxEntries[j].Id);
+                            byte[] multiData = BuildMultiUopEntryFromMul(data, idxEntries[j].Id, componentTable);
 
                             tableEntries[tableIdx].DecompressedSize = multiData.Length;
                             tableEntries[tableIdx].Size = multiData.Length;
 
                             if (compressionFlag >= CompressionFlag.Zlib)
                             {
-                                var result = UopUtils.Compress(multiData);
+                                var result = UopUtils.Compress(multiData, _multiCollectionZlibLevel);
                                 if (!result.success)
                                 {
-                                    return;
+                                    throw new InvalidDataException($"Compression failed for multi {idxEntries[j].Id}.");
                                 }
                                 multiData = result.compressedData;
                                 tableEntries[tableIdx].Size = multiData.Length;
@@ -276,8 +367,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 var result = UopUtils.Compress(gumpArtData);
                                 if (!result.success)
                                 {
-                                    // Handle error
-                                    return;
+                                    throw new InvalidDataException($"Compression failed for gump {idxEntries[j].Id}.");
                                 }
 
                                 tableEntries[tableIdx].Size = result.compressedData.Length;
@@ -294,10 +384,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                             if (compressionFlag >= CompressionFlag.Zlib)
                             {
-                                var result = UopUtils.Compress(binData);
+                                var result = UopUtils.Compress(binData, _multiCollectionZlibLevel);
                                 if (!result.success)
                                 {
-                                    return;
+                                    throw new InvalidDataException("Compression failed for housing.bin.");
                                 }
                                 binData = result.compressedData;
                                 tableEntries[tableIdx].Size = binData.Length;
@@ -308,9 +398,37 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         }
                         else
                         {
-                            tableEntries[tableIdx].Size = data.Length;
-                            tableEntries[tableIdx].Hash = HashAdler32(data);
-                            writer.Write(data);
+                            // Art / Map / Sound. The compression flag was already stamped on the entry above, so
+                            // the data has to actually be compressed here - otherwise the entry claims zlib over
+                            // raw bytes and neither the client nor FromUop can read it back.
+                            byte[] payload = data;
+
+                            if (compressionFlag == CompressionFlag.Mythic)
+                            {
+                                throw new ArgumentException(
+                                    $"Mythic compression is only implemented for {nameof(FileType.GumpartLegacyMul)}, not for {type}.",
+                                    nameof(compressionFlag));
+                            }
+
+                            if (compressionFlag == CompressionFlag.Zlib)
+                            {
+                                var result = UopUtils.Compress(payload);
+                                if (!result.success)
+                                {
+                                    throw new InvalidDataException($"Compression failed for chunk {idxEntries[j].Id}.");
+                                }
+
+                                payload = result.compressedData;
+                            }
+
+                            tableEntries[tableIdx].Size = payload.Length;
+                            tableEntries[tableIdx].Hash = HashAdler32(payload);
+                            writer.Write(payload);
+                        }
+
+                        if (entryHeader != null)
+                        {
+                            tableEntries[tableIdx].Hash = HashAdler32(entryHeader);
                         }
 
                         if (totalEntries > 0)
@@ -344,7 +462,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     for (int j = idxStart; j < idxEnd; ++j, ++tableIdx)
                     {
                         writer.Write(tableEntries[tableIdx].Offset);
-                        writer.Write(0); // header length
+                        writer.Write(tableEntries[tableIdx].HeaderLength); // header length
                         writer.Write(tableEntries[tableIdx].Size); // compressed size
                         writer.Write(tableEntries[tableIdx].DecompressedSize); // decompressed size
                         writer.Write(tableEntries[tableIdx].Identifier);
@@ -363,12 +481,46 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
         }
 
+        private static void ReportComponentSidecarProblems(MultiComponentSidecar.Table componentTable)
+        {
+            if (componentTable == null)
+            {
+                return;
+            }
+
+            ILogger logger = AppLog.For(typeof(LegacyMulFileConverter));
+
+            logger.LogInformation("UopPacker merged {RowCount} component rows from {Path}",
+                componentTable.RowCount, componentTable.Path);
+
+            foreach (string problem in componentTable.Problems)
+            {
+                logger.LogWarning("UopPacker component sidecar: {Problem}", problem);
+            }
+        }
+
         private static readonly byte[] _emptyTableEntry = new byte[8 + 4 + 4 + 4 + 8 + 4 + 2];
+
+        /// <summary>
+        /// The 12 byte block the client writes in front of every entry payload in a version 4 UOP:
+        /// two constant shorts (3, 8) followed by a FILETIME. Constant across all 48897 entries of the
+        /// five shipped version 4 UOPs.
+        /// </summary>
+        private static byte[] BuildEntryHeader()
+        {
+            byte[] header = new byte[12];
+
+            BinaryPrimitives.WriteUInt16LittleEndian(header, 3);
+            BinaryPrimitives.WriteUInt16LittleEndian(header.AsSpan(2), 8);
+            BinaryPrimitives.WriteInt64LittleEndian(header.AsSpan(4), DateTime.UtcNow.ToFileTimeUtc());
+
+            return header;
+        }
 
         //
         // UOP -> MUL
         //
-        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex, string housingBinFile = "", IProgress<int> progress = null)
+        public void FromUop(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex, string housingBinFile = "", IProgress<int> progress = null, string componentsFile = "")
         {
             Dictionary<ulong, int> chunkIds = new Dictionary<ulong, int>();
             Dictionary<ulong, int> chunkIds2 = new Dictionary<ulong, int>();
@@ -390,9 +542,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
             bool[] used = new bool[maxId];
 
+            // multi.mul rows have nowhere to put the per tile component ids, so they go beside it.
+            string componentsPath = type != FileType.MultiCollection
+                ? null
+                : string.IsNullOrWhiteSpace(componentsFile)
+                    ? MultiComponentSidecar.GetDefaultPath(outFile)
+                    : componentsFile;
+
             using (BinaryReader reader = OpenInput(inFile))
             using (BinaryWriter mulWriter = OpenOutput(outFile))
             using (BinaryWriter idxWriter = OpenOutput(outFileIdx))
+            using (MultiComponentSidecar.Writer componentWriter = string.IsNullOrWhiteSpace(componentsPath) ? null : MultiComponentSidecar.CreateWriter(componentsPath))
             {
                 if (reader.ReadInt32() != 0x50594D) // MYP
                 {
@@ -446,11 +606,15 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         }
 
                         // extract housing.bin file (not really needed for muls to work but needed later to pack files back to uop)
-                        if ((type == FileType.MultiCollection) && (offsets[i].Identifier == 0x126D1E99DDEDEE0A) && !string.IsNullOrWhiteSpace(housingBinFile))
+                        if ((type == FileType.MultiCollection) && (offsets[i].Identifier == _housingBinIdentifier))
                         {
-                            // MultiCollection.uop has the file "build/multicollection/housing.bin", which has to be handled separately
-                            using (BinaryWriter writerBin = OpenOutput(housingBinFile))
+                            // MultiCollection.uop has the file "build/multicollection/housing.bin", which has to be
+                            // handled separately. It has no id in the hash lookup, so it must be consumed here even
+                            // when no output path was given - otherwise it falls through as an unknown identifier.
+                            if (!string.IsNullOrWhiteSpace(housingBinFile))
                             {
+                                using BinaryWriter writerBin = OpenOutput(housingBinFile);
+
                                 stream.Seek(offsets[i].Offset + offsets[i].HeaderLength, SeekOrigin.Begin);
 
                                 byte[] binData = reader.ReadBytes(offsets[i].Size);
@@ -567,7 +731,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 case FileType.MultiCollection:
                                     {
                                         long startPosition = mulWriter.BaseStream.Position;
-                                        WriteMultiUopEntryToMul(mulWriter, chunkData);
+                                        WriteMultiUopEntryToMul(mulWriter, chunkData, chunkId, componentWriter);
                                         long endPosition = mulWriter.BaseStream.Position;
 
                                         idxWriter.Write((int)(endPosition - startPosition)); // Size
@@ -819,73 +983,152 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             return b << 16 | a;
         }
 
-        private static void WriteMultiUopEntryToMul(BinaryWriter mulWriter, byte[] chunkData)
+        /*
+         * MUL row layout: [itemId:2][x:2][y:2][z:2][flag:4][extra:4] = 16 bytes (High Seas / 7.0.9+)
+         * UOP tile:       [itemId:2][x:2][y:2][z:2][flag:2][componentCount:4] = 14 bytes, followed by
+         *                 componentCount 32 bit component ids.
+         *
+         * The two flag fields map like this - derived from the 53261 tiles that can be matched by
+         * id/x/y/z between the shipped MultiCollection.uop and the shipped multi.mul, with no exception:
+         *
+         *     mul flag  = (uopFlag & 0x0001) != 0 ? 0 : 1
+         *     mul extra = (uopFlag & 0x0100) != 0 ? 1 : 0
+         *
+         * So the "unknown" trailing int32 of the High Seas mul row is where bit 0x0100 lives. In the
+         * shipped file 8207 of 186695 tiles have it set; folding it into bit 0 (or dropping it) loses it.
+         */
+        private const ushort _uopTileFlagLow = 0x0001;
+        private const ushort _uopTileFlagHigh = 0x0100;
+        private const int _mulRowSize = 16;
+        private const int _uopTileSize = 14;
+
+        private static void WriteMultiUopEntryToMul(BinaryWriter mulWriter, byte[] chunkData, int multiId, MultiComponentSidecar.Writer componentWriter)
         {
-            Span<byte> span = chunkData.AsSpan();
-            uint count = BinaryPrimitives.ReadUInt32LittleEndian(span[4..]);
-            span = span[8..];
+            ReadOnlySpan<byte> data = chunkData.AsSpan();
+
+            if (data.Length < 8)
+            {
+                throw new InvalidDataException($"Multi {multiId}: entry is {data.Length} bytes, too short to hold a header.");
+            }
+
+            uint count = BinaryPrimitives.ReadUInt32LittleEndian(data[4..]);
+            int position = 8;
 
             for (int i = 0; i < count; i++)
             {
-                ushort itemId = BinaryPrimitives.ReadUInt16LittleEndian(span);
-                short x = BinaryPrimitives.ReadInt16LittleEndian(span[2..]);
-                short y = BinaryPrimitives.ReadInt16LittleEndian(span[4..]);
-                short z = BinaryPrimitives.ReadInt16LittleEndian(span[6..]);
+                if (position + _uopTileSize > data.Length)
+                {
+                    throw new InvalidDataException(
+                        $"Multi {multiId}: tile {i} of {count} runs past the end of the {data.Length} byte entry.");
+                }
 
-                // this probably is just tiledata but needs further investigation
-                ushort flagValue = BinaryPrimitives.ReadUInt16LittleEndian(span[8..]);
-                uint clilocsCount = BinaryPrimitives.ReadUInt32LittleEndian(span[10..]);
+                ReadOnlySpan<byte> tile = data[position..];
 
-                int skip = (int)Math.Min(clilocsCount, int.MaxValue) * 4; // bypass binary block
-                span = span[(14 + skip)..];
+                ushort itemId = BinaryPrimitives.ReadUInt16LittleEndian(tile);
+                short x = BinaryPrimitives.ReadInt16LittleEndian(tile[2..]);
+                short y = BinaryPrimitives.ReadInt16LittleEndian(tile[4..]);
+                short z = BinaryPrimitives.ReadInt16LittleEndian(tile[6..]);
+                ushort flagValue = BinaryPrimitives.ReadUInt16LittleEndian(tile[8..]);
+                uint componentCount = BinaryPrimitives.ReadUInt32LittleEndian(tile[10..]);
+
+                long tileSize = _uopTileSize + (long)componentCount * 4;
+                if (position + tileSize > data.Length)
+                {
+                    throw new InvalidDataException(
+                        $"Multi {multiId}: tile {i} claims {componentCount} component ids, which runs past the end of the {data.Length} byte entry.");
+                }
+
+                if (componentCount > 0 && componentWriter != null)
+                {
+                    uint[] componentIds = new uint[componentCount];
+                    for (int c = 0; c < componentIds.Length; ++c)
+                    {
+                        componentIds[c] = BinaryPrimitives.ReadUInt32LittleEndian(tile[(_uopTileSize + c * 4)..]);
+                    }
+
+                    componentWriter.Write(multiId, i, itemId, x, y, z, componentIds);
+                }
+
+                position += (int)tileSize;
 
                 mulWriter.Write(itemId);
                 mulWriter.Write(x);
                 mulWriter.Write(y);
                 mulWriter.Write(z);
-                mulWriter.Write(flagValue != 0 ? 0 : 1);
-                mulWriter.Write(0);
+                mulWriter.Write((flagValue & _uopTileFlagLow) != 0 ? 0 : 1);
+                mulWriter.Write((flagValue & _uopTileFlagHigh) != 0 ? 1 : 0);
             }
         }
 
-        // MUL row layout: [itemId:2][x:2][y:2][z:2][flag:4][extra:4] = 16 bytes
-        // UOP component:  [itemId:2][x:2][y:2][z:2][flag:2][clilocsCount:4] = 14 bytes
-        private static byte[] BuildMultiUopEntryFromMul(byte[] mulData, int multiId)
+        private static byte[] BuildMultiUopEntryFromMul(byte[] mulData, int multiId, MultiComponentSidecar.Table components)
         {
-            const int mulRowSize = 16;
-            const int uopComponentSize = 14;
+            if (mulData.Length % _mulRowSize != 0)
+            {
+                throw new InvalidDataException(
+                    $"Multi {multiId}: {mulData.Length} bytes is not a whole number of 16 byte rows. " +
+                    "MultiCollection.uop can only be built from a High Seas (7.0.9+) multi.mul; " +
+                    "the older 12 byte row format is not supported.");
+            }
 
-            int componentCount = mulData.Length / mulRowSize;
-            byte[] result = new byte[8 + componentCount * uopComponentSize];
+            int tileCount = mulData.Length / _mulRowSize;
+
+            // Component ids make the tile records variable length, so resolve them before sizing the buffer.
+            uint[][] componentIds = new uint[tileCount][];
+            int totalComponents = 0;
+
+            ReadOnlySpan<byte> source = mulData.AsSpan();
+
+            for (int i = 0; i < tileCount; i++)
+            {
+                ReadOnlySpan<byte> row = source[(i * _mulRowSize)..];
+
+                componentIds[i] = components?.GetComponentIds(
+                    multiId,
+                    i,
+                    BinaryPrimitives.ReadUInt16LittleEndian(row),
+                    BinaryPrimitives.ReadInt16LittleEndian(row[2..]),
+                    BinaryPrimitives.ReadInt16LittleEndian(row[4..]),
+                    BinaryPrimitives.ReadInt16LittleEndian(row[6..])) ?? Array.Empty<uint>();
+
+                totalComponents += componentIds[i].Length;
+            }
+
+            byte[] result = new byte[8 + tileCount * _uopTileSize + totalComponents * 4];
 
             Span<byte> dst = result.AsSpan();
             BinaryPrimitives.WriteUInt32LittleEndian(dst, (uint)multiId);
-            BinaryPrimitives.WriteUInt32LittleEndian(dst[4..], (uint)componentCount);
+            BinaryPrimitives.WriteUInt32LittleEndian(dst[4..], (uint)tileCount);
             dst = dst[8..];
 
-            ReadOnlySpan<byte> src = mulData.AsSpan();
-
-            for (int i = 0; i < componentCount; i++)
+            for (int i = 0; i < tileCount; i++)
             {
-                ushort itemId = BinaryPrimitives.ReadUInt16LittleEndian(src);
-                short x = BinaryPrimitives.ReadInt16LittleEndian(src[2..]);
-                short y = BinaryPrimitives.ReadInt16LittleEndian(src[4..]);
-                short z = BinaryPrimitives.ReadInt16LittleEndian(src[6..]);
-                int mulFlag = BinaryPrimitives.ReadInt32LittleEndian(src[8..]);
-                // extra int32 at src[12..16] is discarded
+                ReadOnlySpan<byte> row = source[(i * _mulRowSize)..];
 
-                // Inverse of WriteMultiUopEntryToMul: mul==1 -> visible (uop flag 0), otherwise invisible (uop flag 1).
-                ushort uopFlag = (ushort)(mulFlag == 1 ? 0 : 1);
+                ushort itemId = BinaryPrimitives.ReadUInt16LittleEndian(row);
+                short x = BinaryPrimitives.ReadInt16LittleEndian(row[2..]);
+                short y = BinaryPrimitives.ReadInt16LittleEndian(row[4..]);
+                short z = BinaryPrimitives.ReadInt16LittleEndian(row[6..]);
+                int mulFlag = BinaryPrimitives.ReadInt32LittleEndian(row[8..]);
+                int mulExtra = BinaryPrimitives.ReadInt32LittleEndian(row[12..]);
+
+                // Exact inverse of WriteMultiUopEntryToMul.
+                ushort uopFlag = (ushort)((mulFlag == 0 ? _uopTileFlagLow : 0) | (mulExtra != 0 ? _uopTileFlagHigh : 0));
+
+                uint[] ids = componentIds[i];
 
                 BinaryPrimitives.WriteUInt16LittleEndian(dst, itemId);
                 BinaryPrimitives.WriteInt16LittleEndian(dst[2..], x);
                 BinaryPrimitives.WriteInt16LittleEndian(dst[4..], y);
                 BinaryPrimitives.WriteInt16LittleEndian(dst[6..], z);
                 BinaryPrimitives.WriteUInt16LittleEndian(dst[8..], uopFlag);
-                BinaryPrimitives.WriteUInt32LittleEndian(dst[10..], 0u); // clilocsCount
+                BinaryPrimitives.WriteUInt32LittleEndian(dst[10..], (uint)ids.Length);
 
-                src = src[mulRowSize..];
-                dst = dst[uopComponentSize..];
+                for (int c = 0; c < ids.Length; ++c)
+                {
+                    BinaryPrimitives.WriteUInt32LittleEndian(dst[(_uopTileSize + c * 4)..], ids[c]);
+                }
+
+                dst = dst[(_uopTileSize + ids.Length * 4)..];
             }
 
             return result;
