@@ -42,7 +42,7 @@ namespace UoFiddler.Controls.UserControls
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GumpControl));
             splitContainer1 = new System.Windows.Forms.SplitContainer();
-            listBox = new System.Windows.Forms.ListBox();
+            listView = new System.Windows.Forms.ListView();
             contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
             showFreeSlotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findNextFreeSlotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,7 +112,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(listBox);
+            splitContainer1.Panel1.Controls.Add(listView);
             splitContainer1.Panel1.Controls.Add(filterToolStrip);
             splitContainer1.Panel1.Controls.Add(topMenuToolStrip);
             // 
@@ -125,23 +125,26 @@ namespace UoFiddler.Controls.UserControls
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
-            // listBox
+            // listView
             // 
-            listBox.ContextMenuStrip = contextMenuStrip;
-            listBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            listBox.FormattingEnabled = true;
-            listBox.IntegralHeight = false;
-            listBox.ItemHeight = 75;
-            listBox.Location = new System.Drawing.Point(0, 50);
-            listBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            listBox.Name = "listBox";
-            listBox.Size = new System.Drawing.Size(289, 380);
-            listBox.TabIndex = 0;
-            listBox.DrawItem += ListBox_DrawItem;
-            listBox.MeasureItem += ListBox_MeasureItem;
-            listBox.SelectedIndexChanged += ListBox_SelectedIndexChanged;
-            listBox.KeyUp += Gump_KeyUp;
+            listView.ContextMenuStrip = contextMenuStrip;
+            listView.Dock = System.Windows.Forms.DockStyle.Fill;
+            listView.FullRowSelect = true;
+            listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listView.HideSelection = false;
+            listView.Location = new System.Drawing.Point(0, 50);
+            listView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listView.MultiSelect = false;
+            listView.Name = "listView";
+            listView.OwnerDraw = true;
+            listView.Size = new System.Drawing.Size(289, 380);
+            listView.TabIndex = 0;
+            listView.View = System.Windows.Forms.View.Details;
+            listView.VirtualMode = true;
+            listView.DrawItem += ListView_DrawItem;
+            listView.RetrieveVirtualItem += ListView_RetrieveVirtualItem;
+            listView.SelectedIndexChanged += ListView_SelectedIndexChanged;
+            listView.KeyUp += Gump_KeyUp;
             // 
             // contextMenuStrip
             // 
@@ -531,7 +534,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripTextBox InsertText;
         private System.Windows.Forms.ToolStripMenuItem insertToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem jumpToMaleFemale;
-        private System.Windows.Forms.ListBox listBox;
+        private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripButton Preload;
         private System.ComponentModel.BackgroundWorker PreLoader;

@@ -32,6 +32,7 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint,
                 true);
+            ConfigureListView();
             if (!Files.CacheData)
             {
                 Preload.Visible = false;
@@ -52,6 +53,24 @@ namespace UoFiddler.Controls.UserControls
         private Dictionary<int, GumpEntry> _gumpEntries = new();
         private string _activeNameFilter = string.Empty;
         private readonly HashSet<string> _activeTagFilters = new(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Gump ids currently listed, ascending. The list is virtual, so this is the only place a row's
+        /// identity lives - with free slots hidden a row's position is not its id.
+        /// </summary>
+        private readonly List<int> _ids = new();
+
+        /// <summary>
+        /// Row height. A list view has no ItemHeight of its own, so it comes from the image list.
+        /// </summary>
+        private const int _rowHeight = 75;
+
+        /// <summary>
+        /// Row currently selected, or -1. Kept here because <see cref="DrawListViewItemEventArgs.State"/>
+        /// does not carry the selection for a virtual owner drawn list view - the item being painted is a
+        /// fresh one built in <see cref="ListView_RetrieveVirtualItem"/>, so every row read as selected.
+        /// </summary>
+        private int _selectedPosition = -1;
 
         private static readonly string[] _layerTags =
         {
@@ -81,6 +100,91 @@ namespace UoFiddler.Controls.UserControls
             "skirt",        // 0x17
             "leg-armor",    // 0x18
         };
+
+        /// <summary>
+        /// Sets up the virtual list. It replaced a ListBox because the gump id space (0x12000) is larger
+        /// than the 16 bit item index a list box exposes through LB_ITEMFROMPOINT and its scroll bar, so
+        /// with free slots shown every row above 65535 aliased onto a row near the start of the list.
+        /// </summary>
+        private void ConfigureListView()
+        {
+            listView.SmallImageList = new ImageList { ImageSize = new Size(1, _rowHeight) };
+            listView.Columns.Add(new ColumnHeader { Width = listView.ClientSize.Width });
+            listView.ClientSizeChanged += (_, _) => listView.Columns[0].Width = listView.ClientSize.Width;
+
+            // A row is a 105 pixel thumbnail plus a name and a tag line, so width past that is empty
+            // background. Keep the pane where the user put it when the form resizes, and clamp it.
+            splitContainer1.FixedPanel = FixedPanel.Panel1;
+            splitContainer1.SplitterMoved += (_, _) => ClampListWidth();
+            splitContainer1.SizeChanged += (_, _) => ClampListWidth();
+            ClampListWidth();
+        }
+
+        /// <summary>
+        /// Widest the list pane may get, whether by dragging the splitter or by the form growing.
+        /// </summary>
+        private const int _maxListWidth = 450;
+
+        private void ClampListWidth()
+        {
+            if (splitContainer1.Width <= 0)
+            {
+                return;
+            }
+
+            int max = Math.Min(_maxListWidth,
+                splitContainer1.Width - splitContainer1.Panel2MinSize - splitContainer1.SplitterWidth);
+
+            // Assigning outside the panels' own bounds throws; leave a pane too small to clamp alone.
+            if (max < splitContainer1.Panel1MinSize || splitContainer1.SplitterDistance <= max)
+            {
+                return;
+            }
+
+            splitContainer1.SplitterDistance = max;
+        }
+
+        /// <summary>Gump id of the selected row, or -1 when nothing is selected.</summary>
+        private int SelectedGumpId
+        {
+            get
+            {
+                int position = listView.SelectedIndices.Count > 0 ? listView.SelectedIndices[0] : -1;
+
+                return position >= 0 && position < _ids.Count ? _ids[position] : -1;
+            }
+        }
+
+        private void SelectPosition(int position)
+        {
+            if (position < 0 || position >= _ids.Count)
+            {
+                return;
+            }
+
+            listView.SelectedIndices.Clear();
+            listView.SelectedIndices.Add(position);
+            _selectedPosition = position;
+            listView.EnsureVisible(position);
+        }
+
+        /// <summary>
+        /// Adds an id to the listed set, keeping it ascending, and selects it. Does nothing but select
+        /// when the id is already listed.
+        /// </summary>
+        private void InsertId(int id)
+        {
+            int position = _ids.BinarySearch(id);
+            if (position < 0)
+            {
+                position = ~position;
+                _ids.Insert(position, id);
+                listView.VirtualListSize = _ids.Count;
+            }
+
+            SelectPosition(position);
+            listView.Invalidate();
+        }
 
         /// <summary>
         /// Reload when loaded (file changed)
@@ -130,13 +234,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void PopulateListBox(bool showOnlyValid)
         {
-            listBox.BeginUpdate();
-            listBox.Items.Clear();
+            listView.BeginUpdate();
+            listView.SelectedIndices.Clear();
+            _selectedPosition = -1;
+            _ids.Clear();
 
             bool hasNameFilter = _activeNameFilter.Length > 0;
             bool hasTagFilter = _activeTagFilters.Count > 0;
 
-            List<object> cache = new List<object>();
             for (int i = 0; i < Gumps.GetCount(); ++i)
             {
                 if (showOnlyValid && !Gumps.IsValidIndex(i))
@@ -165,16 +270,14 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                cache.Add(i);
+                _ids.Add(i);
             }
 
-            listBox.Items.AddRange(cache.ToArray());
-            listBox.EndUpdate();
+            listView.VirtualListSize = _ids.Count;
+            listView.EndUpdate();
+            listView.Invalidate();
 
-            if (listBox.Items.Count > 0)
-            {
-                listBox.SelectedIndex = 0;
-            }
+            SelectPosition(0);
         }
 
         private void LoadGumpXml()
@@ -324,44 +427,22 @@ namespace UoFiddler.Controls.UserControls
 
             if (Gumps.IsValidIndex(index))
             {
-                bool done = false;
-                for (int i = 0; i < listBox.Items.Count; ++i)
-                {
-                    int j = int.Parse(listBox.Items[i].ToString());
-                    if (j > index)
-                    {
-                        listBox.Items.Insert(i, index);
-                        listBox.SelectedIndex = i;
-                        done = true;
-                        break;
-                    }
+                InsertId(index);
 
-                    if (j == index)
-                    {
-                        done = true;
-                        break;
-                    }
-                }
-
-                if (!done)
-                {
-                    listBox.Items.Add(index);
-                }
+                return;
             }
-            else
+
+            // Gone. With free slots shown the row stays, it just draws as free.
+            int position = _ids.BinarySearch(index);
+            if (position >= 0 && !_showFreeSlots)
             {
-                for (int i = 0; i < listBox.Items.Count; ++i)
-                {
-                    int j = int.Parse(listBox.Items[i].ToString());
-                    if (j == index)
-                    {
-                        listBox.Items.RemoveAt(i);
-                        break;
-                    }
-                }
-
-                listBox.Invalidate();
+                listView.SelectedIndices.Clear();
+                _selectedPosition = -1;
+                _ids.RemoveAt(position);
+                listView.VirtualListSize = _ids.Count;
             }
+
+            listView.Invalidate();
         }
 
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -375,16 +456,26 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FirePreviewBackgroundColorChangeEvent();
         }
 
-        private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void ListView_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            if (e.Index < 0)
+            // Everything visible is painted in ListView_DrawItem; the text is here so the row still has
+            // an accessible name and a keyboard type-ahead target.
+            e.Item = (uint)e.ItemIndex < (uint)_ids.Count
+                ? new ListViewItem(_ids[e.ItemIndex].ToString())
+                : new ListViewItem(string.Empty);
+        }
+
+        private void ListView_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            if ((uint)e.ItemIndex >= (uint)_ids.Count)
             {
                 return;
             }
 
             Brush fontBrush = Brushes.Gray;
 
-            int i = int.Parse(listBox.Items[e.Index].ToString());
+            bool isSelected = e.ItemIndex == _selectedPosition;
+            int i = _ids[e.ItemIndex];
             bool hasEntry = _gumpEntries.TryGetValue(i, out GumpEntry entry);
 
             if (Gumps.IsValidIndex(i))
@@ -397,7 +488,7 @@ namespace UoFiddler.Controls.UserControls
                     int width = bmp.Width > 100 ? 100 : bmp.Width;
                     int height = bmp.Height > thumbMaxH ? thumbMaxH : bmp.Height;
 
-                    if (listBox.SelectedIndex == e.Index)
+                    if (isSelected)
                     {
                         e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, e.Bounds.Height);
                     }
@@ -414,7 +505,7 @@ namespace UoFiddler.Controls.UserControls
             }
             else
             {
-                if (listBox.SelectedIndex == e.Index)
+                if (isSelected)
                 {
                     e.Graphics.FillRectangle(Brushes.LightSteelBlue, e.Bounds.X, e.Bounds.Y, 105, e.Bounds.Height);
                 }
@@ -445,19 +536,19 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
-        private void ListBox_MeasureItem(object sender, MeasureItemEventArgs e)
+        private void ListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            e.ItemHeight = 75;
-        }
+            _selectedPosition = listView.SelectedIndices.Count > 0 ? listView.SelectedIndices[0] : -1;
 
-        private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox.SelectedIndex == -1)
+            int i = SelectedGumpId;
+            if (i < 0)
             {
+                pictureBox.BackgroundImage = null;
+                listView.Invalidate();
+
                 return;
             }
 
-            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
             pictureBox.BackColor = Options.PreviewBackgroundColor;
             if (Gumps.IsValidIndex(i))
             {
@@ -478,18 +569,18 @@ namespace UoFiddler.Controls.UserControls
                 pictureBox.BackgroundImage = null;
             }
 
-            listBox.Invalidate();
+            listView.Invalidate();
             JumpToMaleFemaleInvalidate();
         }
 
         private void JumpToMaleFemaleInvalidate()
         {
-            if (listBox.SelectedIndex == -1)
+            int gumpId = SelectedGumpId;
+            if (gumpId < 0)
             {
                 return;
             }
 
-            int gumpId = (int)listBox.SelectedItem;
             if (gumpId >= 50000)
             {
                 if (gumpId >= 60000)
@@ -512,7 +603,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickReplace(object sender, EventArgs e)
         {
-            if (listBox.SelectedItems.Count != 1)
+            if (SelectedGumpId < 0)
             {
                 return;
             }
@@ -537,14 +628,14 @@ namespace UoFiddler.Controls.UserControls
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
-                    int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+                    int i = SelectedGumpId;
 
                     Gumps.ReplaceGump(i, bitmap);
 
                     ControlEvents.FireGumpChangeEvent(this, i);
 
-                    listBox.Invalidate();
-                    ListBox_SelectedIndexChanged(this, EventArgs.Empty);
+                    listView.Invalidate();
+                    ListView_SelectedIndexChanged(this, EventArgs.Empty);
 
                     Options.ChangedUltimaClass["Gumps"] = true;
                 }
@@ -573,7 +664,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickRemove(object sender, EventArgs e)
         {
-            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            int i = SelectedGumpId;
+            if (i < 0)
+            {
+                return;
+            }
+
             DialogResult result = MessageBox.Show($"Are you sure to remove {i}", "Remove", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
@@ -585,23 +681,36 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FireGumpChangeEvent(this, i);
             if (!_showFreeSlots)
             {
-                listBox.Items.RemoveAt(listBox.SelectedIndex);
+                int position = _ids.BinarySearch(i);
+                if (position >= 0)
+                {
+                    listView.SelectedIndices.Clear();
+                    _selectedPosition = -1;
+                    _ids.RemoveAt(position);
+                    listView.VirtualListSize = _ids.Count;
+                }
             }
 
             pictureBox.BackgroundImage = null;
-            listBox.Invalidate();
+            listView.Invalidate();
             Options.ChangedUltimaClass["Gumps"] = true;
         }
 
         private void OnClickFindFree(object sender, EventArgs e)
         {
-            int id = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
-            ++id;
-            for (int i = listBox.SelectedIndex + 1; i < listBox.Items.Count; ++i, ++id)
+            int position = listView.SelectedIndices.Count > 0 ? listView.SelectedIndices[0] : -1;
+            if (position < 0)
             {
-                if (id < int.Parse(listBox.Items[i].ToString()))
+                return;
+            }
+
+            int id = _ids[position] + 1;
+            for (int i = position + 1; i < _ids.Count; ++i, ++id)
+            {
+                // A gap in the listed ids is a free slot when free slots are hidden.
+                if (id < _ids[i])
                 {
-                    listBox.SelectedIndex = i;
+                    SelectPosition(i);
                     break;
                 }
 
@@ -610,9 +719,9 @@ namespace UoFiddler.Controls.UserControls
                     continue;
                 }
 
-                if (!Gumps.IsValidIndex(int.Parse(listBox.Items[i].ToString())))
+                if (!Gumps.IsValidIndex(_ids[i]))
                 {
-                    listBox.SelectedIndex = i;
+                    SelectPosition(i);
                     break;
                 }
             }
@@ -673,38 +782,7 @@ namespace UoFiddler.Controls.UserControls
 
                     ControlEvents.FireGumpChangeEvent(this, index);
 
-                    bool done = false;
-                    for (int i = 0; i < listBox.Items.Count; ++i)
-                    {
-                        int j = int.Parse(listBox.Items[i].ToString());
-                        if (j > index)
-                        {
-                            listBox.Items.Insert(i, index);
-                            listBox.SelectedIndex = i;
-                            done = true;
-                            break;
-                        }
-
-                        if (!_showFreeSlots)
-                        {
-                            continue;
-                        }
-
-                        if (j != i)
-                        {
-                            continue;
-                        }
-
-                        Search(index);
-                        done = true;
-                        break;
-                    }
-
-                    if (!done)
-                    {
-                        listBox.Items.Add(index);
-                        listBox.SelectedIndex = listBox.Items.Count - 1;
-                    }
+                    InsertId(index);
 
                     Options.ChangedUltimaClass["Gumps"] = true;
                 }
@@ -713,30 +791,36 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            int i = SelectedGumpId;
             ExportGumpImage(i, ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            int i = SelectedGumpId;
             ExportGumpImage(i, ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            int i = SelectedGumpId;
             ExportGumpImage(i, ImageFormat.Jpeg);
         }
 
         private void Extract_Image_ClickPng(object sender, EventArgs e)
         {
-            int i = int.Parse(listBox.Items[listBox.SelectedIndex].ToString());
+            int i = SelectedGumpId;
             ExportGumpImage(i, ImageFormat.Png);
         }
 
         private static void ExportGumpImage(int index, ImageFormat imageFormat)
         {
+            // The menu entries reach this with the selected id, which is -1 when nothing is selected.
+            if (index < 0 || !Gumps.IsValidIndex(index))
+            {
+                return;
+            }
+
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"Gump {Utils.FormatExportId(index)}.{fileExtension}");
 
@@ -788,9 +872,8 @@ namespace UoFiddler.Controls.UserControls
 
                 using (new WaitCursorScope(this))
                 {
-                    for (int i = 0; i < listBox.Items.Count; ++i)
+                    foreach (int index in _ids)
                     {
-                        int index = int.Parse(listBox.Items[i].ToString());
                         if (index < 0)
                         {
                             continue;
@@ -874,17 +957,17 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(EventArgs.Empty);
             }
 
-            return _refMarker.listBox.Items.Cast<object>().Any(id => (int)id == gumpId);
+            return _refMarker._ids.BinarySearch(gumpId) >= 0;
         }
 
         private void JumpToMaleFemale_Click(object sender, EventArgs e)
         {
-            if (listBox.SelectedIndex == -1)
+            int gumpId = SelectedGumpId;
+            if (gumpId < 0)
             {
                 return;
             }
 
-            int gumpId = (int)listBox.SelectedItem;
             gumpId = gumpId < 60000 ? (gumpId % 10000) + 60000 : (gumpId % 10000) + 50000;
 
             Select(gumpId);
@@ -897,21 +980,15 @@ namespace UoFiddler.Controls.UserControls
                 _refMarker.OnLoad(EventArgs.Empty);
             }
 
-            for (int i = 0; i < _refMarker.listBox.Items.Count; ++i)
+            int position = _refMarker._ids.BinarySearch(graphic);
+            if (position < 0)
             {
-                object id = _refMarker.listBox.Items[i];
-                if ((int)id != graphic)
-                {
-                    continue;
-                }
-
-                _refMarker.listBox.SelectedIndex = i;
-                _refMarker.listBox.TopIndex = i;
-
-                return true;
+                return false;
             }
 
-            return false;
+            _refMarker.SelectPosition(position);
+
+            return true;
         }
 
         private void Gump_KeyUp(object sender, KeyEventArgs e)
@@ -1017,37 +1094,7 @@ namespace UoFiddler.Controls.UserControls
 
                 ControlEvents.FireGumpChangeEvent(this, index);
 
-                bool done = false;
-                for (int i = 0; i < listBox.Items.Count; ++i)
-                {
-                    int j = int.Parse(listBox.Items[i].ToString());
-                    if (j > index)
-                    {
-                        listBox.Items.Insert(i, index);
-                        listBox.SelectedIndex = i;
-                        done = true;
-                        break;
-                    }
-
-                    if (!_showFreeSlots)
-                    {
-                        continue;
-                    }
-
-                    if (j != i)
-                    {
-                        continue;
-                    }
-
-                    done = true;
-                    break;
-                }
-
-                if (!done)
-                {
-                    listBox.Items.Add(index);
-                    listBox.SelectedIndex = listBox.Items.Count - 1;
-                }
+                InsertId(index);
             }
         }
 
