@@ -145,6 +145,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            // Raised before SecondArt disposes the outgoing bitmap cache - drop the instance this box
+            // holds (GetStatic returns the cached bitmap, not a copy). Also reached when another tab,
+            // e.g. Compare TileData, re-points the shared SecondArt index.
+            pictureBoxSec.BackgroundImage = null;
+
             _compare.Clear();
             tileViewOrg.Invalidate();
             tileViewSec.Invalidate();

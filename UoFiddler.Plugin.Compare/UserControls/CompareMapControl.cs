@@ -645,12 +645,33 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             string path = toolStripTextBox1.Text;
 
-            if (Directory.Exists(path))
+            try
             {
-                _currentMap = Map.Custom = new Map(path, _originalMap.FileIndex, _currentMapId, _originalMap.Width, _originalMap.Height);
-            }
+                if (Directory.Exists(path))
+                {
+                    _currentMap = Map.Custom = new Map(path, _originalMap.FileIndex, _currentMapId, _originalMap.Width, _originalMap.Height);
+                }
 
-            CalculateDiffs();
+                // The map files are not touched by the Map ctor - TileMatrix is built lazily and only
+                // parses the .uop on the first block read, which happens here. A compressed map UOP
+                // throws NotSupportedException from that parse, and every later access rethrows.
+                CalculateDiffs();
+            }
+            catch (Exception ex) when (ex is NotSupportedException or IOException or ArgumentException
+                                          or IndexOutOfRangeException)
+            {
+                // Leave nothing half-loaded behind: OnPaint and OnMouseMove would re-enter TileMatrix
+                // and throw again on the UI thread.
+                _currentMap = Map.Custom = null;
+                _diffMasks = null;
+                _diffWidthBlocks = 0;
+                _diffHeightBlocks = 0;
+
+                showMap1ToolStripMenuItem.Checked = true;
+                showMap2ToolStripMenuItem.Checked = false;
+
+                MessageBox.Show(ex.Message, "Map could not be loaded", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             pictureBox.Invalidate();
         }

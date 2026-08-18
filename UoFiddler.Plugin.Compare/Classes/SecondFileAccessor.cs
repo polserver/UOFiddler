@@ -78,23 +78,34 @@ namespace UoFiddler.Plugin.Compare.Classes
     {
         public int Lookup { get; set; }
         public int Length { get; set; }
+        public int DecompressedLength { get; set; }
 
-        private int _extra1Backing;
-        private int _extra2Backing;
+        /// <summary>
+        /// High half of <see cref="Extra"/>. For gumps this is the width, matching the
+        /// (width &lt;&lt; 16 | height) packing in gumpidx.mul.
+        /// </summary>
+        public int Extra1 { get; set; }
 
+        /// <summary>
+        /// Low half of <see cref="Extra"/>. For gumps this is the height.
+        /// </summary>
+        public int Extra2 { get; set; }
+
+        /// <summary>
+        /// Packed (Extra1 &lt;&lt; 16 | Extra2) view over the two halves, mirroring <see cref="SecondEntry3D"/>.
+        /// Extra1/Extra2 are the only storage: they used to sit beside a separate pair of backing fields
+        /// that Extra alone wrote to, so a write through one view was invisible to the other.
+        /// </summary>
         public int Extra
         {
-            get => (_extra1Backing << 16) | _extra2Backing;
+            get => (Extra1 << 16) | (Extra2 & 0xFFFF);
             set
             {
-                _extra1Backing = (value >> 16) & 0xFFFF;
-                _extra2Backing = value & 0xFFFF;
+                Extra1 = (value >> 16) & 0xFFFF;
+                Extra2 = value & 0xFFFF;
             }
         }
 
-        public int DecompressedLength { get; set; }
-        public int Extra1 { get; set; }
-        public int Extra2 { get; set; }
         public SecondCompressionFlag Flag { get; set; }
     }
 
@@ -171,7 +182,9 @@ namespace UoFiddler.Plugin.Compare.Classes
             var fileInfo = new FileInfo(path);
             string uopPattern = fileInfo.Name.Replace(fileInfo.Extension, "").ToLowerInvariant();
 
-            using (var br = new BinaryReader(Stream, System.Text.Encoding.Default, leaveOpen: true))
+            // leaveOpen: this ctor caches Stream on the instance for later
+            // SecondFileIndex.Seek calls; disposing the BinaryReader must not close it.
+            using (var br = new BinaryReader(Stream, System.Text.Encoding.UTF8, leaveOpen: true))
             {
                 br.BaseStream.Seek(0, SeekOrigin.Begin);
 
@@ -196,12 +209,15 @@ namespace UoFiddler.Plugin.Compare.Classes
 
                 br.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
 
-                // UOP entries are sparse; pre-mark all as invalid.
+                // UOP entries are sparse; pre-mark all as invalid. Extra1/Extra2 are set directly
+                // rather than through Extra, whose setter masks each half to 16 bits - the readers
+                // test Extra1 == -1, and Extra still reads back as -1 either way.
                 for (var i = 0; i < Index.Length; i++)
                 {
                     Index[i].Lookup = -1;
                     Index[i].Length = -1;
-                    Index[i].Extra = -1;
+                    Index[i].Extra1 = -1;
+                    Index[i].Extra2 = -1;
                 }
 
                 do
@@ -229,14 +245,18 @@ namespace UoFiddler.Plugin.Compare.Classes
                             continue;
                         }
 
-                        if (idx < 0 || idx > Index.Length)
+                        if (idx < 0 || idx >= Index.Length)
                         {
                             throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
                         }
 
                         offset += headerLength;
 
-                        if (hasExtra && flag != 3)
+                        // The width/height prefix can only be read straight off the stream when the payload
+                        // is stored. For anything compressed those first eight bytes belong to the zlib (or
+                        // zlib+Mythic) stream and the dimensions come out of the decompressed payload instead
+                        // - see SecondGump.ReadEntryPayload.
+                        if (hasExtra && (SecondCompressionFlag)flag == SecondCompressionFlag.None)
                         {
                             long curPos = br.BaseStream.Position;
                             br.BaseStream.Seek(offset, SeekOrigin.Begin);

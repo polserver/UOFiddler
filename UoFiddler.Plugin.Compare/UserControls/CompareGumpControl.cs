@@ -38,6 +38,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private bool _syncingSelection;
         private bool _loaded;
 
+        /// <summary>
+        /// Number of gump ids the two panes cover. Driven by the loaded clients rather than a literal:
+        /// Gumps reaches 0x12000 now, and ids 69971..69985 ship in 7.0.98.1 and later.
+        /// </summary>
+        private int _idRange;
+
         private void OnLoad(object sender, EventArgs e)
         {
             using (new WaitCursorScope(this))
@@ -47,11 +53,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 ConfigureTileView(tileView1);
                 ConfigureTileView(tileView2);
 
-                _displayIndices.Clear();
-                for (int i = 0; i < 0x10000; i++)
-                {
-                    _displayIndices.Add(i);
-                }
+                // Reload() re-enters OnLoad, so take the max of both sides - otherwise a range already
+                // extended by a larger second client would shrink back.
+                RebuildDisplayIndices();
 
                 tileView1.VirtualListSize = _displayIndices.Count;
                 tileView2.VirtualListSize = 0;
@@ -332,15 +336,46 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             using (new WaitCursorScope(this))
             {
+                // SetFileIndex disposes the outgoing bitmap cache, and this box holds one of its
+                // instances (GetGump returns the cached bitmap, not a copy).
+                pictureBox2.BackgroundImage = null;
+
                 SecondGump.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
                 LoadSecond();
+            }
+        }
+
+        /// <summary>
+        /// Fills <see cref="_displayIndices"/> with every id both clients can cover.
+        /// </summary>
+        private void RebuildDisplayIndices()
+        {
+            _idRange = Math.Max(Gumps.GetCount(), SecondGump.GetCount());
+
+            _displayIndices.Clear();
+            for (int i = 0; i < _idRange; i++)
+            {
+                _displayIndices.Add(i);
             }
         }
 
         private void LoadSecond()
         {
             _compare.Clear();
+
+            // Rebuild rather than extend: the list may currently hold a filtered "differences only"
+            // set, and a second client with a larger id space widens the range for both panes.
+            RebuildDisplayIndices();
+
+            tileView1.VirtualListSize = _displayIndices.Count;
             tileView2.VirtualListSize = _displayIndices.Count;
+
+            if (checkBox1.Checked)
+            {
+                // Re-apply the filter against the client that was just loaded.
+                ShowDiff_OnClick(this, EventArgs.Empty);
+            }
+
             tileView1.Invalidate();
         }
 
@@ -395,7 +430,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 _displayIndices.Clear();
                 if (checkBox1.Checked)
                 {
-                    for (int i = 0; i < 0x10000; i++)
+                    for (int i = 0; i < _idRange; i++)
                     {
                         if (!Compare(i))
                         {
@@ -405,7 +440,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
                 else
                 {
-                    for (int i = 0; i < 0x10000; i++)
+                    for (int i = 0; i < _idRange; i++)
                     {
                         _displayIndices.Add(i);
                     }

@@ -13,8 +13,28 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static void SetFileIndex(string idxPath, string mulPath)
         {
-            _fileIndex = new SecondFileIndex(idxPath, mulPath, 0x4000);
+            // Build first so a failure leaves the previous index usable.
+            var newIndex = new SecondFileIndex(idxPath, mulPath, 0x4000);
+
+            SecondFileIndex oldIndex = _fileIndex;
+            Bitmap[] oldCache = _cache;
+
+            _fileIndex = newIndex;
             _cache = new Bitmap[0x4000];
+            _streamBuffer = null;
+
+            // The caller must have dropped any bitmap it still holds (see CompareTextureControl) before
+            // we get here - GetTexture hands out the cached instance, not a copy.
+            oldIndex?.Dispose();
+
+            if (oldCache != null)
+            {
+                for (int i = 0; i < oldCache.Length; ++i)
+                {
+                    oldCache[i]?.Dispose();
+                    oldCache[i] = null;
+                }
+            }
         }
 
         // public static int GetIdxLength()

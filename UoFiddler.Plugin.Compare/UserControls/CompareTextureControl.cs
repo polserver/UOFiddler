@@ -259,6 +259,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     return;
                 }
 
+                // SetFileIndex disposes the outgoing bitmap cache, and this box holds one of its
+                // instances (GetTexture returns the cached bitmap, not a copy).
+                pictureBoxSec.BackgroundImage = null;
+
                 SecondTexture.SetFileIndex(file2, file);
                 LoadSecond();
             }
