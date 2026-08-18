@@ -118,7 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.22.2
+    <value>Version 4.23.0
+- Multi tile flags survive a UOP &lt;&gt; mul round trip: the visibility word maps onto both `multi.mul` int32s instead of one boolean (8207 of 186695 shipped tiles used to lose a bit)
+- Per-tile component ids are kept in a `multi-components.txt` sidecar, so repacking no longer strips a boat's tiller man, hatch and planks or a house's doors
+- Loading a multi no longer deletes invisible tiles or reorders the tile list (this dropped 122 tiles and reshuffled 119 multis on shipped data)
+- `housing.bin` is no longer parsed as multi 7, and the multi id ceiling now covers the ids up to 9000 that ship in MultiCollection.uop
+- MultiCollection.uop is written in the client's real shape: version 4 container, 12-byte entry headers, header Adler32, zlib level 7
+- UOP gump width and height are no longer swapped
+- EA's 0x0 placeholder gumps no longer list as valid (and then fail to draw) on compressed clients
+- Gump ids up to 0x12000 are supported, including 69971..69985 shipped by 7.0.98.1 and later
+- Compressed UOP entries are read at their real on-disk size; animations, maps and gumps were being read short
+- Animation frames using zlib-wrapped Mythic compression are now decoded instead of parsed as pixels
+- Compressed map UOPs are rejected with a clear message instead of silently misread
+- Sounds no longer get 8 bytes of junk prefixed as samples (the name block is 0x28 bytes, not 32)
+- UOP Packer: container layout matches the newest client per file type, and repacking the same input is now byte-identical
+- UOP Packer: empty or out-of-range idx rows are skipped and logged instead of packed from truncated data
+- UOP Packer: unpacked art keeps High Seas status, and large custom maps are no longer truncated to the stock facet size
+- UOP Packer: compression is validated per type, failures delete the partial file, and missing `housing.bin` / component sidecar are prompted for
+- Compare plugin: matches the main reader, so no more phantom differences; wider id range, released file handles and bitmap caches, and unreadable maps report once instead of throwing from paint handlers
+- Multi CSV/XML exports carry the trailing High Seas int32; `gumpidx.mul` and `multi.idx` are truncated at the last real entry instead of padded
+- UOP name hashing rewritten as a readable lookup3 port, verified bit-for-bit over 82k inputs
+
+Version 4.22.2
 - Add export option to thumbnail list in animation tab.
 
 Version 4.22.1
