@@ -586,7 +586,9 @@ namespace Ultima
                                 tmp = tmp.Replace("0x", "");
 
                                 SortedTiles[itemCount].Flags = int.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
-                                SortedTiles[itemCount].Unk1 = 0;
+
+                                // Column 5 carries the High Seas trailing int32; older exports left it empty.
+                                SortedTiles[itemCount].Unk1 = split.Length > 5 ? ParseCsvUnk1(split[5]) : 0;
 
                                 MultiTileEntry e = SortedTiles[itemCount];
 
@@ -914,16 +916,41 @@ namespace Ultima
         /// <summary>
         /// Punt's multi tool csv format
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="field"></param>
+        /// <summary>
+        /// Parses the sixth CSV column: an always-empty "Cliloc" in old exports, now
+        /// <see cref="MultiTileEntry.Unk1"/>. Both forms have to load.
+        /// </summary>
+        private static int ParseCsvUnk1(string field)
+        {
+            string tmp = field.Trim();
+
+            if (tmp.Length == 0)
+            {
+                return 0;
+            }
+
+            if (tmp.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                return int.TryParse(tmp.AsSpan(2), System.Globalization.NumberStyles.HexNumber,
+                    System.Globalization.CultureInfo.InvariantCulture, out int hex) ? hex : 0;
+            }
+
+            return int.TryParse(tmp, System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out int dec) ? dec : 0;
+        }
+
         public void ExportToCsvFile(string fileName)
         {
             using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
             {
-                tex.WriteLine("TileID,OffsetX,OffsetY,OffsetZ,Flag,Cliloc");
+                // The last column used to be an always-empty "Cliloc" and now carries the High Seas trailing
+                // int32 - the 0x0100 visibility bit of the uop tile record, set on 8207 of 186695 shipped tiles.
+                tex.WriteLine("TileID,OffsetX,OffsetY,OffsetZ,Flag,Unk1");
 
                 for (int i = 0; i < SortedTiles.Length; ++i)
                 {
-                    tex.WriteLine($"0x{SortedTiles[i].ItemId:x4},{SortedTiles[i].OffsetX},{SortedTiles[i].OffsetY},{SortedTiles[i].OffsetZ},0x{SortedTiles[i].Flags:x},");
+                    tex.WriteLine($"0x{SortedTiles[i].ItemId:x4},{SortedTiles[i].OffsetX},{SortedTiles[i].OffsetY},{SortedTiles[i].OffsetZ},0x{SortedTiles[i].Flags:x},0x{SortedTiles[i].Unk1:x}");
                 }
             }
         }
@@ -942,6 +969,12 @@ namespace Ultima
                     xmlWriter.WriteAttributeString("Y", SortedTiles[i].OffsetY.ToString());
                     xmlWriter.WriteAttributeString("Z", SortedTiles[i].OffsetZ.ToString());
                     xmlWriter.WriteAttributeString("ID", $"0x{SortedTiles[i].ItemId:X4}");
+
+                    // Both halves of the multi.mul row past the coordinates; without them the export cannot
+                    // describe the tile fully.
+                    xmlWriter.WriteAttributeString("Flags", $"0x{SortedTiles[i].Flags:X}");
+                    xmlWriter.WriteAttributeString("Unk1", $"0x{SortedTiles[i].Unk1:X}");
+
                     xmlWriter.WriteEndElement(); // Item
                 }
 

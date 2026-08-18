@@ -177,14 +177,15 @@ namespace Ultima.Helpers
         /// </summary>
         /// <param name="rawData">data to compress</param>
         /// <param name="zlibLevel">
-        /// Raw zlib level 0-9, or null to use <see cref="CompressionLevel.Optimal"/>. The client's own
-        /// packer used stock zlib, i.e. level 6: re-compressing the 872 entries of the shipped
-        /// MultiCollection.uop at level 6 reproduces its 522 746 compressed bytes exactly, while
-        /// Optimal produces 5.6% more (and level 9 is still 2.4% more).
+        /// Raw zlib level 0-9, or null to use <see cref="CompressionLevel.Optimal"/>. This runtime ships
+        /// zlib-ng, not stock zlib, so its levels neither reproduce stock zlib byte for byte nor follow a
+        /// monotonic size/level curve - measure rather than assume when matching a shipped file.
         /// </param>
         /// <returns>compressed byte[] data</returns>
         public static (bool success, byte[] compressedData) Compress(byte[] rawData, int? zlibLevel = null)
         {
+            // Empty input is a caller bug: a zero byte uop entry is not a usable asset, and the mul to uop
+            // packer drops idx rows that carry no data before this point.
             if (rawData == null || rawData.Length == 0)
             {
                 return (false, Array.Empty<byte>());

@@ -108,6 +108,14 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             packAllHousingBinBtn.Visible = show;
         }
 
+        /// <summary>
+        /// Names the batch tab uses for the multi pair. They deliberately match the single file tab, so a
+        /// MultiCollection.uop extracted in one mode can be repacked by the other.
+        /// </summary>
+        private const string _batchMultiMulName = "multi.mul";
+
+        private const string _batchMultiIdxName = "multi.idx";
+
         private static (string mul, string idx, string uop) GetConventionalNames(FileType type, int mapIndex)
         {
             return type switch
@@ -144,6 +152,12 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             if (isMulti)
             {
                 compressionBox.SelectedItem = nameof(CompressionFlag.Zlib);
+            }
+            else if (type == FileType.ArtLegacyMul || type == FileType.MapLegacyMul || type == FileType.SoundLegacyMul)
+            {
+                // Every art, map and sound entry of every shipped client is stored uncompressed, and
+                // UOFiddler's own map reader can only address stored entries. Default accordingly.
+                compressionBox.SelectedItem = nameof(CompressionFlag.None);
             }
 
             compressionBox.Enabled = !isMulti;
@@ -283,6 +297,11 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                     MessageBox.Show("The input housing.bin does not exist");
                     return;
                 }
+
+                if (!ConfirmComponentSidecar(inmul.Text))
+                {
+                    return;
+                }
             }
 
             var (_, _, uopName) = GetConventionalNames(fileType, (int)mulMapIndex.Value);
@@ -313,6 +332,22 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             {
                 // Not negotiable: every entry of every shipped MultiCollection.uop is zlib compressed.
                 selectedCompressionMethod = CompressionFlag.Zlib;
+            }
+            else if (selectedCompressionMethod != CompressionFlag.None
+                     && (fileType == FileType.ArtLegacyMul || fileType == FileType.MapLegacyMul || fileType == FileType.SoundLegacyMul))
+            {
+                var prompt = MessageBox.Show(
+                    $"Every {fileType} entry in every shipped client is stored uncompressed.\n\n"
+                    + "A compressed map UOP cannot be read back by UOFiddler at all, and compressed art or "
+                    + "sound entries are outside anything the client has been observed to accept.\n\n"
+                    + "Use " + selectedCompressionMethod + " anyway?",
+                    "Unusual compression for this file type",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+                if (prompt != DialogResult.Yes)
+                {
+                    return;
+                }
             }
 
             bool succeeded = false;
@@ -626,6 +661,36 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
         }
 
+        /// <summary>
+        /// multi.mul has nowhere to store a tile's component ids, so UOFiddler keeps them in a text
+        /// sidecar next to the mul. Packing without it succeeds but gives every tile zero components -
+        /// boats lose their tiller man, hatch and planks, houses lose their doors. Ask first.
+        /// </summary>
+        private static bool ConfirmComponentSidecar(string mulPath)
+        {
+            MultiComponentSidecar.Status status = MultiComponentSidecar.Probe(mulPath);
+
+            if (!status.IsEmpty)
+            {
+                return true;
+            }
+
+            string detail = status.Exists
+                ? $"The component sidecar\n\n{status.Path}\n\nexists but contains no component ids."
+                : $"No component sidecar was found at\n\n{status.Path}";
+
+            var prompt = MessageBox.Show(
+                detail
+                + "\n\nEvery tile will be packed with zero components. Boats will lose their tiller man, "
+                + "hatch and planks, and customisable houses will lose their doors.\n\n"
+                + "Extract the original MultiCollection.uop first to produce the sidecar.\n\nPack anyway?",
+                "Multi component ids will be dropped",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            return prompt == DialogResult.Yes;
+        }
+
         private static void LogConverterError(Exception ex, string operation, string input, string output, FileType type)
         {
             ILogger logger = AppLog.For(typeof(UopPackerControl));
@@ -710,6 +775,12 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                     }
                 }
 
+                string batchMultiMul = Path.Combine(inputBase, _batchMultiMulName);
+                if (File.Exists(batchMultiMul) && !ConfirmComponentSidecar(batchMultiMul))
+                {
+                    return;
+                }
+
                 await RunPackAllAsync(inputBase, outputBase, gumpCompression, housingBinPath);
             }
             else
@@ -735,7 +806,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                     Extract(inputBase, outputBase, "artLegacyMUL.uop", "art.mul", "artidx.mul", FileType.ArtLegacyMul, 0, Per(), statusProgress); ++fileIndex;
                     Extract(inputBase, outputBase, "gumpartLegacyMUL.uop", "gumpart.mul", "gumpidx.mul", FileType.GumpartLegacyMul, 0, Per(), statusProgress); ++fileIndex;
                     Extract(inputBase, outputBase, "soundLegacyMUL.uop", "sound.mul", "soundidx.mul", FileType.SoundLegacyMul, 0, Per(), statusProgress); ++fileIndex;
-                    Extract(inputBase, outputBase, "MultiCollection.uop", "multi-unpacked.mul", "multi-unpacked.idx", FileType.MultiCollection, 0, Per(), statusProgress, "housing.bin"); ++fileIndex;
+                    Extract(inputBase, outputBase, "MultiCollection.uop", _batchMultiMulName, _batchMultiIdxName, FileType.MultiCollection, 0, Per(), statusProgress, "housing.bin"); ++fileIndex;
 
                     for (int i = 0; i <= 5; ++i)
                     {
@@ -773,7 +844,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                     Pack(inputBase, outputBase, "art.mul", "artidx.mul", "artLegacyMUL.uop", FileType.ArtLegacyMul, 0, CompressionFlag.None, Per(), statusProgress); ++fileIndex;
                     Pack(inputBase, outputBase, "gumpart.mul", "gumpidx.mul", "gumpartLegacyMUL.uop", FileType.GumpartLegacyMul, 0, gumpCompression, Per(), statusProgress); ++fileIndex;
                     Pack(inputBase, outputBase, "sound.mul", "soundidx.mul", "soundLegacyMUL.uop", FileType.SoundLegacyMul, 0, CompressionFlag.None, Per(), statusProgress); ++fileIndex;
-                    Pack(inputBase, outputBase, "multi-unpacked.mul", "multi-unpacked.idx", "MultiCollection.uop", FileType.MultiCollection, 0, CompressionFlag.Zlib, Per(), statusProgress, housingBinPath); ++fileIndex;
+                    Pack(inputBase, outputBase, _batchMultiMulName, _batchMultiIdxName, "MultiCollection.uop", FileType.MultiCollection, 0, CompressionFlag.Zlib, Per(), statusProgress, housingBinPath); ++fileIndex;
 
                     for (int i = 0; i <= 5; ++i)
                     {

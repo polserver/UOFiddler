@@ -130,7 +130,9 @@ namespace Ultima
                         continue;
                     }
 
-                    int dataSize = flag == 1 ? compressedLength : decompressedLength;
+                    // compressedLength is the byte count on disk; decompressedLength only matches it while
+                    // the entry is stored.
+                    int dataSize = compressedLength;
 
                     _hashTable[hash] = new UopEntry
                     {
@@ -201,7 +203,9 @@ namespace Ultima
                             continue;
                         }
 
-                        int dataSize = flag == 1 ? compressedLength : decompressedLength;
+                        // compressedLength is the byte count on disk; decompressedLength only matches it while
+                        // the entry is stored.
+                        int dataSize = compressedLength;
                         seqEntries[hash] = new UopEntry
                         {
                             FileIndex = -1,
@@ -465,13 +469,33 @@ namespace Ultima
                 _ = fileStream.Read(buffer, 0, buffer.Length);
             }
 
-            if (entry.CompressionFlag >= 1)
+            if (entry.CompressionFlag == 0)
             {
-                var (ok, data) = UopUtils.Decompress(buffer);
-                return ok ? data : null;
+                return buffer;
             }
 
-            return buffer;
+            var (ok, data) = UopUtils.Decompress(buffer);
+            if (!ok)
+            {
+                return null;
+            }
+
+            if (entry.CompressionFlag != (int)CompressionFlag.Mythic)
+            {
+                return data;
+            }
+
+            // Flag 3 is zlib wrapped around a Mythic stream, the same layering gumpart uses. No shipped
+            // AnimationFrame*.uop uses it, but ignoring it hands Mythic bytes to the frame parser as pixels.
+            uint mythicLength = MythicDecompress.PeekDecompressedLength(data);
+            if (mythicLength == 0 || mythicLength > int.MaxValue)
+            {
+                return null;
+            }
+
+            var mythic = new byte[(int)mythicLength];
+
+            return MythicDecompress.TryDecompress(data, mythic, out _) ? mythic : null;
         }
 
         private static AnimationFrame[] ParseUopFrames(byte[] data, int direction, bool flip)

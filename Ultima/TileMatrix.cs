@@ -242,7 +242,9 @@ namespace Ultima
                 int readLen = (int)Math.Min(index.Length, (long)BlockHeight * BlockWidth * 12);
                 index.ReadExactly(MemoryMarshal.AsBytes(_staticIndex.AsSpan()).Slice(0, readLen));
 
-                for (var i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
+                // index.Length is bytes and the loop counts blocks, so the divisor matters: without it a short
+                // staidx leaves its tail blocks as zeroes instead of the -1 sentinel.
+                for (var i = (int)Math.Min(index.Length / 12, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
                 {
                     _staticIndex[i].Lookup = -1;
                     _staticIndex[i].Length = -1;
@@ -398,26 +400,35 @@ namespace Ultima
                     long offset = _uopReader.ReadInt64();
                     int headerLength = _uopReader.ReadInt32();
                     int compressedLength = _uopReader.ReadInt32();
-                    int decompressedLength = _uopReader.ReadInt32();
+                    _uopReader.ReadInt32(); // decompressed length - equal to the compressed one while stored
                     ulong hash = _uopReader.ReadUInt64();
                     _uopReader.ReadUInt32(); // Adler32
                     short flag = _uopReader.ReadInt16();
-
-                    int length = flag == 1 ? compressedLength : decompressedLength;
 
                     if (offset == 0)
                     {
                         continue;
                     }
 
+                    // This reader addresses map blocks by slicing straight into the file, so it can only handle
+                    // stored entries. Every map*LegacyMUL.uop EA ships uses flag 0, but the UOP packer can be told
+                    // to zlib them. compressedLength is the byte count on disk; decompressedLength only matches
+                    // it while the entry is uncompressed.
+                    if (flag != 0)
+                    {
+                        throw new NotSupportedException(
+                            $"{pattern}: compressed map UOP entries are not supported " +
+                            $"(entry uses compression flag {flag}). Repack the map with compression set to None.");
+                    }
+
                     if (hashes.TryGetValue(hash, out int idx))
                     {
-                        if (idx < 0 || idx > UOPFiles.Length)
+                        if (idx < 0 || idx >= UOPFiles.Length)
                         {
                             throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
                         }
 
-                        UOPFiles[idx] = new UopFile(offset + headerLength, length);
+                        UOPFiles[idx] = new UopFile(offset + headerLength, compressedLength);
                     }
                     else
                     {

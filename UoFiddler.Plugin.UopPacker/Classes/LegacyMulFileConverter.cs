@@ -49,8 +49,38 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                        : new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None));
         }
 
-        // Identifier for "build/multicollection/housing.bin" inside MultiCollection.uop.
-        private const ulong _housingBinIdentifier = 0x126D1E99DDEDEE0A;
+        /// <summary>
+        /// Tiles whose multi.mul flags/extra carry bits the uop visibility word cannot represent.
+        /// Thread static so parallel conversions do not mix counts.
+        /// </summary>
+        [ThreadStatic]
+        private static int _unrepresentableMultiFlagTiles;
+
+        /// <summary>
+        /// Idx rows dropped because they carry no data.
+        /// </summary>
+        [ThreadStatic]
+        private static int _emptyIdxEntriesSkipped;
+
+        /// <summary>
+        /// Idx rows dropped because they point outside the mul.
+        /// </summary>
+        [ThreadStatic]
+        private static int _outOfRangeIdxEntriesSkipped;
+
+        /// <summary>
+        /// Identifier for "build/multicollection/housing.bin" inside MultiCollection.uop
+        /// (0x126D1E99DDEDEE0A).
+        /// </summary>
+        private static readonly ulong _housingBinIdentifier = UopUtils.HashFileName(_housingBinEntryName);
+
+        private const string _housingBinEntryName = "build/multicollection/housing.bin";
+
+        /// <summary>
+        /// Bytes of map terrain per map*LegacyMUL.uop entry: 4096 blocks of 196 bytes. Every shipped map
+        /// UOP uses it, so a facet's last entry runs past the end of the mul by up to one chunk.
+        /// </summary>
+        private const int _mapChunkSize = 0xC4000;
 
         // Sentinel Id used to mark a synthetic entry that should be written from housing.bin.
         private const int _housingBinSentinelId = -1;
@@ -94,10 +124,21 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
 
             MultiComponentSidecar.Table componentTable = type == FileType.MultiCollection
-                ? MultiComponentSidecar.Load(string.IsNullOrWhiteSpace(componentsFile)
-                    ? MultiComponentSidecar.GetDefaultPath(inFile)
-                    : componentsFile)
+                ? MultiComponentSidecar.Load(MultiComponentSidecar.ResolvePath(inFile, componentsFile))
                 : null;
+
+            if (type == FileType.MultiCollection && componentTable == null)
+            {
+                // Not fatal - a shard may have no component ids. The UI confirms first; this covers other callers.
+                AppLog.For(typeof(LegacyMulFileConverter)).LogWarning(
+                    "No multi component sidecar at {Path} - every tile in {OutFile} will be written with zero " +
+                    "component ids, so boats lose their tiller man, hatch and planks and customisable houses lose their doors.",
+                    MultiComponentSidecar.ResolvePath(inFile, componentsFile), outFile);
+            }
+
+            _unrepresentableMultiFlagTiles = 0;
+            _emptyIdxEntriesSkipped = 0;
+            _outOfRangeIdxEntriesSkipped = 0;
 
             try
             {
@@ -111,6 +152,32 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
 
             ReportComponentSidecarProblems(componentTable);
+
+            if (_emptyIdxEntriesSkipped > 0)
+            {
+                AppLog.For(typeof(LegacyMulFileConverter)).LogWarning(
+                    "{Count} rows in {IdxFile} have a valid offset but a zero length. A zero byte entry is not a "
+                    + "usable asset, so those ids were left out of {OutFile} - unpacking it writes them back as the "
+                    + "-1 unused sentinel the client itself uses.",
+                    _emptyIdxEntriesSkipped, inFileIdx, outFile);
+            }
+
+            if (_outOfRangeIdxEntriesSkipped > 0)
+            {
+                AppLog.For(typeof(LegacyMulFileConverter)).LogWarning(
+                    "{Count} rows in {IdxFile} point past the end of {InFile}. Those ids were left out of {OutFile} "
+                    + "rather than packed from truncated data.",
+                    _outOfRangeIdxEntriesSkipped, inFileIdx, inFile, outFile);
+            }
+
+            if (_unrepresentableMultiFlagTiles > 0)
+            {
+                AppLog.For(typeof(LegacyMulFileConverter)).LogWarning(
+                    "{Count} tiles in {InFile} carry multi.mul flag or extra bits outside the 0/1 range EA uses. " +
+                    "MultiCollection.uop stores a single 16 bit visibility word, so only the visible and 0x0100 bits " +
+                    "survive and the remaining bits were dropped.",
+                    _unrepresentableMultiFlagTiles, inFile);
+            }
         }
 
         private static void TryDelete(string path)
@@ -134,18 +201,32 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
         private static void WriteUop(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex, CompressionFlag compressionFlag, string housingBinFile, IProgress<int> progress, MultiComponentSidecar.Table componentTable)
         {
-            const int tableSize = 0x64;
-
             /*
-             * The shipped client files come in two shapes: version 4 with 100 entries per block and the
-             * first block right behind the 0x28 byte header (MultiCollection, gumpart, sound, tileart,
-             * AnimationSequence), and version 5 with 1000 entries per block and a large gap before the
-             * first block (art, maps). We only ever write 100 entry blocks, so anything using that layout
-             * has to declare version 4 as well - MultiCollection.uop in particular, which was previously
-             * written as a version 5 header with a version 4 body.
+             * The shipped client files come in two shapes, and which shape a type uses depends on the client
+             * build rather than on the type alone. Measured over ten installs from 6.0.1.10 to the current
+             * live client:
+             *
+             *   version 4, 100 entries per block, first block right behind the 0x28 byte header, every entry
+             *   prefixed by a 12 byte header - MultiCollection and tileart in every build that has them,
+             *   sound from 7.0.65.4 on, gumpart from 7.0.114.4 on.
+             *
+             *   version 5, 1000 entries per block, a large gap before the first block, entry headers of
+             *   135..137 bytes whose last 128 bytes are high entropy (a signature block we cannot reproduce)
+             *   - art and maps in every build, and sound/gumpart in the older ones.
+             *
+             * We target the newest client's shape. The declared block capacity has to agree with the blocks
+             * actually written.
              */
-            bool version4Layout = type == FileType.GumpartLegacyMul || type == FileType.MultiCollection;
+            bool version4Layout = type == FileType.GumpartLegacyMul
+                                  || type == FileType.SoundLegacyMul
+                                  || type == FileType.MultiCollection;
+
+            int tableSize = version4Layout ? 0x64 : 0x3E8;
             long firstTable = version4Layout ? 0x28 : 0x200;
+
+            // Stamped once per file, not per entry, so a repack of the same input is byte identical. The
+            // shipped files vary it per entry (a build machine timestamp), but nothing reads it back.
+            long entryHeaderTimestamp = DateTime.UtcNow.ToFileTimeUtc();
 
             using (BinaryReader reader = OpenInput(inFile))
             using (BinaryReader readerIdx = OpenInput(inFileIdx))
@@ -155,9 +236,9 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                 if (type == FileType.MapLegacyMul)
                 {
-                    // No IDX file, just group the data into 0xC4000 long chunks
+                    // No IDX file, just group the data into _mapChunkSize long chunks
                     int length = (int)reader.BaseStream.Length;
-                    idxEntries = new List<IdxEntry>((int)Math.Ceiling((double)length / 0xC4000));
+                    idxEntries = new List<IdxEntry>((int)Math.Ceiling((double)length / _mapChunkSize));
 
                     int position = 0;
                     int id = 0;
@@ -168,13 +249,13 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         {
                             Id = id++,
                             Offset = position,
-                            Size = 0xC4000,
+                            Size = _mapChunkSize,
                             Extra = 0
                         };
 
                         idxEntries.Add(e);
 
-                        position += 0xC4000;
+                        position += _mapChunkSize;
                     }
                 }
                 else
@@ -182,13 +263,33 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     int idxEntryCount = (int)(readerIdx.BaseStream.Length / 12);
                     idxEntries = new List<IdxEntry>(idxEntryCount);
 
+                    long mulLength = reader.BaseStream.Length;
+
                     for (int i = 0; i < idxEntryCount; ++i)
                     {
                         int offset = readerIdx.ReadInt32();
+                        int size = readerIdx.ReadInt32();
+                        int extra = readerIdx.ReadInt32();
 
+                        // A negative offset is the unused id marker, and what FromUop writes back for an unused id.
                         if (offset < 0)
                         {
-                            readerIdx.BaseStream.Seek(8, SeekOrigin.Current); // skip
+                            continue;
+                        }
+
+                        // Some patched muls mark unused ids with a zero length instead. A zero byte asset is not a
+                        // thing, so drop those rows rather than pack empty uop entries; unpacking restores the -1.
+                        if (size <= 0)
+                        {
+                            ++_emptyIdxEntriesSkipped;
+                            continue;
+                        }
+
+                        // ReadBytes returns a short array at EOF instead of throwing, so a row that
+                        // points past the end of the mul would otherwise be packed from truncated data.
+                        if (offset >= mulLength || (long)offset + size > mulLength)
+                        {
+                            ++_outOfRangeIdxEntriesSkipped;
                             continue;
                         }
 
@@ -196,8 +297,8 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         {
                             Id = i,
                             Offset = offset,
-                            Size = readerIdx.ReadInt32(),
-                            Extra = readerIdx.ReadInt32()
+                            Size = size,
+                            Extra = extra
                         };
 
                         idxEntries.Add(e);
@@ -251,7 +352,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     // Table header
                     writer.Write(idxEnd - idxStart);
                     writer.Write((long)0); // next table, filled in later
-                    writer.Seek(34 * tableSize, SeekOrigin.Current); // table entries, filled in later
+                    writer.Seek(_tableEntrySize * tableSize, SeekOrigin.Current); // table entries, filled in later
 
                     // Data
                     int tableIdx = 0;
@@ -278,15 +379,15 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         /*
                          * Every entry of every shipped version 4 UOP carries a 12 byte header block in front
                          * of its payload, and the 32 bit hash field of the table entry is the Adler32 of those
-                         * 12 bytes - not of the payload (verified against 48897 entries across MultiCollection,
-                         * tileart, AnimationSequence, soundLegacyMUL and gumpartLegacyMUL). Reproduce that for
-                         * MultiCollection; the remaining types keep their old behaviour for now, which does not
-                         * match the shipped files either.
+                         * 12 bytes, not of the payload - verified over 48897 version 4 entries of the current
+                         * client plus 7.0.50.0, 100% header Adler32 and 0% payload Adler32. Version 5 entries
+                         * use a hash we cannot reproduce, so they keep the payload Adler32 and a zero length
+                         * header, which real clients accept.
                          */
                         byte[] entryHeader = null;
-                        if (type == FileType.MultiCollection)
+                        if (version4Layout)
                         {
-                            entryHeader = BuildEntryHeader();
+                            entryHeader = BuildEntryHeader(entryHeaderTimestamp);
                             writer.Write(entryHeader);
                             tableEntries[tableIdx].HeaderLength = entryHeader.Length;
                         }
@@ -447,12 +548,12 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     // Go back and fix table header
                     if (i < tableCount - 1)
                     {
-                        writer.BaseStream.Seek(thisTable + 4, SeekOrigin.Begin);
+                        writer.BaseStream.Seek(thisTable + _nextBlockOffsetField, SeekOrigin.Begin);
                         writer.Write(nextTable);
                     }
                     else
                     {
-                        writer.BaseStream.Seek(thisTable + 12, SeekOrigin.Begin);
+                        writer.BaseStream.Seek(thisTable + _blockHeaderSize, SeekOrigin.Begin);
                         // No need to fix the next table address, it's the last
                     }
 
@@ -499,20 +600,38 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
         }
 
-        private static readonly byte[] _emptyTableEntry = new byte[8 + 4 + 4 + 4 + 8 + 4 + 2];
+        /// <summary>
+        /// Entry count that makes <see cref="Ultima.Art.IsUOAHS"/> classify an artidx.mul as High Seas.
+        /// Kept in sync with the 0x13FDC threshold in Ultima/Art.cs.
+        /// </summary>
+        private const int _uoahsArtIdxEntryCount = 0x13FDC;
+
+        /// <summary>
+        /// On disk size of one entry in a block's entry table:
+        /// offset(8) headerLength(4) compressedSize(4) decompressedSize(4) identifier(8) hash(4) flag(2).
+        /// </summary>
+        private const int _tableEntrySize = 8 + 4 + 4 + 4 + 8 + 4 + 2;
+
+        /// <summary>Size of a block header: usedEntryCount(4) nextBlockOffset(8).</summary>
+        private const int _blockHeaderSize = 4 + 8;
+
+        /// <summary>Offset of the next-block pointer inside a block header.</summary>
+        private const int _nextBlockOffsetField = 4;
+
+        private static readonly byte[] _emptyTableEntry = new byte[_tableEntrySize];
 
         /// <summary>
         /// The 12 byte block the client writes in front of every entry payload in a version 4 UOP:
-        /// two constant shorts (3, 8) followed by a FILETIME. Constant across all 48897 entries of the
-        /// five shipped version 4 UOPs.
+        /// two constant shorts (3, 8) followed by a FILETIME. The (3, 8) pair holds across every
+        /// version 4 entry of every install checked, from 7.0.50.0 to the current client.
         /// </summary>
-        private static byte[] BuildEntryHeader()
+        private static byte[] BuildEntryHeader(long fileTimeUtc)
         {
             byte[] header = new byte[12];
 
             BinaryPrimitives.WriteUInt16LittleEndian(header, 3);
             BinaryPrimitives.WriteUInt16LittleEndian(header.AsSpan(2), 8);
-            BinaryPrimitives.WriteInt64LittleEndian(header.AsSpan(4), DateTime.UtcNow.ToFileTimeUtc());
+            BinaryPrimitives.WriteInt64LittleEndian(header.AsSpan(4), fileTimeUtc);
 
             return header;
         }
@@ -696,7 +815,9 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         if (type == FileType.MapLegacyMul)
                         {
                             // Write this chunk on the right position (no IDX file to point to it)
-                            mulWriter.Seek(chunkId * 0xC4000, SeekOrigin.Begin);
+                            // Through BaseStream: BinaryWriter.Seek only takes an int, and a large
+                            // custom facet can push the offset past int.MaxValue.
+                            mulWriter.BaseStream.Seek((long)chunkId * _mapChunkSize, SeekOrigin.Begin);
                             mulWriter.Write(chunkData);
                         }
                         else
@@ -790,6 +911,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         }
                     }
 
+                    /*
+                     * Art is the exception: Art.IsUOAHS() classifies a client by the entry count of artidx.mul
+                     * (>= 0x13FDC means High Seas), and that also picks the multi.mul row size and the tiledata
+                     * layout. The highest populated art id in the shipped UOPs is around 62700, so padding only to
+                     * the highest used entry downgrades every unpacked art set to pre-Stygian-Abyss limits.
+                     */
+                    if (type == FileType.ArtLegacyMul)
+                    {
+                        padCount = Math.Max(padCount, _uoahsArtIdxEntryCount);
+                    }
+
                     for (int i = 0; i < padCount; ++i)
                     {
                         if (used[i])
@@ -832,11 +964,29 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
             using (var mapFile = File.Open(outFile, FileMode.Open, FileAccess.ReadWrite))
             {
-                var sizeDiff = mapFile.Length - expectedSize;
-                if (sizeDiff > 0)
+                long sizeDiff = mapFile.Length - expectedSize;
+                if (sizeDiff <= 0)
                 {
-                    mapFile.SetLength(mapFile.Length - sizeDiff);
+                    return;
                 }
+
+                /*
+                 * The overshoot we are here to remove is chunk padding: the UOP stores the map in 0xC4000 byte
+                 * chunks, so the last one runs past the end of the facet by less than a chunk (752 640 bytes for
+                 * map2, 1 372 for map4, nothing for map0/1). Anything larger is a custom map that is genuinely
+                 * bigger than the stock facet, and truncating it would throw away real terrain.
+                 */
+                if (sizeDiff >= _mapChunkSize)
+                {
+                    AppLog.For(typeof(LegacyMulFileConverter)).LogInformation(
+                        "{OutFile} is {Actual:N0} bytes, {Diff:N0} more than the stock facet {Index} size of {Expected:N0}. " +
+                        "That is more than one {ChunkSize:N0} byte chunk of padding, so it looks like a custom map and was left untrimmed.",
+                        outFile, mapFile.Length, sizeDiff, typeIndex, expectedSize, _mapChunkSize);
+
+                    return;
+                }
+
+                mapFile.SetLength(expectedSize);
             }
         }
 
@@ -869,7 +1019,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             {
                 case FileType.ArtLegacyMul:
                     {
-                        maxId = 0x13FDC; // UOFiddler requires this exact index length to recognize UOHS art files
+                        maxId = _uoahsArtIdxEntryCount;
                         return ["build/artlegacymul/{0:00000000}.tga", string.Empty];
                     }
                 case FileType.GumpartLegacyMul:
@@ -899,75 +1049,10 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
         }
 
-        //
-        // Hash functions (EA didn't write these, see http://burtleburtle.net/bob/c/lookup3.c)
-        //
-        private static ulong HashLittle2(string s)
-        {
-            int length = s.Length;
-
-            uint a, b, c;
-            a = b = c = 0xDEADBEEF + (uint)length;
-
-            int k = 0;
-
-            while (length > 12)
-            {
-                a += s[k];
-                a += (uint)s[k + 1] << 8;
-                a += (uint)s[k + 2] << 16;
-                a += (uint)s[k + 3] << 24;
-                b += s[k + 4];
-                b += (uint)s[k + 5] << 8;
-                b += (uint)s[k + 6] << 16;
-                b += (uint)s[k + 7] << 24;
-                c += s[k + 8];
-                c += (uint)s[k + 9] << 8;
-                c += (uint)s[k + 10] << 16;
-                c += (uint)s[k + 11] << 24;
-
-                a -= c; a ^= c << 4 | c >> 28; c += b;
-                b -= a; b ^= a << 6 | a >> 26; a += c;
-                c -= b; c ^= b << 8 | b >> 24; b += a;
-                a -= c; a ^= c << 16 | c >> 16; c += b;
-                b -= a; b ^= a << 19 | a >> 13; a += c;
-                c -= b; c ^= b << 4 | b >> 28; b += a;
-
-                length -= 12;
-                k += 12;
-            }
-
-            if (length == 0)
-            {
-                return (ulong)b << 32 | c;
-            }
-
-            switch (length)
-            {
-                case 12: c += (uint)s[k + 11] << 24; goto case 11;
-                case 11: c += (uint)s[k + 10] << 16; goto case 10;
-                case 10: c += (uint)s[k + 9] << 8; goto case 9;
-                case 9: c += s[k + 8]; goto case 8;
-                case 8: b += (uint)s[k + 7] << 24; goto case 7;
-                case 7: b += (uint)s[k + 6] << 16; goto case 6;
-                case 6: b += (uint)s[k + 5] << 8; goto case 5;
-                case 5: b += s[k + 4]; goto case 4;
-                case 4: a += (uint)s[k + 3] << 24; goto case 3;
-                case 3: a += (uint)s[k + 2] << 16; goto case 2;
-                case 2: a += (uint)s[k + 1] << 8; goto case 1;
-                case 1: a += s[k]; break;
-            }
-
-            c ^= b; c -= b << 14 | b >> 18;
-            a ^= c; a -= c << 11 | c >> 21;
-            b ^= a; b -= a << 25 | a >> 7;
-            c ^= b; c -= b << 16 | b >> 16;
-            a ^= c; a -= c << 4 | c >> 28;
-            b ^= a; b -= a << 14 | a >> 18;
-            c ^= b; c -= b << 24 | b >> 8;
-
-            return (ulong)b << 32 | c;
-        }
+        /// <summary>
+        /// Jenkins lookup3 hashlittle2 over a UOP entry path - see <see cref="UopUtils.HashFileName"/>.
+        /// </summary>
+        private static ulong HashLittle2(string input) => UopUtils.HashFileName(input);
 
         private static uint HashAdler32(byte[] d)
         {
@@ -1110,6 +1195,17 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 short z = BinaryPrimitives.ReadInt16LittleEndian(row[6..]);
                 int mulFlag = BinaryPrimitives.ReadInt32LittleEndian(row[8..]);
                 int mulExtra = BinaryPrimitives.ReadInt32LittleEndian(row[12..]);
+
+                /*
+                 * The uop side has a single 16 bit visibility word where the mul has two 32 bit ints, so only
+                 * the two bits EA uses survive. Lossless for every real file - across ten installs multi.mul
+                 * flags and extra are only ever 0 or 1 - but a hand authored mul using the community bit
+                 * assignments (0x2 Trim, 0x8 Door, 0x20 Wall, ...) has nowhere to put them, so count and report.
+                 */
+                if ((mulFlag & ~1) != 0 || (mulExtra & ~1) != 0)
+                {
+                    ++_unrepresentableMultiFlagTiles;
+                }
 
                 // Exact inverse of WriteMultiUopEntryToMul.
                 ushort uopFlag = (ushort)((mulFlag == 0 ? _uopTileFlagLow : 0) | (mulExtra != 0 ? _uopTileFlagHigh : 0));

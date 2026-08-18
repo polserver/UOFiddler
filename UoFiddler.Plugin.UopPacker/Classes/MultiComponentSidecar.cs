@@ -54,6 +54,53 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             return string.IsNullOrEmpty(directory) ? name : Path.Combine(directory, name);
         }
 
+        /// <summary>
+        /// The sidecar a pack of <paramref name="mulPath"/> will read: <paramref name="componentsFile"/>
+        /// when given, otherwise the conventional "&lt;mul&gt;-components.txt" next to the mul.
+        /// </summary>
+        public static string ResolvePath(string mulPath, string componentsFile)
+        {
+            return string.IsNullOrWhiteSpace(componentsFile) ? GetDefaultPath(mulPath) : componentsFile;
+        }
+
+        /// <summary>
+        /// What a pack would find at the sidecar path, for callers that want to warn before anything is
+        /// written - packing without one gives every tile a component count of zero.
+        /// </summary>
+        public static Status Probe(string mulPath, string componentsFile = "")
+        {
+            string path = ResolvePath(mulPath, componentsFile);
+
+            Table table = Load(path);
+
+            return table == null
+                ? new Status(path, false, 0, 0)
+                : new Status(path, true, table.RowCount, table.ComponentCount);
+        }
+
+        /// <summary>Outcome of <see cref="Probe"/>.</summary>
+        public readonly struct Status
+        {
+            internal Status(string path, bool exists, int rowCount, int componentCount)
+            {
+                Path = path;
+                Exists = exists;
+                RowCount = rowCount;
+                ComponentCount = componentCount;
+            }
+
+            public string Path { get; }
+
+            public bool Exists { get; }
+
+            public int RowCount { get; }
+
+            public int ComponentCount { get; }
+
+            /// <summary>True when packing would drop every component id.</summary>
+            public bool IsEmpty => !Exists || ComponentCount == 0;
+        }
+
         private static readonly string[] _header =
         {
             "# MultiCollection.uop per tile component ids, written by UOFiddler.",
@@ -222,6 +269,21 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             public string Path { get; }
 
             public int RowCount => _rows.Count;
+
+            /// <summary>Total number of component ids across every row.</summary>
+            public int ComponentCount
+            {
+                get
+                {
+                    int total = 0;
+                    foreach (Row row in _rows.Values)
+                    {
+                        total += row.ComponentIds.Length;
+                    }
+
+                    return total;
+                }
+            }
 
             /// <summary>Malformed lines plus rows whose tile identity no longer matches multi.mul.</summary>
             public IReadOnlyList<string> Problems => _problems;

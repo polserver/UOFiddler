@@ -42,8 +42,11 @@ namespace Ultima
         private const ushort _uopTileFlagLow = 0x0001;
         private const ushort _uopTileFlagHigh = 0x0100;
 
-        /// <summary>HashLittle2 of "build/multicollection/housing.bin" - the one entry that is not a multi.</summary>
-        private const ulong _housingBinIdentifier = 0x126D1E99DDEDEE0A;
+        /// <summary>
+        /// HashLittle2 of "build/multicollection/housing.bin" (0x126D1E99DDEDEE0A) - the one entry in
+        /// MultiCollection.uop that is not a multi.
+        /// </summary>
+        private static readonly ulong _housingBinIdentifier = UopUtils.HashFileName("build/multicollection/housing.bin");
 
         public enum ImportType
         {

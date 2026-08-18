@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using Ultima.Caching;
@@ -13,8 +14,20 @@ namespace Ultima
 {
     public sealed class Gumps
     {
+        /// <summary>
+        /// Upper bound of the gump id space we build UOP name hashes for. 7.0.98.1 and later ship the
+        /// eight odd ids 69971..69985 above the old 0xFFFF ceiling; 7.0.65.4 and older stop at 61458.
+        /// </summary>
+        private const int _maxGumpIndex = 0x12000;
+
+        /// <summary>
+        /// Row count every shipped Gumpidx.mul has, and the floor <see cref="Save"/> writes out.
+        /// <see cref="_maxGumpIndex"/> is a lookup bound, not a file length.
+        /// </summary>
+        private const int _defaultIdxEntryCount = 0x10000;
+
         private static FileIndex _fileIndex = new FileIndex(
-            "Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, 12, ".tga", -1, true);
+            "Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", _maxGumpIndex, 12, ".tga", -1, true);
 
         // LRU read cache replaces the old Bitmap[_fileIndex.IndexLength].
         // User edits go in _replaced (below) and are never evicted.
@@ -29,14 +42,36 @@ namespace Ultima
 
         // Authoritative id range — what _cache.Length used to be before the
         // LRU swap. Sourced from the FileIndex when available, falls back to
-        // 0xFFFF (the gump id space ceiling) when no client is configured.
+        // _maxGumpIndex (the gump id space ceiling) when no client is configured.
         private static int _indexLength;
+
+        private const byte _contentUnknown = 0;
+        private const byte _contentEmpty = 1;
+        private const byte _contentPresent = 2;
+
+        /// <summary>
+        /// Per id answer to "does this entry contain a drawable gump", filled in on demand.
+        /// </summary>
+        /// <remarks>
+        /// A stored entry carries its real width/height in the index; a compressed one does not, so
+        /// <see cref="FileIndex"/> parks the "dimensions unknown" sentinel 0x0FFFFFFF there, which reads
+        /// back as 0x0FFF x 0xFFFF - non zero, therefore "valid". EA ships 0x0 placeholder gumps
+        /// (29, 33, 34, 37, 47, 49, 98 ...), so on a compressed client those listed and failed to draw.
+        /// </remarks>
+        private static byte[] _contentState;
+
+        /// <summary>
+        /// Compressed bytes read when probing an entry for content - enough to inflate its first few
+        /// output bytes, rather than the whole entry.
+        /// </summary>
+        private const int _contentPeekWindow = 4096;
 
         static Gumps()
         {
             _cache = new LruBitmapCache(Files.CacheCapacityGumps);
-            _indexLength = _fileIndex?.IndexLength > 0 ? (int)_fileIndex.IndexLength : 0xFFFF;
+            _indexLength = _fileIndex?.IndexLength > 0 ? (int)_fileIndex.IndexLength : _maxGumpIndex;
             _removed = new bool[_indexLength];
+            _contentState = new byte[_indexLength];
         }
 
         /// <summary>
@@ -56,21 +91,23 @@ namespace Ultima
             try
             {
                 _fileIndex?.Dispose();
-                _fileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, 12, ".tga", -1, true);
-                _indexLength = _fileIndex.IndexLength > 0 ? (int)_fileIndex.IndexLength : 0xFFFF;
+                _fileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", _maxGumpIndex, 12, ".tga", -1, true);
+                _indexLength = _fileIndex.IndexLength > 0 ? (int)_fileIndex.IndexLength : _maxGumpIndex;
                 _cache?.Clear();
                 _cache ??= new LruBitmapCache(Files.CacheCapacityGumps);
                 _replaced.Clear();
                 _removed = new bool[_indexLength];
+                _contentState = new byte[_indexLength];
             }
             catch
             {
                 _fileIndex = null;
-                _indexLength = 0xFFFF;
+                _indexLength = _maxGumpIndex;
                 _cache?.Clear();
                 _cache ??= new LruBitmapCache(Files.CacheCapacityGumps);
                 _replaced.Clear();
                 _removed = new bool[_indexLength];
+                _contentState = new byte[_indexLength];
             }
 
             //_pixelBuffer = null;
@@ -95,6 +132,7 @@ namespace Ultima
             _cache.Remove(index);
             _removed[index] = false;
             _patched.Remove(index);
+            _contentState[index] = _contentPresent;
         }
 
         /// <summary>
@@ -143,10 +181,130 @@ namespace Ultima
                 return false;
             }
 
-            int width = (extra >> 16) & 0xFFFF;
-            int height = extra & 0xFFFF;
+            byte state = _contentState[index];
+            if (state != _contentUnknown)
+            {
+                return state == _contentPresent;
+            }
 
-            return width > 0 && height > 0;
+            return ProbeContent(index, extra);
+        }
+
+        /// <summary>
+        /// Works out once, and remembers, whether an entry actually holds a drawable gump.
+        /// See <see cref="_contentState"/> for why the index alone cannot answer this.
+        /// </summary>
+        private static bool ProbeContent(int index, int packedExtra)
+        {
+            IEntry entry = _fileIndex[index];
+            if (entry == null || entry.Lookup < 0)
+            {
+                _contentState[index] = _contentEmpty;
+                return false;
+            }
+
+            // The index can answer for stored and verdata patched entries. For zlib it still can: the
+            // payload is the eight byte width/height header plus pixels, so a declared length of eight or
+            // less is a 0x0 gump. Mythic cannot - there DecompressedLength is the inner stream length.
+            bool verdataPatched = (entry.Length & (1 << 31)) != 0;
+
+            if (verdataPatched || entry.Flag == CompressionFlag.None)
+            {
+                bool stored = ((packedExtra >> 16) & 0xFFFF) > 0 && (packedExtra & 0xFFFF) > 0;
+                _contentState[index] = stored ? _contentPresent : _contentEmpty;
+                return stored;
+            }
+
+            if (entry.Flag == CompressionFlag.Zlib && entry.DecompressedLength <= 8)
+            {
+                _contentState[index] = _contentEmpty;
+                return false;
+            }
+
+            Stream stream = _fileIndex.Seek(index, ref entry, out bool _);
+            if (stream == null)
+            {
+                return false;
+            }
+
+            bool? present = CompressedEntryHasContent(stream, entry, index);
+            if (present == null)
+            {
+                // Unreadable, not empty: leave the state unknown so a later call retries.
+                return false;
+            }
+
+            _contentState[index] = present.Value ? _contentPresent : _contentEmpty;
+
+            return present.Value;
+        }
+
+        /// <summary>
+        /// Inflates just the head of a compressed entry to find out whether it has any pixels. Null means
+        /// the entry could not be read, which is not the same answer as an empty gump and is not cached.
+        /// </summary>
+        private static bool? CompressedEntryHasContent(Stream stream, IEntry entry, int index)
+        {
+            int length = entry.Length & 0x7FFFFFFF;
+            if (length <= 0)
+            {
+                return false;
+            }
+
+            int toRead = Math.Min(length, _contentPeekWindow);
+            byte[] rented = ArrayPool<byte>.Shared.Rent(toRead);
+
+            try
+            {
+                stream.ReadExactly(rented, 0, toRead);
+
+                using var compressed = new MemoryStream(rented, 0, toRead, writable: false);
+                using var zlib = new ZLibStream(compressed, CompressionMode.Decompress);
+
+                if (entry.Flag == CompressionFlag.Mythic)
+                {
+                    // Layered zlib(mythic(payload)). The Mythic header carries its own decompressed length, so a
+                    // payload of only the eight byte width/height header is a 0x0 gump.
+                    var mythicHeader = new byte[4];
+                    zlib.ReadExactly(mythicHeader, 0, mythicHeader.Length);
+
+                    return MythicDecompress.PeekDecompressedLength(mythicHeader) > 8;
+                }
+
+                var head = new byte[8];
+                zlib.ReadExactly(head, 0, head.Length);
+
+                int width = head[0] | (head[1] << 8) | (head[2] << 16) | (head[3] << 24);
+                int height = head[4] | (head[5] << 8) | (head[6] << 16) | (head[7] << 24);
+
+                if (width <= 0 || height <= 0)
+                {
+                    return false;
+                }
+
+                _fileIndex.CacheDimensions(index, width, height);
+
+                return true;
+            }
+            catch (EndOfStreamException)
+            {
+                // Runs off the end of the file - a permanent property of it.
+                return false;
+            }
+            catch (Exception ex) when (ex is IOException or ObjectDisposedException)
+            {
+                // Locked or gone. Say nothing rather than remember a wrong answer.
+                return null;
+            }
+            catch (Exception)
+            {
+                // Corrupt payload - nothing drawable either way.
+                return false;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(rented);
+            }
         }
 
         public static byte[] GetRawGump(int index, out int width, out int height)
@@ -222,13 +380,15 @@ namespace Ultima
 
                     width = (payload[3] << 24) | (payload[2] << 16) | (payload[1] << 8) | payload[0];
                     height = (payload[7] << 24) | (payload[6] << 16) | (payload[5] << 8) | payload[4];
-                    entry.Extra1 = width;
-                    entry.Extra2 = height;
 
                     if (width <= 0 || height <= 0)
                     {
+                        _contentState[index] = _contentEmpty;
                         return null;
                     }
+
+                    _fileIndex.CacheDimensions(index, width, height);
+                    _contentState[index] = _contentPresent;
 
                     // Returned array holds the payload without the 8-byte header.
                     int resultLen = payloadLength - 8;
@@ -548,8 +708,16 @@ namespace Ultima
                     width = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
                     height = data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24);
                     dataOffset = 8;
-                    entry.Extra1 = width;
-                    entry.Extra2 = height;
+
+                    if (width > 0 && height > 0)
+                    {
+                        _fileIndex.CacheDimensions(index, width, height);
+                        _contentState[index] = _contentPresent;
+                    }
+                    else
+                    {
+                        _contentState[index] = _contentEmpty;
+                    }
                 }
 
                 if (width <= 0 || height <= 0 || destination.Length < width * height)
@@ -751,8 +919,15 @@ namespace Ultima
                     height = (uint)(data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24));
                     dataOffset = 8;
 
-                    entry.Extra1 = (int)width;
-                    entry.Extra2 = (int)height;
+                    if (width > 0 && height > 0 && width <= 0xFFFF && height <= 0xFFFF)
+                    {
+                        _fileIndex.CacheDimensions(index, (int)width, (int)height);
+                        _contentState[index] = _contentPresent;
+                    }
+                    else
+                    {
+                        _contentState[index] = _contentEmpty;
+                    }
                 }
 
                 if (width <= 0 || height <= 0)
@@ -1092,6 +1267,8 @@ namespace Ultima
             using (var binidx = new BinaryWriter(fsidx))
             using (var binmul = new BinaryWriter(fsmul))
             {
+                int lastRealIndex = -1;
+
                 for (int index = 0; index < _indexLength; index++)
                 {
                     Files.FireFileSaveEvent();
@@ -1112,6 +1289,8 @@ namespace Ultima
 
                         var line = (ushort*)bd.Scan0;
                         int delta = bd.Stride >> 1;
+
+                        lastRealIndex = index;
 
                         binidx.Write((int)fsmul.Position); // lookup
                         var length = (int)fsmul.Position;
@@ -1167,6 +1346,12 @@ namespace Ultima
                         bmp.UnlockBits(bd);
                     }
                 }
+
+                // Drop the sentinel rows past the last real gump. Truncate only - extending would append rows of
+                // zeroes, which read as an entry at offset 0 rather than as an unused id.
+                long rows = Math.Min(_indexLength, Math.Max(_defaultIdxEntryCount, lastRealIndex + 1));
+                binidx.Flush();
+                fsidx.SetLength(rows * 12);
             }
         }
     }

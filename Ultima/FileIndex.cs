@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Ultima.Helpers;
 
 namespace Ultima
@@ -15,7 +16,41 @@ namespace Ultima
         public IEntry this[int index]
         {
             get => FileAccessor[index];
-            set => FileAccessor[index] = (Entry6D)value;
+            // Let the accessor cast: it knows whether it stores Entry3D or Entry6D.
+            set => FileAccessor[index] = value;
+        }
+
+        private readonly Lock _entryWriteLock = new();
+
+        /// <summary>
+        /// Persists dimensions discovered by actually decoding an entry back into the index, so a
+        /// later lookup does not have to decode it again.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Seek(int, ref IEntry, out bool)"/> and the indexer hand out a <b>boxed copy</b> of
+        /// the entry, so assigning to <c>entry.Extra1</c> on that copy is discarded - write-back has to go
+        /// through here. Callers only ever pass values read out of the payload, so the lock is only there
+        /// to stop two threads tearing the struct mid-write.
+        /// </remarks>
+        public void CacheDimensions(int index, int width, int height)
+        {
+            if (FileAccessor == null || index < 0 || index >= FileAccessor.IndexLength)
+            {
+                return;
+            }
+
+            lock (_entryWriteLock)
+            {
+                IEntry entry = FileAccessor[index];
+                if (entry == null)
+                {
+                    return;
+                }
+
+                entry.Extra1 = width;
+                entry.Extra2 = height;
+                FileAccessor[index] = entry;
+            }
         }
 
         private readonly string _mulPath;
@@ -499,24 +534,33 @@ namespace Ultima
 
         public int Length { get; set; }
 
-        private int extra1;
-        private int extra2;
-
-        public int Extra
-        {
-            get => extra1 << 16 | extra2;
-            set
-            {
-                extra1 = value & 0x0000FFFF;
-                extra2 = (int)((value & 0xFFFF0000) >> 16);
-            }
-        }
-
         public int DecompressedLength { get; set; }
 
+        /// <summary>
+        /// High half of <see cref="Extra"/>. For gumps this is the width, matching the
+        /// (width &lt;&lt; 16 | height) packing in gumpidx.mul.
+        /// </summary>
         public int Extra1 { get; set; }
 
+        /// <summary>
+        /// Low half of <see cref="Extra"/>. For gumps this is the height.
+        /// </summary>
         public int Extra2 { get; set; }
+
+        /// <summary>
+        /// Packed (Extra1 &lt;&lt; 16 | Extra2) view over the two halves, mirroring <see cref="Entry3D"/>.
+        /// Getter and setter must agree on the order: they once did not, so every UOP gump reported its
+        /// width and height swapped.
+        /// </summary>
+        public int Extra
+        {
+            get => (Extra1 << 16) | (Extra2 & 0xFFFF);
+            set
+            {
+                Extra1 = (value >> 16) & 0xFFFF;
+                Extra2 = value & 0xFFFF;
+            }
+        }
 
         public CompressionFlag Flag { get; set; }
     }
@@ -672,7 +716,8 @@ namespace Ultima
                 {
                     Index[i].Lookup = -1;
                     Index[i].Length = -1;
-                    Index[i].Extra = -1;
+                    Index[i].Extra1 = -1;
+                    Index[i].Extra2 = -1;
                 }
 
                 do
@@ -700,14 +745,18 @@ namespace Ultima
                             continue;
                         }
 
-                        if (idx < 0 || idx > Index.Length)
+                        if (idx < 0 || idx >= Index.Length)
                         {
                             throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
                         }
 
                         offset += headerLength;
 
-                        if (hasextra && flag != 3)
+                        // The width/height prefix can only be read straight off the stream when the payload
+                        // is stored. For anything compressed those first eight bytes belong to the zlib (or
+                        // zlib+Mythic) stream and the dimensions come out of the decompressed payload instead
+                        // - see Gumps.GetRawGump.
+                        if (hasextra && (CompressionFlag)flag == CompressionFlag.None)
                         {
                             long curPos = br.BaseStream.Position;
 
