@@ -125,7 +125,10 @@ namespace Ultima
                 }
             }
 
-            InvalidLandBlock = new Tile[196];
+            // 64 tiles, not 196 - 196 is the on-disk byte size of a block (4-byte header plus
+            // 64 three-byte tiles), which is a different thing. A caller that enumerates the block
+            // rather than indexing 0..63 used to get 196 tiles back and write a malformed block.
+            InvalidLandBlock = new Tile[64];
 
             _landTiles = new Tile[BlockWidth][][];
             _staticTiles = new HuedTile[BlockWidth][][][][];
