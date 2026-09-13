@@ -16,6 +16,11 @@ namespace Ultima
 
         private static StaticTile[] _tileBuffer = new StaticTile[128];
 
+        /// <remarks>
+        /// The arrays are only allocated when the matching diff files are present, and a client can
+        /// ship one half of the set without the other - 7.0.114.4 has stadif but no mapdif - so the
+        /// accessors have to cope with a null array rather than assume the files were there.
+        /// </remarks>
         public bool IsLandBlockPatched(int x, int y)
         {
             if (x < 0 || y < 0 || x >= _blockWidth || y >= _blockHeight)
@@ -23,12 +28,7 @@ namespace Ultima
                 return false;
             }
 
-            if (LandBlocks[x] == null)
-            {
-                return false;
-            }
-
-            if (LandBlocks[x][y] == null)
+            if (LandBlocks?[x]?[y] == null)
             {
                 return false;
             }
@@ -43,12 +43,7 @@ namespace Ultima
                 return TileMatrix.InvalidLandBlock;
             }
 
-            if (LandBlocks[x]==null)
-            {
-                return TileMatrix.InvalidLandBlock;
-            }
-
-            return LandBlocks[x][y];
+            return LandBlocks?[x]?[y] ?? TileMatrix.InvalidLandBlock;
         }
 
         public Tile GetLandTile(int x, int y)
@@ -63,12 +58,7 @@ namespace Ultima
                 return false;
             }
 
-            if (StaticBlocks[x] == null)
-            {
-                return false;
-            }
-
-            if (StaticBlocks[x][y] == null)
+            if (StaticBlocks?[x]?[y] == null)
             {
                 return false;
             }
@@ -83,12 +73,7 @@ namespace Ultima
                 return TileMatrix.EmptyStaticBlock;
             }
 
-            if (StaticBlocks[x] == null)
-            {
-                return TileMatrix.EmptyStaticBlock;
-            }
-
-            return StaticBlocks[x][y];
+            return StaticBlocks?[x]?[y] ?? TileMatrix.EmptyStaticBlock;
         }
 
         public HuedTile[] GetStaticTiles(int x, int y)
