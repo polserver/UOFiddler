@@ -99,7 +99,7 @@ namespace Ultima
         public TileMatrixPatch(TileMatrix matrix, int index, string path)
         {
             _blockWidth = matrix.BlockWidth;
-            _blockHeight = matrix.BlockWidth;
+            _blockHeight = matrix.BlockHeight;
 
             LandBlocksCount = StaticBlocksCount = 0;
             string mapDataPath, mapIndexPath;
