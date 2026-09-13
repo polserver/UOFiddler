@@ -90,6 +90,13 @@ namespace UoFiddler.Forms
             cmdtext.Text = Options.MapCmd;
             argstext.Text = Options.MapArgs;
             textBoxOutputPath.Text = Options.OutputPath;
+
+            foreach (ClientFileSaveFormat format in ClientFileSaveFormats.All)
+            {
+                comboBoxSaveFormat.Items.Add(ClientFileSaveFormats.DisplayName(format));
+            }
+
+            comboBoxSaveFormat.SelectedIndex = ClientFileSaveFormats.IndexOf(Options.SaveFormat);
         }
 
         private void OnClickApply(object sender, EventArgs e)
@@ -190,6 +197,11 @@ namespace UoFiddler.Forms
             if (Directory.Exists(textBoxOutputPath.Text))
             {
                 Options.OutputPath = textBoxOutputPath.Text;
+            }
+
+            if (comboBoxSaveFormat.SelectedIndex >= 0)
+            {
+                Options.SaveFormat = ClientFileSaveFormats.All[comboBoxSaveFormat.SelectedIndex];
             }
 
             bool newHex = radioExportFilenameHex.Checked;

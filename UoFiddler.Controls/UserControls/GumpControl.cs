@@ -19,6 +19,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
+using Ultima.Uop;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
@@ -651,15 +652,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            using (new WaitCursorScope(this))
-            {
-                ProgressBarDialog barDialog = new ProgressBarDialog(Gumps.GetCount(), "Save");
-                Gumps.Save(Options.OutputPath);
-                barDialog.Dispose();
-            }
-
-            Options.ChangedUltimaClass["Gumps"] = false;
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            ClientFileSaveCommand.Run(this, FileType.GumpartLegacyMul, Gumps.Save, "Gumps",
+                createProgress: () => new ProgressBarDialog(Gumps.GetCount(), "Save"));
         }
 
         private void OnClickRemove(object sender, EventArgs e)

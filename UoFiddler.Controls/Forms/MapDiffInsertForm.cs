@@ -52,7 +52,7 @@ namespace UoFiddler.Controls.Forms
                 : "the same format as this client (.mul)");
             comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}.mul");
             comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}LegacyMUL.uop");
-            comboBoxMapFormat.SelectedIndex = 0;
+            comboBoxMapFormat.SelectedIndex = ClientFileSaveFormats.DefaultIndex(Options.SaveFormat);
 
             checkBoxMap.Text = "Map";
             checkBoxStatics.Text = "Statics";

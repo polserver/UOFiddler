@@ -25,16 +25,10 @@ namespace Ultima.Uop
     /// componentCount 32 bit component ids. A multi.mul row is a fixed 16 bytes and has nowhere to put
     /// those ids, so they are written next to the mul/idx pair instead and merged back in when packing.
     ///
-    /// In the shipped client file 3200 of 186695 tiles carry ids, drawn from a shared vocabulary of only
-    /// 59 values (119404 - 119462) reused across 304 multis, so ids for newly authored multis can be
-    /// written by hand.
-    ///
-    /// A component id marks a tile's interactive role within the multi, not its graphic and not a cliloc:
-    /// every tile carrying 119405 is a "tiller man" in tiledata, every 119406 is a "hatch", 119404 is the
-    /// hull (mast/deck), 119407/119408 are the planks, and 119453/119454 sit on doors. All 24 boat multis
-    /// (6 hulls x 4 facings) share the same 119404-119408 signature, and 1121 of the 1273 item ids that
-    /// carry a component always carry the same one. That is why dropping them breaks a client: a boat
-    /// without its tiller man cannot be steered and a house door stops being a door.
+    /// A component id marks a tile's interactive role within the multi, not its graphic and not a
+    /// cliloc - tiller man, hatch, hull, plank, door. They come from a small shared vocabulary reused
+    /// across multis. Dropping them breaks a client: a boat without its tiller man cannot be steered
+    /// and a house door stops being a door.
     /// </remarks>
     public static class MultiComponentSidecar
     {
@@ -259,6 +253,8 @@ namespace Ultima.Uop
             private readonly Dictionary<(int MultiId, int TileIndex), Row> _rows;
             private readonly List<string> _problems;
 
+            private Dictionary<(int MultiId, ushort ItemId, short X, short Y, short Z), uint[]> _byIdentity;
+
             internal Table(string path, Dictionary<(int MultiId, int TileIndex), Row> rows, List<string> malformed)
             {
                 Path = path;
@@ -289,26 +285,81 @@ namespace Ultima.Uop
             public IReadOnlyList<string> Problems => _problems;
 
             /// <summary>
-            /// Component ids for a tile, or an empty span when the sidecar has no entry for it. A row whose
-            /// itemId/x/y/z disagree with the mul row is dropped and recorded in <see cref="Problems"/> -
-            /// that happens when a multi's tile list was re-authored after the sidecar was written.
+            /// Component ids for a tile, or an empty span when the sidecar describes no such tile. The row
+            /// at the tile's index is used when its itemId/x/y/z agree; otherwise the tile is looked up by
+            /// that identity instead, which covers a mul written in a different tile order from the sidecar.
+            /// Only when neither finds it are the ids dropped and the mismatch recorded in
+            /// <see cref="Problems"/> - that happens when a multi's tile list was re-authored after the
+            /// sidecar was written.
             /// </summary>
             public uint[] GetComponentIds(int multiId, int tileIndex, ushort itemId, short x, short y, short z)
             {
-                if (!_rows.TryGetValue((multiId, tileIndex), out Row row))
+                bool found = _rows.TryGetValue((multiId, tileIndex), out Row row);
+
+                if (found && row.ItemId == itemId && row.X == x && row.Y == y && row.Z == z)
                 {
-                    return _none;
+                    return row.ComponentIds;
                 }
 
-                if (row.ItemId != itemId || row.X != x || row.Y != y || row.Z != z)
+                // A sidecar taken from a uop lists tiles in that file's order, while the mul being packed
+                // is written in the editor's, and the two need not agree even when nothing was edited. So
+                // a tile whose index no longer lines up is looked up by what it is instead of where it sits.
+                uint[] byIdentity = LookupByIdentity(multiId, itemId, x, y, z);
+
+                if (byIdentity != null)
+                {
+                    return byIdentity;
+                }
+
+                if (found)
                 {
                     _problems.Add(
                         $"multi {multiId} tile {tileIndex}: sidecar describes 0x{row.ItemId:X4} at ({row.X},{row.Y},{row.Z}) " +
                         $"but multi.mul has 0x{itemId:X4} at ({x},{y},{z}) - component ids dropped");
-                    return _none;
                 }
 
-                return row.ComponentIds;
+                return _none;
+            }
+
+            /// <summary>
+            /// Component ids for the one row describing this tile, or null when no row does or when more
+            /// than one does and they disagree - an ambiguous match is no better than none.
+            /// </summary>
+            private uint[] LookupByIdentity(int multiId, ushort itemId, short x, short y, short z)
+            {
+                _byIdentity ??= BuildIdentityIndex();
+
+                return _byIdentity.TryGetValue((multiId, itemId, x, y, z), out uint[] ids) ? ids : null;
+            }
+
+            private Dictionary<(int MultiId, ushort ItemId, short X, short Y, short Z), uint[]> BuildIdentityIndex()
+            {
+                var index = new Dictionary<(int MultiId, ushort ItemId, short X, short Y, short Z), uint[]>();
+                var ambiguous = new List<(int MultiId, ushort ItemId, short X, short Y, short Z)>();
+
+                foreach (KeyValuePair<(int MultiId, int TileIndex), Row> pair in _rows)
+                {
+                    Row row = pair.Value;
+                    var key = (pair.Key.MultiId, row.ItemId, row.X, row.Y, row.Z);
+
+                    if (!index.TryGetValue(key, out uint[] existing))
+                    {
+                        index[key] = row.ComponentIds;
+                        continue;
+                    }
+
+                    if (!existing.AsSpan().SequenceEqual(row.ComponentIds))
+                    {
+                        ambiguous.Add(key);
+                    }
+                }
+
+                foreach (var key in ambiguous)
+                {
+                    index.Remove(key);
+                }
+
+                return index;
             }
         }
 

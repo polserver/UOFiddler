@@ -117,19 +117,6 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
         private const string _batchMultiIdxName = "multi.idx";
 
-        private static (string mul, string idx, string uop) GetConventionalNames(FileType type, int mapIndex)
-        {
-            return type switch
-            {
-                FileType.ArtLegacyMul => ("art.mul", "artidx.mul", "artLegacyMUL.uop"),
-                FileType.GumpartLegacyMul => ("gumpart.mul", "gumpidx.mul", "gumpartLegacyMUL.uop"),
-                FileType.MapLegacyMul => ($"map{mapIndex}.mul", null, $"map{mapIndex}LegacyMUL.uop"),
-                FileType.SoundLegacyMul => ("sound.mul", "soundidx.mul", "soundLegacyMUL.uop"),
-                FileType.MultiCollection => ("multi.mul", "multi.idx", "MultiCollection.uop"),
-                _ => ("", "", "")
-            };
-        }
-
         private void OnMulTypeChanged(object sender, EventArgs e) => RefreshMulTypeUi();
 
         private void OnUopTypeChanged(object sender, EventArgs e) => RefreshUopTypeUi();
@@ -147,21 +134,15 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             inidx.Enabled = inidxbtn.Enabled = !isMap;
             mulMapIndex.Enabled = isMap;
 
-            // Every entry of every shipped MultiCollection.uop is zlib compressed. Packing it uncompressed
-            // produces a file several times larger than the original, and Mythic is not a valid compression
-            // for this type at all, so the choice is fixed rather than merely defaulted.
-            if (isMulti)
+            // What the shipped files use, and whether the type has any other valid choice, is recorded
+            // once in UopFileNames. Gumpart is the one type the client also accepts zlib and Mythic for,
+            // so its selection is left wherever the user put it rather than reset on every type change.
+            if (type != FileType.GumpartLegacyMul)
             {
-                compressionBox.SelectedItem = nameof(CompressionFlag.Zlib);
-            }
-            else if (type == FileType.ArtLegacyMul || type == FileType.MapLegacyMul || type == FileType.SoundLegacyMul)
-            {
-                // Every art, map and sound entry of every shipped client is stored uncompressed, and
-                // UOFiddler's own map reader can only address stored entries. Default accordingly.
-                compressionBox.SelectedItem = nameof(CompressionFlag.None);
+                compressionBox.SelectedItem = UopFileNames.DefaultCompression(type).ToString();
             }
 
-            compressionBox.Enabled = !isMulti;
+            compressionBox.Enabled = !UopFileNames.IsCompressionFixed(type);
 
             inhousingbin.Visible = inhousingbinbtn.Visible = labelHousingBin.Visible = isMulti;
 
@@ -171,7 +152,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             inidx.Text = string.Empty;
             inhousingbin.Text = string.Empty;
 
-            var (mulName, idxName, uopName) = GetConventionalNames(type, (int)mulMapIndex.Value);
+            var (mulName, idxName, uopName) = UopFileNames.For(type, (int)mulMapIndex.Value);
             inmul.PlaceholderText = mulName;
             inidx.PlaceholderText = idxName ?? string.Empty;
             inhousingbin.PlaceholderText = "housing.bin";
@@ -193,7 +174,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
             inuop.Text = string.Empty;
 
-            var (mulName, idxName, uopName) = GetConventionalNames(type, (int)uopMapIndex.Value);
+            var (mulName, idxName, uopName) = UopFileNames.For(type, (int)uopMapIndex.Value);
             inuop.PlaceholderText = uopName;
 
             // Preview what will be written under the output folder.
@@ -305,7 +286,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
                 }
             }
 
-            var (_, _, uopName) = GetConventionalNames(fileType, (int)mulMapIndex.Value);
+            var (_, _, uopName) = UopFileNames.For(fileType, (int)mulMapIndex.Value);
             string outUopPath = Path.Combine(outuopfolder.Text, uopName);
             string inIdxPath = fileType == FileType.MapLegacyMul ? null : inidx.Text;
 
@@ -450,7 +431,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             }
 
             int mapIdx = (int)uopMapIndex.Value;
-            var (mulName, idxName, _) = GetConventionalNames(fileType, mapIdx);
+            var (mulName, idxName, _) = UopFileNames.For(fileType, mapIdx);
 
             string outMulPath = Path.Combine(outfolder.Text, mulName);
             string outIdxPath = idxName != null ? Path.Combine(outfolder.Text, idxName) : null;
