@@ -206,7 +206,8 @@ namespace Ultima
             // The index can answer for stored and verdata patched entries. For zlib it still can: the
             // payload is the eight byte width/height header plus pixels, so a declared length of eight or
             // less is a 0x0 gump. Mythic cannot - there DecompressedLength is the inner stream length.
-            bool verdataPatched = (entry.Length & (1 << 31)) != 0;
+            // -1 is the unused entry filler, not a patch - it carries the same high bit.
+            bool verdataPatched = entry.Length != -1 && (entry.Length & (1 << 31)) != 0;
 
             if (verdataPatched || entry.Flag == CompressionFlag.None)
             {

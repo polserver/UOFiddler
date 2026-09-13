@@ -133,6 +133,14 @@ namespace Ultima
 
             int max = size * size * 2;
 
+            // An entry that claims fewer bytes than the size flag implies is truncated - reading
+            // the full tile off it would run past the end of the stream, and this is called from a
+            // paint handler, where an exception takes the whole window down.
+            if (length < max)
+            {
+                return null;
+            }
+
             byte[] streamBuffer = ArrayPool<byte>.Shared.Rent(max);
             try
             {
