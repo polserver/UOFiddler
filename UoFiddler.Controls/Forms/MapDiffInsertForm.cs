@@ -10,9 +10,17 @@
  ***************************************************************************/
 
 using System;
-using System.IO;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
 using Ultima;
+using Ultima.Helpers;
+using Ultima.Maps;
+using Ultima.Statics;
 using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Controls.Forms
@@ -21,473 +29,292 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Map _workingMap;
 
+        private CancellationTokenSource _cancellation;
+
         public MapDiffInsertForm(Map currentMap)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
-            _workingMap = currentMap;
-            numericUpDownX1.Maximum = _workingMap.Width;
-            numericUpDownX2.Maximum = _workingMap.Width;
-            numericUpDownY1.Maximum = _workingMap.Height;
-            numericUpDownY2.Maximum = _workingMap.Height;
-            Text = $"Map Diff Insert ID:{_workingMap.FileIndex}";
+
+            _workingMap = currentMap ?? throw new ArgumentNullException(nameof(currentMap));
+
+            Text = $"Diff to Map Copy - map {_workingMap.FileIndex}";
+
+            bool uop = _workingMap.Tiles.IsUOPFormat;
+
+            comboBoxMapFormat.Items.Add(uop
+                ? "the same format as this client (.uop)"
+                : "the same format as this client (.mul)");
+            comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}.mul");
+            comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}LegacyMUL.uop");
+            comboBoxMapFormat.SelectedIndex = 0;
+
+            checkBoxMap.Text = "Map";
+            checkBoxStatics.Text = "Statics";
+            checkBoxMap.Checked = true;
+            checkBoxStatics.Checked = true;
+
+            // Exclusive bounds: a map of width W has tiles 0..W-1, and the old check let W through,
+            // which becomes a block index one past the end once it is shifted.
+            numericUpDownX1.Maximum = Math.Max(0, _workingMap.Width - 1);
+            numericUpDownX2.Maximum = Math.Max(0, _workingMap.Width - 1);
+            numericUpDownY1.Maximum = Math.Max(0, _workingMap.Height - 1);
+            numericUpDownY2.Maximum = Math.Max(0, _workingMap.Height - 1);
+            numericUpDownX2.Value = numericUpDownX2.Maximum;
+            numericUpDownY2.Value = numericUpDownY2.Maximum;
+
+            OnOptionChanged(this, EventArgs.Empty);
+
+            ActiveControl = buttonCopy;
+        }
+
+        private void OnOptionChanged(object sender, EventArgs e)
+        {
+            comboBoxMapFormat.Enabled = checkBoxMap.Checked;
+            labelMapFormat.Enabled = checkBoxMap.Checked;
+            RemoveDupl.Enabled = checkBoxStatics.Checked;
+            checkBoxDuplicatesHue.Enabled = checkBoxStatics.Checked && RemoveDupl.Checked;
+
+            UpdatePreview();
+        }
+
+        private void OnRegionChanged(object sender, EventArgs e)
+        {
+            UpdatePreview();
+        }
+
+        /// <summary>
+        /// Shows the block-snapped rectangle that will really be patched, and how much diff data
+        /// there is to patch with. The tile to block conversion rounds out to whole 8-tile blocks,
+        /// which used to happen silently.
+        /// </summary>
+        private void UpdatePreview()
+        {
+            int x1 = (int)numericUpDownX1.Value;
+            int y1 = (int)numericUpDownY1.Value;
+            int x2 = (int)numericUpDownX2.Value;
+            int y2 = (int)numericUpDownY2.Value;
+
+            if (x1 > x2)
+            {
+                (x1, x2) = (x2, x1);
+            }
+
+            if (y1 > y2)
+            {
+                (y1, y2) = (y2, y1);
+            }
+
+            var region = new BlockRectangle(x1 >> 3, y1 >> 3, x2 >> 3, y2 >> 3);
+
+            TileMatrixPatch patch = _workingMap.Tiles.Patch;
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"region  {region}");
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                "diff data loaded: {0:N0} land blocks, {1:N0} static blocks",
+                patch.LandBlocksCount, patch.StaticBlocksCount));
+
+            if (region.TileX1 != x1 || region.TileY1 != y1 || region.TileX2 != x2 || region.TileY2 != y2)
+            {
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                    "the request {0},{1} - {2},{3} was widened to whole 8-tile blocks", x1, y1, x2, y2));
+            }
+
+            textBoxPreview.Text = sb.ToString();
         }
 
         private void OnClickCopy(object sender, EventArgs e)
         {
-            int x1 = (int)numericUpDownX1.Value;
-            int x2 = (int)numericUpDownX2.Value;
-            int y1 = (int)numericUpDownY1.Value;
-            int y2 = (int)numericUpDownY2.Value;
-
-            if (x1 < 0 || x1 > _workingMap.Width)
+            if (worker.IsBusy)
             {
-                MessageBox.Show("Invalid X1 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
 
-            if (x2 < 0 || x2 > _workingMap.Width)
+            if (!checkBoxMap.Checked && !checkBoxStatics.Checked)
             {
-                MessageBox.Show("Invalid X2 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show(this, "Nothing is selected to insert.", "Diff to Map Copy",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                 return;
             }
 
-            if (y1 < 0 || y1 > _workingMap.Height)
+            var options = new MapDiffApplyOptions
             {
-                MessageBox.Show("Invalid Y1 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
+                Map = _workingMap,
+                X1 = (int)numericUpDownX1.Value,
+                Y1 = (int)numericUpDownY1.Value,
+                X2 = (int)numericUpDownX2.Value,
+                Y2 = (int)numericUpDownY2.Value,
+                ApplyLand = checkBoxMap.Checked,
+                ApplyStatics = checkBoxStatics.Checked,
+                MapFormat = ResolveFormat(),
+                OutputDirectory = Options.OutputPath
+            };
+
+            if (checkBoxStatics.Checked)
+            {
+                options.StaticsFilter = new StaticsTileFilter
+                {
+                    // The rules this feature has always applied, so its output keeps its old shape.
+                    DropInvalidItemIds = true,
+                    MaxItemId = Art.GetMaxItemId(),
+                    OutOfBlockTiles = OutOfBlockAction.Keep,
+                    DropInvalidZ = false,
+                    NormalizeNegativeHue = true,
+                    RemoveDuplicates = RemoveDupl.Checked,
+                    DuplicatesCompareHue = RemoveDupl.Checked && checkBoxDuplicatesHue.Checked
+                };
             }
 
-            if (y2 < 0 || y2 > _workingMap.Height)
-            {
-                MessageBox.Show("Invalid Y2 coordinate!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
+            _cancellation?.Dispose();
+            _cancellation = new CancellationTokenSource();
+            options.CancellationToken = _cancellation.Token;
+            options.Progress = new Progress<MapCopyProgress>(OnProgress);
 
-            if (x1 > x2 || y1 > y2)
-            {
-                MessageBox.Show("X1 and Y1 cannot be bigger than X2 and Y2!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
-
-            x1 >>= 3;
-            x2 >>= 3;
-            y1 >>= 3;
-            y2 >>= 3;
-
-            int blockY = _workingMap.Height >> 3;
-            int blockX = _workingMap.Width >> 3;
-
-            progressBar1.Step = 1;
+            SetRunning(true);
             progressBar1.Value = 0;
-            progressBar1.Maximum = 0;
+            labelStatus.Text = "Inserting...";
 
-            if (checkBoxMap.Checked)
+            worker.RunWorkerAsync(options);
+        }
+
+        private MapOutputFormat ResolveFormat()
+        {
+            switch (comboBoxMapFormat.SelectedIndex)
             {
-                progressBar1.Maximum += blockY * blockX;
+                case 1: return MapOutputFormat.Mul;
+                case 2: return MapOutputFormat.Uop;
+                default: return _workingMap.Tiles.IsUOPFormat ? MapOutputFormat.Uop : MapOutputFormat.Mul;
+            }
+        }
+
+        private void OnProgress(MapCopyProgress progress)
+        {
+            if (progress.BlocksTotal <= 0)
+            {
+                return;
             }
 
-            if (checkBoxStatics.Checked)
+            progressBar1.Value = Math.Min(100, Math.Max(0, (int)(progress.BlocksDone * 100L / progress.BlocksTotal)));
+            labelStatus.Text = string.Format(CultureInfo.InvariantCulture, "{0}: {1:N0} of {2:N0} blocks",
+                progress.Stage, progress.BlocksDone, progress.BlocksTotal);
+        }
+
+        private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = MapDiffApplier.Run((MapDiffApplyOptions)e.Argument);
+        }
+
+        private void OnWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            SetRunning(false);
+
+            if (e.Error is OperationCanceledException)
             {
-                progressBar1.Maximum += blockY * blockX;
+                progressBar1.Value = 0;
+                labelStatus.Text = "Cancelled. Nothing was written.";
+
+                return;
             }
 
-            if (checkBoxMap.Checked)
+            if (e.Error != null)
             {
-                string mapPath = Files.GetFilePath($"map{_workingMap.FileIndex}.mul");
-                BinaryReader mMapReader;
+                progressBar1.Value = 0;
+                labelStatus.Text = "Failed.";
 
-                if (mapPath != null)
-                {
-                    var mMap = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    mMapReader = new BinaryReader(mMap);
-                }
-                else
-                {
-                    MessageBox.Show("Map file not found!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
+                ShowError("Diff to Map Copy", e.Error);
 
-                string mul = Path.Combine(Options.OutputPath, $"map{_workingMap.FileIndex}.mul");
-                using (FileStream fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-                {
-                    using (BinaryWriter binmul = new BinaryWriter(fsmul))
-                    {
-                        for (int x = 0; x < blockX; ++x)
-                        {
-                            for (int y = 0; y < blockY; ++y)
-                            {
-                                mMapReader.BaseStream.Seek(((x * blockY) + y) * 196, SeekOrigin.Begin);
-                                int header = mMapReader.ReadInt32();
-                                binmul.Write(header);
-                                ushort tileid;
-                                sbyte z;
-                                bool patched = false;
-                                if (x1 <= x && x <= x2 && y1 <= y && y <= y2)
-                                {
-                                    if (_workingMap.Tiles.Patch.IsLandBlockPatched(x, y))
-                                    {
-                                        patched = true;
-                                        Tile[] patchtile = _workingMap.Tiles.Patch.GetLandBlock(x, y);
-                                        for (int i = 0; i < 64; ++i)
-                                        {
-                                            tileid = patchtile[i].Id;
-                                            z = (sbyte)patchtile[i].Z;
-                                            tileid = Art.GetLegalItemId(tileid);
-                                            if (z < -128)
-                                            {
-                                                z = -128;
-                                            }
-
-                                            if (z > 127)
-                                            {
-                                                z = 127;
-                                            }
-
-                                            binmul.Write(tileid);
-                                            binmul.Write(z);
-                                        }
-                                    }
-                                }
-
-                                if (!patched)
-                                {
-                                    for (int i = 0; i < 64; ++i)
-                                    {
-                                        tileid = mMapReader.ReadUInt16();
-                                        z = mMapReader.ReadSByte();
-                                        tileid = Art.GetLegalItemId(tileid);
-                                        if (z < -128)
-                                        {
-                                            z = -128;
-                                        }
-
-                                        if (z > 127)
-                                        {
-                                            z = 127;
-                                        }
-
-                                        binmul.Write(tileid);
-                                        binmul.Write(z);
-                                    }
-                                }
-
-                                progressBar1.PerformStep();
-                            }
-                        }
-                    }
-                }
-
-                mMapReader.Close();
-            }
-            if (checkBoxStatics.Checked)
-            {
-                string indexPath = Files.GetFilePath($"staidx{_workingMap.FileIndex}.mul");
-                BinaryReader mIndexReader;
-                if (indexPath != null)
-                {
-                    var mIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    mIndexReader = new BinaryReader(mIndex);
-                }
-                else
-                {
-                    MessageBox.Show("Static file not found!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                string staticsPath = Files.GetFilePath($"statics{_workingMap.FileIndex}.mul");
-
-                FileStream mStatics;
-                BinaryReader mStaticsReader;
-                if (staticsPath != null)
-                {
-                    mStatics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    mStaticsReader = new BinaryReader(mStatics);
-                }
-                else
-                {
-                    MessageBox.Show("Static file not found!", "Map Diff Insert", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                string idx = Path.Combine(Options.OutputPath, $"staidx{_workingMap.FileIndex}.mul");
-                string mul = Path.Combine(Options.OutputPath, $"statics{_workingMap.FileIndex}.mul");
-                using (FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-                                  fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-                {
-                    using (BinaryWriter binidx = new BinaryWriter(fsidx),
-                                        binmul = new BinaryWriter(fsmul))
-                    {
-                        for (int x = 0; x < blockX; ++x)
-                        {
-                            for (int y = 0; y < blockY; ++y)
-                            {
-                                mIndexReader.BaseStream.Seek(((x * blockY) + y) * 12, SeekOrigin.Begin);
-                                var lookup = mIndexReader.ReadInt32();
-                                var length = mIndexReader.ReadInt32();
-                                var extra = mIndexReader.ReadInt32();
-                                bool patched = false;
-                                if (x1 <= x && x <= x2 && y1 <= y && y <= y2)
-                                {
-                                    if (_workingMap.Tiles.Patch.IsStaticBlockPatched(x, y))
-                                    {
-                                        patched = true;
-                                    }
-                                }
-
-                                if (patched)
-                                {
-                                    HuedTile[][][] patchstat = _workingMap.Tiles.Patch.GetStaticBlock(x, y);
-                                    int count = 0;
-                                    for (int i = 0; i < 8; ++i)
-                                    {
-                                        for (int j = 0; j < 8; ++j)
-                                        {
-                                            if (patchstat[i][j] != null)
-                                            {
-                                                count += patchstat[i][j].Length;
-                                            }
-                                        }
-                                    }
-
-                                    if (count == 0)
-                                    {
-                                        binidx.Write(-1); // lookup
-                                        binidx.Write(-1); // length
-                                        binidx.Write(-1); // extra
-                                    }
-                                    else
-                                    {
-                                        int fsmullength = (int)fsmul.Position;
-                                        if (RemoveDupl.Checked)
-                                        {
-                                            StaticTile[] tilelist = new StaticTile[count];
-                                            int m = 0;
-                                            for (int i = 0; i < 8; ++i)
-                                            {
-                                                for (int j = 0; j < 8; ++j)
-                                                {
-                                                    foreach (HuedTile htile in patchstat[i][j])
-                                                    {
-                                                        StaticTile tile = new StaticTile
-                                                        {
-                                                            Id = htile.Id,
-                                                            Z = (sbyte)htile.Z,
-                                                            X = (byte)i,
-                                                            Y = (byte)j,
-                                                            Hue = (short)htile.Hue
-                                                        };
-
-                                                        if (tile.Id > Art.GetMaxItemId())
-                                                        {
-                                                            continue;
-                                                        }
-
-                                                        if (tile.Hue < 0)
-                                                        {
-                                                            tile.Hue = 0;
-                                                        }
-
-                                                        bool first = true;
-                                                        for (int k = 0; k < m; ++k)
-                                                        {
-                                                            if (tilelist[k].Id == tile.Id && tilelist[k].X == tile.X && tilelist[k].Y == tile.Y && tilelist[k].Z == tile.Z && tilelist[k].Hue == tile.Hue)
-                                                            {
-                                                                first = false;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (first)
-                                                        {
-                                                            tilelist[m] = tile;
-                                                            ++m;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            if (m > 0)
-                                            {
-                                                binidx.Write((int)fsmul.Position); //lookup
-                                                for (int i = 0; i < m; ++i)
-                                                {
-                                                    binmul.Write(tilelist[i].Id);
-                                                    binmul.Write(tilelist[i].X);
-                                                    binmul.Write(tilelist[i].Y);
-                                                    binmul.Write(tilelist[i].Z);
-                                                    binmul.Write(tilelist[i].Hue);
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            bool firstItem = true;
-                                            for (int i = 0; i < 8; ++i)
-                                            {
-                                                for (int j = 0; j < 8; ++j)
-                                                {
-                                                    foreach (HuedTile tile in patchstat[i][j])
-                                                    {
-                                                        ushort graphic = tile.Id;
-                                                        sbyte sz = (sbyte)tile.Z;
-                                                        short sHue = (short)tile.Hue;
-
-                                                        if (graphic > Art.GetMaxItemId())
-                                                        {
-                                                            continue;
-                                                        }
-
-                                                        if (sHue < 0)
-                                                        {
-                                                            sHue = 0;
-                                                        }
-
-                                                        if (firstItem)
-                                                        {
-                                                            binidx.Write((int)fsmul.Position); //lookup
-                                                            firstItem = false;
-                                                        }
-                                                        binmul.Write(graphic);
-                                                        binmul.Write((byte)i); //x
-                                                        binmul.Write((byte)j); //y
-                                                        binmul.Write(sz);
-                                                        binmul.Write(sHue);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        fsmullength = (int)fsmul.Position - fsmullength;
-                                        if (fsmullength > 0)
-                                        {
-                                            binidx.Write(fsmullength); //length
-                                            binidx.Write(extra); //extra
-                                        }
-                                        else
-                                        {
-                                            binidx.Write(-1); //lookup
-                                            binidx.Write(-1); //length
-                                            binidx.Write(-1); //extra
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    if (lookup < 0 || length <= 0)
-                                    {
-                                        binidx.Write(-1); // lookup
-                                        binidx.Write(-1); // length
-                                        binidx.Write(-1); // extra
-                                    }
-                                    else
-                                    {
-                                        mStatics.Seek(lookup, SeekOrigin.Begin);
-                                        int fsmullength = (int)fsmul.Position;
-                                        int count = length / 7;
-
-                                        if (RemoveDupl.Checked)
-                                        {
-                                            StaticTile[] tilelist = new StaticTile[count];
-                                            int j = 0;
-                                            for (int i = 0; i < count; ++i)
-                                            {
-                                                StaticTile tile = new StaticTile
-                                                {
-                                                    Id = mStaticsReader.ReadUInt16(),
-                                                    X = mStaticsReader.ReadByte(),
-                                                    Y = mStaticsReader.ReadByte(),
-                                                    Z = mStaticsReader.ReadSByte(),
-                                                    Hue = mStaticsReader.ReadInt16()
-                                                };
-
-                                                if (tile.Id <= Art.GetMaxItemId())
-                                                {
-                                                    if (tile.Hue < 0)
-                                                    {
-                                                        tile.Hue = 0;
-                                                    }
-
-                                                    bool first = true;
-                                                    for (int k = 0; k < j; ++k)
-                                                    {
-                                                        if (tilelist[k].Id == tile.Id && tilelist[k].X == tile.X && tilelist[k].Y == tile.Y && tilelist[k].Z == tile.Z && tilelist[k].Hue == tile.Hue)
-                                                        {
-                                                            first = false;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (first)
-                                                    {
-                                                        tilelist[j++] = tile;
-                                                    }
-                                                }
-                                            }
-                                            if (j > 0)
-                                            {
-                                                binidx.Write((int)fsmul.Position); //lookup
-                                                for (int i = 0; i < j; ++i)
-                                                {
-                                                    binmul.Write(tilelist[i].Id);
-                                                    binmul.Write(tilelist[i].X);
-                                                    binmul.Write(tilelist[i].Y);
-                                                    binmul.Write(tilelist[i].Z);
-                                                    binmul.Write(tilelist[i].Hue);
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            bool firstItem = true;
-                                            for (int i = 0; i < count; ++i)
-                                            {
-                                                var graphic = mStaticsReader.ReadUInt16();
-                                                var sx = mStaticsReader.ReadByte();
-                                                var sy = mStaticsReader.ReadByte();
-                                                var sz = mStaticsReader.ReadSByte();
-                                                var shue = mStaticsReader.ReadInt16();
-
-                                                if (graphic <= Art.GetMaxItemId())
-                                                {
-                                                    if (shue < 0)
-                                                    {
-                                                        shue = 0;
-                                                    }
-
-                                                    if (firstItem)
-                                                    {
-                                                        binidx.Write((int)fsmul.Position); //lookup
-                                                        firstItem = false;
-                                                    }
-                                                    binmul.Write(graphic);
-                                                    binmul.Write(sx);
-                                                    binmul.Write(sy);
-                                                    binmul.Write(sz);
-                                                    binmul.Write(shue);
-                                                }
-                                            }
-                                        }
-                                        fsmullength = (int)fsmul.Position - fsmullength;
-                                        if (fsmullength > 0)
-                                        {
-                                            binidx.Write(fsmullength); //length
-                                            binidx.Write(extra); //extra
-                                        }
-                                        else
-                                        {
-                                            binidx.Write(-1); //lookup
-                                            binidx.Write(-1); //length
-                                            binidx.Write(-1); //extra
-                                        }
-                                    }
-                                }
-                                progressBar1.PerformStep();
-                            }
-                        }
-                    }
-                }
-                mIndexReader.Close();
-                mStaticsReader.Close();
+                return;
             }
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            var result = (MapDiffApplyResult)e.Result;
+
+            progressBar1.Value = 100;
+            labelStatus.Text = "Done.";
+
+            using (var form = new MapDiffApplyResultForm(result))
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        /// <summary>
+        /// Shows what actually went wrong. A bare "Object reference not set to an instance of an
+        /// object" tells a user nothing and tells whoever gets the bug report even less, so the
+        /// exception type and the place it came from go in the dialog and the whole thing goes to
+        /// the log.
+        /// </summary>
+        private void ShowError(string title, Exception error)
+        {
+            AppLog.For(GetType()).LogError(error, "{Title} failed.", title);
+
+            var sb = new StringBuilder();
+
+            for (Exception current = error; current != null; current = current.InnerException)
+            {
+                sb.AppendLine(current.Message);
+
+                if (current.InnerException != null)
+                {
+                    sb.AppendLine();
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine(error.GetType().FullName);
+
+            string where = error.StackTrace?.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
+
+            if (!string.IsNullOrEmpty(where))
+            {
+                sb.AppendLine(where);
+            }
+
+            MessageBox.Show(this, sb.ToString(), title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void OnClickCancel(object sender, EventArgs e)
+        {
+            _cancellation?.Cancel();
+            labelStatus.Text = "Cancelling...";
+        }
+
+        private void OnClickClose(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void SetRunning(bool running)
+        {
+            buttonCopy.Enabled = !running;
+            buttonCancel.Enabled = running;
+            buttonClose.Enabled = !running;
+            groupBoxWhat.Enabled = !running;
+            groupBoxFrom.Enabled = !running;
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (worker.IsBusy)
+            {
+                _cancellation?.Cancel();
+                e.Cancel = true;
+
+                return;
+            }
+
+            base.OnFormClosing(e);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            _cancellation?.Dispose();
+            _cancellation = null;
+
+            base.OnFormClosed(e);
         }
     }
 }

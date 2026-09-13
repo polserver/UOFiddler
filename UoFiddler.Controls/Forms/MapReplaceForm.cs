@@ -1,18 +1,28 @@
 ﻿/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
  ***************************************************************************/
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
 using Ultima;
+using Ultima.Helpers;
+using Ultima.Maps;
+using Ultima.Statics;
 using UoFiddler.Controls.Classes;
 
 namespace UoFiddler.Controls.Forms
@@ -21,451 +31,476 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Map _workingMap;
 
+        private CancellationTokenSource _cancellation;
+        private MapSize _detectedSize;
+        private bool _detectionKnown;
+        private string _detectionEvidence;
+
         public MapReplaceForm(Map currentMap)
         {
             InitializeComponent();
+
             Icon = Options.GetFiddlerIcon();
-            _workingMap = currentMap;
-            numericUpDownX1.Maximum = _workingMap.Width;
-            numericUpDownX2.Maximum = _workingMap.Width;
-            numericUpDownY1.Maximum = _workingMap.Height;
-            numericUpDownY2.Maximum = _workingMap.Height;
-            numericUpDownToX1.Maximum = _workingMap.Width;
-            numericUpDownToY1.Maximum = _workingMap.Height;
-            Text = $"MapReplace ID:{_workingMap.FileIndex}";
+
+            _workingMap = currentMap ?? throw new ArgumentNullException(nameof(currentMap));
+
+            Text = $"Map and Statics Copy - into map {_workingMap.FileIndex}";
+
             comboBoxMapID.BeginUpdate();
-            comboBoxMapID.Items.Add(new RFeluccaOld());
-            comboBoxMapID.Items.Add(new RFelucca());
-            comboBoxMapID.Items.Add(new RTrammel());
-            comboBoxMapID.Items.Add(new RIlshenar());
-            comboBoxMapID.Items.Add(new RMalas());
-            comboBoxMapID.Items.Add(new RTokuno());
-            comboBoxMapID.Items.Add(new RTerMur());
+            comboBoxMapID.Items.Add(new SupportedMap(0, Options.MapNames[0] + " (old)", 6144, 4096));
+            comboBoxMapID.Items.Add(new SupportedMap(0, Options.MapNames[0], 7168, 4096));
+            comboBoxMapID.Items.Add(new SupportedMap(1, Options.MapNames[1] + " (old)", 6144, 4096));
+            comboBoxMapID.Items.Add(new SupportedMap(1, Options.MapNames[1], 7168, 4096));
+            comboBoxMapID.Items.Add(new SupportedMap(2, Options.MapNames[2], 2304, 1600));
+            comboBoxMapID.Items.Add(new SupportedMap(3, Options.MapNames[3], 2560, 2048));
+            comboBoxMapID.Items.Add(new SupportedMap(4, Options.MapNames[4], 1448, 1448));
+            comboBoxMapID.Items.Add(new SupportedMap(5, Options.MapNames[5], 1280, 4096));
             comboBoxMapID.EndUpdate();
             comboBoxMapID.SelectedIndex = 0;
+
+            bool uop = _workingMap.Tiles.IsUOPFormat;
+
+            comboBoxMapFormat.Items.Add(uop
+                ? "the same format as this client (.uop)"
+                : "the same format as this client (.mul)");
+            comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}.mul");
+            comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}LegacyMUL.uop");
+            comboBoxMapFormat.SelectedIndex = 0;
+
+            checkBoxMap.Checked = true;
+            checkBoxStatics.Checked = true;
+
+            numericUpDownToX1.Maximum = Math.Max(0, _workingMap.Width - 1);
+            numericUpDownToY1.Maximum = Math.Max(0, _workingMap.Height - 1);
+
+            textBoxFolder.TextChanged += OnFolderChanged;
+
+            OnSourceMapChanged(this, EventArgs.Empty);
+            OnOptionChanged(this, EventArgs.Empty);
+
+            ActiveControl = buttonBrowse;
         }
+
+        private SupportedMap SelectedMap => comboBoxMapID.SelectedItem as SupportedMap;
+
+        // ---- source selection ------------------------------------------------------------------
 
         private void OnClickBrowse(object sender, EventArgs e)
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog
+            using (var dialog = new FolderBrowserDialog
             {
-                Description = "Select directory containing the map files",
-                ShowNewFolderButton = false
-            };
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+                Description = "Select the folder holding the map files to copy from",
+                ShowNewFolderButton = false,
+                SelectedPath = Directory.Exists(textBoxFolder.Text) ? textBoxFolder.Text : string.Empty
+            })
             {
-                textBox1.Text = dialog.SelectedPath;
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    textBoxFolder.Text = dialog.SelectedPath;
+                }
             }
-
-            dialog.Dispose();
         }
 
-        private void OnClickCopy(object sender, EventArgs e)
+        private void OnFolderChanged(object sender, EventArgs e)
         {
-            string path = textBox1.Text;
-            if (!Directory.Exists(path))
+            Detect();
+        }
+
+        /// <summary>
+        /// Rebinds the from-region spinners to the selected source map. They used to be bound to the
+        /// destination map, which is a different size, so a valid source coordinate could be
+        /// unreachable or a reachable one rejected.
+        /// </summary>
+        private void OnSourceMapChanged(object sender, EventArgs e)
+        {
+            SupportedMap map = SelectedMap;
+
+            if (map == null)
             {
-                MessageBox.Show("Path not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
 
-            if (!(comboBoxMapID.SelectedItem is SupportedMaps replaceMap))
+            SetMaximum(numericUpDownX1, map.Width - 1);
+            SetMaximum(numericUpDownX2, map.Width - 1);
+            SetMaximum(numericUpDownY1, map.Height - 1);
+            SetMaximum(numericUpDownY2, map.Height - 1);
+
+            Detect();
+        }
+
+        private static void SetMaximum(NumericUpDown control, int maximum)
+        {
+            control.Maximum = Math.Max(0, maximum);
+
+            if (control.Value > control.Maximum)
             {
-                MessageBox.Show("Invalid Map ID!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                control.Value = control.Maximum;
+            }
+        }
+
+        /// <summary>
+        /// Measures the chosen folder and says so, refusing later if it disagrees with the picked
+        /// entry. Nothing used to check the two against each other, so a wrong guess read the wrong
+        /// blocks or ran off the end of the index.
+        /// </summary>
+        private void Detect()
+        {
+            SupportedMap map = SelectedMap;
+
+            _detectionKnown = false;
+            _detectionEvidence = null;
+            labelDetected.Text = string.Empty;
+            labelSizeWarning.Text = string.Empty;
+
+            if (map == null || !Directory.Exists(textBoxFolder.Text))
+            {
+                UpdatePreview();
+
+                return;
+            }
+
+            _detectionKnown = MapSizes.TryDetect(textBoxFolder.Text, map.Id, out _detectedSize, out _detectionEvidence);
+
+            labelDetected.Text = _detectionKnown ? $"folder holds {_detectedSize}" : "size not recognised";
+
+            if (_detectionKnown && _detectedSize.Width == map.Width && _detectedSize.Height == map.Height)
+            {
+                labelSizeWarning.ForeColor = SystemColors.ControlText;
+                labelSizeWarning.Text = _detectionEvidence;
+            }
+            else
+            {
+                labelSizeWarning.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
+                labelSizeWarning.Text = _detectionKnown
+                    ? $"This folder holds {_detectedSize} for map {map.Id}, not the {map.Width}x{map.Height} selected.{Environment.NewLine}Pick the entry that matches."
+                    : _detectionEvidence;
+            }
+
+            UpdatePreview();
+        }
+
+        // ---- preview ---------------------------------------------------------------------------
+
+        private void OnOptionChanged(object sender, EventArgs e)
+        {
+            comboBoxMapFormat.Enabled = checkBoxMap.Checked;
+            labelMapFormat.Enabled = checkBoxMap.Checked;
+            RemoveDupl.Enabled = checkBoxStatics.Checked;
+            checkBoxDuplicatesHue.Enabled = checkBoxStatics.Checked && RemoveDupl.Checked;
+
+            UpdatePreview();
+        }
+
+        private void OnRegionChanged(object sender, EventArgs e)
+        {
+            UpdatePreview();
+        }
+
+        /// <summary>
+        /// Shows the block-snapped rectangles that will really be copied. The tile to block
+        /// conversion rounds out to whole 8-tile blocks, which used to happen silently.
+        /// </summary>
+        private void UpdatePreview()
+        {
+            SupportedMap map = SelectedMap;
+
+            if (map == null)
+            {
+                textBoxPreview.Text = "Choose a folder and a map.";
+
                 return;
             }
 
             int x1 = (int)numericUpDownX1.Value;
-            int x2 = (int)numericUpDownX2.Value;
             int y1 = (int)numericUpDownY1.Value;
+            int x2 = (int)numericUpDownX2.Value;
             int y2 = (int)numericUpDownY2.Value;
-            int tox = (int)numericUpDownToX1.Value;
-            int toy = (int)numericUpDownToY1.Value;
 
-            if (x1 < 0 || x1 > replaceMap.Width)
+            if (x1 > x2)
             {
-                MessageBox.Show("Invalid X1 coordinate!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
+                (x1, x2) = (x2, x1);
             }
 
-            if (x2 < 0 || x2 > replaceMap.Width)
+            if (y1 > y2)
             {
-                MessageBox.Show("Invalid X2 coordinate!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
+                (y1, y2) = (y2, y1);
             }
 
-            if (y1 < 0 || y1 > replaceMap.Height)
+            int toX = (int)numericUpDownToX1.Value;
+            int toY = (int)numericUpDownToY1.Value;
+
+            var source = new BlockRectangle(x1 >> 3, y1 >> 3, x2 >> 3, y2 >> 3);
+            var destination = new BlockRectangle(toX >> 3, toY >> 3,
+                (toX >> 3) + source.BlockWidth - 1, (toY >> 3) + source.BlockHeight - 1);
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"from  {source}");
+            sb.AppendLine($"to    {destination}");
+
+            bool snapped = source.TileX1 != x1 || source.TileY1 != y1 || source.TileX2 != x2 || source.TileY2 != y2;
+
+            if (snapped)
             {
-                MessageBox.Show("Invalid Y1 coordinate!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                    "the request {0},{1} - {2},{3} was widened to whole 8-tile blocks", x1, y1, x2, y2));
             }
 
-            if (y2 < 0 || y2 > replaceMap.Height)
-            {
-                MessageBox.Show("Invalid Y2 coordinate!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
-
-            if (x1 > x2 || y1 > y2)
-            {
-                MessageBox.Show("X1 and Y1 cannot be bigger than X2 and Y2!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
-
-            if (tox < 0 || tox > _workingMap.Width || tox + (x2 - x1) > _workingMap.Width)
-            {
-                MessageBox.Show("Invalid toX coordinate!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
-
-            if (toy < 0 || toy > _workingMap.Height || toy + (y2 - y1) > _workingMap.Height)
-            {
-                MessageBox.Show("Invalid toX coordinate!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
-            }
-
-            x1 >>= 3;
-            x2 >>= 3;
-            y1 >>= 3;
-            y2 >>= 3;
-
-            tox >>= 3;
-            toy >>= 3;
-
-            int tox2 = x2 - x1 + tox;
-            int toy2 = y2 - y1 + toy;
-
-            int blockY = _workingMap.Height >> 3;
-            int blockX = _workingMap.Width >> 3;
-            int blockYReplace = replaceMap.Height >> 3;
-            // int blockxreplace = replacemap.Width >> 3; // TODO: unused variable?
-
-            progressBar1.Step = 1;
-            progressBar1.Value = 0;
-            progressBar1.Maximum = 0;
-
-            if (checkBoxMap.Checked)
-            {
-                progressBar1.Maximum += blockY * blockX;
-            }
-
-            if (checkBoxStatics.Checked)
-            {
-                progressBar1.Maximum += blockY * blockX;
-            }
-
-            if (checkBoxMap.Checked)
-            {
-                string copyMapMul = Path.Combine(path, $"map{replaceMap.Id}.mul");
-                string copyMapUop = Path.Combine(path, $"map{replaceMap.Id}LegacyMUL.uop");
-                if (!File.Exists(copyMapMul) && !File.Exists(copyMapUop))
-                {
-                    MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                string workingMapMul = Files.GetFilePath($"map{_workingMap.FileIndex}.mul");
-                string workingMapUop = Files.GetFilePath($"map{_workingMap.FileIndex}LegacyMUL.uop");
-                if (workingMapMul == null && workingMapUop == null)
-                {
-                    MessageBox.Show("Map file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                        MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                var copyTileMatrix = new TileMatrix(replaceMap.Id, replaceMap.Id, replaceMap.Width, replaceMap.Height, path);
-                var workTileMatrix = new TileMatrix(_workingMap.FileIndex, _workingMap.FileIndex, _workingMap.Width, _workingMap.Height, null);
-
-                string mul = Path.Combine(Options.OutputPath, $"map{_workingMap.FileIndex}.mul");
-                using (FileStream fsMul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-                {
-                    using (BinaryWriter binMul = new BinaryWriter(fsMul))
-                    {
-                        for (int x = 0; x < blockX; ++x)
-                        {
-                            for (int y = 0; y < blockY; ++y)
-                            {
-                                bool inRegion = tox <= x && x <= tox2 && toy <= y && y <= toy2;
-                                Tile[] tiles = inRegion
-                                    ? copyTileMatrix.GetLandBlock(x - tox + x1, y - toy + y1, false)
-                                    : workTileMatrix.GetLandBlock(x, y, false);
-
-                                binMul.Write(0); // 4-byte block header
-                                foreach (Tile tile in tiles)
-                                {
-                                    ushort tileId = Art.GetLegalItemId(tile.Id);
-                                    sbyte z = tile.Z;
-
-                                    if (z < -128)
-                                    {
-                                        z = -128;
-                                    }
-
-                                    if (z > 127)
-                                    {
-                                        z = 127;
-                                    }
-
-                                    binMul.Write(tileId);
-                                    binMul.Write(z);
-                                }
-                                progressBar1.PerformStep();
-                            }
-                        }
-                    }
-                }
-
-                copyTileMatrix.CloseStreams();
-                workTileMatrix.CloseStreams();
-            }
-
-            if (checkBoxStatics.Checked)
-            {
-                string indexPath = Files.GetFilePath($"staidx{_workingMap.FileIndex}.mul");
-                BinaryReader mIndexReader;
-
-                if (indexPath != null)
-                {
-                    FileStream mIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    mIndexReader = new BinaryReader(mIndex);
-                }
-                else
-                {
-                    MessageBox.Show("Static file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                string staticsPath = Files.GetFilePath($"statics{_workingMap.FileIndex}.mul");
-                FileStream mStatics;
-                BinaryReader mStaticsReader;
-
-                if (staticsPath != null)
-                {
-                    mStatics = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    mStaticsReader = new BinaryReader(mStatics);
-                }
-                else
-                {
-                    MessageBox.Show("Static file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                string copyIndexPath = Path.Combine(path, $"staidx{replaceMap.Id}.mul");
-                if (!File.Exists(copyIndexPath))
-                {
-                    MessageBox.Show("Static file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                FileStream mIndexCopy = new FileStream(copyIndexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                BinaryReader mIndexReaderCopy = new BinaryReader(mIndexCopy);
-
-                string copyStaticsPath = Path.Combine(path, $"statics{replaceMap.Id}.mul");
-                if (!File.Exists(copyStaticsPath))
-                {
-                    MessageBox.Show("Static file not found!", "Map Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-
-                FileStream mStaticsCopy = new FileStream(copyStaticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                BinaryReader mStaticsReaderCopy = new BinaryReader(mStaticsCopy);
-
-                string idx = Path.Combine(Options.OutputPath, $"staidx{_workingMap.FileIndex}.mul");
-                string mul = Path.Combine(Options.OutputPath, $"statics{_workingMap.FileIndex}.mul");
-                using (FileStream fsIdx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-                                  fsMul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-                {
-                    using (BinaryWriter binidx = new BinaryWriter(fsIdx),
-                                        binmul = new BinaryWriter(fsMul))
-                    {
-                        for (int x = 0; x < blockX; ++x)
-                        {
-                            for (int y = 0; y < blockY; ++y)
-                            {
-                                int lookup, length, extra;
-                                if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
-                                {
-                                    mIndexReaderCopy.BaseStream.Seek((((x - tox + x1) * blockYReplace) + (y - toy) + y1) * 12, SeekOrigin.Begin);
-                                    lookup = mIndexReaderCopy.ReadInt32();
-                                    length = mIndexReaderCopy.ReadInt32();
-                                    extra = mIndexReaderCopy.ReadInt32();
-                                }
-                                else
-                                {
-                                    mIndexReader.BaseStream.Seek(((x * blockY) + y) * 12, SeekOrigin.Begin);
-                                    lookup = mIndexReader.ReadInt32();
-                                    length = mIndexReader.ReadInt32();
-                                    extra = mIndexReader.ReadInt32();
-                                }
-
-                                if (lookup < 0 || length <= 0)
-                                {
-                                    binidx.Write(-1); // lookup
-                                    binidx.Write(-1); // length
-                                    binidx.Write(-1); // extra
-                                }
-                                else
-                                {
-                                    if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
-                                    {
-                                        mStaticsCopy.Seek(lookup, SeekOrigin.Begin);
-                                    }
-                                    else
-                                    {
-                                        mStatics.Seek(lookup, SeekOrigin.Begin);
-                                    }
-
-                                    int fsMulLength = (int)fsMul.Position;
-                                    int count = length / 7;
-                                    if (RemoveDupl.Checked)
-                                    {
-                                        var tileList = new StaticTile[count];
-                                        int j = 0;
-                                        for (int i = 0; i < count; ++i)
-                                        {
-                                            StaticTile tile = new StaticTile();
-                                            if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
-                                            {
-                                                tile.Id = mStaticsReaderCopy.ReadUInt16();
-                                                tile.X = mStaticsReaderCopy.ReadByte();
-                                                tile.Y = mStaticsReaderCopy.ReadByte();
-                                                tile.Z = mStaticsReaderCopy.ReadSByte();
-                                                tile.Hue = mStaticsReaderCopy.ReadInt16();
-                                            }
-                                            else
-                                            {
-                                                tile.Id = mStaticsReader.ReadUInt16();
-                                                tile.X = mStaticsReader.ReadByte();
-                                                tile.Y = mStaticsReader.ReadByte();
-                                                tile.Z = mStaticsReader.ReadSByte();
-                                                tile.Hue = mStaticsReader.ReadInt16();
-                                            }
-
-                                            if (tile.Id > Art.GetMaxItemId())
-                                            {
-                                                continue;
-                                            }
-
-                                            if (tile.Hue < 0)
-                                            {
-                                                tile.Hue = 0;
-                                            }
-
-                                            bool first = true;
-                                            for (int k = 0; k < j; ++k)
-                                            {
-                                                if (tileList[k].Id == tile.Id && tileList[k].X == tile.X && tileList[k].Y == tile.Y && tileList[k].Z == tile.Z && tileList[k].Hue == tile.Hue)
-                                                {
-                                                    first = false;
-                                                    break;
-                                                }
-                                            }
-                                            if (first)
-                                            {
-                                                tileList[j++] = tile;
-                                            }
-                                        }
-                                        if (j > 0)
-                                        {
-                                            binidx.Write((int)fsMul.Position); //lookup
-                                            for (int i = 0; i < j; ++i)
-                                            {
-                                                binmul.Write(tileList[i].Id);
-                                                binmul.Write(tileList[i].X);
-                                                binmul.Write(tileList[i].Y);
-                                                binmul.Write(tileList[i].Z);
-                                                binmul.Write(tileList[i].Hue);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        bool firstItem = true;
-                                        for (int i = 0; i < count; ++i)
-                                        {
-                                            ushort graphic;
-                                            short sHue;
-                                            byte sx, sy;
-                                            sbyte sz;
-                                            if (tox <= x && x <= tox2 && toy <= y && y <= toy2)
-                                            {
-                                                graphic = mStaticsReaderCopy.ReadUInt16();
-                                                sx = mStaticsReaderCopy.ReadByte();
-                                                sy = mStaticsReaderCopy.ReadByte();
-                                                sz = mStaticsReaderCopy.ReadSByte();
-                                                sHue = mStaticsReaderCopy.ReadInt16();
-                                            }
-                                            else
-                                            {
-                                                graphic = mStaticsReader.ReadUInt16();
-                                                sx = mStaticsReader.ReadByte();
-                                                sy = mStaticsReader.ReadByte();
-                                                sz = mStaticsReader.ReadSByte();
-                                                sHue = mStaticsReader.ReadInt16();
-                                            }
-
-                                            if (graphic > Art.GetMaxItemId())
-                                            {
-                                                continue;
-                                            }
-
-                                            if (sHue < 0)
-                                            {
-                                                sHue = 0;
-                                            }
-
-                                            if (firstItem)
-                                            {
-                                                binidx.Write((int)fsMul.Position); // lookup
-                                                firstItem = false;
-                                            }
-                                            binmul.Write(graphic);
-                                            binmul.Write(sx);
-                                            binmul.Write(sy);
-                                            binmul.Write(sz);
-                                            binmul.Write(sHue);
-                                        }
-                                    }
-
-                                    fsMulLength = (int)fsMul.Position - fsMulLength;
-                                    if (fsMulLength > 0)
-                                    {
-                                        binidx.Write(fsMulLength); // length
-                                        binidx.Write(extra); // extra
-                                    }
-                                    else
-                                    {
-                                        binidx.Write(-1); // lookup
-                                        binidx.Write(-1); // length
-                                        binidx.Write(-1); // extra
-                                    }
-                                }
-
-                                progressBar1.PerformStep();
-                            }
-                        }
-                    }
-                }
-
-                mIndexReader.Close();
-                mStaticsReader.Close();
-                mIndexCopy.Close();
-                mStaticsReaderCopy.Close();
-            }
-
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            textBoxPreview.Text = sb.ToString();
         }
 
-        private class SupportedMaps
-        {
-            public int Id { get; }
-            private string Name { get; }
-            public int Height { get; }
-            public int Width { get; }
+        // ---- running ---------------------------------------------------------------------------
 
-            protected SupportedMaps(int id, string name, int width, int height)
+        private void OnClickCopy(object sender, EventArgs e)
+        {
+            if (worker.IsBusy)
+            {
+                return;
+            }
+
+            SupportedMap map = SelectedMap;
+
+            if (map == null)
+            {
+                return;
+            }
+
+            if (!Directory.Exists(textBoxFolder.Text))
+            {
+                Fail("Choose the folder holding the map files to copy from.");
+
+                return;
+            }
+
+            if (!checkBoxMap.Checked && !checkBoxStatics.Checked)
+            {
+                Fail("Nothing is selected to copy.");
+
+                return;
+            }
+
+            if (!_detectionKnown)
+            {
+                Fail($"The size of map {map.Id} in that folder could not be worked out.{Environment.NewLine}{Environment.NewLine}{_detectionEvidence}");
+
+                return;
+            }
+
+            if (_detectedSize.Width != map.Width || _detectedSize.Height != map.Height)
+            {
+                Fail($"That folder holds {_detectedSize} for map {map.Id}, but {map} is selected." +
+                     $"{Environment.NewLine}{Environment.NewLine}{_detectionEvidence}" +
+                     $"{Environment.NewLine}{Environment.NewLine}Pick the entry that matches, or the wrong blocks will be read.");
+
+                return;
+            }
+
+            MapRegionCopyOptions options = BuildOptions(map);
+
+            _cancellation?.Dispose();
+            _cancellation = new CancellationTokenSource();
+            options.CancellationToken = _cancellation.Token;
+            options.Progress = new Progress<MapCopyProgress>(OnProgress);
+
+            SetRunning(true);
+            progressBar1.Value = 0;
+            labelStatus.Text = "Copying...";
+
+            worker.RunWorkerAsync(options);
+        }
+
+        private MapRegionCopyOptions BuildOptions(SupportedMap map)
+        {
+            int x1 = (int)numericUpDownX1.Value;
+            int y1 = (int)numericUpDownY1.Value;
+            int x2 = (int)numericUpDownX2.Value;
+            int y2 = (int)numericUpDownY2.Value;
+
+            var options = new MapRegionCopyOptions
+            {
+                SourceDirectory = textBoxFolder.Text,
+                SourceFileIndex = map.Id,
+                SourceSize = new MapSize(map.Width, map.Height),
+                Destination = _workingMap,
+                SourceX1 = x1,
+                SourceY1 = y1,
+                SourceX2 = x2,
+                SourceY2 = y2,
+                DestinationX = (int)numericUpDownToX1.Value,
+                DestinationY = (int)numericUpDownToY1.Value,
+                CopyLand = checkBoxMap.Checked,
+                CopyStatics = checkBoxStatics.Checked,
+                MapFormat = ResolveFormat(),
+                OutputDirectory = Options.OutputPath
+            };
+
+            if (checkBoxStatics.Checked)
+            {
+                options.StaticsFilter = new StaticsTileFilter
+                {
+                    // The same rules this feature has always applied, so a copy keeps its old shape.
+                    DropInvalidItemIds = true,
+                    MaxItemId = Art.GetMaxItemId(),
+                    OutOfBlockTiles = OutOfBlockAction.Keep,
+                    DropInvalidZ = false,
+                    NormalizeNegativeHue = true,
+                    RemoveDuplicates = RemoveDupl.Checked,
+                    DuplicatesCompareHue = RemoveDupl.Checked && checkBoxDuplicatesHue.Checked
+                };
+            }
+
+            return options;
+        }
+
+        private MapOutputFormat ResolveFormat()
+        {
+            switch (comboBoxMapFormat.SelectedIndex)
+            {
+                case 1: return MapOutputFormat.Mul;
+                case 2: return MapOutputFormat.Uop;
+                default: return _workingMap.Tiles.IsUOPFormat ? MapOutputFormat.Uop : MapOutputFormat.Mul;
+            }
+        }
+
+        private void OnProgress(MapCopyProgress progress)
+        {
+            if (progress.BlocksTotal <= 0)
+            {
+                return;
+            }
+
+            progressBar1.Value = Math.Min(100, Math.Max(0, (int)(progress.BlocksDone * 100L / progress.BlocksTotal)));
+            labelStatus.Text = string.Format(CultureInfo.InvariantCulture, "{0}: {1:N0} of {2:N0} blocks",
+                progress.Stage, progress.BlocksDone, progress.BlocksTotal);
+        }
+
+        private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = MapRegionCopier.Run((MapRegionCopyOptions)e.Argument);
+        }
+
+        private void OnWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            SetRunning(false);
+
+            if (e.Error is OperationCanceledException)
+            {
+                progressBar1.Value = 0;
+                labelStatus.Text = "Cancelled. Nothing was written.";
+
+                return;
+            }
+
+            if (e.Error != null)
+            {
+                progressBar1.Value = 0;
+                labelStatus.Text = "Failed.";
+                ShowError("Map and Statics Copy", e.Error);
+
+                return;
+            }
+
+            var result = (MapRegionCopyResult)e.Result;
+
+            progressBar1.Value = 100;
+            labelStatus.Text = "Done.";
+
+            using (var form = new MapRegionCopyResultForm(result))
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        /// <summary>
+        /// Shows what actually went wrong. A bare "Object reference not set to an instance of an
+        /// object" tells a user nothing and tells whoever gets the bug report even less, so the
+        /// exception type and the place it came from go in the dialog and the whole thing goes to
+        /// the log.
+        /// </summary>
+        private void ShowError(string title, Exception error)
+        {
+            AppLog.For(GetType()).LogError(error, "{Title} failed.", title);
+
+            var sb = new StringBuilder();
+
+            for (Exception current = error; current != null; current = current.InnerException)
+            {
+                sb.AppendLine(current.Message);
+
+                if (current.InnerException != null)
+                {
+                    sb.AppendLine();
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine(error.GetType().FullName);
+
+            string where = error.StackTrace?.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
+
+            if (!string.IsNullOrEmpty(where))
+            {
+                sb.AppendLine(where);
+            }
+
+            MessageBox.Show(this, sb.ToString(), title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void OnClickCancel(object sender, EventArgs e)
+        {
+            _cancellation?.Cancel();
+            labelStatus.Text = "Cancelling...";
+        }
+
+        private void OnClickClose(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void SetRunning(bool running)
+        {
+            buttonCopy.Enabled = !running;
+            buttonCancel.Enabled = running;
+            buttonClose.Enabled = !running;
+            groupBoxSource.Enabled = !running;
+            groupBoxWhat.Enabled = !running;
+            groupBoxFrom.Enabled = !running;
+            groupBoxTo.Enabled = !running;
+        }
+
+        private void Fail(string message)
+        {
+            MessageBox.Show(this, message, "Map and Statics Copy", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (worker.IsBusy)
+            {
+                _cancellation?.Cancel();
+                e.Cancel = true;
+
+                return;
+            }
+
+            base.OnFormClosing(e);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            _cancellation?.Dispose();
+            _cancellation = null;
+
+            base.OnFormClosed(e);
+        }
+
+        /// <summary>
+        /// One entry of the source-map dropdown. The sizes are the shapes a facet is known to ship
+        /// in; what the chosen folder actually holds is measured separately and has to agree.
+        /// </summary>
+        private sealed class SupportedMap
+        {
+            public SupportedMap(int id, string name, int width, int height)
             {
                 Id = id;
                 Name = name;
@@ -473,45 +508,18 @@ namespace UoFiddler.Controls.Forms
                 Height = height;
             }
 
+            public int Id { get; }
+
+            private string Name { get; }
+
+            public int Width { get; }
+
+            public int Height { get; }
+
             public override string ToString()
             {
                 return $"{Id} - {Name} : {Width}x{Height}";
             }
-        }
-
-        private class RFeluccaOld : SupportedMaps
-        {
-            public RFeluccaOld() : base(0, Options.MapNames[0] + "Old", 6144, 4096) { }
-        }
-
-        private class RFelucca : SupportedMaps
-        {
-            public RFelucca() : base(0, Options.MapNames[0], 7168, 4096) { }
-        }
-
-        private class RTrammel : SupportedMaps
-        {
-            public RTrammel() : base(1, Options.MapNames[1], 7168, 4096) { }
-        }
-
-        private class RIlshenar : SupportedMaps
-        {
-            public RIlshenar() : base(2, Options.MapNames[2], 2304, 1600) { }
-        }
-
-        private class RMalas : SupportedMaps
-        {
-            public RMalas() : base(3, Options.MapNames[3], 2560, 2048) { }
-        }
-
-        private class RTokuno : SupportedMaps
-        {
-            public RTokuno() : base(4, Options.MapNames[4], 1448, 1448) { }
-        }
-
-        private class RTerMur : SupportedMaps
-        {
-            public RTerMur() : base(5, Options.MapNames[5], 1280, 4096) { }
         }
     }
 }

@@ -9,6 +9,14 @@ namespace Ultima
 {
     public sealed class TileMatrix
     {
+        /// <summary>On disk size of one land block: a 4-byte header plus 64 three-byte tiles.</summary>
+        public const int MapBlockSize = 196;
+
+        /// <summary>Size of the per-block header the renderer ignores.</summary>
+        public const int BlockHeaderSize = 4;
+
+        private const int MapStreamBufferSize = 1 << 20;
+
         private readonly HuedTile[][][][][] _staticTiles;
         private readonly Tile[][][] _landTiles;
         private bool[][] _removedStaticBlock;
@@ -374,23 +382,70 @@ namespace Ultima
             return UOPLength;
         }
 
+        /// <summary>
+        /// Reads one land block as it sits on disk: the 4-byte block header followed by 64
+        /// three-byte tiles. Copying through this rather than through <see cref="GetLandBlock"/>
+        /// keeps the header, which the renderer ignores but which real files do carry - a shard map
+        /// may hold the same constant in every block, a shipped one the block index.
+        /// </summary>
+        public void ReadLandBlockBytes(int x, int y, Span<byte> destination)
+        {
+            if (destination.Length != MapBlockSize)
+            {
+                throw new ArgumentException($"A land block is {MapBlockSize} bytes.", nameof(destination));
+            }
+
+            destination.Clear();
+
+            if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+            {
+                return;
+            }
+
+            EnsureMapStream();
+
+            if (_map == null)
+            {
+                return;
+            }
+
+            long offset = ((x * BlockHeight) + y) * (long)MapBlockSize;
+
+            if (IsUOPFormat)
+            {
+                offset = CalculateOffsetFromUOP(offset);
+            }
+
+            _map.Seek(offset, SeekOrigin.Begin);
+            _map.ReadExactly(destination);
+        }
+
+        private void EnsureMapStream()
+        {
+            if (_map?.CanRead == true && _map.CanSeek)
+            {
+                return;
+            }
+
+            // Land blocks are 196 bytes and are normally walked in index order, so the default
+            // 4 KB buffer means one physical read per twenty blocks. A megabyte turns a full-facet
+            // pass from hundreds of thousands of reads into a few hundred.
+            _map = _mapPath == null
+                ? null
+                : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read, MapStreamBufferSize);
+
+            if (!IsUOPFormat || _mapPath == null || IsUOPAlreadyRead)
+            {
+                return;
+            }
+
+            ReadUOPFiles(MapUopReader.PatternFromPath(_mapPath));
+            IsUOPAlreadyRead = true;
+        }
+
         private Tile[] ReadLandBlock(int x, int y)
         {
-            if (_map?.CanRead != true || !_map.CanSeek)
-            {
-                _map = _mapPath == null
-                    ? null
-                    : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                if (IsUOPFormat && _mapPath != null && !IsUOPAlreadyRead)
-                {
-                    var fi = new FileInfo(_mapPath);
-                    string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
-
-                    ReadUOPFiles(uopPattern);
-                    IsUOPAlreadyRead = true;
-                }
-            }
+            EnsureMapStream();
 
             var tiles = new Tile[64];
             if (_map == null)
@@ -398,7 +453,7 @@ namespace Ultima
                 return tiles;
             }
 
-            long offset = (((x * BlockHeight) + y) * 196) + 4;
+            long offset = (((x * BlockHeight) + y) * (long)MapBlockSize) + BlockHeaderSize;
 
             if (IsUOPFormat)
             {

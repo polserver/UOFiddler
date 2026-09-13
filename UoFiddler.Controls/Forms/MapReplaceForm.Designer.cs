@@ -1,9 +1,9 @@
 ﻿/***************************************************************************
  *
  * $Author: Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -28,416 +28,488 @@ namespace UoFiddler.Controls.Forms
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.components = new System.ComponentModel.Container();
+            this.groupBoxSource = new System.Windows.Forms.GroupBox();
+            this.labelFolder = new System.Windows.Forms.Label();
+            this.textBoxFolder = new System.Windows.Forms.TextBox();
+            this.buttonBrowse = new System.Windows.Forms.Button();
+            this.labelMap = new System.Windows.Forms.Label();
+            this.comboBoxMapID = new System.Windows.Forms.ComboBox();
+            this.labelDetected = new System.Windows.Forms.Label();
+            this.labelSizeWarning = new System.Windows.Forms.Label();
+            this.groupBoxWhat = new System.Windows.Forms.GroupBox();
             this.checkBoxMap = new System.Windows.Forms.CheckBox();
+            this.labelMapFormat = new System.Windows.Forms.Label();
+            this.comboBoxMapFormat = new System.Windows.Forms.ComboBox();
             this.checkBoxStatics = new System.Windows.Forms.CheckBox();
-            this.numericUpDownX1 = new System.Windows.Forms.NumericUpDown();
+            this.RemoveDupl = new System.Windows.Forms.CheckBox();
+            this.checkBoxDuplicatesHue = new System.Windows.Forms.CheckBox();
+            this.groupBoxFrom = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.numericUpDownX1 = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.numericUpDownY1 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.numericUpDownX2 = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDownY2 = new System.Windows.Forms.NumericUpDown();
-            this.button2 = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label5 = new System.Windows.Forms.Label();
-            this.RemoveDupl = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBoxTo = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.numericUpDownToX1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownToY1 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            this.comboBoxMapID = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.numericUpDownToY1 = new System.Windows.Forms.NumericUpDown();
+            this.groupBoxPreview = new System.Windows.Forms.GroupBox();
+            this.textBoxPreview = new System.Windows.Forms.TextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.labelStatus = new System.Windows.Forms.Label();
+            this.buttonCopy = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.buttonClose = new System.Windows.Forms.Button();
+            this.worker = new System.ComponentModel.BackgroundWorker();
+            this.components.Add(this.worker);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY2)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToX1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToY1)).BeginInit();
+            this.groupBoxSource.SuspendLayout();
+            this.groupBoxWhat.SuspendLayout();
+            this.groupBoxFrom.SuspendLayout();
+            this.groupBoxTo.SuspendLayout();
+            this.groupBoxPreview.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(105, 14);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(227, 23);
-            this.textBox1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.AutoSize = true;
-            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Location = new System.Drawing.Point(340, 12);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(26, 25);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickBrowse);
-            // 
-            // checkBoxMap
-            // 
-            this.checkBoxMap.AutoSize = true;
-            this.checkBoxMap.Location = new System.Drawing.Point(7, 22);
-            this.checkBoxMap.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxMap.Name = "checkBoxMap";
-            this.checkBoxMap.Size = new System.Drawing.Size(81, 19);
-            this.checkBoxMap.TabIndex = 2;
-            this.checkBoxMap.Text = "Copy Map";
-            this.checkBoxMap.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxStatics
-            // 
-            this.checkBoxStatics.AutoSize = true;
-            this.checkBoxStatics.Location = new System.Drawing.Point(13, 22);
-            this.checkBoxStatics.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxStatics.Name = "checkBoxStatics";
-            this.checkBoxStatics.Size = new System.Drawing.Size(91, 19);
-            this.checkBoxStatics.TabIndex = 3;
-            this.checkBoxStatics.Text = "Copy Statics";
-            this.checkBoxStatics.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDownX1
-            // 
-            this.numericUpDownX1.Increment = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numericUpDownX1.Location = new System.Drawing.Point(99, 22);
-            this.numericUpDownX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.numericUpDownX1.Name = "numericUpDownX1";
-            this.numericUpDownX1.Size = new System.Drawing.Size(63, 23);
-            this.numericUpDownX1.TabIndex = 4;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(63, 24);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 15);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "X1";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(63, 54);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(20, 15);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Y1";
-            // 
-            // numericUpDownY1
-            // 
-            this.numericUpDownY1.Increment = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numericUpDownY1.Location = new System.Drawing.Point(99, 52);
-            this.numericUpDownY1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.numericUpDownY1.Name = "numericUpDownY1";
-            this.numericUpDownY1.Size = new System.Drawing.Size(63, 23);
-            this.numericUpDownY1.TabIndex = 6;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(192, 24);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(20, 15);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "X2";
-            // 
-            // numericUpDownX2
-            // 
-            this.numericUpDownX2.Increment = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numericUpDownX2.Location = new System.Drawing.Point(229, 22);
-            this.numericUpDownX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.numericUpDownX2.Name = "numericUpDownX2";
-            this.numericUpDownX2.Size = new System.Drawing.Size(63, 23);
-            this.numericUpDownX2.TabIndex = 8;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(192, 57);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 15);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Y2";
-            // 
-            // numericUpDownY2
-            // 
-            this.numericUpDownY2.Increment = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numericUpDownY2.Location = new System.Drawing.Point(229, 54);
-            this.numericUpDownY2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.numericUpDownY2.Name = "numericUpDownY2";
-            this.numericUpDownY2.Size = new System.Drawing.Size(63, 23);
-            this.numericUpDownY2.TabIndex = 10;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(144, 318);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 27);
-            this.button2.TabIndex = 12;
-            this.button2.Text = "Replace";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.OnClickCopy);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar1.Location = new System.Drawing.Point(0, 354);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(384, 27);
-            this.progressBar1.TabIndex = 13;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 17);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 15);
-            this.label5.TabIndex = 14;
-            this.label5.Text = "Replace From";
-            // 
-            // RemoveDupl
-            // 
-            this.RemoveDupl.AutoSize = true;
-            this.RemoveDupl.Location = new System.Drawing.Point(13, 48);
-            this.RemoveDupl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.RemoveDupl.Name = "RemoveDupl";
-            this.RemoveDupl.Size = new System.Drawing.Size(127, 19);
-            this.RemoveDupl.TabIndex = 17;
-            this.RemoveDupl.Text = "Remove Duplicates";
-            this.RemoveDupl.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.checkBoxMap);
-            this.groupBox1.Location = new System.Drawing.Point(15, 75);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(169, 75);
-            this.groupBox1.TabIndex = 19;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Map";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.checkBoxStatics);
-            this.groupBox2.Controls.Add(this.RemoveDupl);
-            this.groupBox2.Location = new System.Drawing.Point(201, 75);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Size = new System.Drawing.Size(169, 75);
-            this.groupBox2.TabIndex = 20;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Statics";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.numericUpDownX1);
-            this.groupBox3.Controls.Add(this.numericUpDownY1);
-            this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.numericUpDownX2);
-            this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.numericUpDownY2);
-            this.groupBox3.Location = new System.Drawing.Point(15, 157);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Size = new System.Drawing.Size(355, 85);
-            this.groupBox3.TabIndex = 21;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "From Region";
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Controls.Add(this.numericUpDownToX1);
-            this.groupBox4.Controls.Add(this.numericUpDownToY1);
-            this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Location = new System.Drawing.Point(15, 249);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox4.Size = new System.Drawing.Size(355, 62);
-            this.groupBox4.TabIndex = 22;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "To Region";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(63, 24);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(20, 15);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "X1";
-            // 
-            // numericUpDownToX1
-            // 
-            this.numericUpDownToX1.Increment = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numericUpDownToX1.Location = new System.Drawing.Point(99, 22);
-            this.numericUpDownToX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.numericUpDownToX1.Name = "numericUpDownToX1";
-            this.numericUpDownToX1.Size = new System.Drawing.Size(63, 23);
-            this.numericUpDownToX1.TabIndex = 4;
-            // 
-            // numericUpDownToY1
-            // 
-            this.numericUpDownToY1.Increment = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numericUpDownToY1.Location = new System.Drawing.Point(229, 22);
-            this.numericUpDownToY1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.numericUpDownToY1.Name = "numericUpDownToY1";
-            this.numericUpDownToY1.Size = new System.Drawing.Size(63, 23);
-            this.numericUpDownToY1.TabIndex = 6;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(192, 24);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(20, 15);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Y1";
-            // 
+            //
+            // groupBoxSource
+            //
+            this.groupBoxSource.Controls.Add(this.labelFolder);
+            this.groupBoxSource.Controls.Add(this.textBoxFolder);
+            this.groupBoxSource.Controls.Add(this.buttonBrowse);
+            this.groupBoxSource.Controls.Add(this.labelMap);
+            this.groupBoxSource.Controls.Add(this.comboBoxMapID);
+            this.groupBoxSource.Controls.Add(this.labelDetected);
+            this.groupBoxSource.Controls.Add(this.labelSizeWarning);
+            this.groupBoxSource.Location = new System.Drawing.Point(12, 12);
+            this.groupBoxSource.Name = "groupBoxSource";
+            this.groupBoxSource.Size = new System.Drawing.Size(496, 122);
+            this.groupBoxSource.TabIndex = 0;
+            this.groupBoxSource.TabStop = false;
+            this.groupBoxSource.Text = "Copy from";
+            //
+            // labelFolder
+            //
+            this.labelFolder.Location = new System.Drawing.Point(12, 26);
+            this.labelFolder.Name = "labelFolder";
+            this.labelFolder.Size = new System.Drawing.Size(60, 17);
+            this.labelFolder.TabIndex = 0;
+            this.labelFolder.Text = "Folder:";
+            //
+            // textBoxFolder
+            //
+            this.textBoxFolder.Location = new System.Drawing.Point(76, 23);
+            this.textBoxFolder.Name = "textBoxFolder";
+            this.textBoxFolder.Size = new System.Drawing.Size(320, 23);
+            this.textBoxFolder.TabIndex = 1;
+            //
+            // buttonBrowse
+            //
+            this.buttonBrowse.Location = new System.Drawing.Point(404, 22);
+            this.buttonBrowse.Name = "buttonBrowse";
+            this.buttonBrowse.Size = new System.Drawing.Size(80, 25);
+            this.buttonBrowse.TabIndex = 2;
+            this.buttonBrowse.Text = "Browse...";
+            this.buttonBrowse.UseVisualStyleBackColor = true;
+            this.buttonBrowse.Click += new System.EventHandler(this.OnClickBrowse);
+            //
+            // labelMap
+            //
+            this.labelMap.Location = new System.Drawing.Point(12, 58);
+            this.labelMap.Name = "labelMap";
+            this.labelMap.Size = new System.Drawing.Size(60, 17);
+            this.labelMap.TabIndex = 3;
+            this.labelMap.Text = "Map:";
+            //
             // comboBoxMapID
-            // 
-            this.comboBoxMapID.FormattingEnabled = true;
-            this.comboBoxMapID.Location = new System.Drawing.Point(105, 44);
-            this.comboBoxMapID.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            //
+            this.comboBoxMapID.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxMapID.Location = new System.Drawing.Point(76, 55);
             this.comboBoxMapID.Name = "comboBoxMapID";
-            this.comboBoxMapID.Size = new System.Drawing.Size(227, 23);
-            this.comboBoxMapID.TabIndex = 23;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(13, 47);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(45, 15);
-            this.label8.TabIndex = 24;
-            this.label8.Text = "Map ID";
-            // 
+            this.comboBoxMapID.Size = new System.Drawing.Size(220, 23);
+            this.comboBoxMapID.TabIndex = 4;
+            this.comboBoxMapID.SelectedIndexChanged += new System.EventHandler(this.OnSourceMapChanged);
+            //
+            // labelDetected
+            //
+            this.labelDetected.AutoEllipsis = true;
+            this.labelDetected.Location = new System.Drawing.Point(304, 58);
+            this.labelDetected.Name = "labelDetected";
+            this.labelDetected.Size = new System.Drawing.Size(180, 17);
+            this.labelDetected.TabIndex = 5;
+            //
+            // labelSizeWarning
+            //
+            this.labelSizeWarning.Location = new System.Drawing.Point(12, 80);
+            this.labelSizeWarning.Name = "labelSizeWarning";
+            this.labelSizeWarning.Size = new System.Drawing.Size(472, 36);
+            this.labelSizeWarning.TabIndex = 6;
+            //
+            // groupBoxWhat
+            //
+            this.groupBoxWhat.Controls.Add(this.checkBoxMap);
+            this.groupBoxWhat.Controls.Add(this.labelMapFormat);
+            this.groupBoxWhat.Controls.Add(this.comboBoxMapFormat);
+            this.groupBoxWhat.Controls.Add(this.checkBoxStatics);
+            this.groupBoxWhat.Controls.Add(this.RemoveDupl);
+            this.groupBoxWhat.Controls.Add(this.checkBoxDuplicatesHue);
+            this.groupBoxWhat.Location = new System.Drawing.Point(12, 140);
+            this.groupBoxWhat.Name = "groupBoxWhat";
+            this.groupBoxWhat.Size = new System.Drawing.Size(496, 86);
+            this.groupBoxWhat.TabIndex = 1;
+            this.groupBoxWhat.TabStop = false;
+            this.groupBoxWhat.Text = "Copy";
+            //
+            // checkBoxMap
+            //
+            this.checkBoxMap.Location = new System.Drawing.Point(16, 22);
+            this.checkBoxMap.Name = "checkBoxMap";
+            this.checkBoxMap.Size = new System.Drawing.Size(110, 21);
+            this.checkBoxMap.TabIndex = 0;
+            this.checkBoxMap.Text = "Map";
+            this.checkBoxMap.UseVisualStyleBackColor = true;
+            this.checkBoxMap.CheckedChanged += new System.EventHandler(this.OnOptionChanged);
+            //
+            // labelMapFormat
+            //
+            this.labelMapFormat.Location = new System.Drawing.Point(140, 25);
+            this.labelMapFormat.Name = "labelMapFormat";
+            this.labelMapFormat.Size = new System.Drawing.Size(80, 17);
+            this.labelMapFormat.TabIndex = 1;
+            this.labelMapFormat.Text = "written as:";
+            //
+            // comboBoxMapFormat
+            //
+            this.comboBoxMapFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxMapFormat.Location = new System.Drawing.Point(224, 21);
+            this.comboBoxMapFormat.Name = "comboBoxMapFormat";
+            this.comboBoxMapFormat.Size = new System.Drawing.Size(256, 23);
+            this.comboBoxMapFormat.TabIndex = 2;
+            //
+            // checkBoxStatics
+            //
+            this.checkBoxStatics.Location = new System.Drawing.Point(16, 52);
+            this.checkBoxStatics.Name = "checkBoxStatics";
+            this.checkBoxStatics.Size = new System.Drawing.Size(110, 21);
+            this.checkBoxStatics.TabIndex = 3;
+            this.checkBoxStatics.Text = "Statics";
+            this.checkBoxStatics.UseVisualStyleBackColor = true;
+            this.checkBoxStatics.CheckedChanged += new System.EventHandler(this.OnOptionChanged);
+            //
+            // RemoveDupl
+            //
+            this.RemoveDupl.Location = new System.Drawing.Point(140, 52);
+            this.RemoveDupl.Name = "RemoveDupl";
+            this.RemoveDupl.Size = new System.Drawing.Size(150, 21);
+            this.RemoveDupl.TabIndex = 4;
+            this.RemoveDupl.Text = "remove duplicates";
+            this.RemoveDupl.UseVisualStyleBackColor = true;
+            this.RemoveDupl.CheckedChanged += new System.EventHandler(this.OnOptionChanged);
+            //
+            // checkBoxDuplicatesHue
+            //
+            this.checkBoxDuplicatesHue.Location = new System.Drawing.Point(296, 52);
+            this.checkBoxDuplicatesHue.Name = "checkBoxDuplicatesHue";
+            this.checkBoxDuplicatesHue.Size = new System.Drawing.Size(184, 21);
+            this.checkBoxDuplicatesHue.TabIndex = 5;
+            this.checkBoxDuplicatesHue.Text = "comparing hue too (legacy)";
+            this.checkBoxDuplicatesHue.UseVisualStyleBackColor = true;
+            //
+            // groupBoxFrom
+            //
+            this.groupBoxFrom.Controls.Add(this.label1);
+            this.groupBoxFrom.Controls.Add(this.numericUpDownX1);
+            this.groupBoxFrom.Controls.Add(this.label2);
+            this.groupBoxFrom.Controls.Add(this.numericUpDownY1);
+            this.groupBoxFrom.Controls.Add(this.label3);
+            this.groupBoxFrom.Controls.Add(this.numericUpDownX2);
+            this.groupBoxFrom.Controls.Add(this.label4);
+            this.groupBoxFrom.Controls.Add(this.numericUpDownY2);
+            this.groupBoxFrom.Location = new System.Drawing.Point(12, 232);
+            this.groupBoxFrom.Name = "groupBoxFrom";
+            this.groupBoxFrom.Size = new System.Drawing.Size(496, 60);
+            this.groupBoxFrom.TabIndex = 2;
+            this.groupBoxFrom.TabStop = false;
+            this.groupBoxFrom.Text = "From region, in source map tiles";
+            //
+            // label1
+            //
+            this.label1.Location = new System.Drawing.Point(16, 26);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(24, 17);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "X1";
+            //
+            // numericUpDownX1
+            //
+            this.numericUpDownX1.Increment = new decimal(new int[] { 8, 0, 0, 0 });
+            this.numericUpDownX1.Location = new System.Drawing.Point(44, 23);
+            this.numericUpDownX1.Name = "numericUpDownX1";
+            this.numericUpDownX1.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownX1.TabIndex = 1;
+            this.numericUpDownX1.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // label2
+            //
+            this.label2.Location = new System.Drawing.Point(124, 26);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(24, 17);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Y1";
+            //
+            // numericUpDownY1
+            //
+            this.numericUpDownY1.Increment = new decimal(new int[] { 8, 0, 0, 0 });
+            this.numericUpDownY1.Location = new System.Drawing.Point(152, 23);
+            this.numericUpDownY1.Name = "numericUpDownY1";
+            this.numericUpDownY1.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownY1.TabIndex = 3;
+            this.numericUpDownY1.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // label3
+            //
+            this.label3.Location = new System.Drawing.Point(248, 26);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(24, 17);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "X2";
+            //
+            // numericUpDownX2
+            //
+            this.numericUpDownX2.Increment = new decimal(new int[] { 8, 0, 0, 0 });
+            this.numericUpDownX2.Location = new System.Drawing.Point(276, 23);
+            this.numericUpDownX2.Name = "numericUpDownX2";
+            this.numericUpDownX2.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownX2.TabIndex = 5;
+            this.numericUpDownX2.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // label4
+            //
+            this.label4.Location = new System.Drawing.Point(356, 26);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(24, 17);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Y2";
+            //
+            // numericUpDownY2
+            //
+            this.numericUpDownY2.Increment = new decimal(new int[] { 8, 0, 0, 0 });
+            this.numericUpDownY2.Location = new System.Drawing.Point(384, 23);
+            this.numericUpDownY2.Name = "numericUpDownY2";
+            this.numericUpDownY2.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownY2.TabIndex = 7;
+            this.numericUpDownY2.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // groupBoxTo
+            //
+            this.groupBoxTo.Controls.Add(this.label6);
+            this.groupBoxTo.Controls.Add(this.numericUpDownToX1);
+            this.groupBoxTo.Controls.Add(this.label7);
+            this.groupBoxTo.Controls.Add(this.numericUpDownToY1);
+            this.groupBoxTo.Location = new System.Drawing.Point(12, 298);
+            this.groupBoxTo.Name = "groupBoxTo";
+            this.groupBoxTo.Size = new System.Drawing.Size(496, 60);
+            this.groupBoxTo.TabIndex = 3;
+            this.groupBoxTo.TabStop = false;
+            this.groupBoxTo.Text = "To position, in this map\'s tiles";
+            //
+            // label6
+            //
+            this.label6.Location = new System.Drawing.Point(16, 26);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(24, 17);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "X";
+            //
+            // numericUpDownToX1
+            //
+            this.numericUpDownToX1.Increment = new decimal(new int[] { 8, 0, 0, 0 });
+            this.numericUpDownToX1.Location = new System.Drawing.Point(44, 23);
+            this.numericUpDownToX1.Name = "numericUpDownToX1";
+            this.numericUpDownToX1.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownToX1.TabIndex = 1;
+            this.numericUpDownToX1.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // label7
+            //
+            this.label7.Location = new System.Drawing.Point(124, 26);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(24, 17);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "Y";
+            //
+            // numericUpDownToY1
+            //
+            this.numericUpDownToY1.Increment = new decimal(new int[] { 8, 0, 0, 0 });
+            this.numericUpDownToY1.Location = new System.Drawing.Point(152, 23);
+            this.numericUpDownToY1.Name = "numericUpDownToY1";
+            this.numericUpDownToY1.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownToY1.TabIndex = 3;
+            this.numericUpDownToY1.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // groupBoxPreview
+            //
+            this.groupBoxPreview.Controls.Add(this.textBoxPreview);
+            this.groupBoxPreview.Location = new System.Drawing.Point(12, 364);
+            this.groupBoxPreview.Name = "groupBoxPreview";
+            this.groupBoxPreview.Size = new System.Drawing.Size(496, 80);
+            this.groupBoxPreview.TabIndex = 4;
+            this.groupBoxPreview.TabStop = false;
+            this.groupBoxPreview.Text = "What will be copied";
+            //
+            // textBoxPreview
+            //
+            this.textBoxPreview.BackColor = System.Drawing.SystemColors.Control;
+            this.textBoxPreview.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxPreview.Location = new System.Drawing.Point(16, 20);
+            this.textBoxPreview.Multiline = true;
+            this.textBoxPreview.Name = "textBoxPreview";
+            this.textBoxPreview.ReadOnly = true;
+            this.textBoxPreview.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxPreview.Size = new System.Drawing.Size(464, 52);
+            this.textBoxPreview.TabIndex = 0;
+            this.textBoxPreview.TabStop = false;
+            //
+            // progressBar1
+            //
+            this.progressBar1.Location = new System.Drawing.Point(12, 452);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(496, 18);
+            this.progressBar1.TabIndex = 5;
+            //
+            // labelStatus
+            //
+            this.labelStatus.AutoEllipsis = true;
+            this.labelStatus.Location = new System.Drawing.Point(12, 475);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(496, 17);
+            this.labelStatus.TabIndex = 6;
+            //
+            // buttonCopy
+            //
+            this.buttonCopy.Location = new System.Drawing.Point(244, 500);
+            this.buttonCopy.Name = "buttonCopy";
+            this.buttonCopy.Size = new System.Drawing.Size(80, 28);
+            this.buttonCopy.TabIndex = 7;
+            this.buttonCopy.Text = "Copy";
+            this.buttonCopy.UseVisualStyleBackColor = true;
+            this.buttonCopy.Click += new System.EventHandler(this.OnClickCopy);
+            //
+            // buttonCancel
+            //
+            this.buttonCancel.Enabled = false;
+            this.buttonCancel.Location = new System.Drawing.Point(332, 500);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(72, 28);
+            this.buttonCancel.TabIndex = 8;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.OnClickCancel);
+            //
+            // buttonClose
+            //
+            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonClose.Location = new System.Drawing.Point(420, 500);
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(80, 28);
+            this.buttonClose.TabIndex = 9;
+            this.buttonClose.Text = "Close";
+            this.buttonClose.UseVisualStyleBackColor = true;
+            this.buttonClose.Click += new System.EventHandler(this.OnClickClose);
+            //
+            // worker
+            //
+            this.worker.WorkerSupportsCancellation = true;
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.OnWorkerDoWork);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.OnWorkerCompleted);
+            //
             // MapReplaceForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 381);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.comboBoxMapID);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.label5);
+            this.CancelButton = this.buttonClose;
+            this.ClientSize = new System.Drawing.Size(520, 540);
+            this.Controls.Add(this.groupBoxSource);
+            this.Controls.Add(this.groupBoxWhat);
+            this.Controls.Add(this.groupBoxFrom);
+            this.Controls.Add(this.groupBoxTo);
+            this.Controls.Add(this.groupBoxPreview);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.labelStatus);
+            this.Controls.Add(this.buttonCopy);
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.buttonClose);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(388, 285);
+            this.MinimizeBox = false;
             this.Name = "MapReplaceForm";
-            this.Text = "MapReplace";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Map and Statics Copy";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY2)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToX1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToY1)).EndInit();
+            this.groupBoxSource.ResumeLayout(false);
+            this.groupBoxSource.PerformLayout();
+            this.groupBoxWhat.ResumeLayout(false);
+            this.groupBoxFrom.ResumeLayout(false);
+            this.groupBoxTo.ResumeLayout(false);
+            this.groupBoxPreview.ResumeLayout(false);
+            this.groupBoxPreview.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.ComponentModel.BackgroundWorker worker;
+        private System.Windows.Forms.Button buttonBrowse;
+        private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.Button buttonCopy;
+        private System.Windows.Forms.CheckBox RemoveDupl;
+        private System.Windows.Forms.CheckBox checkBoxDuplicatesHue;
         private System.Windows.Forms.CheckBox checkBoxMap;
         private System.Windows.Forms.CheckBox checkBoxStatics;
+        private System.Windows.Forms.ComboBox comboBoxMapFormat;
         private System.Windows.Forms.ComboBox comboBoxMapID;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox groupBoxFrom;
+        private System.Windows.Forms.GroupBox groupBoxPreview;
+        private System.Windows.Forms.GroupBox groupBoxSource;
+        private System.Windows.Forms.GroupBox groupBoxTo;
+        private System.Windows.Forms.GroupBox groupBoxWhat;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labelDetected;
+        private System.Windows.Forms.Label labelFolder;
+        private System.Windows.Forms.Label labelMap;
+        private System.Windows.Forms.Label labelMapFormat;
+        private System.Windows.Forms.Label labelSizeWarning;
+        private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.NumericUpDown numericUpDownToX1;
         private System.Windows.Forms.NumericUpDown numericUpDownToY1;
         private System.Windows.Forms.NumericUpDown numericUpDownX1;
@@ -445,7 +517,7 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.NumericUpDown numericUpDownY1;
         private System.Windows.Forms.NumericUpDown numericUpDownY2;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.CheckBox RemoveDupl;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBoxFolder;
+        private System.Windows.Forms.TextBox textBoxPreview;
     }
 }
