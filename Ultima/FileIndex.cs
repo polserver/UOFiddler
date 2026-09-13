@@ -249,6 +249,22 @@ namespace Ultima
             }
         }
 
+        /// <summary>
+        /// True when the entry carries the high bit that <see cref="IFileAccessor.ApplyPatch"/> sets
+        /// to mark it as coming from verdata.
+        /// </summary>
+        /// <remarks>
+        /// A length of -1 is the "unused entry" filler that real .idx files are padded with, and it
+        /// has that same high bit set. Without the -1 test every unused entry looks like a verdata
+        /// patch of length 0x7FFFFFFF, and the reader then tries to pull that many bytes out of
+        /// <see cref="Verdata.Stream"/> - which, with no verdata.mul present, is Stream.Null.
+        /// A real patch never reaches 0x7FFFFFFF bytes, so the two cases cannot be confused.
+        /// </remarks>
+        private static bool IsVerdataPatched(IEntry e)
+        {
+            return e.Length != -1 && (e.Length & (1 << 31)) != 0;
+        }
+
         public Stream Seek(int index, out int length, out int extra, out bool patched)
         {
             if (FileAccessor is null)
@@ -277,7 +293,7 @@ namespace Ultima
             length = e.Length & 0x7FFFFFFF;
             extra = e.Extra;
 
-            if ((e.Length & (1 << 31)) != 0)
+            if (IsVerdataPatched(e))
             {
                 patched = true;
                 Verdata.Seek(e.Lookup);
@@ -343,7 +359,7 @@ namespace Ultima
 
             entry = e;
 
-            if ((e.Length & (1 << 31)) != 0)
+            if (IsVerdataPatched(e))
             {
                 patched = true;
                 Verdata.Seek(e.Lookup);
@@ -443,7 +459,7 @@ namespace Ultima
             length = e.Length & 0x7FFFFFFF;
             extra = e.Extra;
 
-            if ((e.Length & (1 << 31)) != 0)
+            if (IsVerdataPatched(e))
             {
                 patched = true;
                 return true;
