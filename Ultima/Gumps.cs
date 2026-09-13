@@ -35,6 +35,8 @@ namespace Ultima
         private static readonly Dictionary<int, Bitmap> _replaced = new Dictionary<int, Bitmap>();
         private static bool[] _removed;
         private static readonly Dictionary<int, bool> _patched = new Dictionary<int, bool>();
+        // Indexes edited since load or since the last save.
+        private static readonly ModifiedIndexTracker _modified = new ModifiedIndexTracker();
 
         private static byte[] _pixelBuffer;
         private static byte[] _streamBuffer;
@@ -114,6 +116,7 @@ namespace Ultima
             _streamBuffer = null;
             //_colorTable = null;
             _patched.Clear();
+            _modified.Clear();
         }
 
         public static int GetCount()
@@ -133,6 +136,7 @@ namespace Ultima
             _removed[index] = false;
             _patched.Remove(index);
             _contentState[index] = _contentPresent;
+            _modified.Mark(index);
         }
 
         /// <summary>
@@ -142,6 +146,29 @@ namespace Ultima
         public static void RemoveGump(int index)
         {
             _removed[index] = true;
+            _modified.Mark(index);
+        }
+
+        /// <summary>
+        /// Tests if the Gump at <paramref name="index"/> was replaced or removed since the gumps were
+        /// loaded or last saved.
+        /// </summary>
+        public static bool IsModified(int index)
+        {
+            return _modified.IsMarked(index);
+        }
+
+        /// <summary>
+        /// Number of Gumps edited since the gumps were loaded or last saved.
+        /// </summary>
+        public static int ModifiedCount => _modified.Count;
+
+        /// <summary>
+        /// Drops every modified mark without touching the edits themselves.
+        /// </summary>
+        public static void ClearModified()
+        {
+            _modified.Clear();
         }
 
         /// <summary>
@@ -1354,6 +1381,8 @@ namespace Ultima
                 binidx.Flush();
                 fsidx.SetLength(rows * 12);
             }
+
+            _modified.Clear();
         }
     }
 }

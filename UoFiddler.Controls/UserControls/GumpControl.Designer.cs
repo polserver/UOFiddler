@@ -57,6 +57,9 @@ namespace UoFiddler.Controls.UserControls
             jumpToMaleFemale = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             replaceGumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            clipboardToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             InsertText = new System.Windows.Forms.ToolStripTextBox();
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -148,8 +151,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip
             // 
-            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, changeBackgroundColorToolStripMenuItem, toolStripSeparator2, extractImageToolStripMenuItem, toolStripSeparator6, jumpToMaleFemale, toolStripSeparator5, replaceGumpToolStripMenuItem, insertToolStripMenuItem, toolStripMenuItem1, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
+            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, changeBackgroundColorToolStripMenuItem, toolStripSeparator2, extractImageToolStripMenuItem, toolStripSeparator6, jumpToMaleFemale, toolStripSeparator5, copyImageToolStripMenuItem, pasteImageToolStripMenuItem, clipboardToolStripSeparator, replaceGumpToolStripMenuItem, insertToolStripMenuItem, toolStripMenuItem1, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
             contextMenuStrip.Name = "contextMenuStrip1";
+            contextMenuStrip.Opening += ContextMenuStrip_Opening;
             contextMenuStrip.Size = new System.Drawing.Size(190, 226);
             // 
             // showFreeSlotsToolStripMenuItem
@@ -229,6 +233,27 @@ namespace UoFiddler.Controls.UserControls
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
             toolStripSeparator5.Size = new System.Drawing.Size(186, 6);
+            // 
+            // copyImageToolStripMenuItem
+            // 
+            copyImageToolStripMenuItem.Name = "copyImageToolStripMenuItem";
+            copyImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+C";
+            copyImageToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            copyImageToolStripMenuItem.Text = "Copy Image";
+            copyImageToolStripMenuItem.Click += OnClickCopyImage;
+            // 
+            // pasteImageToolStripMenuItem
+            // 
+            pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
+            pasteImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+V";
+            pasteImageToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            pasteImageToolStripMenuItem.Text = "Paste Image";
+            pasteImageToolStripMenuItem.Click += OnClickPasteImage;
+            // 
+            // clipboardToolStripSeparator
+            // 
+            clipboardToolStripSeparator.Name = "clipboardToolStripSeparator";
+            clipboardToolStripSeparator.Size = new System.Drawing.Size(186, 6);
             // 
             // replaceGumpToolStripMenuItem
             // 
@@ -541,6 +566,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripProgressBar ProgressBar;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceGumpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator clipboardToolStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripLabel SizeLabel;
         private System.Windows.Forms.SplitContainer splitContainer1;

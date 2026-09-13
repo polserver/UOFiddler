@@ -508,6 +508,93 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void OnClickCopyImage(object sender, EventArgs e)
+        {
+            // The clipboard holds one image, so a multi selection copies the focused tile.
+            int id = SelectedGraphicId;
+            if (id < 0 || !Art.IsValidStatic(id))
+            {
+                return;
+            }
+
+            if (!ImageClipboard.TryCopy(Art.GetStatic(id), out string error))
+            {
+                MessageBox.Show(error, "Copy Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void OnClickPasteImage(object sender, EventArgs e)
+        {
+            var ids = GetSelectedGraphicIds();
+            if (ids.Count == 0)
+            {
+                if (SelectedGraphicId < 0)
+                {
+                    return;
+                }
+
+                ids.Add(SelectedGraphicId);
+            }
+
+            using Bitmap pasted = ImageClipboard.TryPaste(out string error);
+            if (pasted == null)
+            {
+                MessageBox.Show(error, "Paste Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (ids.Count > 1)
+            {
+                DialogResult confirm = MessageBox.Show(
+                    $"Paste this {pasted.Width}x{pasted.Height} image into {ids.Count} selected items?",
+                    "Paste Image", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (confirm != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            Bitmap converted = Utils.ToUoBitmap(pasted);
+
+            if (!Art.ValidateStaticSize(converted, out int estimatedSize))
+            {
+                converted.Dispose();
+
+                MessageBox.Show(
+                    $"Image is too large for MUL format!\n\n" +
+                    $"Image dimensions: {pasted.Width}x{pasted.Height}\n" +
+                    $"Encoded size: {estimatedSize:N0} ushorts\n" +
+                    $"Maximum allowed: 65,535 ushorts\n\n" +
+                    "Try a smaller image or one with more transparent pixels.",
+                    "Image Too Large", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            foreach (int id in ids)
+            {
+                // Each slot needs its own bitmap: the SDK keeps the instance it is handed.
+                Art.ReplaceStatic(id, ids.Count == 1 ? converted : (Bitmap)converted.Clone());
+                ControlEvents.FireItemChangeEvent(this, id);
+            }
+
+            if (ids.Count > 1)
+            {
+                converted.Dispose();
+            }
+
+            ItemsTileView.Invalidate();
+
+            if (SelectedGraphicId >= 0)
+            {
+                UpdateToolStripLabels(SelectedGraphicId);
+                UpdateDetail(SelectedGraphicId);
+            }
+
+            Options.ChangedUltimaClass["Art"] = true;
+        }
+
         private void OnClickReplace(object sender, EventArgs e)
         {
             if (ItemsTileView.SelectedIndices.Count > 1)
@@ -1099,6 +1186,11 @@ namespace UoFiddler.Controls.UserControls
                     e.Graphics.DrawImage(bitmap, new Rectangle(itemPoint, new Size(width, height)));
                 }
 
+                if (Art.IsStaticModified(_itemList[e.Index]))
+                {
+                    ModifiedMarker.Draw(e.Graphics, rect);
+                }
+
                 e.Graphics.Clip = previousClip;
             }
         }
@@ -1221,9 +1313,18 @@ namespace UoFiddler.Controls.UserControls
             SelectInGumpsTab(SelectedGraphicId, true);
         }
 
+        private void DetailPictureBoxContextMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+            copyImageToolStripMenuItemDetail.Enabled = SelectedGraphicId >= 0 && Art.IsValidStatic(SelectedGraphicId);
+            pasteImageToolStripMenuItemDetail.Enabled = SelectedGraphicId >= 0 && ImageClipboard.ContainsImage();
+        }
+
         private void TileViewContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             int selectedCount = ItemsTileView.SelectedIndices.Count;
+            copyImageToolStripMenuItem.Enabled = SelectedGraphicId >= 0 && Art.IsValidStatic(SelectedGraphicId);
+            pasteImageToolStripMenuItem.Enabled = selectedCount > 0 && ImageClipboard.ContainsImage();
+            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"Paste Image into {selectedCount}" : "Paste Image";
             removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
             extractToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
             replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}..." : "Replace...";
@@ -1488,6 +1589,21 @@ namespace UoFiddler.Controls.UserControls
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Copy/paste is handled here rather than as menu ShortcutKeys: a shortcut on a
+            // ContextMenuStrip is processed for the whole form, which would swallow Ctrl+C/Ctrl+V in
+            // every text box on every tab.
+            if (keyData == (Keys.Control | Keys.C) && ItemsTileView.Focused)
+            {
+                OnClickCopyImage(this, EventArgs.Empty);
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.V) && ItemsTileView.Focused)
+            {
+                OnClickPasteImage(this, EventArgs.Empty);
+                return true;
+            }
+
             if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
             {
                 if (searchByNameToolStripTextBox.TextBox.Focused)

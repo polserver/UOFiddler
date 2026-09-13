@@ -23,6 +23,9 @@ namespace Ultima
         private static bool[] _removed;
         private static readonly Dictionary<int, bool> _patched = new Dictionary<int, bool>();
         public static bool Modified;
+        // Indexes edited since load or since the last save, in the same combined index space the
+        // Replace/Remove methods use (land = index & 0x3FFF, static = legal item id + 0x4000).
+        private static readonly ModifiedIndexTracker _modified = new ModifiedIndexTracker();
 
         private static readonly byte[] _validBuffer = new byte[4];
 
@@ -180,6 +183,7 @@ namespace Ultima
             _replaced.Clear();
             _removed = new bool[0x14000];
             _patched.Clear();
+            _modified.Clear();
             Modified = false;
         }
 
@@ -208,6 +212,7 @@ namespace Ultima
 
             _patched.Remove(index);
 
+            _modified.Mark(index);
             Modified = true;
         }
 
@@ -225,6 +230,7 @@ namespace Ultima
 
             _patched.Remove(index);
 
+            _modified.Mark(index);
             Modified = true;
         }
 
@@ -237,6 +243,7 @@ namespace Ultima
             index = GetLegalItemId(index);
             index += 0x4000;
             _removed[index] = true;
+            _modified.Mark(index);
             Modified = true;
         }
 
@@ -248,7 +255,39 @@ namespace Ultima
         {
             index &= 0x3FFF;
             _removed[index] = true;
+            _modified.Mark(index);
             Modified = true;
+        }
+
+        /// <summary>
+        /// Tests if the Static at <paramref name="index"/> was replaced or removed since the art was
+        /// loaded or last saved.
+        /// </summary>
+        public static bool IsStaticModified(int index)
+        {
+            return _modified.IsMarked(GetLegalItemId(index) + 0x4000);
+        }
+
+        /// <summary>
+        /// Tests if the Land tile at <paramref name="index"/> was replaced or removed since the art was
+        /// loaded or last saved.
+        /// </summary>
+        public static bool IsLandModified(int index)
+        {
+            return _modified.IsMarked(index & 0x3FFF);
+        }
+
+        /// <summary>
+        /// Number of Land tiles and Statics edited since the art was loaded or last saved.
+        /// </summary>
+        public static int ModifiedCount => _modified.Count;
+
+        /// <summary>
+        /// Drops every modified mark without touching the edits themselves.
+        /// </summary>
+        public static void ClearModified()
+        {
+            _modified.Clear();
         }
 
         /// <summary>
@@ -1094,6 +1133,8 @@ namespace Ultima
                     memmul.WriteTo(fsmul);
                 }
             }
+
+            _modified.Clear();
         }
 
     }

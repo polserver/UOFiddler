@@ -67,6 +67,12 @@ namespace UoFiddler.Controls.UserControls
             selectInGumpsTabFemaleToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
             replaceToolStripMenuItem = new ToolStripMenuItem();
+            copyImageToolStripMenuItem = new ToolStripMenuItem();
+            pasteImageToolStripMenuItem = new ToolStripMenuItem();
+            clipboardToolStripSeparator = new ToolStripSeparator();
+            copyImageToolStripMenuItemDetail = new ToolStripMenuItem();
+            pasteImageToolStripMenuItemDetail = new ToolStripMenuItem();
+            clipboardToolStripSeparatorDetail = new ToolStripSeparator();
             replaceStartingFromToolStripMenuItem = new ToolStripMenuItem();
             ReplaceStartingFromText = new ToolStripTextBox();
             replaceFromFolderToolStripMenuItem = new ToolStripMenuItem();
@@ -146,8 +152,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // DetailPictureBoxContextMenuStrip
             // 
-            DetailPictureBoxContextMenuStrip.Items.AddRange(new ToolStripItem[] { changeBackgroundColorToolStripMenuItemDetail });
+            DetailPictureBoxContextMenuStrip.Items.AddRange(new ToolStripItem[] { copyImageToolStripMenuItemDetail, pasteImageToolStripMenuItemDetail, clipboardToolStripSeparatorDetail, changeBackgroundColorToolStripMenuItemDetail });
             DetailPictureBoxContextMenuStrip.Name = "contextMenuStrip2";
+            DetailPictureBoxContextMenuStrip.Opening += DetailPictureBoxContextMenuStrip_Opening;
             DetailPictureBoxContextMenuStrip.Size = new System.Drawing.Size(213, 26);
             // 
             // changeBackgroundColorToolStripMenuItemDetail
@@ -218,7 +225,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // TileViewContextMenuStrip
             // 
-            TileViewContextMenuStrip.Items.AddRange(new ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, ChangeBackgroundColorToolStripMenuItem, toolStripSeparator3, extractToolStripMenuItem, toolStripSeparator7, selectInTileDataTabToolStripMenuItem, selectInRadarColorTabToolStripMenuItem, selectInGumpsTabMaleToolStripMenuItem, selectInGumpsTabFemaleToolStripMenuItem, toolStripSeparator2, replaceToolStripMenuItem, replaceStartingFromToolStripMenuItem, replaceFromFolderToolStripMenuItem, insertAtToolStripMenuItem, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
+            TileViewContextMenuStrip.Items.AddRange(new ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, ChangeBackgroundColorToolStripMenuItem, toolStripSeparator3, extractToolStripMenuItem, toolStripSeparator7, selectInTileDataTabToolStripMenuItem, selectInRadarColorTabToolStripMenuItem, selectInGumpsTabMaleToolStripMenuItem, selectInGumpsTabFemaleToolStripMenuItem, toolStripSeparator2, copyImageToolStripMenuItem, pasteImageToolStripMenuItem, clipboardToolStripSeparator, replaceToolStripMenuItem, replaceStartingFromToolStripMenuItem, replaceFromFolderToolStripMenuItem, insertAtToolStripMenuItem, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
             TileViewContextMenuStrip.Name = "contextMenuStrip1";
             TileViewContextMenuStrip.Size = new System.Drawing.Size(213, 314);
             TileViewContextMenuStrip.Opening += TileViewContextMenuStrip_Opening;
@@ -324,6 +331,48 @@ namespace UoFiddler.Controls.UserControls
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new System.Drawing.Size(209, 6);
+            // 
+            // copyImageToolStripMenuItem
+            // 
+            copyImageToolStripMenuItem.Name = "copyImageToolStripMenuItem";
+            copyImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+C";
+            copyImageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            copyImageToolStripMenuItem.Text = "Copy Image";
+            copyImageToolStripMenuItem.Click += OnClickCopyImage;
+            // 
+            // pasteImageToolStripMenuItem
+            // 
+            pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
+            pasteImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+V";
+            pasteImageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            pasteImageToolStripMenuItem.Text = "Paste Image";
+            pasteImageToolStripMenuItem.Click += OnClickPasteImage;
+            // 
+            // clipboardToolStripSeparator
+            // 
+            clipboardToolStripSeparator.Name = "clipboardToolStripSeparator";
+            clipboardToolStripSeparator.Size = new System.Drawing.Size(209, 6);
+            // 
+            // copyImageToolStripMenuItemDetail
+            // 
+            copyImageToolStripMenuItemDetail.Name = "copyImageToolStripMenuItemDetail";
+            copyImageToolStripMenuItemDetail.ShortcutKeyDisplayString = "Ctrl+C";
+            copyImageToolStripMenuItemDetail.Size = new System.Drawing.Size(212, 22);
+            copyImageToolStripMenuItemDetail.Text = "Copy Image";
+            copyImageToolStripMenuItemDetail.Click += OnClickCopyImage;
+            // 
+            // pasteImageToolStripMenuItemDetail
+            // 
+            pasteImageToolStripMenuItemDetail.Name = "pasteImageToolStripMenuItemDetail";
+            pasteImageToolStripMenuItemDetail.ShortcutKeyDisplayString = "Ctrl+V";
+            pasteImageToolStripMenuItemDetail.Size = new System.Drawing.Size(212, 22);
+            pasteImageToolStripMenuItemDetail.Text = "Paste Image";
+            pasteImageToolStripMenuItemDetail.Click += OnClickPasteImage;
+            // 
+            // clipboardToolStripSeparatorDetail
+            // 
+            clipboardToolStripSeparatorDetail.Name = "clipboardToolStripSeparatorDetail";
+            clipboardToolStripSeparatorDetail.Size = new System.Drawing.Size(209, 6);
             // 
             // replaceToolStripMenuItem
             // 
@@ -619,6 +668,12 @@ namespace UoFiddler.Controls.UserControls
         private ToolStripProgressBar ProgressBar;
         private ToolStripMenuItem removeToolStripMenuItem;
         private ToolStripMenuItem replaceToolStripMenuItem;
+        private ToolStripMenuItem copyImageToolStripMenuItem;
+        private ToolStripMenuItem pasteImageToolStripMenuItem;
+        private ToolStripSeparator clipboardToolStripSeparator;
+        private ToolStripMenuItem copyImageToolStripMenuItemDetail;
+        private ToolStripMenuItem pasteImageToolStripMenuItemDetail;
+        private ToolStripSeparator clipboardToolStripSeparatorDetail;
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem selectInRadarColorTabToolStripMenuItem;
         private ToolStripMenuItem selectInTileDataTabToolStripMenuItem;

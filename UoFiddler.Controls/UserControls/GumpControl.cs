@@ -498,6 +498,11 @@ namespace UoFiddler.Controls.UserControls
                         e.Graphics.FillRectangle(Brushes.LightCoral, e.Bounds.X, e.Bounds.Y, 105, e.Bounds.Height);
                     }
                     e.Graphics.DrawImage(bmp, new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 3, width, height));
+
+                    if (Gumps.IsModified(i))
+                    {
+                        ModifiedMarker.Draw(e.Graphics, new Rectangle(e.Bounds.X, e.Bounds.Y, 105, e.Bounds.Height));
+                    }
                 }
                 else
                 {
@@ -600,6 +605,82 @@ namespace UoFiddler.Controls.UserControls
                 jumpToMaleFemale.Enabled = false;
                 jumpToMaleFemale.Text = "Jump to Male/Female";
             }
+        }
+
+        private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            int id = SelectedGumpId;
+            copyImageToolStripMenuItem.Enabled = id >= 0 && Gumps.IsValidIndex(id);
+            pasteImageToolStripMenuItem.Enabled = id >= 0 && ImageClipboard.ContainsImage();
+        }
+
+        private void OnClickCopyImage(object sender, EventArgs e)
+        {
+            int id = SelectedGumpId;
+            if (id < 0 || !Gumps.IsValidIndex(id))
+            {
+                return;
+            }
+
+            if (!ImageClipboard.TryCopy(Gumps.GetGump(id), out string error))
+            {
+                MessageBox.Show(error, "Copy Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void OnClickPasteImage(object sender, EventArgs e)
+        {
+            int id = SelectedGumpId;
+            if (id < 0)
+            {
+                return;
+            }
+
+            using Bitmap pasted = ImageClipboard.TryPaste(out string error);
+            if (pasted == null)
+            {
+                MessageBox.Show(error, "Paste Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Gumps have no fixed size, but the idx packs width and height into one int and the
+            // decoder refuses anything past 0xFFFF on either axis.
+            if (pasted.Width == 0 || pasted.Height == 0 || pasted.Width > 0xFFFF || pasted.Height > 0xFFFF)
+            {
+                MessageBox.Show(
+                    $"Invalid gump dimensions!\n\n" +
+                    $"Clipboard image: {pasted.Width}x{pasted.Height}\n" +
+                    $"Gumps may be up to 65535x65535 pixels.\n\n" +
+                    "No changes made.",
+                    "Invalid Size", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Gumps.ReplaceGump(id, Utils.ToUoBitmap(pasted));
+            ControlEvents.FireGumpChangeEvent(this, id);
+            listView.Invalidate();
+            ListView_SelectedIndexChanged(this, EventArgs.Empty);
+            Options.ChangedUltimaClass["Gumps"] = true;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Copy/paste is handled here rather than as menu ShortcutKeys: a shortcut on a
+            // ContextMenuStrip is processed for the whole form, which would swallow Ctrl+C/Ctrl+V in
+            // every text box on every tab.
+            if (keyData == (Keys.Control | Keys.C) && listView.Focused)
+            {
+                OnClickCopyImage(this, EventArgs.Empty);
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.V) && listView.Focused)
+            {
+                OnClickPasteImage(this, EventArgs.Empty);
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void OnClickReplace(object sender, EventArgs e)
