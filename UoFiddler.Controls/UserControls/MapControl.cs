@@ -1304,23 +1304,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickDefragStatics(object sender, EventArgs e)
         {
-            using (new WaitCursorScope(this))
+            using (var form = new MapDefragStaticsForm(CurrentMap, Options.OutputPath))
             {
-                Map.DefragStatics(Options.OutputPath,
-                    CurrentMap, CurrentMap.Width, CurrentMap.Height, false);
+                form.ShowDialog(FindForm());
             }
-
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Statics saved successfully.");
-        }
-
-        private void OnClickDefragRemoveStatics(object sender, EventArgs e)
-        {
-            using (new WaitCursorScope(this))
-            {
-                Map.DefragStatics(Options.OutputPath,
-                    CurrentMap, CurrentMap.Width, CurrentMap.Height, true);
-            }
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Statics saved successfully.");
         }
 
         private void OnResizeMap(object sender, EventArgs e)
