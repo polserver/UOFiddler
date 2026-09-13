@@ -18,7 +18,8 @@ using Microsoft.Extensions.Logging;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
-using UoFiddler.Plugin.UopPacker.Classes;
+using Ultima.Uop;
+using Ultima.Helpers;
 
 namespace UoFiddler.Plugin.UopPacker.UserControls
 {

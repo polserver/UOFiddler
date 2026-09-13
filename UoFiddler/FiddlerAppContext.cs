@@ -17,6 +17,7 @@ using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Forms;
+using Ultima.Helpers;
 
 namespace UoFiddler
 {

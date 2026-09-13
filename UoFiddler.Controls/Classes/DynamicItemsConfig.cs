@@ -16,6 +16,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using Ultima;
+using Ultima.Helpers;
 
 namespace UoFiddler.Controls.Classes
 {

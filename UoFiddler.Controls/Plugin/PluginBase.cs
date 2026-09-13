@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin.Interfaces;
+using Ultima.Helpers;
 
 namespace UoFiddler.Controls.Plugin
 {
@@ -47,4 +48,3 @@ namespace UoFiddler.Controls.Plugin
         public virtual void ModifyTabPages(TabControl tabControl) { }
     }
 }
-

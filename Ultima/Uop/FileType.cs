@@ -1,4 +1,4 @@
-﻿namespace UoFiddler.Plugin.UopPacker.Classes
+namespace Ultima.Uop
 {
     public enum FileType
     {

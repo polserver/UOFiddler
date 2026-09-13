@@ -15,7 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace UoFiddler.Plugin.UopPacker.Classes
+namespace Ultima.Uop
 {
     /// <summary>
     /// Side storage for the per tile component ids carried by MultiCollection.uop entries.
