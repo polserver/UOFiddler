@@ -24,6 +24,7 @@ using Ultima.Helpers;
 using Ultima.Maps;
 using Ultima.Statics;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -35,6 +36,12 @@ namespace UoFiddler.Controls.Forms
         private MapSize _detectedSize;
         private bool _detectionKnown;
         private string _detectionEvidence;
+
+        /// <summary>Built on the browsed folder so the source panel renders that install, not this one.</summary>
+        private Map _sourceMap;
+
+        /// <summary>Guards the round trip between a drag on a panel and the spinners it writes to.</summary>
+        private bool _syncingPreview;
 
         public MapReplaceForm(Map currentMap)
         {
@@ -75,6 +82,20 @@ namespace UoFiddler.Controls.Forms
 
             textBoxFolder.TextChanged += OnFolderChanged;
 
+            checkBoxPreviewStatics.Checked = true;
+            checkBoxPreviewOverlay.Checked = true;
+
+            previewSource.Mode = MapPreviewMode.Rectangle;
+            previewSource.SelectionChanged += OnSourcePreviewChanged;
+
+            previewTarget.Mode = MapPreviewMode.MoveFixedSize;
+            previewTarget.Map = _workingMap;
+            previewTarget.MapSize = new MapSize(_workingMap.Width, _workingMap.Height);
+            previewTarget.SelectionChanged += OnTargetPreviewChanged;
+
+            groupBoxPreview.SizeChanged += (sender, e) => LayoutPreviewPanels();
+            LayoutPreviewPanels();
+
             OnSourceMapChanged(this, EventArgs.Empty);
             OnOptionChanged(this, EventArgs.Empty);
 
@@ -82,6 +103,52 @@ namespace UoFiddler.Controls.Forms
         }
 
         private SupportedMap SelectedMap => comboBoxMapID.SelectedItem as SupportedMap;
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            FormLayout.FitToScreen(this);
+        }
+
+        /// <summary>
+        /// The two panels split the group box between them. Anchors cannot express that - they would
+        /// grow one panel and leave the other - so the split is arithmetic, redone whenever the group
+        /// box resizes with the form.
+        /// </summary>
+        private void LayoutPreviewPanels()
+        {
+            const int margin = 16;
+            const int gap = 16;
+
+            int width = (groupBoxPreview.ClientSize.Width - (margin * 2) - gap) / 2;
+            // The checkbox row and the summary sit below the panels, and the group box needs a
+            // bottom margin of its own.
+            int height = groupBoxPreview.ClientSize.Height - previewSource.Top - 72;
+
+            if (width < 40 || height < 40)
+            {
+                return;
+            }
+
+            int right = margin + width + gap;
+
+            labelSourcePreview.Width = width;
+            labelTargetPreview.Left = right;
+            labelTargetPreview.Width = width;
+
+            previewSource.Size = new Size(width, height);
+            previewTarget.Location = new Point(right, previewTarget.Top);
+            previewTarget.Size = new Size(width, height);
+
+            int below = previewSource.Bottom + 8;
+
+            checkBoxPreviewStatics.Top = below;
+            checkBoxPreviewOverlay.Top = below;
+
+            textBoxPreview.Location = new Point(right, below - 4);
+            textBoxPreview.Width = width;
+        }
 
         // ---- source selection ------------------------------------------------------------------
 
@@ -154,12 +221,15 @@ namespace UoFiddler.Controls.Forms
 
             if (map == null || !Directory.Exists(textBoxFolder.Text))
             {
+                RebuildSourceMap(null);
                 UpdatePreview();
 
                 return;
             }
 
             _detectionKnown = MapSizes.TryDetect(textBoxFolder.Text, map.Id, out _detectedSize, out _detectionEvidence);
+
+            RebuildSourceMap(map);
 
             labelDetected.Text = _detectionKnown ? $"folder holds {_detectedSize}" : "size not recognised";
 
@@ -235,21 +305,129 @@ namespace UoFiddler.Controls.Forms
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"from  {source}");
-            sb.AppendLine($"to    {destination}");
+            // The panels carry the shape now, so this is only the numbers.
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "from {0},{1} - {2},{3}   {4} x {5} blocks",
+                source.TileX1, source.TileY1, source.TileX2, source.TileY2, source.BlockWidth, source.BlockHeight));
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "to   {0},{1} - {2},{3}",
+                destination.TileX1, destination.TileY1, destination.TileX2, destination.TileY2));
 
             bool snapped = source.TileX1 != x1 || source.TileY1 != y1 || source.TileX2 != x2 || source.TileY2 != y2;
 
             if (snapped)
             {
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "the request {0},{1} - {2},{3} was widened to whole 8-tile blocks", x1, y1, x2, y2));
+                    "{0},{1} - {2},{3} widened to whole blocks", x1, y1, x2, y2));
             }
 
             textBoxPreview.Text = sb.ToString();
+
+            if (_syncingPreview)
+            {
+                return;
+            }
+
+            _syncingPreview = true;
+
+            try
+            {
+                previewSource.Selection = source;
+                previewTarget.Selection = destination;
+                previewTarget.OverlaySelection = source;
+            }
+            finally
+            {
+                _syncingPreview = false;
+            }
         }
 
         // ---- running ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Points the source panel at the browsed folder. The panel renders through a Map of its
+        /// own so it shows that install rather than the one loaded in the app.
+        /// </summary>
+        private void RebuildSourceMap(SupportedMap map)
+        {
+            _sourceMap?.Tiles.CloseStreams();
+            _sourceMap = null;
+
+            if (map != null && Directory.Exists(textBoxFolder.Text))
+            {
+                _sourceMap = new Map(textBoxFolder.Text, map.Id, map.Id, map.Width, map.Height);
+            }
+
+            previewSource.Map = _sourceMap;
+            previewSource.MapSize = map == null ? default : new MapSize(map.Width, map.Height);
+            previewSource.Message = _sourceMap == null ? "Choose a folder to copy from" : null;
+
+            previewTarget.OverlayMap = checkBoxPreviewOverlay.Checked ? _sourceMap : null;
+        }
+
+        private void OnPreviewOptionChanged(object sender, EventArgs e)
+        {
+            previewSource.ShowStatics = checkBoxPreviewStatics.Checked;
+            previewTarget.ShowStatics = checkBoxPreviewStatics.Checked;
+            previewTarget.OverlayMap = checkBoxPreviewOverlay.Checked ? _sourceMap : null;
+
+            UpdatePreview();
+        }
+
+        /// <summary>A drag on the source panel writes the region back into the spinners.</summary>
+        private void OnSourcePreviewChanged(object sender, EventArgs e)
+        {
+            if (_syncingPreview)
+            {
+                return;
+            }
+
+            BlockRectangle selection = previewSource.Selection;
+
+            _syncingPreview = true;
+
+            try
+            {
+                numericUpDownX1.Value = Clamp(numericUpDownX1, selection.TileX1);
+                numericUpDownY1.Value = Clamp(numericUpDownY1, selection.TileY1);
+                numericUpDownX2.Value = Clamp(numericUpDownX2, selection.TileX2);
+                numericUpDownY2.Value = Clamp(numericUpDownY2, selection.TileY2);
+            }
+            finally
+            {
+                _syncingPreview = false;
+            }
+
+            UpdatePreview();
+        }
+
+        /// <summary>A drag on the destination panel writes the paste position back.</summary>
+        private void OnTargetPreviewChanged(object sender, EventArgs e)
+        {
+            if (_syncingPreview)
+            {
+                return;
+            }
+
+            BlockRectangle selection = previewTarget.Selection;
+
+            _syncingPreview = true;
+
+            try
+            {
+                numericUpDownToX1.Value = Clamp(numericUpDownToX1, selection.TileX1);
+                numericUpDownToY1.Value = Clamp(numericUpDownToY1, selection.TileY1);
+            }
+            finally
+            {
+                _syncingPreview = false;
+            }
+
+            UpdatePreview();
+        }
+
+        private static decimal Clamp(NumericUpDown control, int value)
+        {
+            return Math.Clamp(value, (int)control.Minimum, (int)control.Maximum);
+        }
 
         private void OnClickCopy(object sender, EventArgs e)
         {
@@ -490,6 +668,9 @@ namespace UoFiddler.Controls.Forms
         {
             _cancellation?.Dispose();
             _cancellation = null;
+
+            _sourceMap?.Tiles.CloseStreams();
+            _sourceMap = null;
 
             base.OnFormClosed(e);
         }

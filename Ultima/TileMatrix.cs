@@ -416,6 +416,11 @@ namespace Ultima
                 offset = CalculateOffsetFromUOP(offset);
             }
 
+            if (offset < 0 || offset + destination.Length > _map.Length)
+            {
+                return;
+            }
+
             _map.Seek(offset, SeekOrigin.Begin);
             _map.ReadExactly(destination);
         }
@@ -460,9 +465,20 @@ namespace Ultima
                 offset = CalculateOffsetFromUOP(offset);
             }
 
+            Span<byte> destination = MemoryMarshal.AsBytes(tiles.AsSpan());
+
+            // The configured map size can cover more blocks than the file actually holds - a client
+            // whose map0 is the pre-T2A 6144 wide one read as the modern 7168 grid, say - and the
+            // tail blocks are then simply absent. Reading them as empty is what the statics index
+            // already does with a short staidx, and it beats throwing at whoever asked to draw them.
+            if (offset < 0 || offset + destination.Length > _map.Length)
+            {
+                return tiles;
+            }
+
             _map.Seek(offset, SeekOrigin.Begin);
 
-            _map.ReadExactly(MemoryMarshal.AsBytes(tiles.AsSpan()));
+            _map.ReadExactly(destination);
 
             return tiles;
         }

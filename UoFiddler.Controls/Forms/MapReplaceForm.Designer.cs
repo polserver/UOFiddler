@@ -67,6 +67,12 @@ namespace UoFiddler.Controls.Forms
             this.label7 = new System.Windows.Forms.Label();
             this.numericUpDownToY1 = new System.Windows.Forms.NumericUpDown();
             this.groupBoxPreview = new System.Windows.Forms.GroupBox();
+            this.labelSourcePreview = new System.Windows.Forms.Label();
+            this.previewSource = new UoFiddler.Controls.UserControls.MapRegionPreview();
+            this.labelTargetPreview = new System.Windows.Forms.Label();
+            this.previewTarget = new UoFiddler.Controls.UserControls.MapRegionPreview();
+            this.checkBoxPreviewStatics = new System.Windows.Forms.CheckBox();
+            this.checkBoxPreviewOverlay = new System.Windows.Forms.CheckBox();
             this.textBoxPreview = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.labelStatus = new System.Windows.Forms.Label();
@@ -90,6 +96,7 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxSource
             //
+            this.groupBoxSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxSource.Controls.Add(this.labelFolder);
             this.groupBoxSource.Controls.Add(this.textBoxFolder);
             this.groupBoxSource.Controls.Add(this.buttonBrowse);
@@ -99,7 +106,7 @@ namespace UoFiddler.Controls.Forms
             this.groupBoxSource.Controls.Add(this.labelSizeWarning);
             this.groupBoxSource.Location = new System.Drawing.Point(12, 12);
             this.groupBoxSource.Name = "groupBoxSource";
-            this.groupBoxSource.Size = new System.Drawing.Size(496, 122);
+            this.groupBoxSource.Size = new System.Drawing.Size(1440, 122);
             this.groupBoxSource.TabIndex = 0;
             this.groupBoxSource.TabStop = false;
             this.groupBoxSource.Text = "Copy from";
@@ -163,6 +170,7 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxWhat
             //
+            this.groupBoxWhat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxWhat.Controls.Add(this.checkBoxMap);
             this.groupBoxWhat.Controls.Add(this.labelMapFormat);
             this.groupBoxWhat.Controls.Add(this.comboBoxMapFormat);
@@ -171,7 +179,7 @@ namespace UoFiddler.Controls.Forms
             this.groupBoxWhat.Controls.Add(this.checkBoxDuplicatesHue);
             this.groupBoxWhat.Location = new System.Drawing.Point(12, 140);
             this.groupBoxWhat.Name = "groupBoxWhat";
-            this.groupBoxWhat.Size = new System.Drawing.Size(496, 86);
+            this.groupBoxWhat.Size = new System.Drawing.Size(1440, 86);
             this.groupBoxWhat.TabIndex = 1;
             this.groupBoxWhat.TabStop = false;
             this.groupBoxWhat.Text = "Copy";
@@ -233,6 +241,7 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxFrom
             //
+            this.groupBoxFrom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxFrom.Controls.Add(this.label1);
             this.groupBoxFrom.Controls.Add(this.numericUpDownX1);
             this.groupBoxFrom.Controls.Add(this.label2);
@@ -243,7 +252,7 @@ namespace UoFiddler.Controls.Forms
             this.groupBoxFrom.Controls.Add(this.numericUpDownY2);
             this.groupBoxFrom.Location = new System.Drawing.Point(12, 232);
             this.groupBoxFrom.Name = "groupBoxFrom";
-            this.groupBoxFrom.Size = new System.Drawing.Size(496, 60);
+            this.groupBoxFrom.Size = new System.Drawing.Size(1440, 60);
             this.groupBoxFrom.TabIndex = 2;
             this.groupBoxFrom.TabStop = false;
             this.groupBoxFrom.Text = "From region, in source map tiles";
@@ -318,13 +327,14 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxTo
             //
+            this.groupBoxTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTo.Controls.Add(this.label6);
             this.groupBoxTo.Controls.Add(this.numericUpDownToX1);
             this.groupBoxTo.Controls.Add(this.label7);
             this.groupBoxTo.Controls.Add(this.numericUpDownToY1);
             this.groupBoxTo.Location = new System.Drawing.Point(12, 298);
             this.groupBoxTo.Name = "groupBoxTo";
-            this.groupBoxTo.Size = new System.Drawing.Size(496, 60);
+            this.groupBoxTo.Size = new System.Drawing.Size(1440, 60);
             this.groupBoxTo.TabIndex = 3;
             this.groupBoxTo.TabStop = false;
             this.groupBoxTo.Text = "To position, in this map\'s tiles";
@@ -365,45 +375,107 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxPreview
             //
+            this.groupBoxPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPreview.Controls.Add(this.labelSourcePreview);
+            this.groupBoxPreview.Controls.Add(this.previewSource);
+            this.groupBoxPreview.Controls.Add(this.labelTargetPreview);
+            this.groupBoxPreview.Controls.Add(this.previewTarget);
+            this.groupBoxPreview.Controls.Add(this.checkBoxPreviewStatics);
+            this.groupBoxPreview.Controls.Add(this.checkBoxPreviewOverlay);
             this.groupBoxPreview.Controls.Add(this.textBoxPreview);
             this.groupBoxPreview.Location = new System.Drawing.Point(12, 364);
             this.groupBoxPreview.Name = "groupBoxPreview";
-            this.groupBoxPreview.Size = new System.Drawing.Size(496, 80);
+            this.groupBoxPreview.Size = new System.Drawing.Size(1440, 512);
             this.groupBoxPreview.TabIndex = 4;
             this.groupBoxPreview.TabStop = false;
             this.groupBoxPreview.Text = "What will be copied";
+            //
+            // labelSourcePreview
+            //
+            this.labelSourcePreview.Location = new System.Drawing.Point(16, 20);
+            this.labelSourcePreview.Name = "labelSourcePreview";
+            this.labelSourcePreview.Size = new System.Drawing.Size(696, 17);
+            this.labelSourcePreview.TabIndex = 0;
+            this.labelSourcePreview.Text = "From - drag to choose the region";
+            //
+            // previewSource
+            //
+            this.previewSource.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.previewSource.Location = new System.Drawing.Point(16, 40);
+            this.previewSource.Name = "previewSource";
+            this.previewSource.Size = new System.Drawing.Size(696, 400);
+            this.previewSource.TabIndex = 1;
+            //
+            // labelTargetPreview
+            //
+            this.labelTargetPreview.Location = new System.Drawing.Point(728, 20);
+            this.labelTargetPreview.Name = "labelTargetPreview";
+            this.labelTargetPreview.Size = new System.Drawing.Size(696, 17);
+            this.labelTargetPreview.TabIndex = 2;
+            this.labelTargetPreview.Text = "To - drag to place it";
+            //
+            // previewTarget
+            //
+            this.previewTarget.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.previewTarget.Location = new System.Drawing.Point(728, 40);
+            this.previewTarget.Name = "previewTarget";
+            this.previewTarget.Size = new System.Drawing.Size(696, 400);
+            this.previewTarget.TabIndex = 3;
+            //
+            // checkBoxPreviewStatics
+            //
+            this.checkBoxPreviewStatics.Location = new System.Drawing.Point(16, 448);
+            this.checkBoxPreviewStatics.Name = "checkBoxPreviewStatics";
+            this.checkBoxPreviewStatics.Size = new System.Drawing.Size(120, 21);
+            this.checkBoxPreviewStatics.TabIndex = 4;
+            this.checkBoxPreviewStatics.Text = "Show statics";
+            this.checkBoxPreviewStatics.UseVisualStyleBackColor = true;
+            this.checkBoxPreviewStatics.CheckedChanged += new System.EventHandler(this.OnPreviewOptionChanged);
+            //
+            // checkBoxPreviewOverlay
+            //
+            this.checkBoxPreviewOverlay.Location = new System.Drawing.Point(144, 448);
+            this.checkBoxPreviewOverlay.Name = "checkBoxPreviewOverlay";
+            this.checkBoxPreviewOverlay.Size = new System.Drawing.Size(230, 21);
+            this.checkBoxPreviewOverlay.TabIndex = 5;
+            this.checkBoxPreviewOverlay.Text = "Show the piece in place";
+            this.checkBoxPreviewOverlay.UseVisualStyleBackColor = true;
+            this.checkBoxPreviewOverlay.CheckedChanged += new System.EventHandler(this.OnPreviewOptionChanged);
             //
             // textBoxPreview
             //
             this.textBoxPreview.BackColor = System.Drawing.SystemColors.Control;
             this.textBoxPreview.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxPreview.Location = new System.Drawing.Point(16, 20);
+            this.textBoxPreview.Location = new System.Drawing.Point(728, 444);
             this.textBoxPreview.Multiline = true;
             this.textBoxPreview.Name = "textBoxPreview";
             this.textBoxPreview.ReadOnly = true;
-            this.textBoxPreview.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxPreview.Size = new System.Drawing.Size(464, 52);
-            this.textBoxPreview.TabIndex = 0;
+            this.textBoxPreview.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.textBoxPreview.Size = new System.Drawing.Size(696, 56);
+            this.textBoxPreview.TabIndex = 6;
             this.textBoxPreview.TabStop = false;
             //
             // progressBar1
             //
-            this.progressBar1.Location = new System.Drawing.Point(12, 452);
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(12, 884);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(496, 18);
+            this.progressBar1.Size = new System.Drawing.Size(1440, 18);
             this.progressBar1.TabIndex = 5;
             //
             // labelStatus
             //
+            this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.labelStatus.AutoEllipsis = true;
-            this.labelStatus.Location = new System.Drawing.Point(12, 475);
+            this.labelStatus.Location = new System.Drawing.Point(12, 907);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(496, 17);
+            this.labelStatus.Size = new System.Drawing.Size(1440, 17);
             this.labelStatus.TabIndex = 6;
             //
             // buttonCopy
             //
-            this.buttonCopy.Location = new System.Drawing.Point(244, 500);
+            this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopy.Location = new System.Drawing.Point(1204, 932);
             this.buttonCopy.Name = "buttonCopy";
             this.buttonCopy.Size = new System.Drawing.Size(80, 28);
             this.buttonCopy.TabIndex = 7;
@@ -413,8 +485,9 @@ namespace UoFiddler.Controls.Forms
             //
             // buttonCancel
             //
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(332, 500);
+            this.buttonCancel.Location = new System.Drawing.Point(1292, 932);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(72, 28);
             this.buttonCancel.TabIndex = 8;
@@ -424,8 +497,9 @@ namespace UoFiddler.Controls.Forms
             //
             // buttonClose
             //
+            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(420, 500);
+            this.buttonClose.Location = new System.Drawing.Point(1380, 932);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(80, 28);
             this.buttonClose.TabIndex = 9;
@@ -444,7 +518,7 @@ namespace UoFiddler.Controls.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(520, 540);
+            this.ClientSize = new System.Drawing.Size(1464, 972);
             this.Controls.Add(this.groupBoxSource);
             this.Controls.Add(this.groupBoxWhat);
             this.Controls.Add(this.groupBoxFrom);
@@ -456,9 +530,9 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonClose);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(900, 760);
             this.Name = "MapReplaceForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -518,6 +592,12 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.NumericUpDown numericUpDownY2;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.TextBox textBoxFolder;
+        private System.Windows.Forms.CheckBox checkBoxPreviewOverlay;
+        private System.Windows.Forms.CheckBox checkBoxPreviewStatics;
+        private System.Windows.Forms.Label labelSourcePreview;
+        private System.Windows.Forms.Label labelTargetPreview;
         private System.Windows.Forms.TextBox textBoxPreview;
+        private UoFiddler.Controls.UserControls.MapRegionPreview previewSource;
+        private UoFiddler.Controls.UserControls.MapRegionPreview previewTarget;
     }
 }

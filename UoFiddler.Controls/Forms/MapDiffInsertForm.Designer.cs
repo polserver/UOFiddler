@@ -54,6 +54,9 @@ namespace UoFiddler.Controls.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDownY2 = new System.Windows.Forms.NumericUpDown();
             this.groupBoxPreview = new System.Windows.Forms.GroupBox();
+            this.preview = new UoFiddler.Controls.UserControls.MapRegionPreview();
+            this.checkBoxPreviewStatics = new System.Windows.Forms.CheckBox();
+            this.checkBoxPreviewPatched = new System.Windows.Forms.CheckBox();
             this.textBoxPreview = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.labelStatus = new System.Windows.Forms.Label();
@@ -73,6 +76,7 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxWhat
             //
+            this.groupBoxWhat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxWhat.Controls.Add(this.checkBoxMap);
             this.groupBoxWhat.Controls.Add(this.labelMapFormat);
             this.groupBoxWhat.Controls.Add(this.comboBoxMapFormat);
@@ -81,7 +85,7 @@ namespace UoFiddler.Controls.Forms
             this.groupBoxWhat.Controls.Add(this.checkBoxDuplicatesHue);
             this.groupBoxWhat.Location = new System.Drawing.Point(12, 12);
             this.groupBoxWhat.Name = "groupBoxWhat";
-            this.groupBoxWhat.Size = new System.Drawing.Size(496, 86);
+            this.groupBoxWhat.Size = new System.Drawing.Size(960, 86);
             this.groupBoxWhat.TabIndex = 1;
             this.groupBoxWhat.TabStop = false;
             this.groupBoxWhat.Text = "Insert";
@@ -143,6 +147,7 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxFrom
             //
+            this.groupBoxFrom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxFrom.Controls.Add(this.label1);
             this.groupBoxFrom.Controls.Add(this.numericUpDownX1);
             this.groupBoxFrom.Controls.Add(this.label2);
@@ -153,7 +158,7 @@ namespace UoFiddler.Controls.Forms
             this.groupBoxFrom.Controls.Add(this.numericUpDownY2);
             this.groupBoxFrom.Location = new System.Drawing.Point(12, 104);
             this.groupBoxFrom.Name = "groupBoxFrom";
-            this.groupBoxFrom.Size = new System.Drawing.Size(496, 60);
+            this.groupBoxFrom.Size = new System.Drawing.Size(960, 60);
             this.groupBoxFrom.TabIndex = 2;
             this.groupBoxFrom.TabStop = false;
             this.groupBoxFrom.Text = "Region, in map tiles";
@@ -228,45 +233,84 @@ namespace UoFiddler.Controls.Forms
             //
             // groupBoxPreview
             //
+            this.groupBoxPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPreview.Controls.Add(this.preview);
+            this.groupBoxPreview.Controls.Add(this.checkBoxPreviewStatics);
+            this.groupBoxPreview.Controls.Add(this.checkBoxPreviewPatched);
             this.groupBoxPreview.Controls.Add(this.textBoxPreview);
             this.groupBoxPreview.Location = new System.Drawing.Point(12, 170);
             this.groupBoxPreview.Name = "groupBoxPreview";
-            this.groupBoxPreview.Size = new System.Drawing.Size(496, 80);
+            this.groupBoxPreview.Size = new System.Drawing.Size(960, 548);
             this.groupBoxPreview.TabIndex = 4;
             this.groupBoxPreview.TabStop = false;
-            this.groupBoxPreview.Text = "What will be inserted";
+            this.groupBoxPreview.Text = "What will be inserted - drag to choose the region";
+            //
+            // preview
+            //
+            this.preview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.preview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.preview.Location = new System.Drawing.Point(16, 22);
+            this.preview.Name = "preview";
+            this.preview.Size = new System.Drawing.Size(928, 428);
+            this.preview.TabIndex = 0;
+            //
+            // checkBoxPreviewStatics
+            //
+            this.checkBoxPreviewStatics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxPreviewStatics.Location = new System.Drawing.Point(16, 458);
+            this.checkBoxPreviewStatics.Name = "checkBoxPreviewStatics";
+            this.checkBoxPreviewStatics.Size = new System.Drawing.Size(120, 21);
+            this.checkBoxPreviewStatics.TabIndex = 1;
+            this.checkBoxPreviewStatics.Text = "Show statics";
+            this.checkBoxPreviewStatics.UseVisualStyleBackColor = true;
+            this.checkBoxPreviewStatics.CheckedChanged += new System.EventHandler(this.OnPreviewOptionChanged);
+            //
+            // checkBoxPreviewPatched
+            //
+            this.checkBoxPreviewPatched.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxPreviewPatched.Location = new System.Drawing.Point(144, 458);
+            this.checkBoxPreviewPatched.Name = "checkBoxPreviewPatched";
+            this.checkBoxPreviewPatched.Size = new System.Drawing.Size(230, 21);
+            this.checkBoxPreviewPatched.TabIndex = 2;
+            this.checkBoxPreviewPatched.Text = "Mark the blocks the diff covers";
+            this.checkBoxPreviewPatched.UseVisualStyleBackColor = true;
+            this.checkBoxPreviewPatched.CheckedChanged += new System.EventHandler(this.OnPreviewOptionChanged);
             //
             // textBoxPreview
             //
+            this.textBoxPreview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxPreview.BackColor = System.Drawing.SystemColors.Control;
             this.textBoxPreview.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxPreview.Location = new System.Drawing.Point(16, 20);
+            this.textBoxPreview.Location = new System.Drawing.Point(16, 484);
             this.textBoxPreview.Multiline = true;
             this.textBoxPreview.Name = "textBoxPreview";
             this.textBoxPreview.ReadOnly = true;
-            this.textBoxPreview.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxPreview.Size = new System.Drawing.Size(464, 52);
-            this.textBoxPreview.TabIndex = 0;
+            this.textBoxPreview.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.textBoxPreview.Size = new System.Drawing.Size(928, 52);
+            this.textBoxPreview.TabIndex = 3;
             this.textBoxPreview.TabStop = false;
             //
             // progressBar1
             //
-            this.progressBar1.Location = new System.Drawing.Point(12, 258);
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(12, 726);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(496, 18);
+            this.progressBar1.Size = new System.Drawing.Size(960, 18);
             this.progressBar1.TabIndex = 5;
             //
             // labelStatus
             //
+            this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.labelStatus.AutoEllipsis = true;
-            this.labelStatus.Location = new System.Drawing.Point(12, 281);
+            this.labelStatus.Location = new System.Drawing.Point(12, 749);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(496, 17);
+            this.labelStatus.Size = new System.Drawing.Size(960, 17);
             this.labelStatus.TabIndex = 6;
             //
             // buttonCopy
             //
-            this.buttonCopy.Location = new System.Drawing.Point(244, 306);
+            this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopy.Location = new System.Drawing.Point(716, 774);
             this.buttonCopy.Name = "buttonCopy";
             this.buttonCopy.Size = new System.Drawing.Size(80, 28);
             this.buttonCopy.TabIndex = 7;
@@ -276,8 +320,9 @@ namespace UoFiddler.Controls.Forms
             //
             // buttonCancel
             //
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(332, 306);
+            this.buttonCancel.Location = new System.Drawing.Point(804, 774);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(72, 28);
             this.buttonCancel.TabIndex = 8;
@@ -287,8 +332,9 @@ namespace UoFiddler.Controls.Forms
             //
             // buttonClose
             //
+            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(420, 306);
+            this.buttonClose.Location = new System.Drawing.Point(892, 774);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(80, 28);
             this.buttonClose.TabIndex = 9;
@@ -307,7 +353,7 @@ namespace UoFiddler.Controls.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(520, 346);
+            this.ClientSize = new System.Drawing.Size(984, 814);
             this.Controls.Add(this.groupBoxWhat);
             this.Controls.Add(this.groupBoxFrom);
             this.Controls.Add(this.groupBoxPreview);
@@ -317,9 +363,9 @@ namespace UoFiddler.Controls.Forms
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonClose);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(700, 640);
             this.Name = "MapDiffInsertForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -361,6 +407,9 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.NumericUpDown numericUpDownY1;
         private System.Windows.Forms.NumericUpDown numericUpDownY2;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.CheckBox checkBoxPreviewPatched;
+        private System.Windows.Forms.CheckBox checkBoxPreviewStatics;
         private System.Windows.Forms.TextBox textBoxPreview;
+        private UoFiddler.Controls.UserControls.MapRegionPreview preview;
     }
 }
