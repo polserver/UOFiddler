@@ -44,6 +44,12 @@ namespace UoFiddler.Controls.Classes
         public static bool PolSoundIdOffset { get; set; }
 
         /// <summary>
+        /// Which container a save writes for the file types the client ships as either a mul/idx pair
+        /// or a uop - art, gumpart, sound, multis and maps. Everything else has only one format.
+        /// </summary>
+        public static ClientFileSaveFormat SaveFormat { get; set; } = ClientFileSaveFormat.FollowSource;
+
+        /// <summary>
         /// Runtime flag set from AppSettings at startup. Not persisted in profiles.
         /// </summary>
         public static bool DarkMode { get; set; }

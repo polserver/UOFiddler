@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Ultima;
+using Ultima.Uop;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
@@ -781,16 +782,8 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            using (new WaitCursorScope(this))
-            {
-                ProgressBarDialog barDialog = new ProgressBarDialog(Art.GetIdxLength(), "Save");
-                Art.Save(Options.OutputPath);
-                barDialog.Dispose();
-            }
-
-            Options.ChangedUltimaClass["Art"] = false;
-
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            ClientFileSaveCommand.Run(this, FileType.ArtLegacyMul, Art.Save, "Art",
+                createProgress: () => new ProgressBarDialog(Art.GetIdxLength(), "Save"));
         }
 
         private void OnClickShowFreeSlots(object sender, EventArgs e)

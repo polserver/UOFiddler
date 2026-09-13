@@ -15,6 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using Ultima.Uop;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Plugin.MassImport.Imports;
@@ -322,7 +323,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
                     if (changedUltimaClass["Art"])
                     {
                         OutputBox.AppendText($"Saving Items/LandTiles..{Environment.NewLine}");
-                        Ultima.Art.Save(Options.OutputPath);
+                        SaveInChosenFormat(FileType.ArtLegacyMul, Ultima.Art.Save);
                     }
 
                     if (changedUltimaClass["Texture"])
@@ -334,7 +335,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
                     if (changedUltimaClass["Gumps"])
                     {
                         OutputBox.AppendText($"Saving Gumps..{Environment.NewLine}");
-                        Ultima.Gumps.Save(Options.OutputPath);
+                        SaveInChosenFormat(FileType.GumpartLegacyMul, Ultima.Gumps.Save);
                     }
 
                     if (changedUltimaClass["TileData"])
@@ -352,11 +353,40 @@ namespace UoFiddler.Plugin.MassImport.Forms
                     if (changedUltimaClass["Multis"])
                     {
                         OutputBox.AppendText($"Saving Multis..{Environment.NewLine}");
-                        Ultima.Multis.Save(Options.OutputPath);
+                        SaveInChosenFormat(FileType.MultiCollection, Ultima.Multis.Save);
                     }
 
                     OutputBox.AppendText($"Done{Environment.NewLine}");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Writes one file type in whatever container the save format option asks for. A batch cannot
+        /// stop on a dialog, so "ask every time" is taken here to mean the format the client already uses.
+        /// </summary>
+        private void SaveInChosenFormat(FileType type, Action<string> writeMul)
+        {
+            ContainerFormat format = SaveFormatResolver.Resolve(type);
+
+            try
+            {
+                foreach (string concern in ClientFileSaver.Preflight(type, format))
+                {
+                    OutputBox.AppendText($"{concern}{Environment.NewLine}");
+                }
+
+                ClientFileSaveResult result = ClientFileSaver.Save(type, Options.OutputPath, format, writeMul);
+
+                foreach (string warning in result.Warnings)
+                {
+                    OutputBox.AppendText($"{warning}{Environment.NewLine}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Losing one type's output should not abandon the rest of the batch.
+                OutputBox.AppendText($"Could not save {type}: {ex.Message}{Environment.NewLine}");
             }
         }
     }

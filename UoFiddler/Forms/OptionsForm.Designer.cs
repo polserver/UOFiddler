@@ -78,6 +78,8 @@ namespace UoFiddler.Forms
             button2 = new System.Windows.Forms.Button();
             textBoxOutputPath = new System.Windows.Forms.TextBox();
             label10 = new System.Windows.Forms.Label();
+            comboBoxSaveFormat = new System.Windows.Forms.ComboBox();
+            labelSaveFormat = new System.Windows.Forms.Label();
             ColorsGroupBox = new System.Windows.Forms.GroupBox();
             checkboxRemoveTileBorder = new System.Windows.Forms.CheckBox();
             RestoreDefaultsButton = new System.Windows.Forms.Button();
@@ -224,7 +226,7 @@ namespace UoFiddler.Forms
             // 
             // buttonApply
             // 
-            buttonApply.Location = new System.Drawing.Point(318, 551);
+            buttonApply.Location = new System.Drawing.Point(318, 586);
             buttonApply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonApply.Name = "buttonApply";
             buttonApply.Size = new System.Drawing.Size(88, 27);
@@ -478,14 +480,16 @@ namespace UoFiddler.Forms
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(textBoxOutputPath);
             groupBox4.Controls.Add(label10);
+            groupBox4.Controls.Add(comboBoxSaveFormat);
+            groupBox4.Controls.Add(labelSaveFormat);
             groupBox4.Location = new System.Drawing.Point(16, 419);
             groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox4.Size = new System.Drawing.Size(486, 51);
+            groupBox4.Size = new System.Drawing.Size(486, 86);
             groupBox4.TabIndex = 6;
             groupBox4.TabStop = false;
-            groupBox4.Text = "Path";
+            groupBox4.Text = "Output";
             // 
             // button2
             // 
@@ -515,6 +519,26 @@ namespace UoFiddler.Forms
             label10.Size = new System.Drawing.Size(72, 15);
             label10.TabIndex = 0;
             label10.Text = "Output Path";
+            // 
+            // comboBoxSaveFormat
+            // 
+            comboBoxSaveFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxSaveFormat.Location = new System.Drawing.Point(87, 51);
+            comboBoxSaveFormat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            comboBoxSaveFormat.Name = "comboBoxSaveFormat";
+            comboBoxSaveFormat.Size = new System.Drawing.Size(383, 23);
+            comboBoxSaveFormat.TabIndex = 4;
+            toolTip1.SetToolTip(comboBoxSaveFormat, "Which container a save writes for the files the client ships as either. Affects art, gumpart, sound, multis and maps; everything else has only one format.");
+            // 
+            // labelSaveFormat
+            // 
+            labelSaveFormat.AutoSize = true;
+            labelSaveFormat.Location = new System.Drawing.Point(7, 55);
+            labelSaveFormat.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            labelSaveFormat.Name = "labelSaveFormat";
+            labelSaveFormat.Size = new System.Drawing.Size(72, 15);
+            labelSaveFormat.TabIndex = 3;
+            labelSaveFormat.Text = "Save Format";
             // 
             // ColorsGroupBox
             // 
@@ -598,7 +622,7 @@ namespace UoFiddler.Forms
             // 
             // buttonClose
             // 
-            buttonClose.Location = new System.Drawing.Point(414, 551);
+            buttonClose.Location = new System.Drawing.Point(414, 586);
             buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(88, 27);
@@ -612,7 +636,7 @@ namespace UoFiddler.Forms
             ExportFilenamesGroupBox.Controls.Add(radioExportFilenameHex);
             ExportFilenamesGroupBox.Controls.Add(radioExportFilenameDec);
             ExportFilenamesGroupBox.Controls.Add(checkBoxExportFilenameDecPad);
-            ExportFilenamesGroupBox.Location = new System.Drawing.Point(16, 476);
+            ExportFilenamesGroupBox.Location = new System.Drawing.Point(16, 511);
             ExportFilenamesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ExportFilenamesGroupBox.Name = "ExportFilenamesGroupBox";
             ExportFilenamesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -625,7 +649,7 @@ namespace UoFiddler.Forms
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(518, 590);
+            ClientSize = new System.Drawing.Size(518, 625);
             Controls.Add(buttonClose);
             Controls.Add(ExportFilenamesGroupBox);
             Controls.Add(ColorsGroupBox);
@@ -672,6 +696,8 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox comboBoxSaveFormat;
+        private System.Windows.Forms.Label labelSaveFormat;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label2;

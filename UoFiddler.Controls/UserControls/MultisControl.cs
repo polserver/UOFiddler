@@ -17,6 +17,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
+using Ultima.Uop;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
 using UoFiddler.Controls.Helpers;
@@ -621,10 +622,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            Multis.Save(Options.OutputPath);
-            Options.ChangedUltimaClass["Multis"] = false;
-
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            ClientFileSaveCommand.Run(this, FileType.MultiCollection, Multis.Save, "Multis");
         }
 
         private void OnClickRemove(object sender, EventArgs e)

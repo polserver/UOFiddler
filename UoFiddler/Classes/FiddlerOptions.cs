@@ -131,6 +131,12 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("CacheData");
             elem.SetAttribute("active", Files.CacheData.ToString());
             sr.AppendChild(elem);
+            comment = dom.CreateComment(
+                "SaveFormat for art, gumpart, sound, multis and maps: FollowSource, Mul, Uop or Ask");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("SaveFormat");
+            elem.SetAttribute("value", Options.SaveFormat.ToString());
+            sr.AppendChild(elem);
             // + Colors
             comment = dom.CreateComment("Focus tile color for tile views");
             sr.AppendChild(comment);
@@ -322,6 +328,12 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 Options.ArtItemClip = bool.Parse(elem.GetAttribute("active"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("SaveFormat");
+            if (elem != null && Enum.TryParse(elem.GetAttribute("value"), out ClientFileSaveFormat saveFormat))
+            {
+                Options.SaveFormat = saveFormat;
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("CacheData");

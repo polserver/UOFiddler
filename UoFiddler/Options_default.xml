@@ -6,6 +6,8 @@
   <ItemClip active="True" />
   <!--CacheData should mul entries be cached for faster load-->
   <CacheData active="True" />
+  <!--SaveFormat for art, gumpart, sound, multis and maps: FollowSource, Mul, Uop or Ask-->
+  <SaveFormat value="FollowSource" />
   <!--NewMapSize Felucca/Trammel width 7168?-->
   <NewMapSize active="False" />
   <!--UseMapDiff should mapdiff files be used-->

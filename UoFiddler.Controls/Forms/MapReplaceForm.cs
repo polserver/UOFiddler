@@ -87,7 +87,7 @@ namespace UoFiddler.Controls.Forms
                 : "the same format as this client (.mul)");
             comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}.mul");
             comboBoxMapFormat.Items.Add($"map{_workingMap.FileIndex}LegacyMUL.uop");
-            comboBoxMapFormat.SelectedIndex = 0;
+            comboBoxMapFormat.SelectedIndex = ClientFileSaveFormats.DefaultIndex(Options.SaveFormat);
 
             checkBoxMap.Checked = true;
             checkBoxStatics.Checked = true;
@@ -168,8 +168,6 @@ namespace UoFiddler.Controls.Forms
             textBoxPreview.Location = new Point(right, below - 4);
             textBoxPreview.Width = width;
         }
-
-        // ---- source selection ------------------------------------------------------------------
 
         private void OnClickBrowse(object sender, EventArgs e)
         {
@@ -267,8 +265,6 @@ namespace UoFiddler.Controls.Forms
 
             UpdatePreview();
         }
-
-        // ---- preview ---------------------------------------------------------------------------
 
         private void OnOptionChanged(object sender, EventArgs e)
         {
@@ -394,8 +390,6 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        // ---- running ---------------------------------------------------------------------------
-
         /// <summary>
         /// Points the source panel at the browsed folder. The panel renders through a Map of its
         /// own so it shows that install rather than the one loaded in the app.
@@ -477,8 +471,6 @@ namespace UoFiddler.Controls.Forms
 
             UpdatePreview();
         }
-
-        // ---- heights ---------------------------------------------------------------------------
 
         private int ZAdjust => (int)numericUpDownZ.Value;
 
