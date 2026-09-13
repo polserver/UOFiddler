@@ -38,9 +38,6 @@ namespace Ultima
         // Indexes edited since load or since the last save.
         private static readonly ModifiedIndexTracker _modified = new ModifiedIndexTracker();
 
-        private static byte[] _pixelBuffer;
-        private static byte[] _streamBuffer;
-        private static byte[] _colorTable;
 
         // Authoritative id range — what _cache.Length used to be before the
         // LRU swap. Sourced from the FileIndex when available, falls back to
@@ -112,9 +109,6 @@ namespace Ultima
                 _contentState = new byte[_indexLength];
             }
 
-            //_pixelBuffer = null;
-            _streamBuffer = null;
-            //_colorTable = null;
             _patched.Clear();
             _modified.Clear();
         }
@@ -183,7 +177,7 @@ namespace Ultima
                 return false;
             }
 
-            if (index > _indexLength - 1)
+            if (index < 0 || index > _indexLength - 1)
             {
                 return false;
             }
@@ -465,162 +459,30 @@ namespace Ultima
         /// <param name="onlyHueGrayPixels"></param>
         /// <param name="patched"></param>
         /// <returns></returns>
-        // TODO: Currently unused and may be broken because of recent UOP changes. Needs verdata `patched` checks and compression handling
-        public static unsafe Bitmap GetGump(int index, Hue hue, bool onlyHueGrayPixels, out bool patched)
+        public static Bitmap GetGump(int index, Hue hue, bool onlyHueGrayPixels, out bool patched)
         {
-            Stream stream = _fileIndex.Seek(index, out int length, out int extra, out patched);
+            // Decode through the regular path so this overload inherits the index/removed/
+            // replaced checks and the UOP (zlib / Mythic) handling. The previous hand-rolled
+            // RLE decoder here still used the legacy Seek overload, so it walked compressed
+            // UOP bytes as if they were raw RLE and ran the pixel pointer off the buffer.
+            Bitmap gump = GetGump(index, out patched);
 
-            if (stream == null)
+            if (gump == null)
             {
                 return null;
             }
 
-            if (extra == -1)
+            if (hue == null)
             {
-                return null;
+                return gump;
             }
 
-            int width = (extra >> 16) & 0xFFFF;
-            int height = extra & 0xFFFF;
+            // GetGump can hand back a cached or replaced instance, so hue a private copy.
+            var hued = gump.Clone(new Rectangle(0, 0, gump.Width, gump.Height), gump.PixelFormat);
 
-            if (width <= 0 || height <= 0)
-            {
-                return null;
-            }
+            hue.ApplyTo(hued, onlyHueGrayPixels);
 
-            int bytesPerLine = width << 1;
-            int bytesPerStride = (bytesPerLine + 3) & ~3;
-            int bytesForImage = height * bytesPerStride;
-
-            int pixelsPerStride = (width + 1) & ~1;
-            int pixelsPerStrideDelta = pixelsPerStride - width;
-
-            byte[] pixelBuffer = _pixelBuffer;
-
-            if (pixelBuffer == null || pixelBuffer.Length < bytesForImage)
-            {
-                _pixelBuffer = pixelBuffer = new byte[(bytesForImage + 2047) & ~2047];
-            }
-
-            byte[] streamBuffer = _streamBuffer;
-
-            if (streamBuffer == null || streamBuffer.Length < length)
-            {
-                _streamBuffer = streamBuffer = new byte[(length + 2047) & ~2047];
-            }
-
-            byte[] colorTable = _colorTable;
-
-            if (colorTable == null)
-            {
-                _colorTable = colorTable = new byte[128];
-            }
-
-            stream.ReadExactly(streamBuffer, 0, length);
-
-            fixed (ushort* psHueColors = hue.Colors)
-            {
-                fixed (byte* pbStream = streamBuffer)
-                {
-                    fixed (byte* pbPixels = pixelBuffer)
-                    {
-                        fixed (byte* pbColorTable = colorTable)
-                        {
-                            var pHueColors = psHueColors;
-                            ushort* pHueColorsEnd = pHueColors + 32;
-
-                            var pColorTable = (ushort*)pbColorTable;
-
-                            ushort* pColorTableOpaque = pColorTable;
-
-                            while (pHueColors < pHueColorsEnd)
-                            {
-                                *pColorTableOpaque++ = *pHueColors++;
-                            }
-
-                            var pPixelDataStart = (ushort*)pbPixels;
-
-                            var pLookup = (int*)pbStream;
-                            int* pLookupEnd = pLookup + height;
-                            int* pPixelRleStart = pLookup;
-                            int* pPixelRle;
-
-                            ushort* pPixel = pPixelDataStart;
-                            ushort* pRleEnd;
-                            ushort* pPixelEnd = pPixel + width;
-
-                            ushort color, count;
-
-                            if (onlyHueGrayPixels)
-                            {
-                                while (pLookup < pLookupEnd)
-                                {
-                                    pPixelRle = pPixelRleStart + *pLookup++;
-                                    pRleEnd = pPixel;
-
-                                    while (pPixel < pPixelEnd)
-                                    {
-                                        color = *(ushort*)pPixelRle;
-                                        count = *(1 + (ushort*)pPixelRle);
-                                        ++pPixelRle;
-
-                                        pRleEnd += count;
-
-                                        if (color != 0 && (color & 0x1F) == ((color >> 5) & 0x1F) && (color & 0x1F) == ((color >> 10) & 0x1F))
-                                        {
-                                            color = pColorTable[color >> 10];
-                                        }
-                                        else if (color != 0)
-                                        {
-                                            color ^= 0x8000;
-                                        }
-
-                                        while (pPixel < pRleEnd)
-                                        {
-                                            *pPixel++ = color;
-                                        }
-                                    }
-
-                                    pPixel += pixelsPerStrideDelta;
-                                    pPixelEnd += pixelsPerStride;
-                                }
-                            }
-                            else
-                            {
-                                while (pLookup < pLookupEnd)
-                                {
-                                    pPixelRle = pPixelRleStart + *pLookup++;
-                                    pRleEnd = pPixel;
-
-                                    while (pPixel < pPixelEnd)
-                                    {
-                                        color = *(ushort*)pPixelRle;
-                                        count = *(1 + (ushort*)pPixelRle);
-                                        ++pPixelRle;
-
-                                        pRleEnd += count;
-
-                                        if (color != 0)
-                                        {
-                                            color = pColorTable[color >> 10];
-                                        }
-
-                                        while (pPixel < pRleEnd)
-                                        {
-                                            *pPixel++ = color;
-                                        }
-                                    }
-
-                                    pPixel += pixelsPerStrideDelta;
-                                    pPixelEnd += pixelsPerStride;
-                                }
-                            }
-
-                            return new Bitmap(width, height, bytesPerStride, PixelFormat.Format16bppArgb1555, (IntPtr)pPixelDataStart);
-                        }
-                    }
-                }
-            }
+            return hued;
         }
 
         /// <summary>
@@ -850,7 +712,7 @@ namespace Ultima
         {
             patched = _patched.ContainsKey(index) && _patched[index];
 
-            if (index > _indexLength - 1)
+            if (index < 0 || index > _indexLength - 1)
             {
                 return null;
             }
