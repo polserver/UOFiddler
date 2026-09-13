@@ -56,7 +56,7 @@ namespace Ultima.Statics
         }
     }
 
-    public sealed class StaticsDefragResult
+    public sealed class StaticsDefragResult : IStaticsFilterStats
     {
         public int FileIndex { get; set; }
 
@@ -134,6 +134,54 @@ namespace Ultima.Statics
         /// </summary>
         public long TilesAccountedFor => DroppedInvalidItemId + DroppedOutOfBlock + DroppedInvalidZ +
                                          DroppedBelowTerrain + DuplicatesRemoved + StacksCollapsed;
+
+        void IStaticsFilterStats.TileRejected(int blockX, int blockY, StaticTile tile, RejectReason reason)
+        {
+            switch (reason)
+            {
+                case RejectReason.InvalidItemId:
+                    ++DroppedInvalidItemId;
+                    break;
+
+                case RejectReason.OutOfBlockOffset:
+                    ++DroppedOutOfBlock;
+                    break;
+
+                case RejectReason.InvalidZ:
+                    ++DroppedInvalidZ;
+                    break;
+
+                case RejectReason.BelowTerrain:
+                    ++DroppedBelowTerrain;
+                    break;
+
+                case RejectReason.Duplicate:
+                    ++DuplicatesRemoved;
+                    break;
+
+                case RejectReason.CollapsedStack:
+                    ++StacksCollapsed;
+                    break;
+            }
+
+            if (RejectSamples.Count < RejectSampleLimit)
+            {
+                RejectSamples.Add(new RejectedStaticTile(blockX, blockY, tile, reason));
+            }
+        }
+
+        void IStaticsFilterStats.HueNormalized()
+        {
+            ++HuesNormalized;
+        }
+
+        void IStaticsFilterStats.OutOfBlockMasked()
+        {
+            ++MaskedOutOfBlock;
+        }
+
+        /// <summary>How many removed statics to keep as examples.</summary>
+        public int RejectSampleLimit { get; set; } = 200;
 
         public string ToReport()
         {
