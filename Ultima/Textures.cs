@@ -14,6 +14,9 @@ namespace Ultima
         private static Bitmap[] _cache = new Bitmap[0x4000];
         private static bool[] _removed = new bool[0x4000];
         private static readonly Dictionary<int, bool> _patched = new Dictionary<int, bool>();
+        // Indexes edited since load or since the last save. Replace() writes straight into _cache,
+        // which is also the read cache, so there is no other way to tell an edit from a disk load.
+        private static readonly ModifiedIndexTracker _modified = new ModifiedIndexTracker();
 
         private struct Checksums
         {
@@ -31,6 +34,7 @@ namespace Ultima
             _cache = new Bitmap[0x4000];
             _removed = new bool[0x4000];
             _patched.Clear();
+            _modified.Clear();
         }
 
         public static int GetIdxLength()
@@ -45,6 +49,7 @@ namespace Ultima
         public static void Remove(int index)
         {
             _removed[index] = true;
+            _modified.Mark(index & 0x3FFF);
         }
 
         /// <summary>
@@ -57,6 +62,29 @@ namespace Ultima
             _cache[index] = bmp;
             _removed[index] = false;
             _patched.Remove(index);
+            _modified.Mark(index & 0x3FFF);
+        }
+
+        /// <summary>
+        /// Tests if the Texture at <paramref name="index"/> was replaced or removed since the textures
+        /// were loaded or last saved.
+        /// </summary>
+        public static bool IsModified(int index)
+        {
+            return _modified.IsMarked(index & 0x3FFF);
+        }
+
+        /// <summary>
+        /// Number of Textures edited since the textures were loaded or last saved.
+        /// </summary>
+        public static int ModifiedCount => _modified.Count;
+
+        /// <summary>
+        /// Drops every modified mark without touching the edits themselves.
+        /// </summary>
+        public static void ClearModified()
+        {
+            _modified.Clear();
         }
 
         /// <summary>
@@ -276,6 +304,8 @@ namespace Ultima
             }
 
             memIdx.Dispose();
+
+            _modified.Clear();
         }
 
         private static int GetExtraFlag(int length)

@@ -44,6 +44,11 @@ namespace UoFiddler.Controls.UserControls
 
         private const int _landTileMax = 0x4000;
 
+        /// <summary>
+        /// Land art is stored as a fixed size raw block, so every land bitmap is this wide and tall.
+        /// </summary>
+        private const int LandTileSize = 44;
+
         private static LandTilesControl _refMarker;
         private int _selectedGraphicId = -1;
         private readonly List<int> _tileList = new List<int>();
@@ -380,6 +385,90 @@ namespace UoFiddler.Controls.UserControls
                 SelectedGraphicId = moveToId <= 0 ? 0 : moveToId; // TODO: get last index visible instead just curr -1
             }
             LandTilesTileView.Invalidate();
+
+            Options.ChangedUltimaClass["Art"] = true;
+        }
+
+        private void OnClickCopyImage(object sender, EventArgs e)
+        {
+            // The clipboard holds one image, so a multi selection copies the focused tile.
+            int id = _selectedGraphicId;
+            if (id < 0 || !Art.IsValidLand(id))
+            {
+                return;
+            }
+
+            if (!ImageClipboard.TryCopy(Art.GetLand(id), out string error))
+            {
+                MessageBox.Show(error, "Copy Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void OnClickPasteImage(object sender, EventArgs e)
+        {
+            var ids = GetSelectedGraphicIds();
+            if (ids.Count == 0)
+            {
+                if (_selectedGraphicId < 0)
+                {
+                    return;
+                }
+
+                ids.Add(_selectedGraphicId);
+            }
+
+            using Bitmap pasted = ImageClipboard.TryPaste(out string error);
+            if (pasted == null)
+            {
+                MessageBox.Show(error, "Paste Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Land art is a fixed 44x44 raw block - anything else would be written out as garbage.
+            if (pasted.Width != LandTileSize || pasted.Height != LandTileSize)
+            {
+                MessageBox.Show(
+                    $"Invalid land tile dimensions!\n\n" +
+                    $"Clipboard image: {pasted.Width}x{pasted.Height}\n" +
+                    $"Land tiles must be {LandTileSize}x{LandTileSize} pixels.\n\n" +
+                    "No changes made.",
+                    "Invalid Size", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (ids.Count > 1)
+            {
+                DialogResult confirm = MessageBox.Show(
+                    $"Paste this image into {ids.Count} selected land tiles?",
+                    "Paste Image", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (confirm != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            Bitmap converted = Utils.ToUoBitmap(pasted);
+
+            foreach (int id in ids)
+            {
+                // Each slot needs its own bitmap: the SDK keeps the instance it is handed.
+                Art.ReplaceLand(id, ids.Count == 1 ? converted : (Bitmap)converted.Clone());
+                ControlEvents.FireLandTileChangeEvent(this, id);
+            }
+
+            if (ids.Count > 1)
+            {
+                converted.Dispose();
+            }
+
+            LandTilesTileView.Invalidate();
+
+            if (_selectedGraphicId >= 0)
+            {
+                UpdateToolStripLabels(_selectedGraphicId);
+            }
 
             Options.ChangedUltimaClass["Art"] = true;
         }
@@ -758,6 +847,9 @@ namespace UoFiddler.Controls.UserControls
         private void LandTilesContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             int selectedCount = LandTilesTileView.SelectedIndices.Count;
+            copyImageToolStripMenuItem.Enabled = _selectedGraphicId >= 0 && Art.IsValidLand(_selectedGraphicId);
+            pasteImageToolStripMenuItem.Enabled = selectedCount > 0 && ImageClipboard.ContainsImage();
+            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"Paste Image into {selectedCount}" : "Paste Image";
             removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
             exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
             replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
@@ -850,8 +942,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             Point itemPoint = new Point(e.Bounds.X + LandTilesTileView.TilePadding.Left, e.Bounds.Y + LandTilesTileView.TilePadding.Top);
-            const int fixedTileSize = 44;
-            Size itemSize = new Size(fixedTileSize, fixedTileSize);
+            Size itemSize = new Size(LandTileSize, LandTileSize);
             Rectangle itemRec = new Rectangle(itemPoint, itemSize);
 
             using var previousClip = e.Graphics.Clip;
@@ -887,6 +978,11 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 e.Graphics.DrawImage(bitmap, itemRec);
+
+                if (Art.IsLandModified(_tileList[e.Index]))
+                {
+                    ModifiedMarker.Draw(e.Graphics, itemRec);
+                }
 
                 e.Graphics.Clip = previousClip;
             }
@@ -1200,6 +1296,21 @@ namespace UoFiddler.Controls.UserControls
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Copy/paste is handled here rather than as menu ShortcutKeys: a shortcut on a
+            // ContextMenuStrip is processed for the whole form, which would swallow Ctrl+C/Ctrl+V in
+            // every text box on every tab.
+            if (keyData == (Keys.Control | Keys.C) && LandTilesTileView.Focused)
+            {
+                OnClickCopyImage(this, EventArgs.Empty);
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.V) && LandTilesTileView.Focused)
+            {
+                OnClickPasteImage(this, EventArgs.Empty);
+                return true;
+            }
+
             if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
             {
                 if (searchByNameToolStripTextBox.TextBox.Focused)

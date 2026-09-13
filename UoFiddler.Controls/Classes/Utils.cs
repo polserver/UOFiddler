@@ -19,6 +19,11 @@ namespace UoFiddler.Controls.Classes
     public static class Utils
     {
         /// <summary>
+        /// Alpha value at which a pasted pixel is still considered opaque.
+        /// </summary>
+        private const uint AlphaCutoff = 128;
+
+        /// <summary>
         /// Converts string to int with Hex recognition
         /// </summary>
         /// <param name="text">string to parse</param>
@@ -108,6 +113,96 @@ namespace UoFiddler.Controls.Classes
             bmp.UnlockBits(bd);
             bmpNew.UnlockBits(bdNew);
             return bmpNew;
+        }
+
+        /// <summary>
+        /// Converts an arbitrary bitmap into the 16bppArgb1555 form the mul save paths expect.
+        /// </summary>
+        /// <remarks>
+        /// Which pixels end up transparent depends on what the source actually carries. An image with
+        /// a real alpha channel is taken at its word, so pure black stays black. An image without one
+        /// - a screenshot, a flattened bmp - falls back to <see cref="ConvertBmp"/>, whose pure
+        /// black/pure white rule is what the Replace from file paths have always used.
+        /// </remarks>
+        public static unsafe Bitmap ToUoBitmap(Bitmap source)
+        {
+            if (!HasTranslucency(source))
+            {
+                return ConvertBmp(source);
+            }
+
+            Rectangle rectangle = new Rectangle(0, 0, source.Width, source.Height);
+
+            Bitmap result = new Bitmap(source.Width, source.Height, PixelFormat.Format16bppArgb1555);
+            BitmapData sourceData = source.LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData resultData = result.LockBits(rectangle, ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            try
+            {
+                uint* sourceLine = (uint*)sourceData.Scan0;
+                int sourceDelta = sourceData.Stride >> 2;
+
+                ushort* resultLine = (ushort*)resultData.Scan0;
+                int resultDelta = resultData.Stride >> 1;
+
+                for (int y = 0; y < source.Height; ++y, sourceLine += sourceDelta, resultLine += resultDelta)
+                {
+                    for (int x = 0; x < source.Width; ++x)
+                    {
+                        uint argb = sourceLine[x];
+
+                        // One bit of alpha is all the format has, so anything half transparent or
+                        // more drops out entirely.
+                        resultLine[x] = (argb >> 24) < AlphaCutoff
+                            ? (ushort)0
+                            : (ushort)(0x8000 | ((argb >> 9) & 0x7C00) | ((argb >> 6) & 0x03E0) | ((argb >> 3) & 0x001F));
+                    }
+                }
+            }
+            finally
+            {
+                source.UnlockBits(sourceData);
+                result.UnlockBits(resultData);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// True when the bitmap declares an alpha channel and at least one pixel actually uses it.
+        /// </summary>
+        private static unsafe bool HasTranslucency(Bitmap bmp)
+        {
+            if (!Image.IsAlphaPixelFormat(bmp.PixelFormat))
+            {
+                return false;
+            }
+
+            BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            try
+            {
+                uint* line = (uint*)data.Scan0;
+                int delta = data.Stride >> 2;
+
+                for (int y = 0; y < bmp.Height; ++y, line += delta)
+                {
+                    for (int x = 0; x < bmp.Width; ++x)
+                    {
+                        if ((line[x] >> 24) != 0xFF)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                bmp.UnlockBits(data);
+            }
+
+            return false;
         }
 
         public static string GetFileExtensionFor(ImageFormat imageFormat)

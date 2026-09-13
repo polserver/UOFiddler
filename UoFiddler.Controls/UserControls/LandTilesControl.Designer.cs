@@ -60,6 +60,9 @@ namespace UoFiddler.Controls.UserControls
             selectInTexturesTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            clipboardToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             replaceStartingFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ReplaceStartingFromTb = new System.Windows.Forms.ToolStripTextBox();
             replaceFromFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +101,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // LandTilesContextMenuStrip
             // 
-            LandTilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, changeBackgroundColorToolStripMenuItem, toolStripSeparator6, exportImageToolStripMenuItem, toolStripSeparator3, selectInTileDataTabToolStripMenuItem, selectInRadarColorTabToolStripMenuItem, selectInTexturesTabToolStripMenuItem, toolStripSeparator2, replaceToolStripMenuItem, replaceStartingFromToolStripMenuItem, replaceFromFolderToolStripMenuItem, insertAtToolStripMenuItem, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
+            LandTilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { showFreeSlotsToolStripMenuItem, findNextFreeSlotToolStripMenuItem, changeBackgroundColorToolStripMenuItem, toolStripSeparator6, exportImageToolStripMenuItem, toolStripSeparator3, selectInTileDataTabToolStripMenuItem, selectInRadarColorTabToolStripMenuItem, selectInTexturesTabToolStripMenuItem, toolStripSeparator2, copyImageToolStripMenuItem, pasteImageToolStripMenuItem, clipboardToolStripSeparator, replaceToolStripMenuItem, replaceStartingFromToolStripMenuItem, replaceFromFolderToolStripMenuItem, insertAtToolStripMenuItem, removeToolStripMenuItem, toolStripSeparator1, saveToolStripMenuItem });
             LandTilesContextMenuStrip.Name = "contextMenuStrip1";
             LandTilesContextMenuStrip.Size = new System.Drawing.Size(201, 270);
             LandTilesContextMenuStrip.Opening += LandTilesContextMenuStrip_Opening;
@@ -195,6 +198,27 @@ namespace UoFiddler.Controls.UserControls
             //
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new System.Drawing.Size(197, 6);
+            // 
+            // copyImageToolStripMenuItem
+            // 
+            copyImageToolStripMenuItem.Name = "copyImageToolStripMenuItem";
+            copyImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+C";
+            copyImageToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            copyImageToolStripMenuItem.Text = "Copy Image";
+            copyImageToolStripMenuItem.Click += OnClickCopyImage;
+            // 
+            // pasteImageToolStripMenuItem
+            // 
+            pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
+            pasteImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+V";
+            pasteImageToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            pasteImageToolStripMenuItem.Text = "Paste Image";
+            pasteImageToolStripMenuItem.Click += OnClickPasteImage;
+            // 
+            // clipboardToolStripSeparator
+            // 
+            clipboardToolStripSeparator.Name = "clipboardToolStripSeparator";
+            clipboardToolStripSeparator.Size = new System.Drawing.Size(197, 6);
             // 
             // replaceToolStripMenuItem
             // 
@@ -473,6 +497,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripTextBox InsertText;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator clipboardToolStripSeparator;
         private System.Windows.Forms.ToolStripButton SaveButton;
         private System.Windows.Forms.ToolStripMenuItem selectInRadarColorTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectInTexturesTabToolStripMenuItem;

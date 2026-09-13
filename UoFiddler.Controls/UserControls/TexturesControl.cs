@@ -289,6 +289,93 @@ namespace UoFiddler.Controls.UserControls
             Options.ChangedUltimaClass["Texture"] = true;
         }
 
+        private void OnClickCopyImage(object sender, EventArgs e)
+        {
+            // The clipboard holds one image, so a multi selection copies the focused texture.
+            int id = _selectedTextureId;
+            if (id < 0 || !Textures.TestTexture(id))
+            {
+                return;
+            }
+
+            if (!ImageClipboard.TryCopy(Textures.GetTexture(id), out string error))
+            {
+                MessageBox.Show(error, "Copy Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void OnClickPasteImage(object sender, EventArgs e)
+        {
+            var ids = GetSelectedTextureIds();
+            if (ids.Count == 0)
+            {
+                if (_selectedTextureId < 0)
+                {
+                    return;
+                }
+
+                ids.Add(_selectedTextureId);
+            }
+
+            using Bitmap pasted = ImageClipboard.TryPaste(out string error);
+            if (pasted == null)
+            {
+                MessageBox.Show(error, "Paste Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!IsValidTextureSize(pasted))
+            {
+                MessageBox.Show(
+                    $"Invalid texture dimensions!\n\n" +
+                    $"Clipboard image: {pasted.Width}x{pasted.Height}\n" +
+                    $"Textures must be 64x64 or 128x128 pixels.\n\n" +
+                    "No changes made.",
+                    "Invalid Size", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (ids.Count > 1)
+            {
+                DialogResult confirm = MessageBox.Show(
+                    $"Paste this {pasted.Width}x{pasted.Height} image into {ids.Count} selected textures?",
+                    "Paste Image", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (confirm != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            Bitmap converted = Utils.ToUoBitmap(pasted);
+
+            foreach (int id in ids)
+            {
+                // Each slot needs its own bitmap: the SDK keeps the instance it is handed.
+                Textures.Replace(id, ids.Count == 1 ? converted : (Bitmap)converted.Clone());
+                ControlEvents.FireTextureChangeEvent(this, id);
+            }
+
+            if (ids.Count > 1)
+            {
+                converted.Dispose();
+            }
+
+            TextureTileView.Invalidate();
+            Options.ChangedUltimaClass["Texture"] = true;
+        }
+
+        /// <summary>
+        /// Texidx stores no dimensions - the client derives them from the encoded length - so a
+        /// texture that is not 64x64 or 128x128 would be read back as the wrong size.
+        /// </summary>
+        private static bool IsValidTextureSize(Image image)
+        {
+            return (image.Width == 64 && image.Height == 64)
+                   || (image.Width == 128 && image.Height == 128);
+        }
+
         private void OnClickReplace(object sender, EventArgs e)
         {
             if (TextureTileView.SelectedIndices.Count > 1)
@@ -692,6 +779,11 @@ namespace UoFiddler.Controls.UserControls
                 Rectangle textureRectangle = new Rectangle(itemPoint, new Size(bitmap.Width, bitmap.Height));
                 e.Graphics.DrawImage(bitmap, textureRectangle);
 
+                if (Textures.IsModified(_textureList[e.Index]))
+                {
+                    ModifiedMarker.Draw(e.Graphics, tileRectangle);
+                }
+
                 e.Graphics.Clip = previousClip;
             }
         }
@@ -932,9 +1024,32 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Copy/paste is handled here rather than as menu ShortcutKeys: a shortcut on a
+            // ContextMenuStrip is processed for the whole form, which would swallow Ctrl+C/Ctrl+V in
+            // every text box on every tab.
+            if (keyData == (Keys.Control | Keys.C) && TextureTileView.Focused)
+            {
+                OnClickCopyImage(this, EventArgs.Empty);
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.V) && TextureTileView.Focused)
+            {
+                OnClickPasteImage(this, EventArgs.Empty);
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             int selectedCount = TextureTileView.SelectedIndices.Count;
+            copyImageToolStripMenuItem.Enabled = _selectedTextureId >= 0 && Textures.TestTexture(_selectedTextureId);
+            pasteImageToolStripMenuItem.Enabled = selectedCount > 0 && ImageClipboard.ContainsImage();
+            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"Paste Image into {selectedCount}" : "Paste Image";
             removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
             exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
             replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
