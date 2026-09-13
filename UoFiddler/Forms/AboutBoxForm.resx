@@ -118,7 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.23.0
+    <value>Version 4.24.0
+- Statics defrag rewritten with explicit filters (item id ceiling, out-of-block offsets, invalid z, duplicates, stacked statics), a report naming everything removed, and a Verify button that reads the result back and reconciles it against the source
+- Defrag now runs on a background worker with a working Cancel, and no longer reports success when the source files were missing and nothing was written
+- Map region copy and map diff insert work on UOP-only clients, copy land blocks byte-exactly, and can write either `map{N}.mul` or `map{N}LegacyMUL.uop`
+- Both map dialogs gain a draggable region preview with pan and zoom, so a region is picked on the map instead of typed as numbers
+- A copied region can be shifted in z, with the dialog saying up front how far it can actually move before the signed byte runs out
+- New per-profile save format option: art, gumpart, sound, MultiCollection and maps can be written as mul, as uop, following the loaded client, or chosen at save time
+- Fixed the land block sentinel size, diff patch bounds on TerMur, and facet 5 diff files never being found
+- Fixed textures on older clients throwing from a paint handler: unused idx rows were being read as verdata patches
+- Fixed hued gumps taking the process down on UOP clients
+- Fixed AnimationSequence group records being skipped or walked at the wrong stride, so bodies such as 666 and 1253 now resolve the action aliases the file declares
+- TileData can be edited for many entries at once, with Copy tile data / Paste special and a one-level undo of the last bulk apply
+- Items, Land Tiles, Gumps and Textures copy and paste images through the clipboard, and mark the entries edited since load
+
+Version 4.23.0
 - Multi tile flags survive a UOP &lt;&gt; mul round trip: the visibility word maps onto both `multi.mul` int32s instead of one boolean (8207 of 186695 shipped tiles used to lose a bit)
 - Per-tile component ids are kept in a `multi-components.txt` sidecar, so repacking no longer strips a boat's tiller man, hatch and planks or a house's doors
 - Loading a multi no longer deletes invisible tiles or reorders the tile list (this dropped 122 tiles and reshuffled 119 multis on shipped data)
