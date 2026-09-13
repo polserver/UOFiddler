@@ -102,6 +102,13 @@ namespace UoFiddler.Controls.Forms
                                 x - _result.DestinationRegion.BlockX1 + _result.Source.BlockX1,
                                 y - _result.DestinationRegion.BlockY1 + _result.Source.BlockY1,
                                 expected);
+
+                            // The region was asked to move in z, so the source block is not what
+                            // should have been written - the source block plus that shift is.
+                            if (_result.ZAdjust != 0)
+                            {
+                                ShiftZ(expected, _result.ZAdjust);
+                            }
                         }
                         else
                         {
@@ -129,6 +136,11 @@ namespace UoFiddler.Controls.Forms
                 sb.AppendLine(Line("Blocks compared  : {0:N0}", inRegion + carried));
                 sb.AppendLine(Line("  from the source: {0:N0}", inRegion));
                 sb.AppendLine(Line("  carried over   : {0:N0}", carried));
+
+                if (_result.ZAdjust != 0)
+                {
+                    sb.AppendLine(Line("  compared with  : the source shifted by {0:+#;-#;0} in z", _result.ZAdjust));
+                }
                 sb.AppendLine(Line("Blocks differing : {0:N0}", mismatches));
 
                 if (firstMismatch != null)
@@ -150,6 +162,18 @@ namespace UoFiddler.Controls.Forms
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>Moves a land block's 64 z values, the way the copier did on the way out.</summary>
+        private static void ShiftZ(byte[] block, int adjust)
+        {
+            for (int i = 0; i < 64; ++i)
+            {
+                int at = TileMatrix.BlockHeaderSize + (i * 3) + 2;
+
+                block[at] = (byte)(sbyte)Math.Clamp((sbyte)block[at] + adjust,
+                    ZHistogram.MinZ, ZHistogram.MaxZ);
+            }
         }
 
         private void OnClickSave(object sender, EventArgs e)

@@ -122,6 +122,18 @@ namespace Ultima.Maps
         /// <summary>Replaces land ids of 0x4000 and up with 0. Land art only reaches 0x3FFF.</summary>
         public bool SanitizeLandIds { get; set; }
 
+        /// <summary>
+        /// Added to the z of every land tile and static in the copied region. Land and statics move
+        /// together, so a building keeps its footing on the terrain it was copied with.
+        /// </summary>
+        public int ZAdjust { get; set; }
+
+        /// <summary>
+        /// What to do with a tile the adjustment would push outside the -128..127 the files hold.
+        /// Refusing is the default: a shift that does not fit is almost always the wrong shift.
+        /// </summary>
+        public ZOverflowAction ZOverflow { get; set; } = ZOverflowAction.Refuse;
+
         public string OutputDirectory { get; set; }
 
         public IProgress<MapCopyProgress> Progress { get; set; }
@@ -174,6 +186,15 @@ namespace Ultima.Maps
         public long StaticsWritten { get; set; }
 
         public long LandIdsSanitized { get; set; }
+
+        public int ZAdjust { get; set; }
+
+        /// <summary>The z the region carried before the adjustment. Null when nothing was adjusted.</summary>
+        public MapRegionZSurvey SourceZ { get; set; }
+
+        public long LandZClamped { get; set; }
+
+        public long StaticsZClamped { get; set; }
 
         public long DroppedInvalidItemId { get; set; }
 
@@ -249,6 +270,13 @@ namespace Ultima.Maps
             }
 
             sb.AppendLine();
+
+            if (ZAdjust != 0)
+            {
+                sb.AppendLine(Line("Z adjusted by    : {0:+#;-#;0}", ZAdjust));
+                sb.AppendLine();
+            }
+
             sb.AppendLine(Line("Source map size  : {0}", SourceSize));
             sb.AppendLine(Line("Target map size  : {0}", DestinationSize));
             sb.AppendLine();
@@ -262,6 +290,13 @@ namespace Ultima.Maps
                 {
                     sb.AppendLine(Line("  land ids reset : {0:N0} were 0x4000 or above", LandIdsSanitized));
                 }
+
+                if (ZAdjust != 0 && SourceZ != null)
+                {
+                    sb.AppendLine(Line("  land z         : {0} -> {1}{2}", SourceZ.Land,
+                        SourceZ.Land.Describe(ZAdjust),
+                        LandZClamped > 0 ? Line(", {0:N0} held at the limit", LandZClamped) : string.Empty));
+                }
             }
 
             if (OutputIndexPath != null)
@@ -270,6 +305,13 @@ namespace Ultima.Maps
                 sb.AppendLine(Line("  blocks         : {0:N0} copied, {1:N0} carried over", StaticBlocksCopied, StaticBlocksCarried));
                 sb.AppendLine(Line("  statics        : {0:N0} read, {1:N0} written", StaticsRead, StaticsWritten));
                 sb.AppendLine(Line("  highest id     : 0x{0:X4}", HighestItemIdSeen));
+
+                if (ZAdjust != 0 && SourceZ != null)
+                {
+                    sb.AppendLine(Line("  static z       : {0} -> {1}{2}", SourceZ.Statics,
+                        SourceZ.Statics.Describe(ZAdjust),
+                        StaticsZClamped > 0 ? Line(", {0:N0} held at the limit", StaticsZClamped) : string.Empty));
+                }
 
                 if (StaticsAccountedFor > 0 || HuesNormalized > 0 || MaskedOutOfBlock > 0)
                 {
@@ -355,6 +397,13 @@ namespace Ultima.Maps
             WarnAboutOverrides(options.SourceDirectory, options.SourceFileIndex, "source", result);
             WarnAboutOverrides(ClientDirectory(options.Destination.FileIndex), options.Destination.FileIndex, "destination", result);
 
+            result.ZAdjust = options.ZAdjust;
+
+            if (options.ZAdjust != 0)
+            {
+                SurveyZ(options, result, source);
+            }
+
             if (options.CopyLand)
             {
                 CopyLand(options, result, source, destination);
@@ -370,7 +419,116 @@ namespace Ultima.Maps
             return result;
         }
 
-        // ---- geometry --------------------------------------------------------------------------
+        /// <summary>
+        /// Reads the region's z before a byte is written, so a shift that does not fit is refused
+        /// while refusing still costs nothing. The tally is kept for the report either way.
+        /// </summary>
+        private static void SurveyZ(MapRegionCopyOptions options, MapRegionCopyResult result, MapSize source)
+        {
+            MapRegionZSurvey survey = MapRegionZSurvey.Survey(options.SourceDirectory, options.SourceFileIndex,
+                source, result.Source, options.CopyLand, options.CopyStatics, options.Progress,
+                options.CancellationToken);
+
+            result.SourceZ = survey;
+
+            foreach (string warning in survey.Warnings)
+            {
+                result.Warnings.Add(warning);
+            }
+
+            if (options.ZOverflow == ZOverflowAction.Clamp || !survey.Overflows(options.ZAdjust))
+            {
+                return;
+            }
+
+            long land = survey.Land.OutOfRangeAfter(options.ZAdjust);
+            long statics = survey.Statics.OutOfRangeAfter(options.ZAdjust);
+
+            var sb = new StringBuilder();
+
+            sb.Append(string.Format(CultureInfo.InvariantCulture,
+                "Adjusting z by {0:+#;-#;0} would push tiles outside the -128..127 the files hold.", options.ZAdjust));
+
+            if (land > 0)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    " Land runs {0} and {1:N0} tiles would not fit.", survey.Land, land));
+            }
+
+            if (statics > 0)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    " Statics run {0} and {1:N0} would not fit.", survey.Statics, statics));
+            }
+
+            sb.Append(string.Format(CultureInfo.InvariantCulture,
+                " The region takes {0:+#;-#;0} to {1:+#;-#;0} without losing anything.",
+                -Headroom(survey, false), Headroom(survey, true)));
+
+            throw new MapRegionCopyException(sb.ToString());
+        }
+
+        /// <summary>The largest shift the region takes in one direction with nothing hitting a limit.</summary>
+        private static int Headroom(MapRegionZSurvey survey, bool up)
+        {
+            int land = up ? survey.Land.HeadroomUp : survey.Land.HeadroomDown;
+            int statics = up ? survey.Statics.HeadroomUp : survey.Statics.HeadroomDown;
+
+            if (!survey.Land.HasTiles)
+            {
+                return statics;
+            }
+
+            if (!survey.Statics.HasTiles)
+            {
+                return land;
+            }
+
+            return Math.Min(land, statics);
+        }
+
+        /// <summary>Moves a static's z, holding it at the limit rather than wrapping round it.</summary>
+        private static void ShiftStaticsZ(List<StaticTile> tiles, int adjust, MapRegionCopyResult result)
+        {
+            for (int i = 0; i < tiles.Count; ++i)
+            {
+                StaticTile tile = tiles[i];
+
+                int z = tile.Z + adjust;
+
+                if (z < ZHistogram.MinZ || z > ZHistogram.MaxZ)
+                {
+                    z = Math.Clamp(z, ZHistogram.MinZ, ZHistogram.MaxZ);
+                    ++result.StaticsZClamped;
+                }
+
+                tile.Z = (sbyte)z;
+                tiles[i] = tile;
+            }
+        }
+
+        /// <summary>Moves the z of a land block's 64 cells, in the block's own bytes.</summary>
+        private static long ShiftLandZ(Span<byte> block, int adjust)
+        {
+            long clamped = 0;
+
+            for (int i = 0; i < 64; ++i)
+            {
+                int at = TileMatrix.BlockHeaderSize + (i * 3) + 2;
+
+                int z = (sbyte)block[at] + adjust;
+
+                if (z < ZHistogram.MinZ || z > ZHistogram.MaxZ)
+                {
+                    z = Math.Clamp(z, ZHistogram.MinZ, ZHistogram.MaxZ);
+                    ++clamped;
+                }
+
+                block[at] = (byte)(sbyte)z;
+            }
+
+            return clamped;
+        }
 
         private static void Normalise(MapRegionCopyOptions options, MapRegionCopyResult result,
             MapSize source, MapSize destination)
@@ -437,8 +595,6 @@ namespace Ultima.Maps
             }
         }
 
-        // ---- land ------------------------------------------------------------------------------
-
         private static void CopyLand(MapRegionCopyOptions options, MapRegionCopyResult result,
             MapSize source, MapSize destination)
         {
@@ -469,6 +625,11 @@ namespace Ultima.Maps
                                     x - result.DestinationRegion.BlockX1 + result.Source.BlockX1,
                                     y - result.DestinationRegion.BlockY1 + result.Source.BlockY1,
                                     block);
+
+                                if (options.ZAdjust != 0)
+                                {
+                                    result.LandZClamped += ShiftLandZ(block, options.ZAdjust);
+                                }
 
                                 ++result.LandBlocksCopied;
                             }
@@ -529,8 +690,6 @@ namespace Ultima.Maps
 
             return reset;
         }
-
-        // ---- statics ---------------------------------------------------------------------------
 
         private static void CopyStatics(MapRegionCopyOptions options, MapRegionCopyResult result,
             MapSize source, MapSize destination)
@@ -599,6 +758,13 @@ namespace Ultima.Maps
 
                             options.StaticsFilter?.Apply(tiles, x, y, result);
 
+                            // After the filter: what it judges is the source data, not a shifted
+                            // copy of it, so a static sitting at the sentinel z is still seen as one.
+                            if (inRegion && options.ZAdjust != 0)
+                            {
+                                ShiftStaticsZ(tiles, options.ZAdjust, result);
+                            }
+
                             writer.WriteBlock(x, y, tiles, reader.GetEntry(readX, readY).Extra);
 
                             if ((++done & (ProgressInterval - 1)) == 0)
@@ -643,8 +809,6 @@ namespace Ultima.Maps
                 MapBlockSink.TryDelete(tempStatics);
             }
         }
-
-        // ---- helpers ---------------------------------------------------------------------------
 
         private static bool InRegion(BlockRectangle region, int x, int y)
         {
