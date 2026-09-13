@@ -66,6 +66,10 @@ namespace UoFiddler.Controls.Forms
             this.numericUpDownToX1 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.numericUpDownToY1 = new System.Windows.Forms.NumericUpDown();
+            this.labelZAdjust = new System.Windows.Forms.Label();
+            this.numericUpDownZ = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxZClamp = new System.Windows.Forms.CheckBox();
+            this.labelZRange = new System.Windows.Forms.Label();
             this.groupBoxPreview = new System.Windows.Forms.GroupBox();
             this.labelSourcePreview = new System.Windows.Forms.Label();
             this.previewSource = new UoFiddler.Controls.UserControls.MapRegionPreview();
@@ -87,6 +91,7 @@ namespace UoFiddler.Controls.Forms
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToX1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToY1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).BeginInit();
             this.groupBoxSource.SuspendLayout();
             this.groupBoxWhat.SuspendLayout();
             this.groupBoxFrom.SuspendLayout();
@@ -332,6 +337,10 @@ namespace UoFiddler.Controls.Forms
             this.groupBoxTo.Controls.Add(this.numericUpDownToX1);
             this.groupBoxTo.Controls.Add(this.label7);
             this.groupBoxTo.Controls.Add(this.numericUpDownToY1);
+            this.groupBoxTo.Controls.Add(this.labelZAdjust);
+            this.groupBoxTo.Controls.Add(this.numericUpDownZ);
+            this.groupBoxTo.Controls.Add(this.checkBoxZClamp);
+            this.groupBoxTo.Controls.Add(this.labelZRange);
             this.groupBoxTo.Location = new System.Drawing.Point(12, 298);
             this.groupBoxTo.Name = "groupBoxTo";
             this.groupBoxTo.Size = new System.Drawing.Size(1440, 60);
@@ -372,6 +381,43 @@ namespace UoFiddler.Controls.Forms
             this.numericUpDownToY1.Size = new System.Drawing.Size(70, 23);
             this.numericUpDownToY1.TabIndex = 3;
             this.numericUpDownToY1.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // labelZAdjust
+            //
+            this.labelZAdjust.Location = new System.Drawing.Point(248, 26);
+            this.labelZAdjust.Name = "labelZAdjust";
+            this.labelZAdjust.Size = new System.Drawing.Size(64, 17);
+            this.labelZAdjust.TabIndex = 4;
+            this.labelZAdjust.Text = "Z adjust";
+            //
+            // numericUpDownZ
+            //
+            this.numericUpDownZ.Location = new System.Drawing.Point(316, 23);
+            this.numericUpDownZ.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            this.numericUpDownZ.Minimum = new decimal(new int[] { 255, 0, 0, -2147483648 });
+            this.numericUpDownZ.Name = "numericUpDownZ";
+            this.numericUpDownZ.Size = new System.Drawing.Size(70, 23);
+            this.numericUpDownZ.TabIndex = 5;
+            this.numericUpDownZ.ValueChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // checkBoxZClamp
+            //
+            this.checkBoxZClamp.Location = new System.Drawing.Point(396, 24);
+            this.checkBoxZClamp.Name = "checkBoxZClamp";
+            this.checkBoxZClamp.Size = new System.Drawing.Size(206, 21);
+            this.checkBoxZClamp.TabIndex = 6;
+            this.checkBoxZClamp.Text = "hold what passes the limit";
+            this.checkBoxZClamp.UseVisualStyleBackColor = true;
+            this.checkBoxZClamp.CheckedChanged += new System.EventHandler(this.OnRegionChanged);
+            //
+            // labelZRange
+            //
+            this.labelZRange.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelZRange.AutoEllipsis = true;
+            this.labelZRange.Location = new System.Drawing.Point(612, 26);
+            this.labelZRange.Name = "labelZRange";
+            this.labelZRange.Size = new System.Drawing.Size(812, 17);
+            this.labelZRange.TabIndex = 7;
             //
             // groupBoxPreview
             //
@@ -543,6 +589,7 @@ namespace UoFiddler.Controls.Forms
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToX1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownToY1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).EndInit();
             this.groupBoxSource.ResumeLayout(false);
             this.groupBoxSource.PerformLayout();
             this.groupBoxWhat.ResumeLayout(false);
@@ -568,6 +615,10 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.ComboBox comboBoxMapFormat;
         private System.Windows.Forms.ComboBox comboBoxMapID;
         private System.Windows.Forms.GroupBox groupBoxFrom;
+        private System.Windows.Forms.Label labelZAdjust;
+        private System.Windows.Forms.NumericUpDown numericUpDownZ;
+        private System.Windows.Forms.CheckBox checkBoxZClamp;
+        private System.Windows.Forms.Label labelZRange;
         private System.Windows.Forms.GroupBox groupBoxPreview;
         private System.Windows.Forms.GroupBox groupBoxSource;
         private System.Windows.Forms.GroupBox groupBoxTo;

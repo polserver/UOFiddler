@@ -43,6 +43,21 @@ namespace UoFiddler.Controls.Forms
         /// <summary>Guards the round trip between a drag on a panel and the spinners it writes to.</summary>
         private bool _syncingPreview;
 
+        /// <summary>
+        /// Reads the z of the region so the dialog can say what a z adjustment would do to it before
+        /// the copy runs. The tally is per region, not per adjustment, so turning the spinner
+        /// re-answers the question without touching the files again.
+        /// </summary>
+        private readonly BackgroundWorker _zWorker = new BackgroundWorker();
+
+        private readonly System.Windows.Forms.Timer _zDebounce =
+            new System.Windows.Forms.Timer { Interval = 350 };
+
+        private MapRegionZSurvey _zSurvey;
+        private string _zSurveyKey;
+        private ZSurveyRequest _zPending;
+        private CancellationTokenSource _zCancellation;
+
         public MapReplaceForm(Map currentMap)
         {
             InitializeComponent();
@@ -95,6 +110,10 @@ namespace UoFiddler.Controls.Forms
 
             groupBoxPreview.SizeChanged += (sender, e) => LayoutPreviewPanels();
             LayoutPreviewPanels();
+
+            _zDebounce.Tick += OnZDebounceTick;
+            _zWorker.DoWork += OnZWorkerDoWork;
+            _zWorker.RunWorkerCompleted += OnZWorkerCompleted;
 
             OnSourceMapChanged(this, EventArgs.Empty);
             OnOptionChanged(this, EventArgs.Empty);
@@ -266,11 +285,46 @@ namespace UoFiddler.Controls.Forms
             UpdatePreview();
         }
 
+        private sealed class ZSurveyRequest
+        {
+            public string Directory { get; init; }
+
+            public int FileIndex { get; init; }
+
+            public MapSize Size { get; init; }
+
+            public BlockRectangle Region { get; init; }
+
+            public bool Land { get; init; }
+
+            public bool Statics { get; init; }
+
+            public CancellationToken CancellationToken { get; set; }
+
+            /// <summary>Everything the answer depends on. The adjustment is deliberately not part of it.</summary>
+            public string Key => string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2},{3}-{4},{5}|{6}{7}",
+                Directory, FileIndex, Region.BlockX1, Region.BlockY1, Region.BlockX2, Region.BlockY2,
+                Land ? "L" : string.Empty, Statics ? "S" : string.Empty);
+        }
+
+        private sealed class ZSurveyAnswer
+        {
+            public string Key { get; init; }
+
+            public MapRegionZSurvey Survey { get; init; }
+        }
+
+        private void UpdatePreview()
+        {
+            UpdatePreviewRectangles();
+            UpdateZ();
+        }
+
         /// <summary>
         /// Shows the block-snapped rectangles that will really be copied. The tile to block
         /// conversion rounds out to whole 8-tile blocks, which used to happen silently.
         /// </summary>
-        private void UpdatePreview()
+        private void UpdatePreviewRectangles()
         {
             SupportedMap map = SelectedMap;
 
@@ -424,6 +478,197 @@ namespace UoFiddler.Controls.Forms
             UpdatePreview();
         }
 
+        // ---- heights ---------------------------------------------------------------------------
+
+        private int ZAdjust => (int)numericUpDownZ.Value;
+
+        /// <summary>
+        /// Works out what the region's z is, and says whether the adjustment asked for still fits in
+        /// the -128..127 a map or statics file can hold.
+        /// </summary>
+        private void UpdateZ()
+        {
+            SupportedMap map = SelectedMap;
+
+            if (map == null || !_detectionKnown || !Directory.Exists(textBoxFolder.Text) ||
+                (!checkBoxMap.Checked && !checkBoxStatics.Checked))
+            {
+                _zSurvey = null;
+                _zSurveyKey = null;
+                _zDebounce.Stop();
+                labelZRange.Text = string.Empty;
+
+                return;
+            }
+
+            var region = new BlockRectangle(
+                (int)numericUpDownX1.Value >> 3, (int)numericUpDownY1.Value >> 3,
+                (int)numericUpDownX2.Value >> 3, (int)numericUpDownY2.Value >> 3);
+
+            var request = new ZSurveyRequest
+            {
+                Directory = textBoxFolder.Text,
+                FileIndex = map.Id,
+                Size = new MapSize(map.Width, map.Height),
+                Region = Normalise(region),
+                Land = checkBoxMap.Checked,
+                Statics = checkBoxStatics.Checked
+            };
+
+            if (_zSurveyKey == request.Key)
+            {
+                ShowZ();
+
+                return;
+            }
+
+            _zSurvey = null;
+            _zSurveyKey = null;
+            _zPending = request;
+
+            labelZRange.ForeColor = SystemColors.ControlText;
+            labelZRange.Text = "reading the heights in this region...";
+
+            _zDebounce.Stop();
+            _zDebounce.Start();
+        }
+
+        private static BlockRectangle Normalise(BlockRectangle region)
+        {
+            return new BlockRectangle(
+                Math.Min(region.BlockX1, region.BlockX2), Math.Min(region.BlockY1, region.BlockY2),
+                Math.Max(region.BlockX1, region.BlockX2), Math.Max(region.BlockY1, region.BlockY2));
+        }
+
+        private void OnZDebounceTick(object sender, EventArgs e)
+        {
+            _zDebounce.Stop();
+
+            if (_zPending == null || IsDisposed)
+            {
+                return;
+            }
+
+            if (_zWorker.IsBusy)
+            {
+                // Whatever is running is for a region nobody is asking about any more.
+                _zCancellation?.Cancel();
+                _zDebounce.Start();
+
+                return;
+            }
+
+            _zCancellation?.Dispose();
+            _zCancellation = new CancellationTokenSource();
+            _zPending.CancellationToken = _zCancellation.Token;
+
+            _zWorker.RunWorkerAsync(_zPending);
+        }
+
+        private static void OnZWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            var request = (ZSurveyRequest)e.Argument;
+
+            e.Result = new ZSurveyAnswer
+            {
+                Key = request.Key,
+                Survey = MapRegionZSurvey.Survey(request.Directory, request.FileIndex, request.Size,
+                    request.Region, request.Land, request.Statics, null, request.CancellationToken)
+            };
+        }
+
+        private void OnZWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            if (e.Error is OperationCanceledException)
+            {
+                // Cancelled because the region moved. Whatever replaced it is already queued.
+                _zDebounce.Start();
+
+                return;
+            }
+
+            if (e.Error != null)
+            {
+                labelZRange.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
+                labelZRange.Text = "the heights in this region could not be read: " + e.Error.Message;
+
+                return;
+            }
+
+            if (e.Result is ZSurveyAnswer answer)
+            {
+                _zSurvey = answer.Survey;
+                _zSurveyKey = answer.Key;
+            }
+
+            if (_zPending != null && _zPending.Key != _zSurveyKey)
+            {
+                // The region moved while that was in flight.
+                _zDebounce.Start();
+
+                return;
+            }
+
+            ShowZ();
+        }
+
+        /// <summary>Says what the region's z is, and what the adjustment does to it.</summary>
+        private void ShowZ()
+        {
+            if (_zSurvey == null)
+            {
+                return;
+            }
+
+            int adjust = ZAdjust;
+
+            var sb = new StringBuilder();
+
+            // Kept short: this sits on one line beside the spinners, and an ellipsis in the middle
+            // of the warning is worse than no warning at all.
+            sb.Append(CultureInfo.InvariantCulture,
+                $"region z  land {Span(_zSurvey.Land, 0)}, statics {Span(_zSurvey.Statics, 0)}");
+
+            if (adjust != 0)
+            {
+                sb.Append(CultureInfo.InvariantCulture,
+                    $"   ->   land {Span(_zSurvey.Land, adjust)}, statics {Span(_zSurvey.Statics, adjust)}");
+            }
+
+            long past = _zSurvey.OutOfRange(adjust);
+
+            if (past == 0)
+            {
+                labelZRange.ForeColor = SystemColors.ControlText;
+                labelZRange.Text = sb.ToString();
+
+                return;
+            }
+
+            sb.Append(CultureInfo.InvariantCulture,
+                $"   -   {past:N0} past the limit, {(checkBoxZClamp.Checked ? "held there" : "refused")}");
+
+            labelZRange.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
+            labelZRange.Text = sb.ToString();
+        }
+
+        private static string Span(ZHistogram z, int adjust)
+        {
+            if (!z.HasTiles)
+            {
+                return "none";
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "{0}..{1}",
+                Math.Clamp(z.Min + adjust, ZHistogram.MinZ, ZHistogram.MaxZ),
+                Math.Clamp(z.Max + adjust, ZHistogram.MinZ, ZHistogram.MaxZ));
+        }
+
         private static decimal Clamp(NumericUpDown control, int value)
         {
             return Math.Clamp(value, (int)control.Minimum, (int)control.Maximum);
@@ -509,6 +754,8 @@ namespace UoFiddler.Controls.Forms
                 CopyLand = checkBoxMap.Checked,
                 CopyStatics = checkBoxStatics.Checked,
                 MapFormat = ResolveFormat(),
+                ZAdjust = ZAdjust,
+                ZOverflow = checkBoxZClamp.Checked ? ZOverflowAction.Clamp : ZOverflowAction.Refuse,
                 OutputDirectory = Options.OutputPath
             };
 
@@ -668,6 +915,13 @@ namespace UoFiddler.Controls.Forms
         {
             _cancellation?.Dispose();
             _cancellation = null;
+
+            _zDebounce.Stop();
+            _zDebounce.Dispose();
+            _zCancellation?.Cancel();
+            _zCancellation?.Dispose();
+            _zCancellation = null;
+            _zWorker.Dispose();
 
             _sourceMap?.Tiles.CloseStreams();
             _sourceMap = null;
