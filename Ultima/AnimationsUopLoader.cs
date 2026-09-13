@@ -22,6 +22,15 @@ namespace Ultima
         internal const int _maxAnimActions = 80;
         private const int _maxDirections = 5;
 
+        /// <summary>
+        /// Size of the fixed part of one AnimationSequence group record: the four leading fields,
+        /// the per frame bytes and the reserved block. Two variable length lists follow it.
+        /// </summary>
+        private const int _sequenceGroupFixedSize = 64;
+
+        /// <summary>Size of one property record hanging off a group: six ints, two shorts and a float.</summary>
+        private const int _sequenceGroupPropSize = 32;
+
         private static FileStream[] _uopFiles = new FileStream[6];
         private static readonly Dictionary<ulong, UopEntry> _hashTable = new();
         private static readonly Dictionary<int, int[]> _sequenceReplacements = new();
@@ -258,6 +267,21 @@ namespace Ultima
             }
         }
 
+        /// <summary>
+        /// Builds the action replacement table for one body from its AnimationSequence entry.
+        /// </summary>
+        /// <remarks>
+        /// Group records are variable length. The 72 byte stride this used to assume is only the
+        /// degenerate case where both trailing lists are empty: the fixed part is 64 bytes and the
+        /// two counted lists add 8 more when both counts are zero. Three bodies of a shipped client
+        /// - 400, 666 and 1253 in 7.0.114.4 - carry property records and are longer than that.
+        /// <para>
+        /// The walk also used to be skipped outright when the group count was 48 or 68. Those are
+        /// legitimate counts, not sentinels - they are simply the counts of the bodies that carry
+        /// property records, which is what a fixed stride cannot walk. Reading them properly means
+        /// body 666 resolves 67 to 66, and body 1253 resolves 2 to 0, 3 to 1 and 42 to 38.
+        /// </para>
+        /// </remarks>
         private static void ParseSequenceEntry(int animId, byte[] data)
         {
             if (data.Length < 56)
@@ -271,7 +295,7 @@ namespace Ultima
             binaryReader.ReadUInt32(); // animId stored in file
             binaryReader.BaseStream.Seek(48, SeekOrigin.Current); // skip 12 × u32
 
-            int replaces = binaryReader.ReadInt32();
+            int groupCount = binaryReader.ReadInt32();
 
             var replacements = new int[_maxAnimActions];
             for (int i = 0; i < _maxAnimActions; i++)
@@ -279,29 +303,73 @@ namespace Ultima
                 replacements[i] = i;
             }
 
-            if (replaces != 48 && replaces != 68)
+            for (int i = 0; i < groupCount; i++)
             {
-                for (int k = 0; k < replaces; k++)
+                if (!ReadSequenceGroup(binaryReader, replacements))
                 {
-                    if (binaryReader.BaseStream.Position + 72 > binaryReader.BaseStream.Length)
-                    {
-                        break;
-                    }
-
-                    int oldGroup = binaryReader.ReadInt32();
-                    uint frameCount = binaryReader.ReadUInt32();
-                    int newGroup = binaryReader.ReadInt32();
-
-                    if (frameCount == 0 && oldGroup >= 0 && oldGroup < _maxAnimActions && newGroup >= 0)
-                    {
-                        replacements[oldGroup] = newGroup;
-                    }
-
-                    binaryReader.BaseStream.Seek(60, SeekOrigin.Current); // skip remaining per-replacement fields
+                    break;
                 }
             }
 
             _sequenceReplacements[animId] = replacements;
+        }
+
+        /// <summary>
+        /// Reads one group record, recording the alias it declares.
+        /// </summary>
+        /// <remarks>
+        /// A replacement group of -1 means the body has its own frames for that group; any other
+        /// value borrows another group's, and then the frame count is zero.
+        /// </remarks>
+        /// <returns>False when the record runs past the payload, which stops the walk.</returns>
+        private static bool ReadSequenceGroup(BinaryReader reader, int[] replacements)
+        {
+            Stream stream = reader.BaseStream;
+
+            if (stream.Position + _sequenceGroupFixedSize > stream.Length)
+            {
+                return false;
+            }
+
+            int group = reader.ReadInt32();
+            int frameCount = reader.ReadInt32();
+            int replacementGroup = reader.ReadInt32();
+
+            // The frame rate, the per frame bytes and the reserved ints that make up the rest of the
+            // fixed part carry nothing the replacement table needs.
+            stream.Seek(_sequenceGroupFixedSize - (3 * sizeof(int)), SeekOrigin.Current);
+
+            if (frameCount == 0 && group >= 0 && group < _maxAnimActions && replacementGroup >= 0)
+            {
+                replacements[group] = replacementGroup;
+            }
+
+            return TrySkipList(reader, _sequenceGroupPropSize) && TrySkipList(reader, sizeof(int));
+        }
+
+        /// <summary>
+        /// Skips one counted list, checking the count against the bytes left before seeking past it,
+        /// so a malformed entry cannot walk the reader off the payload.
+        /// </summary>
+        private static bool TrySkipList(BinaryReader reader, int itemSize)
+        {
+            Stream stream = reader.BaseStream;
+
+            if (stream.Position + sizeof(int) > stream.Length)
+            {
+                return false;
+            }
+
+            int count = reader.ReadInt32();
+
+            if (count < 0 || (long)count * itemSize > stream.Length - stream.Position)
+            {
+                return false;
+            }
+
+            stream.Seek((long)count * itemSize, SeekOrigin.Current);
+
+            return true;
         }
 
         public static bool IsUopBody(int body)
