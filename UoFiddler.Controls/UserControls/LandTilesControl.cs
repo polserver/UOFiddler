@@ -720,7 +720,14 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSelectTiledata(object sender, EventArgs e)
         {
-            if (_selectedGraphicId >= 0)
+            // Carry the whole selection over, so a set of tiles picked here can be
+            // edited in one go on the TileData tab.
+            List<int> ids = GetSelectedGraphicIds();
+            if (ids.Count > 0)
+            {
+                TileDataControl.Select(ids, true);
+            }
+            else if (_selectedGraphicId >= 0)
             {
                 TileDataControl.Select(_selectedGraphicId, true);
             }
@@ -754,6 +761,9 @@ namespace UoFiddler.Controls.UserControls
             removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
             exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
             replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
+            selectInTileDataTabToolStripMenuItem.Text = selectedCount > 1
+                ? $"Select {selectedCount} in TileData tab"
+                : "Select in TileData tab";
 
             bool hasTexture = _selectedGraphicId >= 0
                 && TileData.LandTable[_selectedGraphicId].TextureId != 0

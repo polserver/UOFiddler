@@ -106,18 +106,69 @@ namespace UoFiddler.Controls.UserControls
 
         private static Color ModifiedColor => Options.DarkMode ? Color.OrangeRed : Color.Red;
 
+        // Snapshot of the entries the last bulk apply overwrote, so one misplaced
+        // "apply to everything selected" can be taken back. Only one level is kept.
+        private TileDataBulkUndo _lastBulkUndo;
+
         private int GetSelectedItemGraphic()
         {
-            return listViewItem.SelectedIndices.Count > 0
-                ? _itemIndices[listViewItem.SelectedIndices[0]]
-                : -1;
+            return GetPrimaryGraphic(listViewItem, _itemIndices);
         }
 
         private int GetSelectedLandGraphic()
         {
-            return listViewLand.SelectedIndices.Count > 0
-                ? _landIndices[listViewLand.SelectedIndices[0]]
-                : -1;
+            return GetPrimaryGraphic(listViewLand, _landIndices);
+        }
+
+        /// <summary>
+        /// The entry the editor pane shows - the focused row while it is part of the
+        /// selection, which is the one the user picked last, otherwise the first
+        /// selected row.
+        /// </summary>
+        private static int GetPrimaryGraphic(ListView listView, int[] indices)
+        {
+            if (listView.SelectedIndices.Count == 0)
+            {
+                return -1;
+            }
+
+            int row = listView.FocusedItem?.Index ?? -1;
+            if (row < 0 || !listView.SelectedIndices.Contains(row))
+            {
+                row = listView.SelectedIndices[0];
+            }
+
+            return (uint)row < (uint)indices.Length ? indices[row] : -1;
+        }
+
+        /// <summary>
+        /// Every selected graphic id in ascending order. Rows are mapped through the
+        /// filter projection, so this is ids, not row positions.
+        /// </summary>
+        private static int[] GetSelectedGraphics(ListView listView, int[] indices)
+        {
+            ListView.SelectedIndexCollection selected = listView.SelectedIndices;
+            var graphics = new List<int>(selected.Count);
+            foreach (int row in selected)
+            {
+                if ((uint)row < (uint)indices.Length)
+                {
+                    graphics.Add(indices[row]);
+                }
+            }
+
+            graphics.Sort();
+            return graphics.ToArray();
+        }
+
+        private int[] GetSelectedItemGraphics()
+        {
+            return GetSelectedGraphics(listViewItem, _itemIndices);
+        }
+
+        private int[] GetSelectedLandGraphics()
+        {
+            return GetSelectedGraphics(listViewLand, _landIndices);
         }
 
         private static string FormatItemRow(int graphic, string name)
@@ -218,6 +269,52 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        /// <summary>
+        /// Selects several rows at once, focusing the last one so the editor pane
+        /// shows it. Batched - a virtual ListView raises a selection event per row.
+        /// </summary>
+        private static void SelectRows(ListView listView, IReadOnlyList<int> rowPositions, int rowCount)
+        {
+            listView.BeginUpdate();
+            try
+            {
+                listView.SelectedIndices.Clear();
+                foreach (int rowPos in rowPositions)
+                {
+                    if ((uint)rowPos < (uint)rowCount)
+                    {
+                        listView.SelectedIndices.Add(rowPos);
+                    }
+                }
+            }
+            finally
+            {
+                listView.EndUpdate();
+            }
+
+            if (rowPositions.Count == 0)
+            {
+                return;
+            }
+
+            int last = rowPositions[rowPositions.Count - 1];
+            if ((uint)last < (uint)rowCount)
+            {
+                listView.EnsureVisible(last);
+                listView.FocusedItem = listView.Items[last];
+            }
+        }
+
+        private void SelectItemRows(IReadOnlyList<int> rowPositions)
+        {
+            SelectRows(listViewItem, rowPositions, _itemIndices.Length);
+        }
+
+        private void SelectLandRows(IReadOnlyList<int> rowPositions)
+        {
+            SelectRows(listViewLand, rowPositions, _landIndices.Length);
+        }
+
         private static int[] BuildIdentity(int length)
         {
             var array = new int[length];
@@ -295,6 +392,109 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        /// <summary>
+        /// Cross-tab entry point carrying a whole selection over, e.g. from the Items
+        /// tab's "Select in TileData tab". See <see cref="Select(int, bool)"/> for why
+        /// the tab has to be activated before the selection is set.
+        /// </summary>
+        public static void Select(IReadOnlyList<int> graphics, bool land)
+        {
+            if (_refMarker == null || graphics == null || graphics.Count == 0)
+            {
+                return;
+            }
+
+            if (graphics.Count == 1)
+            {
+                Select(graphics[0], land);
+                return;
+            }
+
+            TabPageNavigator.ActivateOwningTabPage(_refMarker);
+
+            if (_refMarker.IsHandleCreated)
+            {
+                _refMarker.BeginInvoke(new Action(() => SearchGraphics(graphics, land)));
+            }
+            else
+            {
+                SearchGraphics(graphics, land);
+            }
+        }
+
+        /// <summary>
+        /// Selects every given graphic. Returns false only when none of them exist at
+        /// all; ids the current filter hides are reached by resetting the view once,
+        /// the same way <see cref="SearchGraphic"/> does for a single id.
+        /// </summary>
+        public static bool SearchGraphics(IReadOnlyList<int> graphics, bool land)
+        {
+            if (_refMarker == null || graphics == null || graphics.Count == 0)
+            {
+                return false;
+            }
+
+            int[] indices = land ? _refMarker._landIndices : _refMarker._itemIndices;
+            List<int> rows = MapGraphicsToRows(graphics, indices);
+
+            if (rows.Count < graphics.Count)
+            {
+                // At least one target is filtered out of the view - drop the filter so
+                // the navigation always lands on the full selection.
+                if (land)
+                {
+                    _refMarker.ResetLandView();
+                    indices = _refMarker._landIndices;
+                }
+                else
+                {
+                    _refMarker.ResetItemView();
+                    indices = _refMarker._itemIndices;
+                }
+
+                rows = MapGraphicsToRows(graphics, indices);
+            }
+
+            if (rows.Count == 0)
+            {
+                return false;
+            }
+
+            if (land)
+            {
+                _refMarker.tabcontrol.SelectTab(1);
+                _refMarker.SelectLandRows(rows);
+            }
+            else
+            {
+                _refMarker.tabcontrol.SelectTab(0);
+                _refMarker.SelectItemRows(rows);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Row lookup for a batch of ids. The projection arrays are always ascending -
+        /// identity, or filter matches appended in order - so this can binary search
+        /// instead of scanning the array once per id.
+        /// </summary>
+        private static List<int> MapGraphicsToRows(IReadOnlyList<int> graphics, int[] indices)
+        {
+            var rows = new List<int>(graphics.Count);
+            foreach (int graphic in graphics)
+            {
+                int pos = Array.BinarySearch(indices, graphic);
+                if (pos >= 0)
+                {
+                    rows.Add(pos);
+                }
+            }
+
+            rows.Sort();
+            return rows;
+        }
+
         private void ResetItemView()
         {
             int total = TileData.ItemTable?.Length ?? 0;
@@ -313,6 +513,38 @@ namespace UoFiddler.Controls.UserControls
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Copy/paste is handled here rather than as menu ShortcutKeys: a shortcut on
+            // a ContextMenuStrip is processed for the whole form, which would swallow
+            // Ctrl+C/Ctrl+V in every text box on every tab.
+            if (keyData == (Keys.Control | Keys.C))
+            {
+                if (listViewItem.Focused)
+                {
+                    OnClickCopyItemTileData(this, EventArgs.Empty);
+                    return true;
+                }
+
+                if (listViewLand.Focused)
+                {
+                    OnClickCopyLandTileData(this, EventArgs.Empty);
+                    return true;
+                }
+            }
+            else if (keyData == (Keys.Control | Keys.V))
+            {
+                if (listViewItem.Focused && _copiedItem != null)
+                {
+                    OnClickPasteSpecialItem(this, EventArgs.Empty);
+                    return true;
+                }
+
+                if (listViewLand.Focused && _copiedLand != null)
+                {
+                    OnClickPasteSpecialLand(this, EventArgs.Empty);
+                    return true;
+                }
+            }
+
             if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
             {
                 if (searchByNameToolStripTextBox.TextBox.Focused)
@@ -560,6 +792,9 @@ namespace UoFiddler.Controls.UserControls
             _modifiedItems.Clear();
             _modifiedLand.Clear();
 
+            // The snapshot refers to entries that have just been replaced wholesale.
+            _lastBulkUndo = null;
+
             ResetItemView();
             ResetLandView();
 
@@ -587,17 +822,8 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxItem.BackColor = Options.PreviewBackgroundColor;
             pictureBoxLand.BackColor = Options.PreviewBackgroundColor;
 
-            int itemGraphic = GetSelectedItemGraphic();
-            if (itemGraphic >= 0)
-            {
-                UpdateSelectedItemPreview(itemGraphic);
-            }
-
-            int landGraphic = GetSelectedLandGraphic();
-            if (landGraphic >= 0)
-            {
-                UpdateSelectedLandPreview(landGraphic);
-            }
+            RefreshItemEditor();
+            RefreshLandEditor();
         }
 
         private void OnTileDataChangeEvent(object sender, int index)
@@ -618,7 +844,7 @@ namespace UoFiddler.Controls.UserControls
                 MarkItemModified(graphic);
                 if (GetSelectedItemGraphic() == graphic)
                 {
-                    UpdateSelectedItemPreview(graphic);
+                    QueueItemEditorRefresh();
                 }
             }
             else
@@ -626,31 +852,309 @@ namespace UoFiddler.Controls.UserControls
                 MarkLandModified(index);
                 if (GetSelectedLandGraphic() == index)
                 {
-                    UpdateSelectedLandPreview(index);
+                    QueueLandEditorRefresh();
                 }
             }
         }
 
         private void OnItemSelectedIndexChanged(object sender, EventArgs e)
         {
-            int graphic = GetSelectedItemGraphic();
-            if (graphic < 0)
-            {
-                return;
-            }
-
-            UpdateSelectedItemPreview(graphic);
+            QueueItemEditorRefresh();
         }
 
         private void OnLandSelectedIndexChanged(object sender, EventArgs e)
         {
-            int graphic = GetSelectedLandGraphic();
-            if (graphic < 0)
+            QueueLandEditorRefresh();
+        }
+
+        private void OnItemSelectionRangeChanged(object sender, ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+        {
+            QueueItemEditorRefresh();
+        }
+
+        private void OnLandSelectionRangeChanged(object sender, ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+        {
+            QueueLandEditorRefresh();
+        }
+
+        // SelectedIndexChanged fires once per row, so rubber-banding a few thousand
+        // rows would otherwise repopulate the whole editor pane - art decode included -
+        // once per row. Coalesce everything raised in one message-loop turn.
+        private bool _itemRefreshPending;
+        private bool _landRefreshPending;
+
+        private void QueueItemEditorRefresh()
+        {
+            if (_itemRefreshPending || !IsHandleCreated || IsDisposed)
             {
                 return;
             }
 
-            UpdateSelectedLandPreview(graphic);
+            _itemRefreshPending = true;
+            BeginInvoke(new Action(() =>
+            {
+                _itemRefreshPending = false;
+                if (!IsDisposed)
+                {
+                    RefreshItemEditor();
+                }
+            }));
+        }
+
+        private void QueueLandEditorRefresh()
+        {
+            if (_landRefreshPending || !IsHandleCreated || IsDisposed)
+            {
+                return;
+            }
+
+            _landRefreshPending = true;
+            BeginInvoke(new Action(() =>
+            {
+                _landRefreshPending = false;
+                if (!IsDisposed)
+                {
+                    RefreshLandEditor();
+                }
+            }));
+        }
+
+        private void RefreshItemEditor()
+        {
+            int[] selection = GetSelectedItemGraphics();
+            UpdateMultiSelectInfoLabel(multiSelectItemInfoLabel, selection.Length);
+
+            int primary = GetSelectedItemGraphic();
+            if (primary < 0)
+            {
+                return;
+            }
+
+            UpdateSelectedItemPreview(primary);
+
+            if (selection.Length > 1)
+            {
+                ApplyItemMixedState(selection);
+                _itemMultiBaseline = BuildItemEditFromEditor();
+            }
+            else
+            {
+                _itemMultiBaseline = null;
+            }
+        }
+
+        private void RefreshLandEditor()
+        {
+            int[] selection = GetSelectedLandGraphics();
+            UpdateMultiSelectInfoLabel(multiSelectLandInfoLabel, selection.Length);
+
+            int primary = GetSelectedLandGraphic();
+            if (primary < 0)
+            {
+                return;
+            }
+
+            UpdateSelectedLandPreview(primary);
+
+            if (selection.Length > 1)
+            {
+                ApplyLandMixedState(selection);
+                _landMultiBaseline = BuildLandEditFromEditor();
+            }
+            else
+            {
+                _landMultiBaseline = null;
+            }
+        }
+
+        private static void UpdateMultiSelectInfoLabel(Label label, int selectionCount)
+        {
+            if (selectionCount > 1)
+            {
+                label.Text =
+                    $"{selectionCount} entries selected - 'Save Changes' writes what you edit to all of them."
+                    + " Empty boxes and greyed flags are left unchanged.";
+                label.Visible = true;
+            }
+            else
+            {
+                label.Visible = false;
+            }
+        }
+
+        /// <summary>
+        /// With more than one entry selected the pane shows the primary entry's values,
+        /// then this blanks every box the selection disagrees on and greys every flag
+        /// that is not uniformly set or clear. Blank and grey both read as "leave
+        /// alone" when the edit is applied.
+        /// </summary>
+        private void ApplyItemMixedState(int[] selection)
+        {
+            ref readonly ItemData first = ref TileData.ItemTable[selection[0]];
+
+            bool sameName = true;
+            bool sameAnim = true;
+            bool sameWeight = true;
+            bool sameQuality = true;
+            bool sameQuantity = true;
+            bool sameHue = true;
+            bool sameStackOff = true;
+            bool sameValue = true;
+            bool sameHeight = true;
+            bool sameMisc = true;
+            bool sameUnk2 = true;
+            bool sameUnk3 = true;
+
+            TileFlag inAll = first.Flags;
+            TileFlag inAny = first.Flags;
+
+            for (int i = 1; i < selection.Length; ++i)
+            {
+                ref readonly ItemData row = ref TileData.ItemTable[selection[i]];
+
+                sameName &= string.Equals(row.Name, first.Name, StringComparison.Ordinal);
+                sameAnim &= row.Animation == first.Animation;
+                sameWeight &= row.Weight == first.Weight;
+                sameQuality &= row.Quality == first.Quality;
+                sameQuantity &= row.Quantity == first.Quantity;
+                sameHue &= row.Hue == first.Hue;
+                sameStackOff &= row.StackingOffset == first.StackingOffset;
+                sameValue &= row.Value == first.Value;
+                sameHeight &= row.Height == first.Height;
+                sameMisc &= row.MiscData == first.MiscData;
+                sameUnk2 &= row.Unk2 == first.Unk2;
+                sameUnk3 &= row.Unk3 == first.Unk3;
+
+                inAll &= row.Flags;
+                inAny |= row.Flags;
+            }
+
+            _changingIndex = true;
+            try
+            {
+                BlankIfMixed(textBoxName, sameName);
+                BlankIfMixed(textBoxAnim, sameAnim);
+                BlankIfMixed(textBoxWeight, sameWeight);
+                BlankIfMixed(textBoxQuality, sameQuality);
+                BlankIfMixed(textBoxQuantity, sameQuantity);
+                BlankIfMixed(textBoxHue, sameHue);
+                BlankIfMixed(textBoxStackOff, sameStackOff);
+                BlankIfMixed(textBoxValue, sameValue);
+                BlankIfMixed(textBoxHeigth, sameHeight);
+                BlankIfMixed(textBoxUnk1, sameMisc);
+                BlankIfMixed(textBoxUnk2, sameUnk2);
+                BlankIfMixed(textBoxUnk3, sameUnk3);
+
+                // Set somewhere but not everywhere.
+                MarkMixedFlags(checkedListBox1, inAny & ~inAll);
+            }
+            finally
+            {
+                _changingIndex = false;
+            }
+        }
+
+        private void ApplyLandMixedState(int[] selection)
+        {
+            ref readonly LandData first = ref TileData.LandTable[selection[0]];
+
+            bool sameName = true;
+            bool sameTexture = true;
+
+            TileFlag inAll = first.Flags;
+            TileFlag inAny = first.Flags;
+
+            for (int i = 1; i < selection.Length; ++i)
+            {
+                ref readonly LandData row = ref TileData.LandTable[selection[i]];
+
+                sameName &= string.Equals(row.Name, first.Name, StringComparison.Ordinal);
+                sameTexture &= row.TextureId == first.TextureId;
+
+                inAll &= row.Flags;
+                inAny |= row.Flags;
+            }
+
+            _changingIndex = true;
+            try
+            {
+                BlankIfMixed(textBoxNameLand, sameName);
+                BlankIfMixed(textBoxTexID, sameTexture);
+
+                MarkMixedFlags(checkedListBox2, inAny & ~inAll);
+            }
+            finally
+            {
+                _changingIndex = false;
+            }
+        }
+
+        private static void BlankIfMixed(TextBox textBox, bool allAgree)
+        {
+            if (!allAgree)
+            {
+                textBox.Text = string.Empty;
+            }
+        }
+
+        private static void MarkMixedFlags(CheckedListBox checkedListBox, TileFlag mixed)
+        {
+            if (mixed == TileFlag.None)
+            {
+                return;
+            }
+
+            Array enumValues = Enum.GetValues(typeof(TileFlag));
+            for (int i = 0; i < checkedListBox.Items.Count; ++i)
+            {
+                if ((mixed & (TileFlag)enumValues.GetValue(i + 1)) != 0)
+                {
+                    checkedListBox.SetItemCheckState(i, CheckState.Indeterminate);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Multi-selection flag cycling, which CheckedListBox will not do on its own.
+        /// A flag the selection disagreed on cycles leave alone -> set on all -> clear
+        /// on all, so the "don't touch it" state stays reachable. A flag they all
+        /// already agreed on just toggles: leaving it at the value it came up with is
+        /// already a no-op, so it has no need of a third state.
+        /// </summary>
+        private static CheckState NextMultiSelectFlagState(CheckState current, bool wasMixed)
+        {
+            if (!wasMixed)
+            {
+                return current == CheckState.Checked ? CheckState.Unchecked : CheckState.Checked;
+            }
+
+            switch (current)
+            {
+                case CheckState.Indeterminate:
+                    return CheckState.Checked;
+
+                case CheckState.Checked:
+                    return CheckState.Unchecked;
+
+                default:
+                    return CheckState.Indeterminate;
+            }
+        }
+
+        /// <summary>
+        /// True when the selection disagreed on this flag at the time the pane was
+        /// populated - i.e. the baseline left it out of both masks.
+        /// </summary>
+        private static bool FlagWasMixed(TileFlag baselineSet, TileFlag baselineClear, int flagIndex)
+        {
+            Array enumValues = Enum.GetValues(typeof(TileFlag));
+            if ((uint)(flagIndex + 1) >= (uint)enumValues.Length)
+            {
+                return false;
+            }
+
+            var flag = (TileFlag)enumValues.GetValue(flagIndex + 1);
+            return (baselineSet & flag) == 0 && (baselineClear & flag) == 0;
         }
 
         private void UpdateSelectedItemPreview(int index)
@@ -744,6 +1248,12 @@ namespace UoFiddler.Controls.UserControls
         {
             if (tabcontrol.SelectedIndex == 0) // items
             {
+                if (listViewItem.SelectedIndices.Count > 1)
+                {
+                    ApplyItemEditToSelection(GetSelectedItemGraphics(), BuildItemEditForSelection());
+                    return;
+                }
+
                 int index = GetSelectedItemGraphic();
                 if (index < 0)
                 {
@@ -837,6 +1347,12 @@ namespace UoFiddler.Controls.UserControls
             }
             else // land
             {
+                if (listViewLand.SelectedIndices.Count > 1)
+                {
+                    ApplyLandEditToSelection(GetSelectedLandGraphics(), BuildLandEditForSelection());
+                    return;
+                }
+
                 int index = GetSelectedLandGraphic();
                 if (index < 0)
                 {
@@ -880,14 +1396,338 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        /// <summary>
+        /// Reads the editor pane into a sparse edit. An empty or unparseable box and an
+        /// indeterminate flag are both left out, so applying it across a selection only
+        /// touches what the user actually filled in.
+        /// </summary>
+        private ItemDataEdit BuildItemEditFromEditor()
+        {
+            var edit = new ItemDataEdit
+            {
+                Name = string.IsNullOrEmpty(textBoxName.Text) ? null : TileDataBulkEdit.TruncateName(textBoxName.Text),
+                Animation = ParseShort(textBoxAnim.Text),
+                Weight = ParseByte(textBoxWeight.Text),
+                Quality = ParseByte(textBoxQuality.Text),
+                Quantity = ParseByte(textBoxQuantity.Text),
+                Hue = ParseByte(textBoxHue.Text),
+                StackingOffset = ParseByte(textBoxStackOff.Text),
+                Value = ParseByte(textBoxValue.Text),
+                Height = ParseByte(textBoxHeigth.Text),
+                MiscData = ParseShort(textBoxUnk1.Text),
+                Unk2 = ParseByte(textBoxUnk2.Text),
+                Unk3 = ParseByte(textBoxUnk3.Text)
+            };
+
+            ReadFlagMasks(checkedListBox1, out TileFlag setFlags, out TileFlag clearFlags);
+            edit.SetFlags = setFlags;
+            edit.ClearFlags = clearFlags;
+
+            return edit;
+        }
+
+        private LandDataEdit BuildLandEditFromEditor()
+        {
+            var edit = new LandDataEdit
+            {
+                Name = string.IsNullOrEmpty(textBoxNameLand.Text)
+                    ? null
+                    : TileDataBulkEdit.TruncateName(textBoxNameLand.Text),
+                TextureId = ushort.TryParse(textBoxTexID.Text, out ushort textureId) ? textureId : (ushort?)null
+            };
+
+            ReadFlagMasks(checkedListBox2, out TileFlag setFlags, out TileFlag clearFlags);
+            edit.SetFlags = setFlags;
+            edit.ClearFlags = clearFlags;
+
+            return edit;
+        }
+
+        private static void ReadFlagMasks(CheckedListBox checkedListBox, out TileFlag setFlags, out TileFlag clearFlags)
+        {
+            setFlags = TileFlag.None;
+            clearFlags = TileFlag.None;
+
+            Array enumValues = Enum.GetValues(typeof(TileFlag));
+            for (int i = 0; i < checkedListBox.Items.Count; ++i)
+            {
+                CheckState state = checkedListBox.GetItemCheckState(i);
+                if (state == CheckState.Indeterminate)
+                {
+                    continue;
+                }
+
+                var flag = (TileFlag)enumValues.GetValue(i + 1);
+                if (state == CheckState.Checked)
+                {
+                    setFlags |= flag;
+                }
+                else
+                {
+                    clearFlags |= flag;
+                }
+            }
+        }
+
+        private static byte? ParseByte(string text)
+        {
+            return byte.TryParse(text, out byte value) ? value : (byte?)null;
+        }
+
+        private static short? ParseShort(string text)
+        {
+            return short.TryParse(text, out short value) ? value : (short?)null;
+        }
+
+        // The pane as it stood when it was populated for the current multi-selection.
+        // A bulk apply writes the difference against this, so boxes and flags the user
+        // left alone are neither listed in the confirmation nor written back over
+        // entries that already agree.
+        private ItemDataEdit _itemMultiBaseline;
+        private LandDataEdit _landMultiBaseline;
+
+        /// <summary>
+        /// What the user actually changed in the pane since it was populated for this
+        /// selection.
+        /// </summary>
+        private ItemDataEdit BuildItemEditForSelection()
+        {
+            ItemDataEdit current = BuildItemEditFromEditor();
+            ItemDataEdit baseline = _itemMultiBaseline;
+            if (baseline == null)
+            {
+                return current;
+            }
+
+            return new ItemDataEdit
+            {
+                Name = OnlyIfChanged(current.Name, baseline.Name),
+                Animation = OnlyIfChanged(current.Animation, baseline.Animation),
+                Weight = OnlyIfChanged(current.Weight, baseline.Weight),
+                Quality = OnlyIfChanged(current.Quality, baseline.Quality),
+                Quantity = OnlyIfChanged(current.Quantity, baseline.Quantity),
+                Hue = OnlyIfChanged(current.Hue, baseline.Hue),
+                StackingOffset = OnlyIfChanged(current.StackingOffset, baseline.StackingOffset),
+                Value = OnlyIfChanged(current.Value, baseline.Value),
+                Height = OnlyIfChanged(current.Height, baseline.Height),
+                MiscData = OnlyIfChanged(current.MiscData, baseline.MiscData),
+                Unk2 = OnlyIfChanged(current.Unk2, baseline.Unk2),
+                Unk3 = OnlyIfChanged(current.Unk3, baseline.Unk3),
+
+                // Only flags the user moved to checked / unchecked from something else.
+                SetFlags = current.SetFlags & ~baseline.SetFlags,
+                ClearFlags = current.ClearFlags & ~baseline.ClearFlags
+            };
+        }
+
+        private LandDataEdit BuildLandEditForSelection()
+        {
+            LandDataEdit current = BuildLandEditFromEditor();
+            LandDataEdit baseline = _landMultiBaseline;
+            if (baseline == null)
+            {
+                return current;
+            }
+
+            return new LandDataEdit
+            {
+                Name = OnlyIfChanged(current.Name, baseline.Name),
+                TextureId = OnlyIfChanged(current.TextureId, baseline.TextureId),
+                SetFlags = current.SetFlags & ~baseline.SetFlags,
+                ClearFlags = current.ClearFlags & ~baseline.ClearFlags
+            };
+        }
+
+        private static T? OnlyIfChanged<T>(T? current, T? baseline) where T : struct
+        {
+            return current.HasValue && !EqualityComparer<T?>.Default.Equals(current, baseline)
+                ? current
+                : null;
+        }
+
+        private static string OnlyIfChanged(string current, string baseline)
+        {
+            return current != null && !string.Equals(current, baseline, StringComparison.Ordinal)
+                ? current
+                : null;
+        }
+
+        /// <summary>
+        /// Writes one sparse edit to every selected item entry, after confirming what is
+        /// about to change and snapshotting the old values for a single level of undo.
+        /// </summary>
+        private void ApplyItemEditToSelection(int[] graphics, ItemDataEdit edit)
+        {
+            if (graphics.Length == 0)
+            {
+                return;
+            }
+
+            string what = TileDataBulkEdit.Describe(edit);
+            if (!ConfirmBulkApply(what, graphics.Length))
+            {
+                return;
+            }
+
+            _lastBulkUndo = TileDataBulkUndo.ForItems(graphics, what);
+
+            using (new WaitCursorScope(this))
+            {
+                foreach (int graphic in graphics)
+                {
+                    TileData.ItemTable[graphic] = TileDataBulkEdit.Apply(TileData.ItemTable[graphic], edit);
+
+                    // Mark without RedrawItemRow - that scans the projection array per
+                    // call, which would be quadratic over a large selection. One
+                    // Invalidate below repaints the lot.
+                    _modifiedItems.Add(graphic);
+                    ControlEvents.FireTileDataChangeEvent(this, graphic + 0x4000);
+                }
+            }
+
+            Options.ChangedUltimaClass["TileData"] = true;
+            listViewItem.Invalidate();
+            QueueItemEditorRefresh();
+
+            ReportBulkApply(what, graphics.Length);
+        }
+
+        private void ApplyLandEditToSelection(int[] graphics, LandDataEdit edit)
+        {
+            if (graphics.Length == 0)
+            {
+                return;
+            }
+
+            string what = TileDataBulkEdit.Describe(edit);
+            if (!ConfirmBulkApply(what, graphics.Length))
+            {
+                return;
+            }
+
+            _lastBulkUndo = TileDataBulkUndo.ForLand(graphics, what);
+
+            using (new WaitCursorScope(this))
+            {
+                foreach (int graphic in graphics)
+                {
+                    TileData.LandTable[graphic] = TileDataBulkEdit.Apply(TileData.LandTable[graphic], edit);
+                    _modifiedLand.Add(graphic);
+                    ControlEvents.FireTileDataChangeEvent(this, graphic);
+                }
+            }
+
+            Options.ChangedUltimaClass["TileData"] = true;
+            listViewLand.Invalidate();
+            QueueLandEditorRefresh();
+
+            ReportBulkApply(what, graphics.Length);
+        }
+
+        private bool ConfirmBulkApply(string what, int count)
+        {
+            if (string.IsNullOrEmpty(what))
+            {
+                MessageBox.Show(
+                    "Nothing to apply - every box is empty and every flag is left unchanged.",
+                    "Apply to selection", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
+            }
+
+            return MessageBox.Show(
+                $"Apply {what} to {count} entries?",
+                "Apply to selection", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes;
+        }
+
+        private void ReportBulkApply(string what, int count)
+        {
+            if (!memorySaveWarningToolStripMenuItem.Checked)
+            {
+                return;
+            }
+
+            MessageBox.Show(
+                $"Applied {what} to {count} entries in memory.\r\n\r\nClick 'Save Tiledata' to write to file.",
+                "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+        }
+
+        private void MiscToolStripDropDownButton_DropDownOpening(object sender, EventArgs e)
+        {
+            undoBulkApplyToolStripMenuItem.Enabled = _lastBulkUndo != null;
+            undoBulkApplyToolStripMenuItem.Text = _lastBulkUndo == null
+                ? "Undo last bulk apply"
+                : $"Undo last bulk apply ({_lastBulkUndo.Count} entries)";
+        }
+
+        private void OnClickUndoBulkApply(object sender, EventArgs e)
+        {
+            TileDataBulkUndo undo = _lastBulkUndo;
+            if (undo == null)
+            {
+                return;
+            }
+
+            if (MessageBox.Show(
+                    $"Restore {undo.Count} entries to the values they had before '{undo.Description}' was applied?",
+                    "Undo bulk apply", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button1) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            using (new WaitCursorScope(this))
+            {
+                for (int i = 0; i < undo.Ids.Length; ++i)
+                {
+                    int graphic = undo.Ids[i];
+                    if (undo.Land)
+                    {
+                        TileData.LandTable[graphic] = undo.Lands[i];
+                        ControlEvents.FireTileDataChangeEvent(this, graphic);
+                    }
+                    else
+                    {
+                        TileData.ItemTable[graphic] = undo.Items[i];
+                        ControlEvents.FireTileDataChangeEvent(this, graphic + 0x4000);
+                    }
+                }
+            }
+
+            // The entries keep their modified marker on purpose: undoing restores what
+            // was in memory before this apply, which is not necessarily what is on disk.
+            _lastBulkUndo = null;
+
+            if (undo.Land)
+            {
+                listViewLand.Invalidate();
+                QueueLandEditorRefresh();
+            }
+            else
+            {
+                listViewItem.Invalidate();
+                QueueItemEditorRefresh();
+            }
+        }
+
         private void SaveDirectlyOnChangesToolStripMenuItemOnCheckedChanged(object sender, EventArgs eventArgs)
         {
             Options.TileDataDirectlySaveOnChange = saveDirectlyOnChangesToolStripMenuItem.Checked;
         }
 
+        // "Save directly on changes" writes on every keystroke, which has no sensible
+        // meaning across a multi-selection - half-typed values would land on every
+        // selected entry. Bulk edits go through Save Changes instead, so the
+        // per-keystroke path only runs while exactly one entry is selected.
+        private bool DirectSaveItemEnabled =>
+            saveDirectlyOnChangesToolStripMenuItem.Checked && listViewItem.SelectedIndices.Count == 1;
+
+        private bool DirectSaveLandEnabled =>
+            saveDirectlyOnChangesToolStripMenuItem.Checked && listViewLand.SelectedIndices.Count == 1;
+
         private void OnTextChangedItemAnim(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -918,7 +1758,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemName(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -956,7 +1796,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemWeight(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -987,7 +1827,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemQuality(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1018,7 +1858,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemQuantity(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1049,7 +1889,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemHue(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1080,7 +1920,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemStackOff(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1111,7 +1951,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemValue(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1142,7 +1982,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemHeight(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1173,7 +2013,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemMiscData(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1204,7 +2044,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemUnk2(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1235,7 +2075,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedItemUnk3(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveItemEnabled)
             {
                 return;
             }
@@ -1266,7 +2106,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedLandName(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveLandEnabled)
             {
                 return;
             }
@@ -1303,7 +2143,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnTextChangedLandTexID(object sender, EventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (!DirectSaveLandEnabled)
             {
                 return;
             }
@@ -1334,12 +2174,20 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnFlagItemCheckItems(object sender, ItemCheckEventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (_changingIndex)
             {
                 return;
             }
 
-            if (_changingIndex)
+            if (listViewItem.SelectedIndices.Count > 1)
+            {
+                bool wasMixed = _itemMultiBaseline != null
+                                && FlagWasMixed(_itemMultiBaseline.SetFlags, _itemMultiBaseline.ClearFlags, e.Index);
+                e.NewValue = NextMultiSelectFlagState(e.CurrentValue, wasMixed);
+                return;
+            }
+
+            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
             {
                 return;
             }
@@ -1390,12 +2238,20 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnFlagItemCheckLandTiles(object sender, ItemCheckEventArgs e)
         {
-            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
+            if (_changingIndex)
             {
                 return;
             }
 
-            if (_changingIndex)
+            if (listViewLand.SelectedIndices.Count > 1)
+            {
+                bool wasMixed = _landMultiBaseline != null
+                                && FlagWasMixed(_landMultiBaseline.SetFlags, _landMultiBaseline.ClearFlags, e.Index);
+                e.NewValue = NextMultiSelectFlagState(e.CurrentValue, wasMixed);
+                return;
+            }
+
+            if (!saveDirectlyOnChangesToolStripMenuItem.Checked)
             {
                 return;
             }
@@ -1412,33 +2268,13 @@ namespace UoFiddler.Controls.UserControls
             }
 
             LandData land = TileData.LandTable[index];
-            TileFlag changeFlag;
-            switch (e.Index)
-            {
-                case 0:
-                    changeFlag = TileFlag.Damaging;
-                    break;
 
-                case 1:
-                    changeFlag = TileFlag.Wet;
-                    break;
-
-                case 2:
-                    changeFlag = TileFlag.Impassable;
-                    break;
-
-                case 3:
-                    changeFlag = TileFlag.Wall;
-                    break;
-
-                case 4:
-                    changeFlag = TileFlag.NoDiagonal;
-                    break;
-
-                default:
-                    changeFlag = TileFlag.None;
-                    break;
-            }
+            // The list holds every TileFlag in enum order (index 0 is None and is not
+            // listed), the same mapping OnClickSaveChanges uses. It used to be a
+            // hardcoded switch over five flags, which toggled the wrong bit for the
+            // first five entries and did nothing at all past them.
+            Array enumValues = Enum.GetValues(typeof(TileFlag));
+            var changeFlag = (TileFlag)enumValues.GetValue(e.Index + 1);
 
             if ((land.Flags & changeFlag) != 0)
             {
@@ -1616,8 +2452,107 @@ namespace UoFiddler.Controls.UserControls
             SelectInGumpsTab(graphic, true);
         }
 
+        // In-process clipboard for tiledata entries, one slot per table so item data can
+        // never land on a land tile. Not the Windows clipboard - there is no sensible
+        // text form of a tiledata entry to hand to other applications.
+        private static ItemData? _copiedItem;
+        private static int _copiedItemGraphic = -1;
+        private static LandData? _copiedLand;
+        private static int _copiedLandGraphic = -1;
+
+        private void OnClickCopyItemTileData(object sender, EventArgs e)
+        {
+            int graphic = GetSelectedItemGraphic();
+            if (graphic < 0)
+            {
+                return;
+            }
+
+            _copiedItem = TileData.ItemTable[graphic];
+            _copiedItemGraphic = graphic;
+        }
+
+        private void OnClickCopyLandTileData(object sender, EventArgs e)
+        {
+            int graphic = GetSelectedLandGraphic();
+            if (graphic < 0)
+            {
+                return;
+            }
+
+            _copiedLand = TileData.LandTable[graphic];
+            _copiedLandGraphic = graphic;
+        }
+
+        private void OnClickPasteSpecialItem(object sender, EventArgs e)
+        {
+            if (_copiedItem == null)
+            {
+                return;
+            }
+
+            int[] graphics = GetSelectedItemGraphics();
+            if (graphics.Length == 0)
+            {
+                return;
+            }
+
+            using (var dialog = new TileDataPasteSpecialForm(_copiedItem.Value, _copiedItemGraphic, graphics.Length))
+            {
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                ApplyItemEditToSelection(graphics, dialog.BuildItemEdit());
+            }
+        }
+
+        private void OnClickPasteSpecialLand(object sender, EventArgs e)
+        {
+            if (_copiedLand == null)
+            {
+                return;
+            }
+
+            int[] graphics = GetSelectedLandGraphics();
+            if (graphics.Length == 0)
+            {
+                return;
+            }
+
+            using (var dialog = new TileDataPasteSpecialForm(_copiedLand.Value, _copiedLandGraphic, graphics.Length))
+            {
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                ApplyLandEditToSelection(graphics, dialog.BuildLandEdit());
+            }
+        }
+
+        private void LandTilesContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            int selectedCount = listViewLand.SelectedIndices.Count;
+
+            copyLandTileDataToolStripMenuItem.Enabled = selectedCount == 1;
+            pasteSpecialLandToolStripMenuItem.Enabled = _copiedLand != null && selectedCount > 0;
+            pasteSpecialLandToolStripMenuItem.Text = selectedCount > 1
+                ? $"Paste special onto {selectedCount}..."
+                : "Paste special...";
+        }
+
         private void ItemsContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            int selectedCount = listViewItem.SelectedIndices.Count;
+
+            copyItemTileDataToolStripMenuItem.Enabled = selectedCount == 1;
+            pasteSpecialItemToolStripMenuItem.Enabled = _copiedItem != null && selectedCount > 0;
+            pasteSpecialItemToolStripMenuItem.Text = selectedCount > 1
+                ? $"Paste special onto {selectedCount}..."
+                : "Paste special...";
+
             int graphic = GetSelectedItemGraphic();
             if (graphic <= 0)
             {

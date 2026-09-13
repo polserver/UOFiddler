@@ -26,6 +26,31 @@ namespace UoFiddler.Controls.Forms
 
         private void PopulateFields()
         {
+            AddHeader("Editing many entries");
+            Add("Multi-select",
+                "Ctrl+click and Shift+click select several entries at once. The right hand pane keeps showing the entry "
+                + "you picked last, and 'Save Changes' writes to every selected entry.",
+                "multi");
+            Add("Empty boxes",
+                "With more than one entry selected, a box the entries disagree on comes up empty, and an empty box is "
+                + "left alone when you save - the entries keep their own values. Fill it in to give them all the same "
+                + "value. Because empty means 'leave alone', a name cannot be cleared across a multi-selection; select "
+                + "the entry on its own to do that.",
+                "multi");
+            Add("Greyed flags",
+                "A flag that is set on some of the selected entries but not all shows greyed, and a greyed flag is left "
+                + "alone when you save. Clicking it cycles leave alone -> set on all -> clear on all. A flag they all "
+                + "already agree on just toggles.",
+                "multi");
+            Add("Copy / Paste special",
+                "Right-click an entry and choose 'Copy tile data' to remember it, then select any number of entries and "
+                + "choose 'Paste special...' to pick which of the copied fields and flags to write onto them.",
+                "multi");
+            Add("Undo",
+                "Misc -> 'Undo last bulk apply' puts back the values the entries had before the last apply. Only the "
+                + "most recent apply is kept, and it is forgotten when tiledata is reloaded.",
+                "multi");
+
             AddHeader("Items");
             Add("Name", "This field is for the name of the item, which can be a maximum of 20 characters.", "items");
             Add("Animation", "This field is for the animation ID associated with the item.", "items");
