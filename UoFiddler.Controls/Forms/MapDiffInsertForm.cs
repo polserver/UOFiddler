@@ -22,6 +22,7 @@ using Ultima.Helpers;
 using Ultima.Maps;
 using Ultima.Statics;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -30,6 +31,9 @@ namespace UoFiddler.Controls.Forms
         private readonly Map _workingMap;
 
         private CancellationTokenSource _cancellation;
+
+        /// <summary>Guards the round trip between a drag on the panel and the spinners it writes to.</summary>
+        private bool _syncingPreview;
 
         public MapDiffInsertForm(Map currentMap)
         {
@@ -64,6 +68,15 @@ namespace UoFiddler.Controls.Forms
             numericUpDownX2.Value = numericUpDownX2.Maximum;
             numericUpDownY2.Value = numericUpDownY2.Maximum;
 
+            checkBoxPreviewStatics.Checked = true;
+            checkBoxPreviewPatched.Checked = true;
+
+            preview.Mode = MapPreviewMode.Rectangle;
+            preview.Map = _workingMap;
+            preview.MapSize = new MapSize(_workingMap.Width, _workingMap.Height);
+            preview.SelectionChanged += OnPreviewSelectionChanged;
+
+            OnPreviewOptionChanged(this, EventArgs.Empty);
             OnOptionChanged(this, EventArgs.Empty);
 
             ActiveControl = buttonCopy;
@@ -124,6 +137,68 @@ namespace UoFiddler.Controls.Forms
             }
 
             textBoxPreview.Text = sb.ToString();
+
+            if (_syncingPreview)
+            {
+                return;
+            }
+
+            _syncingPreview = true;
+
+            try
+            {
+                preview.Selection = region;
+            }
+            finally
+            {
+                _syncingPreview = false;
+            }
+        }
+
+        private void OnPreviewOptionChanged(object sender, EventArgs e)
+        {
+            preview.ShowStatics = checkBoxPreviewStatics.Checked;
+
+            // Tinting the blocks the diff lists turns a count into something a region can be aimed at.
+            TileMatrixPatch patch = _workingMap.Tiles.Patch;
+
+            preview.BlockHighlight = checkBoxPreviewPatched.Checked
+                ? (x, y) => patch.IsLandBlockPatched(x, y) || patch.IsStaticBlockPatched(x, y)
+                : null;
+
+            preview.Invalidate();
+        }
+
+        /// <summary>A drag on the panel writes the region back into the spinners.</summary>
+        private void OnPreviewSelectionChanged(object sender, EventArgs e)
+        {
+            if (_syncingPreview)
+            {
+                return;
+            }
+
+            BlockRectangle selection = preview.Selection;
+
+            _syncingPreview = true;
+
+            try
+            {
+                numericUpDownX1.Value = Clamp(numericUpDownX1, selection.TileX1);
+                numericUpDownY1.Value = Clamp(numericUpDownY1, selection.TileY1);
+                numericUpDownX2.Value = Clamp(numericUpDownX2, selection.TileX2);
+                numericUpDownY2.Value = Clamp(numericUpDownY2, selection.TileY2);
+            }
+            finally
+            {
+                _syncingPreview = false;
+            }
+
+            UpdatePreview();
+        }
+
+        private static decimal Clamp(NumericUpDown control, int value)
+        {
+            return Math.Clamp(value, (int)control.Minimum, (int)control.Maximum);
         }
 
         private void OnClickCopy(object sender, EventArgs e)
@@ -294,6 +369,13 @@ namespace UoFiddler.Controls.Forms
             buttonClose.Enabled = !running;
             groupBoxWhat.Enabled = !running;
             groupBoxFrom.Enabled = !running;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            FormLayout.FitToScreen(this);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

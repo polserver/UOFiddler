@@ -51,7 +51,7 @@ namespace Ultima.Statics
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "block {0},{1} tile 0x{2:X4} at {3},{4},{5} hue {6} - {7}",
+                "block {0},{1} tile 0x{2:X4} at {3} {4} {5} hue {6} - {7}",
                 BlockX, BlockY, Tile.Id, WorldX, WorldY, Tile.Z, Tile.Hue, Reason);
         }
     }
