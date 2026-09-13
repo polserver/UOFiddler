@@ -108,7 +108,6 @@ namespace UoFiddler.Controls.UserControls
             this.PreloadMap = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             this.defragStaticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.defragAndRemoveDuplicatesStToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importStaticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.meltStaticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearStaticsinMemoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -612,7 +611,6 @@ namespace UoFiddler.Controls.UserControls
             this.toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defragStaticsToolStripMenuItem,
-            this.defragAndRemoveDuplicatesStToolStripMenuItem,
             this.importStaticsToolStripMenuItem,
             this.meltStaticsToolStripMenuItem,
             this.clearStaticsinMemoryToolStripMenuItem,
@@ -635,15 +633,10 @@ namespace UoFiddler.Controls.UserControls
             // 
             this.defragStaticsToolStripMenuItem.Name = "defragStaticsToolStripMenuItem";
             this.defragStaticsToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
-            this.defragStaticsToolStripMenuItem.Text = "Defrag Statics";
+            this.defragStaticsToolStripMenuItem.Text = "Defrag Statics...";
+            this.defragStaticsToolStripMenuItem.ToolTipText = "Rewrites staidx/statics for this map, compacting it and optionally filtering out " +
+    "statics the client cannot draw correctly. Reports what it removed.";
             this.defragStaticsToolStripMenuItem.Click += new System.EventHandler(this.OnClickDefragStatics);
-            // 
-            // defragAndRemoveDuplicatesStToolStripMenuItem
-            // 
-            this.defragAndRemoveDuplicatesStToolStripMenuItem.Name = "defragAndRemoveDuplicatesStToolStripMenuItem";
-            this.defragAndRemoveDuplicatesStToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
-            this.defragAndRemoveDuplicatesStToolStripMenuItem.Text = "Defrag and Remove Duplicates Statics";
-            this.defragAndRemoveDuplicatesStToolStripMenuItem.Click += new System.EventHandler(this.OnClickDefragRemoveStatics);
             // 
             // importStaticsToolStripMenuItem
             // 
@@ -811,7 +804,6 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripStatusLabel CoordsLabel;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem defragAndRemoveDuplicatesStToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defragStaticsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem feluccaToolStripMenuItem;
