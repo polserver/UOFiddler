@@ -91,6 +91,23 @@ namespace Ultima.Helpers
         /// returned — matching the client function, which only yields the low output
         /// word.
         /// </summary>
+        /// <summary>
+        /// Adler32 of a UOP entry's bytes, as stored in the 32 bit hash field of its table row.
+        /// </summary>
+        public static uint HashAdler32(ReadOnlySpan<byte> data)
+        {
+            uint a = 1;
+            uint b = 0;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                a = (a + data[i]) % 65521;
+                b = (b + a) % 65521;
+            }
+
+            return (b << 16) | a;
+        }
+
         public static uint HashWord2(ReadOnlySpan<uint> data, uint initValue = 0)
         {
             int length = data.Length, i = 0;

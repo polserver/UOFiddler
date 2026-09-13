@@ -17,6 +17,7 @@ using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin.Interfaces;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Controls.UserControls.TileView;
+using Ultima.Helpers;
 
 namespace UoFiddler.Controls.Plugin
 {

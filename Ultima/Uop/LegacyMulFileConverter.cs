@@ -1,25 +1,20 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using Microsoft.Extensions.Logging;
-using Ultima;
 using Ultima.Helpers;
-using UoFiddler.Controls.Classes;
+using Ultima.Maps;
 
-namespace UoFiddler.Plugin.UopPacker.Classes
+namespace Ultima.Uop
 {
     public class LegacyMulFileConverter
     {
-        private struct IdxEntry
-        {
-            public int Id;
-            public int Offset;
-            public int Size;
-            public int Extra;
-        }
-
+        /// <summary>
+        /// One row of a block's entry table, as read back when unpacking. The pack direction hands
+        /// its rows to <see cref="UopContainerWriter"/> instead.
+        /// </summary>
         private struct TableEntry
         {
             public long Offset;
@@ -30,6 +25,14 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             public uint Hash;
             public short CompressionFlag;
             public bool Compressed;
+        }
+
+        private struct IdxEntry
+        {
+            public int Id;
+            public int Offset;
+            public int Size;
+            public int Extra;
         }
 
         //
@@ -221,9 +224,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                   || type == FileType.SoundLegacyMul
                                   || type == FileType.MultiCollection;
 
-            int tableSize = version4Layout ? 0x64 : 0x3E8;
-            long firstTable = version4Layout ? 0x28 : 0x200;
-
             // Stamped once per file, not per entry, so a repack of the same input is byte identical. The
             // shipped files vary it per entry (a build machine timestamp), but nothing reads it back.
             long entryHeaderTimestamp = DateTime.UtcNow.ToFileTimeUtc();
@@ -316,48 +316,16 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                     });
                 }
 
-                // File header
-                writer.Write(0x50594D); // MYP
-                writer.Write(version4Layout ? 4 : 5); // version
-                writer.Write(0xFD23EC43); // format timestamp?
-                writer.Write(firstTable); // first table
-                writer.Write(tableSize); // table size
-                writer.Write(idxEntries.Count); // file count
-                writer.Write(0); // modified count? (wseq, version 5 only)
-                writer.Write(0); // ? (cseq, version 5 only)
-                writer.Write(0); // reserved
-
-                // Padding
-                for (long i = 0x28; i < firstTable; ++i)
-                {
-                    writer.Write((byte)0);
-                }
-
-                int tableCount = (int)Math.Ceiling((double)idxEntries.Count / tableSize);
-                TableEntry[] tableEntries = new TableEntry[tableSize];
-
                 string[] hashFormat = GetHashFormat(type, typeIndex, out int _);
 
                 int totalEntries = idxEntries.Count;
                 int lastReportedPct = -1;
                 progress?.Report(0);
 
-                for (int i = 0; i < tableCount; ++i)
+                using (var container = new UopContainerWriter(writer.BaseStream,
+                           version4Layout ? UopLayout.Version4 : UopLayout.Version5, idxEntries.Count, true))
                 {
-                    long thisTable = writer.BaseStream.Position;
-
-                    int idxStart = i * tableSize;
-                    int idxEnd = Math.Min((i + 1) * tableSize, idxEntries.Count);
-
-                    // Table header
-                    writer.Write(idxEnd - idxStart);
-                    writer.Write((long)0); // next table, filled in later
-                    writer.Seek(_tableEntrySize * tableSize, SeekOrigin.Current); // table entries, filled in later
-
-                    // Data
-                    int tableIdx = 0;
-
-                    for (int j = idxStart; j < idxEnd; ++j, ++tableIdx)
+                    for (int j = 0; j < idxEntries.Count; ++j)
                     {
                         byte[] data;
 
@@ -371,10 +339,9 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             data = reader.ReadBytes(idxEntries[j].Size);
                         }
 
-                        tableEntries[tableIdx].Offset = writer.BaseStream.Position;
-                        tableEntries[tableIdx].DecompressedSize = data.Length;
-                        tableEntries[tableIdx].CompressionFlag = (short)compressionFlag;
-                        tableEntries[tableIdx].HeaderLength = 0;
+                        byte[] payload = null;
+                        ulong identifier;
+                        int decompressedSize = data.Length;
 
                         /*
                          * Every entry of every shipped version 4 UOP carries a 12 byte header block in front
@@ -388,8 +355,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         if (version4Layout)
                         {
                             entryHeader = BuildEntryHeader(entryHeaderTimestamp);
-                            writer.Write(entryHeader);
-                            tableEntries[tableIdx].HeaderLength = entryHeader.Length;
                         }
 
                         // hash 906142efe9fdb38a, which is file 0009834.tga (and no others, as 7.0.59.5) use a different name format (7 digits instead of 8);
@@ -397,23 +362,22 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         //  (even if this seems so much like a typo from someone from the UO development team :P)
                         if ((type == FileType.GumpartLegacyMul) && (idxEntries[j].Id == 9834))
                         {
-                            tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[1], idxEntries[j].Id));
+                            identifier = HashLittle2(string.Format(hashFormat[1], idxEntries[j].Id));
                         }
                         else if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
                         {
-                            tableEntries[tableIdx].Identifier = _housingBinIdentifier;
+                            identifier = _housingBinIdentifier;
                         }
                         else
                         {
-                            tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat[0], idxEntries[j].Id));
+                            identifier = HashLittle2(string.Format(hashFormat[0], idxEntries[j].Id));
                         }
 
                         if (type == FileType.MultiCollection && idxEntries[j].Id != _housingBinSentinelId)
                         {
                             byte[] multiData = BuildMultiUopEntryFromMul(data, idxEntries[j].Id, componentTable);
 
-                            tableEntries[tableIdx].DecompressedSize = multiData.Length;
-                            tableEntries[tableIdx].Size = multiData.Length;
+                            decompressedSize = multiData.Length;
 
                             if (compressionFlag >= CompressionFlag.Zlib)
                             {
@@ -423,11 +387,9 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                     throw new InvalidDataException($"Compression failed for multi {idxEntries[j].Id}.");
                                 }
                                 multiData = result.compressedData;
-                                tableEntries[tableIdx].Size = multiData.Length;
                             }
 
-                            tableEntries[tableIdx].Hash = HashAdler32(multiData);
-                            writer.Write(multiData);
+                            payload = multiData;
                         }
                         else if (type == FileType.GumpartLegacyMul)
                         {
@@ -442,8 +404,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                 gumpArtWriter.Write(height);
                                 gumpArtWriter.Write(data);
 
-                                tableEntries[tableIdx].DecompressedSize += 8;
-                                tableEntries[tableIdx].Size = tableEntries[tableIdx].DecompressedSize;
+                                decompressedSize += 8;
                             }
 
                             if (compressionFlag == CompressionFlag.Mythic)
@@ -460,8 +421,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                     }
                                 }
                                 gumpArtData = gumpArtData2;
-                                tableEntries[tableIdx].DecompressedSize = (int)gumpArtData.Length;
-                                tableEntries[tableIdx].Size = tableEntries[tableIdx].DecompressedSize;
+                                decompressedSize = (int)gumpArtData.Length;
                             }
                             if (compressionFlag >= CompressionFlag.Zlib)
                             {
@@ -471,17 +431,14 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                     throw new InvalidDataException($"Compression failed for gump {idxEntries[j].Id}.");
                                 }
 
-                                tableEntries[tableIdx].Size = result.compressedData.Length;
                                 gumpArtData = result.compressedData;
                             }
-                            tableEntries[tableIdx].Hash = HashAdler32(gumpArtData);
-                            writer.Write(gumpArtData);
+                            payload = gumpArtData;
                         }
                         else if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
                         {
                             byte[] binData = data;
-                            tableEntries[tableIdx].DecompressedSize = binData.Length;
-                            tableEntries[tableIdx].Size = binData.Length;
+                            decompressedSize = binData.Length;
 
                             if (compressionFlag >= CompressionFlag.Zlib)
                             {
@@ -491,18 +448,16 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                                     throw new InvalidDataException("Compression failed for housing.bin.");
                                 }
                                 binData = result.compressedData;
-                                tableEntries[tableIdx].Size = binData.Length;
                             }
 
-                            tableEntries[tableIdx].Hash = HashAdler32(binData);
-                            writer.Write(binData);
+                            payload = binData;
                         }
                         else
                         {
                             // Art / Map / Sound. The compression flag was already stamped on the entry above, so
                             // the data has to actually be compressed here - otherwise the entry claims zlib over
                             // raw bytes and neither the client nor FromUop can read it back.
-                            byte[] payload = data;
+                            byte[] storedPayload = data;
 
                             if (compressionFlag == CompressionFlag.Mythic)
                             {
@@ -513,24 +468,20 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                             if (compressionFlag == CompressionFlag.Zlib)
                             {
-                                var result = UopUtils.Compress(payload);
+                                var result = UopUtils.Compress(storedPayload);
                                 if (!result.success)
                                 {
                                     throw new InvalidDataException($"Compression failed for chunk {idxEntries[j].Id}.");
                                 }
 
-                                payload = result.compressedData;
+                                storedPayload = result.compressedData;
                             }
 
-                            tableEntries[tableIdx].Size = payload.Length;
-                            tableEntries[tableIdx].Hash = HashAdler32(payload);
-                            writer.Write(payload);
+                            payload = storedPayload;
                         }
 
-                        if (entryHeader != null)
-                        {
-                            tableEntries[tableIdx].Hash = HashAdler32(entryHeader);
-                        }
+                        container.WriteEntry(identifier, payload, decompressedSize,
+                            (short)compressionFlag, entryHeader ?? ReadOnlySpan<byte>.Empty);
 
                         if (totalEntries > 0)
                         {
@@ -543,41 +494,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         }
                     }
 
-                    long nextTable = writer.BaseStream.Position;
-
-                    // Go back and fix table header
-                    if (i < tableCount - 1)
-                    {
-                        writer.BaseStream.Seek(thisTable + _nextBlockOffsetField, SeekOrigin.Begin);
-                        writer.Write(nextTable);
-                    }
-                    else
-                    {
-                        writer.BaseStream.Seek(thisTable + _blockHeaderSize, SeekOrigin.Begin);
-                        // No need to fix the next table address, it's the last
-                    }
-
-                    // Table entries
-                    tableIdx = 0;
-
-                    for (int j = idxStart; j < idxEnd; ++j, ++tableIdx)
-                    {
-                        writer.Write(tableEntries[tableIdx].Offset);
-                        writer.Write(tableEntries[tableIdx].HeaderLength); // header length
-                        writer.Write(tableEntries[tableIdx].Size); // compressed size
-                        writer.Write(tableEntries[tableIdx].DecompressedSize); // decompressed size
-                        writer.Write(tableEntries[tableIdx].Identifier);
-                        writer.Write(tableEntries[tableIdx].Hash);
-                        writer.Write(tableEntries[tableIdx].CompressionFlag); // compression method
-                    }
-
-                    // Fill remainder with empty entries
-                    for (; tableIdx < tableSize; ++tableIdx)
-                    {
-                        writer.Write(_emptyTableEntry);
-                    }
-
-                    writer.BaseStream.Seek(nextTable, SeekOrigin.Begin);
+                    container.Complete();
                 }
             }
         }
@@ -605,20 +522,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         /// Kept in sync with the 0x13FDC threshold in Ultima/Art.cs.
         /// </summary>
         private const int _uoahsArtIdxEntryCount = 0x13FDC;
-
-        /// <summary>
-        /// On disk size of one entry in a block's entry table:
-        /// offset(8) headerLength(4) compressedSize(4) decompressedSize(4) identifier(8) hash(4) flag(2).
-        /// </summary>
-        private const int _tableEntrySize = 8 + 4 + 4 + 4 + 8 + 4 + 2;
-
-        /// <summary>Size of a block header: usedEntryCount(4) nextBlockOffset(8).</summary>
-        private const int _blockHeaderSize = 4 + 8;
-
-        /// <summary>Offset of the next-block pointer inside a block header.</summary>
-        private const int _nextBlockOffsetField = 4;
-
-        private static readonly byte[] _emptyTableEntry = new byte[_tableEntrySize];
 
         /// <summary>
         /// The 12 byte block the client writes in front of every entry payload in a version 4 UOP:
@@ -954,27 +857,54 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 return;
             }
 
-            int expectedSize = GetExpectedMapFileSize(typeIndex);
-
-            if (expectedSize == 0)
-            {
-                // do nothing. Map file is wrong, or it's some weird size we don't know about
-                return;
-            }
-
             using (var mapFile = File.Open(outFile, FileMode.Open, FileAccess.ReadWrite))
             {
+                long blocks = mapFile.Length / MapUopWriter.MapBlockSize;
+
+                /*
+                 * Every shipped container carries one block more than its facet holds, and our own
+                 * writer reproduces that, so the usual overshoot is a single block. Recognising it
+                 * against the known shapes rather than against one hardcoded size per facet is what
+                 * lets a pre-T2A 6144-wide map0 come back out at its own size instead of keeping the
+                 * padding because it does not match the modern 7168-wide one.
+                 */
+                foreach (MapSize candidate in MapSizes.Candidates(typeIndex))
+                {
+                    if (candidate.BlockCount == blocks)
+                    {
+                        return;
+                    }
+                }
+
+                foreach (MapSize candidate in MapSizes.Candidates(typeIndex))
+                {
+                    if (candidate.BlockCount == blocks - 1)
+                    {
+                        mapFile.SetLength(candidate.BlockCount * MapUopWriter.MapBlockSize);
+
+                        return;
+                    }
+                }
+
+                int expectedSize = GetExpectedMapFileSize(typeIndex);
+
+                if (expectedSize == 0)
+                {
+                    // Some shape we do not know about. Leave it alone rather than guess.
+                    return;
+                }
+
                 long sizeDiff = mapFile.Length - expectedSize;
+
                 if (sizeDiff <= 0)
                 {
                     return;
                 }
 
                 /*
-                 * The overshoot we are here to remove is chunk padding: the UOP stores the map in 0xC4000 byte
-                 * chunks, so the last one runs past the end of the facet by less than a chunk (752 640 bytes for
-                 * map2, 1 372 for map4, nothing for map0/1). Anything larger is a custom map that is genuinely
-                 * bigger than the stock facet, and truncating it would throw away real terrain.
+                 * Anything left is chunk padding from a packer that rounded the last chunk up. More
+                 * than a chunk of it means a custom map genuinely bigger than the stock facet, and
+                 * truncating that would throw away real terrain.
                  */
                 if (sizeDiff >= _mapChunkSize)
                 {
@@ -992,16 +922,9 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
         private static int GetExpectedMapFileSize(int typeIndex)
         {
-            return typeIndex switch
-            {
-                0 => 89_915_392,
-                1 => 89_915_392,
-                2 => 11_289_600,
-                3 => 16_056_320,
-                4 => 6_421_156,
-                5 => 16_056_320,
-                _ => 0
-            };
+            MapSize size = MapSizes.Fallback(typeIndex);
+
+            return size.IsEmpty ? 0 : (int)(size.BlockCount * 196);
         }
 
         //
@@ -1053,20 +976,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         /// Jenkins lookup3 hashlittle2 over a UOP entry path - see <see cref="UopUtils.HashFileName"/>.
         /// </summary>
         private static ulong HashLittle2(string input) => UopUtils.HashFileName(input);
-
-        private static uint HashAdler32(byte[] d)
-        {
-            uint a = 1;
-            uint b = 0;
-
-            for (int i = 0; i < d.Length; i++)
-            {
-                a = (a + d[i]) % 65521;
-                b = (b + a) % 65521;
-            }
-
-            return b << 16 | a;
-        }
 
         /*
          * MUL row layout: [itemId:2][x:2][y:2][z:2][flag:4][extra:4] = 16 bytes (High Seas / 7.0.9+)

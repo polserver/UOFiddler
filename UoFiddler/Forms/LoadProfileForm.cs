@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Classes;
+using Ultima.Helpers;
 
 namespace UoFiddler.Forms
 {

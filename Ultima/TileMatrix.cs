@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Ultima.Helpers;
+using Ultima.Uop;
 
 namespace Ultima
 {
@@ -17,7 +18,6 @@ namespace Ultima
         public static HuedTile[][][] EmptyStaticBlock { get; private set; }
 
         private FileStream _map;
-        private BinaryReader _uopReader;
         private FileStream _statics;
         private Entry3D[] _staticIndex;
 
@@ -40,7 +40,6 @@ namespace Ultima
         public void CloseStreams()
         {
             _map?.Close();
-            _uopReader?.Close();
             _statics?.Close();
         }
 
@@ -342,111 +341,25 @@ namespace Ultima
 
         /*
          * UOP map files support code, written by Wyatt (c) www.ruosi.org
-         * It's not possible if some entry has unknown hash. Thrown exception
-         * means that EA changed maps UOPs again.
+         * The container walk now lives in Ultima.Uop.MapUopReader so the map writer and size
+         * detection can use it without building a TileMatrix.
          */
         public bool IsUOPFormat { get; set; }
         public bool IsUOPAlreadyRead { get; set; }
 
-        private readonly struct UopFile
-        {
-            public readonly long Offset;
-            public readonly int Length;
-
-            public UopFile(long offset, int length)
-            {
-                Offset = offset;
-                Length = length;
-            }
-        }
-
-        private UopFile[] UOPFiles { get; set; }
+        private MapUopEntry[] UOPFiles { get; set; }
         private long UOPLength { get { return _map.Length; } }
 
         private void ReadUOPFiles(string pattern)
         {
-            _uopReader = new BinaryReader(_map);
-
-            _uopReader.BaseStream.Seek(0, SeekOrigin.Begin);
-
-            if (_uopReader.ReadInt32() != 0x50594D)
-            {
-                throw new ArgumentException("Bad UOP file.");
-            }
-
-            _uopReader.ReadInt64(); // version + signature
-            long nextBlock = _uopReader.ReadInt64();
-            _uopReader.ReadInt32(); // block capacity
-            int count = _uopReader.ReadInt32();
-
-            UOPFiles = new UopFile[count];
-
-            var hashes = new Dictionary<ulong, int>();
-
-            for (int i = 0; i < count; i++)
-            {
-                string file = $"build/{pattern}/{i:D8}.dat";
-                ulong hash = UopUtils.HashFileName(file);
-
-                hashes.TryAdd(hash, i);
-            }
-
-            _uopReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
-
-            do
-            {
-                int filesCount = _uopReader.ReadInt32();
-                nextBlock = _uopReader.ReadInt64();
-
-                for (int i = 0; i < filesCount; i++)
-                {
-                    long offset = _uopReader.ReadInt64();
-                    int headerLength = _uopReader.ReadInt32();
-                    int compressedLength = _uopReader.ReadInt32();
-                    _uopReader.ReadInt32(); // decompressed length - equal to the compressed one while stored
-                    ulong hash = _uopReader.ReadUInt64();
-                    _uopReader.ReadUInt32(); // Adler32
-                    short flag = _uopReader.ReadInt16();
-
-                    if (offset == 0)
-                    {
-                        continue;
-                    }
-
-                    // This reader addresses map blocks by slicing straight into the file, so it can only handle
-                    // stored entries. Every map*LegacyMUL.uop EA ships uses flag 0, but the UOP packer can be told
-                    // to zlib them. compressedLength is the byte count on disk; decompressedLength only matches
-                    // it while the entry is uncompressed.
-                    if (flag != 0)
-                    {
-                        throw new NotSupportedException(
-                            $"{pattern}: compressed map UOP entries are not supported " +
-                            $"(entry uses compression flag {flag}). Repack the map with compression set to None.");
-                    }
-
-                    if (hashes.TryGetValue(hash, out int idx))
-                    {
-                        if (idx < 0 || idx >= UOPFiles.Length)
-                        {
-                            throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
-                        }
-
-                        UOPFiles[idx] = new UopFile(offset + headerLength, compressedLength);
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"File with hash 0x{hash:X8} was not found in hashes dictionary! EA Mythic changed UOP format!");
-                    }
-                }
-            }
-            while (_uopReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+            UOPFiles = MapUopReader.ReadEntryTable(_map, pattern);
         }
 
         private long CalculateOffsetFromUOP(long offset)
         {
             long pos = 0;
 
-            foreach (UopFile t in UOPFiles)
+            foreach (MapUopEntry t in UOPFiles)
             {
                 long currentPosition = pos + t.Length;
 

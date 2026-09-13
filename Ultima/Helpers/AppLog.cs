@@ -13,7 +13,7 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace UoFiddler.Controls.Classes
+namespace Ultima.Helpers
 {
     /// <summary>
     /// Static logger façade for sites that cannot accept ILogger via constructor injection
