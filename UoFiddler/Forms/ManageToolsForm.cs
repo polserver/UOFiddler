@@ -15,6 +15,7 @@ using System.IO;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
 {
@@ -29,6 +30,9 @@ namespace UoFiddler.Forms
             Icon = Options.GetFiddlerIcon();
 
             _loadExternToolStripMenuAction = loadExternToolStripMenuAction;
+
+            // 应用中文汉化
+            LocalizationService.LocalizeForm(this);
         }
 
         private void OnLoad(object sender, EventArgs e)

@@ -40,6 +40,7 @@
         "optionsToolStripMenuItem": "选项...",
         "pathSettingsMenuItem": "路径设置...",
         "reloadFilesMenuItem": "重新加载文件",
+        "manageToolStripMenuItem": "管理...",
         "ToggleViewStart": "开始",
         "ToggleViewMulti": "多重组件",
         "ToggleViewAnimations": "动画",
@@ -115,6 +116,21 @@
       "Title": "路径设置",
       "tsBtnReloadPaths": "重新加载路径",
       "tsBtnSetPathManual": "手动设置路径"
+    },
+    "ManageToolsForm": {
+      "Title": "管理工具",
+      "groupBox3": "工具列表",
+      "groupBox4": "参数列表",
+      "groupBox1": "工具",
+      "groupBox2": "参数",
+      "label1": "参数列表",
+      "button1": "...",
+      "button2": "添加",
+      "button3": "删除",
+      "button4": "删除",
+      "button5": "保存",
+      "button6": "添加",
+      "button7": "保存"
     }
   }
 }
