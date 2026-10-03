@@ -41,6 +41,7 @@
         "pathSettingsMenuItem": "路径设置...",
         "reloadFilesMenuItem": "重新加载文件",
         "manageToolStripMenuItem": "管理...",
+        "Start": "开始",
         "ToggleViewStart": "开始",
         "ToggleViewMulti": "多重组件",
         "ToggleViewAnimations": "动画",

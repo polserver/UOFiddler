@@ -255,7 +255,7 @@ namespace UoFiddler.Forms
 
             ToolStripMenuItem item = new ToolStripMenuItem
             {
-                Text = "Manage.."
+                Text = LocalizationService.GetString("Forms.MainForm.Menus.manageToolStripMenuItem") ?? "Manage.."
             };
             item.Click += OnClickToolManage;
 
@@ -280,7 +280,7 @@ namespace UoFiddler.Forms
 
                 ToolStripMenuItem sub = new ToolStripMenuItem
                 {
-                    Text = "Start",
+                    Text = LocalizationService.GetString("Forms.MainForm.Menus.Start") ?? "Start",
                     Tag = -1
                 };
 
