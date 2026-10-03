@@ -113,7 +113,12 @@ namespace UoFiddler.Forms
                 // 汉化插件菜单项
                 LocalizePluginMenuItems(toolStripDropDownButtonPlugins, plug.Instance.Name);
                 
+                // 记录添加标签页前的数量
+                int tabCountBefore = TabPanel.TabPages.Count;
                 plug.Instance.ModifyTabPages(TabPanel);
+                
+                // 汉化插件标签页标题（处理所有新添加的标签页）
+                LocalizePluginTabPages(TabPanel, tabCountBefore, plug.Instance.Name);
             }
 
             foreach (TabPage tab in TabPanel.TabPages)
@@ -450,20 +455,46 @@ namespace UoFiddler.Forms
         }
 
         /// <summary>
-        /// 汉化插件添加的菜单项
+        /// 汉化插件添加的菜单项（仅处理最后一个菜单项，即刚添加的）
         /// </summary>
         private void LocalizePluginMenuItems(ToolStripDropDownButton toolStrip, string pluginName)
         {
-            foreach (ToolStripItem item in toolStrip.DropDownItems)
+            // 仅处理最后添加的菜单项
+            if (toolStrip.DropDownItems.Count > 0)
             {
-                if (item is ToolStripMenuItem menuItem && !string.IsNullOrEmpty(menuItem.Text))
+                ToolStripItem lastItem = toolStrip.DropDownItems[toolStrip.DropDownItems.Count - 1];
+                
+                if (lastItem is ToolStripMenuItem menuItem && !string.IsNullOrEmpty(menuItem.Text))
                 {
-                    // 首先尝试使用 Name 作为键（如果设置了的话）
-                    string lookupKey = !string.IsNullOrEmpty(menuItem.Name) ? menuItem.Name : menuItem.Text;
+                    // 尝试使用菜单项文本作为键查找汉化
+                    string lookupKey = menuItem.Text;
                     string? localizedText = LocalizationService.GetString($"Forms.MainForm.Plugins.{lookupKey}");
                     if (!string.IsNullOrEmpty(localizedText))
                     {
                         menuItem.Text = localizedText;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 汉化插件添加的标签页标题
+        /// </summary>
+        private void LocalizePluginTabPages(TabControl tabControl, int startIndex, string pluginName)
+        {
+            // 处理从 startIndex 开始的所有新添加的标签页
+            for (int i = startIndex; i < tabControl.TabPages.Count; i++)
+            {
+                TabPage tab = tabControl.TabPages[i];
+                
+                if (!string.IsNullOrEmpty(tab.Text))
+                {
+                    // 尝试使用标签页文本作为键查找汉化
+                    string lookupKey = tab.Text;
+                    string? localizedText = LocalizationService.GetString($"Forms.MainForm.PluginTabPages.{lookupKey}");
+                    if (!string.IsNullOrEmpty(localizedText))
+                    {
+                        tab.Text = localizedText;
                     }
                 }
             }

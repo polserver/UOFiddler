@@ -70,10 +70,23 @@
       },
       "Plugins": {
         "Mass Import": "批量导入",
-        "Compare": "比较",
-        "Multi Editor": "多编辑器",
         "Send Item": "发送物品",
-        "UOP Packer": "UOP打包器"
+        "PluginTest": "插件测试"
+      },
+      "PluginTabPages": {
+        "Multi Editor": "多编辑器",
+        "PluginTest": "插件测试",
+        "UOP Packer": "UOP打包器",
+        "Compare Items": "对比物品",
+        "Compare Land": "对比地形",
+        "Compare CliLocs": "对比CliLoc",
+        "Compare Hues": "对比色调",
+        "Compare Gumps": "对比Gump",
+        "Compare Map": "对比地图",
+        "Compare Texture": "对比纹理",
+        "Compare AnimData": "对比动画数据",
+        "Compare RadarCol": "对比雷达颜色",
+        "Compare TileData": "对比图块数据"
       }
     },
     "LoadProfileForm": {
