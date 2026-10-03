@@ -97,6 +97,9 @@ namespace UoFiddler.Forms
             LoadExternToolStripMenu();
             GlobalPlugins.Plugins.FindPlugins($@"{Application.StartupPath}\plugins");
 
+            // 为所有插件设置汉化 getter
+            UoFiddler.Controls.Plugin.PluginBase.LocalizationGetter = (key) => LocalizationService.GetString(key);
+
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.UserPaint, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);

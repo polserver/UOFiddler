@@ -177,6 +177,15 @@
     "ExceptionForm": {
       "Title": "异常",
       "OK": "确定"
+    },
+    "MassImportForm": {
+      "Title": "批量导入",
+      "groupBox1": "XML",
+      "button1": "创建默认 XML",
+      "button2": "加载 XML",
+      "groupBox2": "输出",
+      "button3": "开始",
+      "checkBoxDirectSave": "直接保存"
     }
   }
 }

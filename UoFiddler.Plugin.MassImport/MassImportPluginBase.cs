@@ -76,6 +76,13 @@ namespace UoFiddler.Plugin.MassImport
             {
                 TopMost = true
             };
+            
+            // 应用汉化
+            if (PluginBase.LocalizationGetter != null)
+            {
+                _importForm.SetLocalization(PluginBase.LocalizationGetter);
+            }
+            
             _importForm.Show();
         }
     }

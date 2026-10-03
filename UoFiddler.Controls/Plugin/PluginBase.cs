@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
@@ -25,6 +26,11 @@ namespace UoFiddler.Controls.Plugin
         public abstract string Description { get; }
         public abstract string Author { get; }
         public abstract string Version { get; }
+
+        /// <summary>
+        /// 静态属性：汉化字符串获取器，由主程序在启动时设置
+        /// </summary>
+        public static Func<string, string> LocalizationGetter { get; set; }
 
         /// <summary>
         /// Per-plugin logger, categorized by the concrete plugin type. Resolved on demand

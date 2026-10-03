@@ -30,6 +30,47 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
             Icon = Options.GetFiddlerIcon();
             _importList = new List<ImportEntry>();
+            
+            // 在窗体加载完成后应用汉化
+            this.Shown += (s, e) =>
+            {
+                if (_localizationGetter != null)
+                {
+                    ApplyLocalization();
+                }
+            };
+        }
+
+        private Func<string, string> _localizationGetter;
+
+        /// <summary>
+        /// 设置汉化回调
+        /// </summary>
+        /// <param name="localizationGetter">返回汉化字符串的委托，参数为键值</param>
+        public void SetLocalization(Func<string, string> localizationGetter)
+        {
+            _localizationGetter = localizationGetter;
+            // 如果窗体已显示，立即应用汉化
+            if (this.Visible)
+            {
+                ApplyLocalization();
+            }
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null)
+            {
+                return;
+            }
+
+            this.Text = _localizationGetter("Forms.MassImportForm.Title") ?? "批量导入";
+            groupBox1.Text = _localizationGetter("Forms.MassImportForm.groupBox1") ?? "XML";
+            button1.Text = _localizationGetter("Forms.MassImportForm.button1") ?? "创建默认 XML";
+            button2.Text = _localizationGetter("Forms.MassImportForm.button2") ?? "加载 XML";
+            groupBox2.Text = _localizationGetter("Forms.MassImportForm.groupBox2") ?? "输出";
+            button3.Text = _localizationGetter("Forms.MassImportForm.button3") ?? "开始";
+            checkBoxDirectSave.Text = _localizationGetter("Forms.MassImportForm.checkBoxDirectSave") ?? "直接保存";
         }
 
         private void DefaultXMLOnClick(object sender, EventArgs e)
