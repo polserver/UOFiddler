@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
 {
@@ -23,6 +24,9 @@ namespace UoFiddler.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+            
+            // 汉化窗口
+            LocalizationService.LocalizeForm(this);
 
             checkBoxCheckOnStart.Checked = FiddlerOptions.UpdateCheckOnStart;
             checkBoxFormState.Checked = FiddlerOptions.StoreFormState;

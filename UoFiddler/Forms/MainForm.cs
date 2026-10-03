@@ -109,6 +109,10 @@ namespace UoFiddler.Forms
                 }
 
                 plug.Instance.ModifyPluginToolStrip(toolStripDropDownButtonPlugins);
+                
+                // 汉化插件菜单项
+                LocalizePluginMenuItems(toolStripDropDownButtonPlugins, plug.Instance.Name);
+                
                 plug.Instance.ModifyTabPages(TabPanel);
             }
 
@@ -443,6 +447,26 @@ namespace UoFiddler.Forms
 
             new UnDockedForm(TabPanel.SelectedTab, ReDock).Show();
             TabPanel.TabPages.Remove(TabPanel.SelectedTab);
+        }
+
+        /// <summary>
+        /// 汉化插件添加的菜单项
+        /// </summary>
+        private void LocalizePluginMenuItems(ToolStripDropDownButton toolStrip, string pluginName)
+        {
+            foreach (ToolStripItem item in toolStrip.DropDownItems)
+            {
+                if (item is ToolStripMenuItem menuItem && !string.IsNullOrEmpty(menuItem.Text))
+                {
+                    // 首先尝试使用 Name 作为键（如果设置了的话）
+                    string lookupKey = !string.IsNullOrEmpty(menuItem.Name) ? menuItem.Name : menuItem.Text;
+                    string? localizedText = LocalizationService.GetString($"Forms.MainForm.Plugins.{lookupKey}");
+                    if (!string.IsNullOrEmpty(localizedText))
+                    {
+                        menuItem.Text = localizedText;
+                    }
+                }
+            }
         }
 
         /// <summary>

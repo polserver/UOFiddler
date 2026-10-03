@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin;
+using UoFiddler.Localization;
 using Ultima.Helpers;
 
 namespace UoFiddler.Forms
@@ -27,6 +28,9 @@ namespace UoFiddler.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+            
+            // 汉化窗口标题
+            LocalizationService.LocalizeForm(this);
 
             foreach (AvailablePlugin plugin in GlobalPlugins.Plugins.AvailablePlugins)
             {

@@ -67,6 +67,13 @@
         "manageToolStripMenuItem1": "管理...",
         "toolStripMenuItemHelp": "帮助",
         "toolStripMenuItemAbout": "关于"
+      },
+      "Plugins": {
+        "Mass Import": "批量导入",
+        "Compare": "比较",
+        "Multi Editor": "多编辑器",
+        "Send Item": "发送物品",
+        "UOP Packer": "UOP打包器"
       }
     },
     "LoadProfileForm": {
@@ -118,6 +125,9 @@
       "tsBtnReloadPaths": "重新加载路径",
       "tsBtnSetPathManual": "手动设置路径"
     },
+    "ManagePluginsForm": {
+      "Title": "管理插件（需要重新启动）"
+    },
     "ManageToolsForm": {
       "Title": "管理工具",
       "groupBox3": "工具列表",
@@ -132,6 +142,20 @@
       "button5": "保存",
       "button6": "添加",
       "button7": "保存"
+    },
+    "AboutBoxForm": {
+      "Title": "关于",
+      "checkBoxCheckOnStart": "启动时检查更新",
+      "button1": "检查更新",
+      "linkLabel1": "访问主页",
+      "label1": "项目作者和管理员",
+      "label3": "特殊贡献者",
+      "label5": "特别感谢",
+      "checkBoxFormState": "保存窗口状态"
+    },
+    "ExceptionForm": {
+      "Title": "异常",
+      "OK": "确定"
     }
   }
 }

@@ -12,6 +12,7 @@
 using System;
 using System.Windows.Forms;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
 {
@@ -21,6 +22,9 @@ namespace UoFiddler.Forms
         {
             InitializeComponent();
             Icon = Options.GetFiddlerIcon();
+            
+            // 汉化窗口
+            LocalizationService.LocalizeForm(this);
 
             richTextBox.Text = err.InnerException != null
                 ? $"{err.InnerException.Message}\n{err.InnerException.GetType()}"
