@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using Ultima;
 using Ultima.Helpers;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
 {
@@ -29,6 +30,9 @@ namespace UoFiddler.Forms
 
             pgPaths.SelectedObject = new DictionaryPropertyGridAdapter(Files.MulPath);
             tsTbRootPath.Text = Files.RootDir;
+
+            // 应用中文汉化
+            LocalizationService.LocalizeForm(this);
         }
 
         private void ReloadPath(object sender, EventArgs e)

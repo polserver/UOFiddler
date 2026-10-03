@@ -110,6 +110,11 @@
       "button2": "...",
       "RestoreDefaultsButton": "恢复默认值",
       "buttonClose": "关闭"
+    },
+    "PathSettingsForm": {
+      "Title": "路径设置",
+      "tsBtnReloadPaths": "重新加载路径",
+      "tsBtnSetPathManual": "手动设置路径"
     }
   }
 }
