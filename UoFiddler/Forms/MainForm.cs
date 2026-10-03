@@ -53,6 +53,9 @@ namespace UoFiddler.Forms
             _log = logger;
             InitializeComponent();
 
+            // 调试: 打印Form名称
+            Console.WriteLine($"[DEBUG] MainForm.Name = '{this.Name}'");
+            
             // 应用本地化
             LocalizationService.LocalizeForm(this);
 
