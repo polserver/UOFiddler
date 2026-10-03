@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Plugin;
 using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
@@ -27,9 +28,25 @@ namespace UoFiddler.Forms
             
             // 汉化窗口
             LocalizationService.LocalizeForm(this);
+            
+            // 在 Load 事件中汉化更新日志
+            this.Load += (s, e) => ApplyChangelogLocalization();
 
             checkBoxCheckOnStart.Checked = FiddlerOptions.UpdateCheckOnStart;
             checkBoxFormState.Checked = FiddlerOptions.StoreFormState;
+        }
+
+        private void ApplyChangelogLocalization()
+        {
+            var getter = PluginBase.LocalizationGetter;
+            if (getter == null) return;
+
+            // 获取汉化的更新日志（如果有）
+            string changelog = getter("Forms.AboutBoxForm.changelog");
+            if (!string.IsNullOrEmpty(changelog))
+            {
+                richTextBox1.Text = changelog;
+            }
         }
 
         private void OnChangeCheck(object sender, EventArgs e)
