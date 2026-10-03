@@ -121,6 +121,11 @@ namespace UoFiddler.Localization
                     Console.WriteLine($"[LocalizationService] 处理ToolStripMenuItem: {menuItem.Name}");
                     LocalizeMenuStripItem(menuItem, formName);
                 }
+                else if (item is ToolStripButton button)
+                {
+                    Console.WriteLine($"[LocalizationService] 处理ToolStripButton: {button.Name}");
+                    LocalizeToolStripButton(button, formName);
+                }
             }
         }
 
@@ -144,6 +149,22 @@ namespace UoFiddler.Localization
             foreach (ToolStripMenuItem subItem in item.DropDownItems.OfType<ToolStripMenuItem>())
             {
                 LocalizeMenuStripItem(subItem, formName);
+            }
+        }
+
+        /// <summary>
+        /// 本地化ToolStripButton
+        /// </summary>
+        private static void LocalizeToolStripButton(ToolStripButton button, string formName)
+        {
+            if (!string.IsNullOrEmpty(button.Name))
+            {
+                string? localizedText = GetString($"Forms.{formName}.{button.Name}");
+                if (!string.IsNullOrEmpty(localizedText))
+                {
+                    Console.WriteLine($"[LocalizationService] ToolStripButton {button.Name} → {localizedText}");
+                    button.Text = localizedText;
+                }
             }
         }
 
