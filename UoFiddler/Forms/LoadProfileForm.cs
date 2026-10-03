@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Classes;
+using UoFiddler.Localization;
 using Ultima.Helpers;
 
 namespace UoFiddler.Forms
@@ -44,6 +45,9 @@ namespace UoFiddler.Forms
 
             comboBoxLoad.SelectedIndex = 0;
             comboBoxBasedOn.SelectedIndex = 0;
+
+            // 应用中文汉化
+            LocalizationService.LocalizeForm(this);
         }
 
         private static string[] GetProfiles()

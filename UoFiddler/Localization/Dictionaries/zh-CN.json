@@ -66,6 +66,14 @@
         "toolStripMenuItemHelp": "帮助",
         "toolStripMenuItemAbout": "关于"
       }
+    },
+    "LoadProfileForm": {
+      "Title": "选择配置文件",
+      "groupBox1": "加载",
+      "groupBox2": "创建",
+      "button1": "加载配置文件",
+      "button2": "创建配置文件",
+      "label1": "基于"
     }
   }
 }
