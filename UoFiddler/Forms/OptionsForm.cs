@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.Plugin;
 using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
@@ -101,6 +102,39 @@ namespace UoFiddler.Forms
 
             // 应用中文汉化
             LocalizationService.LocalizeForm(this);
+            
+            // 在 Load 事件中应用 ToolTip 汉化
+            this.Load += (s, e) => ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            var getter = PluginBase.LocalizationGetter;
+            if (getter == null) return;
+
+            // ToolTips
+            toolTip1.SetToolTip(numericUpDownItemSizeHeight, getter("Forms.OptionsForm.tooltip_numericUpDownItemSizeHeight") ?? "Height");
+            toolTip1.SetToolTip(checkBoxItemClip, getter("Forms.OptionsForm.tooltip_checkBoxItemClip") ?? "ItemClip images in items tab shrinked or clipped");
+            toolTip1.SetToolTip(label1, getter("Forms.OptionsForm.tooltip_label1") ?? "ItemSize controls the size of images in items tab");
+            toolTip1.SetToolTip(numericUpDownItemSizeWidth, getter("Forms.OptionsForm.tooltip_numericUpDownItemSizeWidth") ?? "Width");
+            toolTip1.SetToolTip(checkBoxCacheData, getter("Forms.OptionsForm.tooltip_checkBoxCacheData") ?? "CacheData should mul entries be cached for faster load");
+            toolTip1.SetToolTip(checkBoxNewMapSize, getter("Forms.OptionsForm.tooltip_checkBoxNewMapSize") ?? "NewMapSize Felucca/Trammel width 7168?");
+            toolTip1.SetToolTip(checkBoxuseDiff, getter("Forms.OptionsForm.tooltip_checkBoxuseDiff") ?? "Should map diff files be used");
+            toolTip1.SetToolTip(checkBoxPolSoundIdOffset, getter("Forms.OptionsForm.tooltip_checkBoxPolSoundIdOffset") ?? "UO Sounds are indexed from 0 but POL uses +1 offset.\r\nWhen this option is checked Sounds tab will display sound indexes starting from 1 instead of 0.\r\nThis option also affects the export sound list.");
+            toolTip1.SetToolTip(label2, getter("Forms.OptionsForm.tooltip_label2") ?? "Defines the map name");
+            toolTip1.SetToolTip(label3, getter("Forms.OptionsForm.tooltip_label3") ?? "Defines the map name");
+            toolTip1.SetToolTip(label4, getter("Forms.OptionsForm.tooltip_label4") ?? "Defines the map name");
+            toolTip1.SetToolTip(label5, getter("Forms.OptionsForm.tooltip_label5") ?? "Defines the map name");
+            toolTip1.SetToolTip(label6, getter("Forms.OptionsForm.tooltip_label6") ?? "Defines the map name");
+            toolTip1.SetToolTip(label7, getter("Forms.OptionsForm.tooltip_label7") ?? "Defines the cmd to send Client to loc");
+            toolTip1.SetToolTip(label8, getter("Forms.OptionsForm.tooltip_label8") ?? "{1} = x, {2} = y, {3} = z, {4} = mapid, {5} = mapname");
+            toolTip1.SetToolTip(label9, getter("Forms.OptionsForm.tooltip_label9") ?? "Defines the map name");
+            toolTip1.SetToolTip(FocusColorLabel, getter("Forms.OptionsForm.tooltip_FocusColorLabel") ?? "ItemSize controls the size of images in items tab");
+            toolTip1.SetToolTip(SelectedColorLabel, getter("Forms.OptionsForm.tooltip_SelectedColorLabel") ?? "ItemSize controls the size of images in items tab");
+            toolTip1.SetToolTip(radioExportFilenameHex, getter("Forms.OptionsForm.tooltip_radioExportFilenameHex") ?? "Exported filenames embed the ID in hexadecimal form.");
+            toolTip1.SetToolTip(radioExportFilenameDec, getter("Forms.OptionsForm.tooltip_radioExportFilenameDec") ?? "Exported filenames embed the ID in decimal form.");
+            toolTip1.SetToolTip(checkBoxExportFilenameDecPad, getter("Forms.OptionsForm.tooltip_checkBoxExportFilenameDecPad") ?? "When using decimal format, pad the ID with leading zeros so files sort correctly.");
+            toolTip1.SetToolTip(comboBoxSaveFormat, getter("Forms.OptionsForm.tooltip_comboBoxSaveFormat") ?? "Which container a save writes for the files the client ships as either. Affects art, gumpart, sound, multis and maps; everything else has only one format.");
         }
 
         private void OnClickApply(object sender, EventArgs e)

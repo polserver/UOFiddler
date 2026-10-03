@@ -106,7 +106,66 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
             pictureBoxDrawTiles.MouseWheel += PictureBoxDrawTiles_OnMouseWheel;
             pictureBoxMulti.MouseWheel += PictureBoxMulti_OnMouseWheel;
+            
+            // 在加载完成时应用汉化
+            this.Load += (s, e) => ApplyLocalization();
+        }
 
+        /// <summary>
+        /// 应用汉化（内部方法）
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            var getter = UoFiddler.Controls.Plugin.PluginBase.LocalizationGetter;
+            if (getter == null) return;
+
+            tileTab.Text = getter("Forms.MultiEditorControl.tileTab") ?? "Tiles";
+            designTab.Text = getter("Forms.MultiEditorControl.designTab") ?? "Design";
+            importTab.Text = getter("Forms.MultiEditorControl.importTab") ?? "Import";
+            Save.Text = getter("Forms.MultiEditorControl.Save") ?? "Save";
+            groupBox1.Text = getter("Forms.MultiEditorControl.groupBox1") ?? "Multi Size";
+            groupBox2.Text = getter("Forms.MultiEditorControl.groupBox2") ?? "Save";
+            groupBox3.Text = getter("Forms.MultiEditorControl.groupBox3") ?? "Selected Tile X,Y,Z";
+            groupBox4.Text = getter("Forms.MultiEditorControl.groupBox4") ?? "Export";
+            BTN_CreateBlank.Text = getter("Forms.MultiEditorControl.BTN_CreateBlank") ?? "Create Blank";
+            BTN_Resize.Text = getter("Forms.MultiEditorControl.BTN_Resize") ?? "Resize Multi";
+            BTN_Save.Text = getter("Forms.MultiEditorControl.BTN_Save") ?? "Save to ID";
+            BTN_Export_XML.Text = getter("Forms.MultiEditorControl.BTN_Export_XML") ?? ".xml";
+            BTN_Export_CSV.Text = getter("Forms.MultiEditorControl.BTN_Export_CSV") ?? ".csv";
+            BTN_Export_WSC.Text = getter("Forms.MultiEditorControl.BTN_Export_WSC") ?? ".wsc";
+            BTN_Export_UOA.Text = getter("Forms.MultiEditorControl.BTN_Export_UOA") ?? ".uoa.txt";
+            BTN_Export_UOX3.Text = getter("Forms.MultiEditorControl.BTN_Export_UOX3") ?? ".uox3";
+            BTN_Export_Txt.Text = getter("Forms.MultiEditorControl.BTN_Export_Txt") ?? ".txt";
+            brushSizeLabel.Text = getter("Forms.MultiEditorControl.brushSizeLabel") ?? "Brush size:";
+            RB_Brush_S.Text = getter("Forms.MultiEditorControl.RB_Brush_S") ?? "S";
+            RB_Brush_M.Text = getter("Forms.MultiEditorControl.RB_Brush_M") ?? "M";
+            RB_Brush_L.Text = getter("Forms.MultiEditorControl.RB_Brush_L") ?? "L";
+            DynamiccheckBox.Text = getter("Forms.MultiEditorControl.DynamiccheckBox") ?? "Invisible";
+            toolStripDropDownButton1.Text = getter("Forms.MultiEditorControl.toolStripDropDownButton1") ?? "Misc";
+            UndoItems.Text = getter("Forms.MultiEditorControl.UndoItems") ?? "Undo";
+            showWalkablesToolStripMenuItem.Text = getter("Forms.MultiEditorControl.showWalkablesToolStripMenuItem") ?? "Show Walkable tiles";
+            showDoubleSurfaceMenuItem.Text = getter("Forms.MultiEditorControl.showDoubleSurfaceMenuItem") ?? "Show double surface";
+            removeAllTransToolStripMenuItem.Text = getter("Forms.MultiEditorControl.removeAllTransToolStripMenuItem") ?? "Reset transparent tiles";
+            DrawTileLabel.Text = getter("Forms.MultiEditorControl.DrawTileLabel") ?? "Draw ID:";
+            SelectedTileLabel.Text = getter("Forms.MultiEditorControl.SelectedTileLabel") ?? "ID:";
+            toolStripBtnHelp.Text = getter("Forms.MultiEditorControl.toolStripBtnHelp") ?? "Help";
+            
+            toolTip1.SetToolTip(textBox_Export, getter("Forms.MultiEditorControl.tooltip_textBox_Export") ?? "FileName");
+            toolTip1.SetToolTip(BTN_RectFill, getter("Forms.MultiEditorControl.tooltip_BTN_RectFill") ?? "Rectangle Fill [B]");
+            toolTip1.SetToolTip(BTN_LineDraw, getter("Forms.MultiEditorControl.tooltip_BTN_LineDraw") ?? "Line Draw [L]");
+            toolTip1.SetToolTip(RB_Brush_S, getter("Forms.MultiEditorControl.tooltip_RB_Brush_S") ?? "Small brush (1x1)");
+            toolTip1.SetToolTip(RB_Brush_M, getter("Forms.MultiEditorControl.tooltip_RB_Brush_M") ?? "Medium brush (3x3)");
+            toolTip1.SetToolTip(RB_Brush_L, getter("Forms.MultiEditorControl.tooltip_RB_Brush_L") ?? "Large brush (5x5)");
+            toolTip1.SetToolTip(BTN_Trans, getter("Forms.MultiEditorControl.tooltip_BTN_Trans") ?? "Switch Transparent [T]");
+            toolTip1.SetToolTip(BTN_Pipette, getter("Forms.MultiEditorControl.tooltip_BTN_Pipette") ?? "Pick A Tile [P]");
+            toolTip1.SetToolTip(BTN_Floor, getter("Forms.MultiEditorControl.tooltip_BTN_Floor") ?? "Draw Virtual Floor [F]");
+            toolTip1.SetToolTip(BTN_Z, getter("Forms.MultiEditorControl.tooltip_BTN_Z") ?? "Apply Z Level [E]");
+            toolTip1.SetToolTip(BTN_Remove, getter("Forms.MultiEditorControl.tooltip_BTN_Remove") ?? "Remove A Tile [R]");
+            toolTip1.SetToolTip(BTN_Draw, getter("Forms.MultiEditorControl.tooltip_BTN_Draw") ?? "Draw A Tile [D]");
+            toolTip1.SetToolTip(BTN_Select, getter("Forms.MultiEditorControl.tooltip_BTN_Select") ?? "Select A Tile [S]");
+            toolTip1.SetToolTip(collapsibleSplitter1, getter("Forms.MultiEditorControl.tooltip_collapsibleSplitter1") ?? "Selected Tile Panel");
+            toolTip1.SetToolTip(MaxHeightTrackBar, getter("Forms.MultiEditorControl.tooltip_MaxHeightTrackBar") ?? "Max Height Displayed");
+            toolTip1.SetToolTip(pictureBoxMinimap, getter("Forms.MultiEditorControl.tooltip_pictureBoxMinimap") ?? "Minimap — click to pan");
         }
 
         /// <summary>
@@ -697,6 +756,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            ApplyLocalization();
             ApplyDarkModeIfNeeded();
 
             Options.LoadedUltimaClass["TileData"] = true;
