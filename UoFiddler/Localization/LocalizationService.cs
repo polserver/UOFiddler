@@ -212,10 +212,17 @@ namespace UoFiddler.Localization
             else if (control is Button || control is CheckBox || control is Label || 
                      control is GroupBox || control is RadioButton)
             {
-                // 普通文本控件
+                // 普通文本控件 - 尝试两种键格式
                 string? localizedText = GetString($"Forms.{formName}.{control.Name}.Text");
+                if (string.IsNullOrEmpty(localizedText))
+                {
+                    // 如果没有找到 .Text 后缀的键，尝试直接使用控件名
+                    localizedText = GetString($"Forms.{formName}.{control.Name}");
+                }
+                
                 if (!string.IsNullOrEmpty(localizedText))
                 {
+                    Console.WriteLine($"[LocalizationService] 控件 {control.Name} → {localizedText}");
                     control.Text = localizedText;
                 }
             }
