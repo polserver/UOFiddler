@@ -1,0 +1,48 @@
+{
+  "version": "4.24.0",
+  "language": "zh-CN",
+  "description": "UOFiddler 简体中文汉化包",
+  "Forms": {
+    "MainForm": {
+      "Title": "UOFiddler",
+      "Tabs": {
+        "Start": "开始",
+        "Multis": "多重组件",
+        "Animations": "动画",
+        "Items": "物品",
+        "LandTiles": "地形图块",
+        "Textures": "纹理",
+        "Gumps": "Gump界面",
+        "Sounds": "音效",
+        "Hues": "色调",
+        "Fonts": "字体",
+        "Cliloc": "本地化字符串",
+        "Map": "地图",
+        "Light": "光照",
+        "Speech": "语音",
+        "Skills": "技能",
+        "AnimData": "动画数据",
+        "MultiMap": "多重地图/位面",
+        "Dress": "装扮",
+        "TileData": "图块数据",
+        "RadarColor": "雷达颜色",
+        "SkillGrp": "技能组",
+        "VerdataTab": "Verdata 补丁"
+      },
+      "Menus": {
+        "SettingsMenu": "设置",
+        "AlwaysOnTopMenuItem": "始终置顶",
+        "darkModeMenuItem": "暗黑模式",
+        "OptionsMenuItem": "选项...",
+        "PathSettingsMenuItem": "路径设置...",
+        "ReloadFilesMenuItem": "重新加载文件",
+        "ViewMenu": "视图",
+        "ExternToolsMenu": "外部工具",
+        "ManageMenu": "管理...",
+        "PluginsMenu": "插件",
+        "HelpMenu": "帮助",
+        "AboutMenuItem": "关于"
+      }
+    }
+  }
+}

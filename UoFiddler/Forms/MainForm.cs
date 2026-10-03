@@ -22,6 +22,7 @@ using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Properties;
 using UoFiddler.Controls.Plugin;
+using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
 {
@@ -51,6 +52,9 @@ namespace UoFiddler.Forms
         {
             _log = logger;
             InitializeComponent();
+
+            // 应用本地化
+            LocalizationService.LocalizeForm(this);
 
             darkModeMenuItem.Checked = AppSettings.DarkMode;
 

@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using UoFiddler.Forms;
+using UoFiddler.Localization;
 
 namespace UoFiddler
 {
@@ -41,6 +42,10 @@ namespace UoFiddler
             serilogLogger.Information("UOFiddler - Application start");
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            // 初始化本地化服务
+            LocalizationService.Initialize(Path.Combine(AppContext.BaseDirectory, "Localization", "Dictionaries"));
+            LocalizationService.SetLanguage("zh-CN");
 
             var services = new ServiceCollection();
             services.AddLogging(b => b.AddSerilog(serilogLogger, dispose: true));
