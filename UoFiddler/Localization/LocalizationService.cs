@@ -90,10 +90,60 @@ namespace UoFiddler.Localization
                 {
                     Console.WriteLine($"[LocalizationService] 警告: Form没有MainMenuStrip");
                 }
+
+                // 本地化工具栏中的菜单按钮 (用于ToolStrip中的ToolStripDropDownButton)
+                foreach (var toolStrip in form.Controls.OfType<ToolStrip>())
+                {
+                    Console.WriteLine($"[LocalizationService] 检测到ToolStrip，开始本地化其中的菜单按钮");
+                    LocalizeToolStripItems(toolStrip.Items, form.Name);
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[LocalizationService] 本地化Form失败: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        /// <summary>
+        /// 本地化ToolStrip中的所有项
+        /// </summary>
+        private static void LocalizeToolStripItems(ToolStripItemCollection items, string formName)
+        {
+            foreach (var item in items)
+            {
+                if (item is ToolStripDropDownButton dropDownBtn)
+                {
+                    Console.WriteLine($"[LocalizationService] 处理ToolStripDropDownButton: {dropDownBtn.Name}");
+                    LocalizeToolStripItem(dropDownBtn, formName);
+                }
+                else if (item is ToolStripMenuItem menuItem)
+                {
+                    Console.WriteLine($"[LocalizationService] 处理ToolStripMenuItem: {menuItem.Name}");
+                    LocalizeMenuStripItem(menuItem, formName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 本地化ToolStripDropDownButton和其他ToolStripItem
+        /// </summary>
+        private static void LocalizeToolStripItem(ToolStripDropDownButton item, string formName)
+        {
+            if (!string.IsNullOrEmpty(item.Name))
+            {
+                string key = $"Forms.{formName}.Menus.{item.Name}";
+                string? localizedText = GetString(key);
+                if (!string.IsNullOrEmpty(localizedText))
+                {
+                    Console.WriteLine($"[LocalizationService] 菜单按钮 {item.Name} → {localizedText}");
+                    item.Text = localizedText;
+                }
+            }
+
+            // 递归处理子项
+            foreach (ToolStripMenuItem subItem in item.DropDownItems.OfType<ToolStripMenuItem>())
+            {
+                LocalizeMenuStripItem(subItem, formName);
             }
         }
 
