@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Localization;
 
 namespace UoFiddler.Forms
 {
@@ -97,6 +98,9 @@ namespace UoFiddler.Forms
             }
 
             comboBoxSaveFormat.SelectedIndex = ClientFileSaveFormats.IndexOf(Options.SaveFormat);
+
+            // 应用中文汉化
+            LocalizationService.LocalizeForm(this);
         }
 
         private void OnClickApply(object sender, EventArgs e)
