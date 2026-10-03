@@ -126,7 +126,15 @@
       "tsBtnSetPathManual": "手动设置路径"
     },
     "ManagePluginsForm": {
-      "Title": "管理插件（需要重新启动）"
+      "Title": "管理插件（需要重新启动）",
+      "Plugins": {
+        "MassImportPlugin": "批量导入插件",
+        "ComparePlugin": "对比插件",
+        "MultiEditorPlugin": "多编辑器插件",
+        "SendItemPlugin": "发送物品插件",
+        "UOP Packer": "UOP打包器",
+        "PluginTest": "插件测试"
+      }
     },
     "ManageToolsForm": {
       "Title": "管理工具",
