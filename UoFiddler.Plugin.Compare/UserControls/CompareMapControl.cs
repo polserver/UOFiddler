@@ -32,6 +32,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
             pictureBox.MouseWheel += OnMouseWheel;
         }
 
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            toolStripButton2.Text = getLocalized("button1") ?? "Load";
+            toolStripButton1.Text = getLocalized("button2") ?? "...";
+            showDifferencesToolStripMenuItem.Text = getLocalized("showDifferencesToolStripMenuItem") ?? "Show Differences";
+            showMap1ToolStripMenuItem.Text = getLocalized("showMap1ToolStripMenuItem") ?? "Show Map1";
+            showMap2ToolStripMenuItem.Text = getLocalized("showMap2ToolStripMenuItem") ?? "Show Map2";
+            feluccaToolStripMenuItem.Text = getLocalized("feluccaToolStripMenuItem") ?? "Felucca";
+            trammelToolStripMenuItem.Text = getLocalized("trammelToolStripMenuItem") ?? "Trammel";
+            ilshenarToolStripMenuItem.Text = getLocalized("ilshenarToolStripMenuItem") ?? "Ilshenar";
+            malasToolStripMenuItem.Text = getLocalized("malasToolStripMenuItem") ?? "Malas";
+            tokunoToolStripMenuItem.Text = getLocalized("tokunoToolStripMenuItem") ?? "Tokuno";
+            terMurToolStripMenuItem.Text = getLocalized("terMurToolStripMenuItem") ?? "TerMur";
+            markDiffToolStripMenuItem.Text = getLocalized("markDiffToolStripMenuItem") ?? "Mark Diff";
+        }
+
         private bool _loaded;
         private bool _moving;
         private Point _movingPoint;

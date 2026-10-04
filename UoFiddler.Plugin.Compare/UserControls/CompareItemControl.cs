@@ -27,9 +27,36 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareItemControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareItemControl()
         {
             InitializeComponent();
+        }
+
+        public void SetLocalization(Func<string, string> localizationGetter)
+        {
+            _localizationGetter = localizationGetter;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 汉化菜单项
+            extractAsToolStripMenuItem.Text = _localizationGetter("extractAs") ?? "Export Image..";
+            tiffToolStripMenuItem.Text = _localizationGetter("asBmp") ?? "As Bmp";
+            bmpToolStripMenuItem.Text = _localizationGetter("asTiff") ?? "As Tiff";
+            jpgToolStripMenuItem.Text = _localizationGetter("asJpg") ?? "As Jpg";
+            pngToolStripMenuItem.Text = _localizationGetter("asPng") ?? "As Png";
+            copyItem2To1ToolStripMenuItem.Text = _localizationGetter("copyItem2To1") ?? "Copy Item to left";
+            
+            // 汉化按钮和复选框
+            btnCopyAllDiff.Text = _localizationGetter("copyAllDiff") ?? "Copy All Diff";
+            button1.Text = _localizationGetter("loadSecond") ?? "Load Second";
+            checkBox1.Text = _localizationGetter("showOnlyDifferences") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("multiSelect") ?? "Multi-Select";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();

@@ -18,6 +18,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
             InitializeComponent();
         }
 
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            btnCopyLandSelected.Text = getLocalized("btnCopyLandSelected") ?? "Copy Selected";
+            btnCopyLandAllDiff.Text = getLocalized("btnCopyLandAllDiff") ?? "Copy All Different";
+            btnCopyItemSelected.Text = getLocalized("btnCopyItemSelected") ?? "Copy Selected";
+            btnCopyItemAllDiff.Text = getLocalized("btnCopyItemAllDiff") ?? "Copy All Different";
+            tabLand.Text = getLocalized("tabLand") ?? "Land Tiles";
+            tabItem.Text = getLocalized("tabItem") ?? "Static Tiles";
+        }
+
         // ── State ────────────────────────────────────────────────────────────────
 
         private SecondTileData _secondTileData;

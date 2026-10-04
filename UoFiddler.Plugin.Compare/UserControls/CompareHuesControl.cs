@@ -36,6 +36,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _hue2Loaded = false;
         }
 
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            button1.Text = getLocalized("button1") ?? "Load";
+            button2.Text = getLocalized("button2") ?? "...";
+            chkMultiSelect.Text = getLocalized("chkMultiSelect") ?? "Multi-Select";
+            applyHue1ToHue2ToolStripMenuItem.Text = getLocalized("applyHue1ToHue2") ?? "Apply Hue to left";
+        }
+
         private const int _itemHeight = 20;
         private Bitmap _bmp1;
         private Bitmap _bmp2;

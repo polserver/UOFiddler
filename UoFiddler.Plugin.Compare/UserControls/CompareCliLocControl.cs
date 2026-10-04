@@ -30,6 +30,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _sortColumn = 0;
         }
 
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            button1.Text = getLocalized("button1") ?? "Load";
+            button2.Text = getLocalized("button2") ?? "Load";
+            button3.Text = getLocalized("button3") ?? "...";
+            button4.Text = getLocalized("button4") ?? "...";
+            button5.Text = getLocalized("button5") ?? "Find Next Diff";
+            checkBox1.Text = getLocalized("checkBox1") ?? "Show Only Differences";
+            labelDiff1.Text = getLocalized("labelDiff1") ?? "File 1:";
+            labelDiff2.Text = getLocalized("labelDiff2") ?? "File 2:";
+        }
+
         private static StringList _cliloc1;
         private static StringList _cliloc2;
         private static BindingSource _source;

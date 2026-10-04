@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Plugin;
@@ -64,15 +65,20 @@ namespace UoFiddler.Plugin.Compare
 
         public override void ModifyTabPages(TabControl tabControl)
         {
+            // 获取汉化函数
+            var localizer = LocalizationGetter;
+
             TabPage page = new TabPage
             {
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Items"
             };
-            CompareItemControl compArt = new CompareItemControl
+            CompareItemControl compArt = new CompareItemControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compArt.SetLocalization(localizer);
+            }
+            compArt.Dock = DockStyle.Fill;
             page.Controls.Add(compArt);
             tabControl.TabPages.Add(page);
 
@@ -81,10 +87,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Land"
             };
-            CompareLandControl compLandControl = new CompareLandControl
+            CompareLandControl compLandControl = new CompareLandControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compLandControl.SetLocalization(localizer);
+            }
+            compLandControl.Dock = DockStyle.Fill;
             page2.Controls.Add(compLandControl);
             tabControl.TabPages.Add(page2);
 
@@ -93,10 +101,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare CliLocs"
             };
-            CompareCliLocControl compCli = new CompareCliLocControl
+            CompareCliLocControl compCli = new CompareCliLocControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compCli.SetLocalization(localizer);
+            }
+            compCli.Dock = DockStyle.Fill;
             page3.Controls.Add(compCli);
             tabControl.TabPages.Add(page3);
 
@@ -105,10 +115,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Hues"
             };
-            CompareHuesControl compH = new CompareHuesControl
+            CompareHuesControl compH = new CompareHuesControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compH.SetLocalization(localizer);
+            }
+            compH.Dock = DockStyle.Fill;
             page4.Controls.Add(compH);
             tabControl.TabPages.Add(page4);
 
@@ -117,10 +129,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Gumps"
             };
-            CompareGumpControl compG = new CompareGumpControl
+            CompareGumpControl compG = new CompareGumpControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compG.SetLocalization(localizer);
+            }
+            compG.Dock = DockStyle.Fill;
             page5.Controls.Add(compG);
             tabControl.TabPages.Add(page5);
 
@@ -129,10 +143,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Map"
             };
-            CompareMapControl compM = new CompareMapControl
+            CompareMapControl compM = new CompareMapControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compM.SetLocalization(localizer);
+            }
+            compM.Dock = DockStyle.Fill;
             page6.Controls.Add(compM);
             tabControl.TabPages.Add(page6);
 
@@ -141,10 +157,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare Texture"
             };
-            CompareTextureControl compTextureControl = new CompareTextureControl
+            CompareTextureControl compTextureControl = new CompareTextureControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compTextureControl.SetLocalization(localizer);
+            }
+            compTextureControl.Dock = DockStyle.Fill;
             page7.Controls.Add(compTextureControl);
             tabControl.TabPages.Add(page7);
 
@@ -153,10 +171,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare AnimData"
             };
-            CompareAnimDataControl compAnimData = new CompareAnimDataControl
+            CompareAnimDataControl compAnimData = new CompareAnimDataControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compAnimData.SetLocalization(localizer);
+            }
+            compAnimData.Dock = DockStyle.Fill;
             page8.Controls.Add(compAnimData);
             tabControl.TabPages.Add(page8);
 
@@ -165,10 +185,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare RadarCol"
             };
-            CompareRadarColControl compRadarCol = new CompareRadarColControl
+            CompareRadarColControl compRadarCol = new CompareRadarColControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compRadarCol.SetLocalization(localizer);
+            }
+            compRadarCol.Dock = DockStyle.Fill;
             page9.Controls.Add(compRadarCol);
             tabControl.TabPages.Add(page9);
 
@@ -177,10 +199,12 @@ namespace UoFiddler.Plugin.Compare
                 Tag = tabControl.TabCount + 1,
                 Text = "Compare TileData"
             };
-            CompareTileDataControl compTileDataControl = new CompareTileDataControl
+            CompareTileDataControl compTileDataControl = new CompareTileDataControl();
+            if (localizer != null)
             {
-                Dock = DockStyle.Fill
-            };
+                compTileDataControl.SetLocalization(localizer);
+            }
+            compTileDataControl.Dock = DockStyle.Fill;
             page10.Controls.Add(compTileDataControl);
             tabControl.TabPages.Add(page10);
         }

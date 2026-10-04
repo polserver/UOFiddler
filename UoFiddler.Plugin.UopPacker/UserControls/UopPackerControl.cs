@@ -26,6 +26,7 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
     public partial class UopPackerControl : UserControl
     {
         private readonly LegacyMulFileConverter _conv;
+        private Func<string, string> _localizationGetter;
 
         private UopPackerControl()
         {
@@ -60,7 +61,15 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
 
             ApplyDarkModeIfNeeded();
 
+            // 在 Load 事件中应用汉化
+            this.Load += (s, e) => ApplyLocalization();
+
             Dock = DockStyle.Fill;
+        }
+
+        public void SetLocalization(Func<string, string> localizationGetter)
+        {
+            _localizationGetter = localizationGetter;
         }
 
         private void ApplyDarkModeIfNeeded()
@@ -95,6 +104,92 @@ namespace UoFiddler.Plugin.UopPacker.UserControls
             compressionBox.BackColor = SystemColors.Window;
 
             statustext.ForeColor = Color.OrangeRed;
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 更新所有 UI 控件的文本
+            label1.Text = _localizationGetter("Forms.UopPackerControl.label1") ?? "Convert from MUL to UOP";
+            label2.Text = _localizationGetter("Forms.UopPackerControl.label2") ?? "Input MUL";
+            label3.Text = _localizationGetter("Forms.UopPackerControl.label3") ?? "Input IDX";
+            labelHousingBin.Text = _localizationGetter("Forms.UopPackerControl.labelHousingBin") ?? "housing.bin";
+            label7.Text = _localizationGetter("Forms.UopPackerControl.label7") ?? "Type";
+            label4.Text = _localizationGetter("Forms.UopPackerControl.label4") ?? "Map Index";
+            label5.Text = _localizationGetter("Forms.UopPackerControl.label5") ?? "Type";
+            label6.Text = _localizationGetter("Forms.UopPackerControl.label6") ?? "Map Index";
+            label8.Text = _localizationGetter("Forms.UopPackerControl.label8") ?? "Input UOP";
+            label9.Text = _localizationGetter("Forms.UopPackerControl.label9") ?? "Type";
+            label11.Text = _localizationGetter("Forms.UopPackerControl.label11") ?? "Output files folder";
+            label12.Text = _localizationGetter("Forms.UopPackerControl.label12") ?? "Convert from UOP to MUL";
+            
+            // 调整输入框标签 - 右移以对齐其他标签
+            label13.Text = _localizationGetter("Forms.UopPackerControl.label13") ?? "Input folder";
+            label14.Text = _localizationGetter("Forms.UopPackerControl.label14") ?? "Output folder";
+            
+            // 调整标签宽度和位置以适应中文
+            label13.AutoSize = false;
+            label13.Width = 70;
+            label14.AutoSize = false;
+            label14.Width = 70;
+            
+            // 相应调整输入框位置
+            inputfolder.Location = new System.Drawing.Point(80, inputfolder.Location.Y);
+            outputfolder.Location = new System.Drawing.Point(80, outputfolder.Location.Y);
+            SelectFolderButton.Location = new System.Drawing.Point(328, SelectFolderButton.Location.Y);
+            SelectOutputFolderButton.Location = new System.Drawing.Point(328, SelectOutputFolderButton.Location.Y);
+            
+            // 调整提取/打包单选按钮位置以对齐输入框（X=80）
+            extract.Location = new System.Drawing.Point(80, extract.Location.Y);
+            pack.Location = new System.Drawing.Point(80, pack.Location.Y);
+            
+            multouop.Text = _localizationGetter("Forms.UopPackerControl.multouop") ?? "Convert";
+            uoptomul.Text = _localizationGetter("Forms.UopPackerControl.uoptomul") ?? "Convert";
+            inmulbtn.Text = _localizationGetter("Forms.UopPackerControl.inmulbtn") ?? "...";
+            inidxbtn.Text = _localizationGetter("Forms.UopPackerControl.inidxbtn") ?? "...";
+            inhousingbinbtn.Text = _localizationGetter("Forms.UopPackerControl.inhousingbinbtn") ?? "...";
+            outuopfolderbtn.Text = _localizationGetter("Forms.UopPackerControl.outuopfolderbtn") ?? "...";
+            inuopbtn.Text = _localizationGetter("Forms.UopPackerControl.inuopbtn") ?? "...";
+            outfolderbtn.Text = _localizationGetter("Forms.UopPackerControl.outfolderbtn") ?? "...";
+            
+            // TabControl 和 RadioButtons
+            ExtractAllFilesTabPage.Text = _localizationGetter("Forms.UopPackerControl.ExtractAllFilesTabPage") ?? "Extract/Pack All Files";
+            ExtractSingleFileTabPage.Text = _localizationGetter("Forms.UopPackerControl.ExtractSingleFileTabPage") ?? "Extract/Pack Single File";
+            extract.Text = _localizationGetter("Forms.UopPackerControl.extract") ?? "Extract";
+            pack.Text = _localizationGetter("Forms.UopPackerControl.pack") ?? "Pack";
+            packAllGumpCompressionLabel.Text = _localizationGetter("Forms.UopPackerControl.packAllGumpCompressionLabel") ?? "Gump Compression";
+            packAllHousingBinLabel.Text = _localizationGetter("Forms.UopPackerControl.packAllHousingBinLabel") ?? "housing.bin";
+            
+            SelectFolderButton.Text = _localizationGetter("Forms.UopPackerControl.SelectFolderButton") ?? "Select Folder";
+            SelectOutputFolderButton.Text = _localizationGetter("Forms.UopPackerControl.SelectOutputFolderButton") ?? "Select Folder";
+            StartFolderButton.Text = _localizationGetter("Forms.UopPackerControl.StartFolderButton") ?? "Start";
+            compressionLabel.Text = "(?)";  // 保持为帮助图标
+            compressionInputLabel.Text = _localizationGetter("Forms.UopPackerControl.compressionInputLabel") ?? "Compression";
+            
+            label10.Text = _localizationGetter("Forms.UopPackerControl.label10") ?? "Progress";
+            
+            toolStripStatusLabel2.Text = _localizationGetter("Forms.UopPackerControl.toolStripStatusLabel2") ?? "Extracting/Packing may take some time.";
+            
+            // PlaceholderText 汉化
+            inmul.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_inmul") ?? "art.mul";
+            inidx.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_inidx") ?? "artidx.mul";
+            inhousingbin.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_inhousingbin") ?? "housing.bin file path";
+            outuopfolder.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_outuopfolder") ?? "folder where .uop will be written";
+            inuop.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_inuop") ?? "MultiCollection.uop";
+            outfolder.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_outfolder") ?? "(blank = same as input folder)";
+            inputfolder.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_inputfolder") ?? "folder where files will be extracted";
+            outputfolder.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_outputfolder") ?? "folder where files will be packed";
+            packAllHousingBin.PlaceholderText = _localizationGetter("Forms.UopPackerControl.placeholder_packAllHousingBin") ?? "optional, defaults to folder/housing.bin";
+            
+            // ToolTips
+            compressionTip.SetToolTip(packAllGumpCompressionBox, _localizationGetter("Forms.UopPackerControl.tooltip_compression") ?? "Compression type for gump files");
+            compressionTip.SetToolTip(compressionBox, _localizationGetter("Forms.UopPackerControl.tooltip_compression_single") ?? "Compression type for the file");
+        }
+
+        private string GetLocalizedMessage(string key, string defaultValue = "")
+        {
+            return _localizationGetter?.Invoke(key) ?? defaultValue;
         }
 
         private void OnPackAllModeChanged(object sender, EventArgs e) => UpdatePackAllCompressionVisibility();

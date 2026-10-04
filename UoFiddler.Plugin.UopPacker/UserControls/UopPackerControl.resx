@@ -127,19 +127,19 @@
     <value>17, 17</value>
   </metadata>
   <data name="compressionBox.ToolTip" xml:space="preserve">
-    <value>Pick the compression that matches the original UOP for the file type:
-  Art / Map / Sound: None
-  Gumpart: None on older clients, Mythic on newer clients (New Legacy 7.0.104)
+    <value>选择与该文件类型的原始 UOP 匹配的压缩方式：
+  美术/地图/音效: 无
+  Gumpart: 旧客户端无压缩，较新客户端使用 Mythic（新遗留版 7.0.104）
   MultiCollection: Zlib
-Picking the wrong option produces a UOP that is much larger than the original or unreadable by the client.
+选择错误的选项会导致 UOP 文件大小远大于原始文件或无法被客户端读取。
 </value>
   </data>
   <data name="compressionLabel.ToolTip" xml:space="preserve">
-    <value>Pick the compression that matches the original UOP for the file type:
-  Art / Map / Sound: None
-  Gumpart: None on older clients, Mythic on newer clients (New Legacy 7.0.104)
+    <value>选择与该文件类型的原始 UOP 匹配的压缩方式：
+  美术/地图/音效: 无
+  Gumpart: 旧客户端无压缩，较新客户端使用 Mythic（新遗留版 7.0.104）
   MultiCollection: Zlib
-Picking the wrong option produces a UOP that is much larger than the original or unreadable by the client.</value>
+选择错误的选项会导致 UOP 文件大小远大于原始文件或无法被客户端读取。</value>
   </data>
   <metadata name="MainStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>261, 17</value>

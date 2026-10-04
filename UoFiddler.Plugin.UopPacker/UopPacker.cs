@@ -68,7 +68,16 @@ namespace UoFiddler.Plugin.UopPacker
                 Tag = 0, // at end used for undock/dock feature to define the order
                 Text = "UOP Packer"
             };
-            page.Controls.Add(new UopPackerControl(Version));
+            
+            var control = new UopPackerControl(Version);
+            
+            // 应用汉化
+            if (LocalizationGetter != null)
+            {
+                control.SetLocalization(LocalizationGetter);
+            }
+            
+            page.Controls.Add(control);
             tabControl.TabPages.Add(page);
         }
     }

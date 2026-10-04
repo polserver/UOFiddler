@@ -18,6 +18,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
             InitializeComponent();
         }
 
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            copyEntry2To1ToolStripMenuItem.Text = getLocalized("copyEntry2To1") ?? "Copy Entry to left";
+        }
+
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly List<int> _landDisplayIndices = new List<int>();
         private readonly List<int> _itemDisplayIndices = new List<int>();

@@ -27,9 +27,33 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareLandControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareLandControl()
         {
             InitializeComponent();
+        }
+
+        public void SetLocalization(Func<string, string> localizationGetter)
+        {
+            _localizationGetter = localizationGetter;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            exportImageToolStripMenuItem.Text = _localizationGetter("exportImageToolStripMenuItem") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("asPngToolStripMenuItem") ?? "As Png";
+            copyLandTile2To1ToolStripMenuItem.Text = _localizationGetter("copyLandTile2To1ToolStripMenuItem") ?? "Copy Land to left";
+            btnCopyAllDiff.Text = _localizationGetter("btnCopyAllDiff") ?? "Copy All Diff";
+            button1.Text = _localizationGetter("button1") ?? "Load";
+            checkBox1.Text = _localizationGetter("checkBox1") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("chkMultiSelect") ?? "Multi-Select";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();

@@ -32,6 +32,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
             InitializeComponent();
         }
 
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            checkBox1.Text = getLocalized("checkBox1") ?? "Show only Differences";
+            chkMultiSelect.Text = getLocalized("chkMultiSelect") ?? "Multi-Select";
+            button1.Text = getLocalized("button1") ?? "Load";
+            button2.Text = getLocalized("button2") ?? "...";
+            exportImageToolStripMenuItem.Text = getLocalized("exportImageToolStripMenuItem") ?? "Export Image..";
+            copyLandTile2To1ToolStripMenuItem.Text = getLocalized("copyLandTile2To1ToolStripMenuItem") ?? "Copy Texture to left";
+        }
+
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
         private readonly SHA256 _sha256 = SHA256.Create();
         private readonly ImageConverter _ic = new ImageConverter();
