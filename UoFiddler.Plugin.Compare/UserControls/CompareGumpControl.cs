@@ -27,19 +27,30 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareGumpControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareGumpControl()
         {
             InitializeComponent();
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            checkBox1.Text = getLocalized("checkBox1") ?? "Show only Differences";
-            chkMultiSelect.Text = getLocalized("chkMultiSelect") ?? "Multi-Select";
-            button1.Text = getLocalized("button1") ?? "Load";
-            button2.Text = getLocalized("button2") ?? "Load";
-            extractAsToolStripMenuItem.Text = getLocalized("extractAs") ?? "Extract As..";
-            copyGump2To1ToolStripMenuItem.Text = getLocalized("copyGump2To1") ?? "Copy Gump to left";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            checkBox1.Text = _localizationGetter("Forms.CompareGumpControl.checkBox1") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareGumpControl.chkMultiSelect") ?? "Multi-Select";
+            button1.Text = _localizationGetter("Forms.CompareGumpControl.button1") ?? "Load";
+            button2.Text = _localizationGetter("Forms.CompareGumpControl.button2") ?? "Load";
+            extractAsToolStripMenuItem.Text = _localizationGetter("Forms.CompareGumpControl.extractAs") ?? "Extract As..";
+            copyGump2To1ToolStripMenuItem.Text = _localizationGetter("Forms.CompareGumpControl.copyGump2To1") ?? "Copy Gump to left";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();

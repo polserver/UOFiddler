@@ -13,14 +13,53 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareRadarColControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareRadarColControl()
         {
             InitializeComponent();
+            
+            // 在 Load 事件中应用汉化
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            copyEntry2To1ToolStripMenuItem.Text = getLocalized("copyEntry2To1") ?? "Copy Entry to left";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 汉化菜单项
+            copyEntry2To1ToolStripMenuItem.Text = _localizationGetter("Forms.CompareRadarColControl.copyEntry2To1") ?? "Copy Entry to left";
+            
+            // 汉化按钮
+            buttonLoadSecond.Text = _localizationGetter("Forms.CompareRadarColControl.buttonLoadSecond") ?? "Load";
+            buttonBrowse.Text = _localizationGetter("Forms.CompareRadarColControl.buttonBrowse") ?? "...";
+            buttonCopySelected.Text = _localizationGetter("Forms.CompareRadarColControl.buttonCopySelected") ?? "Copy Selected";
+            buttonCopyAllDiff.Text = _localizationGetter("Forms.CompareRadarColControl.buttonCopyAllDiff") ?? "Copy All Diff";
+            
+            // 汉化复选框
+            checkBoxShowDiff.Text = _localizationGetter("Forms.CompareRadarColControl.checkBoxShowDiff") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareRadarColControl.chkMultiSelect") ?? "Multi-Select";
+            
+            // 汉化GroupBox
+            groupBoxOrg.Text = _localizationGetter("Forms.CompareRadarColControl.groupBoxOrg") ?? "Left (Original)";
+            groupBoxSec.Text = _localizationGetter("Forms.CompareRadarColControl.groupBoxSec") ?? "Right (Second)";
+            groupBoxLegend.Text = _localizationGetter("Forms.CompareRadarColControl.groupBoxLegend") ?? "Legend";
+            
+            // 汉化标签 - Left (Original)
+            labelOrgColorCaption.Text = _localizationGetter("Forms.CompareRadarColControl.labelOrgColorCaption") ?? "Color:";
+            
+            // 汉化标签 - Right (Second)
+            labelSecColorCaption.Text = _localizationGetter("Forms.CompareRadarColControl.labelSecColorCaption") ?? "Color:";
+            
+            // 汉化图例标签
+            legendLabelDifferent.Text = _localizationGetter("Forms.CompareRadarColControl.legendLabelDifferent") ?? "Different values";
+            legendLabelIdentical.Text = _localizationGetter("Forms.CompareRadarColControl.legendLabelIdentical") ?? "Identical";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
@@ -53,7 +92,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 int count = ActiveSecView.SelectedIndices.Count;
                 copyEntry2To1ToolStripMenuItem.Text = ActiveSecView.ShowCheckBoxes && count > 1
                     ? $"Copy {count} Entries to left"
-                    : "Copy Entry to left";
+                    : (_localizationGetter?.Invoke("Forms.CompareRadarColControl.copyEntry2To1") ?? "Copy Entry to left");
             };
 
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;

@@ -25,27 +25,50 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareMapControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+        private string _coordsPrefix = "Coords: ";
+        private string _zoomPrefix = "Zoom: ";
+
         public CompareMapControl()
         {
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             pictureBox.MouseWheel += OnMouseWheel;
+            
+            // 在 Load 事件中应用汉化
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            toolStripButton2.Text = getLocalized("button1") ?? "Load";
-            toolStripButton1.Text = getLocalized("button2") ?? "...";
-            showDifferencesToolStripMenuItem.Text = getLocalized("showDifferencesToolStripMenuItem") ?? "Show Differences";
-            showMap1ToolStripMenuItem.Text = getLocalized("showMap1ToolStripMenuItem") ?? "Show Map1";
-            showMap2ToolStripMenuItem.Text = getLocalized("showMap2ToolStripMenuItem") ?? "Show Map2";
-            feluccaToolStripMenuItem.Text = getLocalized("feluccaToolStripMenuItem") ?? "Felucca";
-            trammelToolStripMenuItem.Text = getLocalized("trammelToolStripMenuItem") ?? "Trammel";
-            ilshenarToolStripMenuItem.Text = getLocalized("ilshenarToolStripMenuItem") ?? "Ilshenar";
-            malasToolStripMenuItem.Text = getLocalized("malasToolStripMenuItem") ?? "Malas";
-            tokunoToolStripMenuItem.Text = getLocalized("tokunoToolStripMenuItem") ?? "Tokuno";
-            terMurToolStripMenuItem.Text = getLocalized("terMurToolStripMenuItem") ?? "TerMur";
-            markDiffToolStripMenuItem.Text = getLocalized("markDiffToolStripMenuItem") ?? "Mark Diff";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 保存前缀用于动态更新
+            _coordsPrefix = _localizationGetter("Forms.CompareMapControl.coordsPrefix") ?? "Coords: ";
+            _zoomPrefix = _localizationGetter("Forms.CompareMapControl.zoomPrefix") ?? "Zoom: ";
+
+            toolStripButton2.Text = _localizationGetter("Forms.CompareMapControl.button1") ?? "Load";
+            toolStripButton1.Text = _localizationGetter("Forms.CompareMapControl.button2") ?? "...";
+            
+            // 汉化上下文菜单项
+            zoomToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.zoomPlus") ?? "Zoom+";
+            zoomToolStripMenuItem1.Text = _localizationGetter("Forms.CompareMapControl.zoomMinus") ?? "Zoom-";
+            showDifferencesToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.showDifferencesToolStripMenuItem") ?? "Show Differences";
+            showMap1ToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.showMap1ToolStripMenuItem") ?? "Show Map1";
+            showMap2ToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.showMap2ToolStripMenuItem") ?? "Show Map2";
+            feluccaToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.feluccaToolStripMenuItem") ?? "Felucca";
+            trammelToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.trammelToolStripMenuItem") ?? "Trammel";
+            ilshenarToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.ilshenarToolStripMenuItem") ?? "Ilshenar";
+            malasToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.malasToolStripMenuItem") ?? "Malas";
+            tokunoToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.tokunoToolStripMenuItem") ?? "Tokuno";
+            terMurToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.terMurToolStripMenuItem") ?? "TerMur";
+            markDiffToolStripMenuItem.Text = _localizationGetter("Forms.CompareMapControl.markDiffToolStripMenuItem") ?? "Mark Diff";
         }
 
         private bool _loaded;
@@ -87,7 +110,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             showMap2ToolStripMenuItem.Checked = false;
             SetScrollBarValues();
             ChangeMapNames();
-            ZoomLabel.Text = $"Zoom: {_zoom}";
+            ZoomLabel.Text = $"{_zoomPrefix}{_zoom}";
 
             Options.LoadedUltimaClass["Map"] = true;
             Options.LoadedUltimaClass["RadarColor"] = true;
@@ -177,7 +200,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             int xDelta = Math.Min(_originalMap.Width, (int)(e.X / _zoom) + Round(hScrollBar.Value));
             int yDelta = Math.Min(_originalMap.Height, (int)(e.Y / _zoom) + Round(vScrollBar.Value));
 
-            CoordsLabel.Text = $"Coords: {xDelta},{yDelta}";
+            CoordsLabel.Text = $"{_coordsPrefix}{xDelta},{yDelta}";
 
             string diff = string.Empty;
 
@@ -605,7 +628,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             ChangeScrollBar();
 
-            ZoomLabel.Text = $"Zoom: {_zoom}";
+            ZoomLabel.Text = $"{_zoomPrefix}{_zoom}";
 
             int x = Math.Max(0, _currentPoint.X - ((int)(pictureBox.ClientSize.Width / _zoom) / 2));
             int y = Math.Max(0, _currentPoint.Y - ((int)(pictureBox.ClientSize.Height / _zoom) / 2));

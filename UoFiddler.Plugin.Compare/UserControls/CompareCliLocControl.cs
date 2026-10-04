@@ -22,24 +22,35 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareCliLocControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareCliLocControl()
         {
             InitializeComponent();
             _source = new BindingSource();
             _sortOrder = SortOrder.Ascending;
             _sortColumn = 0;
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            button1.Text = getLocalized("button1") ?? "Load";
-            button2.Text = getLocalized("button2") ?? "Load";
-            button3.Text = getLocalized("button3") ?? "...";
-            button4.Text = getLocalized("button4") ?? "...";
-            button5.Text = getLocalized("button5") ?? "Find Next Diff";
-            checkBox1.Text = getLocalized("checkBox1") ?? "Show Only Differences";
-            labelDiff1.Text = getLocalized("labelDiff1") ?? "File 1:";
-            labelDiff2.Text = getLocalized("labelDiff2") ?? "File 2:";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            button1.Text = _localizationGetter("Forms.CompareCliLocControl.button1") ?? "Load";
+            button2.Text = _localizationGetter("Forms.CompareCliLocControl.button2") ?? "Load";
+            button3.Text = _localizationGetter("Forms.CompareCliLocControl.button3") ?? "...";
+            button4.Text = _localizationGetter("Forms.CompareCliLocControl.button4") ?? "...";
+            button5.Text = _localizationGetter("Forms.CompareCliLocControl.button5") ?? "Find Next Diff";
+            checkBox1.Text = _localizationGetter("Forms.CompareCliLocControl.checkBox1") ?? "Show Only Differences";
+            labelDiff1.Text = _localizationGetter("Forms.CompareCliLocControl.labelDiff1") ?? "File 1:";
+            labelDiff2.Text = _localizationGetter("Forms.CompareCliLocControl.labelDiff2") ?? "File 2:";
         }
 
         private static StringList _cliloc1;

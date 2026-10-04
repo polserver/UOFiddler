@@ -22,6 +22,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareHuesControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareHuesControl()
         {
             InitializeComponent();
@@ -34,14 +36,23 @@ namespace UoFiddler.Plugin.Compare.UserControls
             pictureBox2.MouseWheel += OnMouseWheel;
 
             _hue2Loaded = false;
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            button1.Text = getLocalized("button1") ?? "Load";
-            button2.Text = getLocalized("button2") ?? "...";
-            chkMultiSelect.Text = getLocalized("chkMultiSelect") ?? "Multi-Select";
-            applyHue1ToHue2ToolStripMenuItem.Text = getLocalized("applyHue1ToHue2") ?? "Apply Hue to left";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            button1.Text = _localizationGetter("Forms.CompareHuesControl.button1") ?? "Load";
+            button2.Text = _localizationGetter("Forms.CompareHuesControl.button2") ?? "...";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareHuesControl.chkMultiSelect") ?? "Multi-Select";
+            applyHue1ToHue2ToolStripMenuItem.Text = _localizationGetter("Forms.CompareHuesControl.applyHue1ToHue2") ?? "Apply Hue to left";
         }
 
         private const int _itemHeight = 20;

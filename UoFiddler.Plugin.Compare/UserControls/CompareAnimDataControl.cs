@@ -12,14 +12,62 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareAnimDataControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareAnimDataControl()
         {
             InitializeComponent();
+            
+            // 在 Load 事件中应用汉化
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            copyEntryToolStripMenuItem.Text = getLocalized("copyEntry") ?? "Copy Entry to left";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 汉化菜单项
+            copyEntryToolStripMenuItem.Text = _localizationGetter("Forms.CompareAnimDataControl.copyEntry") ?? "Copy Entry to left";
+            
+            // 汉化按钮
+            buttonLoadSecond.Text = _localizationGetter("Forms.CompareAnimDataControl.buttonLoadSecond") ?? "Load";
+            buttonBrowse.Text = _localizationGetter("Forms.CompareAnimDataControl.buttonBrowse") ?? "...";
+            buttonCopySelected.Text = _localizationGetter("Forms.CompareAnimDataControl.buttonCopySelected") ?? "Copy Selected";
+            buttonCopyAllDiff.Text = _localizationGetter("Forms.CompareAnimDataControl.buttonCopyAllDiff") ?? "Copy All Diff";
+            buttonCopyAddedOnly.Text = _localizationGetter("Forms.CompareAnimDataControl.buttonCopyAddedOnly") ?? "Copy Added Only";
+            
+            // 汉化复选框
+            checkBoxShowDiff.Text = _localizationGetter("Forms.CompareAnimDataControl.checkBoxShowDiff") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareAnimDataControl.chkMultiSelect") ?? "Multi-Select";
+            
+            // 汉化GroupBox
+            groupBoxOrg.Text = _localizationGetter("Forms.CompareAnimDataControl.groupBoxOrg") ?? "Left (Original)";
+            groupBoxSec.Text = _localizationGetter("Forms.CompareAnimDataControl.groupBoxSec") ?? "Right (Second)";
+            groupBoxLegend.Text = _localizationGetter("Forms.CompareAnimDataControl.groupBoxLegend") ?? "Legend";
+            
+            // 汉化标签 - Left (Original)
+            labelOrgFrameCountCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelOrgFrameCountCaption") ?? "Frame Count:";
+            labelOrgFrameIntervalCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelOrgFrameIntervalCaption") ?? "Frame Interval:";
+            labelOrgFrameStartCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelOrgFrameStartCaption") ?? "Frame Start:";
+            labelOrgFrameDataCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelOrgFrameDataCaption") ?? "Frame Data:";
+            
+            // 汉化标签 - Right (Second)
+            labelSecFrameCountCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelSecFrameCountCaption") ?? "Frame Count:";
+            labelSecFrameIntervalCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelSecFrameIntervalCaption") ?? "Frame Interval:";
+            labelSecFrameStartCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelSecFrameStartCaption") ?? "Frame Start:";
+            labelSecFrameDataCaption.Text = _localizationGetter("Forms.CompareAnimDataControl.labelSecFrameDataCaption") ?? "Frame Data:";
+            
+            // 汉化图例标签
+            legendLabelOnlyInOrg.Text = _localizationGetter("Forms.CompareAnimDataControl.legendLabelOnlyInOrg") ?? "Only in original";
+            legendLabelOnlyInSecond.Text = _localizationGetter("Forms.CompareAnimDataControl.legendLabelOnlyInSecond") ?? "Only in second";
+            legendLabelDifferent.Text = _localizationGetter("Forms.CompareAnimDataControl.legendLabelDifferent") ?? "Different values";
+            legendLabelIdentical.Text = _localizationGetter("Forms.CompareAnimDataControl.legendLabelIdentical") ?? "Identical";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
@@ -42,7 +90,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 int count = tileViewSec.SelectedIndices.Count;
                 copyEntryToolStripMenuItem.Text = tileViewSec.ShowCheckBoxes && count > 1
                     ? $"Copy {count} Entries to left"
-                    : "Copy Entry to left";
+                    : (_localizationGetter?.Invoke("Forms.CompareAnimDataControl.copyEntry") ?? "Copy Entry to left");
             };
 
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;

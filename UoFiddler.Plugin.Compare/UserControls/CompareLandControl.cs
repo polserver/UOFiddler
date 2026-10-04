@@ -44,16 +44,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             if (_localizationGetter == null) return;
 
-            exportImageToolStripMenuItem.Text = _localizationGetter("exportImageToolStripMenuItem") ?? "Export Image..";
-            asBmpToolStripMenuItem.Text = _localizationGetter("asBmpToolStripMenuItem") ?? "As Bmp";
-            asTiffToolStripMenuItem.Text = _localizationGetter("asTiffToolStripMenuItem") ?? "As Tiff";
-            asJpgToolStripMenuItem.Text = _localizationGetter("asJpgToolStripMenuItem") ?? "As Jpg";
-            asPngToolStripMenuItem.Text = _localizationGetter("asPngToolStripMenuItem") ?? "As Png";
-            copyLandTile2To1ToolStripMenuItem.Text = _localizationGetter("copyLandTile2To1ToolStripMenuItem") ?? "Copy Land to left";
-            btnCopyAllDiff.Text = _localizationGetter("btnCopyAllDiff") ?? "Copy All Diff";
-            button1.Text = _localizationGetter("button1") ?? "Load";
-            checkBox1.Text = _localizationGetter("checkBox1") ?? "Show only Differences";
-            chkMultiSelect.Text = _localizationGetter("chkMultiSelect") ?? "Multi-Select";
+            exportImageToolStripMenuItem.Text = _localizationGetter("Forms.CompareLandControl.exportImageToolStripMenuItem") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.CompareLandControl.asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.CompareLandControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.CompareLandControl.asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.CompareLandControl.asPngToolStripMenuItem") ?? "As Png";
+            copyLandTile2To1ToolStripMenuItem.Text = _localizationGetter("Forms.CompareLandControl.copyLandTile2To1ToolStripMenuItem") ?? "Copy Land to left";
+            btnCopyAllDiff.Text = _localizationGetter("Forms.CompareLandControl.btnCopyAllDiff") ?? "Copy All Diff";
+            button1.Text = _localizationGetter("Forms.CompareLandControl.button1") ?? "Load";
+            checkBox1.Text = _localizationGetter("Forms.CompareLandControl.checkBox1") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareLandControl.chkMultiSelect") ?? "Multi-Select";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();

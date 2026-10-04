@@ -27,19 +27,36 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareTextureControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareTextureControl()
         {
             InitializeComponent();
+            
+            // 在 Load 事件中应用汉化
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            checkBox1.Text = getLocalized("checkBox1") ?? "Show only Differences";
-            chkMultiSelect.Text = getLocalized("chkMultiSelect") ?? "Multi-Select";
-            button1.Text = getLocalized("button1") ?? "Load";
-            button2.Text = getLocalized("button2") ?? "...";
-            exportImageToolStripMenuItem.Text = getLocalized("exportImageToolStripMenuItem") ?? "Export Image..";
-            copyLandTile2To1ToolStripMenuItem.Text = getLocalized("copyLandTile2To1ToolStripMenuItem") ?? "Copy Texture to left";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            checkBox1.Text = _localizationGetter("Forms.CompareTextureControl.checkBox1") ?? "Show only Differences";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareTextureControl.chkMultiSelect") ?? "Multi-Select";
+            button1.Text = _localizationGetter("Forms.CompareTextureControl.button1") ?? "Load";
+            button2.Text = _localizationGetter("Forms.CompareTextureControl.button2") ?? "...";
+            exportImageToolStripMenuItem.Text = _localizationGetter("Forms.CompareTextureControl.exportImageToolStripMenuItem") ?? "Export Image..";
+            copyLandTile2To1ToolStripMenuItem.Text = _localizationGetter("Forms.CompareTextureControl.copyLandTile2To1ToolStripMenuItem") ?? "Copy Texture to left";
+            
+            // 汉化按钮
+            FromLeftToRight.Text = _localizationGetter("Forms.CompareTextureControl.fromLeftToRight") ?? "Copy All Diff";
+            CopyAddOnly.Text = _localizationGetter("Forms.CompareTextureControl.copyAddOnly") ?? "Copy Added Only";
         }
 
         private readonly Dictionary<int, bool> _compare = new Dictionary<int, bool>();
@@ -69,7 +86,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 int count = tileViewSec.SelectedIndices.Count;
                 copyLandTile2To1ToolStripMenuItem.Text = tileViewSec.ShowCheckBoxes && count > 1
                     ? $"Copy {count} Textures to left"
-                    : "Copy Texture to left";
+                    : (_localizationGetter?.Invoke("Forms.CompareTextureControl.copyLandTile2To1ToolStripMenuItem") ?? "Copy Texture to left");
             };
 
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
