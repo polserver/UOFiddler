@@ -258,6 +258,29 @@
       "tooltip_pictureBoxMinimap": "小地图 — 点击平移",
       "tooltip_toolStripBtnZoom": "缩放 — 点击或 Ctrl+0 重置为 100%"
     },
+    "SendItemOptionsForm": {
+      "Title": "发送物品选项",
+      "groupBox1": "发送物品",
+      "label7": "命令",
+      "label8": "参数",
+      "SendOnClick": "双击时发送",
+      "button1": "保存",
+      "tooltip_label7": "定义发送给客户端的命令，用于选定的物品",
+      "tooltip_label8": "{1} = 选定物品的对象类型",
+      "tooltip_SendOnClick": "覆盖双击行为"
+    },
+    "PluginTestForm": {
+      "Title": "示例",
+      "ExampleForm": "示例",
+      "SayHello": "打招呼",
+      "PluginTest": "插件测试",
+      "messagebox_hello": "UO 客户端未运行，所以我在这里打个招呼。你好！",
+      "contextmenu_export_selected": "导出选定项到 itemdesc.cfg",
+      "contextmenu_export_all": "导出所有物品到 offset.cfg",
+      "messagebox_export_confirm": "你想要导出所有物品到 offset.cfg 吗？\r\n可能需要一些时间（大约 10-20 秒）。\r\n\r\n导出将替换位于以下位置的现有文件：{path}\r\n\r\n继续吗？\r\n",
+      "messagebox_export_title": "导出所有物品到 offset.cfg？",
+      "messagebox_export_done": "完成！"
+    },
     "AboutBoxForm": {
       "Title": "关于",
       "checkBoxCheckOnStart": "启动时检查更新",
