@@ -360,15 +360,17 @@ namespace UoFiddler.Controls.UserControls
             if (multi == MultiComponentList.Empty)
             {
                 HeightChangeMulti.Maximum = 0;
-                toolTip.SetToolTip(HeightChangeMulti, "MaxHeight: 0");
-                SetMulStatus("Size: 0,0 MaxHeight: 0 MultiRegion: 0,0,0,0");
+                string maxHeightLabel = GetMaxHeightLabel();
+                toolTip.SetToolTip(HeightChangeMulti, $"{maxHeightLabel}: 0");
+                SetMulStatus(FormatMultiStatus(multi));
             }
             else
             {
                 HeightChangeMulti.Maximum = multi.MaxHeight;
+                string maxHeightLabel = GetMaxHeightLabel();
                 toolTip.SetToolTip(HeightChangeMulti,
-                    $"MaxHeight: {HeightChangeMulti.Maximum - HeightChangeMulti.Value}");
-                SetMulStatus($"Size: {multi.Width},{multi.Height} MaxHeight: {multi.MaxHeight} MultiRegion: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} Surface: {multi.Surface}");
+                    $"{maxHeightLabel}: {HeightChangeMulti.Maximum - HeightChangeMulti.Value}");
+                SetMulStatus(FormatMultiStatus(multi));
             }
             ChangeComponentList(multi);
             RefreshMulBitmap();
@@ -999,14 +1001,16 @@ namespace UoFiddler.Controls.UserControls
             if (multi == MultiComponentList.Empty)
             {
                 HeightChangeUop.Maximum = 0;
-                toolTip.SetToolTip(HeightChangeUop, "MaxHeight: 0");
-                SetUopStatus("Size: 0,0 MaxHeight: 0 MultiRegion: 0,0,0,0");
+                string maxHeightLabel = GetMaxHeightLabel();
+                toolTip.SetToolTip(HeightChangeUop, $"{maxHeightLabel}: 0");
+                SetUopStatus(FormatMultiStatus(multi));
             }
             else
             {
                 HeightChangeUop.Maximum = multi.MaxHeight;
-                toolTip.SetToolTip(HeightChangeUop, $"MaxHeight: {HeightChangeUop.Maximum - HeightChangeUop.Value}");
-                SetUopStatus($"Size: {multi.Width},{multi.Height} MaxHeight: {multi.MaxHeight} MultiRegion: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} Surface: {multi.Surface}");
+                string maxHeightLabel = GetMaxHeightLabel();
+                toolTip.SetToolTip(HeightChangeUop, $"{maxHeightLabel}: {HeightChangeUop.Maximum - HeightChangeUop.Value}");
+                SetUopStatus(FormatMultiStatus(multi));
             }
 
             ChangeUopComponentList(multi);
@@ -1237,12 +1241,47 @@ namespace UoFiddler.Controls.UserControls
             SetUopStatus(_uopStatusBase);
         }
 
+        /// <summary>
+        /// 格式化多重组件状态文本（应用汉化）
+        /// </summary>
+        private string FormatMultiStatus(MultiComponentList multi)
+        {
+            if (multi == MultiComponentList.Empty)
+            {
+                return _localizationGetter?.Invoke("Forms.MultisControl.Status.Empty") 
+                    ?? "Size: 0,0 MaxHeight: 0 MultiRegion: 0,0,0,0";
+            }
+
+            string sizeLabel = _localizationGetter?.Invoke("Forms.MultisControl.Status.Size") ?? "Size";
+            string maxHeightLabel = _localizationGetter?.Invoke("Forms.MultisControl.Status.MaxHeight") ?? "MaxHeight";
+            string regionLabel = _localizationGetter?.Invoke("Forms.MultisControl.Status.MultiRegion") ?? "MultiRegion";
+            string surfaceLabel = _localizationGetter?.Invoke("Forms.MultisControl.Status.Surface") ?? "Surface";
+
+            return $"{sizeLabel}: {multi.Width},{multi.Height} {maxHeightLabel}: {multi.MaxHeight} {regionLabel}: {multi.Min.X},{multi.Min.Y},{multi.Max.X},{multi.Max.Y} {surfaceLabel}: {multi.Surface}";
+        }
+
+        /// <summary>
+        /// 获取本地化的 MaxHeight 标签文本
+        /// </summary>
+        private string GetMaxHeightLabel()
+        {
+            return _localizationGetter?.Invoke("Forms.MultisControl.Status.MaxHeight") ?? "MaxHeight";
+        }
+
         private void SetMulStatus(string baseText)
         {
             _mulStatusBase = baseText;
             StatusMultiText.Text = _previewFitMode
                 ? baseText
-                : $"{baseText}  Zoom: {_zoomLevel * 100:F0}%";
+                : $"{baseText}  {GetZoomLabel()}: {_zoomLevel * 100:F0}%";
+        }
+
+        /// <summary>
+        /// 获取本地化的 Zoom 标签文本
+        /// </summary>
+        private string GetZoomLabel()
+        {
+            return _localizationGetter?.Invoke("Forms.MultisControl.Status.Zoom") ?? "Zoom";
         }
 
         private void SetUopStatus(string baseText)
@@ -1250,7 +1289,7 @@ namespace UoFiddler.Controls.UserControls
             _uopStatusBase = baseText;
             StatusUopText.Text = _previewFitMode
                 ? baseText
-                : $"{baseText}  Zoom: {_zoomLevel * 100:F0}%";
+                : $"{baseText}  {GetZoomLabel()}: {_zoomLevel * 100:F0}%";
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -1299,6 +1338,11 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickHelp(object sender, EventArgs e)
         {
             using var form = new MultisHelpForm();
+            // 为帮助窗口提供汉化
+            if (_localizationGetter != null)
+            {
+                form.SetLocalization(_localizationGetter);
+            }
             form.ShowDialog(this);
         }
 
@@ -1720,6 +1764,13 @@ namespace UoFiddler.Controls.UserControls
             uopAsTiffPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsTiffPicToolStripMenuItem") ?? "Export as TIFF";
             uopAsJpgPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsJpgPicToolStripMenuItem") ?? "Export as JPG";
             uopAsPngPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsPngPicToolStripMenuItem") ?? "Export as PNG";
+        }
+
+        private void UpdateStatusDisplay()
+        {
+            // 重新显示状态文本以应用新的汉化
+            SetMulStatus(_mulStatusBase);
+            SetUopStatus(_uopStatusBase);
         }
 
         private sealed class MouseWheelFilter : IMessageFilter
