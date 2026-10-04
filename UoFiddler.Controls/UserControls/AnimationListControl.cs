@@ -1403,6 +1403,13 @@ namespace UoFiddler.Controls.UserControls
             asJpgToolStripMenuItem2.Text = _localizationGetter("Forms.AnimationListControl.asJpgToolStripMenuItem2") ?? "As Jpg";
             asPngToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asPngToolStripMenuItem") ?? "As Png";
 
+            // 导出所有缩略图菜单
+            exportAllThumbnailsToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.ContextMenu.exportAllThumbnailsToolStripMenuItem") ?? "Export All Thumbnails..";
+            asBmpToolStripMenuItem3.Text = _localizationGetter("Forms.AnimationListControl.ContextMenu.asBmpToolStripMenuItem3") ?? "As Bmp";
+            asTiffToolStripMenuItem3.Text = _localizationGetter("Forms.AnimationListControl.ContextMenu.asTiffToolStripMenuItem3") ?? "As Tiff";
+            asJpgToolStripMenuItem3.Text = _localizationGetter("Forms.AnimationListControl.ContextMenu.asJpgToolStripMenuItem3") ?? "As Jpg";
+            asPngToolStripMenuItem3.Text = _localizationGetter("Forms.AnimationListControl.ContextMenu.asPngToolStripMenuItem3") ?? "As Png";
+
             // 帧设置组
             groupBoxSettings.Text = _localizationGetter("Forms.AnimationListControl.groupBoxSettings") ?? "Frames";
             directionLabel.Text = _localizationGetter("Forms.AnimationListControl.directionLabel") ?? "Direction";

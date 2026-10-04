@@ -614,6 +614,13 @@
       "asTiffToolStripMenuItem2": "导出为 TIFF",
       "asJpgToolStripMenuItem2": "导出为 JPG",
       "asPngToolStripMenuItem": "导出为 PNG",
+      "ContextMenu": {
+        "exportAllThumbnailsToolStripMenuItem": "导出所有缩略图..",
+        "asBmpToolStripMenuItem3": "导出为 BMP",
+        "asTiffToolStripMenuItem3": "导出为 TIFF",
+        "asJpgToolStripMenuItem3": "导出为 JPG",
+        "asPngToolStripMenuItem3": "导出为 PNG"
+      },
       "groupBoxSettings": "帧",
       "directionLabel": "方向",
       "ShowFrameBoundsCheckBox": "显示帧边界",
