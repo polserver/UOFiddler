@@ -49,6 +49,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private bool _showFreeSlots;
         private readonly MultisControl _refMarker;
+        private Func<string, string?>? _localizationGetter;
 
         // Virtual ListView backing: row index → multi id. _mulIds includes both
         // present and (when _showFreeSlots is on) empty slots; emptiness is
@@ -1624,6 +1625,101 @@ namespace UoFiddler.Controls.UserControls
             }
 
             FileSavedDialog.Show(FindForm(), fileName, "All Multis saved successfully.");
+        }
+
+        /// <summary>
+        /// 设置本地化函数
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // MUL 标签页菜单项
+            toolStripMenuItem4.Text = _localizationGetter("Forms.MultisControl.toolStripMenuItem4") ?? "Show Free Slots";
+            importToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.importToolStripMenuItem") ?? "Import..";
+            exportToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.exportToolStripMenuItem") ?? "Export..";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.removeToolStripMenuItem") ?? "Remove";
+            saveToolStripMenuItem1.Text = _localizationGetter("Forms.MultisControl.saveToolStripMenuItem1") ?? "Save";
+
+            toTextfileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toTextfileToolStripMenuItem") ?? "Export to Text File";
+            toUOAToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toUOAToolStripMenuItem") ?? "Export to UOA";
+            toWscToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toWscToolStripMenuItem") ?? "Export to WSC";
+            toCsvToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toCsvToolStripMenuItem") ?? "Export to CSV";
+            toUOX3ToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toUOX3ToolStripMenuItem") ?? "Export to UOX3";
+
+            // 工具栏菜单项
+            toolStripDropDownButton1.Text = _localizationGetter("Forms.MultisControl.toolStripDropDownButton1") ?? "Misc";
+            exportAllImagesToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.exportAllImagesToolStripMenuItem") ?? "Export all Images";
+            aToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.aToolStripMenuItem") ?? "Export as BMP";
+            asTiffToolStripMenuItem1.Text = _localizationGetter("Forms.MultisControl.asTiffToolStripMenuItem1") ?? "Export as TIFF";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.asJpgToolStripMenuItem") ?? "Export as JPG";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.MultisControl.asPngToolStripMenuItem1") ?? "Export as PNG";
+
+            ChangeBackgroundColorToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.ChangeBackgroundColorToolStripMenuItem") ?? "Change Background Color";
+            UseTransparencyForPNGToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.UseTransparencyForPNGToolStripMenuItem") ?? "Use Transparency for PNG";
+
+            exportAllPartsToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.exportAllPartsToolStripMenuItem") ?? "Export all Parts";
+            toTextFileToolStripMenuItem1.Text = _localizationGetter("Forms.MultisControl.toTextFileToolStripMenuItem1") ?? "Export to Text File";
+            toUOAFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toUOAFileToolStripMenuItem") ?? "Export to UOA File";
+            toWSCFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toWSCFileToolStripMenuItem") ?? "Export to WSC File";
+            toCSVFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toCSVFileToolStripMenuItem") ?? "Export to CSV File";
+            toUOX3FileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toUOX3FileToolStripMenuItem") ?? "Export to UOX3 File";
+            toXMLFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.toXMLFileToolStripMenuItem") ?? "Export to XML File (CentrED+)";
+
+            fitModeToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.fitModeToolStripMenuItem") ?? "Fit Mode";
+            helpToolStripButton.Text = _localizationGetter("Forms.MultisControl.helpToolStripButton") ?? "Help";
+
+            // 标签页
+            listViewMultiColumn.Text = _localizationGetter("Forms.MultisControl.listViewMultiColumn") ?? "Multi";
+            tabPage5.Text = _localizationGetter("Forms.MultisControl.tabPage5") ?? "Graphics";
+            tabPage6.Text = _localizationGetter("Forms.MultisControl.tabPage6") ?? "Components";
+
+            // MUL 预览菜单
+            extractImageToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.extractImageToolStripMenuItem") ?? "Extract Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.asBmpToolStripMenuItem") ?? "Export as BMP";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.asTiffToolStripMenuItem") ?? "Export as TIFF";
+            asJpgToolStripMenuItem1.Text = _localizationGetter("Forms.MultisControl.asJpgToolStripMenuItem1") ?? "Export as JPG";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.asPngToolStripMenuItem") ?? "Export as PNG";
+
+            // UOP 标签页菜单项
+            listViewUopColumn.Text = _localizationGetter("Forms.MultisControl.listViewUopColumn") ?? "UOP";
+            tabPageMul.Text = _localizationGetter("Forms.MultisControl.tabPageMul") ?? "MUL";
+            tabPageUop.Text = _localizationGetter("Forms.MultisControl.tabPageUop") ?? "UOP";
+            tabPageUopPreview.Text = _localizationGetter("Forms.MultisControl.tabPageUopPreview") ?? "Preview";
+            tabPageUopComponents.Text = _localizationGetter("Forms.MultisControl.tabPageUopComponents") ?? "Components";
+
+            uopExportToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopExportToolStripMenuItem") ?? "Export";
+            uopToUOAToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToUOAToolStripMenuItem") ?? "Export to UOA";
+            uopToWscToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToWscToolStripMenuItem") ?? "Export to WSC";
+            uopToCsvToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToCsvToolStripMenuItem") ?? "Export to CSV";
+
+            toolStripDropDownUop.Text = _localizationGetter("Forms.MultisControl.toolStripDropDownUop") ?? "Misc";
+            uopExportAllImagesToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopExportAllImagesToolStripMenuItem") ?? "Export all Images";
+            uopAsBmpToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsBmpToolStripMenuItem") ?? "Export as BMP";
+            uopAsTiffToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsTiffToolStripMenuItem") ?? "Export as TIFF";
+            uopAsJpgToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsJpgToolStripMenuItem") ?? "Export as JPG";
+            uopAsPngToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsPngToolStripMenuItem") ?? "Export as PNG";
+
+            uopExportAllPartsToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopExportAllPartsToolStripMenuItem") ?? "Export all Parts";
+            uopToTextfileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToTextfileToolStripMenuItem") ?? "Export to Text File";
+            uopToUOAFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToUOAFileToolStripMenuItem") ?? "Export to UOA File";
+            uopToWSCFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToWSCFileToolStripMenuItem") ?? "Export to WSC File";
+            uopToCSVFileToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopToCSVFileToolStripMenuItem") ?? "Export to CSV File";
+
+            uopFitModeToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopFitModeToolStripMenuItem") ?? "Fit Mode";
+            uopHelpToolStripButton.Text = _localizationGetter("Forms.MultisControl.uopHelpToolStripButton") ?? "Help";
+
+            uopExtractImageToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopExtractImageToolStripMenuItem") ?? "Extract Image..";
+            uopAsBmpPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsBmpPicToolStripMenuItem") ?? "Export as BMP";
+            uopAsTiffPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsTiffPicToolStripMenuItem") ?? "Export as TIFF";
+            uopAsJpgPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsJpgPicToolStripMenuItem") ?? "Export as JPG";
+            uopAsPngPicToolStripMenuItem.Text = _localizationGetter("Forms.MultisControl.uopAsPngPicToolStripMenuItem") ?? "Export as PNG";
         }
 
         private sealed class MouseWheelFilter : IMessageFilter

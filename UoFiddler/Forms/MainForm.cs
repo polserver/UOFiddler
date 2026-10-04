@@ -59,6 +59,7 @@ namespace UoFiddler.Forms
             // 为主标签页控件调用本地化（GumpControl等需要手动调用SetLocalization）
             gumpsControl.SetLocalization(key => LocalizationService.GetString(key));
             hueControl.SetLocalization(key => LocalizationService.GetString(key));
+            multisControl.SetLocalization(key => LocalizationService.GetString(key));
 
             darkModeMenuItem.Checked = AppSettings.DarkMode;
 
