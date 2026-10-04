@@ -28,6 +28,10 @@ namespace UoFiddler.Controls.UserControls
 {
     public partial class GumpControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+        private string _idLabelPrefix = "ID:";
+        private string _sizeLabelPrefix = "Size:";
+
         public GumpControl()
         {
             InitializeComponent();
@@ -44,6 +48,63 @@ namespace UoFiddler.Controls.UserControls
             _refMarker = this;
 
             pictureBox.BackColor = Options.PreviewBackgroundColor;
+            
+            // 在加载时应用本地化
+            this.Load += (s, e) => ApplyLocalization();
+        }
+
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 上下文菜单项
+            showFreeSlotsToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.showFreeSlotsToolStripMenuItem") ?? "Show Free Slots";
+            findNextFreeSlotToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.findNextFreeSlotToolStripMenuItem") ?? "Find Next Free Slot";
+            changeBackgroundColorToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.changeBackgroundColorToolStripMenuItem") ?? "Change background color";
+            extractImageToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.extractImageToolStripMenuItem") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem1.Text = _localizationGetter("Forms.GumpControl.asJpgToolStripMenuItem1") ?? "As Jpg";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.GumpControl.asPngToolStripMenuItem1") ?? "As Png";
+            jumpToMaleFemale.Text = _localizationGetter("Forms.GumpControl.jumpToMaleFemale") ?? "Jump to Male/Female";
+            
+            copyImageToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.copyImageToolStripMenuItem") ?? "Copy Image";
+            pasteImageToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            replaceGumpToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.replaceGumpToolStripMenuItem") ?? "Replace";
+            insertToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.insertToolStripMenuItem") ?? "Insert At..";
+            toolStripMenuItem1.Text = _localizationGetter("Forms.GumpControl.toolStripMenuItem1") ?? "Insert Starting From";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.removeToolStripMenuItem") ?? "Remove";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.saveToolStripMenuItem") ?? "Save";
+            
+            // 过滤工具栏标签
+            nameTagToolStripLabel.Text = _localizationGetter("Forms.GumpControl.nameTagToolStripLabel") ?? "Name:";
+            tagFilterDropDownButton.Text = _localizationGetter("Forms.GumpControl.tagFilterDropDownButton") ?? "Tags";
+            
+            // 顶部工具栏
+            IndexToolStripLabel.Text = _localizationGetter("Forms.GumpControl.IndexToolStripLabel") ?? "Index:";
+            toolStripDropDownButton1.Text = _localizationGetter("Forms.GumpControl.toolStripDropDownButton1") ?? "Misc";
+            generateFromTileDataToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.generateFromTileDataToolStripMenuItem") ?? "Generate Gumps.xml entries from TileData Equipment...";
+            exportAllToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.exportAllToolStripMenuItem") ?? "Export All..";
+            asBmpToolStripMenuItem1.Text = _localizationGetter("Forms.GumpControl.asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem1.Text = _localizationGetter("Forms.GumpControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.GumpControl.asPngToolStripMenuItem") ?? "As Png";
+            saveToolStripButton.Text = _localizationGetter("Forms.GumpControl.saveToolStripButton") ?? "Save";
+            
+            // 底部工具栏标签 - 保存前缀用于动态更新
+            IDLabel.Text = _localizationGetter("Forms.GumpControl.IDLabel") ?? "ID:";
+            _idLabelPrefix = IDLabel.Text;
+            
+            SizeLabel.Text = _localizationGetter("Forms.GumpControl.SizeLabel") ?? "Size:";
+            _sizeLabelPrefix = SizeLabel.Text;
+            
+            Preload.Text = _localizationGetter("Forms.GumpControl.Preload") ?? "Preload";
         }
 
         private sealed record GumpEntry(string Name, string[] Tags);
@@ -76,30 +137,30 @@ namespace UoFiddler.Controls.UserControls
         private static readonly string[] _layerTags =
         {
             "",             // 0x00
-            "one-hand",     // 0x01
-            "two-hand",     // 0x02
-            "boots",        // 0x03
-            "pants",        // 0x04
-            "shirt",        // 0x05
-            "helmet",       // 0x06
-            "gloves",       // 0x07
-            "ring",         // 0x08
-            "talisman",     // 0x09
-            "gorget",       // 0x0A
-            "hair",         // 0x0B
-            "waist",        // 0x0C
-            "chest-armor",  // 0x0D
-            "bracelet",     // 0x0E
-            "",             // 0x0F
-            "facial-hair",  // 0x10
-            "tunic",        // 0x11
-            "earring",      // 0x12
-            "sleeves",      // 0x13
-            "cloak",        // 0x14
-            "backpack",     // 0x15
-            "robe",         // 0x16
-            "skirt",        // 0x17
-            "leg-armor",    // 0x18
+            "单手武器",      // 0x01
+            "双手武器",      // 0x02
+            "靴子",          // 0x03
+            "裤子",          // 0x04
+            "衬衣",          // 0x05
+            "头盔",          // 0x06
+            "手套",          // 0x07
+            "戒指",          // 0x08
+            "护身符",        // 0x09
+            "喉甲",          // 0x0A
+            "头发",          // 0x0B
+            "腰部",          // 0x0C
+            "胸甲",          // 0x0D
+            "手镯",          // 0x0E
+            "",              // 0x0F
+            "胡须",          // 0x10
+            "束腰外衣",      // 0x11
+            "耳环",          // 0x12
+            "袖子",          // 0x13
+            "斗篷",          // 0x14
+            "背包",          // 0x15
+            "长袍",          // 0x16
+            "裙子",          // 0x17
+            "腿甲",          // 0x18
         };
 
         /// <summary>
@@ -351,14 +412,16 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            var clearItem = new ToolStripMenuItem("Clear All");
+            var clearItem = new ToolStripMenuItem(_localizationGetter?.Invoke("Forms.GumpControl.ClearAllTags") ?? "Clear All");
             clearItem.Click += OnClearTagFilters;
             tagFilterDropDownButton.DropDownItems.Add(clearItem);
             tagFilterDropDownButton.DropDownItems.Add(new ToolStripSeparator());
 
             foreach (string tag in allTags)
             {
-                var item = new ToolStripMenuItem(tag) { CheckOnClick = true };
+                // 获取本地化的标签显示文本
+                string displayText = GetLocalizedTagText(tag) ?? tag;
+                var item = new ToolStripMenuItem(displayText) { CheckOnClick = true, Tag = tag };
                 item.CheckedChanged += OnTagFilterChanged;
                 tagFilterDropDownButton.DropDownItems.Add(item);
             }
@@ -366,6 +429,36 @@ namespace UoFiddler.Controls.UserControls
             // Keep dropdown open while the user checks/unchecks items
             tagFilterDropDownButton.DropDown.Closing -= OnTagDropDownClosing;
             tagFilterDropDownButton.DropDown.Closing += OnTagDropDownClosing;
+        }
+
+        /// <summary>
+        /// 获取标签的本地化文本
+        /// </summary>
+        private string GetLocalizedTagText(string tag)
+        {
+            if (_localizationGetter == null) return null;
+            
+            // 尝试从本地化字典中获取标签翻译
+            string translatedTag = _localizationGetter($"Forms.GumpControl.Tags.{tag}");
+            return translatedTag;
+        }
+
+        /// <summary>
+        /// 获取选中的所有 Gump 索引
+        /// </summary>
+        private List<int> GetSelectedGumpIndexes()
+        {
+            // 在虚拟模式中，使用 SelectedIndices 而不是 SelectedItems
+            return listView.SelectedIndices.Cast<int>().ToList();
+        }
+
+        /// <summary>
+        /// 获取主要选中的 Gump 索引（第一个）
+        /// </summary>
+        private int? GetPrimarySelectedGumpIndex()
+        {
+            // 在虚拟模式中，使用 SelectedIndices 而不是 SelectedItems
+            return listView.SelectedIndices.Count > 0 ? listView.SelectedIndices[0] : null;
         }
 
         private void OnTagDropDownClosing(object sender, ToolStripDropDownClosingEventArgs e)
@@ -397,7 +490,9 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (item is ToolStripMenuItem { Checked: true } mi)
                 {
-                    _activeTagFilters.Add(mi.Text);
+                    // 使用 Tag 属性存储原始标签值，而不是显示文本
+                    string tagValue = mi.Tag as string ?? mi.Text;
+                    _activeTagFilters.Add(tagValue);
                 }
             }
 
@@ -475,7 +570,8 @@ namespace UoFiddler.Controls.UserControls
 
             Brush fontBrush = Brushes.Gray;
 
-            bool isSelected = e.ItemIndex == _selectedPosition;
+            // 在虚拟模式中，需要检查该项是否在 SelectedIndices 中
+            bool isSelected = listView.SelectedIndices.Contains(e.ItemIndex);
             int i = _ids[e.ItemIndex];
             bool hasEntry = _gumpEntries.TryGetValue(i, out GumpEntry entry);
 
@@ -562,8 +658,18 @@ namespace UoFiddler.Controls.UserControls
                 if (bmp != null)
                 {
                     pictureBox.BackgroundImage = bmp;
-                    IDLabel.Text = $"ID: 0x{i:X} ({i})";
-                    SizeLabel.Text = $"Size: {bmp.Width},{bmp.Height}";
+                    
+                    // 支持显示多选信息 - 在虚拟模式中使用 SelectedIndices.Count
+                    if (listView.SelectedIndices.Count > 1)
+                    {
+                        IDLabel.Text = $"{_idLabelPrefix} 0x{i:X} ({i}) 等 {listView.SelectedIndices.Count} 项";
+                    }
+                    else
+                    {
+                        IDLabel.Text = $"{_idLabelPrefix} 0x{i:X} ({i})";
+                    }
+                    
+                    SizeLabel.Text = $"{_sizeLabelPrefix} {bmp.Width},{bmp.Height}";
                 }
                 else
                 {
@@ -591,25 +697,30 @@ namespace UoFiddler.Controls.UserControls
             {
                 if (gumpId >= 60000)
                 {
-                    jumpToMaleFemale.Text = "Jump to Male";
+                    jumpToMaleFemale.Text = _localizationGetter?.Invoke("Forms.GumpControl.jumpToMale") ?? "Jump to Male";
                     jumpToMaleFemale.Enabled = HasGumpId(gumpId - 10000);
                 }
                 else
                 {
-                    jumpToMaleFemale.Text = "Jump to Female";
+                    jumpToMaleFemale.Text = _localizationGetter?.Invoke("Forms.GumpControl.jumpToFemale") ?? "Jump to Female";
                     jumpToMaleFemale.Enabled = HasGumpId(gumpId + 10000);
                 }
             }
             else
             {
                 jumpToMaleFemale.Enabled = false;
-                jumpToMaleFemale.Text = "Jump to Male/Female";
+                jumpToMaleFemale.Text = _localizationGetter?.Invoke("Forms.GumpControl.jumpToMaleFemale") ?? "Jump to Male/Female";
             }
         }
 
         private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             int id = SelectedGumpId;
+            int selectedCount = listView.SelectedIndices.Count;
+            
+            // 在虚拟模式下，导出菜单项应该只在有选中项时启用
+            extractImageToolStripMenuItem.Enabled = selectedCount > 0;
+            
             copyImageToolStripMenuItem.Enabled = id >= 0 && Gumps.IsValidIndex(id);
             pasteImageToolStripMenuItem.Enabled = id >= 0 && ImageClipboard.ContainsImage();
         }
@@ -866,26 +977,64 @@ namespace UoFiddler.Controls.UserControls
 
         private void Extract_Image_ClickBmp(object sender, EventArgs e)
         {
-            int i = SelectedGumpId;
-            ExportGumpImage(i, ImageFormat.Bmp);
+            ExportSelectedGumpImages(ImageFormat.Bmp);
         }
 
         private void Extract_Image_ClickTiff(object sender, EventArgs e)
         {
-            int i = SelectedGumpId;
-            ExportGumpImage(i, ImageFormat.Tiff);
+            ExportSelectedGumpImages(ImageFormat.Tiff);
         }
 
         private void Extract_Image_ClickJpg(object sender, EventArgs e)
         {
-            int i = SelectedGumpId;
-            ExportGumpImage(i, ImageFormat.Jpeg);
+            ExportSelectedGumpImages(ImageFormat.Jpeg);
         }
 
         private void Extract_Image_ClickPng(object sender, EventArgs e)
         {
-            int i = SelectedGumpId;
-            ExportGumpImage(i, ImageFormat.Png);
+            ExportSelectedGumpImages(ImageFormat.Png);
+        }
+
+        private void ExportSelectedGumpImages(ImageFormat imageFormat)
+        {
+            List<int> selectedIndexes = GetSelectedGumpIndexes();
+            if (selectedIndexes.Count == 0)
+            {
+                return;
+            }
+
+            if (selectedIndexes.Count == 1)
+            {
+                ExportGumpImage(selectedIndexes[0], imageFormat);
+                return;
+            }
+
+            string fileExtension = Utils.GetFileExtensionFor(imageFormat);
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "选择导出目录";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                Cursor.Current = Cursors.WaitCursor;
+                foreach (int index in selectedIndexes)
+                {
+                    string fileName = Path.Combine(dialog.SelectedPath, $"Gump 0x{index:X4}.{fileExtension}");
+                    if (Gumps.IsValidIndex(index))
+                    {
+                        using (Bitmap bit = new Bitmap(Gumps.GetGump(index)))
+                        {
+                            bit.Save(fileName, imageFormat);
+                        }
+                    }
+                }
+                Cursor.Current = Cursors.Default;
+
+                MessageBox.Show($"已成功导出所选的 {selectedIndexes.Count} 个 Gump。", "导出完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private static void ExportGumpImage(int index, ImageFormat imageFormat)

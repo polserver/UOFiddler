@@ -137,7 +137,7 @@ namespace UoFiddler.Controls.UserControls
             listView.HideSelection = false;
             listView.Location = new System.Drawing.Point(0, 50);
             listView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            listView.MultiSelect = false;
+            listView.MultiSelect = true;
             listView.Name = "listView";
             listView.OwnerDraw = true;
             listView.Size = new System.Drawing.Size(289, 380);
