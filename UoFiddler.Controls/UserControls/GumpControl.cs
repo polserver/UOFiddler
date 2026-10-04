@@ -48,9 +48,6 @@ namespace UoFiddler.Controls.UserControls
             _refMarker = this;
 
             pictureBox.BackColor = Options.PreviewBackgroundColor;
-            
-            // 在加载时应用本地化
-            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)

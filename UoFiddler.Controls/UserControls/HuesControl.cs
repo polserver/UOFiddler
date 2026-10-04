@@ -33,6 +33,32 @@ namespace UoFiddler.Controls.UserControls
             pictureBox.MouseWheel += OnMouseWheel;
         }
 
+        private Func<string, string?>? _localizationGetter;
+
+        /// <summary>
+        /// 设置本地化函数
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.HuesControl.saveToolStripMenuItem") ?? "Save";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.HuesControl.replaceToolStripMenuItem") ?? "Replace With..";
+            exportToolStripMenuItem.Text = _localizationGetter("Forms.HuesControl.exportToolStripMenuItem") ?? "Export..";
+            importToolStripMenuItem.Text = _localizationGetter("Forms.HuesControl.importToolStripMenuItem") ?? "Import..";
+            exportAllHueNamesListToolStripMenuItem.Text = _localizationGetter("Forms.HuesControl.exportAllHueNamesListToolStripMenuItem") ?? "Export all hue names list";
+            HueIndexToolStripLabel.Text = _localizationGetter("Forms.HuesControl.HueIndexToolStripLabel") ?? "Index:";
+            HueNameToolStripLabel.Text = _localizationGetter("Forms.HuesControl.HueNameToolStripLabel") ?? "Name:";
+            SearchNameToolStripButton.Text = _localizationGetter("Forms.HuesControl.SearchNameToolStripButton") ?? "Find next";
+            IndexOffsetButton.Text = _localizationGetter("Forms.HuesControl.IndexOffsetButton") ?? "Show ingame numbers";
+        }
+
         private const int _itemHeight = 20;
         private int _selected;
         private bool _loaded;
@@ -232,7 +258,9 @@ namespace UoFiddler.Controls.UserControls
 
             if (Selected >= 0)
             {
-                new HueEditForm(Selected).Show();
+                var form = new HueEditForm(Selected);
+                form.SetLocalization(key => _localizationGetter?.Invoke(key));
+                form.Show();
             }
         }
 

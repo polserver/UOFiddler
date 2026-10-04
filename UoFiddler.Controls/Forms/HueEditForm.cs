@@ -25,6 +25,7 @@ namespace UoFiddler.Controls.Forms
         private int _selected;
         private int _secondSel;
         private Bitmap _preview;
+        private Func<string, string?>? _localizationGetter;
 
         private int Selected
         {
@@ -68,6 +69,45 @@ namespace UoFiddler.Controls.Forms
 
             pictureBoxPreview.BackColor = Options.PreviewBackgroundColor;
             pictureBoxPreview.Image = new Bitmap(pictureBoxPreview.Width, pictureBoxPreview.Height);
+        }
+
+        /// <summary>
+        /// 设置本地化函数
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 窗口标题 - 动态生成，保持索引信息
+            var titleFormat = _localizationGetter("Forms.HueEditForm.Title") ?? "HueEdit";
+            int hueIndex = int.Parse(Text.Split('/')[0].Replace("HueEdit ", "").Trim());
+            Text = $"{titleFormat} {hueIndex} / 0x{hueIndex:X}";
+            
+            // 按钮
+            ColorPickerButton.Text = _localizationGetter("Forms.HueEditForm.ColorPickerButton") ?? "Color Picker";
+            SaveButton.Text = _localizationGetter("Forms.HueEditForm.SaveButton") ?? "Save";
+            Spread.Text = _localizationGetter("Forms.HueEditForm.Spread") ?? "Linear Gradient";
+            ExpGradientButton.Text = _localizationGetter("Forms.HueEditForm.ExpGradientButton") ?? "Exp Gradient";
+            InverseButton.Text = _localizationGetter("Forms.HueEditForm.InverseButton") ?? "Inverse";
+            ModifyRangeButton.Text = _localizationGetter("Forms.HueEditForm.ModifyRangeButton") ?? "Modify Range";
+            SetColorButton.Text = _localizationGetter("Forms.HueEditForm.SetColorButton") ?? "Set color";
+            
+            // 标签
+            RLabel.Text = _localizationGetter("Forms.HueEditForm.RLabel") ?? "R:";
+            GLabel.Text = _localizationGetter("Forms.HueEditForm.GLabel") ?? "G:";
+            BLabel.Text = _localizationGetter("Forms.HueEditForm.BLabel") ?? "B:";
+            
+            // 菜单项
+            itemToolStripMenuItem.Text = _localizationGetter("Forms.HueEditForm.itemToolStripMenuItem") ?? "Item";
+            animationToolStripMenuItem.Text = _localizationGetter("Forms.HueEditForm.animationToolStripMenuItem") ?? "Animation";
+            gumpToolStripMenuItem.Text = _localizationGetter("Forms.HueEditForm.gumpToolStripMenuItem") ?? "Gump";
+            hueOnlyGreyToolStripMenuItem.Text = _localizationGetter("Forms.HueEditForm.hueOnlyGreyToolStripMenuItem") ?? "Hue only Grey";
         }
 
         private int GetIndex(int x)

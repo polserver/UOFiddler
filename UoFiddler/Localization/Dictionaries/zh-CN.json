@@ -387,6 +387,34 @@
       "chkMultiSelect": "多选",
       "applyHue1ToHue2": "应用色调到左侧"
     },
+    "HuesControl": {
+      "saveToolStripMenuItem": "保存",
+      "replaceToolStripMenuItem": "替换为..",
+      "exportToolStripMenuItem": "导出..",
+      "importToolStripMenuItem": "导入..",
+      "exportAllHueNamesListToolStripMenuItem": "导出所有色调名称列表",
+      "HueIndexToolStripLabel": "索引:",
+      "HueNameToolStripLabel": "名称:",
+      "SearchNameToolStripButton": "查找下一个",
+      "IndexOffsetButton": "显示游戏内数字"
+    },
+    "HueEditForm": {
+      "Title": "色调编辑",
+      "ColorPickerButton": "颜色拾取器",
+      "SaveButton": "保存",
+      "Spread": "线性渐变",
+      "ExpGradientButton": "指数渐变",
+      "InverseButton": "反转",
+      "ModifyRangeButton": "修改范围",
+      "SetColorButton": "设置颜色",
+      "RLabel": "R:",
+      "GLabel": "G:",
+      "BLabel": "B:",
+      "itemToolStripMenuItem": "物品",
+      "animationToolStripMenuItem": "动画",
+      "gumpToolStripMenuItem": "Gump",
+      "hueOnlyGreyToolStripMenuItem": "仅色调灰度"
+    },
     "GumpControl": {
       "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
       "findNextFreeSlotToolStripMenuItem": "查找下一个空闲槽位",
