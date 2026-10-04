@@ -37,6 +37,11 @@ namespace UoFiddler.Controls.UserControls
             listView1.Height += SystemInformation.HorizontalScrollBarHeight;
         }
 
+        private Func<string, string?>? _localizationGetter;
+        private string _graphicLabelPrefix = "Graphic: ";
+        private string _baseGraphicLabelPrefix = "Base Graphic: ";
+        private string _hueLabelPrefix = "Hue: ";
+
         public string[][] GetActionNames { get; } = {
             // Monster
             new[]
@@ -349,9 +354,9 @@ namespace UoFiddler.Controls.UserControls
                 _defHue = hue;
             }
 
-            BaseGraphicLabel.Text = $"BaseGraphic: {body} (0x{body:X})";
-            GraphicLabel.Text = $"Graphic: {_currentSelect} (0x{_currentSelect:X})";
-            HueLabel.Text = $"Hue: {hue + 1} (0x{hue + 1:X})";
+            BaseGraphicLabel.Text = $"{_baseGraphicLabelPrefix}{body} (0x{body:X})";
+            GraphicLabel.Text = $"{_graphicLabelPrefix}{_currentSelect} (0x{_currentSelect:X})";
+            HueLabel.Text = $"{_hueLabelPrefix}{hue + 1} (0x{hue + 1:X})";
 
             LoadListViewFrames();
         }
@@ -365,9 +370,9 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.Frames = null;
             LoadListViewFrames();
 
-            BaseGraphicLabel.Text = "BaseGraphic:";
-            GraphicLabel.Text = "Graphic: ";
-            HueLabel.Text = "Hue:";
+            BaseGraphicLabel.Text = _baseGraphicLabelPrefix;
+            GraphicLabel.Text = _graphicLabelPrefix;
+            HueLabel.Text = _hueLabelPrefix;
         }
 
         private void TreeViewMobs_AfterSelect(object sender, TreeViewEventArgs e)
@@ -597,7 +602,9 @@ namespace UoFiddler.Controls.UserControls
                     ? GetActionNames[actionType][i]
                     : $"Action{i}";
 
-                parent.Nodes.Add(new TreeNode($"{i} {actionName}") { Tag = i });
+                // 使用汉化后的动作名称
+                string displayName = GetLocalizedActionName(actionName);
+                parent.Nodes.Add(new TreeNode($"{i} {displayName}") { Tag = i });
             }
         }
 
@@ -681,7 +688,9 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        bodyNode.Nodes.Add(new TreeNode($"{i} {GetActionNames[actionType][i]}") { Tag = i });
+                        // 使用汉化后的动作名称
+                        string displayName = GetLocalizedActionName(GetActionNames[actionType][i]);
+                        bodyNode.Nodes.Add(new TreeNode($"{i} {displayName}") { Tag = i });
                     }
                 }
             }
@@ -1343,6 +1352,88 @@ namespace UoFiddler.Controls.UserControls
             MainPictureBox.Frames.ToGif(outputFile, looping: looping, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
 
             FileSavedDialog.Show(FindForm(), outputFile, "InGame Anim saved successfully.");
+        }
+
+        /// <summary>
+        /// 设置本地化获取器
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// 应用本地化到所有 UI 元素
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 搜索标签
+            searchToolStripLabel.Text = _localizationGetter("Forms.AnimationListControl.searchToolStripLabel") ?? "Search:";
+
+            // 右键菜单项
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.removeToolStripMenuItem") ?? "Remove";
+
+            // 标签页
+            tabPage1.Text = _localizationGetter("Forms.AnimationListControl.tabPage1") ?? "Animation";
+            tabPage2.Text = _localizationGetter("Forms.AnimationListControl.tabPage2") ?? "Thumbnail List";
+
+            // 导出图像菜单
+            extractImageToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.extractImageToolStripMenuItem") ?? "Export Image..";
+            asBMpToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asBMpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem2.Text = _localizationGetter("Forms.AnimationListControl.asPngToolStripMenuItem2") ?? "As Png";
+
+            // 导出动画菜单
+            extractAnimationToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.extractAnimationToolStripMenuItem") ?? "Export Animation..";
+            asBmpToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationListControl.asBmpToolStripMenuItem1") ?? "As Bmp";
+            asTiffToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationListControl.asTiffToolStripMenuItem1") ?? "As Tiff";
+            asJpgToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationListControl.asJpgToolStripMenuItem1") ?? "As Jpg";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationListControl.asPngToolStripMenuItem1") ?? "As Png";
+            asAnimatedGifToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asAnimatedGifToolStripMenuItem") ?? "As animated Gif (looping)";
+            asAnimatedGifnoLoopingToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asAnimatedGifnoLoopingToolStripMenuItem") ?? "As animated Gif (no looping)";
+
+            // 导出帧菜单
+            exportFrameToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.exportFrameToolStripMenuItem") ?? "Export Frame..";
+            asBmpToolStripMenuItem2.Text = _localizationGetter("Forms.AnimationListControl.asBmpToolStripMenuItem2") ?? "As Bmp";
+            asTiffToolStripMenuItem2.Text = _localizationGetter("Forms.AnimationListControl.asTiffToolStripMenuItem2") ?? "As Tiff";
+            asJpgToolStripMenuItem2.Text = _localizationGetter("Forms.AnimationListControl.asJpgToolStripMenuItem2") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.asPngToolStripMenuItem") ?? "As Png";
+
+            // 帧设置组
+            groupBoxSettings.Text = _localizationGetter("Forms.AnimationListControl.groupBoxSettings") ?? "Frames";
+            directionLabel.Text = _localizationGetter("Forms.AnimationListControl.directionLabel") ?? "Direction";
+            ShowFrameBoundsCheckBox.Text = _localizationGetter("Forms.AnimationListControl.ShowFrameBoundsCheckBox") ?? "Show frame bounds";
+            AnimateCheckBox.Text = _localizationGetter("Forms.AnimationListControl.AnimateCheckBox") ?? "Animate";
+
+            // 设置菜单
+            SettingsButton.Text = _localizationGetter("Forms.AnimationListControl.SettingsButton") ?? "Settings";
+            sortAlphaToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.sortAlphaToolStripMenuItem") ?? "Sort alphabetical";
+            hueToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.hueToolStripMenuItem") ?? "Hue";
+            rewriteXmlToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.rewriteXmlToolStripMenuItem") ?? "Rewrite Xml";
+            tryToFindNewGraphicsToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.tryToFindNewGraphicsToolStripMenuItem") ?? "Try to find new Graphics";
+            animationEditToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.animationEditToolStripMenuItem") ?? "Animation edit";
+
+            // 状态栏标签
+            _graphicLabelPrefix = _localizationGetter("Forms.AnimationListControl.GraphicLabel") ?? "Graphic: ";
+            _baseGraphicLabelPrefix = _localizationGetter("Forms.AnimationListControl.BaseGraphicLabel") ?? "Base Graphic: ";
+            _hueLabelPrefix = _localizationGetter("Forms.AnimationListControl.HueLabel") ?? "Hue: ";
+            
+            GraphicLabel.Text = _graphicLabelPrefix;
+            BaseGraphicLabel.Text = _baseGraphicLabelPrefix;
+            HueLabel.Text = _hueLabelPrefix;
+        }
+
+        /// <summary>
+        /// 获取动作名称的本地化文本（汉化）
+        /// </summary>
+        private string GetLocalizedActionName(string actionName)
+        {
+            if (_localizationGetter == null) return actionName;
+            return _localizationGetter($"Forms.AnimationListControl.ActionNames.{actionName}") ?? actionName;
         }
 
         private void OnClickExtractAnimGifLooping(object sender, EventArgs e)
