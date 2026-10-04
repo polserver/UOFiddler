@@ -180,6 +180,9 @@ namespace UoFiddler.Controls.UserControls
             splitContainer1.SplitterMoved += (_, _) => ClampListWidth();
             splitContainer1.SizeChanged += (_, _) => ClampListWidth();
             ClampListWidth();
+            
+            // Shift+Click 范围选择（不干扰系统的 Ctrl 多选）
+            listView.MouseClick += ListView_MouseClick;
         }
 
         /// <summary>
@@ -683,6 +686,50 @@ namespace UoFiddler.Controls.UserControls
 
             listView.Invalidate();
             JumpToMaleFemaleInvalidate();
+        }
+
+        private void ListView_MouseClick(object sender, MouseEventArgs e)
+        {
+            // 只处理 Shift+Click 范围选择
+            // 关键：如果按着 Ctrl，立即返回，让系统自动处理 Ctrl 多选
+            if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                return; // Ctrl+Click 由系统自动处理，我们不干扰
+            }
+
+            if ((Control.ModifierKeys & Keys.Shift) != Keys.Shift)
+            {
+                return; // 不是 Shift+Click，不处理
+            }
+
+            ListViewHitTestInfo hitTest = listView.HitTest(e.Location);
+            if (hitTest.Item == null)
+            {
+                return;
+            }
+
+            int clickedIndex = hitTest.Item.Index;
+
+            // Shift+Click 范围选择：只有当已有选择时才执行
+            if (listView.SelectedIndices.Count > 0)
+            {
+                int firstSelected = listView.SelectedIndices[0];
+                int startIndex = Math.Min(firstSelected, clickedIndex);
+                int endIndex = Math.Max(firstSelected, clickedIndex);
+
+                // 清除现有选择并选择范围
+                listView.SelectedIndices.Clear();
+                for (int i = startIndex; i <= endIndex; i++)
+                {
+                    if (i >= 0 && i < _ids.Count)
+                    {
+                        listView.SelectedIndices.Add(i);
+                    }
+                }
+                
+                // 手动触发以更新 UI
+                ListView_SelectedIndexChanged(listView, EventArgs.Empty);
+            }
         }
 
         private void JumpToMaleFemaleInvalidate()
