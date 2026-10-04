@@ -60,6 +60,7 @@ namespace UoFiddler.Forms
             gumpsControl.SetLocalization(key => LocalizationService.GetString(key));
             hueControl.SetLocalization(key => LocalizationService.GetString(key));
             multisControl.SetLocalization(key => LocalizationService.GetString(key));
+            animationsControl.SetLocalization(key => LocalizationService.GetString(key));
 
             darkModeMenuItem.Checked = AppSettings.DarkMode;
 
