@@ -131,7 +131,15 @@ namespace UoFiddler.Plugin.SendItem
 
         private static void ToolStripClick(object sender, EventArgs e)
         {
-            new SendItemOptionsForm().Show();
+            SendItemOptionsForm form = new SendItemOptionsForm();
+            
+            // 应用汉化
+            if (PluginBase.LocalizationGetter != null)
+            {
+                form.SetLocalization(PluginBase.LocalizationGetter);
+            }
+            
+            form.Show();
         }
 
         private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
