@@ -51,12 +51,12 @@ namespace UoFiddler.Controls.Forms
             // 
             // _columnKey
             // 
-            _columnKey.Text = "Shortcut / Control";
+            _columnKey.Text = "快捷方式 / 控制";
             _columnKey.Width = 180;
             // 
             // _columnAction
             // 
-            _columnAction.Text = "Action";
+            _columnAction.Text = "操作";
             _columnAction.Width = 420;
             // 
             // _btnClose
@@ -67,7 +67,7 @@ namespace UoFiddler.Controls.Forms
             _btnClose.Name = "_btnClose";
             _btnClose.Size = new System.Drawing.Size(75, 27);
             _btnClose.TabIndex = 1;
-            _btnClose.Text = "Close";
+            _btnClose.Text = "关闭";
             _btnClose.UseVisualStyleBackColor = true;
             // 
             // MultisHelpForm
@@ -85,7 +85,7 @@ namespace UoFiddler.Controls.Forms
             Padding = new System.Windows.Forms.Padding(8);
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Multis — Keyboard Shortcuts & Controls";
+            Text = "多重组件 — 键盘快捷方式和控制";
             ResumeLayout(false);
         }
 
