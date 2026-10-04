@@ -26,6 +26,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
     public class ExamplePluginBase : PluginBase
     {
         private const string _itemDescFileName = "itemdesc.cfg";
+        private static Func<string, string> _localizationGetter;
 
         public ExamplePluginBase()
         {
@@ -61,6 +62,12 @@ namespace UoFiddler.Plugin.ExamplePlugin
         {
             // make something useful
             _ = Files.RootDir;
+            
+            // 保存 LocalizationGetter 供后续事件使用
+            if (PluginBase.LocalizationGetter != null)
+            {
+                _localizationGetter = PluginBase.LocalizationGetter;
+            }
         }
 
         public override void Unload()
@@ -74,7 +81,16 @@ namespace UoFiddler.Plugin.ExamplePlugin
                 Tag = tabControl.TabCount + 1, // at end used for undock/dock feature to define the order
                 Text = "PluginTest"
             };
-            page.Controls.Add(new ExampleControl());
+            
+            ExampleControl control = new ExampleControl();
+            
+            // 应用汉化
+            if (PluginBase.LocalizationGetter != null)
+            {
+                control.SetLocalization(PluginBase.LocalizationGetter);
+            }
+            
+            page.Controls.Add(control);
             tabControl.TabPages.Add(page);
         }
 
@@ -90,7 +106,15 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
         private static void ItemClick(object sender, EventArgs e)
         {
-            new ExampleForm().Show();
+            ExampleForm form = new ExampleForm();
+            
+            // 应用汉化
+            if (PluginBase.LocalizationGetter != null)
+            {
+                form.SetLocalization(PluginBase.LocalizationGetter);
+            }
+            
+            form.Show();
         }
 
         private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
@@ -99,7 +123,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
             ToolStripMenuItem exportItemDescItem = new ToolStripMenuItem
             {
-                Text = "Export selected to itemdesc.cfg"
+                Text = _localizationGetter?.Invoke("Forms.PluginTestForm.contextmenu_export_selected") ?? "Export selected to itemdesc.cfg"
             };
             exportItemDescItem.Click += ExportToItemDescClicked;
             strip.Items.Add(exportItemDescItem);
@@ -108,7 +132,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
             ToolStripMenuItem exportOffsetItem = new ToolStripMenuItem
             {
-                Text = "Export all items to offset.cfg"
+                Text = _localizationGetter?.Invoke("Forms.PluginTestForm.contextmenu_export_all") ?? "Export all items to offset.cfg"
             };
             exportOffsetItem.Click += ExportToOffsetClicked;
             strip.Items.Add(exportOffsetItem);
@@ -121,13 +145,20 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
             string fileName = Path.Combine(Options.OutputPath, "offset.cfg");
 
-            string inputMessage = "Do you want to export all items to offset.cfg?\r\n"
+            string inputMessage = _localizationGetter?.Invoke("Forms.PluginTestForm.messagebox_export_confirm") 
+                ?? ("Do you want to export all items to offset.cfg?\r\n"
                                   + "It may take some time (around 10-20 seconds).\r\n\r\n"
                                   + "Export will replace existing file located at: "
                                   + fileName
-                                  + "\r\n\r\nContinue?\r\n";
+                                  + "\r\n\r\nContinue?\r\n");
+            
+            // 如果有本地化文本，需要填入文件名
+            if (inputMessage.Contains("{path}"))
+            {
+                inputMessage = inputMessage.Replace("{path}", fileName);
+            }
 
-            if (MessageBox.Show(inputMessage, "Export all items to offset.cfg?", MessageBoxButtons.YesNo) == DialogResult.No)
+            if (MessageBox.Show(inputMessage, _localizationGetter?.Invoke("Forms.PluginTestForm.messagebox_export_title") ?? "Export all items to offset.cfg?", MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return;
             }
@@ -153,7 +184,7 @@ namespace UoFiddler.Plugin.ExamplePlugin
 
             File.WriteAllText(fileName, sb.ToString());
 
-            MessageBox.Show("Done!");
+            MessageBox.Show(_localizationGetter?.Invoke("Forms.PluginTestForm.messagebox_export_done") ?? "Done!");
         }
 
         private void ExportToItemDescClicked(object sender, EventArgs e)

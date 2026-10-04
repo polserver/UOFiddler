@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Windows.Forms;
 
 namespace UoFiddler.Plugin.ExamplePlugin.Forms
@@ -18,6 +19,27 @@ namespace UoFiddler.Plugin.ExamplePlugin.Forms
         public ExampleForm()
         {
             InitializeComponent();
+            this.Load += (s, e) => ApplyLocalization();
+        }
+
+        public void SetLocalization(Func<string, string> localizationGetter)
+        {
+            _localizationGetter = localizationGetter;
+            
+            // 如果窗体已显示，立即应用汉化
+            if (this.Visible)
+            {
+                ApplyLocalization();
+            }
+        }
+
+        private Func<string, string> _localizationGetter;
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.PluginTestForm.Title") ?? "Example";
         }
     }
 }

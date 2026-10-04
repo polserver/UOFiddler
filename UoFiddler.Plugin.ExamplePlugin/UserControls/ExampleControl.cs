@@ -20,6 +20,27 @@ namespace UoFiddler.Plugin.ExamplePlugin.UserControls
         public ExampleControl()
         {
             InitializeComponent();
+            this.Load += (s, e) => ApplyLocalization();
+        }
+
+        public void SetLocalization(Func<string, string> localizationGetter)
+        {
+            _localizationGetter = localizationGetter;
+            
+            // 如果控件已显示，立即应用汉化
+            if (this.Visible)
+            {
+                ApplyLocalization();
+            }
+        }
+
+        private Func<string, string> _localizationGetter;
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            button1.Text = _localizationGetter("Forms.PluginTestForm.SayHello") ?? "Say Hello";
         }
 
         private void OnClickSayHello(object sender, EventArgs e)
@@ -30,7 +51,9 @@ namespace UoFiddler.Plugin.ExamplePlugin.UserControls
             }
             else
             {
-                MessageBox.Show("UO client is not running so I will say hello here. Hi!");
+                string message = _localizationGetter?.Invoke("Forms.PluginTestForm.messagebox_hello") 
+                    ?? "UO client is not running so I will say hello here. Hi!";
+                MessageBox.Show(message);
             }
         }
     }
