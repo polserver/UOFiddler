@@ -422,6 +422,18 @@
       "ExportSelectedAsTiff": "保存为 TIFF",
       "ExportSelectedAsJpg": "保存为 JPG",
       "ExportSelectedAsPng": "保存为 PNG",
+      "Messages": {
+        "CopyImageError": "复制图像失败",
+        "CopyImage": "复制图像",
+        "PasteImageError": "粘贴图像失败",
+        "PasteImage": "粘贴图像",
+        "InvalidGumpDimensions": "无效的 Gump 尺寸！\n\n剪贴板图像：{0}x{1}\nGump 可支持的最大尺寸为 65535x65535 像素。\n\n未做任何更改。",
+        "InvalidSize": "无效的尺寸",
+        "SaveConfirm": "确定要保存吗？这可能需要一些时间",
+        "Save": "保存",
+        "RemoveConfirm": "确定要删除 {0} 吗？",
+        "Remove": "删除"
+      },
       "Tags": {
         "one-hand": "单手武器",
         "two-hand": "双手武器",

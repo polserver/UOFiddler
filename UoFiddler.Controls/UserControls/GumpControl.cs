@@ -782,7 +782,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (!ImageClipboard.TryCopy(Gumps.GetGump(id), out string error))
             {
-                MessageBox.Show(error, "Copy Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                string title = _localizationGetter?.Invoke("Forms.GumpControl.Messages.CopyImage") ?? "Copy Image";
+                MessageBox.Show(error, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -797,7 +798,8 @@ namespace UoFiddler.Controls.UserControls
             using Bitmap pasted = ImageClipboard.TryPaste(out string error);
             if (pasted == null)
             {
-                MessageBox.Show(error, "Paste Image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                string title = _localizationGetter?.Invoke("Forms.GumpControl.Messages.PasteImage") ?? "Paste Image";
+                MessageBox.Show(error, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -805,12 +807,11 @@ namespace UoFiddler.Controls.UserControls
             // decoder refuses anything past 0xFFFF on either axis.
             if (pasted.Width == 0 || pasted.Height == 0 || pasted.Width > 0xFFFF || pasted.Height > 0xFFFF)
             {
-                MessageBox.Show(
-                    $"Invalid gump dimensions!\n\n" +
-                    $"Clipboard image: {pasted.Width}x{pasted.Height}\n" +
-                    $"Gumps may be up to 65535x65535 pixels.\n\n" +
-                    "No changes made.",
-                    "Invalid Size", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                string template = _localizationGetter?.Invoke("Forms.GumpControl.Messages.InvalidGumpDimensions") 
+                    ?? "Invalid gump dimensions!\n\nClipboard image: {0}x{1}\nGumps may be up to 65535x65535 pixels.\n\nNo changes made.";
+                string message = string.Format(template, pasted.Width, pasted.Height);
+                string title = _localizationGetter?.Invoke("Forms.GumpControl.Messages.InvalidSize") ?? "Invalid Size";
+                MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -884,7 +885,9 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
+            string message = _localizationGetter?.Invoke("Forms.GumpControl.Messages.SaveConfirm") ?? "Are you sure? Will take a while";
+            string title = _localizationGetter?.Invoke("Forms.GumpControl.Messages.Save") ?? "Save";
+            DialogResult result = MessageBox.Show(message, title, MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
@@ -903,7 +906,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            DialogResult result = MessageBox.Show($"Are you sure to remove {i}", "Remove", MessageBoxButtons.YesNo,
+            string template = _localizationGetter?.Invoke("Forms.GumpControl.Messages.RemoveConfirm") ?? "Are you sure to remove {0}";
+            string message = string.Format(template, i);
+            string title = _localizationGetter?.Invoke("Forms.GumpControl.Messages.Remove") ?? "Remove";
+            DialogResult result = MessageBox.Show(message, title, MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
