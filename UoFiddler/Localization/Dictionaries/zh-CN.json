@@ -477,7 +477,40 @@
       "uopAsBmpPicToolStripMenuItem": "导出为 BMP",
       "uopAsTiffPicToolStripMenuItem": "导出为 TIFF",
       "uopAsJpgPicToolStripMenuItem": "导出为 JPG",
-      "uopAsPngPicToolStripMenuItem": "导出为 PNG"
+      "uopAsPngPicToolStripMenuItem": "导出为 PNG",
+      "Status": {
+        "Size": "尺寸",
+        "MaxHeight": "最大高度",
+        "MultiRegion": "多重区域",
+        "Surface": "表面",
+        "Zoom": "缩放",
+        "Empty": "尺寸: 0,0 最大高度: 0 多重区域: 0,0,0,0"
+      },
+      "HelpForm": {
+        "Title": "多重组件 — 键盘快捷方式和控制",
+        "ColumnShortcut": "快捷方式 / 控制",
+        "ColumnAction": "操作",
+        "ButtonClose": "关闭",
+        "HeaderPreview": "预览",
+        "PreviewFit": "适应窗口",
+        "PreviewFitDesc": "切换工具栏上的按钮 — 缩放以适应或以 100% 显示并显示滚动条",
+        "HeaderZoom": "缩放（仅 100% 模式）",
+        "ZoomCtrlWheel": "Ctrl + 鼠标滚轮",
+        "ZoomCtrlWheelDesc": "放大 / 缩小",
+        "ZoomShiftPlus": "Shift + = （加号键）",
+        "ZoomShiftPlusDesc": "放大",
+        "ZoomMinus": "- （减号键）",
+        "ZoomMinusDesc": "缩小",
+        "ZoomNumpadPlus": "数字键盘 +",
+        "ZoomNumpadPlusDesc": "放大",
+        "ZoomNumpadMinus": "数字键盘 -",
+        "ZoomNumpadMinusDesc": "缩小",
+        "ZoomCtrl0": "Ctrl + 0",
+        "ZoomCtrl0Desc": "重置缩放为 100%",
+        "HeaderPanning": "平移（仅 100% 模式）",
+        "PanningLeftDrag": "左键单击拖动",
+        "PanningLeftDragDesc": "平移视图"
+      }
     },
     "GumpControl": {
       "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
