@@ -13,19 +13,88 @@ namespace UoFiddler.Plugin.Compare.UserControls
 {
     public partial class CompareTileDataControl : UserControl
     {
+        private Func<string, string> _localizationGetter;
+
         public CompareTileDataControl()
         {
             InitializeComponent();
+            this.Load += (s, e) => ApplyLocalization();
         }
 
         public void SetLocalization(Func<string, string> getLocalized)
         {
-            btnCopyLandSelected.Text = getLocalized("btnCopyLandSelected") ?? "Copy Selected";
-            btnCopyLandAllDiff.Text = getLocalized("btnCopyLandAllDiff") ?? "Copy All Different";
-            btnCopyItemSelected.Text = getLocalized("btnCopyItemSelected") ?? "Copy Selected";
-            btnCopyItemAllDiff.Text = getLocalized("btnCopyItemAllDiff") ?? "Copy All Different";
-            tabLand.Text = getLocalized("tabLand") ?? "Land Tiles";
-            tabItem.Text = getLocalized("tabItem") ?? "Static Tiles";
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 汉化分组框
+            gbLandFields.Text = _localizationGetter("Forms.CompareTileDataControl.gbLandFields") ?? "Land Fields";
+            gbItemFields.Text = _localizationGetter("Forms.CompareTileDataControl.gbItemFields") ?? "Item Fields";
+            gbIgnoreFlags.Text = _localizationGetter("Forms.CompareTileDataControl.gbIgnoreFlags") ?? "Ignore Flags (checked = excluded from compare)";
+            
+            // 汉化标签
+            labelDir.Text = _localizationGetter("Forms.CompareTileDataControl.labelDir") ?? "Directory:";
+            
+            // 汉化按钮
+            btnBrowse.Text = _localizationGetter("Forms.CompareTileDataControl.btnBrowse") ?? "Browse...";
+            btnLoad.Text = _localizationGetter("Forms.CompareTileDataControl.btnLoad") ?? "Load";
+            btnToggleRules.Text = _localizationGetter("Forms.CompareTileDataControl.btnToggleRulesClose") ?? "Rules ▲";
+            btnResetRules.Text = _localizationGetter("Forms.CompareTileDataControl.btnResetRules") ?? "Reset to Defaults";
+            btnApplyRules.Text = _localizationGetter("Forms.CompareTileDataControl.btnApplyRules") ?? "Apply";
+            
+            // 汉化复选框 - Land Fields
+            chkLandName.Text = _localizationGetter("Forms.CompareTileDataControl.chkLandName") ?? "Name";
+            chkLandTexId.Text = _localizationGetter("Forms.CompareTileDataControl.chkLandTexId") ?? "TextureId";
+            chkLandFlags.Text = _localizationGetter("Forms.CompareTileDataControl.chkLandFlags") ?? "Flags";
+            
+            // 汉化复选框 - Item Fields
+            chkItemName.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemName") ?? "Name";
+            chkItemAnim.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemAnim") ?? "Anim";
+            chkItemWeight.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemWeight") ?? "Weight";
+            chkItemQuality.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemQuality") ?? "Quality";
+            chkItemQty.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemQty") ?? "Quantity";
+            chkItemHue.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemHue") ?? "Hue";
+            chkItemStack.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemStack") ?? "StackOffset";
+            chkItemValue.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemValue") ?? "Value";
+            chkItemHeight.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemHeight") ?? "Height";
+            chkItemMisc.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemMisc") ?? "MiscData";
+            chkItemUnk2.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemUnk2") ?? "Unk2";
+            chkItemUnk3.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemUnk3") ?? "Unk3";
+            chkItemFlags.Text = _localizationGetter("Forms.CompareTileDataControl.chkItemFlags") ?? "Flags";
+            
+            // 汉化其他复选框
+            chkShowDiff.Text = _localizationGetter("Forms.CompareTileDataControl.chkShowDiff") ?? "Show Differences Only";
+            chkMultiSelect.Text = _localizationGetter("Forms.CompareTileDataControl.chkMultiSelect") ?? "Multi-Select";
+            
+            // 汉化复制按钮
+            btnCopyLandSelected.Text = _localizationGetter("Forms.CompareTileDataControl.btnCopyLandSelected") ?? "Copy Selected";
+            btnCopyLandAllDiff.Text = _localizationGetter("Forms.CompareTileDataControl.btnCopyLandAllDiff") ?? "Copy All Different";
+            btnCopyItemSelected.Text = _localizationGetter("Forms.CompareTileDataControl.btnCopyItemSelected") ?? "Copy Selected";
+            btnCopyItemAllDiff.Text = _localizationGetter("Forms.CompareTileDataControl.btnCopyItemAllDiff") ?? "Copy All Different";
+            
+            // 汉化标签页
+            tabLand.Text = _localizationGetter("Forms.CompareTileDataControl.tabLand") ?? "Land Tiles";
+            tabItem.Text = _localizationGetter("Forms.CompareTileDataControl.tabItem") ?? "Static Tiles";
+            
+            // 汉化详细信息标签
+            lblLandName.Text = _localizationGetter("Forms.CompareTileDataControl.labelLandName") ?? "Name";
+            lblLandTexId.Text = _localizationGetter("Forms.CompareTileDataControl.labelLandTexId") ?? "Texture ID";
+            lblItemName.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemName") ?? "Name";
+            lblItemAnim.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemAnim") ?? "Animation";
+            lblItemWeight.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemWeight") ?? "Weight";
+            lblItemQuality.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemQuality") ?? "Quality";
+            lblItemQty.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemQty") ?? "Quantity";
+            lblItemHue.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemHue") ?? "Hue";
+            lblItemStack.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemStack") ?? "StackOffset";
+            lblItemValue.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemValue") ?? "Value";
+            lblItemHeight.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemHeight") ?? "Height";
+            lblItemMisc.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemMisc") ?? "MiscData";
+            lblItemUnk2.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemUnk2") ?? "Unk2";
+            lblItemUnk3.Text = _localizationGetter("Forms.CompareTileDataControl.labelItemUnk3") ?? "Unk3";
         }
 
         // ── State ────────────────────────────────────────────────────────────────
@@ -190,26 +259,26 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void SetupDetailPanels()
         {
             // Land detail — 2 rows (Name, TextureId); Flags shown per-flag below
-            SetupDetailRow(tlpLandDetail, 0, lblLandName, "Name", txtLandOrgName, txtLandSecName);
-            SetupDetailRow(tlpLandDetail, 1, lblLandTexId, "Texture ID", txtLandOrgTexId, txtLandSecTexId);
+            SetupDetailRow(tlpLandDetail, 0, lblLandName, "labelLandName", txtLandOrgName, txtLandSecName, "Name");
+            SetupDetailRow(tlpLandDetail, 1, lblLandTexId, "labelLandTexId", txtLandOrgTexId, txtLandSecTexId, "Texture ID");
             SetupFlagsPanel(panelLandDetail,
                 out _landFlagOrgChecks, out _landFlagSecChecks, out _landFlagLabels, out _landFlagTlp);
             // Push tlpLandDetail to the back so it gets the highest z-order and docks topmost
             panelLandDetail.Controls.SetChildIndex(tlpLandDetail, panelLandDetail.Controls.Count - 1);
 
             // Item detail — 12 rows (no Flags row); Flags shown per-flag below
-            SetupDetailRow(tlpItemDetail, 0, lblItemName, "Name", txtItemOrgName, txtItemSecName);
-            SetupDetailRow(tlpItemDetail, 1, lblItemAnim, "Animation", txtItemOrgAnim, txtItemSecAnim);
-            SetupDetailRow(tlpItemDetail, 2, lblItemWeight, "Weight", txtItemOrgWeight, txtItemSecWeight);
-            SetupDetailRow(tlpItemDetail, 3, lblItemQuality, "Quality", txtItemOrgQuality, txtItemSecQuality);
-            SetupDetailRow(tlpItemDetail, 4, lblItemQty, "Quantity", txtItemOrgQty, txtItemSecQty);
-            SetupDetailRow(tlpItemDetail, 5, lblItemHue, "Hue", txtItemOrgHue, txtItemSecHue);
-            SetupDetailRow(tlpItemDetail, 6, lblItemStack, "StackOffset", txtItemOrgStack, txtItemSecStack);
-            SetupDetailRow(tlpItemDetail, 7, lblItemValue, "Value", txtItemOrgValue, txtItemSecValue);
-            SetupDetailRow(tlpItemDetail, 8, lblItemHeight, "Height", txtItemOrgHeight, txtItemSecHeight);
-            SetupDetailRow(tlpItemDetail, 9, lblItemMisc, "MiscData", txtItemOrgMisc, txtItemSecMisc);
-            SetupDetailRow(tlpItemDetail, 10, lblItemUnk2, "Unk2", txtItemOrgUnk2, txtItemSecUnk2);
-            SetupDetailRow(tlpItemDetail, 11, lblItemUnk3, "Unk3", txtItemOrgUnk3, txtItemSecUnk3);
+            SetupDetailRow(tlpItemDetail, 0, lblItemName, "labelItemName", txtItemOrgName, txtItemSecName, "Name");
+            SetupDetailRow(tlpItemDetail, 1, lblItemAnim, "labelItemAnim", txtItemOrgAnim, txtItemSecAnim, "Animation");
+            SetupDetailRow(tlpItemDetail, 2, lblItemWeight, "labelItemWeight", txtItemOrgWeight, txtItemSecWeight, "Weight");
+            SetupDetailRow(tlpItemDetail, 3, lblItemQuality, "labelItemQuality", txtItemOrgQuality, txtItemSecQuality, "Quality");
+            SetupDetailRow(tlpItemDetail, 4, lblItemQty, "labelItemQty", txtItemOrgQty, txtItemSecQty, "Quantity");
+            SetupDetailRow(tlpItemDetail, 5, lblItemHue, "labelItemHue", txtItemOrgHue, txtItemSecHue, "Hue");
+            SetupDetailRow(tlpItemDetail, 6, lblItemStack, "labelItemStack", txtItemOrgStack, txtItemSecStack, "StackOffset");
+            SetupDetailRow(tlpItemDetail, 7, lblItemValue, "labelItemValue", txtItemOrgValue, txtItemSecValue, "Value");
+            SetupDetailRow(tlpItemDetail, 8, lblItemHeight, "labelItemHeight", txtItemOrgHeight, txtItemSecHeight, "Height");
+            SetupDetailRow(tlpItemDetail, 9, lblItemMisc, "labelItemMisc", txtItemOrgMisc, txtItemSecMisc, "MiscData");
+            SetupDetailRow(tlpItemDetail, 10, lblItemUnk2, "labelItemUnk2", txtItemOrgUnk2, txtItemSecUnk2, "Unk2");
+            SetupDetailRow(tlpItemDetail, 11, lblItemUnk3, "labelItemUnk3", txtItemOrgUnk3, txtItemSecUnk3, "Unk3");
             SetupFlagsPanel(panelItemDetail,
                 out _itemFlagOrgChecks, out _itemFlagSecChecks, out _itemFlagLabels, out _itemFlagTlp);
             // Push tlpItemDetail to the back so it gets the highest z-order and docks topmost
@@ -230,9 +299,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             // Header row
             var header = new Panel { Dock = DockStyle.Top, Height = 22, BackColor = SystemColors.ControlLight };
-            var hLbl = new Label { Text = "Flag", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(4, 0, 0, 0) };
-            var hOrg = new Label { Text = "Org", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
-            var hSec = new Label { Text = "Sec", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
+            var hLbl = new Label { Text = _localizationGetter?.Invoke("Forms.CompareTileDataControl.flagHeaderFlag") ?? "Flag", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(4, 0, 0, 0) };
+            var hOrg = new Label { Text = _localizationGetter?.Invoke("Forms.CompareTileDataControl.flagHeaderOrg") ?? "Org", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
+            var hSec = new Label { Text = _localizationGetter?.Invoke("Forms.CompareTileDataControl.flagHeaderSec") ?? "Sec", Width = 44, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter };
             header.Controls.Add(hLbl);
             // Highest index docks first, so hSec (added last) takes the rightmost slot above secChk (col 2),
             // and hOrg (added second) ends up to its left above orgChk (col 1).
@@ -355,12 +424,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
-        private static void SetupDetailRow(
+        private void SetupDetailRow(
             System.Windows.Forms.TableLayoutPanel tlp, int row,
-            System.Windows.Forms.Label lbl, string labelText,
-            System.Windows.Forms.TextBox orgBox, System.Windows.Forms.TextBox secBox)
+            System.Windows.Forms.Label lbl, string labelKey,
+            System.Windows.Forms.TextBox orgBox, System.Windows.Forms.TextBox secBox,
+            string defaultText)
         {
-            lbl.Text = labelText;
+            lbl.Text = _localizationGetter?.Invoke($"Forms.CompareTileDataControl.{labelKey}") ?? defaultText;
             lbl.Dock = System.Windows.Forms.DockStyle.Fill;
             lbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 
@@ -1425,9 +1495,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             clbFlags.Items.Clear();
             foreach (var (name, _) in MeaningfulFlags)
             {
-                clbFlags.Items.Add(name, isChecked: false); // unchecked = not ignored
+                string localizedName = GetLocalizedFlagName(name);
+                clbFlags.Items.Add(localizedName, isChecked: false); // unchecked = not ignored
             }
+        }
 
+        private string GetLocalizedFlagName(string englishName)
+        {
+            if (_localizationGetter == null)
+                return englishName;
+
+            string key = $"Forms.CompareTileDataControl.flag{englishName}";
+            return _localizationGetter(key) ?? englishName;
         }
 
         private void WireFieldCheckbox(CheckBox chk, Func<bool> getter, Action<bool> setter)
@@ -1497,7 +1576,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void OnClickToggleRules(object sender, EventArgs e)
         {
             panelRules.Visible = !panelRules.Visible;
-            btnToggleRules.Text = panelRules.Visible ? "Rules ▼" : "Rules ▲";
+            
+            if (_localizationGetter != null)
+            {
+                btnToggleRules.Text = panelRules.Visible 
+                    ? _localizationGetter("Forms.CompareTileDataControl.btnToggleRulesOpen") ?? "Rules ▼"
+                    : _localizationGetter("Forms.CompareTileDataControl.btnToggleRulesClose") ?? "Rules ▲";
+            }
+            else
+            {
+                btnToggleRules.Text = panelRules.Visible ? "Rules ▼" : "Rules ▲";
+            }
         }
     }
 }
