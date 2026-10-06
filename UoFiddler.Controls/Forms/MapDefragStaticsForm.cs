@@ -32,6 +32,7 @@ namespace UoFiddler.Controls.Forms
         private const string DefaultCollapseIds = "0x1797-0x179C";
 
         private readonly Map _map;
+        private Func<string, string?>? _localizationGetter;
 
         private CancellationTokenSource _cancellation;
         private bool _lastRunUsedFilters;
@@ -64,6 +65,43 @@ namespace UoFiddler.Controls.Forms
             OnFilterChanged(this, EventArgs.Empty);
 
             ActiveControl = buttonAnalyze;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapDefragStaticsForm.Title") ?? "Defrag Statics";
+            groupBoxSource.Text = _localizationGetter("Forms.MapDefragStaticsForm.Source") ?? "Source";
+            checkBoxAllowTruncation.Text = _localizationGetter("Forms.MapDefragStaticsForm.AllowTruncation") ?? "Discard the blocks past the configured map size";
+            groupBoxFilters.Text = _localizationGetter("Forms.MapDefragStaticsForm.Filters") ?? "Filters";
+            checkBoxDropInvalidIds.Text = _localizationGetter("Forms.MapDefragStaticsForm.DropInvalidIds") ?? "Drop statics with an unknown item id";
+            labelCeiling.Text = _localizationGetter("Forms.MapDefragStaticsForm.Ceiling") ?? "ceiling:";
+            labelOutOfBlock.Text = _localizationGetter("Forms.MapDefragStaticsForm.OutOfBlock") ?? "Out-of-block x/y offsets:";
+            checkBoxDropInvalidZ.Text = _localizationGetter("Forms.MapDefragStaticsForm.DropInvalidZ") ?? "Drop statics at z = -128";
+            checkBoxNormalizeHue.Text = _localizationGetter("Forms.MapDefragStaticsForm.NormalizeHue") ?? "Normalize negative hues to 0";
+            checkBoxBelowTerrain.Text = _localizationGetter("Forms.MapDefragStaticsForm.BelowTerrain") ?? "Drop statics buried under the land tile (never drawn)";
+            checkBoxRemoveDuplicates.Text = _localizationGetter("Forms.MapDefragStaticsForm.RemoveDuplicates") ?? "Remove duplicates (same id, x, y and z)";
+            checkBoxDuplicatesHue.Text = _localizationGetter("Forms.MapDefragStaticsForm.DuplicatesHue") ?? "compare hue too (legacy)";
+            checkBoxCollapseStacks.Text = _localizationGetter("Forms.MapDefragStaticsForm.CollapseStacks") ?? "Collapse stacked statics sharing a cell down to one";
+            labelCollapseFlags.Text = _localizationGetter("Forms.MapDefragStaticsForm.CollapseFlags") ?? "flags:";
+            checkBoxCollapseWet.Text = _localizationGetter("Forms.MapDefragStaticsForm.CollapseWet") ?? "Wet";
+            checkBoxCollapseSurface.Text = _localizationGetter("Forms.MapDefragStaticsForm.CollapseSurface") ?? "Surface";
+            checkBoxCollapseIgnoreZ.Text = _localizationGetter("Forms.MapDefragStaticsForm.CollapseIgnoreZ") ?? "ignore z";
+            labelCollapseIds.Text = _localizationGetter("Forms.MapDefragStaticsForm.CollapseIds") ?? "item ids:";
+            checkBoxSortTiles.Text = _localizationGetter("Forms.MapDefragStaticsForm.SortTiles") ?? "Sort the statics within each block";
+            groupBoxOutput.Text = _localizationGetter("Forms.MapDefragStaticsForm.Output") ?? "Output folder";
+            buttonBrowse.Text = _localizationGetter("Forms.MapDefragStaticsForm.BrowseButton") ?? "Browse...";
+            buttonAnalyze.Text = _localizationGetter("Forms.MapDefragStaticsForm.AnalyzeButton") ?? "Analyze";
+            buttonDefrag.Text = _localizationGetter("Forms.MapDefragStaticsForm.DefragButton") ?? "Defrag";
+            buttonCancel.Text = _localizationGetter("Forms.MapDefragStaticsForm.CancelButton") ?? "Cancel";
+            buttonClose.Text = _localizationGetter("Forms.MapDefragStaticsForm.CloseButton") ?? "Close";
         }
 
         /// <summary>

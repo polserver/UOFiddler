@@ -1299,6 +1299,37 @@
       "ClearButton": "清除",
       "DoneTitle": "清除静态物品",
       "DoneMessage": "完成"
+    },
+    "MapDefragStaticsForm": {
+      "Title": "整理静态物品",
+      "Source": "来源",
+      "AllowTruncation": "丢弃配置的地图大小之外的块",
+      "Filters": "过滤器",
+      "DropInvalidIds": "丢弃未知物品 id 的静态物品",
+      "Ceiling": "天花板：",
+      "OutOfBlock": "超出块 x/y 偏移：",
+      "DropInvalidZ": "丢弃 z = -128 的静态物品",
+      "NormalizeHue": "将负色调标准化为 0",
+      "BelowTerrain": "丢弃埋在地形瓦下的静态物品（从不绘制）",
+      "RemoveDuplicates": "移除重复项（相同 id、x、y 和 z）",
+      "DuplicatesHue": "也比较色调（旧版）",
+      "CollapseStacks": "将共享单元格的堆叠静态物品折叠为一个",
+      "CollapseFlags": "标志：",
+      "CollapseWet": "湿润",
+      "CollapseSurface": "表面",
+      "CollapseIgnoreZ": "忽略 z",
+      "CollapseIds": "物品 id：",
+      "SortTiles": "对每个块中的静态物品进行排序",
+      "Output": "输出文件夹",
+      "BrowseButton": "浏览...",
+      "AnalyzeButton": "分析",
+      "DefragButton": "整理",
+      "CancelButton": "取消",
+      "CloseButton": "关闭",
+      "Geometry": "几何：{0}",
+      "StatusAnalyzing": "分析中...",
+      "StatusDefragging": "整理中...",
+      "StatusCompleted": "完成"
     }
   }
 }
