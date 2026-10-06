@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Windows.Forms;
 
 namespace UoFiddler.Controls.Helpers
@@ -17,6 +18,11 @@ namespace UoFiddler.Controls.Helpers
     {
         public static void AddBasicContextMenu(this RichTextBox richTextBox)
         {
+            AddBasicContextMenu(richTextBox, null);
+        }
+
+        public static void AddBasicContextMenu(this RichTextBox richTextBox, Func<string, string?>? getLocalized)
+        {
             if (richTextBox.ContextMenuStrip != null)
             {
                 return;
@@ -24,13 +30,15 @@ namespace UoFiddler.Controls.Helpers
 
             ContextMenuStrip menuStrip = new ContextMenuStrip { ShowImageMargin = false };
 
-            ToolStripMenuItem menuItemCopy = new ToolStripMenuItem("Copy");
+            string copyText = getLocalized?.Invoke("Forms.ItemsControl.DetailTextBoxContextMenu.Copy") ?? "Copy";
+            ToolStripMenuItem menuItemCopy = new ToolStripMenuItem(copyText);
             menuItemCopy.Click += (sender, e) => richTextBox.Copy();
             menuStrip.Items.Add(menuItemCopy);
 
             menuStrip.Items.Add(new ToolStripSeparator());
 
-            ToolStripMenuItem menuItemSelectAll = new ToolStripMenuItem("Select All");
+            string selectAllText = getLocalized?.Invoke("Forms.ItemsControl.DetailTextBoxContextMenu.SelectAll") ?? "Select All";
+            ToolStripMenuItem menuItemSelectAll = new ToolStripMenuItem(selectAllText);
             menuItemSelectAll.Click += (sender, e) => richTextBox.SelectAll();
             menuStrip.Items.Add(menuItemSelectAll);
 

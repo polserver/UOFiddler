@@ -20,6 +20,7 @@ using Ultima;
 using Ultima.Helpers;
 using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.UserControls;
 using UoFiddler.Properties;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Localization;
@@ -61,6 +62,15 @@ namespace UoFiddler.Forms
             hueControl.SetLocalization(key => LocalizationService.GetString(key));
             multisControl.SetLocalization(key => LocalizationService.GetString(key));
             animationsControl.SetLocalization(key => LocalizationService.GetString(key));
+            
+            // 为 ItemsControl 设置汉化（通过遍历 TabPage 找到）
+            foreach (TabPage tab in TabPanel.TabPages)
+            {
+                if (tab.Controls[0] is ItemsControl itemsCtrl)
+                {
+                    itemsCtrl.SetLocalization(key => LocalizationService.GetString(key));
+                }
+            }
 
             darkModeMenuItem.Checked = AppSettings.DarkMode;
 

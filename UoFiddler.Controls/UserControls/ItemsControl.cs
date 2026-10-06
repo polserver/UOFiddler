@@ -46,6 +46,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _showFreeSlots;
 
         private int _selectedGraphicId = -1;
+        private Func<string, string>? _localizationGetter;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedGraphicId
@@ -423,25 +424,25 @@ namespace UoFiddler.Controls.UserControls
             }
 
             var sb = new StringBuilder();
-            sb.AppendLine($"Name: {item.Name}");
-            sb.AppendLine($"Graphic: 0x{graphic:X4}");
-            sb.AppendLine($"Height/Capacity: {item.Height}");
-            sb.AppendLine($"Weight: {item.Weight}");
-            sb.AppendLine($"Animation: {item.Animation}");
-            sb.AppendLine($"Quality/Layer/Light: {item.Quality}");
-            sb.AppendLine($"Quantity: {item.Quantity}");
-            sb.AppendLine($"Hue: {item.Hue}");
-            sb.AppendLine($"StackingOffset/Unk4: {item.StackingOffset}");
-            sb.AppendLine($"Flags: {item.Flags}");
-            sb.AppendLine($"Graphic pixel size width, height: {bit?.Width ?? 0} {bit?.Height ?? 0} ");
-            sb.AppendLine($"Graphic pixel offset xMin, yMin, xMax, yMax: {xMin} {yMin} {xMax} {yMax}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Name") ?? "Name")}: {item.Name}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Graphic") ?? "Graphic")}: 0x{graphic:X4}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.HeightCapacity") ?? "Height/Capacity")}: {item.Height}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Weight") ?? "Weight")}: {item.Weight}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Animation") ?? "Animation")}: {item.Animation}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.QualityLayerLight") ?? "Quality/Layer/Light")}: {item.Quality}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Quantity") ?? "Quantity")}: {item.Quantity}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Hue") ?? "Hue")}: {item.Hue}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.StackingOffsetUnk4") ?? "StackingOffset/Unk4")}: {item.StackingOffset}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.Flags") ?? "Flags")}: {item.Flags}");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.GraphicPixelSizeWidthHeight") ?? "Graphic pixel size width, height")}: {bit?.Width ?? 0} {bit?.Height ?? 0} ");
+            sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.GraphicPixelOffsetXMinYMinXMaxYMax") ?? "Graphic pixel offset xMin, yMin, xMax, yMax")}: {xMin} {yMin} {xMax} {yMax}");
 
             if ((item.Flags & TileFlag.Animation) != 0)
             {
                 Animdata.AnimdataEntry info = Animdata.GetAnimData(graphic);
                 if (info != null)
                 {
-                    sb.AppendLine($"Animation FrameCount: {info.FrameCount} Interval: {info.FrameInterval}");
+                    sb.AppendLine($"{(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.AnimationFrameCount") ?? "Animation FrameCount")}: {info.FrameCount} {(_localizationGetter?.Invoke("Forms.ItemsControl.DetailLabels.AnimationInterval") ?? "Interval")}: {info.FrameInterval}");
                 }
             }
 
@@ -1324,13 +1325,21 @@ namespace UoFiddler.Controls.UserControls
             int selectedCount = ItemsTileView.SelectedIndices.Count;
             copyImageToolStripMenuItem.Enabled = SelectedGraphicId >= 0 && Art.IsValidStatic(SelectedGraphicId);
             pasteImageToolStripMenuItem.Enabled = selectedCount > 0 && ImageClipboard.ContainsImage();
-            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"Paste Image into {selectedCount}" : "Paste Image";
-            removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
-            extractToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
-            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}..." : "Replace...";
+            
+            // 类型 12：菜单 Opening 事件中使用汉化基础文本构建动态文本
+            string basePasteText = _localizationGetter?.Invoke("Forms.ItemsControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            string baseRemoveText = _localizationGetter?.Invoke("Forms.ItemsControl.removeToolStripMenuItem") ?? "Remove";
+            string baseExtractText = _localizationGetter?.Invoke("Forms.ItemsControl.extractToolStripMenuItem") ?? "Export Image..";
+            string baseReplaceText = _localizationGetter?.Invoke("Forms.ItemsControl.replaceToolStripMenuItem") ?? "Replace...";
+            string baseSelectTileDataText = _localizationGetter?.Invoke("Forms.ItemsControl.selectInTileDataTabToolStripMenuItem") ?? "Select in TileData tab";
+            
+            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"{basePasteText} {selectedCount}" : basePasteText;
+            removeToolStripMenuItem.Text = selectedCount > 1 ? $"{baseRemoveText} {selectedCount}" : baseRemoveText;
+            extractToolStripMenuItem.Text = selectedCount > 1 ? $"{baseExtractText.Replace("...", "")} {selectedCount}..." : baseExtractText;
+            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"{baseReplaceText.Replace("...", "")} {selectedCount}..." : baseReplaceText;
             selectInTileDataTabToolStripMenuItem.Text = selectedCount > 1
-                ? $"Select {selectedCount} in TileData tab"
-                : "Select in TileData tab";
+                ? $"{baseSelectTileDataText.Replace(" tab", "")} {selectedCount} tab"
+                : baseSelectTileDataText;
 
             if (SelectedGraphicId <= 0)
             {
@@ -1684,6 +1693,73 @@ namespace UoFiddler.Controls.UserControls
         private void SearchByNameToolStripButton_Click(object sender, EventArgs e)
         {
             SearchName(searchByNameToolStripTextBox.Text, true);
+        }
+
+        public void SetLocalization(Func<string, string> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null)
+                return;
+
+            // ToolStrip Items
+            toolStripLabel1.Text = _localizationGetter("Forms.ItemsControl.toolStripLabel1") ?? "Index:";
+            toolStripLabel2.Text = _localizationGetter("Forms.ItemsControl.toolStripLabel2") ?? "Name:";
+            searchByNameToolStripButton.Text = _localizationGetter("Forms.ItemsControl.searchByNameToolStripButton") ?? "Find next";
+            PreloadItemsToolStripButton.Text = _localizationGetter("Forms.ItemsControl.PreloadItemsToolStripButton") ?? "Preload Items";
+            MiscToolStripDropDownButton.Text = _localizationGetter("Forms.ItemsControl.MiscToolStripDropDownButton") ?? "Misc";
+            ExportAllToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.ExportAllToolStripMenuItem") ?? "Export all..";
+
+            // Context Menu Items - Tile View
+            showFreeSlotsToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.showFreeSlotsToolStripMenuItem") ?? "Show Free Slots";
+            findNextFreeSlotToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.findNextFreeSlotToolStripMenuItem") ?? "Find Next Free Slot";
+            ChangeBackgroundColorToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.ChangeBackgroundColorToolStripMenuItem") ?? "Change background color";
+            extractToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.extractToolStripMenuItem") ?? "Export Image..";
+            bmpToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.bmpToolStripMenuItem") ?? "As Bmp";
+            tiffToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.tiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem1.Text = _localizationGetter("Forms.ItemsControl.asJpgToolStripMenuItem1") ?? "As Jpg";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.ItemsControl.asPngToolStripMenuItem1") ?? "As Png";
+            selectInTileDataTabToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.selectInTileDataTabToolStripMenuItem") ?? "Select in TileData tab";
+            selectInRadarColorTabToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.selectInRadarColorTabToolStripMenuItem") ?? "Select in RadarColor tab";
+            selectInGumpsTabMaleToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.selectInGumpsTabMaleToolStripMenuItem") ?? "Select in Gumps (M)";
+            selectInGumpsTabFemaleToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.selectInGumpsTabFemaleToolStripMenuItem") ?? "Select in Gumps (F)";
+            copyImageToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.copyImageToolStripMenuItem") ?? "Copy Image";
+            pasteImageToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.replaceToolStripMenuItem") ?? "Replace...";
+            replaceStartingFromToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.replaceStartingFromToolStripMenuItem") ?? "Replace starting from..";
+            replaceFromFolderToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.replaceFromFolderToolStripMenuItem") ?? "Replace from Folder...";
+            insertAtToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.insertAtToolStripMenuItem") ?? "Insert At..";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.removeToolStripMenuItem") ?? "Remove";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.saveToolStripMenuItem") ?? "Save";
+
+            // Context Menu Items - Detail Picture
+            changeBackgroundColorToolStripMenuItemDetail.Text = _localizationGetter("Forms.ItemsControl.changeBackgroundColorToolStripMenuItemDetail") ?? "Change background color";
+            copyImageToolStripMenuItemDetail.Text = _localizationGetter("Forms.ItemsControl.copyImageToolStripMenuItemDetail") ?? "Copy Image";
+            pasteImageToolStripMenuItemDetail.Text = _localizationGetter("Forms.ItemsControl.pasteImageToolStripMenuItemDetail") ?? "Paste Image";
+
+            // Export Formats
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.asPngToolStripMenuItem") ?? "As Png";
+
+            // Status Bar
+            NameLabel.Text = _localizationGetter("Forms.ItemsControl.NameLabel") ?? "Name:";
+            GraphicLabel.Text = _localizationGetter("Forms.ItemsControl.GraphicLabel") ?? "Graphic:";
+
+            // Re-apply DetailTextBox context menu localization
+            DetailTextBox.ContextMenuStrip = null;
+            DetailTextBox.AddBasicContextMenu(_localizationGetter);
+
+            // Refresh detail if needed
+            if (_selectedGraphicId >= 0)
+            {
+                UpdateDetail(_selectedGraphicId);
+            }
         }
     }
 }

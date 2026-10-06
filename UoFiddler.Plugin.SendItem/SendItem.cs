@@ -144,7 +144,11 @@ namespace UoFiddler.Plugin.SendItem
 
         private void EventsModifyItemsControlContextMenuEvent(ContextMenuStrip strip)
         {
-            ToolStripMenuItem item = new ToolStripMenuItem { Text = "Send Item to Client" };
+            // 类型 13：插件动态菜单项汉化
+            string menuText = PluginBase.LocalizationGetter?.Invoke("Forms.ItemsControl.ContextMenu.sendItemToClientToolStripMenuItem") 
+                ?? "Send Item to Client";
+            
+            ToolStripMenuItem item = new ToolStripMenuItem { Text = menuText };
             item.Click += ItemShowContextClicked;
             strip.Items.Add(item);
         }
