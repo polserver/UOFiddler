@@ -42,6 +42,9 @@ namespace UoFiddler.Controls.UserControls
         // across all list items, recreated each reload (the control Font may change).
         private Font _underlineFont;
 
+        // Localization support
+        private Func<string, string?>? _localizationGetter;
+
         public SoundsControl()
         {
             InitializeComponent();
@@ -264,6 +267,66 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        /// <summary>
+        /// 设置本地化的字符串获取委托
+        /// </summary>
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// 应用本地化翻译到所有 UI 控件
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Type 1: 菜单项文本汉化
+            nameSortToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.nameSortToolStripMenuItem") ?? "Name Sort";
+            showFreeSlotsToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.showFreeSlotsToolStripMenuItem") ?? "Show free slots";
+            nextFreeSlotToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.nextFreeSlotToolStripMenuItem") ?? "Find next free slot";
+            playSoundToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.playSoundToolStripMenuItem") ?? "Play";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.replaceToolStripMenuItem") ?? "Insert/Replace";
+            extractSoundToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.extractSoundToolStripMenuItem") ?? "Extract";
+            removeSoundToolStripMenuItem.Text = _localizationGetter("Forms.SoundsControl.removeSoundToolStripMenuItem") ?? "Remove";
+            itemSave.Text = _localizationGetter("Forms.SoundsControl.itemSave") ?? "Save";
+
+            // Type 1: GroupBox 标题
+            groupBox1.Text = _localizationGetter("Forms.SoundsControl.groupBox1") ?? "Generic";
+            SelectedSoundGroup.Text = _localizationGetter("Forms.SoundsControl.SelectedSoundGroup") ?? "Current Sound";
+            groupBox2.Text = _localizationGetter("Forms.SoundsControl.groupBox2") ?? "Search";
+            groupBox3.Text = _localizationGetter("Forms.SoundsControl.groupBox3") ?? "Insert/Replace";
+
+            // Type 1: 按钮文本
+            PlaySoundButton.Text = _localizationGetter("Forms.SoundsControl.PlaySoundButton") ?? "Play";
+            StopSoundButton.Text = _localizationGetter("Forms.SoundsControl.StopSoundButton") ?? "Stop";
+            ExtractSoundButton.Text = _localizationGetter("Forms.SoundsControl.ExtractSoundButton") ?? "Extract";
+            RemoveSoundButton.Text = _localizationGetter("Forms.SoundsControl.RemoveSoundButton") ?? "Remove";
+            SaveFileButton.Text = _localizationGetter("Forms.SoundsControl.SaveFileButton") ?? "Save";
+            exportAllSoundsButton.Text = _localizationGetter("Forms.SoundsControl.exportAllSoundsButton") ?? "Export all sounds";
+            ExportSoundListCsvButton.Text = _localizationGetter("Forms.SoundsControl.ExportSoundListCsvButton") ?? "Export sound list (.csv)";
+            WavChooseInsertButton.Text = _localizationGetter("Forms.SoundsControl.WavChooseInsertButton") ?? "...";
+            AddInsertReplaceButton.Text = _localizationGetter("Forms.SoundsControl.AddInsertReplaceButton") ?? "Add";
+            GoPrevResultButton.Text = _localizationGetter("Forms.SoundsControl.GoPrevResultButton") ?? "< Prev";
+            GoNextResultButton.Text = _localizationGetter("Forms.SoundsControl.GoNextResultButton") ?? "Next >";
+            SearchByIdButton.Text = _localizationGetter("Forms.SoundsControl.SearchByIdButton") ?? "Search";
+            SearchByNameButton.Text = _localizationGetter("Forms.SoundsControl.SearchByNameButton") ?? "Search";
+
+            // Type 1: 标签和复选框
+            label1.Text = _localizationGetter("Forms.SoundsControl.label1") ?? "ID:";
+            label3.Text = _localizationGetter("Forms.SoundsControl.label3") ?? "WAV File:";
+            SortByNameCheckbox.Text = _localizationGetter("Forms.SoundsControl.SortByNameCheckbox") ?? "Sort tree by name";
+            includeSoundIdCheckBox.Text = _localizationGetter("Forms.SoundsControl.includeSoundIdCheckBox") ?? "Export with sound id in file name";
+
+            // Type 1: 列表列头
+            listViewColumn.Text = _localizationGetter("Forms.SoundsControl.listViewColumn") ?? "Sound";
+
+            // Type 1: 工具栏文本
+            stopButton.Text = _localizationGetter("Forms.SoundsControl.stopButton") ?? "Stop";
+        }
+
         private void AfterSelect(object sender, EventArgs e)
         {
             // Mirror the old TreeView BeforeSelect behaviour: stop playback
@@ -281,13 +344,16 @@ namespace UoFiddler.Controls.UserControls
                 extractSoundToolStripMenuItem.Enabled = false;
                 removeSoundToolStripMenuItem.Enabled = false;
                 replaceToolStripMenuItem.Enabled = false;
-                replaceToolStripMenuItem.Text = "Insert/Replace";
+                // Type 12 初始值设置（在 ApplyLocalization 中已设置，此处保持为保障）
+                replaceToolStripMenuItem.Text = _localizationGetter?.Invoke("Forms.SoundsControl.replaceToolStripMenuItem") ?? "Insert/Replace";
             }
 
             if (selected != null)
             {
                 double length = Sounds.GetSoundLength((int)selected.Tag);
-                seconds.Text = length > 0 ? $"{length:f}s" : "Empty Slot";
+                // Type 8：动态文本 - 空插槽提示
+                string emptySlotText = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.emptySlot") ?? "Empty Slot";
+                seconds.Text = length > 0 ? $"{length:f}s" : emptySlotText;
             }
 
             bool isValidSound = selected != null && Sounds.IsValidSound((int)selected.Tag, out _, out _);
@@ -297,13 +363,22 @@ namespace UoFiddler.Controls.UserControls
             removeSoundToolStripMenuItem.Enabled = isValidSound;
 
             replaceToolStripMenuItem.Enabled = true;
-            replaceToolStripMenuItem.Text = isValidSound ? "Replace" : "Insert";
+            // Type 8：动态文本 - Replace/Insert 菜单项文本切换
+            if (isValidSound)
+            {
+                replaceToolStripMenuItem.Text = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.replace") ?? "Replace";
+            }
+            else
+            {
+                replaceToolStripMenuItem.Text = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.insert") ?? "Insert";
+            }
 
             SelectedSoundGroup.Visible = selected != null;
 
             if (selected != null)
             {
-                SelectedSoundGroup.Text = $"Current Sound: {selected.Text} - Duration: {seconds.Text}";
+                // Type 8：动态文本 - GroupBox 标题，包含选中音效信息
+                SelectedSoundGroup.Text = $"{_localizationGetter?.Invoke("Forms.SoundsControl.Messages.currentSoundFormat") ?? "Current Sound"}: {selected.Text} - {_localizationGetter?.Invoke("Forms.SoundsControl.Messages.duration") ?? "Duration"}: {seconds.Text}";
                 IdInsertTextbox.Text = $"0x{(int)selected.Tag + _soundIdOffset:X}";
             }
         }
@@ -436,7 +511,12 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            MessageBox.Show($"Sound saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            // Type 6：消息框文本汉化 - 提取成功提示
+            string message = string.Format(
+                _localizationGetter?.Invoke("Forms.SoundsControl.Messages.soundSavedTo") ?? "Sound saved to {0}",
+                fileName);
+            string title = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.saved") ?? "Saved";
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -486,7 +566,15 @@ namespace UoFiddler.Controls.UserControls
 
             Sounds.SaveSoundListToCsv(fileName, _soundIdOffset);
 
-            FileSavedDialog.Show(FindForm(), fileName, "SoundList saved successfully.");
+            // Type 6：消息框文本汉化 - 导出音效列表完成
+            string message = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.soundListSavedSuccessfully") ?? "SoundList saved successfully.";
+            var dialog = new FileSavedDialog(fileName, message);
+            if (_localizationGetter != null)
+            {
+                dialog.SetLocalization(_localizationGetter);
+            }
+            dialog.ShowDialog(FindForm());
+            dialog.Dispose();
         }
 
         public bool SearchId(int id)
@@ -524,7 +612,7 @@ namespace UoFiddler.Controls.UserControls
                 using (OpenFileDialog dialog = new OpenFileDialog())
                 {
                     dialog.Multiselect = false;
-                    dialog.Title = "Choose wave file";
+                    dialog.Title = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.chooseWaveFile") ?? "Choose wave file";
                     dialog.CheckFileExists = true;
                     dialog.Filter = "wav file (*.wav)|*.wav";
                     if (dialog.ShowDialog() == DialogResult.OK)
@@ -542,6 +630,15 @@ namespace UoFiddler.Controls.UserControls
                 file = _wavChosen;
             }
 
+            // ✅ 修复：检查 file 是否为空或文件是否存在
+            if (string.IsNullOrEmpty(file) || !File.Exists(file))
+            {
+                string errorMsg = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.invalidFilename") ?? "Invalid Filename";
+                string titleMsg = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.addReplaceTitle") ?? "Add/Replace";
+                MessageBox.Show(errorMsg, titleMsg, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                return;  // ✅ 修复：缺少的 return 语句
+            }
+
             if (listView.SelectedItems.Count == 0)
             {
                 return;
@@ -550,11 +647,6 @@ namespace UoFiddler.Controls.UserControls
             int id = (int)listView.SelectedItems[0].Tag;
             string name = Path.GetFileName(file);
 
-            if (!File.Exists(file))
-            {
-                MessageBox.Show("Invalid Filename", "Add/Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-            }
-
             if (name.Length > 32)
             {
                 name = name.Substring(0, 32);
@@ -562,8 +654,10 @@ namespace UoFiddler.Controls.UserControls
 
             if (Sounds.IsValidSound(id, out _, out _))
             {
-                DialogResult result = MessageBox.Show($"Are you sure to replace {listView.SelectedItems[0].Text}?",
-                    "Replace", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                string confirmMsg = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.confirmReplace") ?? $"Are you sure to replace {listView.SelectedItems[0].Text}?";
+                confirmMsg = string.Format(confirmMsg, listView.SelectedItems[0].Text);
+                string titleMsg = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.replaceTitle") ?? "Replace";
+                DialogResult result = MessageBox.Show(confirmMsg, titleMsg, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 
                 if (result != DialogResult.Yes)
                 {
@@ -577,7 +671,9 @@ namespace UoFiddler.Controls.UserControls
             }
             catch (WaveFormatException waveFormatException)
             {
-                MessageBox.Show("Unexpected WAV format:\n" + waveFormatException.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string errorMsg = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.unexpectedWavFormat") ?? "Unexpected WAV format:";
+                string titleMsg = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.errorTitle") ?? "Error";
+                MessageBox.Show(errorMsg + "\n" + waveFormatException.Message, titleMsg, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -854,7 +950,10 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            MessageBox.Show("Extract all sounds complete.", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            // Type 6：消息框文本汉化 - 导出所有完成提示
+            string message = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.extractAllComplete") ?? "Extract all sounds complete.";
+            string title = _localizationGetter?.Invoke("Forms.SoundsControl.Messages.saved") ?? "Saved";
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
     }

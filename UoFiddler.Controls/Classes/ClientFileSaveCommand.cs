@@ -91,7 +91,35 @@ namespace UoFiddler.Controls.Classes
                 Options.ChangedUltimaClass[dirtyKey] = false;
             }
 
-            FileSavedDialog.Show(owner?.FindForm(), outputDirectory, BuildMessage(result));
+            // 尝试通过反射访问 LocalizationService 来获取汉化
+            Func<string, string?> getLocalized = null;
+            try
+            {
+                var localizationServiceType = Type.GetType("UoFiddler.Localization.LocalizationService, UoFiddler");
+                if (localizationServiceType != null)
+                {
+                    var getStringMethod = localizationServiceType.GetMethod("GetString", 
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    if (getStringMethod != null)
+                    {
+                        getLocalized = key => (string?)getStringMethod.Invoke(null, new object[] { key });
+                    }
+                }
+            }
+            catch { }
+
+            string title = "Saved";
+            if (getLocalized != null)
+            {
+                var localizedTitle = getLocalized("Forms.FileSavedDialog.Title");
+                if (localizedTitle != null)
+                    title = localizedTitle;
+            }
+
+            if (getLocalized != null)
+                FileSavedDialog.Show(owner?.FindForm(), outputDirectory, BuildMessage(result), title, getLocalized);
+            else
+                FileSavedDialog.Show(owner?.FindForm(), outputDirectory, BuildMessage(result));
 
             return true;
         }

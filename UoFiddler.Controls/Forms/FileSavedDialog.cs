@@ -107,6 +107,23 @@ namespace UoFiddler.Controls.Forms
         }
 
         /// <summary>
+        /// Shows the file saved dialog with localization support.
+        /// </summary>
+        /// <param name="owner">The owner form.</param>
+        /// <param name="filePath">The path to the saved file.</param>
+        /// <param name="message">Optional custom success message.</param>
+        /// <param name="title">Optional custom dialog title.</param>
+        /// <param name="getLocalized">Localization getter function.</param>
+        public static void Show(IWin32Window owner, string filePath, string message, string title, Func<string, string?> getLocalized)
+        {
+            using (var dialog = new FileSavedDialog(filePath, message, title))
+            {
+                dialog.SetLocalization(getLocalized);
+                dialog.ShowDialog(owner);
+            }
+        }
+
+        /// <summary>
         /// Shows the file saved dialog without an owner.
         /// </summary>
         /// <param name="filePath">The path to the saved file.</param>
