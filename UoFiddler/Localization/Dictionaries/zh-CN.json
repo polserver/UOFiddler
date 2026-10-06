@@ -1188,6 +1188,12 @@
       "ClientLocPrefix": "客户端位置：{0},{1}",
       "ZoomPrefix": "缩放：{0}%"
     },
+    "MapMarkerForm": {
+      "Title": "添加地图标记",
+      "TextLabel": "文本",
+      "ChooseColorButton": "选择颜色",
+      "SaveButton": "保存"
+    },
     "MapClearStaticsForm": {
       "Title": "清除静态物品",
       "X1Label": "X1",

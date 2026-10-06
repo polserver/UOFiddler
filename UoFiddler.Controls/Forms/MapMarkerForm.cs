@@ -20,6 +20,7 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Action<int, int, int, Color, string> _addOverlayAction;
         private static Color _lastColor = Color.FromArgb(180, Color.Yellow);
+        private Func<string, string?>? _localizationGetter;
 
         public MapMarkerForm(Action<int, int, int, Color, string> addOverlayAction, int x, int y, int map)
         {
@@ -35,6 +36,22 @@ namespace UoFiddler.Controls.Forms
             comboBox1.SelectedIndex = map;
 
             pictureBox1.BackColor = _lastColor;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapMarkerForm.Title") ?? "Add MapMarker";
+            label1.Text = _localizationGetter("Forms.MapMarkerForm.TextLabel") ?? "Text";
+            button1.Text = _localizationGetter("Forms.MapMarkerForm.ChooseColorButton") ?? "Choose Color";
+            button2.Text = _localizationGetter("Forms.MapMarkerForm.SaveButton") ?? "Save";
         }
 
         private void OnClickColor(object sender, EventArgs e)
