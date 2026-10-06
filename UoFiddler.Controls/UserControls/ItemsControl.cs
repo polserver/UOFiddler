@@ -1739,6 +1739,8 @@ namespace UoFiddler.Controls.UserControls
             insertAtToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.insertAtToolStripMenuItem") ?? "Insert At..";
             removeToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.removeToolStripMenuItem") ?? "Remove";
             saveToolStripMenuItem.Text = _localizationGetter("Forms.ItemsControl.saveToolStripMenuItem") ?? "Save";
+            saveToolStripButton.Text = _localizationGetter("Forms.ItemsControl.saveToolStripMenuItem") ?? "Save";
+            saveToolStripButton.ToolTipText = _localizationGetter("Forms.ItemsControl.saveToolStripMenuItem") ?? "Save";
 
             // Context Menu Items - Detail Picture
             changeBackgroundColorToolStripMenuItemDetail.Text = _localizationGetter("Forms.ItemsControl.changeBackgroundColorToolStripMenuItemDetail") ?? "Change background color";
