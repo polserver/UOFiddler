@@ -856,8 +856,12 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            NameLabel.Text = !Art.IsValidStatic(graphic) ? "Name: FREE" : $"Name: {TileData.ItemTable[graphic].Name}";
-            GraphicLabel.Text = $"Graphic: 0x{graphic:X4} ({graphic})";
+            // Type 8: 获取汉化的基础标签文本，然后添加动态信息
+            string nameLabel = _localizationGetter?.Invoke("Forms.ItemsControl.NameLabel") ?? "Name:";
+            string graphicLabel = _localizationGetter?.Invoke("Forms.ItemsControl.GraphicLabel") ?? "Graphic:";
+
+            NameLabel.Text = !Art.IsValidStatic(graphic) ? $"{nameLabel} FREE" : $"{nameLabel} {TileData.ItemTable[graphic].Name}";
+            GraphicLabel.Text = $"{graphicLabel} 0x{graphic:X4} ({graphic})";
         }
 
         private void OnClickSave(object sender, EventArgs e)
