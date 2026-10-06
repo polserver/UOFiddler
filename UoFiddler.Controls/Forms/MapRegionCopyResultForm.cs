@@ -24,6 +24,7 @@ namespace UoFiddler.Controls.Forms
     public sealed partial class MapRegionCopyResultForm : Form
     {
         private readonly MapRegionCopyResult _result;
+        private Func<string, string?>? _localizationGetter;
 
         public MapRegionCopyResultForm(MapRegionCopyResult result)
         {
@@ -37,6 +38,24 @@ namespace UoFiddler.Controls.Forms
 
             buttonVerify.Enabled = result.OutputMapPath != null;
             buttonOpenFolder.Enabled = result.OutputMapPath != null || result.OutputIndexPath != null;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapRegionCopyResultForm.Title") ?? "Map and Statics Copy - Result";
+            buttonVerify.Text = _localizationGetter("Forms.MapRegionCopyResultForm.VerifyButton") ?? "Verify output";
+            buttonSave.Text = _localizationGetter("Forms.MapRegionCopyResultForm.SaveButton") ?? "Save report...";
+            buttonCopy.Text = _localizationGetter("Forms.MapRegionCopyResultForm.CopyButton") ?? "Copy";
+            buttonOpenFolder.Text = _localizationGetter("Forms.MapRegionCopyResultForm.OpenFolderButton") ?? "Open output folder";
+            buttonClose.Text = _localizationGetter("Forms.MapRegionCopyResultForm.CloseButton") ?? "Close";
         }
 
         /// <summary>

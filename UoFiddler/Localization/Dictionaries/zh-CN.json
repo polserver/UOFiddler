@@ -1321,6 +1321,14 @@
         "SameFormatMUL": "与此客户端相同格式 (.mul)",
         "LegacyMUL": "LegacyMUL"
       }
+    },
+    "MapRegionCopyResultForm": {
+      "Title": "地图和静态物品复制 - 结果",
+      "VerifyButton": "验证输出",
+      "SaveButton": "保存报告...",
+      "CopyButton": "复制",
+      "OpenFolderButton": "打开输出文件夹",
+      "CloseButton": "关闭"
     }
   }
 }

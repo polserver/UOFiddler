@@ -824,6 +824,22 @@ namespace UoFiddler.Controls.Forms
 
             using (var form = new MapRegionCopyResultForm(result))
             {
+                // 通过反射尝试获取 LocalizationService 的 GetString 方法
+                try
+                {
+                    var localizationServiceType = Type.GetType("UoFiddler.Localization.LocalizationService, UoFiddler");
+                    if (localizationServiceType != null)
+                    {
+                        var getStringMethod = localizationServiceType.GetMethod("GetString", 
+                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                        if (getStringMethod != null)
+                        {
+                            form.SetLocalization(key => (string?)getStringMethod.Invoke(null, new object[] { key }));
+                        }
+                    }
+                }
+                catch { }
+                
                 form.ShowDialog(this);
             }
         }
