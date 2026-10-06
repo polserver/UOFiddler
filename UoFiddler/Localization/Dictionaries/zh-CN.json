@@ -1227,7 +1227,17 @@
       "Geometry": "几何：{0}",
       "StatusAnalyzing": "分析中...",
       "StatusDefragging": "整理中...",
-      "StatusCompleted": "完成"
+      "StatusCompleted": "完成",
+      "Messages": {
+        "Facet": "位面",
+        "MapSize": "地图大小",
+        "Blocks": "块",
+        "FilesNotFound": "staidx{0}.mul 或 statics{0}.mul 在加载的客户端中未找到。",
+        "OverridePresent": "staidx{0}x.mul 存在 - 客户端更倾向使用这些覆盖文件而不是这个对。",
+        "SurplusBlocks": "staidx 包含 {0:N0} 块但配置的地图大小仅覆盖 {1:N0} 块。多余块中的静态物品将被丢弃。",
+        "EmptyBlocks": "staidx 包含 {0:N0} 块，配置的地图大小覆盖 {1:N0} 块。索引末尾之后的块将被写入为空。",
+        "MatchingBlocks": "staidx 包含 {0:N0} 块，与配置的地图大小匹配。"
+      }
     },
     "MapDefragStaticsResultForm": {
       "Title": "整理静态物品 - 结果",

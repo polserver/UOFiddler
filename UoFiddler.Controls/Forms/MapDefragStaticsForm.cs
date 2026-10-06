@@ -102,6 +102,9 @@ namespace UoFiddler.Controls.Forms
             buttonDefrag.Text = _localizationGetter("Forms.MapDefragStaticsForm.DefragButton") ?? "Defrag";
             buttonCancel.Text = _localizationGetter("Forms.MapDefragStaticsForm.CancelButton") ?? "Cancel";
             buttonClose.Text = _localizationGetter("Forms.MapDefragStaticsForm.CloseButton") ?? "Close";
+
+            // 重新生成源描述（包含动态消息）
+            DescribeSource();
         }
 
         /// <summary>
@@ -116,11 +119,17 @@ namespace UoFiddler.Controls.Forms
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"Facet {_map.FileIndex}   map size {_map.Width} x {_map.Height}   blocks {_map.Width >> 3} x {_map.Height >> 3}");
+            string facetLabel = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.Facet") ?? "Facet";
+            string mapSizeLabel = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.MapSize") ?? "map size";
+            string blocksLabel = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.Blocks") ?? "blocks";
+            
+            sb.AppendLine($"{facetLabel} {_map.FileIndex}   {mapSizeLabel} {_map.Width} x {_map.Height}   {blocksLabel} {_map.Width >> 3} x {_map.Height >> 3}");
 
             if (indexPath == null || staticsPath == null)
             {
-                sb.AppendLine($"staidx{_map.FileIndex}.mul or statics{_map.FileIndex}.mul was not found in the loaded client.");
+                string notFoundMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.FilesNotFound") 
+                    ?? "staidx{0}.mul or statics{0}.mul was not found in the loaded client.";
+                sb.AppendLine(string.Format(notFoundMsg, _map.FileIndex));
 
                 textBoxSource.Text = sb.ToString();
                 buttonAnalyze.Enabled = false;
@@ -137,7 +146,9 @@ namespace UoFiddler.Controls.Forms
 
             if (File.Exists(Path.Combine(Path.GetDirectoryName(indexPath) ?? string.Empty, $"staidx{_map.FileIndex}x.mul")))
             {
-                sb.AppendLine($"staidx{_map.FileIndex}x.mul is present - the client prefers those override files over this pair.");
+                string overrideMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.OverridePresent") 
+                    ?? "staidx{0}x.mul is present - the client prefers those override files over this pair.";
+                sb.AppendLine(string.Format(overrideMsg, _map.FileIndex));
             }
 
             textBoxSource.Text = sb.ToString();
@@ -148,10 +159,9 @@ namespace UoFiddler.Controls.Forms
             if (indexBlocks > configuredBlocks)
             {
                 labelGeometry.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
-                labelGeometry.Text = string.Format(CultureInfo.InvariantCulture,
-                    "staidx holds {0:N0} blocks but the configured map size covers only {1:N0}." + Environment.NewLine +
-                    "The statics in the surplus blocks would be discarded.",
-                    indexBlocks, configuredBlocks);
+                string surplusMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.SurplusBlocks")
+                    ?? "staidx holds {0:N0} blocks but the configured map size covers only {1:N0}. The statics in the surplus blocks would be discarded.";
+                labelGeometry.Text = string.Format(CultureInfo.InvariantCulture, surplusMsg, indexBlocks, configuredBlocks);
 
                 _truncationAvailable = true;
                 checkBoxAllowTruncation.Enabled = true;
@@ -159,16 +169,16 @@ namespace UoFiddler.Controls.Forms
             else if (indexBlocks < configuredBlocks)
             {
                 labelGeometry.ForeColor = SystemColors.ControlText;
-                labelGeometry.Text = string.Format(CultureInfo.InvariantCulture,
-                    "staidx holds {0:N0} blocks, the configured map size covers {1:N0}." + Environment.NewLine +
-                    "The blocks past the end of the index will be written empty.",
-                    indexBlocks, configuredBlocks);
+                string emptyBlocksMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.EmptyBlocks")
+                    ?? "staidx holds {0:N0} blocks, the configured map size covers {1:N0}. The blocks past the end of the index will be written empty.";
+                labelGeometry.Text = string.Format(CultureInfo.InvariantCulture, emptyBlocksMsg, indexBlocks, configuredBlocks);
             }
             else
             {
                 labelGeometry.ForeColor = SystemColors.ControlText;
-                labelGeometry.Text = string.Format(CultureInfo.InvariantCulture,
-                    "staidx holds {0:N0} blocks, matching the configured map size.", indexBlocks);
+                string matchingMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.Messages.MatchingBlocks")
+                    ?? "staidx holds {0:N0} blocks, matching the configured map size.";
+                labelGeometry.Text = string.Format(CultureInfo.InvariantCulture, matchingMsg, indexBlocks);
             }
         }
 
