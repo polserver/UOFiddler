@@ -866,7 +866,11 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure? Will take a while", "Save", MessageBoxButtons.YesNo,
+            // Type 6: MessageBox 文本汉化
+            string confirmMessage = _localizationGetter?.Invoke("Forms.ItemsControl.Messages.SaveConfirmation") ?? "Are you sure? Will take a while";
+            string saveTitle = _localizationGetter?.Invoke("Forms.ItemsControl.Messages.SaveTitle") ?? "Save";
+
+            DialogResult result = MessageBox.Show(confirmMessage, saveTitle, MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 
             if (result != DialogResult.Yes)

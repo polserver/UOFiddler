@@ -650,6 +650,10 @@
       },
       "ContextMenu": {
         "sendItemToClientToolStripMenuItem": "发送物品到客户端"
+      },
+      "Messages": {
+        "SaveConfirmation": "确定吗？这需要一些时间",
+        "SaveTitle": "保存"
       }
     },
     "AnimationListControl": {
