@@ -58,6 +58,14 @@ namespace UoFiddler.Controls.UserControls
         }
 
         /// <summary>
+        /// Get the localization getter for child forms
+        /// </summary>
+        internal Func<string, string?>? GetLocalizationGetter()
+        {
+            return _localizationGetter;
+        }
+
+        /// <summary>
         /// Apply localization to all UI elements
         /// </summary>
         private void ApplyLocalization()
@@ -1612,6 +1620,11 @@ namespace UoFiddler.Controls.UserControls
             {
                 TopMost = true
             };
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+            {
+                _showClearStaticsForm.SetLocalization(getter);
+            }
             _showClearStaticsForm.Show();
         }
 

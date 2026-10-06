@@ -1289,6 +1289,16 @@
       "CoordinatePrefix": "坐标：{0},{1}",
       "ClientLocPrefix": "客户端位置：{0},{1}",
       "ZoomPrefix": "缩放：{0}%"
+    },
+    "MapClearStaticsForm": {
+      "Title": "清除静态物品",
+      "X1Label": "X1",
+      "Y1Label": "Y1",
+      "X2Label": "X2",
+      "Y2Label": "Y2",
+      "ClearButton": "清除",
+      "DoneTitle": "清除静态物品",
+      "DoneMessage": "完成"
     }
   }
 }

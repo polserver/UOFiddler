@@ -19,6 +19,7 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Action _refreshMap;
         private readonly Ultima.Map _map;
+        private Func<string, string?>? _localizationGetter;
 
         public MapClearStaticsForm(Action refreshMap, Ultima.Map map)
         {
@@ -33,6 +34,24 @@ namespace UoFiddler.Controls.Forms
             numericUpDownX2.Maximum = map.Width;
             numericUpDownY1.Maximum = map.Height;
             numericUpDownY2.Maximum = map.Height;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapClearStaticsForm.Title") ?? "Clear Statics";
+            label2.Text = _localizationGetter("Forms.MapClearStaticsForm.X1Label") ?? "X1";
+            label3.Text = _localizationGetter("Forms.MapClearStaticsForm.Y1Label") ?? "Y1";
+            label4.Text = _localizationGetter("Forms.MapClearStaticsForm.X2Label") ?? "X2";
+            label5.Text = _localizationGetter("Forms.MapClearStaticsForm.Y2Label") ?? "Y2";
+            button1.Text = _localizationGetter("Forms.MapClearStaticsForm.ClearButton") ?? "Clear";
         }
 
         private void OnClickClear(object sender, EventArgs e)
@@ -78,7 +97,9 @@ namespace UoFiddler.Controls.Forms
 
             _map.ResetCache();
 
-            MessageBox.Show("Done", "Clear Static", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            string title = _localizationGetter?.Invoke("Forms.MapClearStaticsForm.DoneTitle") ?? "Clear Statics";
+            string message = _localizationGetter?.Invoke("Forms.MapClearStaticsForm.DoneMessage") ?? "Done";
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
 
             _refreshMap();
         }
