@@ -25,6 +25,7 @@ namespace UoFiddler.Controls.Forms
     public sealed partial class MapDiffApplyResultForm : Form
     {
         private readonly MapDiffApplyResult _result;
+        private Func<string, string?> _localizationGetter;
 
         public MapDiffApplyResultForm(MapDiffApplyResult result)
         {
@@ -38,6 +39,24 @@ namespace UoFiddler.Controls.Forms
 
             buttonVerify.Enabled = result.OutputMapPath != null;
             buttonOpenFolder.Enabled = result.OutputMapPath != null || result.OutputIndexPath != null;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            Text = _localizationGetter("Forms.MapDiffApplyResultForm.Title") ?? "Diff to Map Copy - Result";
+            buttonVerify.Text = _localizationGetter("Forms.MapDiffApplyResultForm.buttonVerify") ?? "Verify output";
+            buttonSave.Text = _localizationGetter("Forms.MapDiffApplyResultForm.buttonSave") ?? "Save report...";
+            buttonCopy.Text = _localizationGetter("Forms.MapDiffApplyResultForm.buttonCopy") ?? "Copy";
+            buttonOpenFolder.Text = _localizationGetter("Forms.MapDiffApplyResultForm.buttonOpenFolder") ?? "Open output folder";
+            buttonClose.Text = _localizationGetter("Forms.MapDiffApplyResultForm.buttonClose") ?? "Close";
         }
 
         /// <summary>

@@ -663,62 +663,6 @@
         "Delete": "删除"
       }
     },
-    "LandTilesControl": {
-      "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
-      "findNextFreeSlotToolStripMenuItem": "查找下一个空闲槽位",
-      "changeBackgroundColorToolStripMenuItem": "改变背景颜色",
-      "exportImageToolStripMenuItem": "导出图像..",
-      "asBmpToolStripMenuItem": "导出为 BMP",
-      "asTiffToolStripMenuItem": "导出为 TIFF",
-      "asJpgToolStripMenuItem1": "导出为 JPG",
-      "asPngToolStripMenuItem": "导出为 PNG",
-      "selectInTileDataTabToolStripMenuItem": "在 图块数据 标签中选择",
-      "selectInRadarColorTabToolStripMenuItem": "在 雷达颜色 标签中选择",
-      "selectInTexturesTabToolStripMenuItem": "在 纹理 标签中选择",
-      "copyImageToolStripMenuItem": "复制图像",
-      "pasteImageToolStripMenuItem": "粘贴图像",
-      "replaceToolStripMenuItem": "替换",
-      "replaceStartingFromToolStripMenuItem": "从...开始替换",
-      "replaceFromFolderToolStripMenuItem": "从文件夹替换...",
-      "insertAtToolStripMenuItem": "在...处插入",
-      "removeToolStripMenuItem": "移除",
-      "saveToolStripMenuItem": "保存",
-      "IndexToolStripLabel": "索引:",
-      "NameToolStripLabel": "名称:",
-      "searchByNameToolStripButton": "查找下一个",
-      "MiscToolStripDropDownButton": "其他",
-      "exportAllToolStripMenuItem": "导出所有..",
-      "ExportAllAsBmp": "导出为 BMP",
-      "ExportAllAsTiff": "导出为 TIFF",
-      "asJpgToolStripMenuItem": "导出为 JPG",
-      "asPngToolStripMenuItem1": "导出为 PNG",
-      "SaveButton": "保存",
-      "NameLabel": "名称:",
-      "GraphicLabel": "ID:",
-      "FlagsLabel": "标志:",
-      "Messages": {
-        "RemoveSingleConfirm": "确定要移除 0x{0} 吗?",
-        "RemoveMultipleConfirm": "确定要移除 {0} 个地形图块吗?",
-        "RemoveTitle": "保存",
-        "PasteMultipleConfirm": "粘贴此图像到 {0} 个选定的地形图块吗?",
-        "PasteImageTitle": "粘贴图像",
-        "SaveConfirmation": "确定吗?这需要一些时间",
-        "SaveTitle": "保存",
-        "SaveSuccess": "地形图块已保存到 {0}",
-        "SavedTitle": "已保存",
-        "CopyImageError": "复制图像失败",
-        "CopyImageTitle": "复制图像",
-        "PasteImageError": "粘贴图像失败",
-        "InvalidSizeTitle": "无效尺寸",
-        "InvalidSizeMessage": "无效的地形图块尺寸!地形图块必须是 44x44 像素。没有做任何更改。",
-        "SelectionMismatchTitle": "选择不匹配",
-        "SelectionMismatchMessage": "选中 {0} 个地形图块但选择了 {1} 个图像。没有做任何更改。",
-        "ImageTooLargeTitle": "图像过大",
-        "ImageTooLargeMessage": "图像对于 MUL 格式太大!预计编码大小:{0} ushorts，最大允许:{1} ushorts。没有做任何更改。",
-        "LoadTexturesFirst": "你需要先加载 Textures 标签。",
-        "LoadTexturesTitle": "信息"
-      }
-    },
     "TexturesControl": {
       "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
       "findNextFreeSlotToolStripMenuItem": "查找下一个空闲槽位",
@@ -759,44 +703,6 @@
         "InvalidSize": "图像尺寸无效。纹理必须是 64x64 或 128x128",
         "InvalidIndex": "无效的索引",
         "NoImage": "剪贴板中没有图像"
-      }
-    },
-    "SoundsControl": {
-      "nameSortToolStripMenuItem": "按名称排序",
-      "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
-      "nextFreeSlotToolStripMenuItem": "查找下一个空闲槽位",
-      "playSoundToolStripMenuItem": "播放",
-      "insertReplaceToolStripMenuItem": "插入/替换",
-      "replaceSoundToolStripMenuItem": "替换",
-      "insertSoundToolStripMenuItem": "插入",
-      "extractSoundToolStripMenuItem": "提取",
-      "removeSoundToolStripMenuItem": "移除",
-      "saveSoundToolStripMenuItem": "保存",
-      "genericGroupBox": "常规",
-      "currentSoundGroupBox": "当前声音",
-      "searchGroupBox": "搜索",
-      "insertReplaceGroupBox": "插入/替换",
-      "playButton": "播放",
-      "stopButton": "停止",
-      "extractButton": "提取",
-      "removeButton": "移除",
-      "saveButton": "保存",
-      "exportAllSoundsButton": "导出所有声音",
-      "exportSoundListCsvButton": "导出声音列表 (.csv)",
-      "addInsertReplaceButton": "添加/替换",
-      "goPrevButton": "上一个",
-      "goNextButton": "下一个",
-      "idLabel": "ID",
-      "wavLabel": "WAV",
-      "sortByNameCheckBox": "按名称排序树",
-      "includeSoundIdCheckBox": "导出时在文件名中包含声音ID",
-      "soundColumnHeader": "声音",
-      "searchByIdButton": "按ID搜索",
-      "searchByNameButton": "按名称搜索",
-      "Messages": {
-        "emptySlot": "空槽位",
-        "currentSoundFormat": "当前声音: {0} - 时长: {1}",
-        "idCountFormat": "已占用音效 ID: {0}, 空闲音效 ID: {1}"
       }
     },
     "AnimationListControl": {
@@ -1011,14 +917,6 @@
         "Copy": "复制",
         "SelectAll": "全选"
       }
-    },
-    "FileSavedDialog": {
-      "Title": "已保存",
-      "SaveSuccess": "文件已成功保存。",
-      "OpenFolder": "打开文件夹",
-      "OK": "确定",
-      "UnableToOpenFolder": "无法打开文件夹",
-      "Error": "错误"
     },
     "CompareTileDataControl": {
       "btnCopyLandSelected": "复制选定项",
@@ -1341,6 +1239,50 @@
     },
     "MapDetailsForm": {
       "Title": "地图详情"
+    },
+    "MapDiffApplyResultForm": {
+      "Title": "差异应用结果",
+      "buttonVerify": "验证输出",
+      "buttonSave": "保存报告...",
+      "buttonCopy": "复制",
+      "buttonOpenFolder": "打开输出文件夹",
+      "buttonClose": "关闭"
+    },
+    "MapDiffInsertForm": {
+      "Title": "差异到地图复制",
+      "groupBoxWhat": "插入",
+      "groupBoxFrom": "区域，以地图图块为单位",
+      "groupBoxPreview": "将要插入的内容 - 拖动以选择区域",
+      "checkBoxMap": "地图",
+      "checkBoxStatics": "静态物品",
+      "RemoveDupl": "移除重复项",
+      "checkBoxDuplicatesHue": "也比较色调（旧版）",
+      "checkBoxPreviewStatics": "显示静态物品",
+      "checkBoxPreviewPatched": "标记差异涵盖的块",
+      "labelMapFormat": "写入为：",
+      "label1": "X1",
+      "label2": "Y1",
+      "label3": "X2",
+      "label4": "Y2",
+      "buttonCopy": "插入",
+      "buttonCancel": "取消",
+      "buttonClose": "关闭",
+      "Messages": {
+        "Inserting": "插入中...",
+        "Cancelled": "已取消。未写入任何内容。",
+        "Failed": "失败。",
+        "Done": "完成",
+        "Cancelling": "取消中...",
+        "RegionLabel": "区域",
+        "DiffDataLoaded": "差异数据已加载: {0:N0} 陆地块，{1:N0} 静态块",
+        "RequestWidened": "请求 {0},{1} - {2},{3} 已扩展为整个 8 图块块",
+        "BlocksLabel": "块 {0},{1} - {2},{3}，{4} x {5}"
+      },
+      "ComboBoxFormats": {
+        "SameFormatUOP": "与此客户端相同格式 (.uop)",
+        "SameFormatMUL": "与此客户端相同格式 (.mul)",
+        "LegacyMUL": "LegacyMUL"
+      }
     }
   }
 }

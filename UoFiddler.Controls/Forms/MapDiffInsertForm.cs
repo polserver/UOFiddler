@@ -32,6 +32,8 @@ namespace UoFiddler.Controls.Forms
 
         private CancellationTokenSource _cancellation;
 
+        private Func<string, string?> _localizationGetter;
+
         /// <summary>Guards the round trip between a drag on the panel and the spinners it writes to.</summary>
         private bool _syncingPreview;
 
@@ -82,6 +84,77 @@ namespace UoFiddler.Controls.Forms
             ActiveControl = buttonCopy;
         }
 
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            Text = _localizationGetter("Forms.MapDiffInsertForm.Title") ?? "Diff to Map Copy";
+            groupBoxWhat.Text = _localizationGetter("Forms.MapDiffInsertForm.groupBoxWhat") ?? "Insert";
+            groupBoxFrom.Text = _localizationGetter("Forms.MapDiffInsertForm.groupBoxFrom") ?? "Region, in map tiles";
+            groupBoxPreview.Text = _localizationGetter("Forms.MapDiffInsertForm.groupBoxPreview") ?? "What will be inserted - drag to choose the region";
+            
+            checkBoxMap.Text = _localizationGetter("Forms.MapDiffInsertForm.checkBoxMap") ?? "Map";
+            checkBoxStatics.Text = _localizationGetter("Forms.MapDiffInsertForm.checkBoxStatics") ?? "Statics";
+            RemoveDupl.Text = _localizationGetter("Forms.MapDiffInsertForm.RemoveDupl") ?? "remove duplicates";
+            checkBoxDuplicatesHue.Text = _localizationGetter("Forms.MapDiffInsertForm.checkBoxDuplicatesHue") ?? "comparing hue too (legacy)";
+            checkBoxPreviewStatics.Text = _localizationGetter("Forms.MapDiffInsertForm.checkBoxPreviewStatics") ?? "Show statics";
+            checkBoxPreviewPatched.Text = _localizationGetter("Forms.MapDiffInsertForm.checkBoxPreviewPatched") ?? "Mark the blocks the diff covers";
+            
+            labelMapFormat.Text = _localizationGetter("Forms.MapDiffInsertForm.labelMapFormat") ?? "written as:";
+            label1.Text = _localizationGetter("Forms.MapDiffInsertForm.label1") ?? "X1";
+            label2.Text = _localizationGetter("Forms.MapDiffInsertForm.label2") ?? "Y1";
+            label3.Text = _localizationGetter("Forms.MapDiffInsertForm.label3") ?? "X2";
+            label4.Text = _localizationGetter("Forms.MapDiffInsertForm.label4") ?? "Y2";
+            
+            buttonCopy.Text = _localizationGetter("Forms.MapDiffInsertForm.buttonCopy") ?? "Insert";
+            buttonCancel.Text = _localizationGetter("Forms.MapDiffInsertForm.buttonCancel") ?? "Cancel";
+            buttonClose.Text = _localizationGetter("Forms.MapDiffInsertForm.buttonClose") ?? "Close";
+
+            // 应用下拉框汉化
+            ApplyComboBoxLocalization();
+            
+            // 刷新预览区域的汉化消息
+            UpdatePreview();
+        }
+
+        private string GetLocalizedMessage(string key, string defaultValue)
+        {
+            return _localizationGetter?.Invoke($"Forms.MapDiffInsertForm.Messages.{key}") ?? defaultValue;
+        }
+
+        private string GetLocalizedComboBoxFormat(string key, string defaultValue)
+        {
+            return _localizationGetter?.Invoke($"Forms.MapDiffInsertForm.ComboBoxFormats.{key}") ?? defaultValue;
+        }
+
+        private void ApplyComboBoxLocalization()
+        {
+            if (_localizationGetter == null || comboBoxMapFormat.Items.Count == 0) return;
+
+            bool uop = _workingMap.Tiles.IsUOPFormat;
+
+            // 第一项：与此客户端相同格式
+            string firstItemText = uop
+                ? GetLocalizedComboBoxFormat("SameFormatUOP", "the same format as this client (.uop)")
+                : GetLocalizedComboBoxFormat("SameFormatMUL", "the same format as this client (.mul)");
+            comboBoxMapFormat.Items[0] = firstItemText;
+
+            // 其他项保持原样（包含地图索引），但 LegacyMUL 文本可以汉化
+            // 第三项：map{index}LegacyMUL.uop
+            if (comboBoxMapFormat.Items.Count >= 3)
+            {
+                int index = _workingMap.FileIndex;
+                string legacyUopFormat = GetLocalizedComboBoxFormat("LegacyMUL", "LegacyMUL");
+                comboBoxMapFormat.Items[2] = $"map{index}{legacyUopFormat}.uop";
+            }
+        }
+
         private void OnOptionChanged(object sender, EventArgs e)
         {
             comboBoxMapFormat.Enabled = checkBoxMap.Checked;
@@ -125,15 +198,25 @@ namespace UoFiddler.Controls.Forms
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"region  {region}");
+            // 获取区域标签和块标签的汉化文本
+            string regionLabel = GetLocalizedMessage("RegionLabel", "region");
+            string blockFormat = GetLocalizedMessage("BlocksLabel", "块 {0},{1} - {2},{3}，{4} x {5}");
+            string diffDataFormat = GetLocalizedMessage("DiffDataLoaded", "差异数据已加载: {0:N0} 陆地块，{1:N0} 静态块");
+
+            // 构建输出，第一行使用汉化的块格式而不是 region.ToString()
             sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                "diff data loaded: {0:N0} land blocks, {1:N0} static blocks",
+                blockFormat,
+                region.BlockX1, region.BlockY1, region.BlockX2, region.BlockY2,
+                region.BlockWidth, region.BlockHeight));
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                diffDataFormat,
                 patch.LandBlocksCount, patch.StaticBlocksCount));
 
             if (region.TileX1 != x1 || region.TileY1 != y1 || region.TileX2 != x2 || region.TileY2 != y2)
             {
+                string requestWideningFormat = GetLocalizedMessage("RequestWidened", "the request {0},{1} - {2},{3} was widened to whole 8-tile blocks");
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "the request {0},{1} - {2},{3} was widened to whole 8-tile blocks", x1, y1, x2, y2));
+                    requestWideningFormat, x1, y1, x2, y2));
             }
 
             textBoxPreview.Text = sb.ToString();
@@ -251,7 +334,7 @@ namespace UoFiddler.Controls.Forms
 
             SetRunning(true);
             progressBar1.Value = 0;
-            labelStatus.Text = "Inserting...";
+            labelStatus.Text = GetLocalizedMessage("Inserting", "Inserting...");
 
             worker.RunWorkerAsync(options);
         }
@@ -290,7 +373,7 @@ namespace UoFiddler.Controls.Forms
             if (e.Error is OperationCanceledException)
             {
                 progressBar1.Value = 0;
-                labelStatus.Text = "Cancelled. Nothing was written.";
+                labelStatus.Text = GetLocalizedMessage("Cancelled", "Cancelled. Nothing was written.");
 
                 return;
             }
@@ -298,7 +381,7 @@ namespace UoFiddler.Controls.Forms
             if (e.Error != null)
             {
                 progressBar1.Value = 0;
-                labelStatus.Text = "Failed.";
+                labelStatus.Text = GetLocalizedMessage("Failed", "Failed.");
 
                 ShowError("Diff to Map Copy", e.Error);
 
@@ -308,10 +391,13 @@ namespace UoFiddler.Controls.Forms
             var result = (MapDiffApplyResult)e.Result;
 
             progressBar1.Value = 100;
-            labelStatus.Text = "Done.";
+            labelStatus.Text = GetLocalizedMessage("Done", "Done.");
 
             using (var form = new MapDiffApplyResultForm(result))
             {
+                if (_localizationGetter != null)
+                    form.SetLocalization(_localizationGetter);
+                
                 form.ShowDialog(this);
             }
         }
@@ -354,7 +440,7 @@ namespace UoFiddler.Controls.Forms
         private void OnClickCancel(object sender, EventArgs e)
         {
             _cancellation?.Cancel();
-            labelStatus.Text = "Cancelling...";
+            labelStatus.Text = GetLocalizedMessage("Cancelling", "Cancelling...");
         }
 
         private void OnClickClose(object sender, EventArgs e)

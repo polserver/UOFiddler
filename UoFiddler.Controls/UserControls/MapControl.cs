@@ -1483,6 +1483,11 @@ namespace UoFiddler.Controls.UserControls
             {
                 TopMost = true
             };
+            
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+                _showFormMapDiff.SetLocalization(getter);
+            
             _showFormMapDiff.Show();
         }
 
