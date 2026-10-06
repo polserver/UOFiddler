@@ -1204,6 +1204,11 @@
       "DoneTitle": "融化静态物品",
       "DoneMessage": "完成"
     },
+    "MapReplaceTilesForm": {
+      "Title": "地图 - 替换地块",
+      "ReplaceFromLabel": "替换来源",
+      "ReplaceButton": "替换"
+    },
     "MapClearStaticsForm": {
       "Title": "清除静态物品",
       "X1Label": "X1",

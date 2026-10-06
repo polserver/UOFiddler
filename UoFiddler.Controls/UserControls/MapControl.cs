@@ -1667,6 +1667,11 @@ namespace UoFiddler.Controls.UserControls
             {
                 TopMost = true
             };
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+            {
+                _showMapReplaceTilesForm.SetLocalization(getter);
+            }
             _showMapReplaceTilesForm.Show();
         }
 

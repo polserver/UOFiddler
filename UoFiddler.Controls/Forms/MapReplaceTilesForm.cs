@@ -23,12 +23,28 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Map _map;
         private List<ModArea> _toReplace;
+        private Func<string, string?>? _localizationGetter;
 
         public MapReplaceTilesForm(Map map)
         {
             InitializeComponent();
 
             _map = map;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapReplaceTilesForm.Title") ?? "Map - replace tiles";
+            label5.Text = _localizationGetter("Forms.MapReplaceTilesForm.ReplaceFromLabel") ?? "Replace From";
+            button2.Text = _localizationGetter("Forms.MapReplaceTilesForm.ReplaceButton") ?? "Replace";
         }
 
         private void OnReplace(object sender, EventArgs e)
