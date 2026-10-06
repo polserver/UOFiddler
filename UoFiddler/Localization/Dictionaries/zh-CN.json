@@ -719,6 +719,48 @@
         "LoadTexturesTitle": "信息"
       }
     },
+    "TexturesControl": {
+      "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
+      "findNextFreeSlotToolStripMenuItem": "查找下一个空闲槽位",
+      "exportImageToolStripMenuItem": "导出图像..",
+      "asBmpToolStripMenuItem": "导出为 BMP",
+      "asTiffToolStripMenuItem": "导出为 TIFF",
+      "asJpgToolStripMenuItem": "导出为 JPG",
+      "asPngToolStripMenuItem": "导出为 PNG",
+      "selectInLandTilesTabToolStripMenuItem": "在 Land Tiles 标签中选择",
+      "copyImageToolStripMenuItem": "复制图像",
+      "pasteImageToolStripMenuItem": "粘贴图像",
+      "replaceToolStripMenuItem": "替换",
+      "replaceStartingFromToolStripMenuItem": "从...开始替换",
+      "insertAtToolStripMenuItem": "在...处插入",
+      "removeToolStripMenuItem": "移除",
+      "saveToolStripMenuItem": "保存",
+      "SaveButton": "保存",
+      "IndexToolStripLabel": "索引:",
+      "MiscToolStripDropDownButton": "其他",
+      "exportAllToolStripMenuItem": "导出所有..",
+      "ExportAllAsBmp": "全部导出为 BMP",
+      "ExportAllAsTiff": "全部导出为 TIFF",
+      "ExportAllAsJpeg": "全部导出为 JPG",
+      "ExportAllAsPng": "全部导出为 PNG",
+      "GraphicLabel": "图形:",
+      "Messages": {
+        "CopySuccess": "复制成功",
+        "PasteConfirm": "是否粘贴 {0} 个图像?",
+        "PasteSuccess": "粘贴成功",
+        "ReplaceConfirm": "是否替换 {0} 个图像?",
+        "ReplaceSuccess": "替换成功",
+        "InsertConfirm": "是否在位置 {0} 插入图像?",
+        "InsertSuccess": "插入成功",
+        "DeleteConfirm": "是否删除 {0} 个图像?",
+        "DeleteSuccess": "删除成功",
+        "SaveSuccess": "保存成功",
+        "ExportSuccess": "导出 {0} 个图像成功",
+        "InvalidSize": "图像尺寸无效。纹理必须是 64x64 或 128x128",
+        "InvalidIndex": "无效的索引",
+        "NoImage": "剪贴板中没有图像"
+      }
+    },
     "AnimationListControl": {
       "searchToolStripLabel": "搜索:",
       "removeToolStripMenuItem": "移除",
@@ -931,6 +973,14 @@
         "Copy": "复制",
         "SelectAll": "全选"
       }
+    },
+    "FileSavedDialog": {
+      "Title": "已保存",
+      "SaveSuccess": "文件已成功保存。",
+      "OpenFolder": "打开文件夹",
+      "OK": "确定",
+      "UnableToOpenFolder": "无法打开文件夹",
+      "Error": "错误"
     },
     "CompareTileDataControl": {
       "btnCopyLandSelected": "复制选定项",

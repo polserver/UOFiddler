@@ -40,6 +40,9 @@ namespace UoFiddler.Controls.UserControls
         private bool _showFreeSlots;
         private bool _loaded;
         private int _selectedTextureId = -1;
+        
+        // 汉化支持
+        private Func<string, string?>? _localizationGetter;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedTextureId
@@ -609,7 +612,13 @@ namespace UoFiddler.Controls.UserControls
 
             Options.ChangedUltimaClass["Texture"] = false;
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            // Create and localize FileSavedDialog (Type 11)
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Files saved successfully.";
+            string message = _localizationGetter?.Invoke("Forms.FileSavedDialog.SaveSuccess") ?? "Files saved successfully.";
+            
+            var dialog = new FileSavedDialog(Options.OutputPath, message, title);
+            dialog.SetLocalization(_localizationGetter);
+            dialog.ShowDialog(FindForm());
         }
 
         private void OnClickExportBmp(object sender, EventArgs e)
@@ -668,7 +677,14 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"{ids.Count} textures saved successfully.");
+            // Create and localize FileSavedDialog (Type 11)
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Files saved successfully.";
+            string message = _localizationGetter?.Invoke("Forms.FileSavedDialog.SaveSuccess") 
+                ?? $"{ids.Count} textures saved successfully.";
+            
+            var dialog = new FileSavedDialog(Options.OutputPath, message, title);
+            dialog.SetLocalization(_localizationGetter);
+            dialog.ShowDialog(FindForm());
         }
 
         private static void ExportTextureImage(int index, ImageFormat imageFormat)
@@ -1049,10 +1065,17 @@ namespace UoFiddler.Controls.UserControls
             int selectedCount = TextureTileView.SelectedIndices.Count;
             copyImageToolStripMenuItem.Enabled = _selectedTextureId >= 0 && Textures.TestTexture(_selectedTextureId);
             pasteImageToolStripMenuItem.Enabled = selectedCount > 0 && ImageClipboard.ContainsImage();
-            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"Paste Image into {selectedCount}" : "Paste Image";
-            removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
-            exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
-            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
+            
+            // ✅ Type 12 汉化：使用汉化基础文本构建动态文本
+            string basePasteText = _localizationGetter?.Invoke("Forms.TexturesControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            string baseRemoveText = _localizationGetter?.Invoke("Forms.TexturesControl.removeToolStripMenuItem") ?? "Remove";
+            string baseExportText = _localizationGetter?.Invoke("Forms.TexturesControl.exportImageToolStripMenuItem") ?? "Export Image..";
+            string baseReplaceText = _localizationGetter?.Invoke("Forms.TexturesControl.replaceToolStripMenuItem") ?? "Replace";
+            
+            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"{basePasteText} {selectedCount}" : basePasteText;
+            removeToolStripMenuItem.Text = selectedCount > 1 ? $"{baseRemoveText} {selectedCount}" : baseRemoveText;
+            exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"{baseExportText.Replace("...", "")} {selectedCount}..." : baseExportText;
+            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"{baseReplaceText} {selectedCount}" : baseReplaceText;
 
             bool hasLandTile = _selectedTextureId >= 0
                 && _selectedTextureId < 0x4000
@@ -1082,6 +1105,51 @@ namespace UoFiddler.Controls.UserControls
             // we have to invalidate focus so it will scroll to item
             TextureTileView.FocusIndex = -1;
             SelectedTextureId = indexValue;
+        }
+
+        // 汉化支持方法
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Menu Items
+            showFreeSlotsToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.showFreeSlotsToolStripMenuItem") ?? "Show Free Slots";
+            findNextFreeSlotToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.findNextFreeSlotToolStripMenuItem") ?? "Find Next Free Slot";
+            exportImageToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.exportImageToolStripMenuItem") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.asPngToolStripMenuItem") ?? "As Png";
+            selectInLandTilesTabToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.selectInLandTilesTabToolStripMenuItem") ?? "Select in Land Tiles tab";
+            copyImageToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.copyImageToolStripMenuItem") ?? "Copy Image";
+            pasteImageToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.replaceToolStripMenuItem") ?? "Replace";
+            replaceStartingFromToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.replaceStartingFromToolStripMenuItem") ?? "Replace starting from..";
+            insertAtToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.insertAtToolStripMenuItem") ?? "Insert At..";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.removeToolStripMenuItem") ?? "Remove";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.saveToolStripMenuItem") ?? "Save";
+
+            // Toolbar Items
+            SaveButton.Text = _localizationGetter("Forms.TexturesControl.SaveButton") ?? "Save";
+            SaveButton.ToolTipText = _localizationGetter("Forms.TexturesControl.SaveButton") ?? "Save";
+            IndexToolStripLabel.Text = _localizationGetter("Forms.TexturesControl.IndexToolStripLabel") ?? "Index:";
+            MiscToolStripDropDownButton.Text = _localizationGetter("Forms.TexturesControl.MiscToolStripDropDownButton") ?? "Misc";
+
+            // Misc Menu
+            exportAllToolStripMenuItem.Text = _localizationGetter("Forms.TexturesControl.exportAllToolStripMenuItem") ?? "Export All..";
+            ExportAllAsBmp.Text = _localizationGetter("Forms.TexturesControl.ExportAllAsBmp") ?? "As Bmp";
+            ExportAllAsTiff.Text = _localizationGetter("Forms.TexturesControl.ExportAllAsTiff") ?? "As Tiff";
+            ExportAllAsJpeg.Text = _localizationGetter("Forms.TexturesControl.ExportAllAsJpeg") ?? "As Jpg";
+            ExportAllAsPng.Text = _localizationGetter("Forms.TexturesControl.ExportAllAsPng") ?? "As Png";
+
+            // Status Bar
+            GraphicLabel.Text = _localizationGetter("Forms.TexturesControl.GraphicLabel") ?? "Graphic:";
         }
     }
 }

@@ -13,6 +13,7 @@ namespace UoFiddler.Controls.Forms
     public sealed partial class FileSavedDialog : Form
     {
         private readonly string _filePath;
+        private Func<string, string?>? _localizationGetter;
 
         public FileSavedDialog(string filePath, string message = null, string title = null)
         {
@@ -30,6 +31,37 @@ namespace UoFiddler.Controls.Forms
 
             statusLabel.Text = message ?? "File saved successfully.";
             pathLabel.Text = _filePath;
+        }
+
+        /// <summary>
+        /// Sets the localization getter and applies localized text.
+        /// </summary>
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Applies localized text to UI elements.
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Localize title
+            var title = _localizationGetter("Forms.FileSavedDialog.Title");
+            if (title != null)
+                Text = title;
+
+            // Localize status label if not already set to custom message
+            var saveSuccess = _localizationGetter("Forms.FileSavedDialog.SaveSuccess");
+            if (saveSuccess != null && statusLabel.Text == "File saved successfully.")
+                statusLabel.Text = saveSuccess;
+
+            // Localize buttons
+            buttonOpenFolder.Text = _localizationGetter("Forms.FileSavedDialog.OpenFolder") ?? "Open Folder";
+            buttonOk.Text = _localizationGetter("Forms.FileSavedDialog.OK") ?? "OK";
         }
 
         private void OnOpenFolderClick(object sender, EventArgs e)
