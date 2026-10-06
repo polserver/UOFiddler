@@ -21,6 +21,7 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Action _refreshMap;
         private readonly Map _map;
+        private Func<string, string?>? _localizationGetter;
 
         public MapMeltStaticsForm(Action refreshMap, Map map)
         {
@@ -35,6 +36,24 @@ namespace UoFiddler.Controls.Forms
             numericUpDownX2.Maximum = map.Width;
             numericUpDownY1.Maximum = map.Height;
             numericUpDownY2.Maximum = map.Height;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapMeltStaticsForm.Title") ?? "Melt Statics";
+            label2.Text = _localizationGetter("Forms.MapMeltStaticsForm.X1Label") ?? "X1";
+            label3.Text = _localizationGetter("Forms.MapMeltStaticsForm.Y1Label") ?? "Y1";
+            label4.Text = _localizationGetter("Forms.MapMeltStaticsForm.X2Label") ?? "X2";
+            label5.Text = _localizationGetter("Forms.MapMeltStaticsForm.Y2Label") ?? "Y2";
+            button1.Text = _localizationGetter("Forms.MapMeltStaticsForm.MeltButton") ?? "Melt";
         }
 
         private void OnClickMelt(object sender, EventArgs e)
@@ -122,7 +141,9 @@ namespace UoFiddler.Controls.Forms
 
             _map.ResetCache();
 
-            MessageBox.Show("Done", "Melt Static", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            string title = _localizationGetter?.Invoke("Forms.MapMeltStaticsForm.DoneTitle") ?? "Melt Static";
+            string message = _localizationGetter?.Invoke("Forms.MapMeltStaticsForm.DoneMessage") ?? "Done";
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
 
             _refreshMap();
         }

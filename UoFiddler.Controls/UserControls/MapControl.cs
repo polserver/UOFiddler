@@ -1625,6 +1625,11 @@ namespace UoFiddler.Controls.UserControls
             {
                 TopMost = true
             };
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+            {
+                _showMeltStaticsForm.SetLocalization(getter);
+            }
             _showMeltStaticsForm.Show();
         }
 

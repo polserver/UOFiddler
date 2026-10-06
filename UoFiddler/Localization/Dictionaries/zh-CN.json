@@ -1194,6 +1194,16 @@
       "ChooseColorButton": "选择颜色",
       "SaveButton": "保存"
     },
+    "MapMeltStaticsForm": {
+      "Title": "融化静态物品",
+      "X1Label": "X1",
+      "Y1Label": "Y1",
+      "X2Label": "X2",
+      "Y2Label": "Y2",
+      "MeltButton": "融化",
+      "DoneTitle": "融化静态物品",
+      "DoneMessage": "完成"
+    },
     "MapClearStaticsForm": {
       "Title": "清除静态物品",
       "X1Label": "X1",
