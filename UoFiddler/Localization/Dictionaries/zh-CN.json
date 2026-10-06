@@ -1163,6 +1163,25 @@
         "errorTitle": "错误",
         "chooseWaveFile": "选择音效文件"
       }
+    },
+    "FontsControl": {
+      "writeTextToolStripMenuItem": "写入文本",
+      "setOffsetsToolStripMenuItem": "设置偏移",
+      "extractCharacterToolStripMenuItem": "提取字符",
+      "importCharacterToolStripMenuItem": "导入字符",
+      "saveToolStripMenuItem": "保存",
+      "LoadUnicodeFontsCheckBox": "加载 Unicode 字体",
+      "toolStripStatusLabel1": "<未选择>",
+      "Messages": {
+        "loadAllFontsConfirm": "是否要加载包括 Unicode 在内的所有字体?",
+        "loadAsciiOnlyConfirm": "只加载 ASCII 字体?",
+        "fontsReloadTitle": "字体重新加载",
+        "imageSizeExceeds": "图像高度或宽度超过 255",
+        "importTitle": "导入",
+        "characterSavedSuccess": "字符已成功保存。",
+        "unicodeFontsSavedSuccess": "Unicode 字体已成功保存。",
+        "fontsSavedSuccess": "字体已成功保存。"
+      }
     }
   }
 }

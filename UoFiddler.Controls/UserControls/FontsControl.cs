@@ -38,6 +38,40 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private static FontsControl _refMarker;
         private List<int> _fonts = new List<int>();
+        private Func<string, string?>? _localizationGetter;
+
+        /// <summary>
+        /// Set localization for FontsControl
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Apply localization to all UI elements
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 右键菜单项
+            writeTextToolStripMenuItem.Text = _localizationGetter("Forms.FontsControl.writeTextToolStripMenuItem") ?? "Write Text";
+            setOffsetsToolStripMenuItem.Text = _localizationGetter("Forms.FontsControl.setOffsetsToolStripMenuItem") ?? "Set Offsets";
+            extractCharacterToolStripMenuItem.Text = _localizationGetter("Forms.FontsControl.extractCharacterToolStripMenuItem") ?? "Extract Character";
+            importCharacterToolStripMenuItem.Text = _localizationGetter("Forms.FontsControl.importCharacterToolStripMenuItem") ?? "Import Character";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.FontsControl.saveToolStripMenuItem") ?? "Save";
+
+            // 复选框
+            LoadUnicodeFontsCheckBox.Text = _localizationGetter("Forms.FontsControl.LoadUnicodeFontsCheckBox") ?? "Load Unicode Fonts";
+
+            // 状态栏初始文本
+            if (string.IsNullOrEmpty(toolStripStatusLabel1.Text) || toolStripStatusLabel1.Text == "<no selection>")
+            {
+                toolStripStatusLabel1.Text = _localizationGetter("Forms.FontsControl.toolStripStatusLabel1") ?? "<no selection>";
+            }
+        }
 
         /// <summary>
         /// Reload when loaded (file changed)
@@ -229,7 +263,10 @@ namespace UoFiddler.Controls.UserControls
                 bmp.Save(fileName, ImageFormat.Tiff);
             }
 
-            FileSavedDialog.Show(FindForm(), fileName, "Character saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.FontsControl.Messages.characterSavedSuccess") 
+                             ?? "Character saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+            FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter?.Invoke(key));
         }
 
         private static int AsciiFontOffset => 32;
@@ -257,7 +294,11 @@ namespace UoFiddler.Controls.UserControls
                 {
                     import.Dispose();
 
-                    MessageBox.Show("Image Height or Width exceeds 255", "Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    string message = _localizationGetter?.Invoke("Forms.FontsControl.Messages.imageSizeExceeds") 
+                                     ?? "Image Height or Width exceeds 255";
+                    string title = _localizationGetter?.Invoke("Forms.FontsControl.Messages.importTitle") 
+                                   ?? "Import";
+                    MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
 
                     return;
                 }
@@ -286,14 +327,20 @@ namespace UoFiddler.Controls.UserControls
             {
                 string fileName = UnicodeFonts.Save(path, (int)treeView.SelectedNode.Tag);
                 Options.ChangedUltimaClass["UnicodeFont"] = false;
-                FileSavedDialog.Show(FindForm(), fileName, "Unicode fonts saved successfully.");
+                string message = _localizationGetter?.Invoke("Forms.FontsControl.Messages.unicodeFontsSavedSuccess") 
+                                 ?? "Unicode fonts saved successfully.";
+                string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+                FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter?.Invoke(key));
             }
             else
             {
                 string fileName = Path.Combine(path, "fonts.mul");
                 AsciiText.Save(fileName);
                 Options.ChangedUltimaClass["ASCIIFont"] = false;
-                FileSavedDialog.Show(FindForm(), fileName, "Fonts saved successfully.");
+                string message = _localizationGetter?.Invoke("Forms.FontsControl.Messages.fontsSavedSuccess") 
+                                 ?? "Fonts saved successfully.";
+                string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+                FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter?.Invoke(key));
             }
         }
 
@@ -423,21 +470,38 @@ namespace UoFiddler.Controls.UserControls
 
             int i = FontsTileView.SelectedIndices[0];
 
-            toolStripStatusLabel1.Text = (int)treeView.SelectedNode.Parent.Tag == 1
-                ? string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i,
+            if ((int)treeView.SelectedNode.Parent.Tag == 1)
+            {
+                // Unicode fonts
+                toolStripStatusLabel1.Text = string.Format("'{0}' : {1} (0x{1:X}) XOffset: {2} YOffset: {3}", (char)i, i,
                     UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].XOffset,
-                    UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset)
-                : string.Format("'{0}' : {1} (0x{1:X})", (char)(_fonts[i] + AsciiFontOffset), _fonts[i] + AsciiFontOffset);
+                    UnicodeFonts.Fonts[(int)treeView.SelectedNode.Tag].Chars[i].YOffset);
+            }
+            else
+            {
+                // ASCII fonts - 需要边界检查
+                if (i >= 0 && i < _fonts.Count)
+                {
+                    toolStripStatusLabel1.Text = string.Format("'{0}' : {1} (0x{1:X})", 
+                        (char)(_fonts[i] + AsciiFontOffset), _fonts[i] + AsciiFontOffset);
+                }
+                else
+                {
+                    toolStripStatusLabel1.Text = string.Empty;
+                }
+            }
         }
 
         private void LoadUnicodeFontsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             string message = LoadUnicodeFontsCheckBox.Checked
-                ? "Would you like to load all fonts including Unicode?"
-                : "Load only ASCII fonts?";
+                ? (_localizationGetter?.Invoke("Forms.FontsControl.Messages.loadAllFontsConfirm") ?? "Would you like to load all fonts including Unicode?")
+                : (_localizationGetter?.Invoke("Forms.FontsControl.Messages.loadAsciiOnlyConfirm") ?? "Load only ASCII fonts?");
+
+            string title = _localizationGetter?.Invoke("Forms.FontsControl.Messages.fontsReloadTitle") ?? "Fonts reload";
 
             DialogResult result =
-                MessageBox.Show(message, "Fonts reload",
+                MessageBox.Show(message, title,
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
