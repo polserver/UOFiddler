@@ -1330,6 +1330,14 @@
       "StatusAnalyzing": "分析中...",
       "StatusDefragging": "整理中...",
       "StatusCompleted": "完成"
+    },
+    "MapDefragStaticsResultForm": {
+      "Title": "整理静态物品 - 结果",
+      "VerifyButton": "验证输出",
+      "SaveButton": "保存报告...",
+      "CopyButton": "复制",
+      "OpenFolderButton": "打开输出文件夹",
+      "CloseButton": "关闭"
     }
   }
 }

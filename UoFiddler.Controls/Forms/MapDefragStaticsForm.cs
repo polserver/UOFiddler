@@ -426,6 +426,11 @@ namespace UoFiddler.Controls.Forms
 
             using (var form = new MapDefragStaticsResultForm(result, _lastRunUsedFilters))
             {
+                var getter = _localizationGetter;
+                if (getter != null)
+                {
+                    form.SetLocalization(getter);
+                }
                 form.ShowDialog(this);
             }
         }

@@ -22,6 +22,7 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly StaticsDefragResult _result;
         private readonly bool _filtered;
+        private Func<string, string?>? _localizationGetter;
 
         public MapDefragStaticsResultForm(StaticsDefragResult result, bool filtered)
         {
@@ -37,6 +38,24 @@ namespace UoFiddler.Controls.Forms
             // Nothing was written in a dry run, so there is no output to verify or to open.
             buttonVerify.Enabled = !result.DryRun;
             buttonOpenFolder.Enabled = !result.DryRun;
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapDefragStaticsResultForm.Title") ?? "Defrag Statics - Result";
+            buttonVerify.Text = _localizationGetter("Forms.MapDefragStaticsResultForm.VerifyButton") ?? "Verify output";
+            buttonSave.Text = _localizationGetter("Forms.MapDefragStaticsResultForm.SaveButton") ?? "Save report...";
+            buttonCopy.Text = _localizationGetter("Forms.MapDefragStaticsResultForm.CopyButton") ?? "Copy";
+            buttonOpenFolder.Text = _localizationGetter("Forms.MapDefragStaticsResultForm.OpenFolderButton") ?? "Open output folder";
+            buttonClose.Text = _localizationGetter("Forms.MapDefragStaticsResultForm.CloseButton") ?? "Close";
         }
 
         /// <summary>
