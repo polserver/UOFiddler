@@ -1329,6 +1329,37 @@
       "CopyButton": "复制",
       "OpenFolderButton": "打开输出文件夹",
       "CloseButton": "关闭"
+    },
+    "MapReplaceForm": {
+      "Title": "地图和静态物品复制",
+      "GroupBoxSource": "复制来源",
+      "LabelFolder": "文件夹:",
+      "ButtonBrowse": "浏览...",
+      "LabelMap": "地图:",
+      "GroupBoxWhat": "复制内容",
+      "CheckBoxMap": "地图",
+      "LabelMapFormat": "写入为:",
+      "CheckBoxStatics": "静态物品",
+      "RemoveDupl": "移除重复项",
+      "CheckBoxDuplicatesHue": "也比较色调（旧版）",
+      "GroupBoxFrom": "来源区域，以源地图图块为单位",
+      "Label1": "X1",
+      "Label2": "Y1",
+      "Label3": "X2",
+      "Label4": "Y2",
+      "GroupBoxTo": "目标位置，以此地图的图块为单位",
+      "Label6": "X",
+      "Label7": "Y",
+      "LabelZAdjust": "Z 调整",
+      "CheckBoxZClamp": "保留超过限制的内容",
+      "GroupBoxPreview": "将要复制的内容",
+      "LabelSourcePreview": "来源 - 拖动选择区域",
+      "LabelTargetPreview": "目标 - 拖动放置它",
+      "CheckBoxPreviewStatics": "显示静态物品",
+      "CheckBoxPreviewOverlay": "在位置显示该片段",
+      "ButtonCopy": "复制",
+      "ButtonCancel": "取消",
+      "ButtonClose": "关闭"
     }
   }
 }

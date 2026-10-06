@@ -31,6 +31,7 @@ namespace UoFiddler.Controls.Forms
     public partial class MapReplaceForm : Form
     {
         private readonly Map _workingMap;
+        private Func<string, string?>? _localizationGetter;
 
         private CancellationTokenSource _cancellation;
         private MapSize _detectedSize;
@@ -57,6 +58,47 @@ namespace UoFiddler.Controls.Forms
         private string _zSurveyKey;
         private ZSurveyRequest _zPending;
         private CancellationTokenSource _zCancellation;
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapReplaceForm.Title") ?? $"Map and Statics Copy - into map {_workingMap.FileIndex}";
+            groupBoxSource.Text = _localizationGetter("Forms.MapReplaceForm.GroupBoxSource") ?? "Copy from";
+            labelFolder.Text = _localizationGetter("Forms.MapReplaceForm.LabelFolder") ?? "Folder:";
+            buttonBrowse.Text = _localizationGetter("Forms.MapReplaceForm.ButtonBrowse") ?? "Browse...";
+            labelMap.Text = _localizationGetter("Forms.MapReplaceForm.LabelMap") ?? "Map:";
+            groupBoxWhat.Text = _localizationGetter("Forms.MapReplaceForm.GroupBoxWhat") ?? "Copy";
+            checkBoxMap.Text = _localizationGetter("Forms.MapReplaceForm.CheckBoxMap") ?? "Map";
+            labelMapFormat.Text = _localizationGetter("Forms.MapReplaceForm.LabelMapFormat") ?? "written as:";
+            checkBoxStatics.Text = _localizationGetter("Forms.MapReplaceForm.CheckBoxStatics") ?? "Statics";
+            RemoveDupl.Text = _localizationGetter("Forms.MapReplaceForm.RemoveDupl") ?? "remove duplicates";
+            checkBoxDuplicatesHue.Text = _localizationGetter("Forms.MapReplaceForm.CheckBoxDuplicatesHue") ?? "comparing hue too (legacy)";
+            groupBoxFrom.Text = _localizationGetter("Forms.MapReplaceForm.GroupBoxFrom") ?? "From region, in source map tiles";
+            label1.Text = _localizationGetter("Forms.MapReplaceForm.Label1") ?? "X1";
+            label2.Text = _localizationGetter("Forms.MapReplaceForm.Label2") ?? "Y1";
+            label3.Text = _localizationGetter("Forms.MapReplaceForm.Label3") ?? "X2";
+            label4.Text = _localizationGetter("Forms.MapReplaceForm.Label4") ?? "Y2";
+            groupBoxTo.Text = _localizationGetter("Forms.MapReplaceForm.GroupBoxTo") ?? "To position, in this map's tiles";
+            label6.Text = _localizationGetter("Forms.MapReplaceForm.Label6") ?? "X";
+            label7.Text = _localizationGetter("Forms.MapReplaceForm.Label7") ?? "Y";
+            labelZAdjust.Text = _localizationGetter("Forms.MapReplaceForm.LabelZAdjust") ?? "Z adjust";
+            checkBoxZClamp.Text = _localizationGetter("Forms.MapReplaceForm.CheckBoxZClamp") ?? "hold what passes the limit";
+            groupBoxPreview.Text = _localizationGetter("Forms.MapReplaceForm.GroupBoxPreview") ?? "What will be copied";
+            labelSourcePreview.Text = _localizationGetter("Forms.MapReplaceForm.LabelSourcePreview") ?? "From - drag to choose the region";
+            labelTargetPreview.Text = _localizationGetter("Forms.MapReplaceForm.LabelTargetPreview") ?? "To - drag to place it";
+            checkBoxPreviewStatics.Text = _localizationGetter("Forms.MapReplaceForm.CheckBoxPreviewStatics") ?? "Show statics";
+            checkBoxPreviewOverlay.Text = _localizationGetter("Forms.MapReplaceForm.CheckBoxPreviewOverlay") ?? "Show the piece in place";
+            buttonCopy.Text = _localizationGetter("Forms.MapReplaceForm.ButtonCopy") ?? "Copy";
+            buttonCancel.Text = _localizationGetter("Forms.MapReplaceForm.ButtonCancel") ?? "Cancel";
+            buttonClose.Text = _localizationGetter("Forms.MapReplaceForm.ButtonClose") ?? "Close";
+        }
 
         public MapReplaceForm(Map currentMap)
         {
