@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Ultima;
@@ -18,6 +19,8 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class MapDetailsForm : Form
     {
+        private Func<string, string?>? _localizationGetter;
+
         public MapDetailsForm(Map currentMap, Point point)
         {
             InitializeComponent();
@@ -36,6 +39,19 @@ namespace UoFiddler.Controls.Forms
                 ushort id = @static.Id;
                 richTextBox.AppendText($"{TileData.ItemTable[id].Name}: 0x{id:X} Hue: {@static.Hue} Altitude: {@static.Z}\n");
             }
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.MapDetailsForm.Title") ?? "MapDetails";
         }
     }
 }

@@ -1338,6 +1338,9 @@
       "CopyButton": "复制",
       "OpenFolderButton": "打开输出文件夹",
       "CloseButton": "关闭"
+    },
+    "MapDetailsForm": {
+      "Title": "地图详情"
     }
   }
 }

@@ -763,7 +763,13 @@ namespace UoFiddler.Controls.UserControls
 
         private void GetMapInfo(object sender, EventArgs e)
         {
-            new MapDetailsForm(CurrentMap, _currentPoint).Show();
+            var form = new MapDetailsForm(CurrentMap, _currentPoint);
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+            {
+                form.SetLocalization(getter);
+            }
+            form.Show();
         }
 
         private void OnOpenContext(object sender, CancelEventArgs e)  // Save for GetMapInfo
