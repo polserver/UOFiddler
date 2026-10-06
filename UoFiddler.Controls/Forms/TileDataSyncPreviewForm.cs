@@ -27,6 +27,7 @@ namespace UoFiddler.Controls.Forms
 
         private readonly List<Row> _rows = new();
         private readonly Dictionary<ListViewItem, Row> _rowByItem = new();
+        private Func<string, string?>? _localizationGetter;
 
         public IReadOnlyList<TileDataSyncChange> AcceptedChanges
         {
@@ -77,6 +78,42 @@ namespace UoFiddler.Controls.Forms
             changesListView.Items.AddRange(items);
             changesListView.EndUpdate();
 
+            UpdateSummary();
+        }
+
+        /// <summary>
+        /// Set localization for TileDataSyncPreviewForm
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Apply localization to all UI elements
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 窗口标题
+            this.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.Title") ?? "Sync from TileData — Preview";
+
+            // 表格列头
+            actionColumn.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.ColumnAction") ?? "Action";
+            numberColumn.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.ColumnNumber") ?? "Number";
+            oldTextColumn.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.ColumnCurrentText") ?? "Current text";
+            newTextColumn.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.ColumnNewText") ?? "New text";
+
+            // 按钮
+            checkAllButton.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.CheckAllButton") ?? "Check all";
+            uncheckAllButton.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.UncheckAllButton") ?? "Uncheck all";
+            uncheckRemovesButton.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.UncheckRemovesButton") ?? "Uncheck removes";
+            applyButton.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.ApplyButton") ?? "Apply";
+            cancelButton.Text = _localizationGetter("Forms.TileDataSyncPreviewForm.CancelButton") ?? "Cancel";
+
+            // 重新更新 Summary 标签以应用汉化的模板
             UpdateSummary();
         }
 
@@ -165,7 +202,10 @@ namespace UoFiddler.Controls.Forms
                 }
             }
 
-            summaryLabel.Text = $"Will apply:    Add {selAdd}/{totalAdd}    Update {selUpdate}/{totalUpdate}    Remove {selRemove}/{totalRemove}";
+            // 使用汉化的 Summary 模板
+            string template = _localizationGetter?.Invoke("Forms.TileDataSyncPreviewForm.WillApplyTemplate")
+                ?? "Will apply:    Add {0}/{1}    Update {2}/{3}    Remove {4}/{5}";
+            summaryLabel.Text = string.Format(template, selAdd, totalAdd, selUpdate, totalUpdate, selRemove, totalRemove);
         }
 
         private void SetCheckedForAll(bool value)

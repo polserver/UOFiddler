@@ -793,6 +793,7 @@ namespace UoFiddler.Controls.UserControls
                 }
 
                 preview = new TileDataSyncPreviewForm(changes);
+                preview.SetLocalization(_localizationGetter);
             }
             catch
             {

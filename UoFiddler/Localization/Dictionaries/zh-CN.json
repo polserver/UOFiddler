@@ -1224,6 +1224,19 @@
       "SaveSuccess": "文件已成功保存。",
       "OpenFolder": "打开文件夹",
       "OK": "确定"
+    },
+    "TileDataSyncPreviewForm": {
+      "Title": "从 TileData 同步 — 预览",
+      "ColumnAction": "操作",
+      "ColumnNumber": "编号",
+      "ColumnCurrentText": "当前文本",
+      "ColumnNewText": "新文本",
+      "WillApplyTemplate": "将应用：    添加 {0}/{1}    更新 {2}/{3}    删除 {4}/{5}",
+      "CheckAllButton": "全选",
+      "UncheckAllButton": "取消全选",
+      "UncheckRemovesButton": "取消选中删除项",
+      "ApplyButton": "应用",
+      "CancelButton": "取消"
     }
   }
 }
