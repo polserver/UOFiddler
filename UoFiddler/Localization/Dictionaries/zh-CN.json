@@ -1238,7 +1238,14 @@
       "CloseButton": "关闭"
     },
     "MapDetailsForm": {
-      "Title": "地图详情"
+      "Title": "地图详情",
+      "Labels": {
+        "Coordinate": "X",
+        "LandTile": "陆地图块",
+        "Altitude": "高度",
+        "Statics": "静态物品",
+        "Hue": "色调"
+      }
     },
     "MapDiffApplyResultForm": {
       "Title": "差异应用结果",
