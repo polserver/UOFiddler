@@ -42,6 +42,78 @@ namespace UoFiddler.Controls.UserControls
         private SortOrder _sortOrder;
         private int _sortColumn;
         private bool _loaded;
+        private Func<string, string?>? _localizationGetter;
+
+        /// <summary>
+        /// Set localization for CliLocControl
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Apply localization to all UI elements
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 工具栏按钮和文本框
+            GotoEntry.Text = _localizationGetter("Forms.CliLocControl.GotoEntry") ?? "Enter Number";
+            GotoButton.Text = _localizationGetter("Forms.CliLocControl.GotoButton") ?? "Goto";
+            FindEntry.Text = _localizationGetter("Forms.CliLocControl.FindEntry") ?? "Enter Text";
+            FindButton.Text = _localizationGetter("Forms.CliLocControl.FindButton") ?? "Find";
+            RegexToolStripButton.Text = _localizationGetter("Forms.CliLocControl.RegexToolStripButton") ?? "Use regular expression";
+            toolStripButton1.Text = _localizationGetter("Forms.CliLocControl.SaveButton") ?? "Save";
+            ClilocExportButton.Text = _localizationGetter("Forms.CliLocControl.ExportButton") ?? "Export";
+            toolStripDropDownButton1.Text = _localizationGetter("Forms.CliLocControl.ImportButton") ?? "Import";
+
+            // 右键菜单项
+            copyCliLocNumberToolStripMenuItem.Text = _localizationGetter("Forms.CliLocControl.copyCliLocNumberToolStripMenuItem") ?? "Copy CliLoc Number";
+            copyCliLocTextToolStripMenuItem.Text = _localizationGetter("Forms.CliLocControl.copyCliLocTextToolStripMenuItem") ?? "Copy CliLoc Text";
+            addEntryToolStripMenuItem.Text = _localizationGetter("Forms.CliLocControl.addEntryToolStripMenuItem") ?? "Add Entry";
+            deleteEntryToolStripMenuItem.Text = _localizationGetter("Forms.CliLocControl.deleteEntryToolStripMenuItem") ?? "Delete Entry";
+
+            // 导入菜单项 (CSV 保持英文，不汉化)
+            // cSVToolStripMenuItem.Text 保持 "CSV"
+            tileDataToolStripMenuItem.Text = _localizationGetter("Forms.CliLocControl.tileDataToolStripMenuItem") ?? "Sync from TileData";
+
+            // 语言下拉菜单项
+            LangComboBox.Items.Clear();
+            LangComboBox.Items.Add(_localizationGetter("Forms.CliLocControl.LangComboBoxEnglish") ?? "English");
+            LangComboBox.Items.Add(_localizationGetter("Forms.CliLocControl.LangComboBoxGerman") ?? "German");
+            LangComboBox.Items.Add(_localizationGetter("Forms.CliLocControl.LangComboBoxCustom1") ?? "Custom 1");
+            LangComboBox.Items.Add(_localizationGetter("Forms.CliLocControl.LangComboBoxCustom2") ?? "Custom 2");
+
+            // 表格列头
+            if (dataGridView1.Columns.Count > 0)
+            {
+                dataGridView1.Columns[0].HeaderText = _localizationGetter("Forms.CliLocControl.ColumnNumber") ?? "Number";
+                dataGridView1.Columns[1].HeaderText = _localizationGetter("Forms.CliLocControl.ColumnText") ?? "Text";
+                if (dataGridView1.Columns.Count > 2)
+                {
+                    dataGridView1.Columns[2].HeaderText = _localizationGetter("Forms.CliLocControl.ColumnFlag") ?? "Flag";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Apply column headers localization
+        /// </summary>
+        private void ApplyColumnHeaders()
+        {
+            if (dataGridView1.Columns.Count > 0)
+            {
+                dataGridView1.Columns[0].HeaderText = _localizationGetter("Forms.CliLocControl.ColumnNumber") ?? "Number";
+                dataGridView1.Columns[1].HeaderText = _localizationGetter("Forms.CliLocControl.ColumnText") ?? "Text";
+                if (dataGridView1.Columns.Count > 2)
+                {
+                    dataGridView1.Columns[2].HeaderText = _localizationGetter("Forms.CliLocControl.ColumnFlag") ?? "Flag";
+                }
+            }
+        }
 
         /// <summary>
         /// Sets Language and loads cliloc
@@ -72,7 +144,9 @@ namespace UoFiddler.Controls.UserControls
 
                 if (!string.IsNullOrEmpty(_cliloc?.LoadWarning))
                 {
-                    MessageBox.Show(this, _cliloc.LoadWarning, "Cliloc parsed with warnings",
+                    string warningTitle = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.ClilocLoadWarningTitle") 
+                        ?? "Cliloc parsed with warnings";
+                    MessageBox.Show(this, _cliloc.LoadWarning, warningTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
@@ -109,6 +183,8 @@ namespace UoFiddler.Controls.UserControls
                 dataGridView1.DataSource = _source;
                 if (dataGridView1.Columns.Count > 0)
                 {
+                    // 应用列头汉化
+                    ApplyColumnHeaders();
                     dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
                     dataGridView1.Columns[0].Width = 60;
                     dataGridView1.Columns[1].HeaderCell.SortGlyphDirection = SortOrder.None;
@@ -187,6 +263,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (dataGridView1.Columns.Count > 0)
             {
+                // 应用列头汉化
+                ApplyColumnHeaders();
                 dataGridView1.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
                 dataGridView1.Columns[0].Width = 60;
                 dataGridView1.Columns[1].HeaderCell.SortGlyphDirection = SortOrder.None;
@@ -215,9 +293,14 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
+            string gotoNotFoundMessage = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.NumberNotFound") 
+                ?? "Number not found.";
+            string gotoTitle = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.GotoTitle") 
+                ?? "Goto";
+            
             MessageBox.Show(
-                "Number not found.",
-                "Goto",
+                gotoNotFoundMessage,
+                gotoTitle,
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error,
                 MessageBoxDefaultButton.Button1);
@@ -227,7 +310,11 @@ namespace UoFiddler.Controls.UserControls
         {
             if (string.IsNullOrEmpty(FindEntry.Text) || FindEntry.Text == _searchTextPlaceholder)
             {
-                MessageBox.Show("Please provide search text", "Find Entry", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                string message = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.PleaseProvideSearchText") 
+                                 ?? "Please provide search text";
+                string title = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.FindEntryTitle") 
+                               ?? "Find Entry";
+                MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1);
 
                 return;
@@ -256,7 +343,12 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            MessageBox.Show(hasErrors ? "Invalid regular expression." : "Entry not found.", "Find Entry",
+            string msgContent = hasErrors 
+                ? (_localizationGetter?.Invoke("Forms.CliLocControl.Messages.InvalidRegex") ?? "Invalid regular expression.")
+                : (_localizationGetter?.Invoke("Forms.CliLocControl.Messages.EntryNotFound") ?? "Entry not found.");
+            string msgTitle = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.FindEntryTitle") 
+                              ?? "Find Entry";
+            MessageBox.Show(msgContent, msgTitle,
                 MessageBoxButtons.OK, MessageBoxIcon.Error,
                 MessageBoxDefaultButton.Button1);
         }
@@ -282,7 +374,11 @@ namespace UoFiddler.Controls.UserControls
         {
             if (string.IsNullOrEmpty(FindEntry.Text) || FindEntry.Text == _searchTextPlaceholder)
             {
-                MessageBox.Show("Please provide search text", "Find Entry", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                string message = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.PleaseProvideSearchText") 
+                    ?? "Please provide search text";
+                string title = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.FindEntryTitle") 
+                    ?? "Find Entry";
+                MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1);
 
                 return;
@@ -318,7 +414,12 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            MessageBox.Show(hasErrors ? "Invalid regular expression." : "Entry not found.", "Find Entry",
+            string notFoundMessage = hasErrors 
+                ? (_localizationGetter?.Invoke("Forms.CliLocControl.Messages.InvalidRegex") ?? "Invalid regular expression.")
+                : (_localizationGetter?.Invoke("Forms.CliLocControl.Messages.EntryNotFound") ?? "Entry not found.");
+            string dialogTitle = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.FindEntryTitle") 
+                ?? "Find Entry";
+            MessageBox.Show(notFoundMessage, dialogTitle,
                 MessageBoxButtons.OK, MessageBoxIcon.Error,
                 MessageBoxDefaultButton.Button1);
         }
@@ -349,7 +450,10 @@ namespace UoFiddler.Controls.UserControls
             dataGridView1.Invalidate();
             Options.ChangedUltimaClass["CliLoc"] = false;
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "CliLoc saved successfully.");
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") 
+                ?? "Saved";
+            
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, null, title, key => _localizationGetter?.Invoke(key));
         }
 
         private void OnCell_dbClick(object sender, DataGridViewCellEventArgs e)
@@ -558,15 +662,21 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), fileName, "CliLoc saved successfully.");
+            // 使用支持汉化的 Show 重载
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+            FileSavedDialog.Show(FindForm(), fileName, "CliLoc saved successfully.", title, key => _localizationGetter?.Invoke(key));
         }
 
         private void OnClickImportCSV(object sender, EventArgs e)
         {
+            // 获取汉化的标题
+            string dialogTitle = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.ImportChooseFileTitle") 
+                ?? "Choose csv file to import";
+            
             OpenFileDialog dialog = new OpenFileDialog
             {
                 Multiselect = false,
-                Title = "Choose csv file to import",
+                Title = dialogTitle,
                 CheckFileExists = true,
                 Filter = "csv files (*.csv)|*.csv"
             };
@@ -640,16 +750,26 @@ namespace UoFiddler.Controls.UserControls
                         }
                     }
 
+                    // 获取汉化的消息框文本
+                    string doneTitle = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.ImportDoneTitle") 
+                        ?? "Import Done";
+                    
                     if (count > 0)
                     {
                         Options.ChangedUltimaClass["CliLoc"] = true;
                         _source.ResetBindings(false);
                         dataGridView1.Invalidate();
-                        MessageBox.Show(this, $"{count} entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        
+                        string messageTemplate = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.ImportEntriesChanged") 
+                            ?? "{0} entries changed.";
+                        string message = string.Format(messageTemplate, count);
+                        MessageBox.Show(this, message, doneTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show(this, "No entries changed.", "Import Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        string noChangeMessage = _localizationGetter?.Invoke("Forms.CliLocControl.Messages.ImportNoEntriesChanged") 
+                            ?? "No entries changed.";
+                        MessageBox.Show(this, noChangeMessage, doneTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }

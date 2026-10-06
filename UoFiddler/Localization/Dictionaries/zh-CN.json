@@ -1182,6 +1182,48 @@
         "unicodeFontsSavedSuccess": "Unicode 字体已成功保存。",
         "fontsSavedSuccess": "字体已成功保存。"
       }
+    },
+    "CliLocControl": {
+      "GotoEntry": "输入编号",
+      "GotoButton": "跳转",
+      "FindEntry": "输入文本",
+      "FindButton": "查找",
+      "RegexToolStripButton": "使用正则表达式",
+      "SaveButton": "保存",
+      "ExportButton": "导出",
+      "ImportButton": "导入",
+      "LangComboBoxEnglish": "英文",
+      "LangComboBoxGerman": "德文",
+      "LangComboBoxCustom1": "自定义 1",
+      "LangComboBoxCustom2": "自定义 2",
+      "ColumnNumber": "编号",
+      "ColumnText": "文本",
+      "ColumnFlag": "标志",
+      "copyCliLocNumberToolStripMenuItem": "复制 CliLoc 编号",
+      "copyCliLocTextToolStripMenuItem": "复制 CliLoc 文本",
+      "addEntryToolStripMenuItem": "添加条目",
+      "deleteEntryToolStripMenuItem": "删除条目",
+      "cSVToolStripMenuItem": "CSV",
+      "tileDataToolStripMenuItem": "从 TileData 同步",
+      "Messages": {
+        "PleaseProvideSearchText": "请提供搜索文本",
+        "FindEntryTitle": "查找条目",
+        "InvalidRegex": "无效的正则表达式。",
+        "EntryNotFound": "未找到条目。",
+        "NumberNotFound": "未找到编号。",
+        "GotoTitle": "跳转",
+        "ClilocLoadWarningTitle": "Cliloc 分析警告",
+        "ImportChooseFileTitle": "选择要导入的 CSV 文件",
+        "ImportDoneTitle": "导入完成",
+        "ImportEntriesChanged": "{0} 个条目已更改。",
+        "ImportNoEntriesChanged": "没有条目被更改。"
+      }
+    },
+    "FileSavedDialog": {
+      "Title": "文件已保存",
+      "SaveSuccess": "文件已成功保存。",
+      "OpenFolder": "打开文件夹",
+      "OK": "确定"
     }
   }
 }
