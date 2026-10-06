@@ -46,6 +46,87 @@ namespace UoFiddler.Controls.UserControls
             AddAltitudeIntensityMenuItems();
         }
 
+        private Func<string, string?>? _localizationGetter;
+
+        /// <summary>
+        /// Set localization for MapControl
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Apply localization to all UI elements
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 上下文菜单项
+            zoomToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ZoomPlus") ?? "+Zoom";
+            zoomToolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.ZoomMinus") ?? "-Zoom";
+            getMapInfoToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.GetMapInfo") ?? "GetMapInfo";
+            insertMarkerToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.InsertMarker") ?? "Insert Marker";
+            gotoToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.Goto") ?? "Goto...";
+            sendClientToPosToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.SendClientToPos") ?? "Send Client To Pos";
+
+            // 地图名称
+            feluccaToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.Felucca") ?? "Felucca";
+            trammelToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.Trammel") ?? "Trammel";
+            ilshenarToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.Ilshenar") ?? "Ilshenar";
+            malasToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.Malas") ?? "Malas";
+            tokunoToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.Tokuno") ?? "Tokuno";
+            terMurToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.TerMur") ?? "TerMur";
+
+            // 导出地图
+            extractMapToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ExtractMap") ?? "Extract Map..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AsBmp") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AsTiff") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AsJpg") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AsPng") ?? "As Png";
+
+            // 标记菜单
+            gotoToolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.GotoMarker") ?? "Goto";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.RemoveMarker") ?? "Remove";
+            switchVisibleToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.SwitchVisibility") ?? "Switch Visibility";
+
+            // 工具栏按钮
+            toolStripDropDownButton1.Text = _localizationGetter("Forms.MapControl.View") ?? "View";
+            showStaticsToolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.ShowStatics") ?? "Show Statics";
+            showCenterCrossToolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.ShowCenterCross") ?? "Show Center Cross";
+            showMarkersToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ShowMarkers") ?? "Show Markers";
+            showClientCrossToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ShowClientCross") ?? "Show Client Cross";
+
+            // 高度模式
+            altitudeModeNormalToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AltitudeModeNormal") ?? "Normal";
+            altitudeModeNormalWithAltitudeToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AltitudeModeNormalWithAltitude") ?? "Normal + Altitude";
+            altitudeModeAltitudeToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.AltitudeModeAltitude") ?? "Altitude Map";
+
+            // 客户端交互
+            toolStripDropDownButton2.Text = _localizationGetter("Forms.MapControl.ClientInteract") ?? "Client Interact";
+            showClientLocToolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.ShowClientLoc") ?? "Show Client Loc";
+            gotoClientLocToolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.GotoClientLoc") ?? "Goto Client Loc";
+            sendClientToCenterToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.SendClientToCenter") ?? "Send Client to Center";
+
+            // 预加载
+            PreloadMap.Text = _localizationGetter("Forms.MapControl.PreloadMap") ?? "Preload Map";
+
+            // 杂项菜单
+            toolStripDropDownButton3.Text = _localizationGetter("Forms.MapControl.Misc") ?? "Misc";
+            defragStaticsToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.DefragStatics") ?? "Defrag Statics...";
+            importStaticsToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.FreezeStatics") ?? "Freeze Statics.. (in Memory)";
+            meltStaticsToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.MeltStatics") ?? "Melt Statics.. (in Memory)";
+            clearStaticsinMemoryToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ClearStatics") ?? "Clear Statics..(in Memory)";
+            reportStaticsUnderMapToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ReportStaticsUnderMap") ?? "Report Statics below Map (possible invisible)";
+            toolStripMenuItem1.Text = _localizationGetter("Forms.MapControl.ReportInvalidMapIDs") ?? "Report Invalid Map IDs";
+            rewriteMapToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.RewriteMap") ?? "Rewrite Map";
+            copyToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.MapAndStaticsCopy") ?? "Map and Statics Copy...";
+            insertDiffDataToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.DiffToMapCopy") ?? "Diff to Map Copy...";
+            replaceTilesToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ReplaceTiles") ?? "Replace Tiles..";
+        }
+
         private void AddAltitudeIntensityMenuItems()
         {
             // Create preset menu items at the top
