@@ -654,6 +654,69 @@
       "Messages": {
         "SaveConfirmation": "确定吗？这需要一些时间",
         "SaveTitle": "保存"
+      },
+      "ToolStripTextBoxContextMenu": {
+        "Copy": "复制",
+        "Paste": "粘贴",
+        "Cut": "剪切",
+        "SelectAll": "全选",
+        "Delete": "删除"
+      }
+    },
+    "LandTilesControl": {
+      "showFreeSlotsToolStripMenuItem": "显示空闲槽位",
+      "findNextFreeSlotToolStripMenuItem": "查找下一个空闲槽位",
+      "changeBackgroundColorToolStripMenuItem": "改变背景颜色",
+      "exportImageToolStripMenuItem": "导出图像..",
+      "asBmpToolStripMenuItem": "导出为 BMP",
+      "asTiffToolStripMenuItem": "导出为 TIFF",
+      "asJpgToolStripMenuItem1": "导出为 JPG",
+      "asPngToolStripMenuItem": "导出为 PNG",
+      "selectInTileDataTabToolStripMenuItem": "在 TileData 标签中选择",
+      "selectInRadarColorTabToolStripMenuItem": "在 RadarColor 标签中选择",
+      "selectInTexturesTabToolStripMenuItem": "在 Textures 标签中选择",
+      "copyImageToolStripMenuItem": "复制图像",
+      "pasteImageToolStripMenuItem": "粘贴图像",
+      "replaceToolStripMenuItem": "替换",
+      "replaceStartingFromToolStripMenuItem": "从...开始替换",
+      "replaceFromFolderToolStripMenuItem": "从文件夹替换...",
+      "insertAtToolStripMenuItem": "在...处插入",
+      "removeToolStripMenuItem": "移除",
+      "saveToolStripMenuItem": "保存",
+      "IndexToolStripLabel": "索引:",
+      "NameToolStripLabel": "名称:",
+      "searchByNameToolStripButton": "查找下一个",
+      "MiscToolStripDropDownButton": "其他",
+      "exportAllToolStripMenuItem": "导出所有..",
+      "ExportAllAsBmp": "导出为 BMP",
+      "ExportAllAsTiff": "导出为 TIFF",
+      "asJpgToolStripMenuItem": "导出为 JPG",
+      "asPngToolStripMenuItem1": "导出为 PNG",
+      "SaveButton": "保存",
+      "NameLabel": "名称:",
+      "GraphicLabel": "ID:",
+      "FlagsLabel": "标志:",
+      "Messages": {
+        "RemoveSingleConfirm": "确定要移除 0x{0} 吗?",
+        "RemoveMultipleConfirm": "确定要移除 {0} 个地形图块吗?",
+        "RemoveTitle": "保存",
+        "PasteMultipleConfirm": "粘贴此图像到 {0} 个选定的地形图块吗?",
+        "PasteImageTitle": "粘贴图像",
+        "SaveConfirmation": "确定吗?这需要一些时间",
+        "SaveTitle": "保存",
+        "SaveSuccess": "地形图块已保存到 {0}",
+        "SavedTitle": "已保存",
+        "CopyImageError": "复制图像失败",
+        "CopyImageTitle": "复制图像",
+        "PasteImageError": "粘贴图像失败",
+        "InvalidSizeTitle": "无效尺寸",
+        "InvalidSizeMessage": "无效的地形图块尺寸!地形图块必须是 44x44 像素。没有做任何更改。",
+        "SelectionMismatchTitle": "选择不匹配",
+        "SelectionMismatchMessage": "选中 {0} 个地形图块但选择了 {1} 个图像。没有做任何更改。",
+        "ImageTooLargeTitle": "图像过大",
+        "ImageTooLargeMessage": "图像对于 MUL 格式太大!预计编码大小:{0} ushorts，最大允许:{1} ushorts。没有做任何更改。",
+        "LoadTexturesFirst": "你需要先加载 Textures 标签。",
+        "LoadTexturesTitle": "信息"
       }
     },
     "AnimationListControl": {
@@ -835,6 +898,39 @@
       "labelSecColorCaption": "颜色:",
       "legendLabelDifferent": "不同值",
       "legendLabelIdentical": "相同"
+    },
+    "LandTilesControl": {
+      "Title": "地形图块",
+      "MenuItems": {
+        "addLandTile": "添加地形图块",
+        "removeLandTile": "删除地形图块",
+        "copyLandTile": "复制地形图块",
+        "pasteLandTile": "粘贴地形图块",
+        "exportLandTileImage": "导出地形图块图像",
+        "importLandTileImage": "导入地形图块图像",
+        "selectAllLandTiles": "全选"
+      },
+      "Labels": {
+        "detailLabel": "详情",
+        "idLabel": "ID: ",
+        "nameLabel": "名称: ",
+        "graphicLabel": "纹理ID: ",
+        "flagsLabel": "标志: ",
+        "statusLabel": "就绪"
+      },
+      "Messages": {
+        "removeConfirmSingle": "确定要删除该地形图块吗？",
+        "removeConfirmMultiple": "确定要删除这些地形图块吗？",
+        "pasteConfirm": "是否确认粘贴？这将覆盖当前条目。",
+        "SaveConfirmation": "是否保存更改？",
+        "SaveTitle": "保存确认",
+        "LandtileSavedTo": "地形图块已保存至",
+        "Saved": "已保存"
+      },
+      "DetailTextBoxContextMenu": {
+        "Copy": "复制",
+        "SelectAll": "全选"
+      }
     },
     "CompareTileDataControl": {
       "btnCopyLandSelected": "复制选定项",

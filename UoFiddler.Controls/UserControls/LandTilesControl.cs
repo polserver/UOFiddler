@@ -53,6 +53,7 @@ namespace UoFiddler.Controls.UserControls
         private int _selectedGraphicId = -1;
         private readonly List<int> _tileList = new List<int>();
         private bool _showFreeSlots;
+        private Func<string, string?>? _localizationGetter;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedGraphicId
@@ -227,9 +228,14 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            NameLabel.Text = $"Name: {TileData.LandTable[graphic].Name}";
-            GraphicLabel.Text = string.Format("ID: 0x{0:X4} ({0})", graphic);
-            FlagsLabel.Text = $"Flags: {TileData.LandTable[graphic].Flags}";
+            // Type 8: 获取汉化的基础标签文本，然后添加动态信息
+            string nameLabel = _localizationGetter?.Invoke("Forms.LandTilesControl.NameLabel") ?? "Name:";
+            string graphicLabel = _localizationGetter?.Invoke("Forms.LandTilesControl.GraphicLabel") ?? "ID:";
+            string flagsLabel = _localizationGetter?.Invoke("Forms.LandTilesControl.FlagsLabel") ?? "Flags:";
+
+            NameLabel.Text = $"{nameLabel} {TileData.LandTable[graphic].Name}";
+            GraphicLabel.Text = $"{graphicLabel} 0x{graphic:X4} ({graphic})";
+            FlagsLabel.Text = $"{flagsLabel} {TileData.LandTable[graphic].Flags}";
         }
 
         private void OnTileDataChangeEvent(object sender, int id)
@@ -353,12 +359,15 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            // Type 6: MessageBox 确认对话框汉化
             string prompt = ids.Count == 1
-                ? $"Are you sure to remove {ids[0]}"
-                : $"Are you sure to remove {ids.Count} land tiles?";
+                ? _localizationGetter?.Invoke($"Forms.LandTilesControl.Messages.RemoveSingleConfirm")?.Replace("{0}", ids[0].ToString()) ?? $"Are you sure to remove {ids[0]}"
+                : _localizationGetter?.Invoke($"Forms.LandTilesControl.Messages.RemoveMultipleConfirm")?.Replace("{0}", ids.Count.ToString()) ?? $"Are you sure to remove {ids.Count} land tiles?";
+
+            string removeTitle = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.RemoveTitle") ?? "Save";
 
             DialogResult result =
-                        MessageBox.Show(prompt, "Save",
+                        MessageBox.Show(prompt, removeTitle,
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
             if (result != DialogResult.Yes)
             {
@@ -438,9 +447,14 @@ namespace UoFiddler.Controls.UserControls
 
             if (ids.Count > 1)
             {
+                // Type 6: 粘贴确认对话框汉化
+                string pasteConfirm = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.PasteMultipleConfirm")?.Replace("{0}", ids.Count.ToString()) 
+                    ?? $"Paste this image into {ids.Count} selected land tiles?";
+                string pasteTitle = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.PasteImageTitle") ?? "Paste Image";
+                
                 DialogResult confirm = MessageBox.Show(
-                    $"Paste this image into {ids.Count} selected land tiles?",
-                    "Paste Image", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    pasteConfirm,
+                    pasteTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button2);
 
                 if (confirm != DialogResult.Yes)
@@ -718,8 +732,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickSave(object sender, EventArgs e)
         {
+            // Type 6: Save 确认对话框汉化
+            string saveConfirm = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.SaveConfirmation") ?? "Are you sure? Will take a while";
+            string saveTitle = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.SaveTitle") ?? "Save";
+
             DialogResult result =
-                        MessageBox.Show("Are you sure? Will take a while", "Save",
+                        MessageBox.Show(saveConfirm, saveTitle,
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {
@@ -788,7 +806,7 @@ namespace UoFiddler.Controls.UserControls
             FileSavedDialog.Show(FindForm(), Options.OutputPath, $"{ids.Count} land tiles saved successfully.");
         }
 
-        private static void ExportLandTileImage(int index, ImageFormat imageFormat)
+        private void ExportLandTileImage(int index, ImageFormat imageFormat)
         {
             if (!Art.IsValidLand(index))
             {
@@ -803,7 +821,9 @@ namespace UoFiddler.Controls.UserControls
                 bit.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show($"Landtile saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            string message = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.LandtileSavedTo") ?? "Landtile saved to";
+            string title = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.Saved") ?? "Saved";
+            MessageBox.Show($"{message} {fileName}", title, MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -849,13 +869,21 @@ namespace UoFiddler.Controls.UserControls
             int selectedCount = LandTilesTileView.SelectedIndices.Count;
             copyImageToolStripMenuItem.Enabled = _selectedGraphicId >= 0 && Art.IsValidLand(_selectedGraphicId);
             pasteImageToolStripMenuItem.Enabled = selectedCount > 0 && ImageClipboard.ContainsImage();
-            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"Paste Image into {selectedCount}" : "Paste Image";
-            removeToolStripMenuItem.Text = selectedCount > 1 ? $"Remove {selectedCount}" : "Remove";
-            exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"Export {selectedCount} Images..." : "Export Image..";
-            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"Replace {selectedCount}" : "Replace";
+            
+            // ✅ Type 12 汉化：使用汉化基础文本构建动态文本
+            string basePasteText = _localizationGetter?.Invoke("Forms.LandTilesControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            string baseRemoveText = _localizationGetter?.Invoke("Forms.LandTilesControl.removeToolStripMenuItem") ?? "Remove";
+            string baseExportText = _localizationGetter?.Invoke("Forms.LandTilesControl.exportImageToolStripMenuItem") ?? "Export Image..";
+            string baseReplaceText = _localizationGetter?.Invoke("Forms.LandTilesControl.replaceToolStripMenuItem") ?? "Replace";
+            string baseSelectTileDataText = _localizationGetter?.Invoke("Forms.LandTilesControl.selectInTileDataTabToolStripMenuItem") ?? "Select in TileData tab";
+            
+            pasteImageToolStripMenuItem.Text = selectedCount > 1 ? $"{basePasteText} {selectedCount}" : basePasteText;
+            removeToolStripMenuItem.Text = selectedCount > 1 ? $"{baseRemoveText} {selectedCount}" : baseRemoveText;
+            exportImageToolStripMenuItem.Text = selectedCount > 1 ? $"{baseExportText.Replace("...", "")} {selectedCount}..." : baseExportText;
+            replaceToolStripMenuItem.Text = selectedCount > 1 ? $"{baseReplaceText} {selectedCount}" : baseReplaceText;
             selectInTileDataTabToolStripMenuItem.Text = selectedCount > 1
-                ? $"Select {selectedCount} in TileData tab"
-                : "Select in TileData tab";
+                ? $"{baseSelectTileDataText.Replace(" tab", "")} {selectedCount} tab"
+                : baseSelectTileDataText;
 
             bool hasTexture = _selectedGraphicId >= 0
                 && TileData.LandTable[_selectedGraphicId].TextureId != 0
@@ -1391,6 +1419,60 @@ namespace UoFiddler.Controls.UserControls
         private void SearchByNameToolStripButton_Click(object sender, EventArgs e)
         {
             SearchName(searchByNameToolStripTextBox.Text, true);
+        }
+
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Menu Items
+            showFreeSlotsToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.showFreeSlotsToolStripMenuItem") ?? "Show Free Slots";
+            findNextFreeSlotToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.findNextFreeSlotToolStripMenuItem") ?? "Find Next Free Slot";
+            changeBackgroundColorToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.changeBackgroundColorToolStripMenuItem") ?? "Change background color";
+            exportImageToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.exportImageToolStripMenuItem") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.asBmpToolStripMenuItem") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.asTiffToolStripMenuItem") ?? "As Tiff";
+            asJpgToolStripMenuItem1.Text = _localizationGetter("Forms.LandTilesControl.asJpgToolStripMenuItem1") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.asPngToolStripMenuItem") ?? "As Png";
+            selectInTileDataTabToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.selectInTileDataTabToolStripMenuItem") ?? "Select in TileData tab";
+            selectInRadarColorTabToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.selectInRadarColorTabToolStripMenuItem") ?? "Select in RadarColor tab";
+            selectInTexturesTabToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.selectInTexturesTabToolStripMenuItem") ?? "Select in Textures tab";
+            copyImageToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.copyImageToolStripMenuItem") ?? "Copy Image";
+            pasteImageToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.pasteImageToolStripMenuItem") ?? "Paste Image";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.replaceToolStripMenuItem") ?? "Replace";
+            replaceStartingFromToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.replaceStartingFromToolStripMenuItem") ?? "Replace starting from..";
+            replaceFromFolderToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.replaceFromFolderToolStripMenuItem") ?? "Replace from Folder...";
+            insertAtToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.insertAtToolStripMenuItem") ?? "Insert At..";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.removeToolStripMenuItem") ?? "Remove";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.saveToolStripMenuItem") ?? "Save";
+
+            // Toolbar Labels
+            IndexToolStripLabel.Text = _localizationGetter("Forms.LandTilesControl.IndexToolStripLabel") ?? "Index:";
+            NameToolStripLabel.Text = _localizationGetter("Forms.LandTilesControl.NameToolStripLabel") ?? "Name:";
+            searchByNameToolStripButton.Text = _localizationGetter("Forms.LandTilesControl.searchByNameToolStripButton") ?? "Find next";
+
+            // Misc Menu
+            MiscToolStripDropDownButton.Text = _localizationGetter("Forms.LandTilesControl.MiscToolStripDropDownButton") ?? "Misc";
+            exportAllToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.exportAllToolStripMenuItem") ?? "Export All..";
+            ExportAllAsBmp.Text = _localizationGetter("Forms.LandTilesControl.ExportAllAsBmp") ?? "As Bmp";
+            ExportAllAsTiff.Text = _localizationGetter("Forms.LandTilesControl.ExportAllAsTiff") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.LandTilesControl.asJpgToolStripMenuItem") ?? "As Jpg";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.LandTilesControl.asPngToolStripMenuItem1") ?? "As Png";
+
+            // Save Button
+            SaveButton.Text = _localizationGetter("Forms.LandTilesControl.SaveButton") ?? "Save";
+            SaveButton.ToolTipText = _localizationGetter("Forms.LandTilesControl.SaveButton") ?? "Save";
+
+            // Status Bar Labels
+            NameLabel.Text = _localizationGetter("Forms.LandTilesControl.NameLabel") ?? "Name:";
+            GraphicLabel.Text = _localizationGetter("Forms.LandTilesControl.GraphicLabel") ?? "Graphic:";
+            FlagsLabel.Text = _localizationGetter("Forms.LandTilesControl.FlagsLabel") ?? "Flags:";
         }
     }
 }
