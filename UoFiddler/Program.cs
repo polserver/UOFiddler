@@ -46,6 +46,9 @@ namespace UoFiddler
             // 初始化本地化服务
             LocalizationService.Initialize(Path.Combine(AppContext.BaseDirectory, "Localization", "Dictionaries"));
             LocalizationService.SetLanguage("zh-CN");
+            
+            // 为 MapSizes 设置汉化 getter
+            Ultima.Maps.MapSizesLocalization.LocalizationGetter = LocalizationService.GetString;
 
             var services = new ServiceCollection();
             services.AddLogging(b => b.AddSerilog(serilogLogger, dispose: true));

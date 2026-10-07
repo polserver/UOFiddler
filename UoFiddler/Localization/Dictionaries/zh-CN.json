@@ -1360,6 +1360,7 @@
       "ButtonCopy": "复制",
       "ButtonCancel": "取消",
       "ButtonClose": "关闭",
+      "WindowTitle": "地图和静态物品复制",
       "ComboBoxFormats": {
         "SameFormatUOP": "与此客户端相同格式 (.uop)",
         "SameFormatMUL": "与此客户端相同格式 (.mul)",
@@ -1368,7 +1369,42 @@
       },
       "PreviewMessages": {
         "ChooseFolderAndMap": "选择文件夹和地图。",
-        "ChooseFolderToCopyFrom": "选择要复制的文件夹"
+        "ChooseFolderToCopyFrom": "选择要复制的文件夹",
+        "SourceFormat": "从 {0},{1} - {2},{3}   {4} x {5} 块",
+        "DestinationFormat": "到   {0},{1} - {2},{3}",
+        "WidenedFormat": "{0},{1} - {2},{3} 已扩展为整个块",
+        "SizeNotRecognised": "无法识别大小",
+        "FolderHolds": "文件夹包含 {0}",
+        "SizeCheckFailed": "无法确定该文件夹中地图 {0} 的大小。",
+        "SizeCheckMismatch": "该文件夹包含地图 {0} 的 {1}，但选择了 {2}。选择匹配项或将读取错误的块。",
+        "PickMatchingEntry": "选择匹配的条目，或将读取错误的块",
+        "ChooseFolderForCopy": "选择包含要复制的地图文件的文件夹。",
+        "NothingSelected": "没有选择要复制的内容。",
+        "Copying": "复制中...",
+        "CopyingLand": "复制地形",
+        "CopyingStatics": "复制静态物品",
+        "Cancelled": "已取消。未写入任何内容。",
+        "Failed": "失败。",
+        "Done": "完成。",
+        "SelectFolderDialog": "选择包含要复制的地图文件的文件夹",
+        "SizeCouldNotBeDetermined": "无法确定该文件夹中地图 {0} 的大小。{1}{1}{2}",
+        "SizeMismatchError": "该文件夹包含地图 {0} 的 {1}，但选择了 {2}。{3}{3}{4}{3}{3}选择匹配的条目，或将读取错误的块。",
+        "RegionZ": "区域 z  高度 {0}，静态物品 {1}",
+        "RegionZAdjusted": "   ->   高度 {0}，静态物品 {1}",
+        "RegionZOutOfRange": "   -   {0:N0} 超过限制，{1}",
+        "HeldThere": "保留在此处",
+        "Refused": "拒绝",
+        "StaticsNone": "无",
+        "ReadingHeights": "读取此区域的高度..."
+      }
+    }
+  },
+  "Ultima": {
+    "Maps": {
+      "MapSizes": {
+        "NoMapOrStaticsIndex": "无法找到地号 {0} 的地图或静态物品索引；假设 {1}",
+        "HoldsBlocks": "{0} 包含 {1:N0} 块，即 {2}",
+        "HoldsBlocksNoMatch": "{0} 包含 {1:N0} 块，与地号 {2} 的已知形状均不匹配；假设 {3}"
       }
     }
   }

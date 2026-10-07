@@ -264,7 +264,8 @@ namespace UoFiddler.Controls.Forms
         {
             using (var dialog = new FolderBrowserDialog
             {
-                Description = "Select the folder holding the map files to copy from",
+                Description = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.SelectFolderDialog") 
+                    ?? "Select the folder holding the map files to copy from",
                 ShowNewFolderButton = false,
                 SelectedPath = Directory.Exists(textBoxFolder.Text) ? textBoxFolder.Text : string.Empty
             })
@@ -339,19 +340,41 @@ namespace UoFiddler.Controls.Forms
 
             RebuildSourceMap(map);
 
-            labelDetected.Text = _detectionKnown ? $"folder holds {_detectedSize}" : "size not recognised";
+            string sizeNotRecognised = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.SizeNotRecognised") ?? "size not recognised";
+            string folderHoldsTemplate = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.FolderHolds") ?? "folder holds {0}";
+            
+            labelDetected.Text = _detectionKnown ? string.Format(folderHoldsTemplate, _detectedSize) : sizeNotRecognised;
 
             if (_detectionKnown && _detectedSize.Width == map.Width && _detectedSize.Height == map.Height)
             {
                 labelSizeWarning.ForeColor = SystemColors.ControlText;
-                labelSizeWarning.Text = _detectionEvidence;
+                // 将 evidence 中的英文消息汉化
+                string localizedEvidence = _detectionEvidence;
+                if (_localizationGetter != null && _detectionEvidence != null)
+                {
+                    string template = _localizationGetter("Forms.MapReplaceForm.PreviewMessages.NoMapOrStaticsIndex") 
+                        ?? "no map or statics index found for facet {0}; assuming {1}";
+                    // 尝试汉化 evidence 中的模板消息
+                    localizedEvidence = _detectionEvidence.Replace(
+                        "no map or statics index found for facet",
+                        template.Split(';')[0]);
+                }
+                labelSizeWarning.Text = localizedEvidence;
             }
             else
             {
                 labelSizeWarning.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
-                labelSizeWarning.Text = _detectionKnown
-                    ? $"This folder holds {_detectedSize} for map {map.Id}, not the {map.Width}x{map.Height} selected.{Environment.NewLine}Pick the entry that matches."
-                    : _detectionEvidence;
+                if (_detectionKnown)
+                {
+                    string template = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.SizeCheckMismatch")
+                        ?? "This folder holds {0} for map {1}, not the {2} selected.{3}Pick the entry that matches.";
+                    labelSizeWarning.Text = string.Format(template, _detectedSize, map.Id, 
+                        $"{map.Width}x{map.Height}", Environment.NewLine);
+                }
+                else
+                {
+                    labelSizeWarning.Text = _detectionEvidence;
+                }
             }
 
             UpdatePreview();
@@ -447,17 +470,24 @@ namespace UoFiddler.Controls.Forms
             var sb = new StringBuilder();
 
             // The panels carry the shape now, so this is only the numbers.
-            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "from {0},{1} - {2},{3}   {4} x {5} blocks",
+            string sourceFormat = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.SourceFormat") 
+                ?? "from {0},{1} - {2},{3}   {4} x {5} blocks";
+            string destinationFormat = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.DestinationFormat") 
+                ?? "to   {0},{1} - {2},{3}";
+            string widenedFormat = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.WidenedFormat") 
+                ?? "{0},{1} - {2},{3} widened to whole blocks";
+            
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, sourceFormat,
                 source.TileX1, source.TileY1, source.TileX2, source.TileY2, source.BlockWidth, source.BlockHeight));
-            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "to   {0},{1} - {2},{3}",
+            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, destinationFormat,
                 destination.TileX1, destination.TileY1, destination.TileX2, destination.TileY2));
 
             bool snapped = source.TileX1 != x1 || source.TileY1 != y1 || source.TileX2 != x2 || source.TileY2 != y2;
 
             if (snapped)
             {
-                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "{0},{1} - {2},{3} widened to whole blocks", x1, y1, x2, y2));
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, widenedFormat, 
+                    x1, y1, x2, y2));
             }
 
             textBoxPreview.Text = sb.ToString();
@@ -610,7 +640,8 @@ namespace UoFiddler.Controls.Forms
             _zPending = request;
 
             labelZRange.ForeColor = SystemColors.ControlText;
-            labelZRange.Text = "reading the heights in this region...";
+            labelZRange.Text = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.ReadingHeights") 
+                ?? "reading the heights in this region...";
 
             _zDebounce.Stop();
             _zDebounce.Start();
@@ -714,13 +745,19 @@ namespace UoFiddler.Controls.Forms
 
             // Kept short: this sits on one line beside the spinners, and an ellipsis in the middle
             // of the warning is worse than no warning at all.
-            sb.Append(CultureInfo.InvariantCulture,
-                $"region z  land {Span(_zSurvey.Land, 0)}, statics {Span(_zSurvey.Statics, 0)}");
+            string regionTemplate = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.RegionZ")
+                ?? "region z  land {0}, statics {1}";
+            
+            sb.Append(string.Format(CultureInfo.InvariantCulture,
+                regionTemplate, Span(_zSurvey.Land, 0), Span(_zSurvey.Statics, 0)));
 
             if (adjust != 0)
             {
-                sb.Append(CultureInfo.InvariantCulture,
-                    $"   ->   land {Span(_zSurvey.Land, adjust)}, statics {Span(_zSurvey.Statics, adjust)}");
+                string adjustTemplate = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.RegionZAdjusted")
+                    ?? "   ->   land {0}, statics {1}";
+                
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    adjustTemplate, Span(_zSurvey.Land, adjust), Span(_zSurvey.Statics, adjust)));
             }
 
             long past = _zSurvey.OutOfRange(adjust);
@@ -733,18 +770,24 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            sb.Append(CultureInfo.InvariantCulture,
-                $"   -   {past:N0} past the limit, {(checkBoxZClamp.Checked ? "held there" : "refused")}");
+            string limitTemplate = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.RegionZOutOfRange")
+                ?? "   -   {0:N0} past the limit, {1}";
+            string limitAction = checkBoxZClamp.Checked 
+                ? (_localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.HeldThere") ?? "held there")
+                : (_localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.Refused") ?? "refused");
+            
+            sb.Append(string.Format(CultureInfo.InvariantCulture,
+                limitTemplate, past, limitAction));
 
             labelZRange.ForeColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
             labelZRange.Text = sb.ToString();
         }
 
-        private static string Span(ZHistogram z, int adjust)
+        private string Span(ZHistogram z, int adjust)
         {
             if (!z.HasTiles)
             {
-                return "none";
+                return _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.StaticsNone") ?? "none";
             }
 
             return string.Format(CultureInfo.InvariantCulture, "{0}..{1}",
@@ -773,30 +816,34 @@ namespace UoFiddler.Controls.Forms
 
             if (!Directory.Exists(textBoxFolder.Text))
             {
-                Fail("Choose the folder holding the map files to copy from.");
-
+                string msg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.ChooseFolderForCopy") 
+                    ?? "Choose the folder holding the map files to copy from.";
+                Fail(msg);
                 return;
             }
 
             if (!checkBoxMap.Checked && !checkBoxStatics.Checked)
             {
-                Fail("Nothing is selected to copy.");
-
+                string msg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.NothingSelected") 
+                    ?? "Nothing is selected to copy.";
+                Fail(msg);
                 return;
             }
 
             if (!_detectionKnown)
             {
-                Fail($"The size of map {map.Id} in that folder could not be worked out.{Environment.NewLine}{Environment.NewLine}{_detectionEvidence}");
+                string msg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.SizeCouldNotBeDetermined") 
+                    ?? $"The size of map {map.Id} in that folder could not be worked out.{Environment.NewLine}{Environment.NewLine}{_detectionEvidence}";
+                Fail(string.Format(msg, map.Id, Environment.NewLine, _detectionEvidence));
 
                 return;
             }
 
             if (_detectedSize.Width != map.Width || _detectedSize.Height != map.Height)
             {
-                Fail($"That folder holds {_detectedSize} for map {map.Id}, but {map} is selected." +
-                     $"{Environment.NewLine}{Environment.NewLine}{_detectionEvidence}" +
-                     $"{Environment.NewLine}{Environment.NewLine}Pick the entry that matches, or the wrong blocks will be read.");
+                string template = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.SizeMismatchError") 
+                    ?? $"That folder holds {{0}} for map {{1}}, but {{2}} is selected.{{3}}{{3}}{{4}}{{3}}{{3}}Pick the entry that matches, or the wrong blocks will be read.";
+                Fail(string.Format(template, _detectedSize, map.Id, map, Environment.NewLine, _detectionEvidence));
 
                 return;
             }
@@ -810,7 +857,9 @@ namespace UoFiddler.Controls.Forms
 
             SetRunning(true);
             progressBar1.Value = 0;
-            labelStatus.Text = "Copying...";
+            string copyingMsg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.Copying") 
+                ?? "Copying...";
+            labelStatus.Text = copyingMsg;
 
             worker.RunWorkerAsync(options);
         }
@@ -878,8 +927,16 @@ namespace UoFiddler.Controls.Forms
             }
 
             progressBar1.Value = Math.Min(100, Math.Max(0, (int)(progress.BlocksDone * 100L / progress.BlocksTotal)));
+            
+            string stageText = progress.Stage switch
+            {
+                "Copying land" => _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.CopyingLand") ?? "Copying land",
+                "Copying statics" => _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.CopyingStatics") ?? "Copying statics",
+                _ => progress.Stage
+            };
+            
             labelStatus.Text = string.Format(CultureInfo.InvariantCulture, "{0}: {1:N0} of {2:N0} blocks",
-                progress.Stage, progress.BlocksDone, progress.BlocksTotal);
+                stageText, progress.BlocksDone, progress.BlocksTotal);
         }
 
         private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
@@ -894,24 +951,28 @@ namespace UoFiddler.Controls.Forms
             if (e.Error is OperationCanceledException)
             {
                 progressBar1.Value = 0;
-                labelStatus.Text = "Cancelled. Nothing was written.";
-
+                string cancelledMsg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.Cancelled") 
+                    ?? "Cancelled. Nothing was written.";
+                labelStatus.Text = cancelledMsg;
                 return;
             }
 
             if (e.Error != null)
             {
                 progressBar1.Value = 0;
-                labelStatus.Text = "Failed.";
+                string failedMsg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.Failed") 
+                    ?? "Failed.";
+                labelStatus.Text = failedMsg;
                 ShowError("Map and Statics Copy", e.Error);
-
                 return;
             }
 
             var result = (MapRegionCopyResult)e.Result;
 
             progressBar1.Value = 100;
-            labelStatus.Text = "Done.";
+            string doneMsg = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.Done") 
+                ?? "Done.";
+            labelStatus.Text = doneMsg;
 
             using (var form = new MapRegionCopyResultForm(result))
             {
@@ -994,7 +1055,9 @@ namespace UoFiddler.Controls.Forms
 
         private void Fail(string message)
         {
-            MessageBox.Show(this, message, "Map and Statics Copy", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            string title = _localizationGetter?.Invoke("Forms.MapReplaceForm.WindowTitle") 
+                ?? "Map and Statics Copy";
+            MessageBox.Show(this, message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

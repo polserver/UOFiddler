@@ -504,24 +504,24 @@ namespace UoFiddler.Controls.Forms
             // progressBar1
             //
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 884);
+            this.progressBar1.Location = new System.Drawing.Point(12, 844);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1440, 18);
+            this.progressBar1.Size = new System.Drawing.Size(1432, 18);
             this.progressBar1.TabIndex = 5;
             //
             // labelStatus
             //
             this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.labelStatus.AutoEllipsis = true;
-            this.labelStatus.Location = new System.Drawing.Point(12, 907);
+            this.labelStatus.Location = new System.Drawing.Point(12, 867);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(1440, 17);
+            this.labelStatus.Size = new System.Drawing.Size(1432, 17);
             this.labelStatus.TabIndex = 6;
             //
             // buttonCopy
             //
             this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCopy.Location = new System.Drawing.Point(1204, 932);
+            this.buttonCopy.Location = new System.Drawing.Point(1196, 892);
             this.buttonCopy.Name = "buttonCopy";
             this.buttonCopy.Size = new System.Drawing.Size(80, 28);
             this.buttonCopy.TabIndex = 7;
@@ -533,7 +533,7 @@ namespace UoFiddler.Controls.Forms
             //
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(1292, 932);
+            this.buttonCancel.Location = new System.Drawing.Point(1284, 892);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(72, 28);
             this.buttonCancel.TabIndex = 8;
@@ -545,7 +545,7 @@ namespace UoFiddler.Controls.Forms
             //
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(1380, 932);
+            this.buttonClose.Location = new System.Drawing.Point(1372, 892);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(80, 28);
             this.buttonClose.TabIndex = 9;
@@ -564,7 +564,7 @@ namespace UoFiddler.Controls.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(1464, 972);
+            this.ClientSize = new System.Drawing.Size(1464, 1012);
             this.Controls.Add(this.groupBoxSource);
             this.Controls.Add(this.groupBoxWhat);
             this.Controls.Add(this.groupBoxFrom);

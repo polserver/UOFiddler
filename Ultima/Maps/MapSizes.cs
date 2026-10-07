@@ -17,6 +17,17 @@ using Ultima.Uop;
 
 namespace Ultima.Maps
 {
+    /// <summary>
+    /// Static helper for localizing map detection messages.
+    /// </summary>
+    public static class MapSizesLocalization
+    {
+        /// <summary>
+        /// Optional localization getter for error messages (set by main application).
+        /// </summary>
+        public static Func<string, string>? LocalizationGetter { get; set; }
+    }
+
     public readonly struct MapSize : IEquatable<MapSize>
     {
         public MapSize(int width, int height)
@@ -135,9 +146,9 @@ namespace Ultima.Maps
             if (!TryMeasureBlocks(resolve, fileIndex, out long blocks, out string source))
             {
                 size = Fallback(fileIndex);
-                evidence = string.Format(CultureInfo.InvariantCulture,
-                    "no map or statics index found for facet {0}; assuming {1}", fileIndex, size);
-
+                string template = MapSizesLocalization.LocalizationGetter?.Invoke("Ultima.Maps.MapSizes.NoMapOrStaticsIndex") 
+                    ?? "no map or statics index found for facet {0}; assuming {1}";
+                evidence = string.Format(CultureInfo.InvariantCulture, template, fileIndex, size);
                 return false;
             }
 
@@ -149,17 +160,16 @@ namespace Ultima.Maps
                 }
 
                 size = candidate;
-                evidence = string.Format(CultureInfo.InvariantCulture,
-                    "{0} holds {1:N0} blocks, which is {2}", source, blocks, candidate);
-
+                string template1 = MapSizesLocalization.LocalizationGetter?.Invoke("Ultima.Maps.MapSizes.HoldsBlocks")
+                    ?? "{0} holds {1:N0} blocks, which is {2}";
+                evidence = string.Format(CultureInfo.InvariantCulture, template1, source, blocks, candidate);
                 return true;
             }
 
             size = Fallback(fileIndex);
-            evidence = string.Format(CultureInfo.InvariantCulture,
-                "{0} holds {1:N0} blocks, which matches no known shape for facet {2}; assuming {3}",
-                source, blocks, fileIndex, size);
-
+            string template2 = MapSizesLocalization.LocalizationGetter?.Invoke("Ultima.Maps.MapSizes.HoldsBlocksNoMatch")
+                ?? "{0} holds {1:N0} blocks, which matches no known shape for facet {2}; assuming {3}";
+            evidence = string.Format(CultureInfo.InvariantCulture, template2, source, blocks, fileIndex, size);
             return false;
         }
 
