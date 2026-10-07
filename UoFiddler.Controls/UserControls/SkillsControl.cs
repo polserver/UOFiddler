@@ -29,6 +29,7 @@ namespace UoFiddler.Controls.UserControls
 
         private bool _loaded;
         private static BindingSource _source;
+        private Func<string, string?>? _localizationGetter;
 
         /// <summary>
         /// ReLoads if loaded
@@ -69,6 +70,9 @@ namespace UoFiddler.Controls.UserControls
                     dataGridView1.Columns[2].FillWeight = 54.86799F;
                     dataGridView1.Columns[2].ReadOnly = false;
                     dataGridView1.Columns[3].Visible = false; // extraFlag
+                    
+                    // 应用列头汉化
+                    ApplyColumnHeaderLocalization();
                 }
 
                 if (!_loaded)
@@ -98,7 +102,9 @@ namespace UoFiddler.Controls.UserControls
             Skills.Save(path);
             Options.ChangedUltimaClass["Skills"] = false;
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Skills saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.SkillsControl.FileSavedMessage") ?? "Skills saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.SkillsControl.FileSavedTitle") ?? "Save";
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, message, title);
         }
 
         private void OnClickAdd(object sender, EventArgs e)
@@ -127,6 +133,44 @@ namespace UoFiddler.Controls.UserControls
             }
             _source.RemoveCurrent();
             dataGridView1.Invalidate();
+        }
+
+        /// <summary>
+        /// 设置本地化（从 MainForm 调用）
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// 应用列标题汉化（在数据绑定后调用）
+        /// </summary>
+        private void ApplyColumnHeaderLocalization()
+        {
+            // 设置表格列标题
+            if (dataGridView1.Columns.Count > 0)
+            {
+                dataGridView1.Columns[0].HeaderText = _localizationGetter?.Invoke("Forms.SkillsControl.ColumnId") ?? "ID";
+                if (dataGridView1.Columns.Count > 1)
+                    dataGridView1.Columns[1].HeaderText = _localizationGetter?.Invoke("Forms.SkillsControl.ColumnIsAction") ?? "is Action";
+                if (dataGridView1.Columns.Count > 2)
+                    dataGridView1.Columns[2].HeaderText = _localizationGetter?.Invoke("Forms.SkillsControl.ColumnName") ?? "Name";
+            }
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 菜单项汉化
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.SkillsControl.SaveButton") ?? "Save";
+            addToolStripMenuItem.Text = _localizationGetter("Forms.SkillsControl.AddButton") ?? "Add";
+            deleteToolStripMenuItem.Text = _localizationGetter("Forms.SkillsControl.DeleteButton") ?? "Delete";
+
+            // 表格列标题
+            ApplyColumnHeaderLocalization();
         }
     }
 }

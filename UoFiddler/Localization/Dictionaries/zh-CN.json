@@ -1522,6 +1522,16 @@
         "KeyWordNotFoundTitle": "条目",
         "SpeechSavedSuccessfully": "语音文件保存成功。"
       }
+    },
+    "SkillsControl": {
+      "SaveButton": "保存",
+      "AddButton": "添加",
+      "DeleteButton": "删除",
+      "ColumnId": "ID号",
+      "ColumnIsAction": "是否动作",
+      "ColumnName": "技能名称",
+      "FileSavedMessage": "技能已保存成功",
+      "FileSavedTitle": "保存"
     }
   },
   "Ultima": {
