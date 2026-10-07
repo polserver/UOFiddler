@@ -159,9 +159,9 @@ namespace UoFiddler.Controls.Forms
             //
             // labelCeiling
             //
-            this.labelCeiling.Location = new System.Drawing.Point(244, 25);
+            this.labelCeiling.Location = new System.Drawing.Point(240, 25);
             this.labelCeiling.Name = "labelCeiling";
-            this.labelCeiling.Size = new System.Drawing.Size(50, 17);
+            this.labelCeiling.Size = new System.Drawing.Size(56, 17);
             this.labelCeiling.TabIndex = 1;
             this.labelCeiling.Text = "ceiling:";
             //

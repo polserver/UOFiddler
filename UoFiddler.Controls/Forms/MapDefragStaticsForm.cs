@@ -33,6 +33,9 @@ namespace UoFiddler.Controls.Forms
 
         private readonly Map _map;
         private Func<string, string?>? _localizationGetter;
+        
+        private string[] _idCeilingOptions;
+        private string[] _outOfBlockOptions;
 
         private CancellationTokenSource _cancellation;
         private bool _lastRunUsedFilters;
@@ -46,10 +49,14 @@ namespace UoFiddler.Controls.Forms
 
             _map = map ?? throw new ArgumentNullException(nameof(map));
 
-            comboBoxIdCeiling.Items.AddRange(new object[] { "tiledata", "art", "legacy 0x3FFF" });
+            // 保存原始英文值用于业务逻辑
+            _idCeilingOptions = new[] { "tiledata", "art", "legacy 0x3FFF" };
+            _outOfBlockOptions = new[] { "Drop", "Mask to 0-7", "Keep" };
+
+            comboBoxIdCeiling.Items.AddRange(_idCeilingOptions);
             comboBoxIdCeiling.SelectedIndex = 0;
 
-            comboBoxOutOfBlock.Items.AddRange(new object[] { "Drop", "Mask to 0-7", "Keep" });
+            comboBoxOutOfBlock.Items.AddRange(_outOfBlockOptions);
             comboBoxOutOfBlock.SelectedIndex = 0;
 
             checkBoxDropInvalidIds.Checked = true;
@@ -102,6 +109,30 @@ namespace UoFiddler.Controls.Forms
             buttonDefrag.Text = _localizationGetter("Forms.MapDefragStaticsForm.DefragButton") ?? "Defrag";
             buttonCancel.Text = _localizationGetter("Forms.MapDefragStaticsForm.CancelButton") ?? "Cancel";
             buttonClose.Text = _localizationGetter("Forms.MapDefragStaticsForm.CloseButton") ?? "Close";
+
+            // 汉化下拉菜单项 - 保存选中的原始值
+            string selectedIdCeilingValue = comboBoxIdCeiling.SelectedIndex >= 0 ? _idCeilingOptions[comboBoxIdCeiling.SelectedIndex] : _idCeilingOptions[0];
+            string selectedOutOfBlockValue = comboBoxOutOfBlock.SelectedIndex >= 0 ? _outOfBlockOptions[comboBoxOutOfBlock.SelectedIndex] : _outOfBlockOptions[0];
+            
+            comboBoxIdCeiling.Items.Clear();
+            foreach (string option in _idCeilingOptions)
+            {
+                string displayText = _localizationGetter($"Forms.MapDefragStaticsForm.IdCeilingOptions.{option}") ?? option;
+                comboBoxIdCeiling.Items.Add(displayText);
+            }
+            // 恢复选中项（通过原始值查找索引）
+            int idCeilingIndex = System.Array.IndexOf(_idCeilingOptions, selectedIdCeilingValue);
+            comboBoxIdCeiling.SelectedIndex = Math.Max(0, idCeilingIndex);
+
+            comboBoxOutOfBlock.Items.Clear();
+            foreach (string option in _outOfBlockOptions)
+            {
+                string displayText = _localizationGetter($"Forms.MapDefragStaticsForm.OutOfBlockOptions.{option}") ?? option;
+                comboBoxOutOfBlock.Items.Add(displayText);
+            }
+            // 恢复选中项（通过原始值查找索引）
+            int outOfBlockIndex = System.Array.IndexOf(_outOfBlockOptions, selectedOutOfBlockValue);
+            comboBoxOutOfBlock.SelectedIndex = Math.Max(0, outOfBlockIndex);
 
             // 重新生成源描述（包含动态消息）
             DescribeSource();
@@ -349,7 +380,7 @@ namespace UoFiddler.Controls.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Defrag Statics", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -364,7 +395,9 @@ namespace UoFiddler.Controls.Forms
 
             progressBar.Style = ProgressBarStyle.Continuous;
             progressBar.Value = 0;
-            labelStatus.Text = dryRun ? "Analyzing..." : "Defragging...";
+            string analyzingMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.StatusAnalyzing") ?? "Analyzing...";
+            string defraggingMsg = _localizationGetter?.Invoke("Forms.MapDefragStaticsForm.StatusDefragging") ?? "Defragging...";
+            labelStatus.Text = dryRun ? analyzingMsg : defraggingMsg;
 
             worker.RunWorkerAsync(options);
         }
@@ -423,7 +456,7 @@ namespace UoFiddler.Controls.Forms
                 labelStatus.Text = "Failed.";
                 progressBar.Value = 0;
 
-                MessageBox.Show(this, e.Error.Message, "Defrag Statics", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, e.Error.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

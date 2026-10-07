@@ -1171,7 +1171,7 @@
       "SendClientToCenter": "发送客户端到中心",
       "PreloadMap": "预加载地图",
       "Misc": "杂项",
-      "DefragStatics": "碎片整理静态物体...",
+      "DefragStatics": "整理静态物体...",
       "FreezeStatics": "冻结静态物体..(在内存中)",
       "MeltStatics": "融化静态物体..(在内存中)",
       "ClearStatics": "清除静态物体..(在内存中)",
@@ -1195,13 +1195,13 @@
       "SaveButton": "保存"
     },
     "MapMeltStaticsForm": {
-      "Title": "融化静态物品",
+      "Title": "融化静态物体",
       "X1Label": "X1",
       "Y1Label": "Y1",
       "X2Label": "X2",
       "Y2Label": "Y2",
       "MeltButton": "融化",
-      "DoneTitle": "融化静态物品",
+      "DoneTitle": "融化静态物体",
       "DoneMessage": "完成"
     },
     "MapReplaceTilesForm": {
@@ -1210,35 +1210,35 @@
       "ReplaceButton": "替换"
     },
     "MapClearStaticsForm": {
-      "Title": "清除静态物品",
+      "Title": "清除静态物体",
       "X1Label": "X1",
       "Y1Label": "Y1",
       "X2Label": "X2",
       "Y2Label": "Y2",
       "ClearButton": "清除",
-      "DoneTitle": "清除静态物品",
+      "DoneTitle": "清除静态物体",
       "DoneMessage": "完成"
     },
     "MapDefragStaticsForm": {
-      "Title": "整理静态物品",
+      "Title": "整理静态物体",
       "Source": "来源",
       "AllowTruncation": "丢弃配置的地图大小之外的块",
       "Filters": "过滤器",
-      "DropInvalidIds": "丢弃未知物品 id 的静态物品",
+      "DropInvalidIds": "丢弃未知物品 id 的静态物体",
       "Ceiling": "天花板：",
       "OutOfBlock": "超出块 x/y 偏移：",
-      "DropInvalidZ": "丢弃 z = -128 的静态物品",
+      "DropInvalidZ": "丢弃 z = -128 的静态物体",
       "NormalizeHue": "将负色调标准化为 0",
-      "BelowTerrain": "丢弃埋在地形瓦下的静态物品（从不绘制）",
+      "BelowTerrain": "丢弃埋在地形瓦下的静态物体（从不绘制）",
       "RemoveDuplicates": "移除重复项（相同 id、x、y 和 z）",
       "DuplicatesHue": "也比较色调（旧版）",
-      "CollapseStacks": "将共享单元格的堆叠静态物品折叠为一个",
+      "CollapseStacks": "将共享单元格的堆叠静态物体折叠为一个",
       "CollapseFlags": "标志：",
       "CollapseWet": "湿润",
       "CollapseSurface": "表面",
       "CollapseIgnoreZ": "忽略 z",
       "CollapseIds": "物品 id：",
-      "SortTiles": "对每个块中的静态物品进行排序",
+      "SortTiles": "对每个块中的静态物体进行排序",
       "Output": "输出文件夹",
       "BrowseButton": "浏览...",
       "AnalyzeButton": "分析",
@@ -1249,19 +1249,33 @@
       "StatusAnalyzing": "分析中...",
       "StatusDefragging": "整理中...",
       "StatusCompleted": "完成",
+      "IdCeilingOptions": {
+        "tiledata": "TileData",
+        "art": "Art",
+        "legacy 0x3FFF": "Legacy 0x3FFF"
+      },
+      "OutOfBlockOptions": {
+        "Drop": "丢弃",
+        "Mask to 0-7": "掩码到 0-7",
+        "Keep": "保留"
+      },
       "Messages": {
         "Facet": "位面",
         "MapSize": "地图大小",
         "Blocks": "块",
         "FilesNotFound": "staidx{0}.mul 或 statics{0}.mul 在加载的客户端中未找到。",
         "OverridePresent": "staidx{0}x.mul 存在 - 客户端更倾向使用这些覆盖文件而不是这个对。",
-        "SurplusBlocks": "staidx 包含 {0:N0} 块但配置的地图大小仅覆盖 {1:N0} 块。多余块中的静态物品将被丢弃。",
+        "SurplusBlocks": "staidx 包含 {0:N0} 块但配置的地图大小仅覆盖 {1:N0} 块。多余块中的静态物体将被丢弃。",
         "EmptyBlocks": "staidx 包含 {0:N0} 块，配置的地图大小覆盖 {1:N0} 块。索引末尾之后的块将被写入为空。",
-        "MatchingBlocks": "staidx 包含 {0:N0} 块，与配置的地图大小匹配。"
+        "MatchingBlocks": "staidx 包含 {0:N0} 块，与配置的地图大小匹配。",
+        "Cancelled": "已取消。未写入任何内容。",
+        "Failed": "失败。",
+        "Analyzed": "已分析。未写入任何内容。",
+        "Done": "完成。{0:N0} 个静态物体已写入。"
       }
     },
     "MapDefragStaticsResultForm": {
-      "Title": "整理静态物品 - 结果",
+      "Title": "整理静态物体 - 结果",
       "VerifyButton": "验证输出",
       "SaveButton": "保存报告...",
       "CopyButton": "复制",
