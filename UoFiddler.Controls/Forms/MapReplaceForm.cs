@@ -399,7 +399,7 @@ namespace UoFiddler.Controls.Forms
 
             if (map == null)
             {
-                textBoxPreview.Text = "Choose a folder and a map.";
+                textBoxPreview.Text = _localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.ChooseFolderAndMap") ?? "Choose a folder and a map.";
 
                 return;
             }
@@ -479,7 +479,7 @@ namespace UoFiddler.Controls.Forms
 
             previewSource.Map = _sourceMap;
             previewSource.MapSize = map == null ? default : new MapSize(map.Width, map.Height);
-            previewSource.Message = _sourceMap == null ? "Choose a folder to copy from" : null;
+            previewSource.Message = _sourceMap == null ? (_localizationGetter?.Invoke("Forms.MapReplaceForm.PreviewMessages.ChooseFolderToCopyFrom") ?? "Choose a folder to copy from") : null;
 
             previewTarget.OverlayMap = checkBoxPreviewOverlay.Checked ? _sourceMap : null;
         }

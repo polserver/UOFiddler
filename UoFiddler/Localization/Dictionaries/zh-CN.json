@@ -1365,6 +1365,10 @@
         "SameFormatMUL": "与此客户端相同格式 (.mul)",
         "MapMUL": "map{0}.mul",
         "LegacyMUL": "map{0}LegacyMUL.uop"
+      },
+      "PreviewMessages": {
+        "ChooseFolderAndMap": "选择文件夹和地图。",
+        "ChooseFolderToCopyFrom": "选择要复制的文件夹"
       }
     }
   }
