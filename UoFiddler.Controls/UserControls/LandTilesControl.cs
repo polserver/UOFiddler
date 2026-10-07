@@ -803,7 +803,9 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"{ids.Count} land tiles saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.AllLandTilesSavedSuccessfully") 
+                ?? $"{ids.Count} land tiles saved successfully.";
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, message, null, _localizationGetter);
         }
 
         private void ExportLandTileImage(int index, ImageFormat imageFormat)
@@ -917,7 +919,7 @@ namespace UoFiddler.Controls.UserControls
 
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
-                dialog.Description = "Select directory";
+                dialog.Description = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.SelectDirectoryDescription") ?? "Select directory";
                 dialog.ShowNewFolderButton = true;
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
@@ -947,7 +949,7 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All land tiles saved successfully.");
+                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.AllLandTilesSavedSuccessfully") ?? "All land tiles saved successfully.", null, _localizationGetter);
             }
         }
 
@@ -1109,7 +1111,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnClickReplaceFromFolder(object sender, EventArgs e)
         {
             using FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.Description = "Select folder containing images to replace";
+            dialog.Description = _localizationGetter?.Invoke("Forms.LandTilesControl.Messages.SelectFolderForReplaceDescription") ?? "Select folder containing images to replace";
 
             if (dialog.ShowDialog() != DialogResult.OK)
             {
