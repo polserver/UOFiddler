@@ -18,6 +18,7 @@ namespace UoFiddler.Controls.Forms
     public partial class HuePopUpForm : Form
     {
         private readonly Action<int> _changeHueAction;
+        private Func<string, string?>? _localizationGetter;
 
         public HuePopUpForm(Action<int> changeHueAction, int hue)
         {
@@ -39,6 +40,25 @@ namespace UoFiddler.Controls.Forms
             {
                 control.Selected = hue;
             }
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.HuePopUpForm.Title") ?? "Hue Picker";
+            toolStripButton1.Text = _localizationGetter("Forms.HuePopUpForm.OkButton") ?? "OK";
+            toolStripButton2.Text = _localizationGetter("Forms.HuePopUpForm.ClearButton") ?? "Clear";
+            HueOnlyGray.Text = _localizationGetter("Forms.HuePopUpForm.HueOnlyGrayCheckBox") ?? "Hue Only Gray (+0x8000)";
+            
+            // 为内部 HuesControl 调用汉化
+            control.SetLocalization(_localizationGetter);
         }
 
         private void Click_OK(object sender, EventArgs e)

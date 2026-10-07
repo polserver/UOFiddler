@@ -45,6 +45,10 @@ namespace UoFiddler.Controls.UserControls
         private HuePopUpForm _showForm;
         private int _customHue = 0;
         private bool _hueOnlyGray = false;
+        private Func<string, string?>? _localizationGetter;
+        private string _baseGraphicLabelPrefix = "Base Graphic: ";
+        private string _graphicLabelPrefix = "Graphic: ";
+        private string _hueLabelPrefix = "Hue: ";
 
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private int CurrFrame
@@ -56,7 +60,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     var newGraphic = _currentSelect + value;
 
-                    toolStripStatusGraphic.Text = $"Graphic: {newGraphic} (0x{newGraphic:X})";
+                    toolStripStatusGraphic.Text = $"{_graphicLabelPrefix}{newGraphic} (0x{newGraphic:X})";
                     MainPictureBox.FrameIndex = value;
                     _currentFrame = value;
                 }
@@ -88,8 +92,8 @@ namespace UoFiddler.Controls.UserControls
                     }
                     treeViewFrames.EndUpdate();
 
-                    toolStripStatusBaseGraphic.Text = $"Base Graphic: {value} (0x{value:X})";
-                    toolStripStatusGraphic.Text = $"Graphic: {value} (0x{value:X})";
+                    toolStripStatusBaseGraphic.Text = $"{_baseGraphicLabelPrefix}{value} (0x{value:X})";
+                    toolStripStatusGraphic.Text = $"{_graphicLabelPrefix}{value} (0x{value:X})";
 
                     _currentSelect = value;
 
@@ -104,7 +108,7 @@ namespace UoFiddler.Controls.UserControls
         {
             var newGraphic = _currentSelect + MainPictureBox.FrameIndex;
 
-            toolStripStatusGraphic.Text = $"Graphic: {newGraphic} (0x{newGraphic:X})";
+            toolStripStatusGraphic.Text = $"{_graphicLabelPrefix}{newGraphic} (0x{newGraphic:X})";
         }
 
         private void SetPicture()
@@ -302,6 +306,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 TopMost = true
             };
+            _exportForm.SetLocalization(_localizationGetter);
             _exportForm.Show();
         }
 
@@ -318,6 +323,7 @@ namespace UoFiddler.Controls.UserControls
                 TopMost = true,
                 OnAfterImport = Reload
             };
+            _importForm.SetLocalization(_localizationGetter);
             _importForm.Show();
         }
 
@@ -577,7 +583,11 @@ namespace UoFiddler.Controls.UserControls
                 Options.ChangedUltimaClass["Animdata"] = false;
             }
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "File saved successfully.");
+            // 获取汉化的保存成功消息
+            string message = _localizationGetter?.Invoke("Forms.FileSavedDialog.SaveSuccess") ?? "File saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Save Success";
+            
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, message, title, _localizationGetter ?? (k => null));
         }
 
         private void OnClickRemoveAnim(object sender, EventArgs e)
@@ -688,6 +698,7 @@ namespace UoFiddler.Controls.UserControls
                 ? new HuePopUpForm(ChangeHue, 1)
                 : new HuePopUpForm(ChangeHue, _customHue - 1);
 
+            _showForm.SetLocalization(key => _localizationGetter?.Invoke(key));
             _showForm.TopMost = true;
             _showForm.Show();
         }
@@ -698,7 +709,12 @@ namespace UoFiddler.Controls.UserControls
             {
                 var outputFile = Path.Combine(Options.OutputPath, $"AnimData {Utils.FormatExportId(_currentSelect)}.gif");
                 MainPictureBox.Frames.ToGif(outputFile, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
-                MessageBox.Show($"Saved to {outputFile}");
+                
+                var title = _localizationGetter?.Invoke("Forms.AnimDataControl.ExportGifDialog.Title") ?? "Saved";
+                var message = _localizationGetter?.Invoke("Forms.AnimDataControl.ExportGifDialog.Message") ?? "Saved to {0}";
+                message = string.Format(message, outputFile);
+                
+                MessageBox.Show(message, title);
             }
         }
 
@@ -726,6 +742,64 @@ namespace UoFiddler.Controls.UserControls
                 node.EnsureVisible();
                 return;
             }
+        }
+
+        /// <summary>
+        /// 设置本地化（从 MainForm 调用）
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// 应用汉化
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // GroupBox 标题
+            groupBox1.Text = _localizationGetter("Forms.AnimDataControl.PreviewGroupBox") ?? "Preview";
+            groupBox2.Text = _localizationGetter("Forms.AnimDataControl.DataGroupBox") ?? "Data";
+            groupBox4.Text = _localizationGetter("Forms.AnimDataControl.FramesGroupBox") ?? "Frames";
+
+            // Label
+            label1.Text = _localizationGetter("Forms.AnimDataControl.StartDelayLabel") ?? "Start Delay";
+            label2.Text = _localizationGetter("Forms.AnimDataControl.FrameDelayLabel") ?? "Frame Delay";
+
+            // Button
+            button2.Text = _localizationGetter("Forms.AnimDataControl.AddButton") ?? "Add";
+            button5.Text = _localizationGetter("Forms.AnimDataControl.RemoveButton") ?? "Remove";
+            button6.Text = _localizationGetter("Forms.AnimDataControl.SaveButton") ?? "Save";
+            button7.Text = _localizationGetter("Forms.AnimDataControl.ImportButton") ?? "Import...";
+            button8.Text = _localizationGetter("Forms.AnimDataControl.ExportButton") ?? "Export...";
+
+            // ToolStripMenuItem
+            addToolStripMenuItem.Text = _localizationGetter("Forms.AnimDataControl.AddMenuItem") ?? "Add";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.AnimDataControl.RemoveMenuItem") ?? "Remove";
+            hueToolStripMenuItem.Text = _localizationGetter("Forms.AnimDataControl.HueMenuItem") ?? "Hue";
+            animateToolStripMenuItem.Text = _localizationGetter("Forms.AnimDataControl.AnimateMenuItem") ?? "Animate";
+            showFrameBoundsToolStripMenuItem.Text = _localizationGetter("Forms.AnimDataControl.ShowFrameBoundsMenuItem") ?? "Show frame bounds";
+            exportAsAnimatedGifToolStripMenuItem.Text = _localizationGetter("Forms.AnimDataControl.ExportGifMenuItem") ?? "Export as animated Gif";
+
+            // ToolStrip
+            searchByIdToolStripLabel.Text = _localizationGetter("Forms.AnimDataControl.IndexLabel") ?? "Index:";
+            toolStripDropDownButton1.Text = _localizationGetter("Forms.AnimDataControl.SettingsButton") ?? "Settings";
+
+            // CheckBox
+            checkBoxRelative.Text = _localizationGetter("Forms.AnimDataControl.RelativeCheckBox") ?? "Relative";
+
+            // 状态栏标签前缀
+            _baseGraphicLabelPrefix = _localizationGetter("Forms.AnimDataControl.BaseGraphicLabel") ?? "Base Graphic: ";
+            _graphicLabelPrefix = _localizationGetter("Forms.AnimDataControl.GraphicLabel") ?? "Graphic: ";
+            _hueLabelPrefix = _localizationGetter("Forms.AnimDataControl.HueLabel") ?? "Hue: ";
+            
+            // 设置初始状态栏显示
+            toolStripStatusBaseGraphic.Text = $"{_baseGraphicLabelPrefix}0 (0x0)";
+            toolStripStatusGraphic.Text = $"{_graphicLabelPrefix}0 (0x0)";
+            toolStripStatusHue.Text = _hueLabelPrefix + "0";
         }
 
         public static bool Select(int graphic)

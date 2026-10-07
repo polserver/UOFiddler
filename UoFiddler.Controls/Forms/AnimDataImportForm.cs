@@ -9,6 +9,8 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class AnimDataImportForm : Form
     {
+        private Func<string, string?>? _localizationGetter;
+
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Action OnAfterImport { get; set; }
 
@@ -18,13 +20,40 @@ namespace UoFiddler.Controls.Forms
             cboConflictAction.SelectedItem = "skip";
         }
 
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.AnimDataImportForm.Title") ?? "Import AnimData";
+            label5.Text = _localizationGetter("Forms.AnimDataImportForm.label5") ?? "Import from:";
+            btnImport.Text = _localizationGetter("Forms.AnimDataImportForm.btnImport") ?? "Import";
+            label1.Text = _localizationGetter("Forms.AnimDataImportForm.label1") ?? "On conflict:";
+            cbErase.Text = _localizationGetter("Forms.AnimDataImportForm.cbErase") ?? "Erase animdata before importing";
+
+            // 更新下拉菜单项
+            var skipText = _localizationGetter("Forms.AnimDataImportForm.ConflictAction.Skip") ?? "skip";
+            var overwriteText = _localizationGetter("Forms.AnimDataImportForm.ConflictAction.Overwrite") ?? "overwrite";
+            
+            cboConflictAction.Items.Clear();
+            cboConflictAction.Items.Add(skipText);
+            cboConflictAction.Items.Add(overwriteText);
+            cboConflictAction.SelectedIndex = 0;
+        }
+
         private void OnClickImport(object sender, EventArgs e)
         {
             try
             {
                 var fileName = txtImportFileName.Text;
                 var imported = ExportedAnimData.FromFile(fileName);
-                var overwrite = cboConflictAction.Items[cboConflictAction.SelectedIndex].ToString() == "overwrite";
+                // SelectedIndex: 0 = skip, 1 = overwrite
+                var overwrite = cboConflictAction.SelectedIndex == 1;
 
                 // Create a new "working copy" AnimData to update, in case there's an exception thrown while processing.
                 // Shallow clone is okay, as UpdateAnimdata does not modify existing entries' members.
@@ -44,11 +73,18 @@ namespace UoFiddler.Controls.Forms
                     // Swallow any error from the OnAfterImport callback
                 }
 
-                MessageBox.Show($"Imported {importCount} animdata entries from: {fileName}\n\nDo not forget to save your changes!", "AnimData Import");
+                MessageBox.Show(
+                    _localizationGetter?.Invoke("Forms.AnimDataImportForm.ImportSuccessMessage") ?? 
+                    $"Imported {importCount} animdata entries from: {fileName}\n\nDo not forget to save your changes!",
+                    _localizationGetter?.Invoke("Forms.AnimDataImportForm.ImportSuccessTitle") ?? "AnimData Import");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error importing animdata: {ex.Message}", "AnimData Import", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                var errorTitle = _localizationGetter?.Invoke("Forms.AnimDataImportForm.ImportErrorTitle") ?? "AnimData Import";
+                var errorMessageFormat = _localizationGetter?.Invoke("Forms.AnimDataImportForm.ImportErrorMessage") ?? "Error importing animdata: {0}";
+                var errorMessage = string.Format(errorMessageFormat, ex.Message);
+                
+                MessageBox.Show(errorMessage, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
         }
 

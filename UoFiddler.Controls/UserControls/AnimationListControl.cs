@@ -867,6 +867,7 @@ namespace UoFiddler.Controls.UserControls
                 ? new HuePopUpForm(ChangeHue, _defHue + 1)
                 : new HuePopUpForm(ChangeHue, _customHue - 1);
 
+            _showForm.SetLocalization(key => _localizationGetter?.Invoke(key));
             _showForm.TopMost = true;
             _showForm.Show();
         }

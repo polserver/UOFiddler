@@ -5,6 +5,10 @@
   "Forms": {
     "MainForm": {
       "Title": "UOFiddler",
+      "ExitConfirmDialog": {
+        "Title": "未保存更改",
+        "Message": "确定要退出吗？\r\n\r\n存在未保存的文件：\r\n{0}"
+      },
       "Tabs": {
         "StartTab": "开始",
         "MultisTab": "多重组件",
@@ -87,6 +91,9 @@
         "Compare AnimData": "对比动画数据",
         "Compare RadarCol": "对比雷达颜色",
         "Compare TileData": "对比图块数据"
+      },
+      "ContextMenu": {
+        "UnDock": "取消停靠"
       }
     },
     "LoadProfileForm": {
@@ -727,6 +734,10 @@
       "asTiffToolStripMenuItem2": "导出为 TIFF",
       "asJpgToolStripMenuItem2": "导出为 JPG",
       "asPngToolStripMenuItem": "导出为 PNG",
+      "ExportDialog": {
+        "Title": "保存",
+        "Message": "{0} 已保存到 {1}"
+      },
       "ContextMenu": {
         "exportAllThumbnailsToolStripMenuItem": "导出所有缩略图..",
         "asBmpToolStripMenuItem3": "导出为 BMP",
@@ -1532,6 +1543,85 @@
       "ColumnName": "技能名称",
       "FileSavedMessage": "技能已保存成功",
       "FileSavedTitle": "保存"
+    },
+    "AnimDataControl": {
+      "PreviewGroupBox": "预览",
+      "DataGroupBox": "数据",
+      "FramesGroupBox": "帧",
+      "StartDelayLabel": "开始延迟",
+      "FrameDelayLabel": "帧延迟",
+      "AddButton": "添加",
+      "RemoveButton": "移除",
+      "SaveButton": "保存",
+      "ImportButton": "导入...",
+      "ExportButton": "导出...",
+      "AddMenuItem": "添加",
+      "RemoveMenuItem": "移除",
+      "HueMenuItem": "色调",
+      "AnimateMenuItem": "播放动画",
+      "ShowFrameBoundsMenuItem": "显示帧边界",
+      "ExportGifMenuItem": "导出为动画 GIF",
+      "ExportGifDialog": {
+        "Title": "保存",
+        "Message": "已保存到 {0}"
+      },
+      "IndexLabel": "索引:",
+      "SettingsButton": "设置",
+      "RelativeCheckBox": "相对坐标",
+      "BaseGraphicLabel": "基础图形:",
+      "GraphicLabel": "图形:",
+      "HueLabel": "色调:"
+    },
+    "HuePopUpForm": {
+      "Title": "色调拾取器",
+      "OkButton": "确定",
+      "ClearButton": "清除",
+      "HueOnlyGrayCheckBox": "仅灰色色调 (+0x8000)"
+    },
+    "HuesControl": {
+      "HueIndexToolStripLabel": "索引:",
+      "HueNameToolStripLabel": "名称:",
+      "SearchNameToolStripButton": "查找下一个",
+      "IndexOffsetButton": "显示游戏内编号",
+      "saveToolStripMenuItem": "保存",
+      "replaceToolStripMenuItem": "替换为..",
+      "exportToolStripMenuItem": "导出..",
+      "importToolStripMenuItem": "导入..",
+      "exportAllHueNamesListToolStripMenuItem": "导出所有色调名称列表"
+    },
+    "AnimDataExportForm": {
+      "Title": "导出动画数据",
+      "lblAnimationsToExport": "导出动画:",
+      "btnExport": "导出",
+      "ExportSelection": {
+        "All": "全部（默认、蓝色、红色条目）",
+        "IncludeMissing": "包含缺失动画标志（默认和蓝色条目）",
+        "OnlyValid": "仅有效动画（默认条目）"
+      },
+      "ExportSuccessMessage": "已导出 {0} 条 animdata 记录到：{1}",
+      "ExportErrorTitle": "AnimData 导出错误",
+      "ExportErrorMessage": "导出 animdata 时出错：{0}"
+    },
+    "AnimDataImportForm": {
+      "Title": "导入动画数据",
+      "label5": "导入来源:",
+      "btnImport": "导入",
+      "label1": "冲突时:",
+      "cbErase": "导入前清空动画数据",
+      "ConflictAction": {
+        "Skip": "跳过",
+        "Overwrite": "覆盖"
+      },
+      "ImportSuccessTitle": "导入成功",
+      "ImportSuccessMessage": "已从 {0} 成功导入 {1} 条动画数据\n\n请不要忘记保存您的更改!",
+      "ImportErrorTitle": "导入错误",
+      "ImportErrorMessage": "导入动画数据时出错: {0}"
+    },
+    "FileSavedDialog": {
+      "Title": "文件已保存",
+      "SaveSuccess": "文件保存成功。",
+      "OpenFolder": "打开文件夹",
+      "OK": "确定"
     }
   },
   "Ultima": {

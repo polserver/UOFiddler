@@ -57,6 +57,9 @@ namespace UoFiddler.Forms
             // 应用本地化
             LocalizationService.LocalizeForm(this);
             
+            // 汉化右键菜单项
+            unDockToolStripMenuItem.Text = LocalizationService.GetString("Forms.MainForm.ContextMenu.UnDock") ?? "UnDock";
+            
             // 为主标签页控件调用本地化（GumpControl等需要手动调用SetLocalization）
             gumpsControl.SetLocalization(key => LocalizationService.GetString(key));
             hueControl.SetLocalization(key => LocalizationService.GetString(key));
@@ -71,6 +74,7 @@ namespace UoFiddler.Forms
             lightControl.SetLocalization(key => LocalizationService.GetString(key));
             speechControl.SetLocalization(key => LocalizationService.GetString(key));
             skillsControl.SetLocalization(key => LocalizationService.GetString(key));
+            animdataControl.SetLocalization(key => LocalizationService.GetString(key));
             
             // 为 ItemsControl 设置汉化（通过遍历 TabPage 找到）
             foreach (TabPage tab in TabPanel.TabPages)
@@ -577,9 +581,12 @@ namespace UoFiddler.Forms
 
             if (files.Length > 0)
             {
+                var title = LocalizationService.GetString("Forms.MainForm.ExitConfirmDialog.Title") ?? "UnSaved Changes";
+                var message = LocalizationService.GetString("Forms.MainForm.ExitConfirmDialog.Message") ?? "Are you sure you want to quit?\r\n\r\nThere are unsaved files:\r\n{0}";
+                message = string.Format(message, files);
+                
                 DialogResult result =
-                    MessageBox.Show($"Are you sure you want to quit?\r\n\r\nThere are unsaved files:\r\n{files}",
-                        "UnSaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)
                 {

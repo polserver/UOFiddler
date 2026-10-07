@@ -8,6 +8,8 @@ namespace UoFiddler.Controls.Forms
 {
     public partial class AnimDataExportForm : Form
     {
+        private Func<string, string?>? _localizationGetter;
+
         public AnimDataExportForm()
         {
             InitializeComponent();
@@ -16,6 +18,30 @@ namespace UoFiddler.Controls.Forms
                 "Include missing animation tile flag (default- and blue-colored entries)",
                 "Only valid animations (default-colored entries)"
             };
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.AnimDataExportForm.Title") ?? "Export AnimData";
+            lblAnimationsToExport.Text = _localizationGetter("Forms.AnimDataExportForm.lblAnimationsToExport") ?? "Animations to export:";
+            btnExport.Text = _localizationGetter("Forms.AnimDataExportForm.btnExport") ?? "Export";
+
+            // 更新下拉菜单项
+            var items = new List<string>
+            {
+                _localizationGetter("Forms.AnimDataExportForm.ExportSelection.All") ?? "All (default-, blue-, and red-colored entries)",
+                _localizationGetter("Forms.AnimDataExportForm.ExportSelection.IncludeMissing") ?? "Include missing animation tile flag (default- and blue-colored entries)",
+                _localizationGetter("Forms.AnimDataExportForm.ExportSelection.OnlyValid") ?? "Only valid animations (default-colored entries)"
+            };
+            cboExportSelection.DataSource = items;
         }
 
         private void OnClickExport(object sender, EventArgs e)
@@ -48,11 +74,18 @@ namespace UoFiddler.Controls.Forms
 
                 var exported = ExportedAnimData.ToFile(dialog.FileName, AnimData, selection);
 
-                MessageBox.Show($"Exported {exported.Data.Count} animdata entries to: {dialog.FileName}");
+                // 使用汉化的导出成功消息
+                string successMessage = _localizationGetter?.Invoke("Forms.AnimDataExportForm.ExportSuccessMessage") ?? $"Exported {exported.Data.Count} animdata entries to: {dialog.FileName}";
+                successMessage = string.Format(successMessage, exported.Data.Count, dialog.FileName);
+                MessageBox.Show(successMessage);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error exporting animdata: {ex.Message}", "AnimData Export", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                // 使用汉化的导出错误消息
+                string errorTitle = _localizationGetter?.Invoke("Forms.AnimDataExportForm.ExportErrorTitle") ?? "AnimData Export";
+                string errorMessage = _localizationGetter?.Invoke("Forms.AnimDataExportForm.ExportErrorMessage") ?? $"Error exporting animdata: {ex.Message}";
+                errorMessage = string.Format(errorMessage, ex.Message);
+                MessageBox.Show(errorMessage, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
         }
     }
