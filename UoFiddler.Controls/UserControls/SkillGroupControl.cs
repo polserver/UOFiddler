@@ -31,6 +31,31 @@ namespace UoFiddler.Controls.UserControls
 
         private bool _loaded;
         private TreeNode _sourceNode;
+        private Func<string, string?>? _localizationGetter;
+
+        /// <summary>
+        /// 设置本地化（从 MainForm 调用）
+        /// </summary>
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// 应用菜单项汉化
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 菜单项汉化
+            addToolStripMenuItem.Text = _localizationGetter("Forms.SkillGroupControl.AddButton") ?? "Add";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.SkillGroupControl.RemoveButton") ?? "Remove";
+            renameToolStripMenuItem.Text = _localizationGetter("Forms.SkillGroupControl.RenameButton") ?? "Rename";
+            toolStripMenuItem1.Text = _localizationGetter("Forms.SkillGroupControl.SkillIDLabel") ?? "SkillID";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.SkillGroupControl.SaveButton") ?? "Save";
+        }
 
         /// <summary>
         /// ReLoads if loaded
@@ -145,7 +170,9 @@ namespace UoFiddler.Controls.UserControls
             SkillGroups.Save(Options.OutputPath);
             Options.ChangedUltimaClass["SkillGrp"] = false;
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "SkillGrp saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.SkillGroupControl.FileSavedMessage") ?? "SkillGrp saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "File Saved";
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, message, title, key => _localizationGetter?.Invoke(key));
         }
 
         private void OnItemDrag(object sender, ItemDragEventArgs e)
@@ -254,10 +281,14 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            string editFormTitle = _localizationGetter?.Invoke("Forms.SkillGroupControl.EditFormTitle") ?? "SkillGroup Edit";
+            string invalidNameReserved = _localizationGetter?.Invoke("Forms.SkillGroupControl.InvalidNameReserved") ?? "Invalid name. Name is reserved.";
+            string invalidNameEmpty = _localizationGetter?.Invoke("Forms.SkillGroupControl.InvalidNameEmpty") ?? "Invalid name. Name cannot be empty.";
+
             if (string.Equals("Misc", e.Label))
             {
                 e.CancelEdit = true;
-                MessageBox.Show("Invalid name. Name is reserved.", "SkillGroup Edit");
+                MessageBox.Show(invalidNameReserved, editFormTitle);
                 e.Node.BeginEdit();
             }
             else if (e.Label.Length > 0)
@@ -267,7 +298,7 @@ namespace UoFiddler.Controls.UserControls
             else
             {
                 e.CancelEdit = true;
-                MessageBox.Show("Invalid name. Name cannot be empty.", "SkillGroup Edit");
+                MessageBox.Show(invalidNameEmpty, editFormTitle);
                 e.Node.BeginEdit();
             }
             treeView1.LabelEdit = false;

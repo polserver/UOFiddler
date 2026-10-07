@@ -78,6 +78,7 @@ namespace UoFiddler.Forms
             multimapControl.SetLocalization(key => LocalizationService.GetString(key));
             landTilesControl.SetLocalization(key => LocalizationService.GetString(key));
             verdataControl.SetLocalization(key => LocalizationService.GetString(key));
+            skillGroupControl.SetLocalization(key => LocalizationService.GetString(key));
             
             // 为 ItemsControl 设置汉化（通过遍历 TabPage 找到）
             foreach (TabPage tab in TabPanel.TabPages)

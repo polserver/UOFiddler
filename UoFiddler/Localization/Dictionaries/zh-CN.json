@@ -1708,6 +1708,17 @@
       "openVerdataTitle": "打开 verdata.mul",
       "noPatchesFound": "未找到补丁"
     },
+    "SkillGroupControl": {
+      "AddButton": "添加",
+      "RemoveButton": "删除",
+      "RenameButton": "重命名",
+      "SkillIDLabel": "技能ID",
+      "SaveButton": "保存",
+      "InvalidNameReserved": "无效的名称。该名称是保留的。",
+      "InvalidNameEmpty": "无效的名称。名称不能为空。",
+      "EditFormTitle": "技能组编辑",
+      "FileSavedMessage": "技能组保存成功。"
+    },
     "FileSavedDialog": {
       "Title": "文件已保存",
       "SaveSuccess": "文件保存成功。",
