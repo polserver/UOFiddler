@@ -47,6 +47,11 @@ namespace UoFiddler.Controls.UserControls
         }
 
         private Func<string, string?>? _localizationGetter;
+        
+        // 状态栏标签前缀缓存（用于汉化）
+        private string _coordsPrefix = "Coords: ";
+        private string _clientLocPrefix = "ClientLoc: ";
+        private string _zoomPrefix = "Zoom: ";
 
         /// <summary>
         /// Set localization for MapControl
@@ -133,6 +138,16 @@ namespace UoFiddler.Controls.UserControls
             copyToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.MapAndStaticsCopy") ?? "Map and Statics Copy...";
             insertDiffDataToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.DiffToMapCopy") ?? "Diff to Map Copy...";
             replaceTilesToolStripMenuItem.Text = _localizationGetter("Forms.MapControl.ReplaceTiles") ?? "Replace Tiles..";
+
+            // 状态栏标签前缀汉化
+            _coordsPrefix = _localizationGetter("Forms.MapControl.CoordsLabel") ?? "Coords: ";
+            _clientLocPrefix = _localizationGetter("Forms.MapControl.ClientLocLabel") ?? "ClientLoc: ";
+            _zoomPrefix = _localizationGetter("Forms.MapControl.ZoomLabel") ?? "Zoom: ";
+            
+            // 初始化状态栏标签显示（使用默认值，等待数据更新）
+            CoordsLabel.Text = $"{_coordsPrefix}0,0";
+            ClientLocLabel.Text = $"{_clientLocPrefix}0,0";
+            ZoomLabel.Text = $"{_zoomPrefix}1";
         }
 
         private void AddAltitudeIntensityMenuItems()
@@ -244,7 +259,7 @@ namespace UoFiddler.Controls.UserControls
                 tokunoToolStripMenuItem.Checked = false;
                 PreloadMap.Visible = true;
                 ChangeMapNames();
-                ZoomLabel.Text = $"Zoom: {Zoom}";
+                ZoomLabel.Text = $"{_zoomPrefix}{Zoom}";
                 SetScrollBarValues();
                 Refresh();
                 pictureBox.Invalidate();
@@ -586,7 +601,7 @@ namespace UoFiddler.Controls.UserControls
             int xDelta = Math.Min(CurrentMap.Width, (int)(e.X / Zoom) + Round(hScrollBar.Value));
             int yDelta = Math.Min(CurrentMap.Height, (int)(e.Y / Zoom) + Round(vScrollBar.Value));
 
-            CoordsLabel.Text = $"Coords: {xDelta},{yDelta}";
+            CoordsLabel.Text = $"{_coordsPrefix}{xDelta},{yDelta}";
 
             if (!_moving)
             {
@@ -693,7 +708,7 @@ namespace UoFiddler.Controls.UserControls
             hScrollBar.Value = (int)Math.Max(0, x - (pictureBox.Right / Zoom / 2));
             vScrollBar.Value = (int)Math.Max(0, y - (pictureBox.Bottom / Zoom / 2));
             pictureBox.Invalidate();
-            ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{Options.MapNames[mapClient]}";
+            ClientLocLabel.Text = $"{_clientLocPrefix}{x},{y},{z},{Options.MapNames[mapClient]}";
         }
 
         private void SwitchMap(int mapId)
@@ -757,7 +772,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            ClientLocLabel.Text = $"ClientLoc: {x},{y},{z},{mapName}";
+            ClientLocLabel.Text = $"{_clientLocPrefix}{x},{y},{z},{mapName}";
             pictureBox.Invalidate();
         }
 
@@ -844,7 +859,7 @@ namespace UoFiddler.Controls.UserControls
 
             _renderingZoom = true;
             ChangeScrollBar();
-            ZoomLabel.Text = $"Zoom: {Zoom}";
+            ZoomLabel.Text = $"{_zoomPrefix}{Zoom}";
             int x = Math.Max(0, _currentPoint.X - ((int)(pictureBox.ClientSize.Width / Zoom) / 2));
             int y = Math.Max(0, _currentPoint.Y - ((int)(pictureBox.ClientSize.Height / Zoom) / 2));
             x = Math.Min(x, hScrollBar.Maximum);
