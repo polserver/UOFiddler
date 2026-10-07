@@ -32,6 +32,7 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Map _workingMap;
         private Func<string, string?>? _localizationGetter;
+        private bool _initialized = false;
 
         private CancellationTokenSource _cancellation;
         private MapSize _detectedSize;
@@ -63,6 +64,7 @@ namespace UoFiddler.Controls.Forms
         {
             _localizationGetter = getLocalized;
             ApplyLocalization();
+            CompleteInitialization();  // 完成初始化，确保动态消息被汉化
         }
 
         private void ApplyLocalization()
@@ -191,10 +193,23 @@ namespace UoFiddler.Controls.Forms
             _zWorker.DoWork += OnZWorkerDoWork;
             _zWorker.RunWorkerCompleted += OnZWorkerCompleted;
 
-            OnSourceMapChanged(this, EventArgs.Empty);
-            OnOptionChanged(this, EventArgs.Empty);
+            // 不在这里初始化，等待 SetLocalization 被调用
+            // OnSourceMapChanged(this, EventArgs.Empty);
+            // OnOptionChanged(this, EventArgs.Empty);
 
             ActiveControl = buttonBrowse;
+        }
+        
+        /// <summary>
+        /// 完成初始化 - 在 SetLocalization 之后调用
+        /// </summary>
+        private void CompleteInitialization()
+        {
+            if (_initialized) return;
+            _initialized = true;
+            
+            OnSourceMapChanged(this, EventArgs.Empty);
+            OnOptionChanged(this, EventArgs.Empty);
         }
 
         private SupportedMap SelectedMap => comboBoxMapID.SelectedItem as SupportedMap;
