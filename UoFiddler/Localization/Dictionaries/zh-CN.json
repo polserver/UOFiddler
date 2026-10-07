@@ -1288,7 +1288,7 @@
         "Coordinate": "X",
         "LandTile": "陆地图块",
         "Altitude": "高度",
-        "Statics": "静态物品",
+        "Statics": "静态物体",
         "Hue": "色调"
       }
     },

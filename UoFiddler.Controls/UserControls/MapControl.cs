@@ -1462,7 +1462,11 @@ namespace UoFiddler.Controls.UserControls
             {
                 CurrentMap.ReportInvisibleStatics(Options.OutputPath);
             }
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.", null, getter);
+            else
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
         }
 
         private void OnClickReportInvalidMapIDs(object sender, EventArgs e)
@@ -1471,7 +1475,11 @@ namespace UoFiddler.Controls.UserControls
             {
                 CurrentMap.ReportInvalidMapIDs(Options.OutputPath);
             }
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.", null, getter);
+            else
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "Report saved successfully.");
         }
 
         private MapReplaceForm _showForm;
