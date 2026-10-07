@@ -75,6 +75,7 @@ namespace UoFiddler.Forms
             speechControl.SetLocalization(key => LocalizationService.GetString(key));
             skillsControl.SetLocalization(key => LocalizationService.GetString(key));
             animdataControl.SetLocalization(key => LocalizationService.GetString(key));
+            multimapControl.SetLocalization(key => LocalizationService.GetString(key));
             landTilesControl.SetLocalization(key => LocalizationService.GetString(key));
             
             // 为 ItemsControl 设置汉化（通过遍历 TabPage 找到）

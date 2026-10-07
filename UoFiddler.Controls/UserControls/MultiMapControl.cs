@@ -41,6 +41,7 @@ namespace UoFiddler.Controls.UserControls
         private Point _movingPoint;
 
         private bool _loaded;
+        private Func<string, string?>? _localizationGetter;
 
         /// <summary>
         /// ReLoads if loaded
@@ -195,6 +196,41 @@ namespace UoFiddler.Controls.UserControls
             Reload();
         }
 
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 工具栏按钮
+            toolStripDropDownButton1.Text = _localizationGetter("Forms.MultiMapControl.loadButton") ?? "Load..";
+            toolStripDropDownButton2.Text = _localizationGetter("Forms.MultiMapControl.generateButton") ?? "Generate..";
+            toolStripDropDownButton3.Text = _localizationGetter("Forms.MultiMapControl.exportButton") ?? "Export..";
+
+            // 加载菜单项
+            multiMapToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.multiMap") ?? "MultiMap";
+            facet00ToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facet00") ?? "Facet00";
+            facet01ToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facet01") ?? "Facet01";
+            facet02ToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facet02") ?? "Facet02";
+            facet03ToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facet03") ?? "Facet03";
+            facet04ToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facet04") ?? "Facet04";
+            facet05ToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facet05") ?? "Facet05";
+
+            // 生成菜单项
+            multiMapFromImageToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.multiMapFromImage") ?? "MultiMap from Image";
+            facetFromImageToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.facetFromImage") ?? "Facet from Image";
+
+            // 导出菜单项
+            asBmpToolStripMenuItem1.Text = _localizationGetter("Forms.MultiMapControl.Menus.asBmp") ?? "As Bmp..";
+            asTiffToolStripMenuItem1.Text = _localizationGetter("Forms.MultiMapControl.Menus.asTiff") ?? "As Tiff..";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.MultiMapControl.Menus.asJpg") ?? "As Jpg..";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.MultiMapControl.Menus.asPng") ?? "As Png..";
+        }
+
         private void OnClickExportBmp(object sender, EventArgs e)
         {
             ExportMultiMapImage(ImageFormat.Bmp);
@@ -222,7 +258,12 @@ namespace UoFiddler.Controls.UserControls
 
             pictureBox.Image.Save(fileName, imageFormat);
 
-            FileSavedDialog.Show(FindForm(), fileName, $"{CheckedToString()} saved successfully.");
+            string successMessage = _localizationGetter?.Invoke("Forms.MultiMapControl.Messages.multiMapSavedSuccess") 
+                ?? $"{CheckedToString()} saved successfully.";
+            if (_localizationGetter != null)
+                FileSavedDialog.Show(FindForm(), fileName, successMessage, null, _localizationGetter);
+            else
+                FileSavedDialog.Show(FindForm(), fileName, successMessage);
         }
 
         private string CheckedToString()
@@ -300,7 +341,8 @@ namespace UoFiddler.Controls.UserControls
         {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                dialog.Title = "Select Image to convert";
+                dialog.Title = _localizationGetter?.Invoke("Forms.MultiMapControl.Dialogs.selectImageTitle") 
+                    ?? "Select Image to convert";
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
@@ -314,7 +356,10 @@ namespace UoFiddler.Controls.UserControls
 
                         if (image.Height != 2048 || image.Width != 2560)
                         {
-                            MessageBox.Show("Invalid image height or width", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                            string errorTitle = _localizationGetter?.Invoke("Forms.MultiMapControl.Dialogs.errorTitle") ?? "Error";
+                            string errorMsg = _localizationGetter?.Invoke("Forms.MultiMapControl.Messages.invalidImageSize") 
+                                ?? "Invalid image height or width";
+                            MessageBox.Show(errorMsg, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                             return;
                         }
 
@@ -326,12 +371,20 @@ namespace UoFiddler.Controls.UserControls
                             Ultima.MultiMap.SaveMultiMap(image, bin);
                         }
 
-                        FileSavedDialog.Show(FindForm(), fileName, "MultiMap saved successfully.");
+                        string successMsg = _localizationGetter?.Invoke("Forms.MultiMapControl.Messages.multiMapSavedSuccess") 
+                            ?? "MultiMap saved successfully.";
+                        if (_localizationGetter != null)
+                            FileSavedDialog.Show(FindForm(), fileName, successMsg, null, _localizationGetter);
+                        else
+                            FileSavedDialog.Show(FindForm(), fileName, successMsg);
                     }
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    string errorTitle = _localizationGetter?.Invoke("Forms.MultiMapControl.Dialogs.errorTitle") ?? "Error";
+                    string errorMsg = _localizationGetter?.Invoke("Forms.MultiMapControl.Messages.imageNotFound") 
+                        ?? "No image found";
+                    MessageBox.Show(errorMsg, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
                 }
             }
@@ -341,7 +394,8 @@ namespace UoFiddler.Controls.UserControls
         {
             using (var dialog = new OpenFileDialog())
             {
-                dialog.Title = "Select Image to convert";
+                dialog.Title = _localizationGetter?.Invoke("Forms.MultiMapControl.Dialogs.selectImageTitle") 
+                    ?? "Select Image to convert";
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
@@ -356,12 +410,20 @@ namespace UoFiddler.Controls.UserControls
                         string fileName = Path.Combine(path, "facet.mul");
                         Ultima.MultiMap.SaveFacetImage(fileName, image);
 
-                        FileSavedDialog.Show(FindForm(), fileName, "Facet saved successfully.");
+                        string successMsg = _localizationGetter?.Invoke("Forms.MultiMapControl.Messages.facetSavedSuccess") 
+                            ?? "Facet saved successfully.";
+                        if (_localizationGetter != null)
+                            FileSavedDialog.Show(FindForm(), fileName, successMsg, null, _localizationGetter);
+                        else
+                            FileSavedDialog.Show(FindForm(), fileName, successMsg);
                     }
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("No image found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                    string errorTitle = _localizationGetter?.Invoke("Forms.MultiMapControl.Dialogs.errorTitle") ?? "Error";
+                    string errorMsg = _localizationGetter?.Invoke("Forms.MultiMapControl.Messages.imageNotFound") 
+                        ?? "No image found";
+                    MessageBox.Show(errorMsg, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
                 }
             }

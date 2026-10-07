@@ -1658,6 +1658,36 @@
         "SelectFolderForReplaceDescription": "选择包含要替换的图像的文件夹"
       }
     },
+    "MultiMapControl": {
+      "loadButton": "加载..",
+      "generateButton": "生成..",
+      "exportButton": "导出..",
+      "Menus": {
+        "multiMap": "多重地图",
+        "facet00": "位面 00",
+        "facet01": "位面 01",
+        "facet02": "位面 02",
+        "facet03": "位面 03",
+        "facet04": "位面 04",
+        "facet05": "位面 05",
+        "multiMapFromImage": "从图像生成多重地图",
+        "facetFromImage": "从图像生成位面",
+        "asBmp": "导出为 BMP..",
+        "asTiff": "导出为 TIFF..",
+        "asJpg": "导出为 JPG..",
+        "asPng": "导出为 PNG.."
+      },
+      "Dialogs": {
+        "selectImageTitle": "选择要转换的图像",
+        "errorTitle": "错误"
+      },
+      "Messages": {
+        "invalidImageSize": "图像高度或宽度无效",
+        "imageNotFound": "未找到图像",
+        "multiMapSavedSuccess": "多重地图保存成功。",
+        "facetSavedSuccess": "位面保存成功。"
+      }
+    },
     "FileSavedDialog": {
       "Title": "文件已保存",
       "SaveSuccess": "文件保存成功。",
