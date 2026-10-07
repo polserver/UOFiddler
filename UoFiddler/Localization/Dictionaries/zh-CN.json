@@ -1470,6 +1470,29 @@
         "Normal": "正常强度",
         "Strong": "强烈强度"
       }
+    },
+    "LightControl": {
+      "Light": "光照",
+      "ExportImage": "导出图像..",
+      "AsBmp": "为 BMP",
+      "AsTiff": "为 TIFF",
+      "AsJpg": "为 JPG",
+      "Remove": "删除",
+      "Replace": "替换",
+      "InsertAt": "插入位置..",
+      "Save": "保存",
+      "IGPreview": "游戏内预览",
+      "BackgroundLandTile": "背景地形图块",
+      "LightTile": "光照图块",
+      "Dialogs": {
+        "ReplaceTitle": "选择要替换的图像文件",
+        "InsertTitle": "选择要插入位置 {0} (0x{0:X}) 的图像文件",
+        "FileFilter": "图像文件 (*.tif;*.tiff;*.bmp;*.png)|*.tif;*.tiff;*.bmp;*.png"
+      },
+      "Messages": {
+        "LightSavedSuccessfully": "光照文件保存成功。",
+        "FilesSavedSuccessfully": "文件保存成功。"
+      }
     }
   },
   "Ultima": {

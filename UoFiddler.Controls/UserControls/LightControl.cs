@@ -35,6 +35,7 @@ namespace UoFiddler.Controls.UserControls
         private bool _loaded;
         private int _landTile = 0x3;
         private int _lightTile = 0x0B20;
+        private Func<string, string?>? _localizationGetter;
 
         /// <summary>
         /// ReLoads if loaded
@@ -239,9 +240,9 @@ namespace UoFiddler.Controls.UserControls
             using (var dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
-                dialog.Title = "Choose image file to replace";
+                dialog.Title = _localizationGetter?.Invoke("Forms.LightControl.Dialogs.ReplaceTitle") ?? "Choose image file to replace";
                 dialog.CheckFileExists = true;
-                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp;*.png)|*.tif;*.tiff;*.bmp;*.png";
+                dialog.Filter = _localizationGetter?.Invoke("Forms.LightControl.Dialogs.FileFilter") ?? "Image files (*.tif;*.tiff;*.bmp;*.png)|*.tif;*.tiff;*.bmp;*.png";
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
@@ -302,9 +303,10 @@ namespace UoFiddler.Controls.UserControls
             using (var dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = false;
-                dialog.Title = string.Format("Choose image file to insert at {0} (0x{0:X})", index);
+                string insertTitleFormat = _localizationGetter?.Invoke("Forms.LightControl.Dialogs.InsertTitle") ?? "Choose image file to insert at {0} (0x{0:X})";
+                dialog.Title = string.Format(insertTitleFormat, index);
                 dialog.CheckFileExists = true;
-                dialog.Filter = "Image files (*.tif;*.tiff;*.bmp;*.png)|*.tif;*.tiff;*.bmp;*.png";
+                dialog.Filter = _localizationGetter?.Invoke("Forms.LightControl.Dialogs.FileFilter") ?? "Image files (*.tif;*.tiff;*.bmp;*.png)|*.tif;*.tiff;*.bmp;*.png";
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
                     return;
@@ -342,7 +344,8 @@ namespace UoFiddler.Controls.UserControls
         {
             Light.Save(Options.OutputPath);
             Options.ChangedUltimaClass["Light"] = false;
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            string successMessage = _localizationGetter?.Invoke("Forms.LightControl.Messages.FilesSavedSuccessfully") ?? "Files saved successfully.";
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, successMessage, null, key => _localizationGetter?.Invoke(key));
         }
 
         private void OnClickExportBmp(object sender, EventArgs e)
@@ -356,7 +359,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.bmp");
             Light.GetLight(i).Save(fileName, ImageFormat.Bmp);
-            FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
+            string successMessage = _localizationGetter?.Invoke("Forms.LightControl.Messages.LightSavedSuccessfully") ?? "Light saved successfully.";
+            FileSavedDialog.Show(FindForm(), fileName, successMessage, null, key => _localizationGetter?.Invoke(key));
         }
 
         private void OnClickExportTiff(object sender, EventArgs e)
@@ -370,7 +374,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.tiff");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Tiff);
-            FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
+            string successMessage = _localizationGetter?.Invoke("Forms.LightControl.Messages.LightSavedSuccessfully") ?? "Light saved successfully.";
+            FileSavedDialog.Show(FindForm(), fileName, successMessage, null, key => _localizationGetter?.Invoke(key));
         }
 
         private void OnClickExportJpg(object sender, EventArgs e)
@@ -384,7 +389,8 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Light {Utils.FormatExportId(i)}.jpg");
             Ultima.Light.GetLight(i).Save(fileName, ImageFormat.Jpeg);
-            FileSavedDialog.Show(FindForm(), fileName, "Light saved successfully.");
+            string successMessage = _localizationGetter?.Invoke("Forms.LightControl.Messages.LightSavedSuccessfully") ?? "Light saved successfully.";
+            FileSavedDialog.Show(FindForm(), fileName, successMessage, null, key => _localizationGetter?.Invoke(key));
         }
 
         private void IgPreviewClicked(object sender, EventArgs e)
@@ -471,6 +477,35 @@ namespace UoFiddler.Controls.UserControls
             _lightTile = index;
 
             pictureBoxPreview.Image = GetImage();
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 菜单项汉化
+            exportImageToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.ExportImage") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.AsBmp") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.AsTiff") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.AsJpg") ?? "As Jpg";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.Remove") ?? "Remove";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.Replace") ?? "Replace";
+            insertAtToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.InsertAt") ?? "Insert At..";
+            saveToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.Save") ?? "Save";
+
+            // 预览菜单项汉化
+            iGPreviewToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.IGPreview") ?? "IG Preview";
+            backgroundLandTileToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.BackgroundLandTile") ?? "Background LandTile";
+            lightTileToolStripMenuItem.Text = _localizationGetter("Forms.LightControl.LightTile") ?? "LightTile";
+
+            // 列表列标题汉化
+            listViewLightsColumn.Text = _localizationGetter("Forms.LightControl.Light") ?? "Light";
         }
     }
 }
