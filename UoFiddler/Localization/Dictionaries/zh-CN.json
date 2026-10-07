@@ -1688,6 +1688,26 @@
         "facetSavedSuccess": "位面保存成功。"
       }
     },
+    "VerdataControl": {
+      "buttonReload": "重新加载",
+      "buttonLoadFile": "加载文件…",
+      "buttonPlay": "播放",
+      "buttonStop": "停止",
+      "labelType": "补丁类型:",
+      "labelCount": "补丁:",
+      "labelFile": "文件:",
+      "labelIndex": "索引:",
+      "labelLookup": "查询:",
+      "labelLength": "长度:",
+      "labelExtra": "额外:",
+      "labelActions": "动作:",
+      "labelDir": "方向:",
+      "tabPageMultiPreview": "预览",
+      "tabPageMultiComponents": "组件",
+      "changeBackgroundColor": "更改背景颜色",
+      "openVerdataTitle": "打开 verdata.mul",
+      "noPatchesFound": "未找到补丁"
+    },
     "FileSavedDialog": {
       "Title": "文件已保存",
       "SaveSuccess": "文件保存成功。",

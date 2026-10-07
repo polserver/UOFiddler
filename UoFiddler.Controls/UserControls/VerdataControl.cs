@@ -33,8 +33,43 @@ namespace UoFiddler.Controls.UserControls
         private int _currentAnimBody = -1;
         private bool _suppressAnimEvents;
         private Entry5D[] _customPatches;
+        private Func<string, string?>? _localizationGetter;
 
         private Entry5D[] ActivePatches => _customPatches ?? Verdata.Patches;
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // 工具栏按钮
+            buttonReload.Text = _localizationGetter("Forms.VerdataControl.buttonReload") ?? "Reload";
+            buttonLoadFile.Text = _localizationGetter("Forms.VerdataControl.buttonLoadFile") ?? "Load File…";
+
+            // 标签
+            labelType.Text = _localizationGetter("Forms.VerdataControl.labelType") ?? "Patch Type:";
+            labelCount.Text = _localizationGetter("Forms.VerdataControl.labelCount") ?? "Patches:";
+            labelActions.Text = _localizationGetter("Forms.VerdataControl.labelActions") ?? "Actions:";
+            labelDir.Text = _localizationGetter("Forms.VerdataControl.labelDir") ?? "Direction:";
+
+            // 标签页
+            if (tabControlMulti.TabCount > 0)
+            {
+                tabControlMulti.TabPages[0].Text = _localizationGetter("Forms.VerdataControl.tabPageMultiPreview") ?? "Preview";
+            }
+            if (tabControlMulti.TabCount > 1)
+            {
+                tabControlMulti.TabPages[1].Text = _localizationGetter("Forms.VerdataControl.tabPageMultiComponents") ?? "Components";
+            }
+
+            // 菜单项
+            changeBackgroundColorToolStripMenuItem.Text = _localizationGetter("Forms.VerdataControl.changeBackgroundColor") ?? "Change background color";
+        }
 
         // Action names by body type — mirrors AnimationListControl.GetActionNames
         // [0] Monster (body 0–199):   22 actions
@@ -145,7 +180,8 @@ namespace UoFiddler.Controls.UserControls
 
             if (patches.Length == 0)
             {
-                labelCount.Text = "No patches found";
+                string noPatchesText = _localizationGetter?.Invoke("Forms.VerdataControl.noPatchesFound") ?? "No patches found";
+                labelCount.Text = noPatchesText;
                 listBoxType.EndUpdate();
                 return;
             }
@@ -196,7 +232,8 @@ namespace UoFiddler.Controls.UserControls
                 listBoxPatches.Items.Add(new PatchItem(patch));
             }
 
-            labelCount.Text = $"Patches: {group.Patches.Count}";
+            string patchesLabel = _localizationGetter?.Invoke("Forms.VerdataControl.labelCount") ?? "Patches:";
+            labelCount.Text = $"{patchesLabel} {group.Patches.Count}";
             listBoxPatches.EndUpdate();
 
             ClearPreview();
@@ -346,7 +383,9 @@ namespace UoFiddler.Controls.UserControls
             }
 
             animatedPictureBox.Animate = !animatedPictureBox.Animate;
-            buttonPlayStop.Text = animatedPictureBox.Animate ? "Stop" : "Play";
+            string stopText = _localizationGetter?.Invoke("Forms.VerdataControl.buttonStop") ?? "Stop";
+            string playText = _localizationGetter?.Invoke("Forms.VerdataControl.buttonPlay") ?? "Play";
+            buttonPlayStop.Text = animatedPictureBox.Animate ? stopText : playText;
         }
 
         private void OnActionSelected(object sender, EventArgs e)
@@ -634,17 +673,24 @@ namespace UoFiddler.Controls.UserControls
 
         private void ClearPreview()
         {
-            labelFile.Text = "File:";
-            labelIndex.Text = "Index:";
-            labelLookup.Text = "Lookup:";
-            labelLength.Text = "Length:";
-            labelExtra.Text = "Extra:";
+            string fileLabel = _localizationGetter?.Invoke("Forms.VerdataControl.labelFile") ?? "File:";
+            string indexLabel = _localizationGetter?.Invoke("Forms.VerdataControl.labelIndex") ?? "Index:";
+            string lookupLabel = _localizationGetter?.Invoke("Forms.VerdataControl.labelLookup") ?? "Lookup:";
+            string lengthLabel = _localizationGetter?.Invoke("Forms.VerdataControl.labelLength") ?? "Length:";
+            string extraLabel = _localizationGetter?.Invoke("Forms.VerdataControl.labelExtra") ?? "Extra:";
+            string playText = _localizationGetter?.Invoke("Forms.VerdataControl.buttonPlay") ?? "Play";
+
+            labelFile.Text = fileLabel;
+            labelIndex.Text = indexLabel;
+            labelLookup.Text = lookupLabel;
+            labelLength.Text = lengthLabel;
+            labelExtra.Text = extraLabel;
             labelDecoded.Text = string.Empty;
             _currentAnimBody = -1;
             animatedPictureBox.Animate = false;
             animatedPictureBox.Frames = null;
             panelAnimation.Visible = false;
-            buttonPlayStop.Text = "Play";
+            buttonPlayStop.Text = playText;
             panelMulti.Visible = false;
             pictureBoxMulti.Image = null;
             richTextBoxMultiComponents.Text = string.Empty;
@@ -656,9 +702,10 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickLoadFile(object sender, EventArgs e)
         {
+            string dialogTitle = _localizationGetter?.Invoke("Forms.VerdataControl.openVerdataTitle") ?? "Open verdata.mul";
             using var dialog = new OpenFileDialog
             {
-                Title = "Open verdata.mul",
+                Title = dialogTitle,
                 Filter = "verdata.mul|verdata.mul|MUL files (*.mul)|*.mul|All files (*.*)|*.*",
                 FilterIndex = 1
             };
