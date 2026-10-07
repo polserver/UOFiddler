@@ -148,6 +148,9 @@ namespace UoFiddler.Controls.UserControls
             CoordsLabel.Text = $"{_coordsPrefix}0,0";
             ClientLocLabel.Text = $"{_clientLocPrefix}0,0";
             ZoomLabel.Text = $"{_zoomPrefix}1";
+
+            // 高度模式菜单项汉化（动态生成的菜单项）
+            ApplyAltitudeMenuLocalization();
         }
 
         private void AddAltitudeIntensityMenuItems()
@@ -183,7 +186,59 @@ namespace UoFiddler.Controls.UserControls
             altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(subtleItem);
             altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(normalItem);
             altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Add(strongItem);
-                    }
+        }
+
+        /// <summary>
+        /// Apply localization to altitude mode menu items
+        /// 处理动态菜单中的下拉项汉化（在 ApplyLocalization() 中调用）
+        /// </summary>
+        private void ApplyAltitudeMenuLocalization()
+        {
+            if (_localizationGetter == null || altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems.Count == 0)
+                return;
+
+            // 遍历菜单项并应用汉化
+            foreach (var item in altitudeModeNormalWithAltitudeToolStripMenuItem.DropDownItems)
+            {
+                if (!(item is ToolStripMenuItem menuItem))
+                    continue;
+
+                string originalText = menuItem.Text.Trim();
+
+                // 预设选项
+                if (originalText == "Sharp (High Contrast)")
+                {
+                    menuItem.Text = _localizationGetter("Forms.MapControl.AltitudePreset.Sharp") 
+                        ?? "Sharp (High Contrast)";
+                }
+                else if (originalText == "Normal (More Contrast)")
+                {
+                    menuItem.Text = _localizationGetter("Forms.MapControl.AltitudePreset.Normal") 
+                        ?? "Normal (More Contrast)";
+                }
+                else if (originalText == "Soft (Subtle)")
+                {
+                    menuItem.Text = _localizationGetter("Forms.MapControl.AltitudePreset.Soft") 
+                        ?? "Soft (Subtle)";
+                }
+                // 强度选项（保留项目符号）
+                else if (originalText.Contains("Subtle Intensity"))
+                {
+                    menuItem.Text = "    • " + (_localizationGetter("Forms.MapControl.AltitudeIntensity.Subtle") 
+                        ?? "Subtle Intensity");
+                }
+                else if (originalText.Contains("Normal Intensity"))
+                {
+                    menuItem.Text = "    • " + (_localizationGetter("Forms.MapControl.AltitudeIntensity.Normal") 
+                        ?? "Normal Intensity");
+                }
+                else if (originalText.Contains("Strong Intensity"))
+                {
+                    menuItem.Text = "    • " + (_localizationGetter("Forms.MapControl.AltitudeIntensity.Strong") 
+                        ?? "Strong Intensity");
+                }
+            }
+        }
 
         private static MapControl _refMarker;
         public static double Zoom = 1;
