@@ -69,6 +69,7 @@ namespace UoFiddler.Forms
             clilocControl.SetLocalization(key => LocalizationService.GetString(key));
             mapControl.SetLocalization(key => LocalizationService.GetString(key));
             lightControl.SetLocalization(key => LocalizationService.GetString(key));
+            speechControl.SetLocalization(key => LocalizationService.GetString(key));
             
             // 为 ItemsControl 设置汉化（通过遍历 TabPage 找到）
             foreach (TabPage tab in TabPanel.TabPages)

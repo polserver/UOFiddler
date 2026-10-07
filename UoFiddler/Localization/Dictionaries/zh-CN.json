@@ -1493,6 +1493,35 @@
         "LightSavedSuccessfully": "光照文件保存成功。",
         "FilesSavedSuccessfully": "文件保存成功。"
       }
+    },
+    "SpeechControl": {
+      "IDEntryPlaceholder": "查找 ID...",
+      "KeyWordEntryPlaceholder": "关键词...",
+      "IDButton": "查找",
+      "IDNextButton": "查找下一个",
+      "KeyWordButton": "查找",
+      "KeyWordNextButton": "查找下一个",
+      "SaveButton": "保存",
+      "MiscMenu": "杂项",
+      "ImportFromCSV": "从 CSV 导入",
+      "ExportToCSV": "导出到 CSV",
+      "AddButton": "添加条目",
+      "DeleteButton": "删除条目",
+      "AddEntryMenu": "添加条目",
+      "DeleteEntryMenu": "删除条目",
+      "ColumnId": "标识号",
+      "ColumnKeyWord": "关键词",
+      "Dialogs": {
+        "ImportTitle": "选择要导入的 CSV 文件",
+        "CSVFilter": "CSV 文件 (*.csv)|*.csv"
+      },
+      "Messages": {
+        "IDNotFound": "找不到 ID。",
+        "IDNotFoundTitle": "跳转",
+        "KeyWordNotFound": "找不到关键词。",
+        "KeyWordNotFoundTitle": "条目",
+        "SpeechSavedSuccessfully": "语音文件保存成功。"
+      }
     }
   },
   "Ultima": {
