@@ -101,6 +101,9 @@ namespace UoFiddler.Controls.Forms
 
             // 汉化 ComboBox 项（类型 2 - 动态列表项汉化）
             ApplyComboBoxLocalization();
+            
+            // 刷新预览消息，应用动态文本汉化（类型 8 - 运行时动态文本）
+            UpdatePreview();
         }
 
         private void ApplyComboBoxLocalization()
