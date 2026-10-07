@@ -1453,7 +1453,11 @@ namespace UoFiddler.Controls.UserControls
                 Map.RewriteMap(Options.OutputPath,
                     _currentMapId, CurrentMap.Width, CurrentMap.Height);
             }
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Files saved successfully.");
+            var getter = GetLocalizationGetter();
+            if (getter != null)
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "File saved successfully.", null, getter);
+            else
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, "File saved successfully.");
         }
 
         private void OnClickReportInvisStatics(object sender, EventArgs e)
