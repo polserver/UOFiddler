@@ -44,6 +44,9 @@ namespace UoFiddler.Controls.UserControls
         private int[] _displayedItems = Array.Empty<int>();
         private Color[] _displayedColors = Array.Empty<Color>();
 
+        // Localization support
+        private Func<string, string?>? _localizationGetter;
+
         private int GetSelectedObjType()
         {
             return listViewItems.SelectedIndices.Count > 0
@@ -179,6 +182,58 @@ namespace UoFiddler.Controls.UserControls
         public void SetHue(int index, int color)
         {
             _hues[index] = color;
+        }
+
+        /// <summary>
+        /// Sets the localization getter and applies localized text.
+        /// </summary>
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Applies localized text to UI elements.
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Buttons and Labels
+            FindNextItemButton.Text = _localizationGetter("Forms.DressControl.FindNextItemButton") ?? "Find next";
+            button1.Text = _localizationGetter("Forms.DressControl.ExportReportButton") ?? "Export Report";
+            LayerSort.Text = _localizationGetter("Forms.DressControl.LayerSort") ?? "Layer Sort";
+            buttonDress.Text = _localizationGetter("Forms.DressControl.DressItemButton") ?? "Dress Item";
+            checkBoxfemale.Text = _localizationGetter("Forms.DressControl.FemaleCheckBox") ?? "Female";
+            checkBoxHuman.Text = _localizationGetter("Forms.DressControl.HumanRadio") ?? "Human";
+            checkBoxElve.Text = _localizationGetter("Forms.DressControl.ElfRadio") ?? "Elf";
+            checkBoxGargoyle.Text = _localizationGetter("Forms.DressControl.GargoyleRadio") ?? "Gargoyle";
+            groupBox1.Text = _localizationGetter("Forms.DressControl.MountGroupBox") ?? "Mount";
+            groupBoxAnimate.Text = _localizationGetter("Forms.DressControl.FacingActionGroupBox") ?? "Facing/Action";
+            listViewItemsColumn.Text = _localizationGetter("Forms.DressControl.ItemColumnHeader") ?? "Item";
+
+            // Context Menu 1 (Wear List)
+            unDressToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.UnDress") ?? "UnDress";
+            huToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.Hue") ?? "Hue";
+            hueToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.HueEllipsis") ?? "Hue..";
+            unDressAllToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.UnDressAll") ?? "UnDress All";
+
+            // Context Menu 2 (Picture)
+            showAnimationToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.ShowAnimation") ?? "Show Animation";
+            animateToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.Animate") ?? "Animate";
+            extractImageToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.ExportImage") ?? "Export Image..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.AsBmp") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.AsTiff") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.AsJpg") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.AsPng") ?? "As Png";
+            extractAnimationToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.ExportAnimation") ?? "Export Animation..";
+            asBmpToolStripMenuItem1.Text = _localizationGetter("Forms.DressControl.AsBmp") ?? "As Bmp";
+            asTiffToolStripMenuItem1.Text = _localizationGetter("Forms.DressControl.AsTiff") ?? "As Tiff";
+            asJpgToolStripMenuItem1.Text = _localizationGetter("Forms.DressControl.AsJpg") ?? "As Jpg";
+            asPngToolStripMenuItem1.Text = _localizationGetter("Forms.DressControl.AsPng") ?? "As Png";
+            asAnimatedGifToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.AsAnimatedGifLooping") ?? "As animated Gif (looping)";
+            asAnimatedGifnoLoopingToolStripMenuItem.Text = _localizationGetter("Forms.DressControl.AsAnimatedGifNoLooping") ?? "As animated Gif (no looping)";
         }
 
         /// <summary>
@@ -798,14 +853,25 @@ namespace UoFiddler.Controls.UserControls
             pictureBoxDress.Invalidate();
 
             TextBox.Clear();
+            
+            // Get localized labels
+            string objTypeLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.ObjType") ?? "Objtype";
+            string layerLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.Layer") ?? "Layer";
+            string gumpIdLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.GumpID") ?? "GumpID";
+            string hueLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.Hue") ?? "Hue";
+            string animationLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.Animation") ?? "Animation";
+            string validGumpLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.ValidGump") ?? "ValidGump";
+            string validAnimLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.ValidAnim") ?? "ValidAnim";
+            string validLayerLabel = _localizationGetter?.Invoke("Forms.DressControl.InfoLabels.ValidLayer") ?? "ValidLayer";
+            
             TextBox.AppendText(
-                $"Objtype: 0x{objType:X4}\nLayer: 0x{TileData.ItemTable[objType].Quality:X2}\n");
-            TextBox.AppendText($"GumpID: 0x{gump:X4} (0x{gumpOrig:X4})\nHue: {hue + 1}\n");
-            TextBox.AppendText($"Animation: 0x{ani:X4} (0x{TileData.ItemTable[objType].Animation:X4})\n");
+                $"{objTypeLabel}: 0x{objType:X4}\n{layerLabel}: 0x{TileData.ItemTable[objType].Quality:X2}\n");
+            TextBox.AppendText($"{gumpIdLabel}: 0x{gump:X4} (0x{gumpOrig:X4})\n{hueLabel}: {hue + 1}\n");
+            TextBox.AppendText($"{animationLabel}: 0x{ani:X4} (0x{TileData.ItemTable[objType].Animation:X4})\n");
             TextBox.AppendText(
-                $"ValidGump: {Gumps.IsValidIndex(gump)}\nValidAnim: {Animations.IsActionDefined(ani, 0, 0)}\n");
+                $"{validGumpLabel}: {Gumps.IsValidIndex(gump)}\n{validAnimLabel}: {Animations.IsActionDefined(ani, 0, 0)}\n");
             TextBox.AppendText(
-                $"ValidLayer: {Array.IndexOf(_drawOrder, TileData.ItemTable[objType].Quality) != -1}");
+                $"{validLayerLabel}: {Array.IndexOf(_drawOrder, TileData.ItemTable[objType].Quality) != -1}");
         }
 
         private void OnClick_Animate(object sender, EventArgs e)
@@ -988,13 +1054,13 @@ namespace UoFiddler.Controls.UserControls
             {
                 groupBoxAnimate.Visible = false;
                 animateToolStripMenuItem.Visible = false;
-                showAnimationToolStripMenuItem.Text = "Show Animation";
+                showAnimationToolStripMenuItem.Text = _localizationGetter?.Invoke("Forms.DressControl.ShowAnimation") ?? "Show Animation";
             }
             else
             {
                 groupBoxAnimate.Visible = true;
                 animateToolStripMenuItem.Visible = true;
-                showAnimationToolStripMenuItem.Text = "Show Paperdoll";
+                showAnimationToolStripMenuItem.Text = _localizationGetter?.Invoke("Forms.DressControl.ShowPaperdoll") ?? "Show Paperdoll";
             }
 
             RefreshDrawing();
@@ -1346,7 +1412,9 @@ namespace UoFiddler.Controls.UserControls
                 string fileName = Path.Combine(outputPath, $"Dress PD.{fileExtension}");
                 DressPic.Image.Save(fileName, imageFormat);
 
-                FileSavedDialog.Show(FindForm(), fileName, "Paperdoll saved successfully.");
+                string message = _localizationGetter?.Invoke("Forms.DressControl.ExportMessages.PaperdollSaved") ?? "Paperdoll saved successfully.";
+                string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+                FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter?.Invoke(key));
             }
             else
             {
@@ -1360,8 +1428,9 @@ namespace UoFiddler.Controls.UserControls
                     DressPic.Image.Save(fileName, imageFormat);
                 }
 
-
-                FileSavedDialog.Show(FindForm(), fileName, "InGame saved successfully.");
+                string message = _localizationGetter?.Invoke("Forms.DressControl.ExportMessages.InGameSaved") ?? "InGame saved successfully.";
+                string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+                FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter?.Invoke(key));
             }
         }
 
@@ -1397,7 +1466,9 @@ namespace UoFiddler.Controls.UserControls
                 _animation[i].Save(Path.Combine(path, $"{fileName}-{i}.{fileExtension}"), imageFormat);
             }
 
-            FileSavedDialog.Show(FindForm(), path, "InGame Anim saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.DressControl.ExportMessages.AnimSaved") ?? "InGame Anim saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+            FileSavedDialog.Show(FindForm(), path, message, title, key => _localizationGetter?.Invoke(key));
         }
 
         private void ExportAnimatedGif(bool looping)
@@ -1432,7 +1503,9 @@ namespace UoFiddler.Controls.UserControls
                 stream.WriteByte(0);
             }
 
-            FileSavedDialog.Show(FindForm(), outputFile, "InGame Anim saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.DressControl.ExportMessages.AnimSaved") ?? "InGame Anim saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved";
+            FileSavedDialog.Show(FindForm(), outputFile, message, title, key => _localizationGetter?.Invoke(key));
         }
         private void OnClickExtractAnimGifLooping(object sender, EventArgs e)
         {
@@ -1706,7 +1779,10 @@ namespace UoFiddler.Controls.UserControls
                 tex.WriteLine("</table> </body> </html>");
             }
 
-            FileSavedDialog.Show(FindForm(), fileName, "Report saved successfully.");
+            FileSavedDialog.Show(FindForm(), fileName, 
+                _localizationGetter?.Invoke("Forms.DressControl.ExportMessages.ReportSaved") ?? "Report saved successfully.",
+                _localizationGetter?.Invoke("Forms.FileSavedDialog.Title") ?? "Saved",
+                key => _localizationGetter?.Invoke(key));
         }
 
         private void MountTextBoxOnKeyDown(object sender, KeyEventArgs e)

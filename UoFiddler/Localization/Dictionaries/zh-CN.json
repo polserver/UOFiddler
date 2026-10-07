@@ -394,17 +394,6 @@
       "chkMultiSelect": "多选",
       "applyHue1ToHue2": "应用色调到左侧"
     },
-    "HuesControl": {
-      "saveToolStripMenuItem": "保存",
-      "replaceToolStripMenuItem": "替换为..",
-      "exportToolStripMenuItem": "导出..",
-      "importToolStripMenuItem": "导入..",
-      "exportAllHueNamesListToolStripMenuItem": "导出所有色调名称列表",
-      "HueIndexToolStripLabel": "索引:",
-      "HueNameToolStripLabel": "名称:",
-      "SearchNameToolStripButton": "查找下一个",
-      "IndexOffsetButton": "显示游戏内数字"
-    },
     "HueEditForm": {
       "Title": "色调编辑",
       "ColorPickerButton": "颜色拾取器",
@@ -896,39 +885,6 @@
       "legendLabelDifferent": "不同值",
       "legendLabelIdentical": "相同"
     },
-    "LandTilesControl": {
-      "Title": "地形图块",
-      "MenuItems": {
-        "addLandTile": "添加地形图块",
-        "removeLandTile": "删除地形图块",
-        "copyLandTile": "复制地形图块",
-        "pasteLandTile": "粘贴地形图块",
-        "exportLandTileImage": "导出地形图块图像",
-        "importLandTileImage": "导入地形图块图像",
-        "selectAllLandTiles": "全选"
-      },
-      "Labels": {
-        "detailLabel": "详情",
-        "idLabel": "ID: ",
-        "nameLabel": "名称: ",
-        "graphicLabel": "纹理ID: ",
-        "flagsLabel": "标志: ",
-        "statusLabel": "就绪"
-      },
-      "Messages": {
-        "removeConfirmSingle": "确定要删除该地形图块吗？",
-        "removeConfirmMultiple": "确定要删除这些地形图块吗？",
-        "pasteConfirm": "是否确认粘贴？这将覆盖当前条目。",
-        "SaveConfirmation": "是否保存更改？",
-        "SaveTitle": "保存确认",
-        "LandtileSavedTo": "地形图块已保存至",
-        "Saved": "已保存"
-      },
-      "DetailTextBoxContextMenu": {
-        "Copy": "复制",
-        "SelectAll": "全选"
-      }
-    },
     "CompareTileDataControl": {
       "btnCopyLandSelected": "复制选定项",
       "btnCopyLandAllDiff": "复制所有差异",
@@ -1128,12 +1084,6 @@
         "ImportNoEntriesChanged": "没有条目被更改。"
       }
     },
-    "FileSavedDialog": {
-      "Title": "文件已保存",
-      "SaveSuccess": "文件已成功保存。",
-      "OpenFolder": "打开文件夹",
-      "OK": "确定"
-    },
     "TileDataSyncPreviewForm": {
       "Title": "从 TileData 同步 — 预览",
       "ColumnAction": "操作",
@@ -1146,58 +1096,6 @@
       "UncheckRemovesButton": "取消选中删除项",
       "ApplyButton": "应用",
       "CancelButton": "取消"
-    },
-    "MapControl": {
-      "ZoomPlus": "+缩放",
-      "ZoomMinus": "-缩放",
-      "GetMapInfo": "获取地图信息",
-      "InsertMarker": "插入标记",
-      "Goto": "跳转...",
-      "SendClientToPos": "发送客户端到位置",
-      "Felucca": "Felucca",
-      "Trammel": "Trammel",
-      "Ilshenar": "Ilshenar",
-      "Malas": "Malas",
-      "Tokuno": "Tokuno",
-      "TerMur": "TerMur",
-      "ExtractMap": "导出地图..",
-      "AsBmp": "为 BMP",
-      "AsTiff": "为 TIFF",
-      "AsJpg": "为 JPG",
-      "AsPng": "为 PNG",
-      "GotoMarker": "跳转",
-      "RemoveMarker": "移除",
-      "SwitchVisibility": "切换可见性",
-      "View": "视图",
-      "ShowStatics": "显示静态物体",
-      "ShowCenterCross": "显示中心十字",
-      "ShowMarkers": "显示标记",
-      "ShowClientCross": "显示客户端十字",
-      "AltitudeModeNormal": "正常",
-      "AltitudeModeNormalWithAltitude": "正常 + 高度",
-      "AltitudeModeAltitude": "高度地图",
-      "ClientInteract": "客户端交互",
-      "ShowClientLoc": "显示客户端位置",
-      "GotoClientLoc": "跳转到客户端位置",
-      "SendClientToCenter": "发送客户端到中心",
-      "PreloadMap": "预加载地图",
-      "Misc": "杂项",
-      "DefragStatics": "整理静态物体...",
-      "FreezeStatics": "冻结静态物体..(在内存中)",
-      "MeltStatics": "融化静态物体..(在内存中)",
-      "ClearStatics": "清除静态物体..(在内存中)",
-      "ReportStaticsUnderMap": "报告地图下方的静态物体（可能不可见）",
-      "ReportInvalidMapIDs": "报告无效地图 ID",
-      "RewriteMap": "重写地图",
-      "MapAndStaticsCopy": "地图和静态物体复制...",
-      "DiffToMapCopy": "差异到地图复制...",
-      "ReplaceTiles": "替换图块..",
-      "CoordsLabel": "坐标：",
-      "ClientLocLabel": "客户端位置：",
-      "ZoomLabel": "缩放：",
-      "CoordinatePrefix": "坐标：{0},{1}",
-      "ClientLocPrefix": "客户端位置：{0},{1}",
-      "ZoomPrefix": "缩放：{0}%"
     },
     "MapMarkerForm": {
       "Title": "添加地图标记",
@@ -1724,6 +1622,50 @@
       "SaveSuccess": "文件保存成功。",
       "OpenFolder": "打开文件夹",
       "OK": "确定"
+    },
+    "DressControl": {
+      "AsJpg": "JPG 格式",
+      "ExportMessages": {
+        "PaperdollSaved": "人物模型已成功保存。",
+        "InGameSaved": "游戏内图像已成功保存。",
+        "AnimSaved": "动画已成功保存。",
+        "ReportSaved": "报告已成功保存。"
+      },
+      "FacingActionGroupBox": "方向/动作",
+      "DressItemButton": "穿戴物品",
+      "UnDress": "卸下",
+      "AsTiff": "TIFF 格式",
+      "ShowAnimation": "显示动画",
+      "UnDressAll": "卸下全部",
+      "FindNextItemButton": "查找下一个",
+      "ItemColumnHeader": "物品",
+      "FemaleCheckBox": "女性",
+      "ElfRadio": "精灵",
+      "ExportAnimation": "导出动画...",
+      "ExportImage": "导出图像...",
+      "HumanRadio": "人类",
+      "ExportReportButton": "导出报告",
+      "AsAnimatedGifNoLooping": "动画 GIF（非循环）",
+      "Animate": "动画",
+      "AsBmp": "BMP 格式",
+      "MountGroupBox": "坐骑",
+      "HueEllipsis": "色调...",
+      "AsPng": "PNG 格式",
+      "LayerSort": "按层排序",
+      "AsAnimatedGifLooping": "动画 GIF（循环）",
+      "Hue": "色调",
+      "GargoyleRadio": "石像鬼",
+      "ShowPaperdoll": "显示纸娃娃",
+      "InfoLabels": {
+        "ValidGump": "有效Gump",
+        "ValidAnim": "有效动画",
+        "ValidLayer": "有效层",
+        "ObjType": "对象类型",
+        "Animation": "动画",
+        "Hue": "色调",
+        "Layer": "层",
+        "GumpID": "Gump ID"
+      }
     }
   },
   "Ultima": {
