@@ -98,6 +98,37 @@ namespace UoFiddler.Controls.Forms
             buttonCopy.Text = _localizationGetter("Forms.MapReplaceForm.ButtonCopy") ?? "Copy";
             buttonCancel.Text = _localizationGetter("Forms.MapReplaceForm.ButtonCancel") ?? "Cancel";
             buttonClose.Text = _localizationGetter("Forms.MapReplaceForm.ButtonClose") ?? "Close";
+
+            // 汉化 ComboBox 项（类型 2 - 动态列表项汉化）
+            ApplyComboBoxLocalization();
+        }
+
+        private void ApplyComboBoxLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            bool uop = _workingMap.Tiles.IsUOPFormat;
+
+            // 清空并重新添加翻译后的项
+            comboBoxMapFormat.Items.Clear();
+
+            // 第一项：与客户端相同格式
+            string sameFormatKey = uop ? "SameFormatUOP" : "SameFormatMUL";
+            string sameFormatText = _localizationGetter($"Forms.MapReplaceForm.ComboBoxFormats.{sameFormatKey}")
+                ?? (uop ? "the same format as this client (.uop)" : "the same format as this client (.mul)");
+            comboBoxMapFormat.Items.Add(sameFormatText);
+
+            // 第二项：map{0}.mul
+            string mapMulTemplate = _localizationGetter("Forms.MapReplaceForm.ComboBoxFormats.MapMUL") 
+                ?? "map{0}.mul";
+            comboBoxMapFormat.Items.Add(string.Format(mapMulTemplate, _workingMap.FileIndex));
+
+            // 第三项：map{0}LegacyMUL.uop
+            string legacyTemplate = _localizationGetter("Forms.MapReplaceForm.ComboBoxFormats.LegacyMUL")
+                ?? "map{0}LegacyMUL.uop";
+            comboBoxMapFormat.Items.Add(string.Format(legacyTemplate, _workingMap.FileIndex));
+
+            comboBoxMapFormat.SelectedIndex = ClientFileSaveFormats.DefaultIndex(Options.SaveFormat);
         }
 
         public MapReplaceForm(Map currentMap)

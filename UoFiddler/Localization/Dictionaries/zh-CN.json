@@ -1359,7 +1359,13 @@
       "CheckBoxPreviewOverlay": "在位置显示该片段",
       "ButtonCopy": "复制",
       "ButtonCancel": "取消",
-      "ButtonClose": "关闭"
+      "ButtonClose": "关闭",
+      "ComboBoxFormats": {
+        "SameFormatUOP": "与此客户端相同格式 (.uop)",
+        "SameFormatMUL": "与此客户端相同格式 (.mul)",
+        "MapMUL": "map{0}.mul",
+        "LegacyMUL": "map{0}LegacyMUL.uop"
+      }
     }
   }
 }
