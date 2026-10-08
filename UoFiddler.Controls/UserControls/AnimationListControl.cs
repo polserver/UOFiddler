@@ -987,6 +987,7 @@ namespace UoFiddler.Controls.UserControls
 
             _animEditFormEntry = new AnimationEditForm();
             //animEditEntry.TopMost = true; // TODO: should it be topMost?
+            _animEditFormEntry.SetLocalization(_localizationGetter);
             _animEditFormEntry.Show();
         }
 
@@ -999,7 +1000,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _animNewEntryForm = new AnimationListNewEntriesForm(IsAlreadyDefined, AddGraphic, GetActionNames)
+            _animNewEntryForm = new AnimationListNewEntriesForm(IsAlreadyDefined, AddGraphic, GetActionNames, _localizationGetter)
             {
                 TopMost = true
             };
@@ -1060,7 +1061,9 @@ namespace UoFiddler.Controls.UserControls
                 dom.Save(fileName);
             }
 
-            MessageBox.Show("XML saved", "Rewrite", MessageBoxButtons.OK, MessageBoxIcon.Information,
+            string message = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.RewriteMessage") ?? "XML saved";
+            string title = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.RewriteTitle") ?? "Rewrite";
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1);
         }
 
@@ -1149,8 +1152,12 @@ namespace UoFiddler.Controls.UserControls
                 newBitmap.Save(fileName, imageFormat);
             }
 
-            MessageBox.Show($"{what} saved to {fileName}", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1);
+            // 获取汉化标题和消息
+            string title = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportSingleFrameTitle") ?? "Saved";
+            string messageTemplate = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportSingleFrameMessage") ?? "{0} saved to {1}";
+            string message = string.Format(messageTemplate, what, fileName);
+            
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickExtractAnimBmp(object sender, EventArgs e)
@@ -1200,7 +1207,18 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"Files with following format {fileName}-X.{fileExtension} saved successfully.");
+            string message = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportFramesMessage") 
+                ?? $"Files with following format {fileName}-X.{fileExtension} saved successfully.";
+            
+            if (_localizationGetter != null)
+            {
+                string title = _localizationGetter("Forms.FileSavedDialog.Title") ?? "Saved";
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, message, title, _localizationGetter);
+            }
+            else
+            {
+                FileSavedDialog.Show(FindForm(), Options.OutputPath, message);
+            }
         }
 
         private void OnClickExportFrameBmp(object sender, EventArgs e)
@@ -1237,7 +1255,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
-            string fileName = Path.Combine(Options.OutputPath, $"{what} {Utils.FormatExportId(_currentSelect)}");
+            string fileName = Path.Combine(Options.OutputPath, $"{what} {Utils.FormatExportId(_currentSelect)}-{(int)listView1.SelectedItems[0].Tag}.{fileExtension}");
 
             Bitmap bit = MainPictureBox.Frames[(int)listView1.SelectedItems[0].Tag].Bitmap;
             using (Bitmap newBitmap = new Bitmap(bit.Width, bit.Height))
@@ -1249,8 +1267,15 @@ namespace UoFiddler.Controls.UserControls
                     newGraph.Save();
                 }
 
-                newBitmap.Save($"{fileName}-{(int)listView1.SelectedItems[0].Tag}.{fileExtension}", imageFormat);
+                newBitmap.Save(fileName, imageFormat);
             }
+
+            // 获取汉化标题和消息
+            string title = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportSingleFrameTitle") ?? "Saved";
+            string messageTemplate = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportSingleFrameMessage") ?? "{0} saved to {1}";
+            string message = string.Format(messageTemplate, what, fileName);
+            
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
         private void OnClickExportAllThumbnailsBmp(object sender, EventArgs e)
@@ -1339,7 +1364,20 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), thumbnailPath, "All thumbnails saved successfully.");
+            // Localize message and title
+            string message = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportAllThumbnailsMessage") 
+                ?? "All thumbnails saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportAllThumbnailsTitle") 
+                ?? "Saved";
+            
+            if (_localizationGetter != null)
+            {
+                FileSavedDialog.Show(FindForm(), thumbnailPath, message, title, _localizationGetter);
+            }
+            else
+            {
+                FileSavedDialog.Show(FindForm(), thumbnailPath, message);
+            }
         }
 
         private void ExportAnimatedGif(bool looping)
@@ -1352,7 +1390,20 @@ namespace UoFiddler.Controls.UserControls
             var outputFile = Path.Combine(Options.OutputPath, $"{(_displayType == 1 ? "Equipment" : "Mob")} {_currentSelect}.gif");
             MainPictureBox.Frames.ToGif(outputFile, looping: looping, delay: 150, showFrameBounds: MainPictureBox.ShowFrameBounds);
 
-            FileSavedDialog.Show(FindForm(), outputFile, "InGame Anim saved successfully.");
+            // Localize message and title
+            string message = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportAnimatedGifMessage") 
+                ?? "InGame Anim saved successfully.";
+            string title = _localizationGetter?.Invoke("Forms.AnimationListControl.Messages.ExportAnimatedGifTitle") 
+                ?? "Saved";
+            
+            if (_localizationGetter != null)
+            {
+                FileSavedDialog.Show(FindForm(), outputFile, message, title, _localizationGetter);
+            }
+            else
+            {
+                FileSavedDialog.Show(FindForm(), outputFile, message);
+            }
         }
 
         /// <summary>

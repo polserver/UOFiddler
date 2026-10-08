@@ -26,6 +26,7 @@ namespace UoFiddler.Controls.Forms
         private readonly string[][] _actionNames;
         private readonly Func<int, bool> _isAlreadyDefinedCallback;
         private readonly Action<int, int, string> _addGraphicAction;
+        private readonly Func<string, string> _localizationGetter;
 
         private int _currentSelect;
         private int _facing = 1;
@@ -35,8 +36,10 @@ namespace UoFiddler.Controls.Forms
         private AnimationFrame[] _animation;
 
         public AnimationListNewEntriesForm(Func<int, bool> isAlreadyDefinedCallback,
-            Action<int, int, string> addGraphicAction, string[][] actionNames)
+            Action<int, int, string> addGraphicAction, string[][] actionNames, Func<string, string> localizationGetter = null)
         {
+            _localizationGetter = localizationGetter;
+
             InitializeComponent();
 
             Icon = Options.GetFiddlerIcon();
@@ -190,6 +193,31 @@ namespace UoFiddler.Controls.Forms
             }
 
             tvAnimationList.EndUpdate();
+            
+            // 应用汉化
+            ApplyLocalization();
+        }
+        
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null)
+                return;
+            
+            Text = _localizationGetter("Forms.AnimationListControl.NewEntriesForm.Title") ?? "Animationlist New Entries";
+            toolStripButton1.Text = _localizationGetter("Forms.AnimationListControl.NewEntriesForm.AddButton") ?? "Add";
+            animateToolStripMenuItem.Text = _localizationGetter("Forms.AnimationListControl.NewEntriesForm.AnimateMenuitem") ?? "Animate";
+            
+            // 更新下拉框选项
+            string[] actionTypes = new[]
+            {
+                _localizationGetter("Forms.AnimationListControl.NewEntriesForm.ActionTypes.Monster") ?? "Monster",
+                _localizationGetter("Forms.AnimationListControl.NewEntriesForm.ActionTypes.SeaMonster") ?? "Sea Monster",
+                _localizationGetter("Forms.AnimationListControl.NewEntriesForm.ActionTypes.Animal") ?? "Animal",
+                _localizationGetter("Forms.AnimationListControl.NewEntriesForm.ActionTypes.HumanEquipment") ?? "Human/Equipment"
+            };
+            
+            ComboBoxActionType.Items.Clear();
+            ComboBoxActionType.Items.AddRange(actionTypes);
         }
 
         private void ProcessBodyConverterTable(IEnumerable<int> table)

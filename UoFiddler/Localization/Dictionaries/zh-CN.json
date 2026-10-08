@@ -824,6 +824,134 @@
         "Bow_Lesser_01": "鞠躬_较小_01",
         "Salute_Armed1h_01": "敬礼_持单手_01",
         "Ingest_Eat_01": "进食_进食_01"
+      },
+      "Messages": {
+        "ExportFramesMessage": "文件已成功保存",
+        "ExportFrameMessage": "{0} 已保存到 {1}",
+        "ExportFrameTitle": "已保存",
+        "ExportSingleFrameMessage": "{0} 已保存到 {1}",
+        "ExportSingleFrameTitle": "已保存",
+        "ExportAllThumbnailsMessage": "所有缩略图已成功保存",
+        "ExportAllThumbnailsTitle": "已保存",
+        "ExportAnimatedGifMessage": "动画已成功保存",
+        "ExportAnimatedGifTitle": "已保存",
+        "RewriteTitle": "重写",
+        "RewriteMessage": "XML 已保存"
+      },
+      "NewEntriesForm": {
+        "Title": "动画列表新条目",
+        "AddButton": "添加",
+        "AnimateMenuitem": "播放动画",
+        "ActionTypes": {
+          "Monster": "怪物",
+          "SeaMonster": "海怪",
+          "Animal": "动物",
+          "HumanEquipment": "人类/装备"
+        }
+      }
+    },
+    "AnimationEditForm": {
+      "Title": "动画编辑",
+      "Tabs": {
+        "Frame": "帧",
+        "PreviewEdit": "预览/编辑",
+        "Gallery": "画廊"
+      },
+      "TreeViewContextMenu": {
+        "Replace": "替换",
+        "Remove": "移除",
+        "ExtractImages": "导出图像..",
+        "ExtractAsFormats": {
+          "Bmp": "导出为 BMP",
+          "Tiff": "导出为 TIFF",
+          "Jpg": "导出为 JPG",
+          "Png": "导出为 PNG"
+        },
+        "Import": "导入..",
+        "ImportFromVD": "从 .vd 导入",
+        "Export": "导出..",
+        "ExportToVD": "导出到 .vd"
+      },
+      "FileSelector": "选择动画文件",
+      "PaletteContextMenu": {
+        "Export": "导出..",
+        "ExportBmp": "BMP",
+        "ExportTiff": "TIFF",
+        "ExportText": "文本",
+        "Import": "导入..",
+        "ImportFromTxt": "从 TXT 导入",
+        "ImportFromGif": "从 GIF 导入",
+        "ImportFromImage": "从图像导入"
+      },
+      "FramesListViewContextMenu": {
+        "AllDirectionsAdd": "添加全部方向",
+        "AllDirectionsAddWithCanvas": "添加全部方向（带画布）",
+        "AllDirectionsAddWithCanvasCv5GifStyle": "添加全部方向（带画布，CV5 GIF 风格）",
+        "AllDirectionsAddWithCanvasKRColorCorrector": "添加全部方向（带画布，KR 颜色校正）",
+        "Add": "添加",
+        "AddWithCanvas": "添加（带画布）",
+        "Replace": "替换",
+        "Remove": "移除"
+      },
+      "FramePage": {
+        "ColorBalance": "色彩平衡",
+        "BackgroundRed": "R",
+        "BackgroundGreen": "G",
+        "BackgroundBlue": "B",
+        "ApplyButton": "应用",
+        "PaletteConverter": "调色板转换器",
+        "SetPallete": "设置",
+        "ColorModes": {
+          "RGB": "RGB",
+          "RBG": "RBG",
+          "GRB": "GRB",
+          "GBR": "GBR",
+          "BGR": "BGR",
+          "BRG": "BRG"
+        },
+        "ExtraBackground": "额外背景",
+        "ColorRed": "R",
+        "ColorGreen": "G",
+        "ColorBlue": "B",
+        "LockColorControls": "锁定颜色控制"
+      },
+      "AnimationEditPage": {
+        "Zoom": "缩放:",
+        "DrawFullRectangle": "绘制完整矩形",
+        "DrawEmptyRectangle": "绘制空矩形",
+        "DrawReferencialPoint": "绘制参考点",
+        "SecondAnimOverlay": "第二动画叠加层",
+        "ShowOverlay": "显示叠加层",
+        "SecondAnimFileId": "ID",
+        "SecondAnimOpacity": "不透明度",
+        "OnTop": "在顶部",
+        "Box": "方框",
+        "WarningLabel": "警告",
+        "AnimationFrames": "动画帧",
+        "AnimationSpeed": "动画速度",
+        "PlayButton": "播放",
+        "LocationCenter": "位置中心",
+        "CenterX": "X",
+        "CenterY": "Y",
+        "SameCenter": "相同中心",
+        "ReferencialPoint": "参考点",
+        "RefX": "X",
+        "RefY": "Y",
+        "LockButton": "锁定",
+        "Coordinates": "坐标",
+        "SetCoordinates": "设置",
+        "SaveCoordinates": "保存"
+      },
+      "StatusBar": {
+        "MiscButton": "杂项",
+        "SaveMenuItem": "保存",
+        "ShowOnlyValidMenuItem": "仅显示有效",
+        "ExportAllToVD": "全部导出到 VD"
+      },
+      "Tooltips": {
+        "AllDirectionsAddToolTip": "依次选择 5 个 GIF，分别添加到不同方向",
+        "AllDirectionsAddWithCanvasToolTip": "依次选择 5 个 GIF，分别添加到不同方向（使用画布收缩算法）",
+        "AllDirectionsAddWithCanvasKRToolTip": "添加图像时移除所有绿色"
       }
     },
     "CompareGumpControl": {

@@ -1089,7 +1089,7 @@
             // SecondAnimColorComboBox
             // 
             SecondAnimColorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            SecondAnimColorComboBox.Items.AddRange(new object[] { "Original", "Green", "Magenta", "Cyan", "Red", "Custom…" });
+            SecondAnimColorComboBox.Items.AddRange(new object[] { "原始", "绿色", "洋红色", "青色", "红色", "自定义…" });
             SecondAnimColorComboBox.Location = new System.Drawing.Point(9, 98);
             SecondAnimColorComboBox.Name = "SecondAnimColorComboBox";
             SecondAnimColorComboBox.Size = new System.Drawing.Size(172, 23);
@@ -1211,7 +1211,7 @@
             // AnimationSpeedTrackBar
             // 
             AnimationSpeedTrackBar.AutoSize = false;
-            AnimationSpeedTrackBar.Location = new System.Drawing.Point(48, 22);
+            AnimationSpeedTrackBar.Location = new System.Drawing.Point(48, 35);
             AnimationSpeedTrackBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AnimationSpeedTrackBar.Maximum = 14;
             AnimationSpeedTrackBar.Name = "AnimationSpeedTrackBar";

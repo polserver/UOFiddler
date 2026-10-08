@@ -38,6 +38,8 @@ namespace UoFiddler.Controls.Forms
 
         private float _zoomFactor = 1.0f;
 
+        private Func<string, string?>? _localizationGetter;
+
         // Second-animation overlay state
         private bool _secondAnimActivated;
         private int _secondAnimId;
@@ -114,8 +116,109 @@ namespace UoFiddler.Controls.Forms
             _loaded = false;
         }
 
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Tab pages
+            FramePage.Text = _localizationGetter("Forms.AnimationEditForm.Tabs.Frame") ?? "Frame";
+            AnimationEditPage.Text = _localizationGetter("Forms.AnimationEditForm.Tabs.PreviewEdit") ?? "Preview/Edit";
+            GalleryPage.Text = _localizationGetter("Forms.AnimationEditForm.Tabs.Gallery") ?? "Gallery";
+
+            // TreeView context menu
+            addToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.Replace") ?? "Replace";
+            removeToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.Remove") ?? "Remove";
+            extractImagesToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ExtractImages") ?? "Extract Images..";
+            asBmpToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ExtractAsFormats.Bmp") ?? "As Bmp";
+            asTiffToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ExtractAsFormats.Tiff") ?? "As Tiff";
+            asJpgToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ExtractAsFormats.Jpg") ?? "As Jpg";
+            asPngToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ExtractAsFormats.Png") ?? "As Png";
+            importToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.Import") ?? "Import..";
+            fromvdToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ImportFromVD") ?? "From .vd";
+            exportToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.Export") ?? "Export..";
+            tovdToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.TreeViewContextMenu.ExportToVD") ?? "To .vd";
+
+            // Palette context menu
+            exportToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.Export") ?? "Export..";
+            bmpToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.ExportBmp") ?? "Bmp";
+            tiffToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.ExportTiff") ?? "Tiff";
+            textToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.ExportText") ?? "Text";
+            importToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.Import") ?? "Import..";
+            fromTxtToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.ImportFromTxt") ?? "From Txt";
+            fromGifToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.ImportFromGif") ?? "From Gif";
+            fromImageToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.PaletteContextMenu.ImportFromImage") ?? "From Image";
+
+            // Frames list view context menu
+            allDirectionsAddToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.AllDirectionsAdd") ?? "All directions add";
+            allDirectionsAddWithCanvasToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.AllDirectionsAddWithCanvas") ?? "All directions add with Canvas";
+            addDirectionsAddWithCanvasUniqueImageToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.AllDirectionsAddWithCanvasCv5GifStyle") ?? "All directions add with Canvas ( CV5 Gif Style )";
+            allDirectionsAddWithCanvasKRframeEditorColorCorrectorToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.AllDirectionsAddWithCanvasKRColorCorrector") ?? "All directions add with Canvas ( KRframeViewer Color Corrector)";
+            addToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.Add") ?? "Add";
+            addWithCanvasToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.AddWithCanvas") ?? "Add with Canvas";
+            replaceToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.Replace") ?? "Replace";
+            removeToolStripMenuItem1.Text = _localizationGetter("Forms.AnimationEditForm.FramesListViewContextMenu.Remove") ?? "Remove";
+
+            // Frame page controls
+            groupBox1.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ExtraBackground") ?? "Extra background";
+            BackgroundRedLabel.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.BackgroundRed") ?? "R";
+            BackgroundGreenLabel.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.BackgroundGreen") ?? "G";
+            BackgroundBlueLabel.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.BackgroundBlue") ?? "B";
+            groupBox2.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.PaletteConverter") ?? "Palette converter";
+            SetPalleteButton.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.SetPallete") ?? "Set";
+            rbRGB.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorModes.RGB") ?? "RGB";
+            rbRBG.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorModes.RBG") ?? "RBG";
+            rbGRB.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorModes.GRB") ?? "GRB";
+            rbGBR.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorModes.GBR") ?? "GBR";
+            rbBGR.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorModes.BGR") ?? "BGR";
+            rbBRG.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorModes.BRG") ?? "BRG";
+            groupBox3.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorBalance") ?? "Color balance";
+            ColorRedLabel.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorRed") ?? "R";
+            ColorGreenLabel.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorGreen") ?? "G";
+            ColorBlueLabel.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ColorBlue") ?? "B";
+            ApplyButton.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.ApplyButton") ?? "Apply";
+            LockColorControlsCheckBox.Text = _localizationGetter("Forms.AnimationEditForm.FramePage.LockColorControls") ?? "Lock";
+
+            // Animation Edit page controls
+            ZoomLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.Zoom") ?? "Zoom:";
+            DrawFullRectangleToolStripButton.ToolTipText = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.DrawFullRectangle") ?? "Draw Full Rectangle";
+            DrawEmptyRectangleToolStripButton.ToolTipText = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.DrawEmptyRectangle") ?? "Draw Empty Rectangle";
+            DrawReferencialPointToolStripButton.ToolTipText = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.DrawReferencialPoint") ?? "Draw Referencial Point";
+            SecondAnimGroupBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.SecondAnimOverlay") ?? "Second Animation Overlay";
+            SecondAnimCheckBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.ShowOverlay") ?? "Show overlay";
+            SecondAnimIdLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.SecondAnimFileId") ?? "ID";
+            SecondAnimOpacityLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.SecondAnimOpacity") ?? "Opacity";
+            SecondAnimInFrontCheckBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.OnTop") ?? "On top";
+            SecondAnimBoxCheckBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.Box") ?? "Box";
+            FramesGroupBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.AnimationFrames") ?? "Animation Frames";
+            SpeedGroupBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.AnimationSpeed") ?? "Animation Speed";
+            LocationCenterGroupBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.LocationCenter") ?? "Location Center";
+            CenterXLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.CenterX") ?? "X";
+            CenterYLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.CenterY") ?? "Y";
+            SameCenterButton.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.SameCenter") ?? "Same Center";
+            ReferencialPointGroupBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.ReferencialPoint") ?? "Referencial Point";
+            RefXLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.RefX") ?? "X";
+            RefYLabel.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.RefY") ?? "Y";
+            ToolStripLockButton.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.LockButton") ?? "Lock";
+            CoordinatesGroupBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.Coordinates") ?? "Coordinates";
+            SetCoordinatesButton.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.SetCoordinates") ?? "Set";
+            SaveCoordinatesCheckBox.Text = _localizationGetter("Forms.AnimationEditForm.AnimationEditPage.SaveCoordinates") ?? "Save";
+
+            // Status bar items
+            SaveToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.StatusBar.SaveMenuItem") ?? "Save";
+            ShowOnlyValidToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.StatusBar.ShowOnlyValidMenuItem") ?? "Show Only Valid";
+            ExportAllToVDToolStripMenuItem.Text = _localizationGetter("Forms.AnimationEditForm.StatusBar.ExportAllToVD") ?? "Export All Valid To VD";
+            MiscToolStripButton.Text = _localizationGetter("Forms.AnimationEditForm.StatusBar.MiscButton") ?? "Misc";
+        }
+
         // Indexed by MobType enum: Monster=0, Sea=1, Animal=2, Human=3, Equipment=4.
         // Equipment composites onto a humanoid and shares the human action set.
+
         private readonly string[][] _animNames =
         {
             new[] // Monster (22)
@@ -1313,7 +1416,7 @@ namespace UoFiddler.Controls.Forms
             AnimationEdit.Save(_fileType, Options.OutputPath);
             Options.ChangedUltimaClass["Animations"] = false;
 
-            MessageBox.Show($"AnimationFile saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
+            MessageBox.Show($"动画文件已保存到 {Options.OutputPath}", "已保存", MessageBoxButtons.OK,
                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
         }
 
@@ -2806,8 +2909,8 @@ namespace UoFiddler.Controls.Forms
                     AnimationEdit.ExportToVD(_fileType, index, fileName);
                 }
 
-                MessageBox.Show($"All Animations saved to {dialog.SelectedPath}",
-                    "Export", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                MessageBox.Show($"所有动画已保存到 {dialog.SelectedPath}",
+                    "全部导出到VD", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
