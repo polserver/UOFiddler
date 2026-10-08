@@ -78,6 +78,7 @@ namespace UoFiddler.Forms
             multimapControl.SetLocalization(key => LocalizationService.GetString(key));
             landTilesControl.SetLocalization(key => LocalizationService.GetString(key));
             verdataControl.SetLocalization(key => LocalizationService.GetString(key));
+            radarColControl.SetLocalization(key => LocalizationService.GetString(key));
             skillGroupControl.SetLocalization(key => LocalizationService.GetString(key));
             dressControl.SetLocalization(key => LocalizationService.GetString(key));
             

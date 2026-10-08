@@ -549,7 +549,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // numericUpDownShortCol
             // 
-            numericUpDownShortCol.Location = new System.Drawing.Point(50, 22);
+            numericUpDownShortCol.Location = new System.Drawing.Point(100, 22);
             numericUpDownShortCol.Margin = new System.Windows.Forms.Padding(4);
             numericUpDownShortCol.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
             numericUpDownShortCol.Name = "numericUpDownShortCol";

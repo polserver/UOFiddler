@@ -71,6 +71,9 @@ namespace UoFiddler.Controls.UserControls
         private ushort _currentColor;
         private static RadarColorControl _refMarker;
         private bool _updating;
+        
+        // 汉化字段
+        private Func<string, string?>? _localizationGetter;
         private readonly Dictionary<int, ushort> _originalItemColors = [];
         private readonly Dictionary<int, ushort> _originalLandColors = [];
         private Timer _debounceTimer;
@@ -488,6 +491,110 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        // 汉化支持
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // GroupBox 标题
+            groupColor.Text = _localizationGetter("Forms.RadarColorControl.groupColor") ?? "Color preview";
+            groupColorValue.Text = _localizationGetter("Forms.RadarColorControl.groupColorValue") ?? "Color value";
+            groupSingleTile.Text = _localizationGetter("Forms.RadarColorControl.groupSingleTile") ?? "Single tile";
+            groupBatch.Text = _localizationGetter("Forms.RadarColorControl.groupBatch") ?? "Batch";
+            groupFile.Text = _localizationGetter("Forms.RadarColorControl.groupFile") ?? "File";
+
+            // TabPage 标题
+            tabPage3.Text = _localizationGetter("Forms.RadarColorControl.tabPageItems") ?? "Items";
+            tabPage4.Text = _localizationGetter("Forms.RadarColorControl.tabPageLand") ?? "Land Tiles";
+
+            // 标签文本
+            labelHex.Text = _localizationGetter("Forms.RadarColorControl.labelHex") ?? "Hex:";
+            labelRgb.Text = _localizationGetter("Forms.RadarColorControl.labelRgb") ?? "RGB:";
+            label1.Text = _localizationGetter("Forms.RadarColorControl.labelItemsProgress") ?? "Items:";
+            label2.Text = _localizationGetter("Forms.RadarColorControl.labelLandProgress") ?? "Land:";
+
+            // 按钮文本
+            buttonMean.Text = _localizationGetter("Forms.RadarColorControl.buttonMean") ?? "Average Color";
+            buttonRevert.Text = _localizationGetter("Forms.RadarColorControl.buttonRevert") ?? "Revert";
+            buttonSaveColor.Text = _localizationGetter("Forms.RadarColorControl.buttonSaveColor") ?? "Save Color";
+            buttonSaveFile.Text = _localizationGetter("Forms.RadarColorControl.buttonSaveFile") ?? "Save File";
+            buttonRevertAll.Text = _localizationGetter("Forms.RadarColorControl.buttonRevertAll") ?? "Revert All";
+            buttonExport.Text = _localizationGetter("Forms.RadarColorControl.buttonExport") ?? "Export..";
+            buttonImport.Text = _localizationGetter("Forms.RadarColorControl.buttonImport") ?? "Import..";
+            buttonAverageAll.Text = _localizationGetter("Forms.RadarColorControl.buttonAverageAll") ?? "Auto-fill empty entries";
+            buttonSelectAllItems.Text = _localizationGetter("Forms.RadarColorControl.buttonSelectAllItems") ?? "Select All";
+            buttonSelectNoneItems.Text = _localizationGetter("Forms.RadarColorControl.buttonSelectNoneItems") ?? "Select None";
+            buttonSelectAllLand.Text = _localizationGetter("Forms.RadarColorControl.buttonSelectAllLand") ?? "Select All";
+            buttonSelectNoneLand.Text = _localizationGetter("Forms.RadarColorControl.buttonSelectNoneLand") ?? "Select None";
+            
+            // 注意：以下三个按钮的文本会在 Selection/Range 模式切换时动态改变
+            // 初始化时先设置为 Selection 模式，但会立即被 ApplyBatchButtonLocalization() 覆盖
+            buttonCurrentToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonCurrentToRangeAverage_selection") ?? "Current tile to selection average";
+            buttonRangeToIndividualAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToIndividualAverage_selection") ?? "Selected tiles to individual average";
+            buttonRangeToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToRangeAverage_selection") ?? "Selected tiles to selection average";
+
+            // 单选框文本
+            radioUseSelection.Text = _localizationGetter("Forms.RadarColorControl.radioUseSelection") ?? "Selection / Checked tiles";
+            radioUseRange.Text = _localizationGetter("Forms.RadarColorControl.radioUseRange") ?? "Range:";
+
+            // 动态按钮文本（初始化为 Selection 模式）
+            bool useSelection = radioUseSelection.Checked;
+            ApplyBatchButtonLocalization(useSelection);
+
+            // 菜单项文本
+            selectInItemsTabToolStripMenuItem.Text = _localizationGetter("Forms.RadarColorControl.selectInItemsTabToolStripMenuItem") ?? "Select in Items tab";
+            selectInTiledataTabToolStripMenuItem.Text = _localizationGetter("Forms.RadarColorControl.selectInTiledataTabToolStripMenuItem") ?? "Select in Tiledata tab";
+            setAsRangeFromToolStripMenuItem.Text = _localizationGetter("Forms.RadarColorControl.setAsRangeFromToolStripMenuItem") ?? "Set as Range \"from\"";
+            setAsRangeToToolStripMenuItem.Text = _localizationGetter("Forms.RadarColorControl.setAsRangeToToolStripMenuItem") ?? "Set as Range \"to\"";
+            toolStripMenuItem1.Text = _localizationGetter("Forms.RadarColorControl.toolStripMenuItem1") ?? "Select in Landtiles tab";
+            toolStripMenuItem2.Text = _localizationGetter("Forms.RadarColorControl.toolStripMenuItem2") ?? "Select in Tiledata tab";
+            setAsRangeFromToolStripMenuItem1.Text = _localizationGetter("Forms.RadarColorControl.setAsRangeFromToolStripMenuItem1") ?? "Set as Range \"from\"";
+            setAsRangeToToolStripMenuItem1.Text = _localizationGetter("Forms.RadarColorControl.setAsRangeToToolStripMenuItem1") ?? "Set as Range \"to\"";
+            changeBackgroundColorToolStripMenuItem.Text = _localizationGetter("Forms.RadarColorControl.changeBackgroundColorToolStripMenuItem") ?? "Change background color";
+
+            // 文本框占位符
+            textBoxMeanFrom.PlaceholderText = _localizationGetter("Forms.RadarColorControl.textBoxMeanFromPlaceholder") ?? "from";
+            textBoxMeanTo.PlaceholderText = _localizationGetter("Forms.RadarColorControl.textBoxMeanToPlaceholder") ?? "to";
+
+            // Filter 文本框占位符
+            textFilterItems.PlaceholderText = _localizationGetter("Forms.RadarColorControl.textFilterItems") ?? "Filter";
+            textFilterLand.PlaceholderText = _localizationGetter("Forms.RadarColorControl.textFilterLand") ?? "Filter";
+
+            // Tooltip
+            toolTip.SetToolTip(buttonStrategyHelp,
+                _localizationGetter("Forms.RadarColorControl.toolTipStrategyHelp") ?? "About these averaging strategies");
+        }
+
+        private void ApplyBatchButtonLocalization(bool useSelection)
+        {
+            if (_localizationGetter == null) return;
+
+            if (useSelection)
+            {
+                buttonCurrentToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonCurrentToRangeAverage_selection")
+                    ?? "Current tile to selection average";
+                buttonRangeToIndividualAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToIndividualAverage_selection")
+                    ?? "Selected tiles to individual average";
+                buttonRangeToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToRangeAverage_selection")
+                    ?? "Selected tiles to selection average";
+            }
+            else
+            {
+                buttonCurrentToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonCurrentToRangeAverage_range")
+                    ?? "Current tile to range average";
+                buttonRangeToIndividualAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToIndividualAverage_range")
+                    ?? "Range tiles to individual average";
+                buttonRangeToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToRangeAverage_range")
+                    ?? "Range tiles to range average";
+            }
+        }
+
         public void OnLoad(object sender, EventArgs e)
         {
             if (IsAncestorSiteInDesignMode || FormsDesignerHelper.IsInDesignMode())
@@ -539,7 +646,7 @@ namespace UoFiddler.Controls.UserControls
             comboMeanStrategy.BeginUpdate();
             foreach (RadarAveragingStrategy s in RadarColorAveraging.All)
             {
-                comboMeanStrategy.Items.Add(new MeanStrategyItem(s));
+                comboMeanStrategy.Items.Add(new MeanStrategyItem(s, _localizationGetter));
             }
             // Select the persisted/runtime strategy.
             for (int i = 0; i < comboMeanStrategy.Items.Count; ++i)
@@ -560,8 +667,29 @@ namespace UoFiddler.Controls.UserControls
         private sealed class MeanStrategyItem
         {
             public RadarAveragingStrategy Strategy { get; }
-            public MeanStrategyItem(RadarAveragingStrategy s) { Strategy = s; }
-            public override string ToString() => RadarColorAveraging.DisplayName(Strategy);
+            private readonly Func<string, string?>? _localizationGetter;
+
+            public MeanStrategyItem(RadarAveragingStrategy s, Func<string, string?>? localizationGetter = null) 
+            { 
+                Strategy = s; 
+                _localizationGetter = localizationGetter;
+            }
+            
+            public override string ToString()
+            {
+                // DEBUG: 打印枚举名称用于调试
+                string enumName = Strategy.ToString();
+                
+                if (_localizationGetter != null)
+                {
+                    string localizedName = _localizationGetter($"Forms.RadarColorControl.AveragingStrategies.{enumName}");
+                    if (!string.IsNullOrEmpty(localizedName))
+                    {
+                        return localizedName;
+                    }
+                }
+                return RadarColorAveraging.DisplayName(Strategy);
+            }
         }
 
         private RadarAveragingStrategy CurrentStrategy =>
@@ -577,7 +705,7 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickStrategyHelp(object sender, EventArgs e)
         {
-            using var dlg = new StrategyHelpForm();
+            using var dlg = new StrategyHelpForm(_localizationGetter);
             dlg.ShowDialog(FindForm());
         }
 
@@ -586,9 +714,13 @@ namespace UoFiddler.Controls.UserControls
         // to the code that defines the strategies.
         private sealed class StrategyHelpForm : Form
         {
-            public StrategyHelpForm()
+            private readonly Func<string, string?>? _localizationGetter;
+
+            public StrategyHelpForm(Func<string, string?>? localizationGetter = null)
             {
-                Text = "Radar color — averaging strategies";
+                _localizationGetter = localizationGetter;
+
+                Text = _localizationGetter?.Invoke("Forms.StrategyHelpForm.Title") ?? "Radar color — averaging strategies";
                 FormBorderStyle = FormBorderStyle.Sizable;
                 StartPosition = FormStartPosition.CenterParent;
                 MinimumSize = new Size(560, 400);
@@ -605,12 +737,12 @@ namespace UoFiddler.Controls.UserControls
                     WordWrap = true,
                     Dock = DockStyle.Fill,
                     Font = new Font(FontFamily.GenericSansSerif, 9f),
-                    Text = HelpText,
+                    Text = GetHelpText(),
                     TabStop = false,
                 };
                 var ok = new Button
                 {
-                    Text = "Close",
+                    Text = _localizationGetter?.Invoke("Forms.StrategyHelpForm.CloseButton") ?? "Close",
                     DialogResult = DialogResult.OK,
                     Dock = DockStyle.Bottom,
                     Height = 32,
@@ -638,6 +770,19 @@ namespace UoFiddler.Controls.UserControls
                         break;
                     }
                 }
+            }
+
+            private string GetHelpText()
+            {
+                if (_localizationGetter != null)
+                {
+                    var helpText = _localizationGetter("Forms.StrategyHelpForm.HelpText");
+                    if (!string.IsNullOrEmpty(helpText))
+                    {
+                        return helpText;
+                    }
+                }
+                return HelpText;
             }
 
             private const string HelpText =
@@ -860,7 +1005,10 @@ namespace UoFiddler.Controls.UserControls
 
             Options.ChangedUltimaClass["RadarCol"] = false;
 
-            FileSavedDialog.Show(FindForm(), fileName, "RadarCol saved successfully.");
+            string message = _localizationGetter("Forms.RadarColorControl.Messages.RadarColSaved")
+                ?? "RadarCol saved successfully.";
+            string title = _localizationGetter("Forms.FileSavedDialog.Title") ?? "Saved";
+            FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter(key));
         }
 
         private void SaveColor()
@@ -900,11 +1048,12 @@ namespace UoFiddler.Controls.UserControls
 
         private void OnClickRevertAll(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-                "Do you want to revert all changes to items and land tiles?",
-                "Revert All",
-                MessageBoxButtons.YesNo
-                );
+            string message = _localizationGetter("Forms.RadarColorControl.Messages.ConfirmRevertAll")
+                ?? "Do you want to revert all changes to items and land tiles?";
+            string title = _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.RevertAll")
+                ?? "Revert All";
+            
+            DialogResult result = MessageBox.Show(message, title, MessageBoxButtons.YesNo);
 
             if (result != DialogResult.Yes)
             {
@@ -1076,7 +1225,11 @@ namespace UoFiddler.Controls.UserControls
                 if (!Utils.ConvertStringToInt(textBoxMeanFrom.Text, out int from, 0, maxIndex) ||
                     !Utils.ConvertStringToInt(textBoxMeanTo.Text, out int to, 0, maxIndex))
                 {
-                    MessageBox.Show($"Invalid parameters. Expected [to, from] between [0, {maxIndex} (0x{maxIndex:X4})]", "Error", MessageBoxButtons.OK);
+                    string message = _localizationGetter("Forms.RadarColorControl.Messages.InvalidParametersRange")
+                        ?? $"Invalid parameters. Expected [to, from] between [0, {maxIndex} (0x{maxIndex:X4})]";
+                    string title = _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.Error")
+                        ?? "Error";
+                    MessageBox.Show(string.Format(message, maxIndex), title, MessageBoxButtons.OK);
                     return null;
                 }
 
@@ -1092,7 +1245,11 @@ namespace UoFiddler.Controls.UserControls
                 var sequence = isItem ? _selectedItems : _selectedLand;
                 if (sequence.Count == 0)
                 {
-                    MessageBox.Show("Invalid parameters. No tiles selected/checked.", "Error", MessageBoxButtons.OK);
+                    string message = _localizationGetter("Forms.RadarColorControl.Messages.InvalidParametersNoSelection")
+                        ?? "Invalid parameters. No tiles selected/checked.";
+                    string title = _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.Error")
+                        ?? "Error";
+                    MessageBox.Show(message, title, MessageBoxButtons.OK);
                     return null;
                 }
                 return sequence;
@@ -1228,7 +1385,11 @@ namespace UoFiddler.Controls.UserControls
             var found = ItemsControl.SearchGraphic(index);
             if (!found)
             {
-                MessageBox.Show("You need to load Items tab first.", "Information");
+                string message = _localizationGetter("Forms.RadarColorControl.Messages.ItemsTabNotLoaded")
+                    ?? "You need to load Items tab first.";
+                string title = _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.Information")
+                    ?? "Information";
+                MessageBox.Show(message, title);
             }
         }
 
@@ -1254,7 +1415,11 @@ namespace UoFiddler.Controls.UserControls
             var found = LandTilesControl.SearchGraphic(index);
             if (!found)
             {
-                MessageBox.Show("You need to load LandTiles tab first.", "Information");
+                string message = _localizationGetter("Forms.RadarColorControl.Messages.LandTilesTabNotLoaded")
+                    ?? "You need to load LandTiles tab first.";
+                string title = _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.Information")
+                    ?? "Information";
+                MessageBox.Show(message, title);
             }
         }
 
@@ -1309,16 +1474,20 @@ namespace UoFiddler.Controls.UserControls
             string fileName = Path.Combine(path, "RadarColor.csv");
             RadarCol.ExportToCSV(fileName);
 
-            FileSavedDialog.Show(FindForm(), fileName, "RadarColor saved successfully.");
+            string message = _localizationGetter("Forms.RadarColorControl.Messages.RadarColorSaved")
+                ?? "RadarColor saved successfully.";
+            string title = _localizationGetter("Forms.FileSavedDialog.Title") ?? "Saved";
+            FileSavedDialog.Show(FindForm(), fileName, message, title, key => _localizationGetter(key));
         }
 
         private void OnClickMeanColorAll(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-                "Do you want to calculate and set new radar color values for all items and land tiles entries where current color is black or missing?",
-                "Average All",
-                MessageBoxButtons.YesNo
-                );
+            string message = _localizationGetter("Forms.RadarColorControl.Messages.ConfirmAutoFillEmpty")
+                ?? "Do you want to calculate and set new radar color values for all items and land tiles entries where current color is black or missing?";
+            string title = _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.AverageAll")
+                ?? "Average All";
+            
+            DialogResult result = MessageBox.Show(message, title, MessageBoxButtons.YesNo);
 
             if (result != DialogResult.Yes)
             {
@@ -1384,7 +1553,10 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            MessageBox.Show("Done!", "Average All");
+            MessageBox.Show(
+                _localizationGetter("Forms.RadarColorControl.Messages.OperationDone") ?? "Done!",
+                _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.AverageAll") ?? "Average All"
+            );
 
             progressBar1.Value = 0;
             progressBar2.Value = 0;
@@ -1515,18 +1687,44 @@ namespace UoFiddler.Controls.UserControls
         {
             textBoxMeanFrom.Enabled = false;
             textBoxMeanTo.Enabled = false;
-            buttonRangeToRangeAverage.Text = "Selected tiles to selection average";
-            buttonRangeToIndividualAverage.Text = "Selected tiles to individual average";
-            buttonCurrentToRangeAverage.Text = "Current tile to selection average";
+            
+            if (_localizationGetter != null)
+            {
+                buttonRangeToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToRangeAverage_selection")
+                    ?? "Selected tiles to selection average";
+                buttonRangeToIndividualAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToIndividualAverage_selection")
+                    ?? "Selected tiles to individual average";
+                buttonCurrentToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonCurrentToRangeAverage_selection")
+                    ?? "Current tile to selection average";
+            }
+            else
+            {
+                buttonRangeToRangeAverage.Text = "Selected tiles to selection average";
+                buttonRangeToIndividualAverage.Text = "Selected tiles to individual average";
+                buttonCurrentToRangeAverage.Text = "Current tile to selection average";
+            }
         }
 
         private void OnCheckedChangeUseRange(object sender, EventArgs e)
         {
             textBoxMeanFrom.Enabled = true;
             textBoxMeanTo.Enabled = true;
-            buttonRangeToRangeAverage.Text = "Range tiles to range average";
-            buttonRangeToIndividualAverage.Text = "Range tiles to individual average";
-            buttonCurrentToRangeAverage.Text = "Current tile to range average";
+            
+            if (_localizationGetter != null)
+            {
+                buttonRangeToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToRangeAverage_range")
+                    ?? "Range tiles to range average";
+                buttonRangeToIndividualAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonRangeToIndividualAverage_range")
+                    ?? "Range tiles to individual average";
+                buttonCurrentToRangeAverage.Text = _localizationGetter("Forms.RadarColorControl.DynamicButtonTexts.buttonCurrentToRangeAverage_range")
+                    ?? "Current tile to range average";
+            }
+            else
+            {
+                buttonRangeToRangeAverage.Text = "Range tiles to range average";
+                buttonRangeToIndividualAverage.Text = "Range tiles to individual average";
+                buttonCurrentToRangeAverage.Text = "Current tile to range average";
+            }
         }
 
         private void OnClickSelectAllLand(object sender, EventArgs e)
@@ -1659,7 +1857,8 @@ namespace UoFiddler.Controls.UserControls
                              $"  item : {item.Exact[bestIdx]}/{item.Counted[bestIdx]} " +
                              $"({(item.Counted[bestIdx] == 0 ? 0 : 100.0 * item.Exact[bestIdx] / item.Counted[bestIdx]):F2}%)\n\n" +
                              $"Full report: {outPath}";
-            MessageBox.Show(FindForm(), summary, "Algorithm benchmark");
+            MessageBox.Show(FindForm(), summary, 
+                _localizationGetter("Forms.RadarColorControl.MessageBoxTitles.AlgorithmBenchmark") ?? "Algorithm benchmark");
         }
 
         private sealed class BenchStats
