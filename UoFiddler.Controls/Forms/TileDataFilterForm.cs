@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -20,6 +21,7 @@ namespace UoFiddler.Controls.Forms
     {
         private readonly Action<ItemData> _applyItemFilterAction;
         private readonly Action<LandData> _applyLandFilterAction;
+        private Func<string, string?>? _localizationGetter;
 
         public TileDataFilterForm(Action<ItemData> applyItemFilterAction, Action<LandData> applyLandFilterAction)
         {
@@ -32,6 +34,125 @@ namespace UoFiddler.Controls.Forms
             InitFlagCheckBoxes();
         }
 
+        /// <summary>
+        /// Sets the localization getter and applies localized text.
+        /// </summary>
+        public void SetLocalization(Func<string, string?>? getLocalized)
+        {
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        /// <summary>
+        /// Applies localized text to UI elements.
+        /// </summary>
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            // Localize title
+            var title = _localizationGetter("Forms.TileDataFilterForm.Title");
+            if (title != null)
+                Text = title;
+
+            // Localize tab pages - look for TabPage controls named tabPageItems and tabPageLand
+            foreach (TabPage page in tabcontrol.TabPages)
+            {
+                if (page.Name == "tabPageItems")
+                {
+                    var itemsTab = _localizationGetter("Forms.TileDataFilterForm.ItemsTab");
+                    if (itemsTab != null)
+                        page.Text = itemsTab;
+                }
+                else if (page.Name == "tabPageLand")
+                {
+                    var landTab = _localizationGetter("Forms.TileDataFilterForm.LandTab");
+                    if (landTab != null)
+                        page.Text = landTab;
+                }
+            }
+
+            // Map textbox names to their corresponding label names and JSON keys
+            // The label names are defined in Designer.cs (e.g., label1, label2, etc.)
+            var textboxToLabelName = new Dictionary<string, (string labelName, string jsonKey)>
+            {
+                { "textBoxName", ("label1", "Forms.TileDataFilterForm.Labels.Name") },
+                { "textBoxAnim", ("label2", "Forms.TileDataFilterForm.Labels.Anim") },
+                { "textBoxWeight", ("label3", "Forms.TileDataFilterForm.Labels.Weight") },
+                { "textBoxQuality", ("label4", "Forms.TileDataFilterForm.Labels.Quality") },
+                { "textBoxQuantity", ("label5", "Forms.TileDataFilterForm.Labels.Quantity") },
+                { "textBoxHue", ("label8", "Forms.TileDataFilterForm.Labels.Hue") },
+                { "textBoxStackOff", ("label7", "Forms.TileDataFilterForm.Labels.StackOff") },
+                { "textBoxValue", ("label6", "Forms.TileDataFilterForm.Labels.Value") },
+                { "textBoxHeigth", ("label11", "Forms.TileDataFilterForm.Labels.Height") },  // label11.Text = "Heigth" (typo in Designer)
+                { "textBoxUnk1", ("label10", "Forms.TileDataFilterForm.Labels.MiscData") },
+                { "textBoxUnk2", ("label9", "Forms.TileDataFilterForm.Labels.Unk2") },
+                { "textBoxUnk3", ("label12", "Forms.TileDataFilterForm.Labels.Unk3") },
+                { "textBoxNameLand", ("label23", "Forms.TileDataFilterForm.Labels.NameLand") },
+                { "textBoxTexID", ("label24", "Forms.TileDataFilterForm.Labels.TexID") }
+            };
+
+            // Create a map of label names to controls for quick lookup
+            var labelMap = new Dictionary<string, Control>();
+            foreach (Control control in GetAllControls(this))
+            {
+                if (control is Label && !string.IsNullOrEmpty(control.Name))
+                {
+                    labelMap[control.Name] = control;
+                }
+            }
+
+            // Now apply localizations to each label based on its mapped textbox
+            foreach (var textbox in textboxToLabelName)
+            {
+                if (labelMap.TryGetValue(textbox.Value.labelName, out Control? labelControl))
+                {
+                    if (labelControl is Label label)
+                    {
+                        var localized = _localizationGetter(textbox.Value.jsonKey);
+                        if (localized != null)
+                            label.Text = localized;
+                    }
+                }
+            }
+
+            // Localize buttons
+            foreach (Control control in GetAllControls(this))
+            {
+                if (control is Button button)
+                {
+                    if (button.Text == "Apply Filter" || button.Text == "应用过滤器")
+                    {
+                        var applyButton = _localizationGetter("Forms.TileDataFilterForm.ApplyButton");
+                        if (applyButton != null)
+                            button.Text = applyButton;
+                    }
+                    else if (button.Text == "Reset Filter" || button.Text == "重置过滤器")
+                    {
+                        var resetButton = _localizationGetter("Forms.TileDataFilterForm.ResetButton");
+                        if (resetButton != null)
+                            button.Text = resetButton;
+                    }
+                }
+            }
+
+            // Re-initialize flag checkboxes with localized names
+            InitFlagCheckBoxes();
+        }
+
+        /// <summary>
+        /// Helper method to recursively get all controls.
+        /// </summary>
+        private IEnumerable<Control> GetAllControls(Control container)
+        {
+            foreach (Control control in container.Controls)
+            {
+                yield return control;
+                foreach (Control child in GetAllControls(control))
+                    yield return child;
+            }
+        }
+
         private void InitFlagCheckBoxes()
         {
             string[] enumNames = Enum.GetNames(typeof(TileFlag));
@@ -42,7 +163,10 @@ namespace UoFiddler.Controls.Forms
             checkedListBox1.Items.Clear();
             for (int i = 1; i < maxLength; ++i)
             {
-                checkedListBox1.Items.Add(enumNames[i], false);
+                string flagName = enumNames[i];
+                // 获取汉化文本，如果没有就用原始英文
+                string displayName = _localizationGetter?.Invoke($"Forms.TileDataControl.TileFlags.{flagName}") ?? flagName;
+                checkedListBox1.Items.Add(displayName, false);
             }
             checkedListBox1.EndUpdate();
 
@@ -51,7 +175,10 @@ namespace UoFiddler.Controls.Forms
             checkedListBox2.Items.Clear();
             for (int i = 1; i < maxLength; ++i)
             {
-                checkedListBox2.Items.Add(enumNames[i], false);
+                string flagName = enumNames[i];
+                // 获取汉化文本，如果没有就用原始英文
+                string displayName = _localizationGetter?.Invoke($"Forms.TileDataControl.TileFlags.{flagName}") ?? flagName;
+                checkedListBox2.Items.Add(displayName, false);
             }
             checkedListBox2.EndUpdate();
         }

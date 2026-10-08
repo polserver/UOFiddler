@@ -1757,6 +1757,571 @@
       "setAsRangeFromToolStripMenuItem1": "设置为范围\"起点\"",
       "setAsRangeToToolStripMenuItem1": "设置为范围\"终点\""
     },
+    "TileDataControl": {
+      "TabPages": {
+        "tabPageItems": "物品",
+        "tabPageLand": "地形磁贴"
+      },
+      "Labels": {
+        "nameLabel": "名称",
+        "animLabel": "动画",
+        "weightLabel": "重量",
+        "layerLabel": "层级",
+        "quantityLabel": "数量",
+        "valueLabel": "价值",
+        "stackOffLabel": "堆叠偏移",
+        "hueLabel": "色调",
+        "unknown2Label": "未知值2",
+        "miscDataLabel": "杂项数据",
+        "heightLabel": "高度",
+        "unknown3Label": "未知值3",
+        "landNameLabel": "名称",
+        "landTexIdLabel": "纹理 ID"
+      },
+      "Toolbar": {
+        "toolStripLabel1": "索引：",
+        "toolStripLabel2": "名称：",
+        "searchByNameToolStripButton": "查找下一个",
+        "toolStripButton1": "导出为 CSV",
+        "toolStripButton5": "从 CSV 导入",
+        "toolStripButton4": "保存更改",
+        "toolStripButton3": "保存 TileData",
+        "helpToolStripButton": "帮助"
+      },
+      "MiscMenu": {
+        "memorySaveWarning": "内存保存警告",
+        "saveDirectlyOnChanges": "更改时直接保存",
+        "setFilter": "设置过滤器",
+        "undoBulkApply": "撤销上次批量应用",
+        "setTextureOnDoubleClick": "双击时设置 TexID",
+        "setTextures": "设置纹理"
+      },
+      "ItemsContextMenu": {
+        "copyTileData": "复制图块数据",
+        "pasteSpecial": "粘贴特殊...",
+        "selectInItems": "在物品标签中选择",
+        "selectInRadarColor": "在雷达颜色标签中选择",
+        "selectInGumpsMale": "在 Gumps 中选择 (男)",
+        "selectInGumpsFemale": "在 Gumps 中选择 (女)",
+        "selectInAnimData": "在动画数据标签中选择"
+      },
+      "LandContextMenu": {
+        "copyTileData": "复制图块数据",
+        "pasteSpecial": "粘贴特殊...",
+        "selectInLandTiles": "在地形标签中选择",
+        "selectInRadarColor": "在雷达颜色标签中选择"
+      },
+      "PictureBoxMenu": {
+        "changeBackgroundColor": "改变背景颜色"
+      },
+      "FileDialogs": {
+        "importCsvTitle": "选择要导入的 csv 文件",
+        "importCsvFilter": "csv 文件 (*.csv)|*.csv",
+        "tileDataSavedMessage": "TileData 已成功保存。",
+        "itemDataSavedMessage": "ItemData 已成功保存。",
+        "landDataSavedMessage": "LandData 已成功保存。"
+      },
+      "MessageBoxes": {
+        "SetTextures": {
+          "Title": "设置纹理",
+          "ConfirmMessage": "您想为所有地形设置 TexID 吗？\n\n此操作假设地形图块索引值等于纹理索引值。\n\n它只考虑 TexID 为 0 的地形磁贴。\n\n继续？",
+          "SuccessMessage": "已更新 {0} 个地形。",
+          "NothingUpdated": "未更新任何内容。"
+        },
+        "BulkApply": {
+          "Title": "应用到选择",
+          "ConfirmMessage": "应用 {0} 到 {1} 项？",
+          "EmptyFieldsMessage": "没有要应用的内容 - 所有框都为空，所有标志保持不变。"
+        },
+        "BulkApplyResult": {
+          "Title": "已保存",
+          "Message": "已在内存中应用 {0} 到 {1} 项。\r\n\r\n单击'保存 TileData'写入文件。"
+        },
+        "MemorySaveWarning": {
+          "Title": "信息",
+          "ItemMessage": "编辑 0x{0:X4} ({0}) 已保存到内存。单击'保存 TileData'写入文件。",
+          "LandMessage": "编辑 0x{0:X4} ({0}) 已保存到内存。单击'保存 TileData'写入文件。"
+        },
+        "UndoBulkApply": {
+          "Title": "撤销批量应用",
+          "ConfirmMessage": "将 {0} 项恢复到应用'{1}'之前的值？"
+        },
+        "TabNotLoaded": {
+          "ItemsTabMessage": "您需要先加载物品标签页。",
+          "LandTabMessage": "您需要先加载地形标签页。"
+        },
+        "SelectionError": {
+          "NoItemSelected": "您需要先选择一个物品。",
+          "NoLandSelected": "您需要先选择一个地形。",
+          "NothingToPaste": "您需要先复制某些内容才能粘贴。"
+        },
+        "Messages": {
+          "emptyApply": "没有要应用的内容 - 所有框都为空，所有标志保持不变。",
+          "applyToSelection": "应用到选择",
+          "saved": "已保存",
+          "applyToMany": "应用 {0} 到 {1} 项？",
+          "appliedToMany": "已在内存中应用 {0} 到 {1} 项。\r\n\r\n单击'保存 TileData'写入文件。",
+          "undoConfirm": "将 {0} 项恢复到应用'{1}'之前的值？",
+          "undoBulkApply": "撤销批量应用",
+          "needLoadItems": "您需要先加载物品标签页。",
+          "needLoadLand": "您需要先加载地形标签页。",
+          "setTextures": "设置纹理",
+          "texturesUpdated": "已更新 {0} 个地形。",
+          "texturesNothing": "未更新任何内容。",
+          "information": "信息",
+          "setTexturesConfirm": "您想为所有地形设置 TexID 吗？\n\n此操作假设地形图块索引值等于纹理索引值。\n\n它只考虑 TexID 为 0 的地形磁贴。\n\n继续？"
+        }
+      },
+      "TileFlags": {
+        "Background": "背景",
+        "Weapon": "武器",
+        "Transparent": "透明",
+        "Translucent": "半透明",
+        "Wall": "墙壁",
+        "Damaging": "伤害性",
+        "Impassable": "不可通行",
+        "Wet": "潮湿",
+        "Unknown1": "未知值1",
+        "Surface": "表面",
+        "Bridge": "桥梁",
+        "Generic": "通用",
+        "Window": "窗户",
+        "NoShoot": "不可射击",
+        "ArticleA": "冠词A",
+        "ArticleAn": "冠词An",
+        "ArticleThe": "冠词The",
+        "Foliage": "树叶",
+        "PartialHue": "部分色调",
+        "NoHouse": "不可建造房屋",
+        "Map": "地图",
+        "Container": "容器",
+        "Wearable": "可穿戴",
+        "LightSource": "光源",
+        "Animation": "动画",
+        "HoverOver": "悬停",
+        "NoDiagonal": "不可对角线",
+        "Armor": "护甲",
+        "Roof": "屋顶",
+        "Door": "门",
+        "StairBack": "后楼梯",
+        "StairRight": "右楼梯",
+        "AlphaBlend": "透明混合",
+        "UseNewArt": "使用新美术",
+        "ArtUsed": "已使用美术",
+        "Unused8": "未使用8",
+        "NoShadow": "无阴影",
+        "PixelBleed": "像素渗漏",
+        "PlayAnimOnce": "播放一次动画",
+        "MultiMovable": "多部件可移动",
+        "Unused10": "未使用10",
+        "Unused11": "未使用11",
+        "Unused12": "未使用12",
+        "Unused13": "未使用13",
+        "Unused14": "未使用14",
+        "Unused15": "未使用15",
+        "Unused16": "未使用16",
+        "Unused17": "未使用17",
+        "Unused18": "未使用18",
+        "Unused19": "未使用19",
+        "Unused20": "未使用20",
+        "Unused21": "未使用21",
+        "Unused22": "未使用22",
+        "Unused23": "未使用23",
+        "Unused24": "未使用24",
+        "Unused25": "未使用25",
+        "Unused26": "未使用26",
+        "Unused27": "未使用27",
+        "Unused28": "未使用28",
+        "Unused29": "未使用29",
+        "Unused30": "未使用30",
+        "Unused31": "未使用31",
+        "Unused32": "未使用32"
+      },
+      "Tooltips": {
+        "name": "此字段用于物品名称，最多可为20个字符。",
+        "anim": "此字段用于与物品关联的动画ID。",
+        "weight": "此字段用于物品的重量。",
+        "layer": "此字段用于物品的层级：\n\n1 单手武器\n2 双手武器、盾牌或杂项\n3 鞋类\n4 裤子\n5 衬衣\n6 头盔/衣领\n7 手套\n8 戒指\n9 护身符\n10 项链\n11 头发\n12 腰部（半围裙）\n13 躯干（内侧）（胸甲）\n14 手镯\n15 未使用（但背包使用第21层）\n16 面部毛发\n17 躯干（中间）（超衣、束腰外衣、满围裙、腰带）\n18 耳环\n19 手臂\n20 背部（斗篷）\n21 背包\n22 躯干（外侧）（长袍）\n23 腿部（外侧）（裙子/短裙）\n24 腿部（内侧）（腿甲）\n25 坐骑（马、鸵鸟等）\n26 NPC购买补货容器\n27 NPC购买无补货容器\n28 NPC销售容器",
+        "quantity": "此字段用于物品的数量。",
+        "value": "此字段用于物品的价值。",
+        "stackOff": "堆叠偏移是指多个物品堆叠时以像素为单位的堆叠偏移。\n更高的堆叠偏移值意味着物品在堆栈中出现的距离会更远。",
+        "hue": "此字段用于物品的色调（颜色）。",
+        "unknown2": "此字段用于第二个未知值。",
+        "miscData": "旧UO演示武器模板定义",
+        "height": "此字段用于物品的高度。",
+        "unknown3": "此字段用于第三个未知值。",
+        "landName": "此字段用于地形图块名称，最多可为20个字符。",
+        "landTexId": "此字段用于与地形图块关联的纹理ID。"
+      }
+    },
+    "TileDataFilterForm": {
+      "Title": "设置过滤器",
+      "ItemsTab": "物品过滤器",
+      "LandTab": "地形过滤器",
+      "ApplyButton": "应用过滤器",
+      "ResetButton": "重置过滤器",
+      "Labels": {
+        "Name": "名称",
+        "Anim": "动画",
+        "Weight": "重量",
+        "Quality": "品质",
+        "Quantity": "数量",
+        "Hue": "色调",
+        "StackOff": "堆叠偏移",
+        "Value": "价值",
+        "Height": "高度",
+        "MiscData": "杂项数据",
+        "Unk2": "未知值2",
+        "Unk3": "未知值3",
+        "NameLand": "名称",
+        "TexID": "纹理ID"
+      }
+    },
+    "TileDataHelpForm": {
+      "Title": "TileData 帮助",
+      "FieldColumnHeader": "字段",
+      "CloseButton": "关闭",
+      "EditingManyEntries": {
+        "Title": "编辑多个条目",
+        "MultiSelect": {
+          "Title": "多选",
+          "Description": "Ctrl+点击和Shift+点击可以一次选择多个条目。右侧窗格保持显示您最后选择的条目，'保存更改'会写入到每个选定的条目。"
+        },
+        "EmptyBoxes": {
+          "Title": "空框",
+          "Description": "选择多个条目时，条目之间不一致的框会显示为空。保存时会忽略空框——条目保留自己的值。填充它可以给它们全部相同的值。因为空意味着'保留不变'，在多选中不能清除名称；单独选择条目来执行该操作。"
+        },
+        "GreyedFlags": {
+          "Title": "灰化标志",
+          "Description": "在某些选定条目上设置但不是全部的标志显示为灰化。保存时灰化标志保留不变。单击它会循环：保留不变 -> 全部打开 -> 全部关闭。它们都已同意的标志只是切换。"
+        },
+        "CopyPasteSpecial": {
+          "Title": "复制/特殊粘贴",
+          "Description": "右键单击条目并选择'复制图块数据'以记住它，然后选择任意数量的条目并选择'特殊粘贴...'来选择复制的字段和标志中的哪些写入它们。"
+        },
+        "Undo": {
+          "Title": "撤销",
+          "Description": "杂项 -> '撤销最后批量应用'会恢复条目在最后应用前的值。仅保留最近的应用，当重新加载tiledata时会忘记。"
+        }
+      },
+      "Items": {
+        "Title": "物品",
+        "Name": {
+          "Title": "名称",
+          "Description": "此字段用于物品名称，最多可为20个字符。"
+        },
+        "Animation": {
+          "Title": "动画",
+          "Description": "此字段用于与物品关联的动画ID。"
+        },
+        "Weight": {
+          "Title": "重量",
+          "Description": "此字段用于物品的重量。"
+        },
+        "Layer": {
+          "Title": "层级",
+          "Description": "此字段用于物品的层级：\n\n1 单手武器\n2 双手武器、盾牌或杂项\n3 鞋类\n4 裤子\n5 衬衫\n6 头盔/颈部\n7 手套\n8 戒指\n9 护身符\n10 项链\n11 头发\n12 腰部（半围裙）\n13 躯干（内侧）（胸甲）\n14 手镯\n15 未使用（但背包使用第21层）\n16 面部毛发\n17 躯干（中间）（超衣、束腰外衣、满围裙、腰带）\n18 耳环\n19 手臂\n20 背部（斗篷）\n21 背包\n22 躯干（外侧）（长袍）\n23 腿部（外侧）（裙子/短裙）\n24 腿部（内侧）（腿甲）\n25 坐骑（马、鸵鸟等）\n26 NPC购买补货容器\n27 NPC购买无补货容器\n28 NPC销售容器"
+        },
+        "Quantity": {
+          "Title": "数量",
+          "Description": "此字段用于物品的数量。"
+        },
+        "Value": {
+          "Title": "价值",
+          "Description": "此字段用于物品的价值。"
+        },
+        "StackingOffset": {
+          "Title": "堆叠偏移",
+          "Description": "堆叠偏移是指多个物品堆叠时以像素为单位的堆叠偏移。\n更高的堆叠偏移值意味着物品在堆栈中出现的距离会更远。"
+        },
+        "Hue": {
+          "Title": "色调",
+          "Description": "此字段用于物品的色调（颜色）。"
+        },
+        "Unknown2": {
+          "Title": "未知值2",
+          "Description": "此字段用于第二个未知值。"
+        },
+        "MiscData": {
+          "Title": "杂项数据",
+          "Description": "旧UO演示武器模板定义"
+        },
+        "Height": {
+          "Title": "高度",
+          "Description": "此字段用于物品的高度。"
+        },
+        "Unknown3": {
+          "Title": "未知值3",
+          "Description": "此字段用于第三个未知值。"
+        }
+      },
+      "LandTiles": {
+        "Title": "地形图块",
+        "Name": {
+          "Title": "名称",
+          "Description": "此字段用于地形图块名称，最多可为20个字符。"
+        },
+        "TextureID": {
+          "Title": "纹理ID",
+          "Description": "此字段用于与地形图块关联的纹理ID。"
+        }
+      },
+      "Flags": {
+        "Title": "标志",
+        "Background": {
+          "Description": "尚未记录。",
+          "Title": "背景"
+        },
+        "Weapon": {
+          "Description": "尚未记录。",
+          "Title": "武器"
+        },
+        "Transparent": {
+          "Description": "尚未记录。",
+          "Title": "透明"
+        },
+        "Translucent": {
+          "Description": "图块以部分透明度渲染。",
+          "Title": "半透明"
+        },
+        "Wall": {
+          "Description": "图块是墙。",
+          "Title": "墙"
+        },
+        "Damaging": {
+          "Description": "图块在移动时可能造成伤害。",
+          "Title": "伤害"
+        },
+        "Impassable": {
+          "Description": "图块不可移动或穿过。",
+          "Title": "不可通行"
+        },
+        "Wet": {
+          "Description": "尚未记录。",
+          "Title": "湿润"
+        },
+        "Unknown1": {
+          "Description": "未知。",
+          "Title": "未知1"
+        },
+        "Surface": {
+          "Description": "图块是表面。它可以被移动，但不能穿过。",
+          "Title": "表面"
+        },
+        "Bridge": {
+          "Description": "图块是楼梯、坡道或梯子。",
+          "Title": "桥梁"
+        },
+        "Generic": {
+          "Description": "图块是可堆叠的。",
+          "Title": "通用"
+        },
+        "Window": {
+          "Description": "图块是窗口。与NoShoot一样，带有此标志的图块阻挡视线。",
+          "Title": "窗户"
+        },
+        "NoShoot": {
+          "Description": "图块阻挡视线。",
+          "Title": "不穿透"
+        },
+        "ArticleA": {
+          "Description": "对于单数量图块，应在图块名称前加上\"一个 \"。",
+          "Title": "冠词A"
+        },
+        "ArticleAn": {
+          "Description": "对于单数量图块，应在图块名称前加上\"一个 \"。",
+          "Title": "冠词An"
+        },
+        "ArticleThe": {
+          "Description": "可能在图块名称前加上\"该\"。",
+          "Title": "冠词The"
+        },
+        "Foliage": {
+          "Description": "走在后面时图块变为半透明。船桅也有此标志。",
+          "Title": "树叶"
+        },
+        "PartialHue": {
+          "Description": "仅灰色像素会被着色。",
+          "Title": "部分着色"
+        },
+        "NoHouse": {
+          "Description": "NoHouse或未知。需要进一步研究。",
+          "Title": "非房屋"
+        },
+        "Map": {
+          "Description": "图块在制图学意义上是地图。未知用途。",
+          "Title": "地图"
+        },
+        "Container": {
+          "Description": "图块是容器。",
+          "Title": "容器"
+        },
+        "Wearable": {
+          "Description": "图块可以被装备。",
+          "Title": "可穿戴"
+        },
+        "LightSource": {
+          "Description": "图块发出光。",
+          "Title": "光源"
+        },
+        "Animation": {
+          "Description": "图块是动画的。",
+          "Title": "动画"
+        },
+        "HoverOver": {
+          "Description": "石像鬼可以飞过，或NoDiagonal。",
+          "Title": "悬停通过"
+        },
+        "NoDiagonal": {
+          "Description": "NoDiagonal（未知3）。",
+          "Title": "无对角线"
+        },
+        "Armor": {
+          "Description": "尚未记录。",
+          "Title": "护甲"
+        },
+        "Roof": {
+          "Description": "图块是斜面屋顶。",
+          "Title": "屋顶"
+        },
+        "Door": {
+          "Description": "图块是门。带有此标志的图块可以被幽灵和GM穿过。",
+          "Title": "门"
+        },
+        "StairBack": {
+          "Description": "尚未记录。",
+          "Title": "后楼梯"
+        },
+        "StairRight": {
+          "Description": "尚未记录。",
+          "Title": "右楼梯"
+        },
+        "AlphaBlend": {
+          "Description": "混合Alphas，图块混合。",
+          "Title": "透明混合"
+        },
+        "UseNewArt": {
+          "Description": "使用新美术风格？与nodraw图块相关？",
+          "Title": "使用新美术"
+        },
+        "ArtUsed": {
+          "Description": "有美术被使用？",
+          "Title": "已使用美术"
+        },
+        "Unused8": {
+          "Description": "未使用或未知。",
+          "Title": "未使用8"
+        },
+        "NoShadow": {
+          "Description": "不允许此图块上的阴影，光源？熔岩？",
+          "Title": "无阴影"
+        },
+        "PixelBleed": {
+          "Description": "让像素渗透到其他图块？这是禁用纹理夹具？",
+          "Title": "像素渗漏"
+        },
+        "PlayAnimOnce": {
+          "Description": "播放一次图块动画。",
+          "Title": "播放一次动画"
+        },
+        "MultiMovable": {
+          "Description": "可移动多重部件？很酷的船和车辆等？与桅杆相关的东西？",
+          "Title": "多部件可移动"
+        },
+        "Unused10": {
+          "Description": "未使用或未知。",
+          "Title": "未使用10"
+        },
+        "Unused11": {
+          "Description": "未使用或未知。",
+          "Title": "未使用11"
+        },
+        "Unused12": {
+          "Description": "未使用或未知。",
+          "Title": "未使用12"
+        },
+        "Unused13": {
+          "Description": "未使用或未知。",
+          "Title": "未使用13"
+        },
+        "Unused14": {
+          "Description": "未使用或未知。",
+          "Title": "未使用14"
+        },
+        "Unused15": {
+          "Description": "未使用或未知。",
+          "Title": "未使用15"
+        },
+        "Unused16": {
+          "Description": "未使用或未知。",
+          "Title": "未使用16"
+        },
+        "Unused17": {
+          "Description": "未使用或未知。",
+          "Title": "未使用17"
+        },
+        "Unused18": {
+          "Description": "未使用或未知。",
+          "Title": "未使用18"
+        },
+        "Unused19": {
+          "Description": "未使用或未知。",
+          "Title": "未使用19"
+        },
+        "Unused20": {
+          "Description": "未使用或未知。",
+          "Title": "未使用20"
+        },
+        "Unused21": {
+          "Description": "未使用或未知。",
+          "Title": "未使用21"
+        },
+        "Unused22": {
+          "Description": "未使用或未知。",
+          "Title": "未使用22"
+        },
+        "Unused23": {
+          "Description": "未使用或未知。",
+          "Title": "未使用23"
+        },
+        "Unused24": {
+          "Description": "未使用或未知。",
+          "Title": "未使用24"
+        },
+        "Unused25": {
+          "Description": "未使用或未知。",
+          "Title": "未使用25"
+        },
+        "Unused26": {
+          "Description": "未使用或未知。",
+          "Title": "未使用26"
+        },
+        "Unused27": {
+          "Description": "未使用或未知。",
+          "Title": "未使用27"
+        },
+        "Unused28": {
+          "Description": "未使用或未知。",
+          "Title": "未使用28"
+        },
+        "Unused29": {
+          "Description": "未使用或未知。",
+          "Title": "未使用29"
+        },
+        "Unused30": {
+          "Description": "未使用或未知。",
+          "Title": "未使用30"
+        },
+        "Unused31": {
+          "Description": "未使用或未知。",
+          "Title": "未使用31"
+        },
+        "Unused32": {
+          "Description": "未使用或未知。",
+          "Title": "未使用32"
+        }
+      }
+    },
     "StrategyHelpForm": {
       "Title": "雷达颜色 — 平均策略",
       "CloseButton": "关闭",
