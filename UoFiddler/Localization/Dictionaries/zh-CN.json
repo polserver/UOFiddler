@@ -108,6 +108,20 @@
         "NewProfileTitle": "新配置文件"
       }
     },
+    "ClientFileSaveCommand": {
+      "SaveConfirmTitle": "保存",
+      "SaveAnywayQuestion": "仍然保存吗？",
+      "SaveFailedTitle": "保存失败"
+    },
+    "FileSavedDialog": {
+      "Title": "已保存",
+      "SaveSuccess": "保存成功",
+      "OpenFolder": "打开文件夹",
+      "OK": "确定",
+      "MultiSavedMessage": "多重组件保存成功",
+      "AllMultisSavedMessage": "所有多重组件保存成功",
+      "AllUopMultisSavedMessage": "所有 UOP 多重组件保存成功"
+    },
     "OptionsForm": {
       "Title": "选项",
       "groupBox1": "物品标签页",

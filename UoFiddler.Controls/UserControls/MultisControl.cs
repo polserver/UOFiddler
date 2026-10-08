@@ -538,7 +538,7 @@ namespace UoFiddler.Controls.UserControls
             string floorSuffix = HeightChangeMulti.Value > 0 ? $"_Z{HeightChangeMulti.Value:000}" : string.Empty;
             string fileName = Path.Combine(Options.OutputPath, $"Multi {Utils.FormatExportId(GetSelectedMulId())}{floorSuffix}.{fileExtension}");
             SaveImage(_mulBitmap, fileName, imageFormat, backgroundColor);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private static void SaveImage(Image sourceImage, string fileName, ImageFormat imageFormat, Color backgroundColor)
@@ -578,7 +578,7 @@ namespace UoFiddler.Controls.UserControls
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.txt");
             multi.ExportToTextFile(fileName);
 
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnExportWscFile(object sender, EventArgs e)
@@ -599,7 +599,7 @@ namespace UoFiddler.Controls.UserControls
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.wsc");
             multi.ExportToWscFile(fileName);
 
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnExportUOAFile(object sender, EventArgs e)
@@ -620,7 +620,7 @@ namespace UoFiddler.Controls.UserControls
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.uoa");
             multi.ExportToUOAFile(fileName);
 
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnClickSave(object sender, EventArgs e)
@@ -741,7 +741,7 @@ namespace UoFiddler.Controls.UserControls
                     }
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
+                ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
             }
         }
 
@@ -774,7 +774,7 @@ namespace UoFiddler.Controls.UserControls
                     multi.ExportToTextFile(fileName);
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
+                ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
             }
         }
 
@@ -807,7 +807,7 @@ namespace UoFiddler.Controls.UserControls
                     multi.ExportToUOAFile(fileName);
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
+                ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
             }
         }
 
@@ -840,7 +840,7 @@ namespace UoFiddler.Controls.UserControls
                     multi.ExportToWscFile(fileName);
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
+                ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
             }
         }
 
@@ -873,7 +873,7 @@ namespace UoFiddler.Controls.UserControls
                     multi.ExportToCsvFile(fileName);
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
+                ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
             }
         }
 
@@ -906,7 +906,7 @@ namespace UoFiddler.Controls.UserControls
                     multi.ExportToUox3File(fileName);
                 }
 
-                FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All Multis saved successfully.");
+                ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
             }
         }
 
@@ -927,7 +927,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"{id:D4}.csv");
             multi.ExportToCsvFile(fileName);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnExportUox3File(object sender, EventArgs e)
@@ -947,7 +947,7 @@ namespace UoFiddler.Controls.UserControls
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"Multi {Utils.FormatExportId(id)}.uox3");
             multi.ExportToUox3File(fileName);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1370,7 +1370,7 @@ namespace UoFiddler.Controls.UserControls
             int id = GetSelectedUopId();
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}{floorSuffix}.{fileExtension}");
             SaveImage(_uopBitmap, fileName, imageFormat, backgroundColor);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnUopExportTextFile(object sender, EventArgs e)
@@ -1387,7 +1387,7 @@ namespace UoFiddler.Controls.UserControls
             }
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.txt");
             multi.ExportToTextFile(fileName);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnUopExportUOAFile(object sender, EventArgs e)
@@ -1404,7 +1404,7 @@ namespace UoFiddler.Controls.UserControls
             }
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.uoa");
             multi.ExportToUOAFile(fileName);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnUopExportWscFile(object sender, EventArgs e)
@@ -1421,7 +1421,7 @@ namespace UoFiddler.Controls.UserControls
             }
             string fileName = Path.Combine(Options.OutputPath, $"UopMulti {Utils.FormatExportId(id)}.wsc");
             multi.ExportToWscFile(fileName);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnUopExportCsvFile(object sender, EventArgs e)
@@ -1438,7 +1438,7 @@ namespace UoFiddler.Controls.UserControls
             }
             string fileName = Path.Combine(Options.OutputPath, $"{id:D4}_uop.csv");
             multi.ExportToCsvFile(fileName);
-            FileSavedDialog.Show(FindForm(), fileName, "Multi saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.MultiSavedMessage") ?? "Multi saved successfully.");
         }
 
         private void OnUopClick_SaveAllBmp(object sender, EventArgs e) =>
@@ -1485,7 +1485,7 @@ namespace UoFiddler.Controls.UserControls
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
+            ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllUopMultisSavedMessage") ?? "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllText(object sender, EventArgs e)
@@ -1513,7 +1513,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToTextFile(Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.txt"));
             }
 
-            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
+            ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllUopMultisSavedMessage") ?? "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllUOA(object sender, EventArgs e)
@@ -1541,7 +1541,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToUOAFile(Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.uoa"));
             }
 
-            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
+            ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllUopMultisSavedMessage") ?? "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllWSC(object sender, EventArgs e)
@@ -1569,7 +1569,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToWscFile(Path.Combine(dialog.SelectedPath, $"UopMulti {Utils.FormatExportId(index)}.wsc"));
             }
 
-            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
+            ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllUopMultisSavedMessage") ?? "All UOP Multis saved successfully.");
         }
 
         private void OnUopClick_SaveAllCSV(object sender, EventArgs e)
@@ -1597,7 +1597,7 @@ namespace UoFiddler.Controls.UserControls
                 multi.ExportToCsvFile(Path.Combine(dialog.SelectedPath, $"{index:D4}_uop.csv"));
             }
 
-            FileSavedDialog.Show(FindForm(), dialog.SelectedPath, "All UOP Multis saved successfully.");
+            ShowFileSavedDialog(dialog.SelectedPath, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllUopMultisSavedMessage") ?? "All UOP Multis saved successfully.");
         }
 
         private void OnClick_SaveAllToXML(object sender, EventArgs e)
@@ -1668,7 +1668,7 @@ namespace UoFiddler.Controls.UserControls
                 groupWriter.WriteEndDocument();
             }
 
-            FileSavedDialog.Show(FindForm(), fileName, "All Multis saved successfully.");
+            ShowFileSavedDialog(fileName, _localizationGetter?.Invoke("Forms.FileSavedDialog.AllMultisSavedMessage") ?? "All Multis saved successfully.");
         }
 
         /// <summary>
@@ -1678,6 +1678,17 @@ namespace UoFiddler.Controls.UserControls
         {
             _localizationGetter = getLocalized;
             ApplyLocalization();
+        }
+
+        /// <summary>
+        /// 显示文件保存成功对话框，支持汉化
+        /// </summary>
+        private void ShowFileSavedDialog(string filePath, string message)
+        {
+            if (_localizationGetter != null)
+                FileSavedDialog.Show(FindForm(), filePath, message, null, _localizationGetter);
+            else
+                FileSavedDialog.Show(FindForm(), filePath, message);
         }
 
         private void ApplyLocalization()
@@ -1823,3 +1834,5 @@ namespace UoFiddler.Controls.UserControls
         }
     }
 }
+
+

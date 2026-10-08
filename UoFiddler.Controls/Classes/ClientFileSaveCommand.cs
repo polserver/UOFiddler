@@ -161,7 +161,35 @@ namespace UoFiddler.Controls.Classes
 
             sb.AppendLine().AppendLine().Append("Save anyway?");
 
-            return MessageBox.Show(owner?.FindForm(), sb.ToString(), "Save", MessageBoxButtons.YesNo,
+            // 尝试获取汉化文本
+            string confirmTitle = "Save";
+            string confirmQuestion = "Save anyway?";
+            try
+            {
+                var localizationServiceType = Type.GetType("UoFiddler.Localization.LocalizationService, UoFiddler");
+                if (localizationServiceType != null)
+                {
+                    var getStringMethod = localizationServiceType.GetMethod("GetString", 
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    if (getStringMethod != null)
+                    {
+                        var localizedTitle = getStringMethod.Invoke(null, new object[] { "Forms.ClientFileSaveCommand.SaveConfirmTitle" });
+                        if (localizedTitle is string title)
+                            confirmTitle = title;
+                        
+                        var localizedQuestion = getStringMethod.Invoke(null, new object[] { "Forms.ClientFileSaveCommand.SaveAnywayQuestion" });
+                        if (localizedQuestion is string question)
+                            confirmQuestion = question;
+                    }
+                }
+            }
+            catch { }
+
+            // 替换英文问题为汉化版本
+            sb.Length -= "Save anyway?".Length;
+            sb.Append(confirmQuestion);
+
+            return MessageBox.Show(owner?.FindForm(), sb.ToString(), confirmTitle, MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
         }
 
@@ -211,7 +239,25 @@ namespace UoFiddler.Controls.Classes
                 sb.AppendLine(where);
             }
 
-            MessageBox.Show(owner?.FindForm(), sb.ToString(), "Save failed", MessageBoxButtons.OK,
+            string errorTitle = "Save failed";
+            try
+            {
+                var localizationServiceType = Type.GetType("UoFiddler.Localization.LocalizationService, UoFiddler");
+                if (localizationServiceType != null)
+                {
+                    var getStringMethod = localizationServiceType.GetMethod("GetString", 
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    if (getStringMethod != null)
+                    {
+                        var localizedTitle = getStringMethod.Invoke(null, new object[] { "Forms.ClientFileSaveCommand.SaveFailedTitle" });
+                        if (localizedTitle is string title)
+                            errorTitle = title;
+                    }
+                }
+            }
+            catch { }
+
+            MessageBox.Show(owner?.FindForm(), sb.ToString(), errorTitle, MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
 
