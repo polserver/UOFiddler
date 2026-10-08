@@ -24,6 +24,7 @@ namespace UoFiddler.Forms
     {
         private readonly string[] _profiles;
         private readonly ILogger<LoadProfileForm> _log;
+        private Func<string, string?>? _localizationGetter;
 
         public LoadProfileForm() : this(AppLog.For<LoadProfileForm>()) { }
 
@@ -46,8 +47,27 @@ namespace UoFiddler.Forms
             comboBoxLoad.SelectedIndex = 0;
             comboBoxBasedOn.SelectedIndex = 0;
 
-            // 应用中文汉化
-            LocalizationService.LocalizeForm(this);
+            // 汉化 getter 在 SetLocalization() 时才初始化
+            // 这样确保 LocalizationService 已完全初始化
+        }
+
+        public void SetLocalization(Func<string, string?> getLocalized)
+        {
+            if (getLocalized == null) return;
+            _localizationGetter = getLocalized;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            if (_localizationGetter == null) return;
+
+            this.Text = _localizationGetter("Forms.LoadProfileForm.Title") ?? "Choose Profile";
+            groupBox1.Text = _localizationGetter("Forms.LoadProfileForm.groupBox1") ?? "Load";
+            groupBox2.Text = _localizationGetter("Forms.LoadProfileForm.groupBox2") ?? "Create";
+            button1.Text = _localizationGetter("Forms.LoadProfileForm.button1") ?? "Load Profile";
+            button2.Text = _localizationGetter("Forms.LoadProfileForm.button2") ?? "Create Profile";
+            label1.Text = _localizationGetter("Forms.LoadProfileForm.label1") ?? "Based On";
         }
 
         private static string[] GetProfiles()
@@ -87,7 +107,11 @@ namespace UoFiddler.Forms
         {
             if (string.IsNullOrEmpty(textBoxCreate.Text))
             {
-                MessageBox.Show("Profile name is missing", "New Profile", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string message = _localizationGetter?.Invoke("Forms.LoadProfileForm.Messages.ProfileNameMissing") ?? "Profile name is missing";
+                string title = _localizationGetter?.Invoke("Forms.LoadProfileForm.Messages.NewProfileTitle") ?? "New Profile";
+                MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // 不关闭对话框，让用户重新输入
+                textBoxCreate.Focus();
                 return;
             }
 

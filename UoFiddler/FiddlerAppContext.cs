@@ -17,6 +17,7 @@ using UoFiddler.Classes;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.UserControls;
 using UoFiddler.Forms;
+using UoFiddler.Localization;
 using Ultima.Helpers;
 
 namespace UoFiddler
@@ -47,6 +48,7 @@ namespace UoFiddler
 
             _logger.LogInformation("Starting loading profile form...");
             var profile = new LoadProfileForm(services.GetRequiredService<ILogger<LoadProfileForm>>()) { TopMost = true };
+            profile.SetLocalization(LocalizationService.GetString);
             var profileResult = profile.ShowDialog();
             if (profileResult == DialogResult.Cancel)
             {
@@ -80,9 +82,15 @@ namespace UoFiddler
             }
 
             _logger.LogInformation("Starting main form...");
+            
+            // 确保 Options.ProfileName 有有效值
+            string profileDisplayName = string.IsNullOrEmpty(Options.ProfileName) 
+                ? "Default" 
+                : Options.ProfileName.Replace("Options_", "").Replace(".xml", "");
+            
             MainForm = new MainForm(services.GetRequiredService<ILogger<MainForm>>())
             {
-                Text = $"{Application.ProductName} (Profile: {Options.ProfileName.Replace("Options_", "").Replace(".xml", "")})"
+                Text = $"{Application.ProductName} (Profile: {profileDisplayName})"
             };
             MainForm.Show();
         }

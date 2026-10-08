@@ -102,7 +102,11 @@
       "groupBox2": "创建",
       "button1": "加载配置文件",
       "button2": "创建配置文件",
-      "label1": "基于"
+      "label1": "基于",
+      "Messages": {
+        "ProfileNameMissing": "配置文件名称不能为空",
+        "NewProfileTitle": "新配置文件"
+      }
     },
     "OptionsForm": {
       "Title": "选项",
