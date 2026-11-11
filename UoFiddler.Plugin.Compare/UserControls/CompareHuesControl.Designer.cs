@@ -47,8 +47,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonBrowse = new System.Windows.Forms.Button();
+            this.buttonLoadSecond = new System.Windows.Forms.Button();
             this.chkMultiSelect = new System.Windows.Forms.CheckBox();
             this.buttonCopySelected = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -146,8 +146,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.button2);
-            this.splitContainer1.Panel2.Controls.Add(this.button1);
+            this.splitContainer1.Panel2.Controls.Add(this.buttonBrowse);
+            this.splitContainer1.Panel2.Controls.Add(this.buttonLoadSecond);
             this.splitContainer1.Panel2.Controls.Add(this.buttonCopySelected);
             this.splitContainer1.Panel2.Controls.Add(this.chkMultiSelect);
             this.splitContainer1.Panel2.Controls.Add(this.textBox1);
@@ -156,31 +156,31 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 1;
             // 
-            // button2
+            // buttonBrowse
             // 
-            this.button2.AutoSize = true;
-            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Location = new System.Drawing.Point(435, 12);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(26, 25);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "...";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.BrowseOnClick);
+            this.buttonBrowse.AutoSize = true;
+            this.buttonBrowse.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonBrowse.Location = new System.Drawing.Point(435, 12);
+            this.buttonBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonBrowse.Name = "buttonBrowse";
+            this.buttonBrowse.Size = new System.Drawing.Size(26, 25);
+            this.buttonBrowse.TabIndex = 2;
+            this.buttonBrowse.Text = "...";
+            this.buttonBrowse.UseVisualStyleBackColor = true;
+            this.buttonBrowse.Click += new System.EventHandler(this.BrowseOnClick);
             // 
-            // button1
+            // buttonLoadSecond
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.buttonLoadSecond.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(469, 11);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 27);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Load Second";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OnClickLoad);
+            this.buttonLoadSecond.Location = new System.Drawing.Point(469, 11);
+            this.buttonLoadSecond.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonLoadSecond.Name = "buttonLoadSecond";
+            this.buttonLoadSecond.Size = new System.Drawing.Size(100, 27);
+            this.buttonLoadSecond.TabIndex = 1;
+            this.buttonLoadSecond.Text = "Load Second";
+            this.buttonLoadSecond.UseVisualStyleBackColor = true;
+            this.buttonLoadSecond.Click += new System.EventHandler(this.OnClickLoad);
             // 
             // buttonCopySelected
             // 
@@ -243,10 +243,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem applyHue1ToHue2ToolStripMenuItem;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonLoadSecond;
         private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button buttonCopySelected;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;

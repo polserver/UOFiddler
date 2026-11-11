@@ -341,20 +341,20 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             if (!_secondLoaded)
             {
-                if (!checkBox1.Checked)
+                if (!checkBoxShowDiff.Checked)
                 {
                     return;
                 }
 
                 MessageBox.Show("Second Land file is not loaded!");
-                checkBox1.Checked = false;
+                checkBoxShowDiff.Checked = false;
                 return;
             }
 
             using (new WaitCursorScope(this))
             {
                 _displayIndices.Clear();
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     for (int i = 0; i < 0x4000; i++)
                     {
@@ -520,7 +520,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Options.ChangedUltimaClass["Art"] = true;
                 }
 
-                if (checkBox1.Checked && changed)
+                if (checkBoxShowDiff.Checked && changed)
                 {
                     foreach (int idx in copied.OrderByDescending(x => x))
                     {
@@ -594,7 +594,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Options.ChangedUltimaClass["Art"] = true;
                 }
 
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     _displayIndices.Clear();
                     for (int i = 0; i < 0x4000; i++)

@@ -53,12 +53,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
             pictureBox1 = new System.Windows.Forms.PictureBox();
             pictureBox2 = new System.Windows.Forms.PictureBox();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
-            checkBox1 = new System.Windows.Forms.CheckBox();
+            checkBoxShowDiff = new System.Windows.Forms.CheckBox();
             chkMultiSelect = new System.Windows.Forms.CheckBox();
             buttonCopyAllDiff = new System.Windows.Forms.Button();
             buttonCopySelected = new System.Windows.Forms.Button();
-            button2 = new System.Windows.Forms.Button();
-            button1 = new System.Windows.Forms.Button();
+            buttonLoadSecond = new System.Windows.Forms.Button();
+            buttonBrowse = new System.Windows.Forms.Button();
             textBoxSecondDir = new System.Windows.Forms.TextBox();
             comboBoxFileMode = new System.Windows.Forms.ComboBox();
             contextMenuStrip1.SuspendLayout();
@@ -204,10 +204,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             splitContainer1.Panel2.Controls.Add(buttonCopySelected);
             splitContainer1.Panel2.Controls.Add(buttonCopyAllDiff);
-            splitContainer1.Panel2.Controls.Add(checkBox1);
+            splitContainer1.Panel2.Controls.Add(checkBoxShowDiff);
             splitContainer1.Panel2.Controls.Add(chkMultiSelect);
-            splitContainer1.Panel2.Controls.Add(button2);
-            splitContainer1.Panel2.Controls.Add(button1);
+            splitContainer1.Panel2.Controls.Add(buttonLoadSecond);
+            splitContainer1.Panel2.Controls.Add(buttonBrowse);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
             splitContainer1.Panel2.Controls.Add(comboBoxFileMode);
             splitContainer1.Size = new System.Drawing.Size(880, 378);
@@ -215,17 +215,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 3;
             // 
-            // checkBox1
+            // checkBoxShowDiff
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new System.Drawing.Point(507, 18);
-            checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new System.Drawing.Size(143, 19);
-            checkBox1.TabIndex = 3;
-            checkBox1.Text = "Show only Differences";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.Click += ShowDiff_OnClick;
+            checkBoxShowDiff.AutoSize = true;
+            checkBoxShowDiff.Location = new System.Drawing.Point(507, 18);
+            checkBoxShowDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxShowDiff.Name = "checkBoxShowDiff";
+            checkBoxShowDiff.Size = new System.Drawing.Size(143, 19);
+            checkBoxShowDiff.TabIndex = 3;
+            checkBoxShowDiff.Text = "Show only Differences";
+            checkBoxShowDiff.UseVisualStyleBackColor = true;
+            checkBoxShowDiff.Click += ShowDiff_OnClick;
             //
             // chkMultiSelect
             //
@@ -261,29 +261,29 @@ namespace UoFiddler.Plugin.Compare.UserControls
             buttonCopyAllDiff.UseVisualStyleBackColor = true;
             buttonCopyAllDiff.Click += OnClickCopyAllDiff;
             // 
-            // button2
+            // buttonLoadSecond
             // 
-            button2.Location = new System.Drawing.Point(399, 14);
-            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(100, 27);
-            button2.TabIndex = 2;
-            button2.Text = "Load Second";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += Load_Click;
+            buttonLoadSecond.Location = new System.Drawing.Point(399, 14);
+            buttonLoadSecond.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonLoadSecond.Name = "buttonLoadSecond";
+            buttonLoadSecond.Size = new System.Drawing.Size(100, 27);
+            buttonLoadSecond.TabIndex = 2;
+            buttonLoadSecond.Text = "Load Second";
+            buttonLoadSecond.UseVisualStyleBackColor = true;
+            buttonLoadSecond.Click += Load_Click;
             // 
-            // button1
+            // buttonBrowse
             // 
-            button1.AutoSize = true;
-            button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            button1.Location = new System.Drawing.Point(362, 14);
-            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(26, 25);
-            button1.TabIndex = 1;
-            button1.Text = "...";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += Browse_OnClick;
+            buttonBrowse.AutoSize = true;
+            buttonBrowse.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            buttonBrowse.Location = new System.Drawing.Point(362, 14);
+            buttonBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonBrowse.Name = "buttonBrowse";
+            buttonBrowse.Size = new System.Drawing.Size(26, 25);
+            buttonBrowse.TabIndex = 1;
+            buttonBrowse.Text = "...";
+            buttonBrowse.UseVisualStyleBackColor = true;
+            buttonBrowse.Click += Browse_OnClick;
             // 
             // textBoxSecondDir
             // 
@@ -330,9 +330,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem bmpToolStripMenuItem;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button buttonBrowse;
+        private System.Windows.Forms.Button buttonLoadSecond;
+        private System.Windows.Forms.CheckBox checkBoxShowDiff;
         private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button buttonCopyAllDiff;
         private System.Windows.Forms.Button buttonCopySelected;
