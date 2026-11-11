@@ -1311,6 +1311,20 @@ namespace UoFiddler.Controls.UserControls
                 return true;
             }
 
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                searchByNameToolStripTextBox.Focus();
+                searchByNameToolStripTextBox.SelectAll();
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.G))
+            {
+                searchByIdToolStripTextBox.Focus();
+                searchByIdToolStripTextBox.SelectAll();
+                return true;
+            }
+
             if (keyData == Keys.F3 || keyData == (Keys.F3 | Keys.Shift))
             {
                 if (searchByNameToolStripTextBox.TextBox.Focused)

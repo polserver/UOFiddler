@@ -1041,6 +1041,13 @@ namespace UoFiddler.Controls.UserControls
                 return true;
             }
 
+            if (keyData == (Keys.Control | Keys.F) || keyData == (Keys.Control | Keys.G))
+            {
+                searchByIdToolStripTextBox.Focus();
+                searchByIdToolStripTextBox.SelectAll();
+                return true;
+            }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
