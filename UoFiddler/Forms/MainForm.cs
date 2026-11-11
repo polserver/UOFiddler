@@ -636,6 +636,7 @@ namespace UoFiddler.Forms
                 case 19: return RadarColTab;
                 case 20: return SkillGrpTab;
                 case 21: return VerdataTab;
+                case 22: return TileGroupsTab;
                 default: return StartTab;
             }
         }
@@ -666,6 +667,7 @@ namespace UoFiddler.Forms
                 case 19: return ToggleViewRadarColor;
                 case 20: return ToggleViewSkillGrp;
                 case 21: return ToggleViewVerdata;
+                case 22: return ToggleViewTileGroups;
                 default: return ToggleViewStart;
             }
         }

@@ -121,6 +121,9 @@ namespace UoFiddler.Forms
             ToggleViewRadarColor = new System.Windows.Forms.ToolStripMenuItem();
             ToggleViewSkillGrp = new System.Windows.Forms.ToolStripMenuItem();
             ToggleViewVerdata = new System.Windows.Forms.ToolStripMenuItem();
+            TileGroupsTab = new System.Windows.Forms.TabPage();
+            tileGroupsControl = new TileGroupsControl();
+            ToggleViewTileGroups = new System.Windows.Forms.ToolStripMenuItem();
             ExternToolsDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             manageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButtonPlugins = new System.Windows.Forms.ToolStripDropDownButton();
@@ -156,6 +159,7 @@ namespace UoFiddler.Forms
             RadarColTab.SuspendLayout();
             SkillGrpTab.SuspendLayout();
             VerdataTab.SuspendLayout();
+            TileGroupsTab.SuspendLayout();
             tsMainMenu.SuspendLayout();
             SuspendLayout();
             // 
@@ -184,6 +188,7 @@ namespace UoFiddler.Forms
             TabPanel.Controls.Add(RadarColTab);
             TabPanel.Controls.Add(SkillGrpTab);
             TabPanel.Controls.Add(VerdataTab);
+            TabPanel.Controls.Add(TileGroupsTab);
             TabPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             TabPanel.Location = new System.Drawing.Point(0, 25);
             TabPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -692,9 +697,31 @@ namespace UoFiddler.Forms
             verdataControl.Name = "verdataControl";
             verdataControl.Size = new System.Drawing.Size(898, 592);
             verdataControl.TabIndex = 0;
-            // 
+            //
+            // TileGroupsTab
+            //
+            TileGroupsTab.Controls.Add(tileGroupsControl);
+            TileGroupsTab.Location = new System.Drawing.Point(4, 24);
+            TileGroupsTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TileGroupsTab.Name = "TileGroupsTab";
+            TileGroupsTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TileGroupsTab.Size = new System.Drawing.Size(906, 598);
+            TileGroupsTab.TabIndex = 22;
+            TileGroupsTab.Tag = 22;
+            TileGroupsTab.Text = "Tile Groups";
+            TileGroupsTab.UseVisualStyleBackColor = true;
+            //
+            // tileGroupsControl
+            //
+            tileGroupsControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            tileGroupsControl.Location = new System.Drawing.Point(4, 3);
+            tileGroupsControl.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            tileGroupsControl.Name = "tileGroupsControl";
+            tileGroupsControl.Size = new System.Drawing.Size(898, 592);
+            tileGroupsControl.TabIndex = 0;
+            //
             // tsMainMenu
-            // 
+            //
             tsMainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { SettingsMenu, toolStripDropDownButtonView, ExternToolsDropDown, toolStripDropDownButtonPlugins, toolStripDropDownButtonHelp });
             tsMainMenu.Location = new System.Drawing.Point(0, 0);
             tsMainMenu.Name = "tsMainMenu";
@@ -759,7 +786,7 @@ namespace UoFiddler.Forms
             // toolStripDropDownButtonView
             // 
             toolStripDropDownButtonView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButtonView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleViewStart, ToggleViewMulti, ToggleViewAnimations, ToggleViewItems, ToggleViewLandTiles, ToggleViewTexture, ToggleViewGumps, ToggleViewSounds, ToggleViewHue, ToggleViewFonts, ToggleViewCliloc, ToggleViewMap, ToggleViewLight, ToggleViewSpeech, ToggleViewSkills, ToggleViewAnimData, ToggleViewMultiMap, ToggleViewDress, ToggleViewTileData, ToggleViewRadarColor, ToggleViewSkillGrp, ToggleViewVerdata });
+            toolStripDropDownButtonView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleViewStart, ToggleViewMulti, ToggleViewAnimations, ToggleViewItems, ToggleViewLandTiles, ToggleViewTexture, ToggleViewGumps, ToggleViewSounds, ToggleViewHue, ToggleViewFonts, ToggleViewCliloc, ToggleViewMap, ToggleViewLight, ToggleViewSpeech, ToggleViewSkills, ToggleViewAnimData, ToggleViewMultiMap, ToggleViewDress, ToggleViewTileData, ToggleViewRadarColor, ToggleViewSkillGrp, ToggleViewVerdata, ToggleViewTileGroups });
             toolStripDropDownButtonView.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButtonView.Name = "toolStripDropDownButtonView";
             toolStripDropDownButtonView.Size = new System.Drawing.Size(45, 22);
@@ -984,9 +1011,19 @@ namespace UoFiddler.Forms
             ToggleViewVerdata.Tag = 21;
             ToggleViewVerdata.Text = "Verdata";
             ToggleViewVerdata.Click += ToggleView;
-            // 
+            //
+            // ToggleViewTileGroups
+            //
+            ToggleViewTileGroups.Checked = true;
+            ToggleViewTileGroups.CheckState = System.Windows.Forms.CheckState.Checked;
+            ToggleViewTileGroups.Name = "ToggleViewTileGroups";
+            ToggleViewTileGroups.Size = new System.Drawing.Size(164, 22);
+            ToggleViewTileGroups.Tag = 22;
+            ToggleViewTileGroups.Text = "Tile Groups";
+            ToggleViewTileGroups.Click += ToggleView;
+            //
             // ExternToolsDropDown
-            // 
+            //
             ExternToolsDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             ExternToolsDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { manageToolStripMenuItem });
             ExternToolsDropDown.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -1099,6 +1136,7 @@ namespace UoFiddler.Forms
             RadarColTab.ResumeLayout(false);
             SkillGrpTab.ResumeLayout(false);
             VerdataTab.ResumeLayout(false);
+            TileGroupsTab.ResumeLayout(false);
             tsMainMenu.ResumeLayout(false);
             tsMainMenu.PerformLayout();
             ResumeLayout(false);
@@ -1192,6 +1230,9 @@ namespace UoFiddler.Forms
         private System.Windows.Forms.TabPage VerdataTab;
         private UoFiddler.Controls.UserControls.VerdataControl verdataControl;
         private System.Windows.Forms.ToolStripMenuItem ToggleViewVerdata;
+        private System.Windows.Forms.TabPage TileGroupsTab;
+        private TileGroupsControl tileGroupsControl;
+        private System.Windows.Forms.ToolStripMenuItem ToggleViewTileGroups;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonHelp;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
