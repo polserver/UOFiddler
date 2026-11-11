@@ -688,16 +688,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            // Both tabs share the checkbox.
             using (new WaitCursorScope(this))
             {
-                if (IsLandTab)
-                {
-                    RefreshLandLists();
-                }
-                else
-                {
-                    RefreshItemLists();
-                }
+                RefreshBothLists();
             }
         }
 
