@@ -12,6 +12,11 @@ namespace Ultima
 
         public static Dictionary<int, AnimdataEntry> AnimData { get; set; }
 
+        /// <summary>
+        /// Entry slots in the loaded file, 8 per chunk.
+        /// </summary>
+        public static int SlotCount => (_header?.Length ?? 0) * 8;
+
         static Animdata()
         {
             Initialize();
@@ -147,7 +152,7 @@ namespace Ultima
         public class AnimdataEntry
         {
             public sbyte[] FrameData { get; set; }
-            public byte Unknown { get; }
+            public byte Unknown { get; set; }
             public byte FrameCount { get; set; }
             public byte FrameInterval { get; set; }
             public byte FrameStart { get; set; }

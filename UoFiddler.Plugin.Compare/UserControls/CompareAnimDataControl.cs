@@ -451,7 +451,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
 
                     int id = _displayIndices[focusIdx];
-                    CopyEntry(id);
+                    if (!CopyEntry(id))
+                    {
+                        continue;
+                    }
+
                     lastId = id;
                     changed = true;
                 }
@@ -493,9 +497,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             var allIds = Animdata.AnimData.Keys.Union(SecondAnimdata.GetKeys()).ToList();
             foreach (int id in allIds)
             {
-                if (!Compare(id) && SecondAnimdata.GetAnimData(id) != null)
+                if (!Compare(id) && CopyEntry(id))
                 {
-                    CopyEntry(id);
                     changed = true;
                 }
             }
@@ -522,9 +525,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             bool changed = false;
             foreach (int id in SecondAnimdata.GetKeys())
             {
-                if (!Animdata.AnimData.ContainsKey(id))
+                if (!Animdata.AnimData.ContainsKey(id) && CopyEntry(id))
                 {
-                    CopyEntry(id);
                     changed = true;
                 }
             }
@@ -535,23 +537,40 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
-        private void CopyEntry(int id)
+        /// <summary>
+        /// Copies one entry from the second file. Returns false if there is nothing to copy or the
+        /// id is past the end of the original file.
+        /// </summary>
+        private bool CopyEntry(int id)
         {
             var src = SecondAnimdata.GetAnimData(id);
-            if (src == null)
+            if (src == null || id >= Animdata.SlotCount)
             {
-                return;
+                return false;
             }
 
-            Animdata.AnimData[id] = new Animdata.AnimdataEntry(
-                (sbyte[])src.FrameData.Clone(),
-                src.Unknown,
-                src.FrameCount,
-                src.FrameInterval,
-                src.FrameStart);
+            // Update in place: the AnimData tab may hold a reference to this entry.
+            if (Animdata.AnimData.TryGetValue(id, out var dst))
+            {
+                dst.FrameData = (sbyte[])src.FrameData.Clone();
+                dst.Unknown = src.Unknown;
+                dst.FrameCount = src.FrameCount;
+                dst.FrameInterval = src.FrameInterval;
+                dst.FrameStart = src.FrameStart;
+            }
+            else
+            {
+                Animdata.AnimData[id] = new Animdata.AnimdataEntry(
+                    (sbyte[])src.FrameData.Clone(),
+                    src.Unknown,
+                    src.FrameCount,
+                    src.FrameInterval,
+                    src.FrameStart);
+            }
 
             Options.ChangedUltimaClass["Animdata"] = true;
             _compare[id] = true;
+            return true;
         }
     }
 }
