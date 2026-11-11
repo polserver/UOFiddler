@@ -177,7 +177,8 @@ namespace UoFiddler.Controls.Classes
             {"Texture", false},
             {"TileData", false},
             {"RadarColor",false},
-            {"SkillGrp",false}
+            {"SkillGrp",false},
+            {"TileGroups",false}
         };
 
         /// <summary>
@@ -206,7 +207,8 @@ namespace UoFiddler.Controls.Classes
             {18, true},
             {19, true},
             {20, true},
-            {21, true}
+            {21, true},
+            {22, true}
         };
 
         public static Icon GetFiddlerIcon()
