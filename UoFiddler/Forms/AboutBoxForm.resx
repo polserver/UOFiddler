@@ -118,7 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.24.0
+    <value>Version 4.24.1
+- Fixed a crash when preloading gumps on clients with verdata-patched gumps
+- Fixed possible crashes on corrupt or unusual gump and item art entries
+- Faster texture browsing: textures are now cached instead of decoded on every access
+- Compare plugin: entries that exist in only one of the two clients are shown as such and never copied, and the original files are never extended. Fixes copies writing item 0 graphics or colour 0, or crashing, when the clients differ in size
+- Compare plugin: RadarCol compares all item colours, not only the first 0x4000 items
+- Compare plugin: fixed TileData copies refreshing the wrong tile in other tabs, AnimData copies losing later AnimData tab edits, and the Map tab comparing against the previous client's Trammel after a path change
+- Compare plugin: results update after edits in other tabs and after loading another second file, and files that can't be read show a message instead of crashing
+- Compare plugin: TileData shows every flag bit and applies rule changes on Apply, Hues and AnimData compare all stored fields, and the Map tab shows the right tile under the cursor
+- Compare plugin: Copy Selected button on every tab with multi-select, Copy All Diff and double-click copy on Gumps, and consistent button sizes and labels
+- Compare plugin: removed the non-working Copy Entry 1 to 2 from RadarCol
+
+Version 4.24.0
 - Statics defrag rewritten with explicit filters (item id ceiling, out-of-block offsets, invalid z, duplicates, stacked statics), a report naming everything removed, and a Verify button that reads the result back and reconciles it against the source
 - Defrag now runs on a background worker with a working Cancel, and no longer reports success when the source files were missing and nothing was written
 - Map region copy and map diff insert work on UOP-only clients, copy land blocks byte-exactly, and can write either `map{N}.mul` or `map{N}LegacyMUL.uop`
