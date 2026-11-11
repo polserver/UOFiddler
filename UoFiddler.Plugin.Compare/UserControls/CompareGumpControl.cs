@@ -354,8 +354,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 // instances (GetGump returns the cached bitmap, not a copy).
                 pictureBox2.BackgroundImage = null;
 
-                SecondGump.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
-                LoadSecond();
+                if (CompareFiles.TryLoad("the second gump files",
+                        () => SecondGump.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop)))
+                {
+                    LoadSecond();
+                }
             }
         }
 

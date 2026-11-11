@@ -61,5 +61,27 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             return false;
         }
+
+        /// <summary>
+        /// Runs <paramref name="load"/>, showing a message instead of throwing if the file can't be read.
+        /// </summary>
+        public static bool TryLoad(string what, Action load)
+        {
+            try
+            {
+                load();
+                return true;
+            }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException
+                                          or ArgumentException or IndexOutOfRangeException)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    $"Could not load {what}:\n\n{ex.Message}",
+                    "Load Failed",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Warning);
+                return false;
+            }
+        }
     }
 }

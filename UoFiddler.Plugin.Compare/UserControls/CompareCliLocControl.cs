@@ -64,7 +64,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            _cliloc1 = new StringList("1", path, false);
+            StringList loaded = null;
+            if (!CompareFiles.TryLoad("the cliloc file", () => loaded = new StringList("1", path, false)))
+            {
+                return;
+            }
+
+            _cliloc1 = loaded;
             _cliloc1.Entries.Sort(new StringList.NumberComparer(false));
 
             if (_cliloc2 != null)
@@ -97,7 +103,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            _cliloc2 = new StringList("2", path, false);
+            StringList loaded = null;
+            if (!CompareFiles.TryLoad("the cliloc file", () => loaded = new StringList("2", path, false)))
+            {
+                return;
+            }
+
+            _cliloc2 = loaded;
             _cliloc2.Entries.Sort(new StringList.NumberComparer(false));
 
             if (_cliloc1 != null)
