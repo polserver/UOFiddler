@@ -56,6 +56,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             checkBox1 = new System.Windows.Forms.CheckBox();
             chkMultiSelect = new System.Windows.Forms.CheckBox();
             buttonCopyAllDiff = new System.Windows.Forms.Button();
+            buttonCopySelected = new System.Windows.Forms.Button();
             button2 = new System.Windows.Forms.Button();
             button1 = new System.Windows.Forms.Button();
             textBoxSecondDir = new System.Windows.Forms.TextBox();
@@ -201,6 +202,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(buttonCopySelected);
             splitContainer1.Panel2.Controls.Add(buttonCopyAllDiff);
             splitContainer1.Panel2.Controls.Add(checkBox1);
             splitContainer1.Panel2.Controls.Add(chkMultiSelect);
@@ -208,7 +210,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(button1);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
             splitContainer1.Panel2.Controls.Add(comboBoxFileMode);
-            splitContainer1.Size = new System.Drawing.Size(760, 378);
+            splitContainer1.Size = new System.Drawing.Size(860, 378);
             splitContainer1.SplitterDistance = 309;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 3;
@@ -237,10 +239,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
             chkMultiSelect.UseVisualStyleBackColor = true;
             chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
             // 
+            // buttonCopySelected
+            // 
+            buttonCopySelected.AutoSize = true;
+            buttonCopySelected.Location = new System.Drawing.Point(648, 13);
+            buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonCopySelected.Name = "buttonCopySelected";
+            buttonCopySelected.Size = new System.Drawing.Size(99, 29);
+            buttonCopySelected.TabIndex = 12;
+            buttonCopySelected.Text = "Copy Selected";
+            buttonCopySelected.UseVisualStyleBackColor = true;
+            buttonCopySelected.Click += OnClickCopy;
+            // 
             // buttonCopyAllDiff
             // 
             buttonCopyAllDiff.AutoSize = true;
-            buttonCopyAllDiff.Location = new System.Drawing.Point(648, 13);
+            buttonCopyAllDiff.Location = new System.Drawing.Point(754, 13);
             buttonCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCopyAllDiff.Name = "buttonCopyAllDiff";
             buttonCopyAllDiff.Size = new System.Drawing.Size(99, 29);
@@ -300,7 +314,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CompareGumpControl";
-            Size = new System.Drawing.Size(760, 378);
+            Size = new System.Drawing.Size(860, 378);
             Load += OnLoad;
             contextMenuStrip1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
@@ -323,6 +337,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.Button buttonCopyAllDiff;
+        private System.Windows.Forms.Button buttonCopySelected;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyGump2To1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractAsToolStripMenuItem;
