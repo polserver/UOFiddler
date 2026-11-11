@@ -184,9 +184,8 @@ namespace UoFiddler.Plugin.Compare.Classes
         //     return buffer;
         // }
 
-        private static unsafe Bitmap LoadStatic(Stream stream, int length)
+        private static Bitmap LoadStatic(Stream stream, int length)
         {
-            Bitmap bmp;
             if (_streamBuffer == null || _streamBuffer.Length < length)
             {
                 _streamBuffer = new byte[length];
@@ -196,65 +195,7 @@ namespace UoFiddler.Plugin.Compare.Classes
             // SecondFileIndex.EnsureOpen would have to re-open the file for the next tile.
             stream.ReadExactly(_streamBuffer, 0, length);
 
-            fixed (byte* data = _streamBuffer)
-            {
-                ushort* binData = (ushort*)data;
-                int count = 2;
-                // bin.ReadInt32(); // TODO: ???
-                int width = binData[count++];
-                int height = binData[count++];
-
-                if (width <= 0 || height <= 0)
-                {
-                    return null;
-                }
-
-                int[] lookups = new int[height];
-
-                int start = height + 4;
-
-                for (int i = 0; i < height; ++i)
-                {
-                    lookups[i] = start + binData[count++];
-                }
-
-                bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
-                BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-                ushort* line = (ushort*)bd.Scan0;
-                int delta = bd.Stride >> 1;
-
-                for (int y = 0; y < height; ++y, line += delta)
-                {
-                    count = lookups[y];
-
-                    ushort* cur = line;
-                    int xOffset, xRun;
-
-                    while ((xOffset = binData[count++]) + (xRun = binData[count++]) != 0)
-                    {
-                        if (xOffset > delta)
-                        {
-                            break;
-                        }
-
-                        cur += xOffset;
-                        if (xOffset + xRun > delta)
-                        {
-                            break;
-                        }
-
-                        ushort* end = cur + xRun;
-
-                        while (cur < end)
-                        {
-                            *cur++ = (ushort)(binData[count++] ^ 0x8000);
-                        }
-                    }
-                }
-                bmp.UnlockBits(bd);
-            }
-            return bmp;
+            return Art.DecodeStaticBitmap(_streamBuffer.AsSpan(0, length));
         }
 
         public static bool IsValidLand(int index)
