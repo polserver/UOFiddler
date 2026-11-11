@@ -78,6 +78,12 @@
 		<Compile Update="UserControls\CompareRadarColControl.Designer.cs">
 			<DependentUpon>CompareRadarColControl.cs</DependentUpon>
 		</Compile>
+		<Compile Update="UserControls\CompareTileDataControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControls\CompareTileDataControl.Designer.cs">
+			<DependentUpon>CompareTileDataControl.cs</DependentUpon>
+		</Compile>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<AutoGen>True</AutoGen>
 			<DesignTime>True</DesignTime>
@@ -121,6 +127,9 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="UserControls\CompareRadarColControl.resx">
 			<DependentUpon>CompareRadarColControl.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UserControls\CompareTileDataControl.resx">
+			<DependentUpon>CompareTileDataControl.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
