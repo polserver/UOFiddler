@@ -50,6 +50,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.chkMultiSelect = new System.Windows.Forms.CheckBox();
+            this.buttonCopySelected = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
@@ -147,9 +148,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
+            this.splitContainer1.Panel2.Controls.Add(this.buttonCopySelected);
             this.splitContainer1.Panel2.Controls.Add(this.chkMultiSelect);
             this.splitContainer1.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(733, 380);
+            this.splitContainer1.Size = new System.Drawing.Size(770, 380);
             this.splitContainer1.SplitterDistance = 320;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 1;
@@ -181,6 +183,17 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.button1.Text = "Load";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.OnClickLoad);
+            // 
+            // buttonCopySelected
+            // 
+            this.buttonCopySelected.Location = new System.Drawing.Point(667, 11);
+            this.buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonCopySelected.Name = "buttonCopySelected";
+            this.buttonCopySelected.Size = new System.Drawing.Size(88, 27);
+            this.buttonCopySelected.TabIndex = 12;
+            this.buttonCopySelected.Text = "Copy Selected";
+            this.buttonCopySelected.UseVisualStyleBackColor = true;
+            this.buttonCopySelected.Click += new System.EventHandler(this.OnClickApplyHue1to2);
             //
             // chkMultiSelect
             //
@@ -214,7 +227,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CompareHuesControl";
-            this.Size = new System.Drawing.Size(733, 380);
+            this.Size = new System.Drawing.Size(770, 380);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -234,6 +247,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.ToolStripMenuItem applyHue1ToHue2ToolStripMenuItem;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkMultiSelect;
+        private System.Windows.Forms.Button buttonCopySelected;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.PictureBox pictureBox1;

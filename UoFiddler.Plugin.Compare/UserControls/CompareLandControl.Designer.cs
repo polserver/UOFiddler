@@ -42,6 +42,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             components = new System.ComponentModel.Container();
             tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
             btnCopyAllDiff = new System.Windows.Forms.Button();
+            btnCopySelected = new System.Windows.Forms.Button();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             pictureBoxSec = new System.Windows.Forms.PictureBox();
             pictureBoxOrg = new System.Windows.Forms.PictureBox();
@@ -85,10 +86,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewOrg.DrawItem += OnDrawItemOrg;
             tileViewOrg.SizeChanged += OnTileViewSizeChanged;
             // 
+            // btnCopySelected
+            // 
+            btnCopySelected.AutoSize = true;
+            btnCopySelected.Location = new System.Drawing.Point(594, 11);
+            btnCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnCopySelected.Name = "btnCopySelected";
+            btnCopySelected.Size = new System.Drawing.Size(99, 29);
+            btnCopySelected.TabIndex = 12;
+            btnCopySelected.Text = "Copy Selected";
+            btnCopySelected.UseVisualStyleBackColor = true;
+            btnCopySelected.Click += OnClickCopy;
+            // 
             // btnCopyAllDiff
             // 
             btnCopyAllDiff.AutoSize = true;
-            btnCopyAllDiff.Location = new System.Drawing.Point(594, 11);
+            btnCopyAllDiff.Location = new System.Drawing.Point(700, 11);
             btnCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnCopyAllDiff.Name = "btnCopyAllDiff";
             btnCopyAllDiff.Size = new System.Drawing.Size(99, 29);
@@ -278,6 +291,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(btnCopySelected);
             splitContainer1.Panel2.Controls.Add(btnCopyAllDiff);
             splitContainer1.Panel2.Controls.Add(button2);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
@@ -285,7 +299,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(chkMultiSelect);
             splitContainer1.Panel2.Controls.Add(button1);
             splitContainer1.Panel2.Controls.Add(comboBoxFileMode);
-            splitContainer1.Size = new System.Drawing.Size(719, 430);
+            splitContainer1.Size = new System.Drawing.Size(810, 430);
             splitContainer1.SplitterDistance = 359;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 10;
@@ -322,7 +336,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CompareLandControl";
-            Size = new System.Drawing.Size(719, 430);
+            Size = new System.Drawing.Size(810, 430);
             Load += OnLoad;
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxSec).EndInit();
@@ -345,6 +359,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.ToolStripMenuItem asJpgToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asPngToolStripMenuItem;
         private System.Windows.Forms.Button btnCopyAllDiff;
+        private System.Windows.Forms.Button btnCopySelected;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox1;

@@ -60,6 +60,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             CopyAddOnly = new System.Windows.Forms.Button();
             FromLeftToRight = new System.Windows.Forms.Button();
+            buttonCopySelected = new System.Windows.Forms.Button();
             button2 = new System.Windows.Forms.Button();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxSec).BeginInit();
@@ -275,20 +276,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(CopyAddOnly);
+            splitContainer1.Panel2.Controls.Add(buttonCopySelected);
             splitContainer1.Panel2.Controls.Add(FromLeftToRight);
             splitContainer1.Panel2.Controls.Add(button2);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
             splitContainer1.Panel2.Controls.Add(checkBox1);
             splitContainer1.Panel2.Controls.Add(chkMultiSelect);
             splitContainer1.Panel2.Controls.Add(button1);
-            splitContainer1.Size = new System.Drawing.Size(724, 434);
+            splitContainer1.Size = new System.Drawing.Size(800, 434);
             splitContainer1.SplitterDistance = 369;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 10;
             // 
             // CopyAddOnly
             // 
-            CopyAddOnly.Location = new System.Drawing.Point(590, 12);
+            CopyAddOnly.Location = new System.Drawing.Point(686, 12);
             CopyAddOnly.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CopyAddOnly.Name = "CopyAddOnly";
             CopyAddOnly.Size = new System.Drawing.Size(100, 27);
@@ -297,9 +299,20 @@ namespace UoFiddler.Plugin.Compare.UserControls
             CopyAddOnly.UseVisualStyleBackColor = true;
             CopyAddOnly.Click += CopyAddOnly_Click;
             // 
+            // buttonCopySelected
+            // 
+            buttonCopySelected.Location = new System.Drawing.Point(494, 12);
+            buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonCopySelected.Name = "buttonCopySelected";
+            buttonCopySelected.Size = new System.Drawing.Size(88, 27);
+            buttonCopySelected.TabIndex = 12;
+            buttonCopySelected.Text = "Copy Selected";
+            buttonCopySelected.UseVisualStyleBackColor = true;
+            buttonCopySelected.Click += OnClickCopy;
+            // 
             // FromLeftToRight
             // 
-            FromLeftToRight.Location = new System.Drawing.Point(494, 12);
+            FromLeftToRight.Location = new System.Drawing.Point(590, 12);
             FromLeftToRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             FromLeftToRight.Name = "FromLeftToRight";
             FromLeftToRight.Size = new System.Drawing.Size(88, 27);
@@ -329,7 +342,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CompareTextureControl";
-            Size = new System.Drawing.Size(724, 434);
+            Size = new System.Drawing.Size(800, 434);
             Load += OnLoad;
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxSec).EndInit();
@@ -367,6 +380,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolStripMenuItem copyLandTile2To1ToolStripMenuItem;
         private System.Windows.Forms.Button FromLeftToRight;
+        private System.Windows.Forms.Button buttonCopySelected;
         private System.Windows.Forms.Button CopyAddOnly;
     }
 }
