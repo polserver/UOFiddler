@@ -1444,14 +1444,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         }
 
+        private readonly List<(CheckBox Box, Action<bool> Set)> _fieldRules = new List<(CheckBox, Action<bool>)>();
+
         private void WireFieldCheckbox(CheckBox chk, Func<bool> getter, Action<bool> setter)
         {
+            // Rules take effect on Apply, together with the ignored flags.
             chk.Checked = getter();
-            chk.CheckedChanged += (s, e) => setter(chk.Checked);
+            _fieldRules.Add((chk, setter));
         }
 
         private void OnClickApplyRules(object sender, EventArgs e)
         {
+            foreach (var (box, set) in _fieldRules)
+            {
+                set(box.Checked);
+            }
+
             // Rebuild ignored flags mask from the CheckedListBox state
             TileFlag mask = TileFlag.None;
             for (int i = 0; i < clbFlags.Items.Count && i < MeaningfulFlags.Length; i++)
@@ -1467,14 +1475,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             using (new WaitCursorScope(this))
             {
                 InvalidateCompareCache();
-                if (IsLandTab)
-                {
-                    RefreshLandLists();
-                }
-                else
-                {
-                    RefreshItemLists();
-                }
+                RefreshBothLists();
             }
         }
 
