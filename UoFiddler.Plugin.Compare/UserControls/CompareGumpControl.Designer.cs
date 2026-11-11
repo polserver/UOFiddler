@@ -50,6 +50,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             pngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             copyGump2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            pixelDiffBar = new PixelDiffBar();
             pictureBox1 = new System.Windows.Forms.PictureBox();
             pictureBox2 = new System.Windows.Forms.PictureBox();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -146,18 +147,29 @@ namespace UoFiddler.Plugin.Compare.UserControls
             copyGump2To1ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             copyGump2To1ToolStripMenuItem.Text = "Copy Gump to left";
             copyGump2To1ToolStripMenuItem.Click += OnClickCopy;
+            //
+            // pixelDiffBar
+            //
+            pixelDiffBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            pixelDiffBar.FirstPictureBox = pictureBox1;
+            pixelDiffBar.Margin = new System.Windows.Forms.Padding(0);
+            pixelDiffBar.Name = "pixelDiffBar";
+            pixelDiffBar.SecondPictureBox = pictureBox2;
+            pixelDiffBar.TabIndex = 20;
             // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(pictureBox1, 0, 0);
-            tableLayoutPanel1.Controls.Add(pictureBox2, 0, 1);
+            tableLayoutPanel1.Controls.Add(pixelDiffBar, 0, 0);
+            tableLayoutPanel1.Controls.Add(pictureBox1, 0, 1);
+            tableLayoutPanel1.Controls.Add(pictureBox2, 0, 2);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             tableLayoutPanel1.Location = new System.Drawing.Point(174, 0);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tableLayoutPanel1.Size = new System.Drawing.Size(382, 309);
@@ -347,6 +359,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private PixelDiffBar pixelDiffBar;
         private System.Windows.Forms.TextBox textBoxSecondDir;
         private System.Windows.Forms.ToolStripMenuItem tiffToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBoxFileMode;
