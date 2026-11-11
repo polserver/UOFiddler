@@ -304,7 +304,22 @@ namespace UoFiddler.Plugin.Compare.Classes
             return result;
         }
 
-        public static unsafe Bitmap GetGump(int index)
+        public static Bitmap GetGump(int index) => GetGump(index, Files.CacheData);
+
+        /// <summary>
+        /// Returns a copy of the gump owned by the caller, without caching it.
+        /// </summary>
+        public static Bitmap GetGumpCopy(int index)
+        {
+            if (_cache != null && index >= 0 && index < _indexLength && _cache[index] != null)
+            {
+                return new Bitmap(_cache[index]);
+            }
+
+            return GetGump(index, store: false);
+        }
+
+        private static unsafe Bitmap GetGump(int index, bool store)
         {
             if (_fileIndex == null)
             {
@@ -356,7 +371,7 @@ namespace UoFiddler.Plugin.Compare.Classes
                 return null;
             }
 
-            return Files.CacheData ? _cache[index] = bmp : bmp;
+            return store ? _cache[index] = bmp : bmp;
         }
 
         /// Reads the pixel-RLE payload for a gump entry into <see cref="_streamBuffer"/>,
