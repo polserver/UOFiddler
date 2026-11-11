@@ -69,6 +69,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             SecondArt.FileIndexChanged += OnSecondArtChanged;
             ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+            ControlEvents.LandTileChangeEvent += OnLandTileChangeEvent;
         }
 
         // TileViewControl exposes TileSize/Margin/Padding/Border with DesignerSerializationVisibility.Hidden,
@@ -128,6 +129,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return new List<int> { tileViewSec.FocusIndex };
             }
             return new List<int>();
+        }
+
+        // Edited elsewhere: drop the cached result. Our own copies record theirs.
+        private void OnLandTileChangeEvent(object sender, int id)
+        {
+            if (sender == this)
+            {
+                return;
+            }
+
+            _compare.Remove(id);
+            tileViewOrg.Invalidate();
+            tileViewSec.Invalidate();
         }
 
         private void OnFilePathChangeEvent()

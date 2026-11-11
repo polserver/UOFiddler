@@ -81,6 +81,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                             : "Copy Gump to left";
                     };
                     ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    ControlEvents.GumpChangeEvent += OnGumpChangeEvent;
                 }
 
                 _loaded = true;
@@ -144,6 +145,19 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return new List<int> { tileView2.FocusIndex };
             }
             return new List<int>();
+        }
+
+        // Edited elsewhere: drop the cached result. Our own copies record theirs.
+        private void OnGumpChangeEvent(object sender, int id)
+        {
+            if (sender == this)
+            {
+                return;
+            }
+
+            _compare.Remove(id);
+            tileView1.Invalidate();
+            tileView2.Invalidate();
         }
 
         private void OnFilePathChangeEvent()
