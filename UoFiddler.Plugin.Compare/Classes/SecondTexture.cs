@@ -56,9 +56,10 @@ namespace UoFiddler.Plugin.Compare.Classes
                 return true;
             }
 
-            bool valid = _fileIndex.Valid(index, out int length, out _);
+            bool valid = _fileIndex.Valid(index, out int length, out int extra);
 
-            return valid && length != 0;
+            // Same length check as GetTexture.
+            return valid && length >= (extra == 0 ? 64 * 64 * 2 : 128 * 128 * 2);
         }
 
         public static Bitmap GetTexture(int index)
@@ -75,15 +76,16 @@ namespace UoFiddler.Plugin.Compare.Classes
                 return _cache[index];
             }
 
-            Stream stream = _fileIndex.Seek(index, out _, out int extra);
-            if (stream == null)
+            // Zero length marks an empty slot.
+            Stream stream = _fileIndex.Seek(index, out int length, out int extra);
+            if (stream == null || length == 0)
             {
                 return null;
             }
 
             return Files.CacheData
-                ? _cache[index] = LoadTexture(stream, extra)
-                : LoadTexture(stream, extra);
+                ? _cache[index] = LoadTexture(stream, length, extra)
+                : LoadTexture(stream, length, extra);
         }
 
         // public static byte[] GetRawTexture(int index)
@@ -98,23 +100,34 @@ namespace UoFiddler.Plugin.Compare.Classes
         //     return buffer;
         // }
 
-        private static unsafe Bitmap LoadTexture(Stream stream, int extra)
+        private static unsafe Bitmap LoadTexture(Stream stream, int length, int extra)
         {
             int size = extra == 0 ? 64 : 128;
-
-            Bitmap bmp = new Bitmap(size, size, PixelFormat.Format16bppArgb1555);
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
             int max = size * size * 2;
+
+            if (length < max)
+            {
+                return null;
+            }
 
             if (_streamBuffer == null || _streamBuffer.Length < max)
             {
                 _streamBuffer = new byte[max];
             }
 
-            stream.ReadExactly(_streamBuffer, 0, max);
+            try
+            {
+                stream.ReadExactly(_streamBuffer, 0, max);
+            }
+            catch (EndOfStreamException)
+            {
+                return null;
+            }
+
+            Bitmap bmp = new Bitmap(size, size, PixelFormat.Format16bppArgb1555);
+            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+            ushort* line = (ushort*)bd.Scan0;
+            int delta = bd.Stride >> 1;
 
             fixed (byte* data = _streamBuffer)
             {

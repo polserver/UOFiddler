@@ -356,13 +356,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondTexture.IsValidTexture(i))
+            Bitmap bmp = SecondTexture.IsValidTexture(i) ? SecondTexture.GetTexture(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
-            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Bmp);
+            bmp.Save(fileName, ImageFormat.Bmp);
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
@@ -375,13 +376,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondTexture.IsValidTexture(i))
+            Bitmap bmp = SecondTexture.IsValidTexture(i) ? SecondTexture.GetTexture(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
-            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Tiff);
+            bmp.Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
@@ -394,13 +396,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondTexture.IsValidTexture(i))
+            Bitmap bmp = SecondTexture.IsValidTexture(i) ? SecondTexture.GetTexture(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
-            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Jpeg);
+            bmp.Save(fileName, ImageFormat.Jpeg);
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
@@ -413,13 +416,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondTexture.IsValidTexture(i))
+            Bitmap bmp = SecondTexture.IsValidTexture(i) ? SecondTexture.GetTexture(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Texture(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
-            SecondTexture.GetTexture(i).Save(fileName, ImageFormat.Png);
+            bmp.Save(fileName, ImageFormat.Png);
             FileSavedDialog.Show(FindForm(), fileName, "Texture saved successfully.");
         }
 
@@ -462,7 +466,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         continue;
                     }
 
-                    Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
+                    Bitmap source = SecondTexture.GetTexture(i);
+                    if (source == null)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(source);
                     Textures.Replace(i, copy);
                     ControlEvents.FireTextureChangeEvent(this, i);
                     _compare[i] = true;
@@ -519,7 +529,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     continue;
                 }
 
-                Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
+                Bitmap source = SecondTexture.GetTexture(i);
+                if (source == null)
+                {
+                    continue;
+                }
+
+                Bitmap copy = new Bitmap(source);
                 Textures.Replace(i, copy);
                 ControlEvents.FireTextureChangeEvent(this, i);
             }
@@ -560,7 +576,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     continue;
                 }
 
-                Bitmap copy = new Bitmap(SecondTexture.GetTexture(i));
+                Bitmap source = SecondTexture.GetTexture(i);
+                if (source == null)
+                {
+                    continue;
+                }
+
+                Bitmap copy = new Bitmap(source);
                 Textures.Replace(i, copy);
                 ControlEvents.FireTextureChangeEvent(this, i);
             }
