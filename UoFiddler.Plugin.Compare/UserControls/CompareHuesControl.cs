@@ -305,7 +305,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            SecondHue.Initialize(file);
+            if (!CompareFiles.TryLoad("the second hues.mul", () => SecondHue.Initialize(file)))
+            {
+                return;
+            }
             _hue2Loaded = true;
             _compare.Clear();
             vScrollBar.Value = 0;

@@ -15,7 +15,8 @@ namespace UoFiddler.Plugin.Compare.Classes
         {
             int index = 0;
 
-            List = new Hue[3000];
+            // Keep the previous list if the file can't be read.
+            var list = new Hue[3000];
 
             if (path != null)
             {
@@ -44,17 +45,19 @@ namespace UoFiddler.Plugin.Compare.Classes
 
                         for (int j = 0; j < 8; ++j, ++index)
                         {
-                            List[index] = new Hue(index, bufferSpan.Slice(cursor, hueDataSize));
+                            list[index] = new Hue(index, bufferSpan.Slice(cursor, hueDataSize));
                             cursor += hueDataSize;
                         }
                     }
                 }
             }
 
-            for (; index < List.Length; ++index)
+            for (; index < list.Length; ++index)
             {
-                List[index] = new Hue(index);
+                list[index] = new Hue(index);
             }
+
+            List = list;
         }
 
         // TODO: unused method?

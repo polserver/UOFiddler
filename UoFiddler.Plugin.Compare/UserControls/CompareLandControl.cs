@@ -303,8 +303,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            SecondArt.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
-            LoadSecond();
+            if (CompareFiles.TryLoad("the second art files",
+                    () => SecondArt.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop)))
+            {
+                LoadSecond();
+            }
         }
 
         private void LoadSecond()

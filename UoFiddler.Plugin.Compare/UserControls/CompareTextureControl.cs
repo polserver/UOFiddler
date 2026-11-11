@@ -277,8 +277,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 // instances (GetTexture returns the cached bitmap, not a copy).
                 pictureBoxSec.BackgroundImage = null;
 
-                SecondTexture.SetFileIndex(file2, file);
-                LoadSecond();
+                if (CompareFiles.TryLoad("the second texture files", () => SecondTexture.SetFileIndex(file2, file)))
+                {
+                    LoadSecond();
+                }
             }
         }
 
