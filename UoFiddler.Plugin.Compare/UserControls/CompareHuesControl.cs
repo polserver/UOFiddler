@@ -50,6 +50,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            // Makes MainForm reload Hues on a client path change.
+            Options.LoadedUltimaClass["Hues"] = true;
+
             vScrollBar.Maximum = Hues.List.Length;
             vScrollBar.Minimum = 0;
             vScrollBar.Value = 0;
