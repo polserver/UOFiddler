@@ -739,6 +739,7 @@ namespace UoFiddler.Forms
             SettingsMenu.Name = "SettingsMenu";
             SettingsMenu.Size = new System.Drawing.Size(62, 22);
             SettingsMenu.Text = "Settings";
+            SettingsMenu.ToolTipText = "Options, client paths and reloading files";
             // 
             // AlwaysOnTopMenuitem
             // 
@@ -781,6 +782,7 @@ namespace UoFiddler.Forms
             reloadFilesMenuItem.Name = "reloadFilesMenuItem";
             reloadFilesMenuItem.Size = new System.Drawing.Size(212, 22);
             reloadFilesMenuItem.Text = "Reload Files";
+            reloadFilesMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
             reloadFilesMenuItem.Click += ReloadFiles;
             // 
             // toolStripDropDownButtonView
@@ -791,6 +793,7 @@ namespace UoFiddler.Forms
             toolStripDropDownButtonView.Name = "toolStripDropDownButtonView";
             toolStripDropDownButtonView.Size = new System.Drawing.Size(45, 22);
             toolStripDropDownButtonView.Text = "View";
+            toolStripDropDownButtonView.ToolTipText = "Show or hide tabs (Ctrl+1..9 switch tabs)";
             // 
             // ToggleViewStart
             // 
@@ -1030,6 +1033,7 @@ namespace UoFiddler.Forms
             ExternToolsDropDown.Name = "ExternToolsDropDown";
             ExternToolsDropDown.Size = new System.Drawing.Size(83, 22);
             ExternToolsDropDown.Text = "Extern Tools";
+            ExternToolsDropDown.ToolTipText = "Run configured external tools";
             // 
             // manageToolStripMenuItem
             // 
@@ -1046,6 +1050,7 @@ namespace UoFiddler.Forms
             toolStripDropDownButtonPlugins.Name = "toolStripDropDownButtonPlugins";
             toolStripDropDownButtonPlugins.Size = new System.Drawing.Size(59, 22);
             toolStripDropDownButtonPlugins.Text = "Plugins";
+            toolStripDropDownButtonPlugins.ToolTipText = "Plugin features and plugin management";
             // 
             // manageToolStripMenuItem1
             // 
@@ -1074,6 +1079,7 @@ namespace UoFiddler.Forms
             toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
             toolStripMenuItemHelp.Size = new System.Drawing.Size(107, 22);
             toolStripMenuItemHelp.Text = "Help";
+            toolStripMenuItemHelp.ShortcutKeys = System.Windows.Forms.Keys.F1;
             toolStripMenuItemHelp.Click += ToolStripMenuItemHelp_Click;
             // 
             // toolStripSeparator1
