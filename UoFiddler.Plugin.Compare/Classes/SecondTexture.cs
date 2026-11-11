@@ -136,4 +136,3 @@ namespace UoFiddler.Plugin.Compare.Classes
         }
     }
 }
-
