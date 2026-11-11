@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Ultima.Caching;
@@ -554,6 +555,7 @@ namespace Ultima
                 stream.ReadExactly(rented, 0, length);
 
                 byte[] data = rented;
+                int dataLength = length;
                 int dataOffset = 0;
                 width = entry.Extra1;
                 height = entry.Extra2;
@@ -588,10 +590,12 @@ namespace Ultima
                         }
 
                         data = mythicBuf;
+                        dataLength = (int)mythicLen;
                     }
                     else
                     {
                         data = zlibBuf;
+                        dataLength = zlibLen;
                     }
 
                     // Header: 4-byte width then 4-byte height (little-endian), pixel data at offset 8.
@@ -615,42 +619,11 @@ namespace Ultima
                     return false;
                 }
 
-                fixed (byte* dataPtr = data)
                 fixed (ushort* destPtr = destination)
                 {
-                    byte* basePtr = dataPtr + dataOffset;
-                    var lookup = (int*)basePtr;
-                    var dat = (ushort*)basePtr;
-
-                    for (int y = 0; y < height; ++y)
-                    {
-                        int count = (*lookup++ * 2);
-
-                        ushort* cur = destPtr + y * width;
-                        ushort* end = cur + width;
-
-                        while (cur < end)
-                        {
-                            ushort color = dat[count++];
-                            ushort* next = cur + dat[count++];
-
-                            if (color == 0)
-                            {
-                                cur = next;
-                            }
-                            else
-                            {
-                                color ^= 0x8000;
-                                while (cur < next)
-                                {
-                                    *cur++ = color;
-                                }
-                            }
-                        }
-                    }
+                    return DecodeRle(
+                        data.AsSpan(dataOffset, dataLength - dataOffset), destPtr, width, height, width);
                 }
-
-                return true;
             }
             finally
             {
@@ -763,6 +736,7 @@ namespace Ultima
                 stream.ReadExactly(rented, 0, length);
 
                 byte[] data = rented;
+                int dataLength = length;
                 int dataOffset = 0;
 
                 uint width = (uint)entry.Extra1;
@@ -799,10 +773,12 @@ namespace Ultima
                         }
 
                         data = mythicBuf;
+                        dataLength = (int)mythicLen;
                     }
                     else
                     {
                         data = zlibBuf;
+                        dataLength = zlibLen;
                     }
 
                     width = (uint)(data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
@@ -825,54 +801,33 @@ namespace Ultima
                     return null;
                 }
 
+                if (width > 0xFFFF || height > 0xFFFF)
+                {
+                    return null;
+                }
+
                 try
                 {
                     var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format16bppArgb1555);
                     BitmapData bd = bmp.LockBits(
                         new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
 
+                    bool decoded;
                     try
                     {
-                        fixed (byte* dataPtr = data)
-                        {
-                            byte* basePtr = dataPtr + dataOffset;
-                            var lookup = (int*)basePtr;
-                            var dat = (ushort*)basePtr;
-
-                            var line = (ushort*)bd.Scan0;
-                            int delta = bd.Stride >> 1;
-
-                            for (int y = 0; y < (int)height; ++y, line += delta)
-                            {
-                                int count = (*lookup++ * 2);
-
-                                ushort* cur = line;
-                                ushort* end = line + bd.Width;
-
-                                while (cur < end)
-                                {
-                                    ushort color = dat[count++];
-                                    ushort* next = cur + dat[count++];
-
-                                    if (color == 0)
-                                    {
-                                        cur = next;
-                                    }
-                                    else
-                                    {
-                                        color ^= 0x8000;
-                                        while (cur < next)
-                                        {
-                                            *cur++ = color;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        decoded = DecodeRle(
+                            data.AsSpan(dataOffset, dataLength - dataOffset), (ushort*)bd.Scan0,
+                            (int)width, (int)height, bd.Stride >> 1);
                     }
                     finally
                     {
                         bmp.UnlockBits(bd);
+                    }
+
+                    if (!decoded)
+                    {
+                        bmp.Dispose();
+                        return null;
                     }
 
                     if (Files.CacheData)
@@ -902,6 +857,54 @@ namespace Ultima
 
                 ArrayPool<byte>.Shared.Return(rented);
             }
+        }
+
+        /// <summary>
+        /// Decodes gump RLE into a 16bpp buffer, clipping runs to their row. Returns false if a row
+        /// offset or run falls outside <paramref name="src"/>.
+        /// </summary>
+        private static unsafe bool DecodeRle(ReadOnlySpan<byte> src, ushort* dest, int width, int height, int strideInPixels)
+        {
+            ReadOnlySpan<int> lookup = MemoryMarshal.Cast<byte, int>(src);
+            ReadOnlySpan<ushort> dat = MemoryMarshal.Cast<byte, ushort>(src);
+            if (lookup.Length < height)
+            {
+                return false;
+            }
+
+            for (int y = 0; y < height; ++y)
+            {
+                long start = (long)lookup[y] * 2;
+                if (start < 0 || start >= dat.Length)
+                {
+                    return false;
+                }
+
+                int count = (int)start;
+                ushort* line = dest + (long)y * strideInPixels;
+                int x = 0;
+
+                while (x < width)
+                {
+                    if (count + 1 >= dat.Length)
+                    {
+                        return false;
+                    }
+
+                    ushort color = dat[count];
+                    int run = Math.Min(dat[count + 1], width - x);
+                    count += 2;
+
+                    if (color != 0)
+                    {
+                        new Span<ushort>(line + x, run).Fill((ushort)(color ^ 0x8000));
+                    }
+
+                    x += run;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1001,7 +1004,8 @@ namespace Ultima
                 return;
             }
 
-            int length = entry.Length & 0x7FFFFFFF;
+            // Negative length: unused entry or verdata patch, which GetGump reads from verdata.mul.
+            int length = entry.Length;
             if (length <= 0)
             {
                 return;
@@ -1016,6 +1020,7 @@ namespace Ultima
                 stream.ReadExactly(rented, 0, length);
 
                 byte[] data = rented;
+                int dataLength = length;
                 int dataOffset = 0;
                 uint width = (uint)entry.Extra1;
                 uint height = (uint)entry.Extra2;
@@ -1050,10 +1055,12 @@ namespace Ultima
                         }
 
                         data = mythicBuf;
+                        dataLength = (int)mythicLen;
                     }
                     else
                     {
                         data = zlibBuf;
+                        dataLength = zlibLen;
                     }
 
                     width = (uint)(data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
@@ -1078,48 +1085,22 @@ namespace Ultima
 
                 BitmapData bd = bmp.LockBits(
                     new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                bool decoded;
                 try
                 {
-                    fixed (byte* dataPtr = data)
-                    {
-                        byte* basePtr = dataPtr + dataOffset;
-                        var lookup = (int*)basePtr;
-                        var dat = (ushort*)basePtr;
-
-                        var line = (ushort*)bd.Scan0;
-                        int delta = bd.Stride >> 1;
-
-                        for (int y = 0; y < (int)height; ++y, line += delta)
-                        {
-                            int count = (*lookup++ * 2);
-
-                            ushort* cur = line;
-                            ushort* end = line + bd.Width;
-
-                            while (cur < end)
-                            {
-                                ushort color = dat[count++];
-                                ushort* next = cur + dat[count++];
-
-                                if (color == 0)
-                                {
-                                    cur = next;
-                                }
-                                else
-                                {
-                                    color ^= 0x8000;
-                                    while (cur < next)
-                                    {
-                                        *cur++ = color;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    decoded = DecodeRle(
+                        data.AsSpan(dataOffset, dataLength - dataOffset), (ushort*)bd.Scan0,
+                        (int)width, (int)height, bd.Stride >> 1);
                 }
                 finally
                 {
                     bmp.UnlockBits(bd);
+                }
+
+                if (!decoded)
+                {
+                    bmp.Dispose();
+                    return;
                 }
 
                 if (Files.CacheData)
