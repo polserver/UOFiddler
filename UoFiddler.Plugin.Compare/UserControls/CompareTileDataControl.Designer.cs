@@ -200,7 +200,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             chkShowDiff.Name = "chkShowDiff";
             chkShowDiff.Size = new System.Drawing.Size(145, 19);
             chkShowDiff.TabIndex = 4;
-            chkShowDiff.Text = "Show Differences Only";
+            chkShowDiff.Text = "Show only Differences";
             chkShowDiff.CheckedChanged += OnChangeShowDiff;
             //
             // chkMultiSelect
