@@ -95,6 +95,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileView2.FocusSelectionChanged += OnFocusChanged2;
             tileView2.DrawItem += OnDrawItem2;
             tileView2.SizeChanged += OnTileViewSizeChanged;
+            tileView2.MouseDoubleClick += OnDoubleClickSec;
             // 
             // contextMenuStrip1
             // 
