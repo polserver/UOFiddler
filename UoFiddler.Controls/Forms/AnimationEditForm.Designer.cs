@@ -33,7 +33,6 @@
             MainSplitContainer = new System.Windows.Forms.SplitContainer();
             AnimationListTreeView = new System.Windows.Forms.TreeView();
             ContextMenuStripTreeView = new System.Windows.Forms.ContextMenuStrip(components);
-            addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             extractImagesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             asBmpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -246,17 +245,10 @@
             // ContextMenuStripTreeView
             // 
             ContextMenuStripTreeView.ImageScalingSize = new System.Drawing.Size(20, 20);
-            ContextMenuStripTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { addToolStripMenuItem, removeToolStripMenuItem, copyActionToolStripMenuItem, extractImagesToolStripMenuItem1, importToolStripMenuItem1, exportToolStripMenuItem1 });
+            ContextMenuStripTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { removeToolStripMenuItem, copyActionToolStripMenuItem, extractImagesToolStripMenuItem1, importToolStripMenuItem1, exportToolStripMenuItem1 });
             ContextMenuStripTreeView.Name = "contextMenuStrip2";
             ContextMenuStripTreeView.Size = new System.Drawing.Size(158, 136);
             ContextMenuStripTreeView.Opening += OnTreeViewContextMenuOpening;
-            // 
-            // addToolStripMenuItem
-            // 
-            addToolStripMenuItem.Name = "addToolStripMenuItem";
-            addToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            addToolStripMenuItem.Text = "Replace";
-            addToolStripMenuItem.Visible = false;
             // 
             // removeToolStripMenuItem
             // 
@@ -1687,7 +1679,6 @@
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem addDirectionsAddWithCanvasUniqueImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem addWithCanvasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allDirectionsAddToolStripMenuItem;
