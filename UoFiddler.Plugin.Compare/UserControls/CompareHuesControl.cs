@@ -266,7 +266,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             else
             {
-                if (vScrollBar.Value <= 1)
+                if (vScrollBar.Value <= vScrollBar.Minimum)
                 {
                     return;
                 }
@@ -335,8 +335,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void OnMouseClick1(object sender, MouseEventArgs e)
         {
             pictureBox1.Focus();
-            Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / _itemHeight);
+            // e is relative to the picture box.
+            int index = GetIndex(e.Y / _itemHeight);
             if (index < 0)
             {
                 return;
@@ -355,8 +355,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void OnMouseClick2(object sender, MouseEventArgs e)
         {
             pictureBox2.Focus();
-            Point m = PointToClient(MousePosition);
-            int index = GetIndex(m.Y / _itemHeight);
+            // e is relative to the picture box.
+            int index = GetIndex(e.Y / _itemHeight);
             if (index < 0)
             {
                 return;
