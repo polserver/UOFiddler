@@ -159,12 +159,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
+        /// <summary>
+        /// End (exclusive) of a section in a file of <paramref name="length"/> entries. Land is the
+        /// first 0x4000 entries; items take the rest.
+        /// </summary>
+        private static int SectionEnd(bool isLand, int length) => isLand ? Math.Min(0x4000, length) : length;
+
         private void PopulateOrgOnly(bool isLand)
         {
             int start = isLand ? 0x0000 : 0x4000;
-            int end   = isLand ? 0x4000 : 0x8000;
-            int limit = RadarCol.Colors?.Length ?? end;
-            end = Math.Min(end, limit);
+            int end   = SectionEnd(isLand, RadarCol.Colors?.Length ?? 0);
 
             var indices = isLand ? _landDisplayIndices : _itemDisplayIndices;
             indices.Clear();
@@ -191,7 +195,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
 
                 int start = isLand ? 0x0000 : 0x4000;
-                int end   = Math.Min(isLand ? 0x4000 : 0x8000, totalCount);
+                int end   = SectionEnd(isLand, totalCount);
 
                 var indices = isLand ? _landDisplayIndices : _itemDisplayIndices;
                 indices.Clear();
@@ -252,13 +256,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 e.Graphics.FillRectangle(backBrush, e.Bounds);
             }
 
-            // Color swatch.
-            ushort radarHue = GetRadarColor(idx, isSec);
+            bool exists = isSec ? InSec(idx) : InOrg(idx);
+
+            // Colour swatch; empty frame when this side has no entry.
             int swatchX = e.ContentLeft + 2;
             int swatchY = e.Bounds.Y + (e.Bounds.Height - SwatchSize) / 2;
             var swatchRect = new Rectangle(swatchX, swatchY, SwatchSize, SwatchSize);
-            using (var swatchBrush = new SolidBrush(HueHelpers.HueToColor(radarHue)))
+            if (exists)
             {
+                using var swatchBrush = new SolidBrush(HueHelpers.HueToColor(GetRadarColor(idx, isSec)));
                 e.Graphics.FillRectangle(swatchBrush, swatchRect);
             }
             using (var border = new Pen(SystemColors.ControlDark))
@@ -269,20 +275,45 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // Text — display id is *within* the section (0x0000-based for both
             // items and land), matching RadarColorControl's labelling.
             int displayId = idx < 0x4000 ? idx : idx - 0x4000;
-            string name = GetTileName(idx);
+            string name = exists ? GetTileName(idx) : _missingEntry;
             string text = string.IsNullOrEmpty(name)
                 ? $"0x{displayId:X4} ({displayId})"
                 : $"0x{displayId:X4} ({displayId}) {name}";
 
             Brush fontBrush = focused
                 ? CompareColors.ContrastBrush(Options.TileSelectionColor)
-                : SecondRadarCol.IsLoaded && IsDifferent(idx)
-                    ? (Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue)
-                    : Brushes.Gray;
+                : GetDiffBrush(idx);
 
             int textX = swatchX + SwatchSize + SwatchGap;
             float textY = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(text, e.Font).Height) / 2f;
             e.Graphics.DrawString(text, e.Font, fontBrush, new PointF(textX, textY));
+        }
+
+        private const string _missingEntry = "<entry doesn't exist>";
+
+        // Orange: only in the original, green: only in the second, blue: different.
+        private Brush GetDiffBrush(int idx)
+        {
+            if (!SecondRadarCol.IsLoaded)
+            {
+                return Brushes.Gray;
+            }
+
+            bool inOrg = InOrg(idx);
+            bool inSec = InSec(idx);
+            if (inOrg && !inSec)
+            {
+                return Brushes.Orange;
+            }
+
+            if (!inOrg && inSec)
+            {
+                return Brushes.Green;
+            }
+
+            return IsDifferent(idx)
+                ? (Options.DarkMode ? Brushes.CornflowerBlue : Brushes.Blue)
+                : Brushes.Gray;
         }
 
         private static ushort GetRadarColor(int idx, bool isSec)
@@ -422,23 +453,27 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void UpdateDetailPanel(int idx)
         {
-            ushort orgColor = RadarCol.Colors != null && idx < RadarCol.Colors.Length
-                ? RadarCol.Colors[idx]
-                : (ushort)0;
-
-            ushort secColor = SecondRadarCol.IsLoaded ? SecondRadarCol.GetColor(idx) : (ushort)0;
-
-            labelOrgColorValue.Text = $"0x{orgColor:X4} ({orgColor})";
-            pictureBoxOrgColor.BackColor = HueHelpers.HueToColor(orgColor);
-
-            if (SecondRadarCol.IsLoaded)
+            if (InOrg(idx))
             {
+                ushort orgColor = RadarCol.Colors[idx];
+                labelOrgColorValue.Text = $"0x{orgColor:X4} ({orgColor})";
+                pictureBoxOrgColor.BackColor = HueHelpers.HueToColor(orgColor);
+            }
+            else
+            {
+                labelOrgColorValue.Text = _missingEntry;
+                pictureBoxOrgColor.BackColor = SystemColors.Control;
+            }
+
+            if (SecondRadarCol.IsLoaded && InSec(idx))
+            {
+                ushort secColor = SecondRadarCol.GetColor(idx);
                 labelSecColorValue.Text = $"0x{secColor:X4} ({secColor})";
                 pictureBoxSecColor.BackColor = HueHelpers.HueToColor(secColor);
             }
             else
             {
-                labelSecColorValue.Text = "-";
+                labelSecColorValue.Text = SecondRadarCol.IsLoaded ? _missingEntry : "-";
                 pictureBoxSecColor.BackColor = SystemColors.Control;
             }
         }
@@ -508,6 +543,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             PopulateSection(IsLandSection, checkBoxShowDiff.Checked);
         }
 
+        private static bool InOrg(int idx) => RadarCol.Colors != null && idx < RadarCol.Colors.Length;
+
+        private static bool InSec(int idx) => idx < SecondRadarCol.Length;
+
+        /// <summary>
+        /// Only entries present in both files can be copied.
+        /// </summary>
+        private static bool CanCopy(int idx) => InOrg(idx) && InSec(idx);
+
         private bool IsDifferent(int idx)
         {
             if (_compare.TryGetValue(idx, out bool cached))
@@ -515,9 +559,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return !cached;
             }
 
-            bool same = RadarCol.Colors != null
-                        && idx < RadarCol.Colors.Length
-                        && RadarCol.Colors[idx] == SecondRadarCol.GetColor(idx);
+            bool same = CanCopy(idx) && RadarCol.Colors[idx] == SecondRadarCol.GetColor(idx);
 
             _compare[idx] = same;
             return !same;
@@ -544,10 +586,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
+            int skipped = 0;
             using (new WaitCursorScope(this))
             {
                 int lastIdx = -1;
-                bool changed = false;
+                var copied = new List<int>();
 
                 foreach (int focusIdx in targets)
                 {
@@ -557,19 +600,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
 
                     int idx = indices[focusIdx];
-                    CopySecToOrg(idx);
+                    if (!CopySecToOrg(idx))
+                    {
+                        skipped++;
+                        continue;
+                    }
+
                     lastIdx = idx;
-                    changed = true;
+                    copied.Add(focusIdx);
                 }
 
-                if (checkBoxShowDiff.Checked && changed)
+                if (checkBoxShowDiff.Checked && copied.Count > 0)
                 {
-                    foreach (int displayIdx in targets.OrderByDescending(x => x))
+                    foreach (int displayIdx in copied.OrderByDescending(x => x))
                     {
-                        if (displayIdx >= 0 && displayIdx < indices.Count)
-                        {
-                            indices.RemoveAt(displayIdx);
-                        }
+                        indices.RemoveAt(displayIdx);
                     }
                     orgView.VirtualListSize = indices.Count;
                     secView.VirtualListSize = indices.Count;
@@ -586,6 +631,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     UpdateDetailPanel(lastIdx);
                 }
             }
+
+            ReportSkipped(skipped);
         }
 
         private void OnClickCopyAllDiff(object sender, EventArgs e)
@@ -597,32 +644,57 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             bool isLand = IsLandSection;
             int start   = isLand ? 0x0000 : 0x4000;
-            int end     = Math.Min(isLand ? 0x4000 : 0x8000,
-                                    Math.Max(RadarCol.Colors?.Length ?? 0, SecondRadarCol.Length));
+            int end     = SectionEnd(isLand, Math.Max(RadarCol.Colors?.Length ?? 0, SecondRadarCol.Length));
             bool changed = false;
 
-            for (int i = start; i < end; i++)
+            using (new WaitCursorScope(this))
             {
-                if (IsDifferent(i))
+                for (int i = start; i < end; i++)
                 {
-                    CopySecToOrg(i); changed = true;
-                }
-            }
-
-            if (changed)
-            {
-                if (checkBoxShowDiff.Checked)
-                {
-                    PopulateSection(isLand, showDiffOnly: true);
+                    if (IsDifferent(i) && CopySecToOrg(i))
+                    {
+                        changed = true;
+                    }
                 }
 
-                ActiveOrgView.Invalidate();
-                ActiveSecView.Invalidate();
+                if (changed)
+                {
+                    if (checkBoxShowDiff.Checked)
+                    {
+                        PopulateSection(isLand, showDiffOnly: true);
+                    }
+
+                    ActiveOrgView.Invalidate();
+                    ActiveSecView.Invalidate();
+                }
             }
         }
 
-        private void CopySecToOrg(int idx)
+        private static void ReportSkipped(int skipped)
         {
+            if (skipped == 0)
+            {
+                return;
+            }
+
+            MessageBox.Show(
+                $"{skipped} selected entr{(skipped == 1 ? "y exists" : "ies exist")} in only one of the two files " +
+                "and can't be copied. The original radarcol.mul is not resized.",
+                "RadarCol",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Copies one entry into RadarCol; false if it exists in only one file.
+        /// </summary>
+        private bool CopySecToOrg(int idx)
+        {
+            if (!CanCopy(idx))
+            {
+                return false;
+            }
+
             ushort value = SecondRadarCol.GetColor(idx);
             if (idx < 0x4000)
             {
@@ -635,6 +707,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             Options.ChangedUltimaClass["RadarCol"] = true;
             _compare[idx] = true;
+            return true;
         }
     }
 }
