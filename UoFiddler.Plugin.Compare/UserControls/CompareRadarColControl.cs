@@ -531,7 +531,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             OnClickCopySelected(sender, e);
         }
-        private void OnDoubleClickOrg(object sender, MouseEventArgs e) => OnClickCopy1To2(sender, e);
 
         private void OnClickCopySelected(object sender, EventArgs e)
         {
@@ -589,17 +588,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
-        private void OnClickCopy1To2(object sender, EventArgs e)
-        {
-            var orgView = ActiveOrgView;
-            if (orgView.FocusIndex < 0)
-            {
-                return;
-            }
-
-            CopyOrgToSec(ActiveIndices[orgView.FocusIndex]);
-        }
-
         private void OnClickCopyAllDiff(object sender, EventArgs e)
         {
             if (!SecondRadarCol.IsLoaded)
@@ -647,16 +635,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             Options.ChangedUltimaClass["RadarCol"] = true;
             _compare[idx] = true;
-        }
-
-        private void CopyOrgToSec(int idx)
-        {
-            MessageBox.Show(
-                "The second file is a read-only reference source.\n" +
-                "Use 'Copy Entry 2 to 1' to transfer from second to original.",
-                "Read-only",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
         }
     }
 }
