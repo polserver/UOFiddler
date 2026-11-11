@@ -607,6 +607,16 @@ namespace UoFiddler.Plugin.Compare.UserControls
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
 
+        private void OnDoubleClickSec(object sender, MouseEventArgs e)
+        {
+            if (tileView2.ShowCheckBoxes)
+            {
+                return;
+            }
+
+            OnClickCopy(sender, e);
+        }
+
         private void OnClickCopy(object sender, EventArgs e)
         {
             var targets = GetCopyTargets();
