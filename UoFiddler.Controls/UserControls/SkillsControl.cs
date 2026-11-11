@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
@@ -25,6 +26,26 @@ namespace UoFiddler.Controls.UserControls
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             _source = new BindingSource();
+            dataGridView1.CellValidating += OnCellValidating;
+        }
+
+        private void OnCellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            // Only typed values; a name loaded with other bytes must not trap the cursor
+            if (!dataGridView1.IsCurrentCellInEditMode ||
+                dataGridView1.Columns[e.ColumnIndex].DataPropertyName != nameof(SkillInfo.Name))
+            {
+                return;
+            }
+
+            // skills.mul stores names as single bytes; the client has no Unicode for them
+            string name = e.FormattedValue as string ?? string.Empty;
+            if (name.Any(c => c > 127))
+            {
+                e.Cancel = true;
+                MessageBox.Show("Use ASCII characters only: skills.mul stores names as single bytes.", "Skills",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private bool _loaded;

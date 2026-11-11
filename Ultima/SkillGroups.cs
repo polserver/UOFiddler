@@ -15,12 +15,47 @@ namespace Ultima
         }
     }
 
+    /// <summary>
+    /// skillgrp.mul: a group count, the names of groups 1..count-1 (group 0, Misc, has no stored name),
+    /// then one int32 group id per skill. The order of skills inside a group is not stored.
+    /// </summary>
     public sealed class SkillGroups
     {
+        /// <summary>
+        /// Skill entries the client reads and writes, whatever skills.idx holds (measured on client 7.0.117.0).
+        /// Skills past this are not shown in the client's skill groups.
+        /// </summary>
+        public const int ClientSkillLimit = 58;
+
+        /// <summary>
+        /// Groups the client allows, Misc included. Its loader does not check this, so a file with more
+        /// groups overruns the client's name table (measured on client 7.0.117.0).
+        /// </summary>
+        public const int ClientGroupLimit = 12;
+
+        /// <summary>
+        /// Longest group name: names are 17-character slots that the client reads up to a NUL.
+        /// </summary>
+        public const int MaxNameLength = 16;
+
+        private const int _nameSlot = 17;
+
+        /// <summary>
+        /// Groups in file order; index 0 is always Misc.
+        /// </summary>
         public static List<SkillGroup> List { get; private set; }
+
+        /// <summary>
+        /// Group index of each skill, by skill id.
+        /// </summary>
         public static List<int> SkillList { get; private set; }
 
-        private static bool _unicode;
+        /// <summary>
+        /// True when the file stores group names in 16-bit slots (count preceded by -1). This is not Unicode
+        /// support: the client keeps only the low byte of each character and saves the file back as 8-bit.
+        /// Names should be ASCII in either form.
+        /// </summary>
+        public static bool Unicode { get; private set; }
 
         static SkillGroups()
         {
@@ -31,8 +66,9 @@ namespace Ultima
         {
             string path = Files.GetFilePath("skillgrp.mul");
 
-            List = new List<SkillGroup>();
+            List = new List<SkillGroup> { new SkillGroup("Misc") };
             SkillList = new List<int>();
+            Unicode = false;
 
             if (path == null)
             {
@@ -42,58 +78,60 @@ namespace Ultima
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var bin = new BinaryReader(fs))
             {
+                if (fs.Length < 4)
+                {
+                    return;
+                }
+
                 int start = 4;
-                int strLen = 17;
                 int count = bin.ReadInt32();
 
                 if (count == -1)
                 {
-                    _unicode = true;
+                    Unicode = true;
                     count = bin.ReadInt32();
-                    start *= 2;
-                    strLen *= 2;
+                    start = 8;
                 }
 
-                List.Add(new SkillGroup("Misc"));
+                int charSize = Unicode ? 2 : 1;
+                int slotSize = _nameSlot * charSize;
+                int names = Math.Max(0, count - 1);
 
-                for (int i = 0; i < count - 1; ++i)
+                for (int i = 0; i < names; ++i)
                 {
-                    int strBuild;
-
-                    fs.Seek(start + (i * strLen), SeekOrigin.Begin);
-
-                    var builder2 = new StringBuilder(17);
-                    if (_unicode)
+                    long offset = start + ((long)i * slotSize);
+                    if (offset + slotSize > fs.Length)
                     {
-                        while ((strBuild = bin.ReadInt16()) != 0)
+                        break;
+                    }
+
+                    fs.Seek(offset, SeekOrigin.Begin);
+
+                    var builder = new StringBuilder(_nameSlot);
+                    for (int c = 0; c < _nameSlot; ++c)
+                    {
+                        int ch = Unicode ? bin.ReadUInt16() : bin.ReadByte();
+                        if (ch == 0)
                         {
-                            builder2.Append((char)strBuild);
+                            break;
                         }
-                    }
-                    else
-                    {
-                        while ((strBuild = bin.ReadByte()) != 0)
-                        {
-                            builder2.Append((char)strBuild);
-                        }
+
+                        builder.Append((char)ch);
                     }
 
-                    List.Add(new SkillGroup(builder2.ToString()));
+                    List.Add(new SkillGroup(builder.ToString()));
                 }
 
-                fs.Seek((start + ((count - 1) * strLen)), SeekOrigin.Begin);
-
-                try
+                long skillsStart = start + ((long)names * slotSize);
+                if (skillsStart >= fs.Length)
                 {
-                    while (bin.BaseStream.Length != bin.BaseStream.Position)
-                    {
-                        SkillList.Add(bin.ReadInt32());
-                    }
+                    return;
                 }
-                catch // just for safety
+
+                fs.Seek(skillsStart, SeekOrigin.Begin);
+                while (fs.Length - fs.Position >= 4)
                 {
-                    // TODO: ignored?
-                    // ignored
+                    SkillList.Add(bin.ReadInt32());
                 }
             }
         }
@@ -105,47 +143,17 @@ namespace Ultima
             using (var fs = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
-                if (_unicode)
+                if (Unicode)
                 {
                     bin.Write(-1);
                 }
 
                 bin.Write(List.Count);
 
-                foreach (SkillGroup group in List)
+                // Group 0 is Misc and has no stored name
+                for (int i = 1; i < List.Count; ++i)
                 {
-                    if (group.Name == "Misc")
-                    {
-                        continue;
-                    }
-
-                    byte[] name = _unicode ? new byte[34] : new byte[17];
-
-                    if (group.Name != null)
-                    {
-                        if (_unicode)
-                        {
-                            byte[] bb = Encoding.Unicode.GetBytes(group.Name);
-                            if (bb.Length > 34)
-                            {
-                                Array.Resize(ref bb, 34);
-                            }
-
-                            bb.CopyTo(name, 0);
-                        }
-                        else
-                        {
-                            byte[] bb = Encoding.ASCII.GetBytes(group.Name);
-                            if (bb.Length > 17)
-                            {
-                                Array.Resize(ref bb, 17);
-                            }
-
-                            bb.CopyTo(name, 0);
-                        }
-                    }
-
-                    bin.Write(name);
+                    bin.Write(EncodeName(List[i].Name));
                 }
 
                 foreach (int group in SkillList)
@@ -153,6 +161,26 @@ namespace Ultima
                     bin.Write(group);
                 }
             }
+        }
+
+        private static byte[] EncodeName(string name)
+        {
+            var slot = new byte[_nameSlot * (Unicode ? 2 : 1)];
+            if (string.IsNullOrEmpty(name))
+            {
+                return slot;
+            }
+
+            if (name.Length > MaxNameLength)
+            {
+                name = name.Substring(0, MaxNameLength);
+            }
+
+            // 8-bit names are written back byte for byte as loaded (Latin-1)
+            byte[] bytes = Unicode ? Encoding.Unicode.GetBytes(name) : Encoding.Latin1.GetBytes(name);
+            bytes.CopyTo(slot, 0);
+
+            return slot;
         }
     }
 }
