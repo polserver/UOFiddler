@@ -73,21 +73,10 @@ namespace UoFiddler.Plugin.Compare.Classes
             return 0x3FFF;
         }
 
-        private static ushort GetLegalItemId(int itemId)
-        {
-            if (itemId < 0)
-            {
-                return 0;
-            }
-
-            int max = GetMaxItemId();
-            if (itemId > max)
-            {
-                return 0;
-            }
-
-            return (ushort)itemId;
-        }
+        /// <summary>
+        /// True if this client has a slot for <paramref name="itemId"/>.
+        /// </summary>
+        private static bool IsInRange(int itemId) => itemId >= 0 && itemId <= GetMaxItemId();
 
         private static int GetIdxLength()
         {
@@ -102,12 +91,11 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static bool IsValidStatic(int index)
         {
-            if (_fileIndex == null || _cache == null)
+            if (_fileIndex == null || _cache == null || !IsInRange(index))
             {
                 return false;
             }
 
-            index = GetLegalItemId(index);
             index += 0x4000;
 
             if (_cache[index] != null)
@@ -138,12 +126,11 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         public static Bitmap GetStatic(int index)
         {
-            if (_fileIndex == null || _cache == null)
+            if (_fileIndex == null || _cache == null || !IsInRange(index))
             {
                 return null;
             }
 
-            index = GetLegalItemId(index);
             index += 0x4000;
 
             if (_cache[index] != null)
