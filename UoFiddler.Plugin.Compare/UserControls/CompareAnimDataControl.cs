@@ -23,6 +23,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnLoad(object sender, EventArgs e)
         {
+            // Makes MainForm reload Animdata on a client path change.
+            Options.LoadedUltimaClass["Animdata"] = true;
+
             if (Options.DarkMode)
             {
                 legendSwatchDifferent.BackColor = Color.CornflowerBlue;
