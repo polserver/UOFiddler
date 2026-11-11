@@ -416,6 +416,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             bool same = e1.FrameCount == e2.FrameCount
+                     && e1.Unknown == e2.Unknown
                      && e1.FrameInterval == e2.FrameInterval
                      && e1.FrameStart == e2.FrameStart
                      && e1.FrameData.SequenceEqual(e2.FrameData);
