@@ -188,15 +188,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             btnLoad.Location = new System.Drawing.Point(408, 3);
             btnLoad.Name = "btnLoad";
-            btnLoad.Size = new System.Drawing.Size(55, 23);
+            btnLoad.Size = new System.Drawing.Size(100, 23);
             btnLoad.TabIndex = 3;
-            btnLoad.Text = "Load";
+            btnLoad.Text = "Load Second";
             btnLoad.Click += OnClickLoad;
             // 
             // chkShowDiff
             // 
             chkShowDiff.AutoSize = true;
-            chkShowDiff.Location = new System.Drawing.Point(470, 6);
+            chkShowDiff.Location = new System.Drawing.Point(516, 6);
             chkShowDiff.Name = "chkShowDiff";
             chkShowDiff.Size = new System.Drawing.Size(145, 19);
             chkShowDiff.TabIndex = 4;
@@ -206,7 +206,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // chkMultiSelect
             //
             chkMultiSelect.AutoSize = true;
-            chkMultiSelect.Location = new System.Drawing.Point(737, 6);
+            chkMultiSelect.Location = new System.Drawing.Point(750, 6);
             chkMultiSelect.Name = "chkMultiSelect";
             chkMultiSelect.Size = new System.Drawing.Size(90, 19);
             chkMultiSelect.TabIndex = 6;
@@ -217,7 +217,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // btnToggleRules
             // 
             btnToggleRules.AutoSize = true;
-            btnToggleRules.Location = new System.Drawing.Point(650, 3);
+            btnToggleRules.Location = new System.Drawing.Point(667, 3);
             btnToggleRules.Name = "btnToggleRules";
             btnToggleRules.Size = new System.Drawing.Size(75, 25);
             btnToggleRules.TabIndex = 5;
@@ -605,22 +605,20 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // btnCopyLandSelected
             // 
-            btnCopyLandSelected.AutoSize = true;
-            btnCopyLandSelected.Location = new System.Drawing.Point(4, 4);
+            btnCopyLandSelected.Location = new System.Drawing.Point(4, 2);
             btnCopyLandSelected.Name = "btnCopyLandSelected";
-            btnCopyLandSelected.Size = new System.Drawing.Size(92, 25);
+            btnCopyLandSelected.Size = new System.Drawing.Size(100, 27);
             btnCopyLandSelected.TabIndex = 0;
             btnCopyLandSelected.Text = "Copy Selected";
             btnCopyLandSelected.Click += OnClickCopyLandSelected;
             // 
             // btnCopyLandAllDiff
             // 
-            btnCopyLandAllDiff.AutoSize = true;
-            btnCopyLandAllDiff.Location = new System.Drawing.Point(110, 4);
+            btnCopyLandAllDiff.Location = new System.Drawing.Point(110, 2);
             btnCopyLandAllDiff.Name = "btnCopyLandAllDiff";
-            btnCopyLandAllDiff.Size = new System.Drawing.Size(111, 25);
+            btnCopyLandAllDiff.Size = new System.Drawing.Size(100, 27);
             btnCopyLandAllDiff.TabIndex = 1;
-            btnCopyLandAllDiff.Text = "Copy All Different";
+            btnCopyLandAllDiff.Text = "Copy All Diff";
             btnCopyLandAllDiff.Click += OnClickCopyLandAllDiff;
             // 
             // tileViewLandSec
@@ -754,22 +752,20 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // btnCopyItemSelected
             // 
-            btnCopyItemSelected.AutoSize = true;
-            btnCopyItemSelected.Location = new System.Drawing.Point(4, 4);
+            btnCopyItemSelected.Location = new System.Drawing.Point(4, 2);
             btnCopyItemSelected.Name = "btnCopyItemSelected";
-            btnCopyItemSelected.Size = new System.Drawing.Size(92, 25);
+            btnCopyItemSelected.Size = new System.Drawing.Size(100, 27);
             btnCopyItemSelected.TabIndex = 0;
             btnCopyItemSelected.Text = "Copy Selected";
             btnCopyItemSelected.Click += OnClickCopyItemSelected;
             // 
             // btnCopyItemAllDiff
             // 
-            btnCopyItemAllDiff.AutoSize = true;
-            btnCopyItemAllDiff.Location = new System.Drawing.Point(110, 4);
+            btnCopyItemAllDiff.Location = new System.Drawing.Point(110, 2);
             btnCopyItemAllDiff.Name = "btnCopyItemAllDiff";
-            btnCopyItemAllDiff.Size = new System.Drawing.Size(111, 25);
+            btnCopyItemAllDiff.Size = new System.Drawing.Size(100, 27);
             btnCopyItemAllDiff.TabIndex = 1;
-            btnCopyItemAllDiff.Text = "Copy All Different";
+            btnCopyItemAllDiff.Text = "Copy All Diff";
             btnCopyItemAllDiff.Click += OnClickCopyItemAllDiff;
             // 
             // tileViewItemSec

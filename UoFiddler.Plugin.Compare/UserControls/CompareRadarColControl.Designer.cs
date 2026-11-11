@@ -370,9 +370,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // buttonCopyAllDiff
             // 
-            buttonCopyAllDiff.Location = new System.Drawing.Point(659, 11);
+            buttonCopyAllDiff.Location = new System.Drawing.Point(669, 11);
             buttonCopyAllDiff.Name = "buttonCopyAllDiff";
-            buttonCopyAllDiff.Size = new System.Drawing.Size(90, 27);
+            buttonCopyAllDiff.Size = new System.Drawing.Size(100, 27);
             buttonCopyAllDiff.TabIndex = 5;
             buttonCopyAllDiff.Text = "Copy All Diff";
             buttonCopyAllDiff.UseVisualStyleBackColor = true;
@@ -382,7 +382,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             buttonCopySelected.Location = new System.Drawing.Point(563, 11);
             buttonCopySelected.Name = "buttonCopySelected";
-            buttonCopySelected.Size = new System.Drawing.Size(90, 27);
+            buttonCopySelected.Size = new System.Drawing.Size(100, 27);
             buttonCopySelected.TabIndex = 4;
             buttonCopySelected.Text = "Copy Selected";
             buttonCopySelected.UseVisualStyleBackColor = true;
@@ -412,10 +412,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // buttonLoadSecond
             // 
-            buttonLoadSecond.AutoSize = true;
             buttonLoadSecond.Location = new System.Drawing.Point(306, 11);
             buttonLoadSecond.Name = "buttonLoadSecond";
-            buttonLoadSecond.Size = new System.Drawing.Size(90, 27);
+            buttonLoadSecond.Size = new System.Drawing.Size(100, 27);
             buttonLoadSecond.TabIndex = 2;
             buttonLoadSecond.Text = "Load Second";
             buttonLoadSecond.UseVisualStyleBackColor = true;
