@@ -44,6 +44,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private static Bitmap OrgStatic(int i) => i <= Art.GetMaxItemId() ? Art.GetStatic(i) : null;
 
+        private static int RowCount() => Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId()) + 1;
+
         private void OnLoad(object sender, EventArgs e)
         {
             ConfigureTileView(tileViewOrg);
@@ -392,11 +394,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             using (new WaitCursorScope(this))
             {
-                int maxId = Math.Max(Art.GetMaxItemId(), SecondArt.GetMaxItemId());
+                int rowCount = RowCount();
                 _displayIndices.Clear();
                 if (checkBox1.Checked)
                 {
-                    for (int i = 0; i < maxId; i++)
+                    for (int i = 0; i < rowCount; i++)
                     {
                         if (!Compare(i))
                         {
@@ -406,7 +408,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
                 else
                 {
-                    for (int i = 0; i < maxId; i++)
+                    for (int i = 0; i < rowCount; i++)
                     {
                         _displayIndices.Add(i);
                     }
@@ -593,6 +595,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             using (new WaitCursorScope(this))
             {
                 int maxId = Art.GetMaxItemId() + 1;
+                int rowCount = RowCount();
                 for (int i = 0; i < maxId; i++)
                 {
                     if (!SecondArt.IsValidStatic(i) || Compare(i))
@@ -618,7 +621,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 if (checkBox1.Checked)
                 {
                     _displayIndices.Clear();
-                    for (int i = 0; i < maxId; i++)
+                    for (int i = 0; i < rowCount; i++)
                     {
                         if (!Compare(i))
                         {
