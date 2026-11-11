@@ -23,8 +23,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabPageLand = new System.Windows.Forms.TabPage();
             tableLayoutLand = new System.Windows.Forms.TableLayoutPanel();
             tileViewOrg = new UoFiddler.Controls.UserControls.TileView.TileViewControl();
-            contextMenuStripOrg = new System.Windows.Forms.ContextMenuStrip(components);
-            copyEntry1To2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             panelDetail = new System.Windows.Forms.Panel();
             groupBoxOrg = new System.Windows.Forms.GroupBox();
             labelOrgColorCaption = new System.Windows.Forms.Label();
@@ -60,7 +58,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabControl.SuspendLayout();
             tabPageLand.SuspendLayout();
             tableLayoutLand.SuspendLayout();
-            contextMenuStripOrg.SuspendLayout();
             panelDetail.SuspendLayout();
             groupBoxOrg.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxOrgColor).BeginInit();
@@ -140,7 +137,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // tileViewOrg
             // 
-            tileViewOrg.ContextMenuStrip = contextMenuStripOrg;
             tileViewOrg.Dock = System.Windows.Forms.DockStyle.Fill;
             tileViewOrg.Location = new System.Drawing.Point(3, 3);
             tileViewOrg.Name = "tileViewOrg";
@@ -150,21 +146,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewOrg.FocusSelectionChanged += OnFocusChangedLandOrg;
             tileViewOrg.DrawItem += OnDrawItemLandOrg;
             tileViewOrg.SizeChanged += OnTileViewSizeChanged;
-            tileViewOrg.MouseDoubleClick += OnDoubleClickOrg;
-            // 
-            // contextMenuStripOrg
-            // 
-            contextMenuStripOrg.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyEntry1To2ToolStripMenuItem });
-            contextMenuStripOrg.Name = "contextMenuStripOrg";
-            contextMenuStripOrg.Size = new System.Drawing.Size(165, 26);
-            // 
-            // copyEntry1To2ToolStripMenuItem
-            // 
-            copyEntry1To2ToolStripMenuItem.Name = "copyEntry1To2ToolStripMenuItem";
-            copyEntry1To2ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            copyEntry1To2ToolStripMenuItem.Text = "Copy Entry 1 to 2";
-            copyEntry1To2ToolStripMenuItem.Click += OnClickCopy1To2;
-            // 
+            //
             // panelDetail
             // 
             panelDetail.BackColor = System.Drawing.SystemColors.Control;
@@ -362,7 +344,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // tileViewItemOrg
             // 
-            tileViewItemOrg.ContextMenuStrip = contextMenuStripOrg;
             tileViewItemOrg.Dock = System.Windows.Forms.DockStyle.Fill;
             tileViewItemOrg.Location = new System.Drawing.Point(3, 3);
             tileViewItemOrg.Name = "tileViewItemOrg";
@@ -372,7 +353,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewItemOrg.FocusSelectionChanged += OnFocusChangedItemOrg;
             tileViewItemOrg.DrawItem += OnDrawItemItemOrg;
             tileViewItemOrg.SizeChanged += OnTileViewSizeChanged;
-            tileViewItemOrg.MouseDoubleClick += OnDoubleClickOrg;
             // 
             // tileViewItemSec
             // 
@@ -477,7 +457,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tabControl.ResumeLayout(false);
             tabPageLand.ResumeLayout(false);
             tableLayoutLand.ResumeLayout(false);
-            contextMenuStripOrg.ResumeLayout(false);
             panelDetail.ResumeLayout(false);
             groupBoxOrg.ResumeLayout(false);
             groupBoxOrg.PerformLayout();
@@ -519,8 +498,6 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.Label legendLabelDifferent;
         private System.Windows.Forms.Label legendSwatchIdentical;
         private System.Windows.Forms.Label legendLabelIdentical;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStripOrg;
-        private System.Windows.Forms.ToolStripMenuItem copyEntry1To2ToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripSec;
         private System.Windows.Forms.ToolStripMenuItem copyEntry2To1ToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxSecondFile;
