@@ -49,18 +49,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             jpgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             copyItem2To1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            btnCopyAllDiff = new System.Windows.Forms.Button();
-            btnCopySelected = new System.Windows.Forms.Button();
+            buttonCopyAllDiff = new System.Windows.Forms.Button();
+            buttonCopySelected = new System.Windows.Forms.Button();
             pictureBoxOrg = new System.Windows.Forms.PictureBox();
             pictureBoxSec = new System.Windows.Forms.PictureBox();
             textBoxSecondDir = new System.Windows.Forms.TextBox();
-            button1 = new System.Windows.Forms.Button();
-            checkBox1 = new System.Windows.Forms.CheckBox();
+            buttonLoadSecond = new System.Windows.Forms.Button();
+            checkBoxShowDiff = new System.Windows.Forms.CheckBox();
             chkMultiSelect = new System.Windows.Forms.CheckBox();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
-            button2 = new System.Windows.Forms.Button();
+            buttonBrowse = new System.Windows.Forms.Button();
             comboBoxFileMode = new System.Windows.Forms.ComboBox();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxOrg).BeginInit();
@@ -149,27 +149,27 @@ namespace UoFiddler.Plugin.Compare.UserControls
             copyItem2To1ToolStripMenuItem.Text = "Copy Item to left";
             copyItem2To1ToolStripMenuItem.Click += OnClickCopy;
             // 
-            // btnCopySelected
+            // buttonCopySelected
             // 
-            btnCopySelected.Location = new System.Drawing.Point(598, 13);
-            btnCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            btnCopySelected.Name = "btnCopySelected";
-            btnCopySelected.Size = new System.Drawing.Size(100, 27);
-            btnCopySelected.TabIndex = 12;
-            btnCopySelected.Text = "Copy Selected";
-            btnCopySelected.UseVisualStyleBackColor = true;
-            btnCopySelected.Click += OnClickCopy;
+            buttonCopySelected.Location = new System.Drawing.Point(598, 13);
+            buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonCopySelected.Name = "buttonCopySelected";
+            buttonCopySelected.Size = new System.Drawing.Size(100, 27);
+            buttonCopySelected.TabIndex = 12;
+            buttonCopySelected.Text = "Copy Selected";
+            buttonCopySelected.UseVisualStyleBackColor = true;
+            buttonCopySelected.Click += OnClickCopy;
             // 
-            // btnCopyAllDiff
+            // buttonCopyAllDiff
             // 
-            btnCopyAllDiff.Location = new System.Drawing.Point(704, 13);
-            btnCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            btnCopyAllDiff.Name = "btnCopyAllDiff";
-            btnCopyAllDiff.Size = new System.Drawing.Size(100, 27);
-            btnCopyAllDiff.TabIndex = 9;
-            btnCopyAllDiff.Text = "Copy All Diff";
-            btnCopyAllDiff.UseVisualStyleBackColor = true;
-            btnCopyAllDiff.Click += OnClickCopyAllDiff;
+            buttonCopyAllDiff.Location = new System.Drawing.Point(704, 13);
+            buttonCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonCopyAllDiff.Name = "buttonCopyAllDiff";
+            buttonCopyAllDiff.Size = new System.Drawing.Size(100, 27);
+            buttonCopyAllDiff.TabIndex = 9;
+            buttonCopyAllDiff.Text = "Copy All Diff";
+            buttonCopyAllDiff.UseVisualStyleBackColor = true;
+            buttonCopyAllDiff.Click += OnClickCopyAllDiff;
             // 
             // pictureBoxOrg
             // 
@@ -201,28 +201,28 @@ namespace UoFiddler.Plugin.Compare.UserControls
             textBoxSecondDir.Size = new System.Drawing.Size(168, 23);
             textBoxSecondDir.TabIndex = 4;
             // 
-            // button1
+            // buttonLoadSecond
             // 
-            button1.Location = new System.Drawing.Point(336, 13);
-            button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(100, 27);
-            button1.TabIndex = 5;
-            button1.Text = "Load Second";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += OnClickLoadSecond;
+            buttonLoadSecond.Location = new System.Drawing.Point(336, 13);
+            buttonLoadSecond.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonLoadSecond.Name = "buttonLoadSecond";
+            buttonLoadSecond.Size = new System.Drawing.Size(100, 27);
+            buttonLoadSecond.TabIndex = 5;
+            buttonLoadSecond.Text = "Load Second";
+            buttonLoadSecond.UseVisualStyleBackColor = true;
+            buttonLoadSecond.Click += OnClickLoadSecond;
             // 
-            // checkBox1
+            // checkBoxShowDiff
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new System.Drawing.Point(443, 18);
-            checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new System.Drawing.Size(143, 19);
-            checkBox1.TabIndex = 6;
-            checkBox1.Text = "Show only Differences";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.Click += OnChangeShowDiff;
+            checkBoxShowDiff.AutoSize = true;
+            checkBoxShowDiff.Location = new System.Drawing.Point(443, 18);
+            checkBoxShowDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxShowDiff.Name = "checkBoxShowDiff";
+            checkBoxShowDiff.Size = new System.Drawing.Size(143, 19);
+            checkBoxShowDiff.TabIndex = 6;
+            checkBoxShowDiff.Text = "Show only Differences";
+            checkBoxShowDiff.UseVisualStyleBackColor = true;
+            checkBoxShowDiff.Click += OnChangeShowDiff;
             // 
             // chkMultiSelect
             // 
@@ -288,31 +288,31 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(btnCopySelected);
-            splitContainer1.Panel2.Controls.Add(btnCopyAllDiff);
-            splitContainer1.Panel2.Controls.Add(button2);
+            splitContainer1.Panel2.Controls.Add(buttonCopySelected);
+            splitContainer1.Panel2.Controls.Add(buttonCopyAllDiff);
+            splitContainer1.Panel2.Controls.Add(buttonBrowse);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
-            splitContainer1.Panel2.Controls.Add(checkBox1);
+            splitContainer1.Panel2.Controls.Add(checkBoxShowDiff);
             splitContainer1.Panel2.Controls.Add(chkMultiSelect);
-            splitContainer1.Panel2.Controls.Add(button1);
+            splitContainer1.Panel2.Controls.Add(buttonLoadSecond);
             splitContainer1.Panel2.Controls.Add(comboBoxFileMode);
             splitContainer1.Size = new System.Drawing.Size(810, 383);
             splitContainer1.SplitterDistance = 309;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 9;
             // 
-            // button2
+            // buttonBrowse
             // 
-            button2.AutoSize = true;
-            button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            button2.Location = new System.Drawing.Point(302, 15);
-            button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(26, 25);
-            button2.TabIndex = 7;
-            button2.Text = "...";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += OnClickBrowse;
+            buttonBrowse.AutoSize = true;
+            buttonBrowse.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            buttonBrowse.Location = new System.Drawing.Point(302, 15);
+            buttonBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonBrowse.Name = "buttonBrowse";
+            buttonBrowse.Size = new System.Drawing.Size(26, 25);
+            buttonBrowse.TabIndex = 7;
+            buttonBrowse.Text = "...";
+            buttonBrowse.UseVisualStyleBackColor = true;
+            buttonBrowse.Click += OnClickBrowse;
             // 
             // comboBoxFileMode
             // 
@@ -352,11 +352,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem bmpToolStripMenuItem;
-        private System.Windows.Forms.Button btnCopyAllDiff;
-        private System.Windows.Forms.Button btnCopySelected;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button buttonCopyAllDiff;
+        private System.Windows.Forms.Button buttonCopySelected;
+        private System.Windows.Forms.Button buttonLoadSecond;
+        private System.Windows.Forms.Button buttonBrowse;
+        private System.Windows.Forms.CheckBox checkBoxShowDiff;
         private System.Windows.Forms.CheckBox chkMultiSelect;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyItem2To1ToolStripMenuItem;

@@ -315,10 +315,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             if (!_secondLoaded)
             {
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     MessageBox.Show("Second Texture file is not loaded!");
-                    checkBox1.Checked = false;
+                    checkBoxShowDiff.Checked = false;
                 }
                 return;
             }
@@ -326,7 +326,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             using (new WaitCursorScope(this))
             {
                 _displayIndices.Clear();
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     for (int i = 0; i < 0x4000; i++)
                     {
@@ -490,7 +490,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Options.ChangedUltimaClass["Texture"] = true;
                 }
 
-                if (checkBox1.Checked && changed)
+                if (checkBoxShowDiff.Checked && changed)
                 {
                     foreach (int idx in copied.OrderByDescending(x => x))
                     {
@@ -519,7 +519,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
-        private void CopyToLeft_Click(object sender, MouseEventArgs e)
+        private void OnDoubleClickSec(object sender, MouseEventArgs e)
         {
             if (tileViewSec.ShowCheckBoxes)
             {
@@ -528,7 +528,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             OnClickCopy(sender, e);
         }
 
-        private void CopyAll_Click(object sender, EventArgs e)
+        private void OnClickCopyAllDiff(object sender, EventArgs e)
         {
             if (!_secondLoaded)
             {
@@ -561,7 +561,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             _compare.Clear();
 
-            if (checkBox1.Checked)
+            if (checkBoxShowDiff.Checked)
             {
                 _displayIndices.Clear();
                 for (int i = 0; i < 0x4000; i++)
@@ -585,7 +585,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileViewSec.VirtualListSize = _displayIndices.Count;
         }
 
-        private void CopyAddOnly_Click(object sender, EventArgs e)
+        private void OnClickCopyAddedOnly(object sender, EventArgs e)
         {
             if (!_secondLoaded)
             {
@@ -618,7 +618,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
             _compare.Clear();
 
-            if (checkBox1.Checked)
+            if (checkBoxShowDiff.Checked)
             {
                 _displayIndices.Clear();
                 for (int i = 0; i < 0x4000; i++)

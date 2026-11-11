@@ -387,7 +387,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             tileView1.VirtualListSize = _displayIndices.Count;
             tileView2.VirtualListSize = _displayIndices.Count;
 
-            if (checkBox1.Checked)
+            if (checkBoxShowDiff.Checked)
             {
                 // Re-apply the filter against the client that was just loaded.
                 ShowDiff_OnClick(this, EventArgs.Empty);
@@ -485,10 +485,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
         {
             if (tileView2.VirtualListSize == 0)
             {
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     MessageBox.Show("Second Gump file is not loaded!");
-                    checkBox1.Checked = false;
+                    checkBoxShowDiff.Checked = false;
                 }
                 return;
             }
@@ -496,7 +496,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             using (new WaitCursorScope(this))
             {
                 _displayIndices.Clear();
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     for (int i = 0; i < _idRange; i++)
                     {
@@ -669,7 +669,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Options.ChangedUltimaClass["Gumps"] = true;
                 }
 
-                if (checkBox1.Checked)
+                if (checkBoxShowDiff.Checked)
                 {
                     ShowDiff_OnClick(this, EventArgs.Empty);
                 }
@@ -740,7 +740,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Options.ChangedUltimaClass["Gumps"] = true;
                 }
 
-                if (checkBox1.Checked && changed)
+                if (checkBoxShowDiff.Checked && changed)
                 {
                     foreach (int idx in copied.OrderByDescending(x => x))
                     {
