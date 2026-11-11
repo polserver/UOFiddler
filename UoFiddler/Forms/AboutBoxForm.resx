@@ -118,7 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.25.0
+    <value>Version 4.26.0
+- New Tile Groups tab for the client's building lists (walls, floors, roof, doors, misc, stairs and teleporters): browse categories and styles with art previews and cliloc names, change tile ids, add, rename and delete categories and styles, and save the files to the output folder
+- Compare plugin: Pixel diff option on the Items, Land, Textures and Gumps tabs. Changed pixels keep their colors inside a magenta outline while unchanged ones fade, with tolerance and fade settings. Art stored at a different spot in its canvas is lined up before comparing
+- Compare plugin: fixed control layout in the Hues tab
+
+Version 4.25.0
 - Hue editor reworked: select a range of cells on the strip (drag or Shift+click) and apply tools to it, or to the whole hue
 - Hue editor tools: gradient between two colors with a choice of curve, build shades from one base color, and adjust hue, saturation, lightness and R/G/B
 - Hue editor color picker with a saturation/brightness square, R/G/B and H/S/V sliders, typed values, a hex box and recent colors. Colors are snapped to what a hue can store
