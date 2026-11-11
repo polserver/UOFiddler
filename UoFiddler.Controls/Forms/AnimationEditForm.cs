@@ -2761,7 +2761,7 @@ namespace UoFiddler.Controls.Forms
             {
                 Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bottom);
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format32bppArgb);
             }
 
             // End of Canvas algorithm
@@ -2894,14 +2894,27 @@ namespace UoFiddler.Controls.Forms
         }
         //End of Soulblighter Modification
 
-        private static unsafe Bitmap ConvertBmpAnim(Bitmap bmp, int red, int green, int blue)
+        private static Bitmap ConvertBmpAnim(Bitmap bmp, int red, int green, int blue)
         {
-            //Extra background
-            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
+            return ConvertToAnimFrame(bmp, red, green, blue, removeGrey: false, removeGreen: false);
+        }
 
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
+        /// <summary>
+        /// Converts an image to an ARGB1555 animation frame. Pure white, the custom background colour and,
+        /// with <paramref name="removeGrey"/>, 170,170,170 become transparent. They are matched on the
+        /// source 8-bit colour; matching after the drop to 5 bits also removed near-white and near-grey pixels.
+        /// </summary>
+        private static unsafe Bitmap ConvertToAnimFrame(Bitmap bmp, int red, int green, int blue, bool removeGrey, bool removeGreen)
+        {
+            const int white = 0xFFFFFF;
+            int grey = _greyConvert.ToArgb() & 0xFFFFFF;
+            int custom = (red << 16) | (green << 8) | blue;
+            // A background that is black after the drop to 5 bits was never removed; black is kept visible below
+            bool useCustom = (red >> 3) != 0 || (green >> 3) != 0 || (blue >> 3) != 0;
+
+            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            uint* line = (uint*)bd.Scan0;
+            int delta = bd.Stride >> 2;
 
             Bitmap bmpNew = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
             BitmapData bdNew = bmpNew.LockBits(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
@@ -2911,22 +2924,38 @@ namespace UoFiddler.Controls.Forms
 
             for (int y = 0; y < bmp.Height; ++y, line += delta, lineNew += deltaNew)
             {
-                ushort* cur = line;
+                uint* cur = line;
                 ushort* curNew = lineNew;
                 for (int x = 0; x < bmp.Width; ++x)
                 {
-                    //My Soulblighter Modification
-                    // Convert color 0,0,0 to 0,0,8
-                    if (cur[x] == 32768)
+                    curNew[x] = 0;
+
+                    uint argb = cur[x];
+                    if ((argb >> 24) < 0x80)
                     {
-                        curNew[x] = 32769;
+                        continue;
                     }
 
-                    if (cur[x] != 65535 && cur[x] != extraBack && cur[x] > 32768) //True White == BackGround
+                    int rgb = (int)(argb & 0xFFFFFF);
+                    if (rgb == white || (useCustom && rgb == custom) || (removeGrey && rgb == grey))
                     {
-                        curNew[x] = cur[x];
+                        continue;
                     }
-                    //End of Soulblighter Modification
+
+                    int r = (rgb >> 19) & 0x1F;
+                    int g = (rgb >> 11) & 0x1F;
+                    int b = (rgb >> 3) & 0x1F;
+
+                    // KR frame viewer exports use a green background
+                    if (removeGreen && g > b && g > r && g > 10)
+                    {
+                        continue;
+                    }
+
+                    int color = 0x8000 | (r << 10) | (g << 5) | b;
+
+                    // 0,0,0 is transparent in the client, keep black visible as 0,0,8
+                    curNew[x] = (ushort)(color == 0x8000 ? 0x8001 : color);
                 }
             }
             bmp.UnlockBits(bd);
@@ -3390,44 +3419,9 @@ namespace UoFiddler.Controls.Forms
             return edit;
         }
 
-        private static unsafe Bitmap ConvertBmpAnimCv5(Bitmap bmp, int red, int green, int blue)
+        private static Bitmap ConvertBmpAnimCv5(Bitmap bmp, int red, int green, int blue)
         {
-            //Extra background
-            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
-
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
-            Bitmap bmpNew = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-            BitmapData bdNew = bmpNew.LockBits(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-            ushort* lineNew = (ushort*)bdNew.Scan0;
-            int deltaNew = bdNew.Stride >> 1;
-
-            for (int y = 0; y < bmp.Height; ++y, line += delta, lineNew += deltaNew)
-            {
-                ushort* cur = line;
-                ushort* curNew = lineNew;
-                for (int x = 0; x < bmp.Width; ++x)
-                {
-                    //My Soulblighter Modification
-                    // Convert color 0,0,0 to 0,0,8
-                    if (cur[x] == 32768)
-                    {
-                        curNew[x] = 32769;
-                    }
-
-                    if (cur[x] != 65535 && cur[x] != 54965 && cur[x] != extraBack && cur[x] > 32768) //True White == BackGround
-                    {
-                        curNew[x] = cur[x];
-                    }
-                    //End of Soulblighter Modification
-                }
-            }
-            bmp.UnlockBits(bd);
-            bmpNew.UnlockBits(bdNew);
-            return bmpNew;
+            return ConvertToAnimFrame(bmp, red, green, blue, removeGrey: true, removeGreen: false);
         }
 
         private static readonly Color _greyConvert = Color.FromArgb(255, 170, 170, 170);
@@ -3766,7 +3760,7 @@ namespace UoFiddler.Controls.Forms
             {
                 Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bottom);
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format32bppArgb);
             }
         }
 
@@ -4126,65 +4120,9 @@ namespace UoFiddler.Controls.Forms
             return edit;
         }
 
-        private static unsafe Bitmap ConvertBmpAnimKr(Bitmap bmp, int red, int green, int blue)
+        private static Bitmap ConvertBmpAnimKr(Bitmap bmp, int red, int green, int blue)
         {
-            // Extra background
-            int extraBack = (red / 8 * 1024) + (green / 8 * 32) + (blue / 8) + 32768;
-
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            ushort* line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
-            Bitmap bmpNew = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
-            BitmapData bdNew = bmpNew.LockBits(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-            ushort* lineNew = (ushort*)bdNew.Scan0;
-            int deltaNew = bdNew.Stride >> 1;
-
-            for (int y = 0; y < bmp.Height; ++y, line += delta, lineNew += deltaNew)
-            {
-                ushort* cur = line;
-                ushort* curNew = lineNew;
-                for (int x = 0; x < bmp.Width; ++x)
-                {
-                    //if (cur[X] != 53235)
-                    //{
-                    // Convert back to RGB
-                    int blueTemp = (cur[x] - 32768) / 32;
-                    blueTemp *= 32;
-                    blueTemp = cur[x] - 32768 - blueTemp;
-
-                    int greenTemp = (cur[x] - 32768) / 1024;
-                    greenTemp *= 1024;
-                    greenTemp = cur[x] - 32768 - greenTemp - blueTemp;
-                    greenTemp /= 32;
-
-                    int redTemp = (cur[x] - 32768) / 1024;
-
-                    // remove green colors
-                    if (greenTemp > blueTemp && greenTemp > redTemp && greenTemp > 10)
-                    {
-                        cur[x] = 65535;
-                    }
-                    //}
-
-                    //My Soulblighter Modification
-                    // Convert color 0,0,0 to 0,0,8
-                    if (cur[x] == 32768)
-                    {
-                        curNew[x] = 32769;
-                    }
-
-                    if (cur[x] != 65535 && cur[x] != 54965 && cur[x] != extraBack && cur[x] > 32768) //True White == BackGround
-                    {
-                        curNew[x] = cur[x];
-                    }
-                    //End of Soulblighter Modification
-                }
-            }
-            bmp.UnlockBits(bd);
-            bmpNew.UnlockBits(bdNew);
-            return bmpNew;
+            return ConvertToAnimFrame(bmp, red, green, blue, removeGrey: true, removeGreen: true);
         }
 
         private static void KrCanvasAlgorithm(Bitmap[] bitBmp, int frameCount, FrameDimension dimension, Color customConvert)
@@ -4509,7 +4447,7 @@ namespace UoFiddler.Controls.Forms
             {
                 Rectangle rect = new Rectangle(left, top, bitBmp[index].Width - left - right, bitBmp[index].Height - top - bottom);
                 bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format16bppArgb1555);
+                bitBmp[index] = bitBmp[index].Clone(rect, PixelFormat.Format32bppArgb);
             }
         }
 
