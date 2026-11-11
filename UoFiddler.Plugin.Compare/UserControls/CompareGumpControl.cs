@@ -460,14 +460,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondGump.IsValidIndex(i))
+            Bitmap bmp = SecondGump.IsValidIndex(i) ? SecondGump.GetGump(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
-            SecondGump.GetGump(i).Save(fileName, ImageFormat.Bmp);
+            bmp.Save(fileName, ImageFormat.Bmp);
 
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
@@ -481,14 +482,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondGump.IsValidIndex(i))
+            Bitmap bmp = SecondGump.IsValidIndex(i) ? SecondGump.GetGump(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
-            SecondGump.GetGump(i).Save(fileName, ImageFormat.Tiff);
+            bmp.Save(fileName, ImageFormat.Tiff);
 
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
@@ -502,14 +504,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondGump.IsValidIndex(i))
+            Bitmap bmp = SecondGump.IsValidIndex(i) ? SecondGump.GetGump(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
-            SecondGump.GetGump(i).Save(fileName, ImageFormat.Jpeg);
+            bmp.Save(fileName, ImageFormat.Jpeg);
 
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
@@ -523,14 +526,15 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondGump.IsValidIndex(i))
+            Bitmap bmp = SecondGump.IsValidIndex(i) ? SecondGump.GetGump(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string path     = Options.OutputPath;
             string fileName = Path.Combine(path, $"Gump(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
-            SecondGump.GetGump(i).Save(fileName, ImageFormat.Png);
+            bmp.Save(fileName, ImageFormat.Png);
 
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
@@ -556,12 +560,21 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
 
                     int i = _displayIndices[focusIdx];
-                    if (!SecondGump.IsValidIndex(i))
+
+                    // Ids past the original's range have no slot to copy into.
+                    if (i >= Gumps.GetCount() || !SecondGump.IsValidIndex(i))
                     {
                         continue;
                     }
 
-                    Bitmap copy = new Bitmap(SecondGump.GetGump(i));
+                    // IsValidIndex only probes compressed entries, so decoding can still fail.
+                    Bitmap source = SecondGump.GetGump(i);
+                    if (source == null)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(source);
                     Gumps.ReplaceGump(i, copy);
                     ControlEvents.FireGumpChangeEvent(this, i);
                     _compare[i] = true;
