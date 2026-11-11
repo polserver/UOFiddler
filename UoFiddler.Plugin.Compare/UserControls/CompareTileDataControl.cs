@@ -31,7 +31,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         // ── Flag rows ─────────────────────────────────────────────────────────────
 
-        private static readonly (string Name, TileFlag Flag)[] MeaningfulFlags =
+        // Every compared flag bit needs a row so it can be shown and ignored. WithOtherBits adds
+        // a row for the bits not named here.
+        private static readonly (string Name, TileFlag Flag)[] MeaningfulFlags = WithOtherBits(new (string Name, TileFlag Flag)[]
         {
             ("Background",   TileFlag.Background),
             ("Weapon",       TileFlag.Weapon),
@@ -72,7 +74,20 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ("PixelBleed",   TileFlag.PixelBleed),
             ("PlayAnimOnce", TileFlag.PlayAnimOnce),
             ("MultiMovable", TileFlag.MultiMovable),
-        };
+            ("Unused8",      TileFlag.Unused8),
+            ("Bit 39",       (TileFlag)0x8000000000),
+        });
+
+        private static (string Name, TileFlag Flag)[] WithOtherBits((string Name, TileFlag Flag)[] named)
+        {
+            TileFlag listed = TileFlag.None;
+            foreach (var (_, flag) in named)
+            {
+                listed |= flag;
+            }
+
+            return [.. named, ("Other bits", ~listed)];
+        }
 
         private CheckBox[] _landFlagOrgChecks;
         private CheckBox[] _landFlagSecChecks;
@@ -328,7 +343,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     secChecks[i].Checked = secHas;
 
                     bool ignored = (_options.IgnoredFlags & f) != 0;
-                    bool differs = hasOrg && hasSec && compareFlags && !ignored && orgHas != secHas;
+                    // Compare the row's bits: "Other bits" spans several.
+                    bool differs = hasOrg && hasSec && compareFlags && !ignored && ((orgFlags ^ secFlags) & f) != 0;
 
                     Color bg = differs ? DiffColor : def;
                     labels[i].BackColor = bg;
