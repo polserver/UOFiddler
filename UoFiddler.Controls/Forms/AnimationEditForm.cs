@@ -1043,7 +1043,7 @@ namespace UoFiddler.Controls.Forms
             }
 
             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            if (edit != null && edit.Frames.Count >= FramesTrackBar.Value)
+            if (edit != null && edit.Frames.Count > FramesTrackBar.Value)
             {
                 CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
                 CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;

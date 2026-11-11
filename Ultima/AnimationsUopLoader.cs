@@ -22,6 +22,9 @@ namespace Ultima
         internal const int _maxAnimActions = 80;
         private const int _maxDirections = 5;
 
+        /// <summary>"AMOU", the first four bytes of every animation frame payload.</summary>
+        private const uint _frameMagic = 0x554F4D41;
+
         /// <summary>
         /// Size of the fixed part of one AnimationSequence group record: the four leading fields,
         /// the per frame bytes and the reserved block. Two variable length lists follow it.
@@ -568,13 +571,19 @@ namespace Ultima
 
         private static AnimationFrame[] ParseUopFrames(byte[] data, int direction, bool flip)
         {
-            if (data.Length < 36)
+            // The header is 40 bytes; frame count and table offset sit at 32 and 36
+            if (data.Length < 40)
             {
                 return null;
             }
 
             using var memoryStream = new MemoryStream(data);
             using var reader = new BinaryReader(memoryStream);
+
+            if (reader.ReadUInt32() != _frameMagic)
+            {
+                return null;
+            }
 
             reader.BaseStream.Seek(32, SeekOrigin.Begin);
             int frameCount = reader.ReadInt32();
