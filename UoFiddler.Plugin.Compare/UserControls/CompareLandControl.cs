@@ -564,6 +564,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             using (new WaitCursorScope(this))
             {
+                bool changed = false;
                 for (int i = 0; i < 0x4000; i++)
                 {
                     if (!SecondArt.IsValidLand(i) || Compare(i))
@@ -582,9 +583,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Art.ReplaceLand(i, copy);
                     ControlEvents.FireLandTileChangeEvent(this, i);
                     _compare[i] = true;
+                    changed = true;
                 }
 
-                Options.ChangedUltimaClass["Art"] = true;
+                if (changed)
+                {
+                    Options.ChangedUltimaClass["Art"] = true;
+                }
 
                 if (checkBox1.Checked)
                 {

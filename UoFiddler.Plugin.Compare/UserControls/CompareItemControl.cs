@@ -596,6 +596,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 int maxId = Art.GetMaxItemId() + 1;
                 int rowCount = RowCount();
+                bool changed = false;
                 for (int i = 0; i < maxId; i++)
                 {
                     if (!SecondArt.IsValidStatic(i) || Compare(i))
@@ -614,9 +615,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     Art.ReplaceStatic(i, copy);
                     ControlEvents.FireItemChangeEvent(this, i);
                     _compare[i] = true;
+                    changed = true;
                 }
 
-                Options.ChangedUltimaClass["Art"] = true;
+                if (changed)
+                {
+                    Options.ChangedUltimaClass["Art"] = true;
+                }
 
                 if (checkBox1.Checked)
                 {
