@@ -527,6 +527,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void CopyAll_Click(object sender, EventArgs e)
         {
+            if (!_secondLoaded)
+            {
+                return;
+            }
+
+            bool changed = false;
             for (int i = 0; i < 0x4000; i++)
             {
                 if (!SecondTexture.IsValidTexture(i) || Compare(i))
@@ -543,9 +549,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 Bitmap copy = new Bitmap(source);
                 Textures.Replace(i, copy);
                 ControlEvents.FireTextureChangeEvent(this, i);
+                changed = true;
             }
 
-            Options.ChangedUltimaClass["Texture"] = true;
+            if (changed)
+            {
+                Options.ChangedUltimaClass["Texture"] = true;
+            }
             _compare.Clear();
 
             if (checkBox1.Checked)
@@ -574,6 +584,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void CopyAddOnly_Click(object sender, EventArgs e)
         {
+            if (!_secondLoaded)
+            {
+                return;
+            }
+
+            bool changed = false;
             for (int i = 0; i < 0x4000; i++)
             {
                 if (!SecondTexture.IsValidTexture(i) || Textures.TestTexture(i))
@@ -590,9 +606,13 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 Bitmap copy = new Bitmap(source);
                 Textures.Replace(i, copy);
                 ControlEvents.FireTextureChangeEvent(this, i);
+                changed = true;
             }
 
-            Options.ChangedUltimaClass["Texture"] = true;
+            if (changed)
+            {
+                Options.ChangedUltimaClass["Texture"] = true;
+            }
             _compare.Clear();
 
             if (checkBox1.Checked)
