@@ -1708,6 +1708,13 @@ namespace UoFiddler.Controls.Forms
                             return;
                         }
 
+                        if (animType == AnimationEdit.ActionVdType)
+                        {
+                            MessageBox.Show("This .vd holds a single action. Use Import.. > Action from .vd on an action instead.",
+                                "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
                         if (animType != currentType)
                         {
                             MessageBox.Show("Wrong Anim Id ( Type )", "Import", MessageBoxButtons.OK,
@@ -1757,6 +1764,158 @@ namespace UoFiddler.Controls.Forms
             AnimationEdit.ExportToVD(_fileType, _currentBody, fileName);
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
+        }
+
+        private void OnTreeViewContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            bool actionSelected = _fileType != 0 && TryGetSelectedAction(out _, out _);
+            copyActionToolStripMenuItem.Enabled = actionSelected;
+            actionFromVdToolStripMenuItem.Enabled = actionSelected;
+            actionToVdToolStripMenuItem.Enabled = actionSelected;
+        }
+
+        private bool TryGetSelectedAction(out int body, out int action)
+        {
+            TreeNode node = AnimationListTreeView.SelectedNode;
+            if (node?.Parent == null)
+            {
+                body = -1;
+                action = -1;
+                return false;
+            }
+
+            body = (int)node.Parent.Tag;
+            action = (int)node.Tag;
+            return true;
+        }
+
+        private void OnClickExportActionToVD(object sender, EventArgs e)
+        {
+            if (_fileType == 0 || !TryGetSelectedAction(out int body, out int action))
+            {
+                return;
+            }
+
+            string fileName = Path.Combine(Options.OutputPath, $"anim{_fileType}_{Utils.FormatExportId(body)}_action{action}.vd");
+            AnimationEdit.ExportActionToVD(_fileType, body, action, fileName);
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Action saved successfully.");
+        }
+
+        private void OnClickImportActionFromVD(object sender, EventArgs e)
+        {
+            if (_fileType == 0 || !TryGetSelectedAction(out int body, out int action))
+            {
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = false;
+                dialog.Title = $"Choose a single-action .vd to replace action {action} of body {body}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "vd files (*.vd)|*.vd";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                using (FileStream fs = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (BinaryReader bin = new BinaryReader(fs))
+                {
+                    int fileType = bin.ReadInt16();
+                    int animType = bin.ReadInt16();
+                    if (fileType != 6)
+                    {
+                        MessageBox.Show("Not an Anim File.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    if (animType != AnimationEdit.ActionVdType)
+                    {
+                        MessageBox.Show("This .vd holds a whole body. Use Import.. > Body from .vd on the body instead.",
+                            "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    if (AnimationEdit.IsActionDefined(_fileType, body, action) &&
+                        MessageBox.Show($"Action {action} of body {body} already has frames. Replace them?", "Import",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        AnimationEdit.LoadActionFromVD(_fileType, body, action, bin);
+                    }
+                    catch (Exception ex) when (ex is IOException || ex is ArgumentException || ex is OverflowException)
+                    {
+                        MessageBox.Show($"Could not read {Path.GetFileName(dialog.FileName)}: {ex.Message}", "Import",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+            }
+
+            UpdateBodyNode(body);
+            Options.ChangedUltimaClass["Animations"] = true;
+            AfterSelectTreeView(this, null);
+        }
+
+        private void OnClickCopyAction(object sender, EventArgs e)
+        {
+            if (_fileType == 0 || !TryGetSelectedAction(out int body, out int action))
+            {
+                return;
+            }
+
+            using (var form = new AnimationCopyActionForm(_fileType, body, action))
+            {
+                if (form.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                AnimationEdit.CopyAction(_fileType, body, action, form.TargetBody, form.TargetAction);
+                UpdateBodyNode(form.TargetBody);
+            }
+
+            Options.ChangedUltimaClass["Animations"] = true;
+            AfterSelectTreeView(this, null);
+        }
+
+        /// <summary>
+        /// Recolours a body's tree nodes after its actions changed.
+        /// </summary>
+        private void UpdateBodyNode(int body)
+        {
+            TreeNode node = _showOnlyValid
+                ? AnimationListTreeView.Nodes.Cast<TreeNode>().FirstOrDefault(n => (int)n.Tag == body)
+                : body < AnimationListTreeView.Nodes.Count ? AnimationListTreeView.Nodes[body] : null;
+            if (node == null)
+            {
+                return;
+            }
+
+            bool valid = false;
+            foreach (TreeNode child in node.Nodes)
+            {
+                if (AnimationEdit.IsActionDefined(_fileType, body, (int)child.Tag))
+                {
+                    valid = true;
+                    if (child.ForeColor == _invalidColor)
+                    {
+                        child.ForeColor = Color.Empty;
+                    }
+                }
+                else
+                {
+                    child.ForeColor = _invalidColor;
+                }
+            }
+
+            node.ForeColor = valid ? Color.Empty : _invalidColor;
         }
 
         private void OnClickShowOnlyValid(object sender, EventArgs e)
