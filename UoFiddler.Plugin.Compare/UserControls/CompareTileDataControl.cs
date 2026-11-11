@@ -1262,7 +1262,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void CopyLandEntry(int id)
         {
-            if (id >= _secondTileData.LandTable.Length)
+            if (id >= _secondTileData.LandTable.Length || id >= TileData.LandTable.Length)
             {
                 return;
             }
@@ -1376,7 +1376,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void CopyItemEntry(int id)
         {
-            if (id >= _secondTileData.ItemTable.Length)
+            // Never resize the original table.
+            if (id >= _secondTileData.ItemTable.Length || id >= TileData.ItemTable.Length)
             {
                 return;
             }
