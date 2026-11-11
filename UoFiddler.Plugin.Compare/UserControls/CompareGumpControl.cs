@@ -607,6 +607,78 @@ namespace UoFiddler.Plugin.Compare.UserControls
             FileSavedDialog.Show(FindForm(), fileName, "Gump saved successfully.");
         }
 
+        // Copies stay in memory as edits, so confirm large batches.
+        private const int CopyAllConfirmThreshold = 100;
+
+        private void OnClickCopyAllDiff(object sender, EventArgs e)
+        {
+            if (tileView2.VirtualListSize == 0)
+            {
+                return;
+            }
+
+            var ids = new List<int>();
+            using (new WaitCursorScope(this))
+            {
+                int count = Gumps.GetCount();
+                for (int i = 0; i < count; i++)
+                {
+                    if (SecondGump.IsValidIndex(i) && !Compare(i))
+                    {
+                        ids.Add(i);
+                    }
+                }
+            }
+
+            if (ids.Count == 0)
+            {
+                return;
+            }
+
+            if (ids.Count > CopyAllConfirmThreshold
+                && MessageBox.Show(
+                    $"Copy {ids.Count} differing gumps from the second client into the original?\n\n" +
+                    "Each copied gump is kept in memory as an edit until the gumps are reloaded.",
+                    "Copy All Diff",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            using (new WaitCursorScope(this))
+            {
+                bool changed = false;
+                foreach (int i in ids)
+                {
+                    // Uncached copy; null if the decode fails.
+                    Bitmap copy = SecondGump.GetGumpCopy(i);
+                    if (copy == null)
+                    {
+                        continue;
+                    }
+
+                    Gumps.ReplaceGump(i, copy);
+                    ControlEvents.FireGumpChangeEvent(this, i);
+                    _compare[i] = true;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    Options.ChangedUltimaClass["Gumps"] = true;
+                }
+
+                if (checkBox1.Checked)
+                {
+                    ShowDiff_OnClick(this, EventArgs.Empty);
+                }
+
+                tileView1.Invalidate();
+                tileView2.Invalidate();
+            }
+        }
+
         private void OnDoubleClickSec(object sender, MouseEventArgs e)
         {
             if (tileView2.ShowCheckBoxes)
