@@ -225,6 +225,14 @@ namespace Ultima
         }
 
         /// <summary>
+        /// Closes the map and statics files if they were opened, without creating the tile matrix.
+        /// </summary>
+        public void CloseStreams()
+        {
+            _tiles?.CloseStreams();
+        }
+
+        /// <summary>
         /// Sets cache-vars to null
         /// </summary>
         public static void Reload()

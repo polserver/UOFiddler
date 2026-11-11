@@ -677,7 +677,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 if (Directory.Exists(path))
                 {
+                    // Release the replaced map's files.
+                    Map previous = _currentMap;
                     _currentMap = Map.Custom = new Map(path, OriginalMap.FileIndex, _currentMapId, OriginalMap.Width, OriginalMap.Height);
+                    previous?.CloseStreams();
                 }
 
                 // The map files are not touched by the Map ctor - TileMatrix is built lazily and only
@@ -690,6 +693,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 // Leave nothing half-loaded behind: OnPaint and OnMouseMove would re-enter TileMatrix
                 // and throw again on the UI thread.
+                _currentMap?.CloseStreams();
                 _currentMap = Map.Custom = null;
                 _diffMasks = null;
                 _diffWidthBlocks = 0;
