@@ -27,6 +27,10 @@ namespace UoFiddler.Forms
         private readonly Action _updateItemsTabAction;
         private readonly Action _updateSoundTabAction;
 
+        private readonly ErrorProvider _outputPathError;
+        private readonly Timer _savedTimer;
+        private readonly string _title;
+
         public OptionsForm(Action updateAllTileViewsAction,
             Action updateItemsTabAction,
             Action updateSoundTabAction,
@@ -40,6 +44,15 @@ namespace UoFiddler.Forms
             checkBoxExportFilenameDecPad.Enabled = !AppSettings.ExportFilenameInHex;
 
             Icon = Options.GetFiddlerIcon();
+
+            _title = Text;
+            _outputPathError = new ErrorProvider(components) { BlinkStyle = ErrorBlinkStyle.NeverBlink };
+            _savedTimer = new Timer(components) { Interval = 2000 };
+            _savedTimer.Tick += (_, _) =>
+            {
+                _savedTimer.Stop();
+                Text = _title;
+            };
 
             _updateAllTileViewsAction = updateAllTileViewsAction;
             _updateItemsTabAction = updateItemsTabAction;
@@ -90,6 +103,8 @@ namespace UoFiddler.Forms
             cmdtext.Text = Options.MapCmd;
             argstext.Text = Options.MapArgs;
             textBoxOutputPath.Text = Options.OutputPath;
+            textBoxOutputPath.TextChanged += (_, _) => ValidateOutputPath();
+            ValidateOutputPath();
 
             foreach (ClientFileSaveFormat format in ClientFileSaveFormats.All)
             {
@@ -214,6 +229,21 @@ namespace UoFiddler.Forms
                 Options.ExportFilenameDecimalPadded = newPad;
                 AppSettings.Save();
             }
+
+            Text = $"{_title} - settings saved";
+            _savedTimer.Stop();
+            _savedTimer.Start();
+        }
+
+        /// <summary>
+        /// Apply keeps the old output path when the new one does not exist, so say so next to the box.
+        /// </summary>
+        private void ValidateOutputPath()
+        {
+            string path = textBoxOutputPath.Text;
+            bool valid = string.IsNullOrWhiteSpace(path) || Directory.Exists(path);
+            _outputPathError.SetError(textBoxOutputPath,
+                valid ? string.Empty : "This folder does not exist, so Apply keeps the current output path.");
         }
 
         private void OnExportFilenameFormatChanged(object sender, EventArgs e)
