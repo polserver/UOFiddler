@@ -92,7 +92,8 @@ namespace Ultima
                 //;
             }
 
-            return Encoding.ASCII.GetString(_stringBuffer, 0, count);
+            // Names are single bytes; Latin-1 keeps every byte as loaded so saving writes it back unchanged
+            return Encoding.Latin1.GetString(_stringBuffer, 0, count);
         }
 
         public static void Save(string path)
@@ -120,7 +121,7 @@ namespace Ultima
                         var length = (int)fsmul.Position;
                         binmul.Write(skill.IsAction);
 
-                        byte[] nameBytes = Encoding.ASCII.GetBytes(skill.Name);
+                        byte[] nameBytes = Encoding.Latin1.GetBytes(skill.Name);
                         binmul.Write(nameBytes);
                         binmul.Write((byte)0); // null terminated
 
