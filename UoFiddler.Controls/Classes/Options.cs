@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *
  * $Author: Turley
  * 
@@ -222,6 +222,19 @@ namespace UoFiddler.Controls.Classes
         public static Color TileSelectionColor { get; set; } = Color.DodgerBlue;
         public static bool RemoveTileBorder { get; set; }
         public static Color PreviewBackgroundColor { get; set; } = Color.White;
+
+        /// <summary>The hue editor's last preview preset name ("Custom" for typed ids).</summary>
+        public static string HueEditorPreviewPreset { get; set; } = string.Empty;
+
+        /// <summary>The hue editor's typed preview ids, used with the "Custom" preset. -1 means none.</summary>
+        public static int HueEditorPreviewItemId { get; set; } = 0x1F03;
+
+        public static int HueEditorPreviewGumpId { get; set; } = -1;
+
+        public static int HueEditorPreviewBodyId { get; set; } = 400;
+
+        /// <summary>The direction (0-7) the hue editor's animation preview faces.</summary>
+        public static int HueEditorPreviewFacing { get; set; } = 1;
 
         static Options()
         {

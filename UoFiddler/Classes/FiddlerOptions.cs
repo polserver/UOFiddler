@@ -161,6 +161,16 @@ namespace UoFiddler.Classes
             elem = dom.CreateElement("PreviewBackgroundColor");
             elem.SetAttribute("value", ColorTranslator.ToHtml(Options.PreviewBackgroundColor));
             sr.AppendChild(elem);
+
+            comment = dom.CreateComment("Hue editor preview: preset name, the ids typed for the Custom preset (-1: none) and the animation facing");
+            sr.AppendChild(comment);
+            elem = dom.CreateElement("HueEditorPreview");
+            elem.SetAttribute("preset", Options.HueEditorPreviewPreset ?? string.Empty);
+            elem.SetAttribute("item", Options.HueEditorPreviewItemId.ToString());
+            elem.SetAttribute("gump", Options.HueEditorPreviewGumpId.ToString());
+            elem.SetAttribute("body", Options.HueEditorPreviewBodyId.ToString());
+            elem.SetAttribute("facing", Options.HueEditorPreviewFacing.ToString());
+            sr.AppendChild(elem);
             // - Colors
             comment = dom.CreateComment("NewMapSize Felucca/Trammel width 7168?");
             sr.AppendChild(comment);
@@ -364,6 +374,31 @@ namespace UoFiddler.Classes
             if (elem != null)
             {
                 Options.PreviewBackgroundColor = ColorTranslator.FromHtml(elem.GetAttribute("value"));
+            }
+
+            elem = (XmlElement)xOptions.SelectSingleNode("HueEditorPreview");
+            if (elem != null)
+            {
+                Options.HueEditorPreviewPreset = elem.GetAttribute("preset");
+                if (int.TryParse(elem.GetAttribute("item"), out int previewItem))
+                {
+                    Options.HueEditorPreviewItemId = previewItem;
+                }
+
+                if (int.TryParse(elem.GetAttribute("gump"), out int previewGump))
+                {
+                    Options.HueEditorPreviewGumpId = previewGump;
+                }
+
+                if (int.TryParse(elem.GetAttribute("body"), out int previewBody))
+                {
+                    Options.HueEditorPreviewBodyId = previewBody;
+                }
+
+                if (int.TryParse(elem.GetAttribute("facing"), out int facing) && facing is >= 0 and <= 7)
+                {
+                    Options.HueEditorPreviewFacing = facing;
+                }
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("NewMapSize");
