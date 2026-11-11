@@ -1384,7 +1384,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             TileData.ItemTable[id] = _secondTileData.ItemTable[id];
             Options.ChangedUltimaClass["TileData"] = true;
-            ControlEvents.FireTileDataChangeEvent(this, id);
+            // Item ids are sent with the 0x4000 offset.
+            ControlEvents.FireTileDataChangeEvent(this, id + 0x4000);
             _compareItem[id] = true;
         }
 
