@@ -863,7 +863,7 @@ namespace Ultima
         /// Decodes gump RLE into a 16bpp buffer, clipping runs to their row. Returns false if a row
         /// offset or run falls outside <paramref name="src"/>.
         /// </summary>
-        private static unsafe bool DecodeRle(ReadOnlySpan<byte> src, ushort* dest, int width, int height, int strideInPixels)
+        public static unsafe bool DecodeRle(ReadOnlySpan<byte> src, ushort* dest, int width, int height, int strideInPixels)
         {
             ReadOnlySpan<int> lookup = MemoryMarshal.Cast<byte, int>(src);
             ReadOnlySpan<ushort> dat = MemoryMarshal.Cast<byte, ushort>(src);

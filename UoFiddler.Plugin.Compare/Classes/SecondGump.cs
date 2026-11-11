@@ -337,41 +337,22 @@ namespace UoFiddler.Plugin.Compare.Classes
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
 
-            fixed (byte* pData = _streamBuffer)
+            bool decoded;
+            try
             {
-                int* lookup = (int*)pData;
-                ushort* dat = (ushort*)pData;
-
-                ushort* line = (ushort*)bd.Scan0;
-                int delta = bd.Stride >> 1;
-                for (int y = 0; y < height; ++y, line += delta)
-                {
-                    int count = *lookup++ * 2;
-                    ushort* cur = line;
-                    ushort* end = line + bd.Width;
-
-                    while (cur < end)
-                    {
-                        ushort color = dat[count++];
-                        ushort* next = cur + dat[count++];
-
-                        if (color == 0)
-                        {
-                            cur = next;
-                        }
-                        else
-                        {
-                            color ^= 0x8000;
-                            while (cur < next)
-                            {
-                                *cur++ = color;
-                            }
-                        }
-                    }
-                }
+                decoded = Gumps.DecodeRle(
+                    _streamBuffer.AsSpan(0, payloadLength), (ushort*)bd.Scan0, width, height, bd.Stride >> 1);
+            }
+            finally
+            {
+                bmp.UnlockBits(bd);
             }
 
-            bmp.UnlockBits(bd);
+            if (!decoded)
+            {
+                bmp.Dispose();
+                return null;
+            }
 
             return Files.CacheData ? _cache[index] = bmp : bmp;
         }
