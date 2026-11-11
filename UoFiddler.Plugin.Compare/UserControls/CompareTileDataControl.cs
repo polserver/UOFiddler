@@ -457,10 +457,22 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            SecondArt.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
+            // Keep the previous comparison if loading fails.
+            var loaded = new SecondTileData();
+            try
+            {
+                SecondArt.SetFileIndex(resolvedIdx, resolvedMul, resolvedUop);
+                loaded.Initialize(tileFile, SecondArt.IsUOAHS());
+            }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException
+                                          or ArgumentException or IndexOutOfRangeException)
+            {
+                MessageBox.Show($"Could not load the second tiledata.mul:\n\n{ex.Message}",
+                    "Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            _secondTileData = new SecondTileData();
-            _secondTileData.Initialize(tileFile, SecondArt.IsUOAHS());
+            _secondTileData = loaded;
 
             InvalidateCompareCache();
             RefreshBothLists();
