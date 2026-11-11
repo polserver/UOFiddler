@@ -65,6 +65,8 @@ namespace UoFiddler.Controls.UserControls
             asPngToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             asAnimatedGifToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             asAnimatedGifnoLoopingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            alignFramesSeparator = new System.Windows.Forms.ToolStripSeparator();
+            alignFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             listView1 = new ListViewWithScrollbar();
             contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(components);
             exportFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -312,7 +314,7 @@ namespace UoFiddler.Controls.UserControls
             // 
             // extractAnimationToolStripMenuItem
             // 
-            extractAnimationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem1, asTiffToolStripMenuItem1, asJpgToolStripMenuItem1, asPngToolStripMenuItem1, asAnimatedGifToolStripMenuItem, asAnimatedGifnoLoopingToolStripMenuItem });
+            extractAnimationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem1, asTiffToolStripMenuItem1, asJpgToolStripMenuItem1, asPngToolStripMenuItem1, asAnimatedGifToolStripMenuItem, asAnimatedGifnoLoopingToolStripMenuItem, alignFramesSeparator, alignFramesToolStripMenuItem });
             extractAnimationToolStripMenuItem.Name = "extractAnimationToolStripMenuItem";
             extractAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             extractAnimationToolStripMenuItem.Text = "Export Animation..";
@@ -358,6 +360,19 @@ namespace UoFiddler.Controls.UserControls
             asAnimatedGifnoLoopingToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             asAnimatedGifnoLoopingToolStripMenuItem.Text = "As animated Gif (no looping)";
             asAnimatedGifnoLoopingToolStripMenuItem.Click += OnClickExtractAnimGifNoLooping;
+            //
+            // alignFramesSeparator
+            //
+            alignFramesSeparator.Name = "alignFramesSeparator";
+            alignFramesSeparator.Size = new System.Drawing.Size(224, 6);
+            //
+            // alignFramesToolStripMenuItem
+            //
+            alignFramesToolStripMenuItem.CheckOnClick = true;
+            alignFramesToolStripMenuItem.Name = "alignFramesToolStripMenuItem";
+            alignFramesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            alignFramesToolStripMenuItem.Text = "Align Frames on One Canvas";
+            alignFramesToolStripMenuItem.ToolTipText = "Bmp/Tiff/Jpg/Png: draw every frame on one canvas, anchored at its center like the Gif export, so frames don't jump. Png and Tiff get a transparent background.";
             // 
             // listView1
             // 
@@ -729,6 +744,8 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripMenuItem tryToFindNewGraphicsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asAnimatedGifnoLoopingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator alignFramesSeparator;
+        private System.Windows.Forms.ToolStripMenuItem alignFramesToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;

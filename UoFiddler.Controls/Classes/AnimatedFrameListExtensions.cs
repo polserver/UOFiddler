@@ -25,6 +25,11 @@ namespace UoFiddler.Controls.Classes
             var drawCenter = new Point(int.MinValue, int.MinValue);
             foreach (var frame in frames)
             {
+                if (frame?.Bitmap == null)
+                {
+                    continue;
+                }
+
                 drawCenter.X = Math.Max(drawCenter.X, frame.Center.X);
                 drawCenter.Y = Math.Max(drawCenter.Y, frame.Center.Y + frame.Bitmap.Height);
             }
@@ -34,12 +39,25 @@ namespace UoFiddler.Controls.Classes
             var outputSize = new Size(0, 0);
             foreach (var frame in frames)
             {
-                var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
+                if (frame?.Bitmap == null)
+                {
+                    continue;
+                }
+
+                var location = frame.GetAlignedLocation(drawCenter);
                 outputSize.Width = Math.Max(outputSize.Width, location.X + frame.Bitmap.Width);
                 outputSize.Height = Math.Max(outputSize.Height, location.Y + frame.Bitmap.Height);
             }
-            
+
             return (drawCenter, outputSize);
+        }
+
+        /// <summary>
+        /// Where to draw <paramref name="frame"/> so its center lands on <paramref name="drawCenter"/>.
+        /// </summary>
+        public static Point GetAlignedLocation(this AnimatedFrame frame, Point drawCenter)
+        {
+            return new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
         }
 
         public static void ToGif(this IEnumerable<AnimatedFrame> frames, string outputFile, bool looping = true, int delay = 150, bool showFrameBounds = false)
@@ -57,7 +75,7 @@ namespace UoFiddler.Controls.Classes
 
                     using var target = new Bitmap(outputSize.Width, outputSize.Height);
                     using var g = Graphics.FromImage(target);
-                    var location = new Point(drawCenter.X - frame.Center.X, drawCenter.Y - frame.Center.Y - frame.Bitmap.Height);
+                    var location = frame.GetAlignedLocation(drawCenter);
 
                     g.DrawImage(frame.Bitmap, location);
 

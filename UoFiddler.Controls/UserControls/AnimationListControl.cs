@@ -1174,23 +1174,47 @@ namespace UoFiddler.Controls.UserControls
             string fileExtension = Utils.GetFileExtensionFor(imageFormat);
             string fileName = Path.Combine(Options.OutputPath, $"{what} {Utils.FormatExportId(_currentSelect)}");
 
-            for (int i = 0; i < MainPictureBox.Frames?.Count; ++i)
+            var frames = MainPictureBox.Frames;
+            if (frames == null || frames.Count == 0)
             {
-                var frameBitmap = MainPictureBox.Frames[i].Bitmap;
-                using (Bitmap newBitmap = new Bitmap(frameBitmap.Width, frameBitmap.Height))
+                return;
+            }
+
+            // Aligned: every frame on one canvas, anchored at its center like the Gif export
+            bool align = alignFramesToolStripMenuItem.Checked;
+            var (drawCenter, canvasSize) = align ? frames.GetAnimationDetails() : (Point.Empty, Size.Empty);
+            if (align && (canvasSize.Width <= 0 || canvasSize.Height <= 0))
+            {
+                return;
+            }
+
+            // Bmp and Jpg have no alpha
+            bool transparent = align && (imageFormat.Equals(ImageFormat.Png) || imageFormat.Equals(ImageFormat.Tiff));
+
+            for (int i = 0; i < frames.Count; ++i)
+            {
+                var frame = frames[i];
+                if (frame?.Bitmap == null)
+                {
+                    continue;
+                }
+
+                Size size = align ? canvasSize : frame.Bitmap.Size;
+                Point location = align ? frame.GetAlignedLocation(drawCenter) : Point.Empty;
+                using (Bitmap newBitmap = new Bitmap(size.Width, size.Height))
                 {
                     using (Graphics newGraph = Graphics.FromImage(newBitmap))
                     {
-                        newGraph.FillRectangle(Brushes.White, 0, 0, newBitmap.Width, newBitmap.Height);
-                        newGraph.DrawImage(frameBitmap, new Point(0, 0));
-                        newGraph.Save();
+                        newGraph.Clear(transparent ? Color.Transparent : Color.White);
+                        newGraph.DrawImage(frame.Bitmap, location);
                     }
 
                     newBitmap.Save($"{fileName}-{i}.{fileExtension}", imageFormat);
                 }
             }
 
-            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"Files with following format {fileName}-X.{fileExtension} saved successfully.");
+            string aligned = align ? $", aligned on a {canvasSize.Width}x{canvasSize.Height} canvas," : string.Empty;
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, $"Files with following format {fileName}-X.{fileExtension}{aligned} saved successfully.");
         }
 
         private void OnClickExportFrameBmp(object sender, EventArgs e)
