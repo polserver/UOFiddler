@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using Ultima.Caching;
 using Ultima.Helpers;
 
@@ -539,64 +540,21 @@ namespace Ultima
             {
                 stream.ReadExactly(buffer, 0, length);
 
-                fixed (byte* data = buffer)
+                ReadOnlySpan<byte> entry = buffer.AsSpan(0, length);
+                if (!TryReadStaticSize(entry, out width, out height))
                 {
-                    var binData = (ushort*)data;
-                    int count = 2;
-                    width = binData[count++];
-                    height = binData[count++];
-
-                    if (width <= 0 || height <= 0)
-                    {
-                        return false;
-                    }
-
-                    if (destination.Length < width * height)
-                    {
-                        return false;
-                    }
-
-                    var lookups = new int[height];
-                    int start = height + 4;
-                    for (int i = 0; i < height; ++i)
-                    {
-                        lookups[i] = start + binData[count++];
-                    }
-
-                    fixed (ushort* destPtr = destination)
-                    {
-                        for (int y = 0; y < height; ++y)
-                        {
-                            count = lookups[y];
-
-                            ushort* cur = destPtr + y * width;
-                            ushort* lineEnd = cur + width;
-                            int xOffset, xRun;
-
-                            while ((xOffset = binData[count++]) + (xRun = binData[count++]) != 0)
-                            {
-                                if (xOffset > width)
-                                {
-                                    break;
-                                }
-
-                                cur += xOffset;
-                                if (xOffset + xRun > width)
-                                {
-                                    break;
-                                }
-
-                                ushort* end = cur + xRun;
-                                while (cur < end && cur < lineEnd)
-                                {
-                                    *cur++ = (ushort)(binData[count++] ^ 0x8000);
-                                }
-                            }
-                        }
-                    }
+                    return false;
                 }
 
-                return true;
+                if (destination.Length < width * height)
+                {
+                    return false;
+                }
+
+                fixed (ushort* destPtr = destination)
+                {
+                    return DecodeStatic(entry, destPtr, width, height, width);
+                }
             }
             finally
             {
@@ -784,83 +742,126 @@ namespace Ultima
             bmp.UnlockBits(bd);
         }
 
-        private static unsafe Bitmap LoadStatic(Stream stream, int length)
+        private static Bitmap LoadStatic(Stream stream, int length)
         {
             byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
             try
             {
                 stream.ReadExactly(buffer, 0, length);
-
-                fixed (byte* data = buffer)
-                {
-                    var binData = (ushort*)data;
-                    int count = 2;
-                    int width = binData[count++];
-                    int height = binData[count++];
-
-                    if (width <= 0 || height <= 0)
-                    {
-                        return null;
-                    }
-
-                    var lookups = new int[height];
-
-                    int start = height + 4;
-
-                    for (int i = 0; i < height; ++i)
-                    {
-                        lookups[i] = start + binData[count++];
-                    }
-
-                    Bitmap bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
-                    BitmapData bd = bmp.LockBits(
-                        new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-
-                    try
-                    {
-                        var line = (ushort*)bd.Scan0;
-                        int delta = bd.Stride >> 1;
-
-                        for (int y = 0; y < height; ++y, line += delta)
-                        {
-                            count = lookups[y];
-
-                            ushort* cur = line;
-                            int xOffset, xRun;
-
-                            while ((xOffset = binData[count++]) + (xRun = binData[count++]) != 0)
-                            {
-                                if (xOffset > delta)
-                                {
-                                    break;
-                                }
-
-                                cur += xOffset;
-                                if (xOffset + xRun > delta)
-                                {
-                                    break;
-                                }
-
-                                ushort* end = cur + xRun;
-                                while (cur < end)
-                                {
-                                    *cur++ = (ushort)(binData[count++] ^ 0x8000);
-                                }
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        bmp.UnlockBits(bd);
-                    }
-
-                    return bmp;
-                }
+                return DecodeStaticBitmap(buffer.AsSpan(0, length));
             }
             finally
             {
                 ArrayPool<byte>.Shared.Return(buffer);
             }
+        }
+
+        /// <summary>
+        /// Reads the width and height from a static art entry's 8-byte header.
+        /// </summary>
+        public static bool TryReadStaticSize(ReadOnlySpan<byte> entry, out int width, out int height)
+        {
+            width = height = 0;
+            if (entry.Length < 8)
+            {
+                return false;
+            }
+
+            width = entry[4] | (entry[5] << 8);
+            height = entry[6] | (entry[7] << 8);
+            return width > 0 && height > 0;
+        }
+
+        /// <summary>
+        /// Decodes a static art entry, or returns null if it is empty or invalid.
+        /// </summary>
+        public static unsafe Bitmap DecodeStaticBitmap(ReadOnlySpan<byte> entry)
+        {
+            if (!TryReadStaticSize(entry, out int width, out int height))
+            {
+                return null;
+            }
+
+            var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
+            BitmapData bd = bmp.LockBits(
+                new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+
+            bool decoded;
+            try
+            {
+                decoded = DecodeStatic(entry, (ushort*)bd.Scan0, width, height, bd.Stride >> 1);
+            }
+            finally
+            {
+                bmp.UnlockBits(bd);
+            }
+
+            if (!decoded)
+            {
+                bmp.Dispose();
+                return null;
+            }
+
+            return bmp;
+        }
+
+        /// <summary>
+        /// Decodes static art RLE into a 16bpp buffer. A run that would leave its row ends the row;
+        /// returns false if a read falls outside <paramref name="entry"/>.
+        /// </summary>
+        public static unsafe bool DecodeStatic(ReadOnlySpan<byte> entry, ushort* dest, int width, int height, int strideInPixels)
+        {
+            ReadOnlySpan<ushort> dat = MemoryMarshal.Cast<byte, ushort>(entry);
+            int start = 4 + height;
+            if (dat.Length < start)
+            {
+                return false;
+            }
+
+            for (int y = 0; y < height; ++y)
+            {
+                int count = start + dat[4 + y];
+                ushort* line = dest + (long)y * strideInPixels;
+                int x = 0;
+
+                while (true)
+                {
+                    if (count + 1 >= dat.Length)
+                    {
+                        return false;
+                    }
+
+                    int xOffset = dat[count];
+                    int xRun = dat[count + 1];
+                    count += 2;
+
+                    if (xOffset + xRun == 0)
+                    {
+                        break;
+                    }
+
+                    if (xOffset > width - x || xRun > width - x - xOffset)
+                    {
+                        break;
+                    }
+
+                    if (xRun > dat.Length - count)
+                    {
+                        return false;
+                    }
+
+                    x += xOffset;
+                    for (int i = 0; i < xRun; ++i)
+                    {
+                        line[x + i] = (ushort)(dat[count + i] ^ 0x8000);
+                    }
+
+                    count += xRun;
+                    x += xRun;
+                }
+            }
+
+            return true;
         }
 
         private static unsafe Bitmap LoadLand(Stream stream, int length)
