@@ -148,7 +148,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new System.Drawing.Size(145, 19);
             checkBox1.TabIndex = 6;
-            checkBox1.Text = "Show Only Differences";
+            checkBox1.Text = "Show only Differences";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.Click += OnClickShowOnlyDiff;
             //
