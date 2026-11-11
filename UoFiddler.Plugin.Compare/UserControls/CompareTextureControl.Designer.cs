@@ -248,11 +248,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             //
             // button1
             // 
-            button1.AutoSize = true;
             button1.Location = new System.Drawing.Point(238, 10);
             button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(99, 29);
+            button1.Size = new System.Drawing.Size(100, 27);
             button1.TabIndex = 5;
             button1.Text = "Load Second";
             button1.UseVisualStyleBackColor = true;
@@ -283,14 +282,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(checkBox1);
             splitContainer1.Panel2.Controls.Add(chkMultiSelect);
             splitContainer1.Panel2.Controls.Add(button1);
-            splitContainer1.Size = new System.Drawing.Size(800, 434);
+            splitContainer1.Size = new System.Drawing.Size(820, 434);
             splitContainer1.SplitterDistance = 369;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 10;
             // 
             // CopyAddOnly
             // 
-            CopyAddOnly.Location = new System.Drawing.Point(686, 12);
+            CopyAddOnly.Location = new System.Drawing.Point(706, 12);
             CopyAddOnly.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CopyAddOnly.Name = "CopyAddOnly";
             CopyAddOnly.Size = new System.Drawing.Size(100, 27);
@@ -304,7 +303,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             buttonCopySelected.Location = new System.Drawing.Point(494, 12);
             buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCopySelected.Name = "buttonCopySelected";
-            buttonCopySelected.Size = new System.Drawing.Size(88, 27);
+            buttonCopySelected.Size = new System.Drawing.Size(100, 27);
             buttonCopySelected.TabIndex = 12;
             buttonCopySelected.Text = "Copy Selected";
             buttonCopySelected.UseVisualStyleBackColor = true;
@@ -312,10 +311,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // FromLeftToRight
             // 
-            FromLeftToRight.Location = new System.Drawing.Point(590, 12);
+            FromLeftToRight.Location = new System.Drawing.Point(600, 12);
             FromLeftToRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             FromLeftToRight.Name = "FromLeftToRight";
-            FromLeftToRight.Size = new System.Drawing.Size(88, 27);
+            FromLeftToRight.Size = new System.Drawing.Size(100, 27);
             FromLeftToRight.TabIndex = 8;
             FromLeftToRight.Text = "Copy All Diff";
             FromLeftToRight.UseVisualStyleBackColor = true;
@@ -342,7 +341,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CompareTextureControl";
-            Size = new System.Drawing.Size(800, 434);
+            Size = new System.Drawing.Size(820, 434);
             Load += OnLoad;
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxSec).EndInit();

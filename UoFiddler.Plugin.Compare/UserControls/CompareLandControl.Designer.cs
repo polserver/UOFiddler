@@ -88,11 +88,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // btnCopySelected
             // 
-            btnCopySelected.AutoSize = true;
             btnCopySelected.Location = new System.Drawing.Point(594, 11);
             btnCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnCopySelected.Name = "btnCopySelected";
-            btnCopySelected.Size = new System.Drawing.Size(99, 29);
+            btnCopySelected.Size = new System.Drawing.Size(100, 27);
             btnCopySelected.TabIndex = 12;
             btnCopySelected.Text = "Copy Selected";
             btnCopySelected.UseVisualStyleBackColor = true;
@@ -100,11 +99,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // btnCopyAllDiff
             // 
-            btnCopyAllDiff.AutoSize = true;
             btnCopyAllDiff.Location = new System.Drawing.Point(700, 11);
             btnCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnCopyAllDiff.Name = "btnCopyAllDiff";
-            btnCopyAllDiff.Size = new System.Drawing.Size(99, 29);
+            btnCopyAllDiff.Size = new System.Drawing.Size(100, 27);
             btnCopyAllDiff.TabIndex = 9;
             btnCopyAllDiff.Text = "Copy All Diff";
             btnCopyAllDiff.UseVisualStyleBackColor = true;
@@ -264,11 +262,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // button1
             // 
-            button1.AutoSize = true;
             button1.Location = new System.Drawing.Point(332, 11);
             button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(99, 29);
+            button1.Size = new System.Drawing.Size(100, 27);
             button1.TabIndex = 5;
             button1.Text = "Load Second";
             button1.UseVisualStyleBackColor = true;

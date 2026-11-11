@@ -210,7 +210,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             splitContainer1.Panel2.Controls.Add(button1);
             splitContainer1.Panel2.Controls.Add(textBoxSecondDir);
             splitContainer1.Panel2.Controls.Add(comboBoxFileMode);
-            splitContainer1.Size = new System.Drawing.Size(860, 378);
+            splitContainer1.Size = new System.Drawing.Size(880, 378);
             splitContainer1.SplitterDistance = 309;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 3;
@@ -218,7 +218,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new System.Drawing.Point(493, 18);
+            checkBox1.Location = new System.Drawing.Point(507, 18);
             checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new System.Drawing.Size(143, 19);
@@ -230,7 +230,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // chkMultiSelect
             //
             chkMultiSelect.AutoSize = true;
-            chkMultiSelect.Location = new System.Drawing.Point(493, 41);
+            chkMultiSelect.Location = new System.Drawing.Point(507, 41);
             chkMultiSelect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkMultiSelect.Name = "chkMultiSelect";
             chkMultiSelect.Size = new System.Drawing.Size(90, 19);
@@ -241,11 +241,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // buttonCopySelected
             // 
-            buttonCopySelected.AutoSize = true;
-            buttonCopySelected.Location = new System.Drawing.Point(648, 13);
+            buttonCopySelected.Location = new System.Drawing.Point(662, 13);
             buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCopySelected.Name = "buttonCopySelected";
-            buttonCopySelected.Size = new System.Drawing.Size(99, 29);
+            buttonCopySelected.Size = new System.Drawing.Size(100, 27);
             buttonCopySelected.TabIndex = 12;
             buttonCopySelected.Text = "Copy Selected";
             buttonCopySelected.UseVisualStyleBackColor = true;
@@ -253,11 +252,10 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // 
             // buttonCopyAllDiff
             // 
-            buttonCopyAllDiff.AutoSize = true;
-            buttonCopyAllDiff.Location = new System.Drawing.Point(754, 13);
+            buttonCopyAllDiff.Location = new System.Drawing.Point(768, 13);
             buttonCopyAllDiff.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCopyAllDiff.Name = "buttonCopyAllDiff";
-            buttonCopyAllDiff.Size = new System.Drawing.Size(99, 29);
+            buttonCopyAllDiff.Size = new System.Drawing.Size(100, 27);
             buttonCopyAllDiff.TabIndex = 11;
             buttonCopyAllDiff.Text = "Copy All Diff";
             buttonCopyAllDiff.UseVisualStyleBackColor = true;
@@ -268,9 +266,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
             button2.Location = new System.Drawing.Point(399, 14);
             button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(88, 27);
+            button2.Size = new System.Drawing.Size(100, 27);
             button2.TabIndex = 2;
-            button2.Text = "Load";
+            button2.Text = "Load Second";
             button2.UseVisualStyleBackColor = true;
             button2.Click += Load_Click;
             // 
@@ -314,7 +312,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             DoubleBuffered = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CompareGumpControl";
-            Size = new System.Drawing.Size(860, 378);
+            Size = new System.Drawing.Size(880, 378);
             Load += OnLoad;
             contextMenuStrip1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
