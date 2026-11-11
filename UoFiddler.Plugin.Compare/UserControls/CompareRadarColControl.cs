@@ -618,6 +618,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
                     orgView.VirtualListSize = indices.Count;
                     secView.VirtualListSize = indices.Count;
+                    // Copy with nothing selected uses the focused row, which now points at another entry.
+                    orgView.FocusIndex = -1;
+                    secView.FocusIndex = -1;
                 }
                 else
                 {

@@ -679,6 +679,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
                     tileView1.VirtualListSize = _displayIndices.Count;
                     tileView2.VirtualListSize = _displayIndices.Count;
+                    // Copy with nothing selected uses the focused row, which now points at another entry.
+                    tileView1.FocusIndex = -1;
+                    tileView2.FocusIndex = -1;
                 }
                 else
                 {

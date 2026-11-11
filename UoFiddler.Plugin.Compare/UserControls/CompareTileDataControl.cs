@@ -1246,6 +1246,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
                     tileViewLandOrg.VirtualListSize = _landDisplayIndices.Count;
                     tileViewLandSec.VirtualListSize = _landDisplayIndices.Count;
+                    // Copy with nothing selected uses the focused row, which now points at another entry.
+                    tileViewLandOrg.FocusIndex = -1;
+                    tileViewLandSec.FocusIndex = -1;
                 }
                 else
                 {
@@ -1350,6 +1353,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
                     tileViewItemOrg.VirtualListSize = _itemDisplayIndices.Count;
                     tileViewItemSec.VirtualListSize = _itemDisplayIndices.Count;
+                    // Copy with nothing selected uses the focused row, which now points at another entry.
+                    tileViewItemOrg.FocusIndex = -1;
+                    tileViewItemSec.FocusIndex = -1;
                 }
                 else
                 {
