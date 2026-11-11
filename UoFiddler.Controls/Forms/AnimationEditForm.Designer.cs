@@ -42,6 +42,9 @@
             asPngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             fromvdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            actionFromVdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            actionToVdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyActionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             tovdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             AnimationFileToolStrip = new System.Windows.Forms.ToolStrip();
@@ -243,9 +246,10 @@
             // ContextMenuStripTreeView
             // 
             ContextMenuStripTreeView.ImageScalingSize = new System.Drawing.Size(20, 20);
-            ContextMenuStripTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { addToolStripMenuItem, removeToolStripMenuItem, extractImagesToolStripMenuItem1, importToolStripMenuItem1, exportToolStripMenuItem1 });
+            ContextMenuStripTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { addToolStripMenuItem, removeToolStripMenuItem, copyActionToolStripMenuItem, extractImagesToolStripMenuItem1, importToolStripMenuItem1, exportToolStripMenuItem1 });
             ContextMenuStripTreeView.Name = "contextMenuStrip2";
-            ContextMenuStripTreeView.Size = new System.Drawing.Size(158, 114);
+            ContextMenuStripTreeView.Size = new System.Drawing.Size(158, 136);
+            ContextMenuStripTreeView.Opening += OnTreeViewContextMenuOpening;
             // 
             // addToolStripMenuItem
             // 
@@ -260,7 +264,15 @@
             removeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             removeToolStripMenuItem.Text = "Remove";
             removeToolStripMenuItem.Click += OnClickRemoveAction;
-            // 
+            //
+            // copyActionToolStripMenuItem
+            //
+            copyActionToolStripMenuItem.Name = "copyActionToolStripMenuItem";
+            copyActionToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            copyActionToolStripMenuItem.Text = "Copy Action To..";
+            copyActionToolStripMenuItem.ToolTipText = "Copy the selected action, all directions, to another body or action";
+            copyActionToolStripMenuItem.Click += OnClickCopyAction;
+            //
             // extractImagesToolStripMenuItem1
             // 
             extractImagesToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { asBmpToolStripMenuItem, asTiffToolStripMenuItem, asJpgToolStripMenuItem, asPngToolStripMenuItem });
@@ -302,7 +314,7 @@
             // 
             // importToolStripMenuItem1
             // 
-            importToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { fromvdToolStripMenuItem });
+            importToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { fromvdToolStripMenuItem, actionFromVdToolStripMenuItem });
             importToolStripMenuItem1.Name = "importToolStripMenuItem1";
             importToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             importToolStripMenuItem1.Text = "Import..";
@@ -310,13 +322,21 @@
             // fromvdToolStripMenuItem
             // 
             fromvdToolStripMenuItem.Name = "fromvdToolStripMenuItem";
-            fromvdToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
-            fromvdToolStripMenuItem.Text = "From .vd";
+            fromvdToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            fromvdToolStripMenuItem.Text = "Body from .vd";
             fromvdToolStripMenuItem.Click += OnClickImportFromVD;
+            //
+            // actionFromVdToolStripMenuItem
+            //
+            actionFromVdToolStripMenuItem.Name = "actionFromVdToolStripMenuItem";
+            actionFromVdToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            actionFromVdToolStripMenuItem.Text = "Action from .vd";
+            actionFromVdToolStripMenuItem.ToolTipText = "Replace the selected action, all directions, with a single-action .vd";
+            actionFromVdToolStripMenuItem.Click += OnClickImportActionFromVD;
             // 
             // exportToolStripMenuItem1
             // 
-            exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tovdToolStripMenuItem });
+            exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tovdToolStripMenuItem, actionToVdToolStripMenuItem });
             exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
             exportToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             exportToolStripMenuItem1.Text = "Export..";
@@ -324,9 +344,17 @@
             // tovdToolStripMenuItem
             // 
             tovdToolStripMenuItem.Name = "tovdToolStripMenuItem";
-            tovdToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
-            tovdToolStripMenuItem.Text = "To .vd";
+            tovdToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            tovdToolStripMenuItem.Text = "Body to .vd";
             tovdToolStripMenuItem.Click += OnClickExportToVD;
+            //
+            // actionToVdToolStripMenuItem
+            //
+            actionToVdToolStripMenuItem.Name = "actionToVdToolStripMenuItem";
+            actionToVdToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            actionToVdToolStripMenuItem.Text = "Action to .vd";
+            actionToVdToolStripMenuItem.ToolTipText = "Export the selected action, all directions, as a single-action .vd";
+            actionToVdToolStripMenuItem.Click += OnClickExportActionToVD;
             // 
             // AnimationFileToolStrip
             // 
@@ -1681,6 +1709,9 @@
         private System.Windows.Forms.ToolStripMenuItem fromImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fromTxtToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fromvdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actionFromVdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actionToVdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyActionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem1;
         private System.Windows.Forms.Label BackgroundRedLabel;

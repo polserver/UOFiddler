@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -313,6 +314,107 @@ namespace Ultima
             }
         }
 
+        /// <summary>
+        /// .vd header type of a file that holds one action (5 directions). Body files use 0, 1 and 2.
+        /// </summary>
+        public const short ActionVdType = 3;
+
+        /// <summary>
+        /// True when <paramref name="action"/> of <paramref name="body"/> has idx records in the given anim file.
+        /// </summary>
+        public static bool IsActionInRange(int fileType, int body, int action)
+        {
+            if (body < 0 || action < 0 || action >= Animations.GetActionCapacity(body, fileType))
+            {
+                return false;
+            }
+
+            AnimIdx[] cache = GetCache(fileType);
+            if (cache == null)
+            {
+                return false;
+            }
+
+            GetFileIndex(body, fileType, action, 4, out FileIndex _, out int index);
+
+            return index < cache.Length;
+        }
+
+        /// <summary>
+        /// Writes one action as a .vd file: the body .vd layout with 5 index entries, one per direction.
+        /// </summary>
+        public static void ExportActionToVD(int fileType, int body, int action, string file)
+        {
+            using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var bin = new BinaryWriter(fs))
+            {
+                bin.Write((short)6);
+                bin.Write(ActionVdType);
+                long indexPos = bin.BaseStream.Position;
+                long animPos = bin.BaseStream.Position + (12 * 5);
+                for (int dir = 0; dir < 5; ++dir)
+                {
+                    GetAnimation(fileType, body, action, dir).ExportToVD(bin, ref indexPos, ref animPos);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reads a single-action .vd, positioned after its 4-byte header, into the given action.
+        /// Directions the file leaves empty are cleared. Nothing changes if the file can't be read.
+        /// </summary>
+        public static void LoadActionFromVD(int fileType, int body, int action, BinaryReader bin)
+        {
+            var entries = new Entry3D[5];
+            for (int dir = 0; dir < 5; ++dir)
+            {
+                entries[dir].Lookup = bin.ReadInt32();
+                entries[dir].Length = bin.ReadInt32();
+                entries[dir].Extra = bin.ReadInt32();
+            }
+
+            var loaded = new AnimIdx[5];
+            for (int dir = 0; dir < 5; ++dir)
+            {
+                Entry3D entry = entries[dir];
+                if ((entry.Lookup > 0) && (entry.Lookup < bin.BaseStream.Length) && (entry.Length > 0))
+                {
+                    bin.BaseStream.Seek(entry.Lookup, SeekOrigin.Begin);
+                    loaded[dir] = new AnimIdx(bin, entry.Extra);
+                }
+            }
+
+            for (int dir = 0; dir < 5; ++dir)
+            {
+                AnimIdx target = GetAnimation(fileType, body, action, dir);
+                if (loaded[dir] != null)
+                {
+                    target.CopyFrom(loaded[dir]);
+                }
+                else
+                {
+                    target.ClearFrames();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copies the frames and palettes of all 5 directions of an action to another action, unchanged.
+        /// </summary>
+        public static void CopyAction(int fileType, int sourceBody, int sourceAction, int targetBody, int targetAction)
+        {
+            if (sourceBody == targetBody && sourceAction == targetAction)
+            {
+                return;
+            }
+
+            for (int dir = 0; dir < 5; ++dir)
+            {
+                AnimIdx source = GetAnimation(fileType, sourceBody, sourceAction, dir);
+                GetAnimation(fileType, targetBody, targetAction, dir).CopyFrom(source);
+            }
+        }
+
         public static void Save(int fileType, string path)
         {
             string filename;
@@ -392,7 +494,7 @@ namespace Ultima
     {
         public readonly int PaletteCapacity = 0x100;
 
-        private readonly int _idxExtra;
+        private int _idxExtra;
 
         public ushort[] Palette { get; private set; }
         public List<FrameEdit> Frames { get; private set; }
@@ -561,6 +663,21 @@ namespace Ultima
         public void ClearFrames()
         {
             Frames?.Clear();
+        }
+
+        /// <summary>
+        /// Makes this a copy of <paramref name="source"/>: palette, frames and idx extra. Nothing is shared.
+        /// </summary>
+        public void CopyFrom(AnimIdx source)
+        {
+            if (ReferenceEquals(source, this))
+            {
+                return;
+            }
+
+            Array.Copy(source.Palette, Palette, PaletteCapacity);
+            Frames = source.Frames?.ConvertAll(frame => new FrameEdit(frame));
+            _idxExtra = source._idxExtra;
         }
 
         public void ExportPalette(string filename, int type)
@@ -756,6 +873,25 @@ namespace Ultima
 
             RawData = tmp.ToArray();
             Center = new Point(xCenter, yCenter);
+        }
+
+        public FrameEdit(FrameEdit source)
+        {
+            Center = source.Center;
+            Width = source.Width;
+            Height = source.Height;
+
+            if (source.RawData == null)
+            {
+                return;
+            }
+
+            RawData = new Raw[source.RawData.Length];
+            for (int i = 0; i < RawData.Length; ++i)
+            {
+                RawData[i] = source.RawData[i];
+                RawData[i].data = (byte[])source.RawData[i].data.Clone();
+            }
         }
 
         public unsafe FrameEdit(Bitmap bit, ushort[] palette, int centerX, int centerY)
