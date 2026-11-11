@@ -634,8 +634,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private void OnClickLoad(object sender, EventArgs e)
         {
             string path = toolStripTextBox1.Text;
-            if (Directory.Exists(path)
-                && CompareFiles.IsLoadedClientFile(Path.Combine(path, $"map{_currentMapId}.mul"), $"map{_currentMapId}.mul"))
+            if (Directory.Exists(path) && IsLoadedMapFile(path))
             {
                 MessageBox.Show(
                     "The selected directory contains the same map file that is currently loaded.\n\n" +
@@ -647,6 +646,25 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             ChangeMap();
+        }
+
+        /// <summary>
+        /// True if the map file the second map would read from <paramref name="path"/> is the loaded
+        /// one. Checks the file TileMatrix opens: map{FileIndex}.mul, then the UOP.
+        /// </summary>
+        private bool IsLoadedMapFile(string path)
+        {
+            int fileIndex = OriginalMap.FileIndex;
+            foreach (string name in new[] { $"map{fileIndex}.mul", $"map{fileIndex}LegacyMUL.uop" })
+            {
+                string candidate = Path.Combine(path, name);
+                if (File.Exists(candidate))
+                {
+                    return CompareFiles.IsLoadedClientFile(candidate, name);
+                }
+            }
+
+            return false;
         }
 
         private void ChangeMap()
