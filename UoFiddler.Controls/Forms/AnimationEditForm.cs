@@ -10,12 +10,12 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Media.Imaging;
 using Ultima;
 using UoFiddler.Controls.Classes;
 
@@ -1373,12 +1373,8 @@ namespace UoFiddler.Controls.Forms
 
                 using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
-                    Bitmap bitmap = new Bitmap(bmpTemp);
-
-                    if (dialog.FileName.Contains(".bmp"))
-                    {
-                        bitmap = ConvertBmpAnim(bitmap, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                    }
+                    // Same background removal as Add, for every format
+                    Bitmap bitmap = ConvertBmpAnim(bmpTemp, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
 
                     AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                     if (edit == null)
@@ -1447,7 +1443,6 @@ namespace UoFiddler.Controls.Forms
                                         Bitmap[] bitBmp = new Bitmap[frameCount];
 
                                         bitmap.SelectActiveFrame(dimension, 0);
-                                        UpdateGifPalette(bitmap, edit);
 
                                         ProgressBar.Maximum = frameCount;
 
@@ -1523,12 +1518,18 @@ namespace UoFiddler.Controls.Forms
 
         private void AddImageAtCertainIndex(int frameCount, Bitmap[] bitBmp, Bitmap bmp, FrameDimension dimension, AnimIdx edit)
         {
-            // Return an Image at a certain index
             for (int index = 0; index < frameCount; index++)
             {
                 bmp.SelectActiveFrame(dimension, index);
                 bitBmp[index] = ConvertBmpAnim(bmp, (int) numericUpDownRed.Value,
                     (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
+            }
+
+            // One palette for all frames, not just the first
+            edit.FitPalette(bitBmp);
+
+            for (int index = 0; index < frameCount; index++)
+            {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width / 2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2047,8 +2048,6 @@ namespace UoFiddler.Controls.Forms
 
                             bitmap.SelectActiveFrame(dimension, 0);
 
-                            UpdateGifPalette(bitmap, edit);
-
                             Bitmap[] bitBmp = new Bitmap[frameCount];
 
                             AddImageAtCertainIndex(frameCount, bitBmp, bitmap, dimension, edit);
@@ -2297,7 +2296,6 @@ namespace UoFiddler.Controls.Forms
             int frameCount = bmp.GetFrameCount(dimension);
             ProgressBar.Maximum = frameCount;
             bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
 
             // Return an Image at a certain index
             Bitmap[] bitBmp = new Bitmap[frameCount];
@@ -2607,11 +2605,10 @@ namespace UoFiddler.Controls.Forms
 
             // End of Canvas algorithm
 
+            ConvertAndFitFrames(edit, bitBmp, 0, frameCount, dimension, ConvertBmpAnim);
+
             for (int index = 0; index < frameCount; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
-                    (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -2717,20 +2714,37 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                foreach (string filename in dialog.FileNames)
+                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+                if (edit == null)
                 {
-                    Bitmap bit = new Bitmap(filename);
-                    AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                    if (edit != null)
-                    {
-                        bit = ConvertBmpAnim(bit, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
-                        UpdateImagePalette(bit, edit);
-                    }
-                    SetPaletteBox();
-                    FramesListView.Invalidate();
-                    Options.ChangedUltimaClass["Animations"] = true;
-                    SetPaletteBox();
+                    return;
                 }
+
+                // One palette from all chosen images
+                var images = new List<Bitmap>(dialog.FileNames.Length);
+                try
+                {
+                    foreach (string filename in dialog.FileNames)
+                    {
+                        using (var bit = new Bitmap(filename))
+                        {
+                            images.Add(ConvertBmpAnim(bit, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value));
+                        }
+                    }
+
+                    edit.SetPaletteFrom(images);
+                }
+                finally
+                {
+                    foreach (Bitmap image in images)
+                    {
+                        image.Dispose();
+                    }
+                }
+
+                SetPaletteBox();
+                FramesListView.Invalidate();
+                Options.ChangedUltimaClass["Animations"] = true;
             }
         }
         //End of Soulblighter Modification
@@ -2967,8 +2981,6 @@ namespace UoFiddler.Controls.Forms
 
                                         bitmap.SelectActiveFrame(dimension, 0);
 
-                                        UpdateGifPalette(bitmap, edit);
-
                                         Bitmap[] bitBmp = new Bitmap[frameCount];
 
                                         // Return an Image at a certain index
@@ -3016,11 +3028,10 @@ namespace UoFiddler.Controls.Forms
         private AnimIdx Cv5AnimIdxPositions(int frameCount, Bitmap[] bitBmp, FrameDimension dimension, AnimIdx edit, Bitmap bmp)
         {
             // position 0
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 8 * 4, frameCount / 8 * 5, dimension, ConvertBmpAnimCv5);
+
             for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3064,13 +3075,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 1
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, 0, frameCount / 8, dimension, ConvertBmpAnimCv5);
+
             for (int index = 0; index < frameCount / 8; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3114,13 +3122,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 2
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 8 * 5, frameCount / 8 * 6, dimension, ConvertBmpAnimCv5);
+
             for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3164,13 +3169,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 3
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 8 * 1, frameCount / 8 * 2, dimension, ConvertBmpAnimCv5);
+
             for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3214,13 +3216,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 4
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 8 * 6, frameCount / 8 * 7, dimension, ConvertBmpAnimCv5);
+
             for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimCv5(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3668,8 +3667,6 @@ namespace UoFiddler.Controls.Forms
 
                                         bitmap.SelectActiveFrame(dimension, 0);
 
-                                        UpdateGifPalette(bitmap, edit);
-
                                         Bitmap[] bitBmp = new Bitmap[frameCount];
 
                                         // Return an Image at a certain index
@@ -3717,11 +3714,10 @@ namespace UoFiddler.Controls.Forms
         private AnimIdx KrAnimIdxPositions(int frameCount, Bitmap[] bitBmp, FrameDimension dimension, AnimIdx edit, Bitmap bmp)
         {
             // position 0
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 5 * 0, frameCount / 5 * 1, dimension, ConvertBmpAnimKr);
+
             for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3765,13 +3761,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 1
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 5 * 1, frameCount / 5 * 2, dimension, ConvertBmpAnimKr);
+
             for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3815,13 +3808,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 2
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 5 * 2, frameCount / 5 * 3, dimension, ConvertBmpAnimKr);
+
             for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3865,13 +3855,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 3
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 5 * 3, frameCount / 5 * 4, dimension, ConvertBmpAnimKr);
+
             for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -3915,13 +3902,10 @@ namespace UoFiddler.Controls.Forms
 
             // position 4
             edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            bmp.SelectActiveFrame(dimension, 0);
-            UpdateGifPalette(bmp, edit);
+            ConvertAndFitFrames(edit, bitBmp, frameCount / 5 * 4, frameCount / 5 * 5, dimension, ConvertBmpAnimKr);
+
             for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
             {
-                bitBmp[index].SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnimKr(bitBmp[index], (int) numericUpDownRed.Value, (int) numericUpDownGreen.Value,
-                    (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
                 TreeNode node = GetNode(_currentBody);
                 if (node != null)
@@ -4428,128 +4412,50 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
+        /// <summary>
+        /// Sets the palette from the colours of every frame of a GIF, not just the first.
+        /// </summary>
         public void UpdateGifPalette(Bitmap bit, AnimIdx animIdx)
         {
-            using (MemoryStream imageStreamSource = new MemoryStream())
+            FrameDimension dimension = new FrameDimension(bit.FrameDimensionsList[0]);
+            int frameCount = bit.GetFrameCount(dimension);
+            var frames = new Bitmap[frameCount];
+            try
             {
-                ImageConverter ic = new ImageConverter();
-                byte[] btImage = (byte[])ic.ConvertTo(bit, typeof(byte[]));
-                imageStreamSource.Write(btImage, 0, btImage.Length);
-                GifBitmapDecoder decoder = new GifBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-                BitmapPalette pal = decoder.Palette;
-                int i;
-                for (i = 0; i < Animations.PaletteCapacity; i++)
+                for (int index = 0; index < frameCount; index++)
                 {
-                    animIdx.Palette[i] = 0;
+                    bit.SelectActiveFrame(dimension, index);
+                    frames[index] = ConvertBmpAnim(bit, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
                 }
 
-                try
+                animIdx.SetPaletteFrom(frames);
+            }
+            finally
+            {
+                foreach (Bitmap frame in frames)
                 {
-                    i = 0;
-                    while (i < Animations.PaletteCapacity) //&& i < pal.Colors.Count)
-                    {
-                        int red = pal.Colors[i].R / 8;
-                        int green = pal.Colors[i].G / 8;
-                        int blue = pal.Colors[i].B / 8;
-
-                        int contaFinal = (0x400 * red) + (0x20 * green) + blue + 0x8000;
-                        if (contaFinal == 0x8000)
-                        {
-                            contaFinal = 0x8001;
-                        }
-
-                        animIdx.Palette[i] = (ushort)contaFinal;
-                        i++;
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    // TODO: ignored?
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    // TODO: ignored?
+                    frame?.Dispose();
                 }
 
-                for (i = 0; i < Animations.PaletteCapacity; i++)
-                {
-                    if (animIdx.Palette[i] < 0x8000)
-                    {
-                        animIdx.Palette[i] = 0x8000;
-                    }
-                }
+                bit.SelectActiveFrame(dimension, 0);
             }
         }
 
-        public unsafe void UpdateImagePalette(Bitmap bit, AnimIdx animIdx)
+        /// <summary>
+        /// Converts frames [start, end) in place, then fits the palette of <paramref name="edit"/> to all of them
+        /// before they are added.
+        /// </summary>
+        private void ConvertAndFitFrames(AnimIdx edit, Bitmap[] bitBmp, int start, int end, FrameDimension dimension,
+            Func<Bitmap, int, int, int, Bitmap> convert)
         {
-            int count = 0;
-            var bmp = new Bitmap(bit);
-            BitmapData bd = bmp.LockBits(
-                new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
-            var line = (ushort*)bd.Scan0;
-            int delta = bd.Stride >> 1;
-
-            int i = 0;
-            while (i < Animations.PaletteCapacity)
+            for (int index = start; index < end; index++)
             {
-                animIdx.Palette[i] = 0;
-                i++;
+                bitBmp[index].SelectActiveFrame(dimension, index);
+                bitBmp[index] = convert(bitBmp[index], (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value,
+                    (int)numericUpDownBlue.Value);
             }
 
-            int y = 0;
-
-            while (y < bmp.Height)
-            {
-                ushort* cur = line;
-                for (int x = 0; x < bmp.Width; x++)
-                {
-                    ushort c = cur[x];
-                    if (c == 0)
-                    {
-                        continue;
-                    }
-
-                    bool found = false;
-                    i = 0;
-
-                    while (i < animIdx.Palette.Length)
-                    {
-                        if (animIdx.Palette[i] == c)
-                        {
-                            found = true;
-                            break;
-                        }
-                        i++;
-                    }
-
-                    if (!found)
-                    {
-                        animIdx.Palette[count++] = c;
-                    }
-
-                    if (count >= Animations.PaletteCapacity)
-                    {
-                        break;
-                    }
-                }
-
-                for (i = 0; i < Animations.PaletteCapacity; i++)
-                {
-                    if (animIdx.Palette[i] < 0x8000)
-                    {
-                        animIdx.Palette[i] = 0x8000;
-                    }
-                }
-
-                if (count >= Animations.PaletteCapacity)
-                {
-                    break;
-                }
-
-                y++;
-                line += delta;
-            }
+            edit.FitPalette(bitBmp[start..end]);
         }
 
         public void PaletteConverter(int selector, AnimIdx animIdx)

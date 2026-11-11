@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -525,6 +526,7 @@ namespace Ultima
                 Frames = new List<FrameEdit>();
             }
 
+            FitPalette(new[] { bit });
             Frames.Add(new FrameEdit(bit, Palette, centerX, centerY));
         }
 
@@ -540,7 +542,313 @@ namespace Ultima
                 return;
             }
 
+            FitPalette(new[] { bit }, index);
             Frames[index] = new FrameEdit(bit, Palette, Frames[index].Center.X, Frames[index].Center.Y);
+        }
+
+        /// <summary>
+        /// Makes the palette hold the colours of <paramref name="bitmaps"/> next to those of the current frames,
+        /// so they can be added without losing colours. New colours go into entries no frame uses; past 256
+        /// colours the palette is reduced over all frames and the current frames are remapped to it.
+        /// Fitting all frames of an import at once gives a better reduction than adding them one by one.
+        /// </summary>
+        /// <param name="bitmaps">Frames about to be added or replaced.</param>
+        /// <param name="replacedFrame">Index of the frame being replaced, whose colours no longer count.</param>
+        public void FitPalette(IEnumerable<Bitmap> bitmaps, int replacedFrame = -1)
+        {
+            Dictionary<ushort, int> newColors = CountColors(bitmaps);
+            if (newColors.Count == 0)
+            {
+                return;
+            }
+
+            var usedCounts = new int[PaletteCapacity];
+            if (Frames != null)
+            {
+                for (int f = 0; f < Frames.Count; ++f)
+                {
+                    if (f == replacedFrame || Frames[f].RawData == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (FrameEdit.Raw raw in Frames[f].RawData)
+                    {
+                        foreach (byte index in raw.data)
+                        {
+                            usedCounts[index]++;
+                        }
+                    }
+                }
+            }
+
+            var reserved = new bool[PaletteCapacity];
+            for (int i = 0; i < PaletteCapacity; ++i)
+            {
+                reserved[i] = usedCounts[i] > 0;
+            }
+
+            var missing = new List<ushort>();
+            foreach (ushort color in newColors.Keys)
+            {
+                int index = Array.IndexOf(Palette, color);
+                if (index >= 0)
+                {
+                    reserved[index] = true;
+                }
+                else
+                {
+                    missing.Add(color);
+                }
+            }
+
+            if (missing.Count == 0)
+            {
+                return;
+            }
+
+            // Empty entries first, then entries no frame uses
+            var free = new List<int>();
+            for (int i = 0; i < PaletteCapacity; ++i)
+            {
+                if (!reserved[i] && Palette[i] == 0x8000)
+                {
+                    free.Add(i);
+                }
+            }
+
+            for (int i = 0; i < PaletteCapacity; ++i)
+            {
+                if (!reserved[i] && Palette[i] != 0x8000)
+                {
+                    free.Add(i);
+                }
+            }
+
+            if (missing.Count <= free.Count)
+            {
+                for (int i = 0; i < missing.Count; ++i)
+                {
+                    Palette[free[i]] = missing[i];
+                }
+
+                return;
+            }
+
+            var histogram = new Dictionary<ushort, int>(newColors);
+            for (int i = 0; i < PaletteCapacity; ++i)
+            {
+                if (usedCounts[i] == 0)
+                {
+                    continue;
+                }
+
+                ushort color = FrameEdit.VisibleColor(Palette[i]);
+                histogram.TryGetValue(color, out int count);
+                histogram[color] = count + usedCounts[i];
+            }
+
+            ushort[] reduced = MedianCut(histogram, PaletteCapacity);
+
+            var remap = new byte[PaletteCapacity];
+            for (int i = 0; i < PaletteCapacity; ++i)
+            {
+                remap[i] = FrameEdit.NearestIndex(reduced, FrameEdit.VisibleColor(Palette[i]));
+            }
+
+            if (Frames != null)
+            {
+                foreach (FrameEdit frame in Frames)
+                {
+                    if (frame.RawData == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (FrameEdit.Raw raw in frame.RawData)
+                    {
+                        for (int k = 0; k < raw.data.Length; ++k)
+                        {
+                            raw.data[k] = remap[raw.data[k]];
+                        }
+                    }
+                }
+            }
+
+            Array.Copy(reduced, Palette, PaletteCapacity);
+        }
+
+        /// <summary>
+        /// Replaces the palette with the colours of <paramref name="bitmaps"/>, reduced to 256 when there are more.
+        /// Frames keep their palette indexes.
+        /// </summary>
+        public void SetPaletteFrom(IEnumerable<Bitmap> bitmaps)
+        {
+            Dictionary<ushort, int> colors = CountColors(bitmaps);
+            if (colors.Count == 0)
+            {
+                return;
+            }
+
+            ushort[] palette;
+            if (colors.Count <= PaletteCapacity)
+            {
+                palette = new ushort[PaletteCapacity];
+                Array.Fill(palette, (ushort)0x8000);
+                colors.Keys.CopyTo(palette, 0);
+            }
+            else
+            {
+                palette = MedianCut(colors, PaletteCapacity);
+            }
+
+            Array.Copy(palette, Palette, PaletteCapacity);
+        }
+
+        private static unsafe Dictionary<ushort, int> CountColors(IEnumerable<Bitmap> bitmaps)
+        {
+            var counts = new Dictionary<ushort, int>();
+            foreach (Bitmap bit in bitmaps)
+            {
+                if (bit == null)
+                {
+                    continue;
+                }
+
+                BitmapData bd = bit.LockBits(new Rectangle(0, 0, bit.Width, bit.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                try
+                {
+                    for (int y = 0; y < bit.Height; ++y)
+                    {
+                        var line = (ushort*)((byte*)bd.Scan0 + (y * bd.Stride));
+                        for (int x = 0; x < bit.Width; ++x)
+                        {
+                            if ((line[x] & 0x8000) == 0)
+                            {
+                                continue;
+                            }
+
+                            ushort color = FrameEdit.VisibleColor(line[x]);
+                            counts.TryGetValue(color, out int count);
+                            counts[color] = count + 1;
+                        }
+                    }
+                }
+                finally
+                {
+                    bit.UnlockBits(bd);
+                }
+            }
+
+            return counts;
+        }
+
+        /// <summary>
+        /// Reduces a colour histogram to at most <paramref name="maxColors"/> colours by weighted median cut.
+        /// Unused entries of the result are 0x8000.
+        /// </summary>
+        private static ushort[] MedianCut(Dictionary<ushort, int> histogram, int maxColors)
+        {
+            var boxes = new List<List<KeyValuePair<ushort, int>>> { new List<KeyValuePair<ushort, int>>(histogram) };
+
+            while (boxes.Count < maxColors)
+            {
+                int best = -1;
+                int bestChannel = 0;
+                long bestScore = 0;
+                for (int i = 0; i < boxes.Count; ++i)
+                {
+                    if (boxes[i].Count < 2)
+                    {
+                        continue;
+                    }
+
+                    long pixels = 0;
+                    var min = new[] { 31, 31, 31 };
+                    var max = new[] { 0, 0, 0 };
+                    foreach (KeyValuePair<ushort, int> entry in boxes[i])
+                    {
+                        pixels += entry.Value;
+                        for (int c = 0; c < 3; ++c)
+                        {
+                            int value = Channel(entry.Key, c);
+                            min[c] = Math.Min(min[c], value);
+                            max[c] = Math.Max(max[c], value);
+                        }
+                    }
+
+                    for (int c = 0; c < 3; ++c)
+                    {
+                        long score = (max[c] - min[c]) * pixels;
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            best = i;
+                            bestChannel = c;
+                        }
+                    }
+                }
+
+                if (best < 0)
+                {
+                    break;
+                }
+
+                List<KeyValuePair<ushort, int>> box = boxes[best];
+                int channel = bestChannel;
+                box.Sort((a, b) => Channel(a.Key, channel).CompareTo(Channel(b.Key, channel)));
+
+                long total = 0;
+                foreach (KeyValuePair<ushort, int> entry in box)
+                {
+                    total += entry.Value;
+                }
+
+                int split = box.Count - 1;
+                long sum = 0;
+                for (int i = 0; i < box.Count - 1; ++i)
+                {
+                    sum += box[i].Value;
+                    if (sum * 2 >= total)
+                    {
+                        split = i + 1;
+                        break;
+                    }
+                }
+
+                boxes[best] = box.GetRange(0, split);
+                boxes.Add(box.GetRange(split, box.Count - split));
+            }
+
+            var palette = new ushort[maxColors];
+            Array.Fill(palette, (ushort)0x8000);
+            for (int i = 0; i < boxes.Count; ++i)
+            {
+                long total = 0;
+                long red = 0;
+                long green = 0;
+                long blue = 0;
+                foreach (KeyValuePair<ushort, int> entry in boxes[i])
+                {
+                    total += entry.Value;
+                    red += (long)Channel(entry.Key, 0) * entry.Value;
+                    green += (long)Channel(entry.Key, 1) * entry.Value;
+                    blue += (long)Channel(entry.Key, 2) * entry.Value;
+                }
+
+                int r = (int)((red + (total / 2)) / total);
+                int g = (int)((green + (total / 2)) / total);
+                int b = (int)((blue + (total / 2)) / total);
+                palette[i] = FrameEdit.VisibleColor((ushort)(0x8000 | (r << 10) | (g << 5) | b));
+            }
+
+            return palette;
+        }
+
+        // 0 = red, 1 = green, 2 = blue
+        private static int Channel(ushort color, int channel)
+        {
+            return (color >> (10 - (5 * channel))) & 0x1F;
         }
 
         public void RemoveFrame(int index)
@@ -768,6 +1076,7 @@ namespace Ultima
             var line = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
             var tmp = new List<Raw>();
+            var indexCache = new Dictionary<ushort, byte>();
 
             for (int y = 0; y < bit.Height; ++y, line += delta)
             {
@@ -781,7 +1090,7 @@ namespace Ultima
                     for (i = x; i <= bit.Width; ++i)
                     {
                         // first pixel set
-                        if (i < bit.Width && cur[i] != 0)
+                        if (i < bit.Width && (cur[i] & 0x8000) != 0)
                         {
                             break;
                         }
@@ -796,7 +1105,7 @@ namespace Ultima
                     for (j = (i + 1); j < bit.Width; ++j)
                     {
                         // next non set pixel
-                        if (cur[j] == 0)
+                        if ((cur[j] & 0x8000) == 0)
                         {
                             break;
                         }
@@ -815,8 +1124,14 @@ namespace Ultima
                     raw.data = new byte[raw.run];
                     while (r < raw.run)
                     {
-                        ushort col = cur[r + i];
-                        raw.data[r++] = GetPaletteIndex(palette, col);
+                        ushort col = VisibleColor(cur[r + i]);
+                        if (!indexCache.TryGetValue(col, out byte index))
+                        {
+                            index = NearestIndex(palette, col);
+                            indexCache[col] = index;
+                        }
+
+                        raw.data[r++] = index;
                     }
                     tmp.Add(raw);
                     x = j + 1;
@@ -841,17 +1156,51 @@ namespace Ultima
             Center = new Point(x, y);
         }
 
-        private static byte GetPaletteIndex(IReadOnlyList<ushort> palette, ushort col)
+        /// <summary>
+        /// Index of <paramref name="col"/> in the palette, or of the closest colour when it is missing.
+        /// Entries of 0x8000 are skipped: the client draws them transparent.
+        /// </summary>
+        internal static byte NearestIndex(IReadOnlyList<ushort> palette, ushort col)
         {
+            int red = (col >> 10) & 0x1F;
+            int green = (col >> 5) & 0x1F;
+            int blue = col & 0x1F;
+
+            int best = 0;
+            int bestDistance = int.MaxValue;
             for (int i = 0; i < palette.Count; i++)
             {
-                if (palette[i] == col)
+                ushort entry = palette[i];
+                if (entry == col)
                 {
                     return (byte)i;
                 }
+
+                if (entry == 0x8000)
+                {
+                    continue;
+                }
+
+                int dr = ((entry >> 10) & 0x1F) - red;
+                int dg = ((entry >> 5) & 0x1F) - green;
+                int db = (entry & 0x1F) - blue;
+                int distance = (2 * dr * dr) + (4 * dg * dg) + (3 * db * db);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    best = i;
+                }
             }
 
-            return 0;
+            return (byte)best;
+        }
+
+        /// <summary>
+        /// 0x8000 (black) is stored as 0, which the client draws transparent; keep it visible as 0,0,8.
+        /// </summary>
+        internal static ushort VisibleColor(ushort color)
+        {
+            return color == 0x8000 ? (ushort)0x8001 : color;
         }
 
         public void Save(BinaryWriter bin)
