@@ -1199,6 +1199,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             using (new WaitCursorScope(this))
             {
                 int lastId = -1;
+                // Only copied rows leave the show-differences list.
+                var copied = new List<int>();
 
                 foreach (int focusIdx in targets)
                 {
@@ -1208,13 +1210,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
 
                     int id = _landDisplayIndices[focusIdx];
-                    CopyLandEntry(id);
+                    if (!CopyLandEntry(id))
+                    {
+                        continue;
+                    }
+
                     lastId = id;
+                    copied.Add(focusIdx);
                 }
 
                 if (chkShowDiff.Checked && lastId >= 0)
                 {
-                    foreach (int displayIdx in targets.OrderByDescending(x => x))
+                    foreach (int displayIdx in copied.OrderByDescending(x => x))
                     {
                         if (displayIdx >= 0 && displayIdx < _landDisplayIndices.Count)
                         {
@@ -1266,17 +1273,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
         }
 
-        private void CopyLandEntry(int id)
+        private bool CopyLandEntry(int id)
         {
             if (id >= _secondTileData.LandTable.Length || id >= TileData.LandTable.Length)
             {
-                return;
+                return false;
             }
 
             TileData.LandTable[id] = _secondTileData.LandTable[id];
             Options.ChangedUltimaClass["TileData"] = true;
             ControlEvents.FireTileDataChangeEvent(this, id);
             _compareLand[id] = true;
+            return true;
         }
 
         private void OnClickCopyItemSelected(object sender, EventArgs e)
@@ -1295,6 +1303,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             using (new WaitCursorScope(this))
             {
                 int lastId = -1;
+                // Only copied rows leave the show-differences list.
+                var copied = new List<int>();
 
                 foreach (int focusIdx in targets)
                 {
@@ -1304,13 +1314,18 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     }
 
                     int id = _itemDisplayIndices[focusIdx];
-                    CopyItemEntry(id);
+                    if (!CopyItemEntry(id))
+                    {
+                        continue;
+                    }
+
                     lastId = id;
+                    copied.Add(focusIdx);
                 }
 
                 if (chkShowDiff.Checked && lastId >= 0)
                 {
-                    foreach (int displayIdx in targets.OrderByDescending(x => x))
+                    foreach (int displayIdx in copied.OrderByDescending(x => x))
                     {
                         if (displayIdx >= 0 && displayIdx < _itemDisplayIndices.Count)
                         {
@@ -1380,12 +1395,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
             OnClickCopyLandSelected(sender, e);
         }
 
-        private void CopyItemEntry(int id)
+        private bool CopyItemEntry(int id)
         {
             // Never resize the original table.
             if (id >= _secondTileData.ItemTable.Length || id >= TileData.ItemTable.Length)
             {
-                return;
+                return false;
             }
 
             TileData.ItemTable[id] = _secondTileData.ItemTable[id];
@@ -1393,6 +1408,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             // Item ids are sent with the 0x4000 offset.
             ControlEvents.FireTileDataChangeEvent(this, id + 0x4000);
             _compareItem[id] = true;
+            return true;
         }
 
         // ── Compare Rules panel ───────────────────────────────────────────────────

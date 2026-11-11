@@ -445,6 +445,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             {
                 int lastId = -1;
                 bool changed = false;
+                // Only copied rows leave the show-differences list.
+                var copied = new List<int>();
 
                 foreach (int focusIdx in targets)
                 {
@@ -461,11 +463,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                     lastId = id;
                     changed = true;
+                    copied.Add(focusIdx);
                 }
 
                 if (checkBoxShowDiff.Checked && changed)
                 {
-                    foreach (int idx in targets.OrderByDescending(x => x))
+                    foreach (int idx in copied.OrderByDescending(x => x))
                     {
                         if (idx >= 0 && idx < _displayIndices.Count)
                         {
