@@ -386,13 +386,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidLand(i))
+            Bitmap bmp = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
-            SecondArt.GetLand(i).Save(fileName, ImageFormat.Bmp);
+            bmp.Save(fileName, ImageFormat.Bmp);
 
             FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
@@ -406,13 +407,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidLand(i))
+            Bitmap bmp = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
-            SecondArt.GetLand(i).Save(fileName, ImageFormat.Tiff);
+            bmp.Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
 
@@ -425,13 +427,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidLand(i))
+            Bitmap bmp = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
-            SecondArt.GetLand(i).Save(fileName, ImageFormat.Jpeg);
+            bmp.Save(fileName, ImageFormat.Jpeg);
             FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
 
@@ -444,13 +447,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidLand(i))
+            Bitmap bmp = SecondArt.IsValidLand(i) ? SecondArt.GetLand(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Landtile(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
-            SecondArt.GetLand(i).Save(fileName, ImageFormat.Png);
+            bmp.Save(fileName, ImageFormat.Png);
             FileSavedDialog.Show(FindForm(), fileName, "Landtile saved successfully.");
         }
 
@@ -493,7 +497,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         continue;
                     }
 
-                    Bitmap copy = new Bitmap(SecondArt.GetLand(i));
+                    // Can still fail to decode.
+                    Bitmap source = SecondArt.GetLand(i);
+                    if (source == null)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(source);
                     Art.ReplaceLand(i, copy);
                     ControlEvents.FireLandTileChangeEvent(this, i);
                     _compare[i] = true;
@@ -557,7 +568,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         continue;
                     }
 
-                    Bitmap copy = new Bitmap(SecondArt.GetLand(i));
+                    // Can still fail to decode.
+                    Bitmap source = SecondArt.GetLand(i);
+                    if (source == null)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(source);
                     Art.ReplaceLand(i, copy);
                     ControlEvents.FireLandTileChangeEvent(this, i);
                     _compare[i] = true;
