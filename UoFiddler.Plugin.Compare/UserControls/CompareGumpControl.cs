@@ -386,6 +386,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return value;
             }
 
+            // GetRawGump reads the file and doesn't see in-memory edits.
+            if (Gumps.IsEditedInMemory(index))
+            {
+                bool same = SamePixels(Gumps.GetGump(index), SecondGump.GetGump(index));
+                _compare[index] = same;
+                return same;
+            }
+
             byte[] org = Gumps.GetRawGump(index, out int width1, out int height1);
             byte[] sec = SecondGump.GetRawGump(index, out int width2, out int height2);
             bool res;
@@ -411,6 +419,49 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             _compare[index] = res;
             return res;
+        }
+
+        private static unsafe bool SamePixels(Bitmap a, Bitmap b)
+        {
+            if (a == null || b == null)
+            {
+                return a == null && b == null;
+            }
+
+            if (a.Size != b.Size)
+            {
+                return false;
+            }
+
+            var rect = new Rectangle(0, 0, a.Width, a.Height);
+            BitmapData da = a.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+            try
+            {
+                BitmapData db = b.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                try
+                {
+                    int rowBytes = a.Width * 2;
+                    for (int y = 0; y < a.Height; y++)
+                    {
+                        var ra = new ReadOnlySpan<byte>((byte*)da.Scan0 + ((long)y * da.Stride), rowBytes);
+                        var rb = new ReadOnlySpan<byte>((byte*)db.Scan0 + ((long)y * db.Stride), rowBytes);
+                        if (!ra.SequenceEqual(rb))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+                finally
+                {
+                    b.UnlockBits(db);
+                }
+            }
+            finally
+            {
+                a.UnlockBits(da);
+            }
         }
 
         private void ShowDiff_OnClick(object sender, EventArgs e)

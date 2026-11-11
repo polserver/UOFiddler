@@ -154,6 +154,15 @@ namespace Ultima
         }
 
         /// <summary>
+        /// True if the gump is replaced or removed in memory, so <see cref="GetRawGump"/> no longer
+        /// matches it. Unlike <see cref="IsModified"/>, a save doesn't clear it.
+        /// </summary>
+        public static bool IsEditedInMemory(int index)
+        {
+            return index >= 0 && index < _indexLength && (_removed[index] || _replaced.ContainsKey(index));
+        }
+
+        /// <summary>
         /// Number of Gumps edited since the gumps were loaded or last saved.
         /// </summary>
         public static int ModifiedCount => _modified.Count;
