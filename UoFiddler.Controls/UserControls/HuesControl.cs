@@ -344,6 +344,32 @@ namespace UoFiddler.Controls.UserControls
             vScrollBar.Value = scrollPosition;
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                HueNameToolStripTextBox.Focus();
+                HueNameToolStripTextBox.SelectAll();
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.G))
+            {
+                HueIndexToolStripTextBox.Focus();
+                HueIndexToolStripTextBox.SelectAll();
+                return true;
+            }
+
+            if (keyData == Keys.F3 && !HueNameToolStripTextBox.TextBox.Focused &&
+                !string.IsNullOrEmpty(HueNameToolStripTextBox.Text))
+            {
+                FindByName(Selected);
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void SearchNameToolStripButton_Click(object sender, EventArgs e)
         {
             FindByName(Selected);
