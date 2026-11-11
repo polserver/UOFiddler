@@ -39,204 +39,199 @@ namespace UoFiddler.Plugin.Compare.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.applyHue1ToHue2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.vScrollBar = new System.Windows.Forms.VScrollBar();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.buttonBrowse = new System.Windows.Forms.Button();
-            this.buttonLoadSecond = new System.Windows.Forms.Button();
-            this.chkMultiSelect = new System.Windows.Forms.CheckBox();
-            this.buttonCopySelected = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            applyHue1ToHue2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pictureBox2 = new System.Windows.Forms.PictureBox();
+            vScrollBar = new System.Windows.Forms.VScrollBar();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            buttonBrowse = new System.Windows.Forms.Button();
+            buttonLoadSecond = new System.Windows.Forms.Button();
+            buttonCopySelected = new System.Windows.Forms.Button();
+            chkMultiSelect = new System.Windows.Forms.CheckBox();
+            textBox1 = new System.Windows.Forms.TextBox();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.pictureBox2, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.vScrollBar, 1, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(733, 320);
-            this.tableLayoutPanel1.TabIndex = 0;
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(pictureBox1, 0, 0);
+            tableLayoutPanel1.Controls.Add(pictureBox2, 2, 0);
+            tableLayoutPanel1.Controls.Add(vScrollBar, 1, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(790, 318);
+            tableLayoutPanel1.TabIndex = 0;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(4, 3);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(348, 314);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.SizeChanged += new System.EventHandler(this.OnResizeHue);
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick1);
+            pictureBox1.ContextMenuStrip = contextMenuStrip1;
+            pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBox1.Location = new System.Drawing.Point(4, 3);
+            pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(377, 312);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            pictureBox1.SizeChanged += OnResizeHue;
+            pictureBox1.MouseClick += OnMouseClick1;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.applyHue1ToHue2ToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(188, 26);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { applyHue1ToHue2ToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(165, 26);
             // 
             // applyHue1ToHue2ToolStripMenuItem
             // 
-            this.applyHue1ToHue2ToolStripMenuItem.Name = "applyHue1ToHue2ToolStripMenuItem";
-            this.applyHue1ToHue2ToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.applyHue1ToHue2ToolStripMenuItem.Text = "Apply Hue to left";
-            this.applyHue1ToHue2ToolStripMenuItem.Click += new System.EventHandler(this.OnClickApplyHue1to2);
+            applyHue1ToHue2ToolStripMenuItem.Name = "applyHue1ToHue2ToolStripMenuItem";
+            applyHue1ToHue2ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            applyHue1ToHue2ToolStripMenuItem.Text = "Apply Hue to left";
+            applyHue1ToHue2ToolStripMenuItem.Click += OnClickApplyHue1to2;
             // 
             // pictureBox2
             // 
-            this.pictureBox2.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox2.Location = new System.Drawing.Point(380, 3);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(349, 314);
-            this.pictureBox2.TabIndex = 1;
-            this.pictureBox2.TabStop = false;
-            this.pictureBox2.SizeChanged += new System.EventHandler(this.OnResizeHue);
-            this.pictureBox2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick2);
+            pictureBox2.ContextMenuStrip = contextMenuStrip1;
+            pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBox2.Location = new System.Drawing.Point(409, 3);
+            pictureBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new System.Drawing.Size(377, 312);
+            pictureBox2.TabIndex = 1;
+            pictureBox2.TabStop = false;
+            pictureBox2.SizeChanged += OnResizeHue;
+            pictureBox2.MouseClick += OnMouseClick2;
             // 
             // vScrollBar
             // 
-            this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.vScrollBar.Location = new System.Drawing.Point(356, 0);
-            this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(20, 320);
-            this.vScrollBar.TabIndex = 2;
-            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnScroll);
+            vScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            vScrollBar.Location = new System.Drawing.Point(385, 0);
+            vScrollBar.Name = "vScrollBar";
+            vScrollBar.Size = new System.Drawing.Size(20, 318);
+            vScrollBar.TabIndex = 2;
+            vScrollBar.Scroll += OnScroll;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new System.Drawing.Point(0, 0);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
+            splitContainer1.Panel1.Controls.Add(tableLayoutPanel1);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.buttonBrowse);
-            this.splitContainer1.Panel2.Controls.Add(this.buttonLoadSecond);
-            this.splitContainer1.Panel2.Controls.Add(this.buttonCopySelected);
-            this.splitContainer1.Panel2.Controls.Add(this.chkMultiSelect);
-            this.splitContainer1.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(790, 380);
-            this.splitContainer1.SplitterDistance = 320;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 1;
+            splitContainer1.Panel2.Controls.Add(buttonBrowse);
+            splitContainer1.Panel2.Controls.Add(buttonLoadSecond);
+            splitContainer1.Panel2.Controls.Add(buttonCopySelected);
+            splitContainer1.Panel2.Controls.Add(chkMultiSelect);
+            splitContainer1.Panel2.Controls.Add(textBox1);
+            splitContainer1.Size = new System.Drawing.Size(790, 380);
+            splitContainer1.SplitterDistance = 318;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 1;
             // 
             // buttonBrowse
             // 
-            this.buttonBrowse.AutoSize = true;
-            this.buttonBrowse.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonBrowse.Location = new System.Drawing.Point(435, 12);
-            this.buttonBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(26, 25);
-            this.buttonBrowse.TabIndex = 2;
-            this.buttonBrowse.Text = "...";
-            this.buttonBrowse.UseVisualStyleBackColor = true;
-            this.buttonBrowse.Click += new System.EventHandler(this.BrowseOnClick);
+            buttonBrowse.AutoSize = true;
+            buttonBrowse.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            buttonBrowse.Location = new System.Drawing.Point(283, 14);
+            buttonBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonBrowse.Name = "buttonBrowse";
+            buttonBrowse.Size = new System.Drawing.Size(26, 25);
+            buttonBrowse.TabIndex = 2;
+            buttonBrowse.Text = "...";
+            buttonBrowse.UseVisualStyleBackColor = true;
+            buttonBrowse.Click += BrowseOnClick;
             // 
             // buttonLoadSecond
             // 
-            this.buttonLoadSecond.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoadSecond.Location = new System.Drawing.Point(469, 11);
-            this.buttonLoadSecond.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonLoadSecond.Name = "buttonLoadSecond";
-            this.buttonLoadSecond.Size = new System.Drawing.Size(100, 27);
-            this.buttonLoadSecond.TabIndex = 1;
-            this.buttonLoadSecond.Text = "Load Second";
-            this.buttonLoadSecond.UseVisualStyleBackColor = true;
-            this.buttonLoadSecond.Click += new System.EventHandler(this.OnClickLoad);
+            buttonLoadSecond.Location = new System.Drawing.Point(317, 13);
+            buttonLoadSecond.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonLoadSecond.Name = "buttonLoadSecond";
+            buttonLoadSecond.Size = new System.Drawing.Size(100, 27);
+            buttonLoadSecond.TabIndex = 1;
+            buttonLoadSecond.Text = "Load Second";
+            buttonLoadSecond.UseVisualStyleBackColor = true;
+            buttonLoadSecond.Click += OnClickLoad;
             // 
             // buttonCopySelected
             // 
-            this.buttonCopySelected.Location = new System.Drawing.Point(675, 11);
-            this.buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonCopySelected.Name = "buttonCopySelected";
-            this.buttonCopySelected.Size = new System.Drawing.Size(100, 27);
-            this.buttonCopySelected.TabIndex = 12;
-            this.buttonCopySelected.Text = "Copy Selected";
-            this.buttonCopySelected.UseVisualStyleBackColor = true;
-            this.buttonCopySelected.Click += new System.EventHandler(this.OnClickApplyHue1to2);
-            //
+            buttonCopySelected.Location = new System.Drawing.Point(549, 13);
+            buttonCopySelected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonCopySelected.Name = "buttonCopySelected";
+            buttonCopySelected.Size = new System.Drawing.Size(100, 27);
+            buttonCopySelected.TabIndex = 12;
+            buttonCopySelected.Text = "Copy Selected";
+            buttonCopySelected.UseVisualStyleBackColor = true;
+            buttonCopySelected.Click += OnClickApplyHue1to2;
+            // 
             // chkMultiSelect
-            //
-            this.chkMultiSelect.AutoSize = true;
-            this.chkMultiSelect.Location = new System.Drawing.Point(577, 15);
-            this.chkMultiSelect.Name = "chkMultiSelect";
-            this.chkMultiSelect.Size = new System.Drawing.Size(90, 19);
-            this.chkMultiSelect.TabIndex = 10;
-            this.chkMultiSelect.Text = "Multi-Select";
-            this.chkMultiSelect.UseVisualStyleBackColor = true;
-            this.chkMultiSelect.CheckedChanged += new System.EventHandler(this.OnChangeMultiSelect);
+            // 
+            chkMultiSelect.AutoSize = true;
+            chkMultiSelect.Location = new System.Drawing.Point(452, 17);
+            chkMultiSelect.Name = "chkMultiSelect";
+            chkMultiSelect.Size = new System.Drawing.Size(90, 19);
+            chkMultiSelect.TabIndex = 10;
+            chkMultiSelect.Text = "Multi-Select";
+            chkMultiSelect.UseVisualStyleBackColor = true;
+            chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
             // 
             // textBox1
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(156, 14);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBox1.MaximumSize = new System.Drawing.Size(271, 20);
-            this.textBox1.MinimumSize = new System.Drawing.Size(271, 20);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(271, 20);
-            this.textBox1.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox1, "Directory of hues.mul");
+            textBox1.Location = new System.Drawing.Point(4, 16);
+            textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBox1.MaximumSize = new System.Drawing.Size(271, 20);
+            textBox1.MinimumSize = new System.Drawing.Size(271, 20);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(271, 20);
+            textBox1.TabIndex = 0;
+            toolTip1.SetToolTip(textBox1, "Directory of hues.mul");
             // 
             // CompareHuesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
-            this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "CompareHuesControl";
-            this.Size = new System.Drawing.Size(790, 380);
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(splitContainer1);
+            DoubleBuffered = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "CompareHuesControl";
+            Size = new System.Drawing.Size(790, 380);
+            Load += OnLoad;
+            tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            contextMenuStrip1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 
