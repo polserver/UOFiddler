@@ -450,6 +450,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return false;
             }
 
+            if (org.Name != sec.Name || org.TableStart != sec.TableStart || org.TableEnd != sec.TableEnd)
+            {
+                _compare[index] = false;
+                return false;
+            }
+
             for (int i = 0; i < org.Colors.Length; i++)
             {
                 if (org.Colors[i] != sec.Colors[i])
@@ -491,8 +497,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
                 sec.Colors.CopyTo(org.Colors, 0);
                 org.Name = sec.Name;
-                org.TableStart = org.Colors[0];
-                org.TableEnd = (ushort)(org.Colors[org.Colors.Length - 1] + 1057);
+                org.TableStart = sec.TableStart;
+                org.TableEnd = sec.TableEnd;
                 _compare[index] = true;
                 changed = true;
             }
