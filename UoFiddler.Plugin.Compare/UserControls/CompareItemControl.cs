@@ -39,6 +39,11 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private bool _syncingSelection;
         private bool _secondLoaded;
 
+        // Art maps ids past its max to item 0, so only ask about ids the original has.
+        private static bool OrgValid(int i) => i <= Art.GetMaxItemId() && Art.IsValidStatic(i);
+
+        private static Bitmap OrgStatic(int i) => i <= Art.GetMaxItemId() ? Art.GetStatic(i) : null;
+
         private void OnLoad(object sender, EventArgs e)
         {
             ConfigureTileView(tileViewOrg);
@@ -190,7 +195,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             Brush fontBrush = Brushes.Gray;
-            bool valid = isSecondary ? SecondArt.IsValidStatic(i) : Art.IsValidStatic(i);
+            bool valid = isSecondary ? SecondArt.IsValidStatic(i) : OrgValid(i);
 
             if (!valid)
             {
@@ -242,7 +247,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 }
             }
 
-            pictureBoxOrg.BackgroundImage = Art.IsValidStatic(i) ? Art.GetStatic(i) : null;
+            pictureBoxOrg.BackgroundImage = OrgValid(i) ? OrgStatic(i) : null;
             pictureBoxSec.BackgroundImage = _secondLoaded && SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
             tileViewOrg.Invalidate();
         }
@@ -271,7 +276,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 _syncingSelection = false;
             }
 
-            pictureBoxOrg.BackgroundImage = Art.IsValidStatic(i) ? Art.GetStatic(i) : null;
+            pictureBoxOrg.BackgroundImage = OrgValid(i) ? OrgStatic(i) : null;
             pictureBoxSec.BackgroundImage = SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
             tileViewSec.Invalidate();
         }
@@ -335,7 +340,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return _compare[index];
             }
 
-            Bitmap bitorg = Art.GetStatic(index);
+            Bitmap bitorg = OrgStatic(index);
             Bitmap bitsec = SecondArt.GetStatic(index);
             if (bitorg == null && bitsec == null)
             {
@@ -533,7 +538,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 tileViewSec.Invalidate();
                 if (lastCopiedId >= 0)
                 {
-                    pictureBoxOrg.BackgroundImage = Art.IsValidStatic(lastCopiedId) ? Art.GetStatic(lastCopiedId) : null;
+                    pictureBoxOrg.BackgroundImage = OrgValid(lastCopiedId) ? OrgStatic(lastCopiedId) : null;
                 }
             }
         }
