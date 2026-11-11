@@ -1418,11 +1418,12 @@ namespace UoFiddler.Controls.Forms
                             {
                                 using (var bmpTemp = new Bitmap(fileName))
                                 {
-                                    Bitmap bitmap = new Bitmap(bmpTemp);
+                                    // Copying a GIF keeps only its first frame
+                                    Bitmap bitmap = fileName.Contains(".gif") ? bmpTemp : new Bitmap(bmpTemp);
 
-                                    if (dialog.FileName.Contains(".bmp") || dialog.FileName.Contains(".tiff") ||
-                                        dialog.FileName.Contains(".png") || dialog.FileName.Contains(".jpeg") ||
-                                        dialog.FileName.Contains(".jpg"))
+                                    if (fileName.Contains(".bmp") || fileName.Contains(".tiff") ||
+                                        fileName.Contains(".png") || fileName.Contains(".jpeg") ||
+                                        fileName.Contains(".jpg"))
                                     {
                                         bitmap = ConvertBmpAnim(bitmap, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
 
@@ -1436,7 +1437,7 @@ namespace UoFiddler.Controls.Forms
                                     }
 
                                     //Gif Especial Properties
-                                    if (dialog.FileName.Contains(".gif"))
+                                    if (fileName.Contains(".gif"))
                                     {
                                         FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
 
@@ -1525,9 +1526,8 @@ namespace UoFiddler.Controls.Forms
             // Return an Image at a certain index
             for (int index = 0; index < frameCount; index++)
             {
-                bitBmp[index] = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format16bppArgb1555);
                 bmp.SelectActiveFrame(dimension, index);
-                bitBmp[index] = ConvertBmpAnim(bitBmp[index], (int) numericUpDownRed.Value,
+                bitBmp[index] = ConvertBmpAnim(bmp, (int) numericUpDownRed.Value,
                     (int) numericUpDownGreen.Value, (int) numericUpDownBlue.Value);
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width / 2);
                 TreeNode node = GetNode(_currentBody);
@@ -2195,10 +2195,8 @@ namespace UoFiddler.Controls.Forms
                     if (dialog.FileNames[w].Contains(".gif"))
                     {
                         // dialog.Filename replaced by dialog.FileNames[w]
-                        using (Bitmap bmpTemp = new Bitmap(dialog.FileNames[w]))
+                        using (Bitmap bitmap = new Bitmap(dialog.FileNames[w]))
                         {
-                            Bitmap bitmap = new Bitmap(bmpTemp);
-
                             FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
 
                             // Number of frames
