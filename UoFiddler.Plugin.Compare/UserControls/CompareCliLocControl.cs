@@ -113,36 +113,50 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 return;
             }
 
-            foreach (var stringEntry in _cliloc1.Entries)
-            {
-                CompareEntry entry = new CompareEntry { CompareResult = CompareEntry.CompareRes.NewIn1 };
-                StringEntry entr = stringEntry;
-                entry.Number = entr.Number;
-                entry.Text1 = entr.Text;
-                entry.Text2 = string.Empty;
-                _compareList.Add(entry.Number, entry);
-            }
+            _compareList.Clear();
 
-            foreach (var stringEntry in _cliloc2.Entries)
+            // Numbers can repeat: add each once, with the text GetString returns.
+            foreach (var stringEntry in _cliloc1.Entries)
             {
                 if (_compareList.ContainsKey(stringEntry.Number))
                 {
-                    CompareEntry entr1 = _compareList[stringEntry.Number];
-                    entr1.Text2 = stringEntry.Text;
-                    entr1.CompareResult = entr1.Text1 != stringEntry.Text
+                    continue;
+                }
+
+                _compareList.Add(stringEntry.Number, new CompareEntry
+                {
+                    CompareResult = CompareEntry.CompareRes.NewIn1,
+                    Number = stringEntry.Number,
+                    Text1 = _cliloc1.GetString(stringEntry.Number),
+                    Text2 = string.Empty
+                });
+            }
+
+            var seenIn2 = new HashSet<int>();
+            foreach (var stringEntry in _cliloc2.Entries)
+            {
+                if (!seenIn2.Add(stringEntry.Number))
+                {
+                    continue;
+                }
+
+                string text2 = _cliloc2.GetString(stringEntry.Number);
+                if (_compareList.TryGetValue(stringEntry.Number, out CompareEntry entr1))
+                {
+                    entr1.Text2 = text2;
+                    entr1.CompareResult = entr1.Text1 != text2
                         ? CompareEntry.CompareRes.Diff
                         : CompareEntry.CompareRes.Equal;
                 }
                 else
                 {
-                    CompareEntry entry = new CompareEntry
+                    _compareList.Add(stringEntry.Number, new CompareEntry
                     {
                         CompareResult = CompareEntry.CompareRes.NewIn2,
                         Number = stringEntry.Number,
                         Text1 = string.Empty,
-                        Text2 = stringEntry.Text
-                    };
-                    _compareList.Add(entry.Number, entry);
+                        Text2 = text2
+                    });
                 }
             }
 
