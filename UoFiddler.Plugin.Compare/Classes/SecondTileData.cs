@@ -37,13 +37,21 @@ namespace UoFiddler.Plugin.Compare.Classes
             {
                 var landHeader = new int[512];
                 int j = 0;
-                LandTable = new LandData[0x4000];
+                var landTable = new LandData[0x4000];
 
                 var buffer = new byte[fs.Length];
                 fs.ReadExactly(buffer, 0, buffer.Length);
                 int currentPos = 0;
 
                 int landStructSize = useNeWTileDataFormat ? sizeof(NewLandTileDataMul) : sizeof(OldLandTileDataMul);
+
+                // ReadUnaligned isn't bounds-checked, so reject a file shorter than the land section.
+                long landSectionSize = 512L * (4 + (32L * landStructSize));
+                if (buffer.Length < landSectionSize)
+                {
+                    throw new InvalidDataException(
+                        $"tiledata.mul is {buffer.Length} bytes, shorter than its {landSectionSize}-byte land section.");
+                }
 
                 for (int i = 0; i < 0x4000; i += 32)
                 {
@@ -54,12 +62,12 @@ namespace UoFiddler.Plugin.Compare.Classes
                         if (useNeWTileDataFormat)
                         {
                             var cur = Unsafe.ReadUnaligned<NewLandTileDataMul>(ref buffer[currentPos]);
-                            LandTable[i + count] = new LandData(cur);
+                            landTable[i + count] = new LandData(cur);
                         }
                         else
                         {
                             var cur = Unsafe.ReadUnaligned<OldLandTileDataMul>(ref buffer[currentPos]);
-                            LandTable[i + count] = new LandData(cur);
+                            landTable[i + count] = new LandData(cur);
                         }
                         currentPos += landStructSize;
                     }
@@ -72,8 +80,8 @@ namespace UoFiddler.Plugin.Compare.Classes
                 var itemHeader = new int[remaining / ((structSize * 32) + 4)];
                 int itemLength = itemHeader.Length * 32;
 
-                ItemTable = new ItemData[itemLength];
-                HeightTable = new int[itemLength];
+                var itemTable = new ItemData[itemLength];
+                var heightTable = new int[itemLength];
 
                 j = 0;
                 for (int i = 0; i < itemLength; i += 32)
@@ -85,18 +93,23 @@ namespace UoFiddler.Plugin.Compare.Classes
                         if (useNeWTileDataFormat)
                         {
                             var cur = Unsafe.ReadUnaligned<NewItemTileDataMul>(ref buffer[currentPos]);
-                            ItemTable[i + count] = new ItemData(cur);
-                            HeightTable[i + count] = cur.height;
+                            itemTable[i + count] = new ItemData(cur);
+                            heightTable[i + count] = cur.height;
                         }
                         else
                         {
                             var cur = Unsafe.ReadUnaligned<OldItemTileDataMul>(ref buffer[currentPos]);
-                            ItemTable[i + count] = new ItemData(cur);
-                            HeightTable[i + count] = cur.height;
+                            itemTable[i + count] = new ItemData(cur);
+                            heightTable[i + count] = cur.height;
                         }
                         currentPos += structSize;
                     }
                 }
+
+                // Publish only after the whole file has parsed.
+                LandTable = landTable;
+                ItemTable = itemTable;
+                HeightTable = heightTable;
             }
         }
     }
