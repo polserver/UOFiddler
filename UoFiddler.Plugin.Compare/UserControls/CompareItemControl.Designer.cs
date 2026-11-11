@@ -58,6 +58,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             checkBoxShowDiff = new System.Windows.Forms.CheckBox();
             chkMultiSelect = new System.Windows.Forms.CheckBox();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            pixelDiffBar = new PixelDiffBar();
             tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             buttonBrowse = new System.Windows.Forms.Button();
@@ -235,19 +236,30 @@ namespace UoFiddler.Plugin.Compare.UserControls
             chkMultiSelect.Text = "Multi-Select";
             chkMultiSelect.UseVisualStyleBackColor = true;
             chkMultiSelect.CheckedChanged += OnChangeMultiSelect;
+            //
+            // pixelDiffBar
+            //
+            pixelDiffBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            pixelDiffBar.FirstPictureBox = pictureBoxOrg;
+            pixelDiffBar.Margin = new System.Windows.Forms.Padding(0);
+            pixelDiffBar.Name = "pixelDiffBar";
+            pixelDiffBar.SecondPictureBox = pictureBoxSec;
+            pixelDiffBar.TabIndex = 20;
             // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(pictureBoxSec, 0, 1);
-            tableLayoutPanel1.Controls.Add(pictureBoxOrg, 0, 0);
+            tableLayoutPanel1.Controls.Add(pixelDiffBar, 0, 0);
+            tableLayoutPanel1.Controls.Add(pictureBoxSec, 0, 2);
+            tableLayoutPanel1.Controls.Add(pictureBoxOrg, 0, 1);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             tableLayoutPanel1.Location = new System.Drawing.Point(200, 3);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tableLayoutPanel1.Size = new System.Drawing.Size(319, 303);
@@ -369,6 +381,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
         private System.Windows.Forms.PictureBox pictureBoxSec;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private PixelDiffBar pixelDiffBar;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TextBox textBoxSecondDir;
         private System.Windows.Forms.ToolStripMenuItem tiffToolStripMenuItem;
