@@ -1144,43 +1144,8 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ResumeLayout(false);
         }
 
-        // Helper: add a label + two read-only textboxes as a TLP row
-        private static void AddDetailRow(
-            System.Windows.Forms.TableLayoutPanel tlp,
-            int row,
-            System.Windows.Forms.Label lbl,
-            string labelText,
-            System.Windows.Forms.TextBox txtOrg,
-            System.Windows.Forms.TextBox txtSec,
-            bool wideRow)
-        {
-            lbl.Text = labelText;
-            lbl.Dock = System.Windows.Forms.DockStyle.Fill;
-            lbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            txtOrg.ReadOnly = true;
-            txtOrg.Dock = System.Windows.Forms.DockStyle.Fill;
-
-            txtSec.ReadOnly = true;
-            txtSec.Dock = System.Windows.Forms.DockStyle.Fill;
-
-            tlp.Controls.Add(lbl,    0, row);
-            tlp.Controls.Add(txtOrg, 1, row);
-            tlp.Controls.Add(txtSec, 2, row);
-
-            if (wideRow)
-            {
-                tlp.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22));
-            }
-            else
-            {
-                tlp.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22));
-            }
-        }
-
         #endregion
 
-        // ── Field declarations ────────────────────────────────────────────────────
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Label labelDir;
         private System.Windows.Forms.TextBox textBoxSecondDir;

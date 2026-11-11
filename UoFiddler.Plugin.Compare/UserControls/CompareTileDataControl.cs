@@ -745,14 +745,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                 e.Graphics.FillRectangle(backBrush, e.Bounds);
             }
 
-            Brush brush = focused ? CompareColors.ContrastBrush(Options.TileSelectionColor) : GetLandBrush(i, isSecondary);
+            Brush brush = focused ? CompareColors.ContrastBrush(Options.TileSelectionColor) : GetLandBrush(i);
             string label = GetLandLabel(i, isSecondary);
 
             float y = e.Bounds.Y + (e.Bounds.Height - e.Graphics.MeasureString(label, e.Font).Height) / 2f;
             e.Graphics.DrawString(label, e.Font, brush, new PointF(e.ContentLeft + 4, y));
         }
 
-        private Brush GetLandBrush(int i, bool isSecondary)
+        private Brush GetLandBrush(int i)
         {
             bool inOrg = i < TileData.LandTable.Length;
             bool inSec = _secondTileData != null && i < _secondTileData.LandTable.Length;
