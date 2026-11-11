@@ -329,7 +329,9 @@ namespace UoFiddler.Plugin.Compare.Classes
             }
 
             int payloadLength = ReadEntryPayload(index, stream, entry, out int width, out int height);
-            if (payloadLength <= 0 || width <= 0 || height <= 0)
+
+            // Same size limit as Gumps.GetGump.
+            if (payloadLength <= 0 || width <= 0 || height <= 0 || width > 0xFFFF || height > 0xFFFF)
             {
                 return null;
             }
@@ -374,7 +376,16 @@ namespace UoFiddler.Plugin.Compare.Classes
                 _streamBuffer = new byte[length];
             }
 
-            stream.ReadExactly(_streamBuffer, 0, length);
+            // Treat an entry past the end of the file as missing.
+            try
+            {
+                stream.ReadExactly(_streamBuffer, 0, length);
+            }
+            catch (EndOfStreamException)
+            {
+                width = height = -1;
+                return 0;
+            }
 
             if (entry.Flag >= SecondCompressionFlag.Zlib)
             {
