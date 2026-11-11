@@ -103,9 +103,10 @@ namespace UoFiddler.Plugin.Compare.Classes
                 return true;
             }
 
-            Stream stream = _fileIndex.Seek(index, out _, out _);
+            Stream stream = _fileIndex.Seek(index, out int length, out _);
 
-            if (stream == null)
+            // Zero-length entries exist in real files.
+            if (stream == null || length < 8)
             {
                 return false;
             }
@@ -173,14 +174,12 @@ namespace UoFiddler.Plugin.Compare.Classes
 
         private static Bitmap LoadStatic(Stream stream, int length)
         {
-            if (_streamBuffer == null || _streamBuffer.Length < length)
-            {
-                _streamBuffer = new byte[length];
-            }
-
             // Do not close the stream: it is the index's cached handle, shared by every entry, and
             // SecondFileIndex.EnsureOpen would have to re-open the file for the next tile.
-            stream.ReadExactly(_streamBuffer, 0, length);
+            if (!TryRead(stream, length))
+            {
+                return null;
+            }
 
             return Art.DecodeStaticBitmap(_streamBuffer.AsSpan(0, length));
         }
@@ -237,17 +236,42 @@ namespace UoFiddler.Plugin.Compare.Classes
         //     return buffer;
         // }
 
-        private static unsafe Bitmap LoadLand(Stream stream, int length)
+        /// <summary>
+        /// Reads an entry into <see cref="_streamBuffer"/>; false if it runs past the end of the file.
+        /// </summary>
+        private static bool TryRead(Stream stream, int length)
         {
-            Bitmap bmp = new Bitmap(44, 44, PixelFormat.Format16bppArgb1555);
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 44, 44), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
             if (_streamBuffer == null || _streamBuffer.Length < length)
             {
                 _streamBuffer = new byte[length];
             }
 
+            try
+            {
+                stream.ReadExactly(_streamBuffer, 0, length);
+                return true;
+            }
+            catch (EndOfStreamException)
+            {
+                return false;
+            }
+        }
+
+        private static unsafe Bitmap LoadLand(Stream stream, int length)
+        {
+            if (length < Art.LandTileBytes)
+            {
+                return null;
+            }
+
             // See LoadStatic: the stream belongs to the index and stays open.
-            stream.ReadExactly(_streamBuffer, 0, length);
+            if (!TryRead(stream, length))
+            {
+                return null;
+            }
+
+            Bitmap bmp = new Bitmap(44, 44, PixelFormat.Format16bppArgb1555);
+            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 44, 44), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
             fixed (byte* binData = _streamBuffer)
             {
                 ushort* bdata = (ushort*)binData;

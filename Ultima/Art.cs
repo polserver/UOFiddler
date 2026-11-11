@@ -583,7 +583,7 @@ namespace Ultima
             }
 
             Stream stream = _fileIndex.Seek(index, out int length, out _, out patched);
-            if (stream == null)
+            if (stream == null || length < LandTileBytes)
             {
                 return false;
             }
@@ -864,8 +864,18 @@ namespace Ultima
             return true;
         }
 
+        /// <summary>
+        /// Size of a land tile entry: 1012 16-bit pixels.
+        /// </summary>
+        public const int LandTileBytes = 2024;
+
         private static unsafe Bitmap LoadLand(Stream stream, int length)
         {
+            if (length < LandTileBytes)
+            {
+                return null;
+            }
+
             var bmp = new Bitmap(44, 44, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, 44, 44), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
             byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
