@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -45,12 +46,19 @@ namespace UoFiddler.Forms
 
         private readonly ILogger<MainForm> _log;
 
+        private StatusStrip _statusStrip;
+        private ToolStripStatusLabel _statusLabel;
+        private ToolStripProgressBar _statusProgress;
+        private readonly Dictionary<TabPage, string> _tabTitles = new();
+
         public MainForm() : this(AppLog.For<MainForm>()) { }
 
         public MainForm(ILogger<MainForm> logger)
         {
             _log = logger;
             InitializeComponent();
+            InitializeStatusStrip();
+            InitializeUnsavedTabMarkers();
 
             darkModeMenuItem.Checked = AppSettings.DarkMode;
 
@@ -147,96 +155,92 @@ namespace UoFiddler.Forms
 
         private void ReloadFiles(object sender, EventArgs e)
         {
-            using (new WaitCursorScope(this))
+            // Order matters: art has to be reloaded before tiledata for the latter to load properly.
+            var steps = new (string Label, bool Run, Action Reload)[]
             {
-                Verdata.Initialize();
-
-                if (Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"])
+                ("Verdata", true, Verdata.Initialize),
+                ("Art and TileData", Options.LoadedUltimaClass["Art"] || Options.LoadedUltimaClass["TileData"], () =>
                 {
-                    // Looks like we have to reload art first to have proper tiledata loading
-                    // and order here is important
                     Art.Reload();
                     TileData.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["Hues"])
-                {
-                    Hues.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["ASCIIFont"])
-                {
-                    AsciiText.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["UnicodeFont"])
-                {
-                    UnicodeFonts.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["Animdata"])
-                {
-                    Animdata.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["Light"])
-                {
-                    Light.Reload();
-                }
-
-                if (Options.LoadedUltimaClass["Skills"])
-                {
-                    Skills.Reload();
-                }
-
-                if (Options.LoadedUltimaClass["Sound"])
-                {
-                    Sounds.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["Texture"])
-                {
-                    Textures.Reload();
-                }
-
-                if (Options.LoadedUltimaClass["Gumps"])
-                {
-                    Gumps.Reload();
-                }
-
-                if (Options.LoadedUltimaClass["Animations"])
-                {
-                    Animations.Reload();
-                }
-
-                if (Options.LoadedUltimaClass["RadarColor"])
-                {
-                    RadarCol.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["Map"])
+                }),
+                ("Hues", Options.LoadedUltimaClass["Hues"], Hues.Initialize),
+                ("ASCII fonts", Options.LoadedUltimaClass["ASCIIFont"], AsciiText.Initialize),
+                ("Unicode fonts", Options.LoadedUltimaClass["UnicodeFont"], UnicodeFonts.Initialize),
+                ("Animdata", Options.LoadedUltimaClass["Animdata"], Animdata.Initialize),
+                ("Light", Options.LoadedUltimaClass["Light"], Light.Reload),
+                ("Skills", Options.LoadedUltimaClass["Skills"], Skills.Reload),
+                ("Sounds", Options.LoadedUltimaClass["Sound"], Sounds.Initialize),
+                ("Textures", Options.LoadedUltimaClass["Texture"], Textures.Reload),
+                ("Gumps", Options.LoadedUltimaClass["Gumps"], Gumps.Reload),
+                ("Animations", Options.LoadedUltimaClass["Animations"], Animations.Reload),
+                ("Radar colors", Options.LoadedUltimaClass["RadarColor"], RadarCol.Initialize),
+                ("Map", Options.LoadedUltimaClass["Map"], () =>
                 {
                     MapHelper.CheckForNewMapSize();
                     Map.Reload();
-                }
+                }),
+                ("Multis", Options.LoadedUltimaClass["Multis"], Multis.Reload),
+                ("Speech", Options.LoadedUltimaClass["Speech"], SpeechList.Initialize),
+                ("Animation editor", Options.LoadedUltimaClass["AnimationEdit"], AnimationEdit.Reload),
+            };
 
-                if (Options.LoadedUltimaClass["Multis"])
+            var toRun = steps.Where(step => step.Run).ToList();
+
+            using (new WaitCursorScope(this))
+            {
+                _statusProgress.Maximum = toRun.Count + 1;
+                _statusProgress.Value = 0;
+                _statusProgress.Visible = true;
+
+                foreach (var step in toRun)
                 {
-                    Multis.Reload();
+                    SetStatus($"Reloading {step.Label}...");
+                    step.Reload();
+                    _statusProgress.Value++;
                 }
 
-                if (Options.LoadedUltimaClass["Speech"])
-                {
-                    SpeechList.Initialize();
-                }
-
-                if (Options.LoadedUltimaClass["AnimationEdit"])
-                {
-                    AnimationEdit.Reload();
-                }
-
+                SetStatus("Refreshing tabs...");
                 ControlEvents.FireFilePathChangeEvent();
+
+                _statusProgress.Visible = false;
+                SetStatus("Files reloaded.");
             }
+        }
+
+        private void InitializeStatusStrip()
+        {
+            _statusLabel = new ToolStripStatusLabel
+            {
+                Spring = true,
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            _statusProgress = new ToolStripProgressBar
+            {
+                Visible = false,
+                Size = new Size(160, 16)
+            };
+
+            _statusStrip = new StatusStrip
+            {
+                SizingGrip = false
+            };
+            _statusStrip.Items.Add(_statusLabel);
+            _statusStrip.Items.Add(_statusProgress);
+
+            // Added last so it docks before the tab panel fills the rest of the window.
+            Controls.Add(_statusStrip);
+        }
+
+        /// <summary>
+        /// Shows a message in the status bar and repaints it straight away, since the callers keep
+        /// the UI thread busy.
+        /// </summary>
+        private void SetStatus(string message)
+        {
+            _statusLabel.Text = message;
+            _statusStrip.Refresh();
         }
 
         /// <summary>
@@ -731,6 +735,88 @@ namespace UoFiddler.Forms
             {
                 aboutBoxForm.ShowDialog(this);
             }
+        }
+
+        /// <summary>
+        /// The <see cref="Options.ChangedUltimaClass"/> keys whose unsaved changes a tab shows,
+        /// by tab tag.
+        /// </summary>
+        private static readonly Dictionary<int, string[]> _tabChangeKeys = new()
+        {
+            { 1, new[] { "Multis" } },
+            { 2, new[] { "Animations" } },
+            { 3, new[] { "Art" } },
+            { 4, new[] { "Art" } },
+            { 5, new[] { "Texture" } },
+            { 6, new[] { "Gumps" } },
+            { 7, new[] { "Sound" } },
+            { 8, new[] { "Hues" } },
+            { 9, new[] { "ASCIIFont", "UnicodeFont" } },
+            { 10, new[] { "CliLoc" } },
+            { 11, new[] { "Map" } },
+            { 12, new[] { "Light" } },
+            { 13, new[] { "Speech" } },
+            { 14, new[] { "Skills" } },
+            { 15, new[] { "Animdata" } },
+            { 18, new[] { "TileData" } },
+            { 19, new[] { "RadarCol" } },
+            { 20, new[] { "SkillGrp" } },
+            { 22, new[] { "TileGroups" } },
+        };
+
+        /// <summary>
+        /// Prefixes a tab's title with "* " while the data it edits has unsaved changes. The change
+        /// flags are plain dictionary entries set all over the controls, so they are polled.
+        /// </summary>
+        private void InitializeUnsavedTabMarkers()
+        {
+            var timer = new Timer(components) { Interval = 500 };
+            timer.Tick += (_, _) => UpdateUnsavedTabMarkers();
+            timer.Start();
+        }
+
+        private void UpdateUnsavedTabMarkers()
+        {
+            foreach (TabPage page in TabPanel.TabPages)
+            {
+                if (page.Tag is not int tag || !_tabChangeKeys.TryGetValue(tag, out string[] keys))
+                {
+                    continue;
+                }
+
+                if (!_tabTitles.TryGetValue(page, out string title))
+                {
+                    title = page.Text;
+                    _tabTitles[page] = title;
+                }
+
+                bool unsaved = keys.Any(key => Options.ChangedUltimaClass.TryGetValue(key, out bool changed) && changed);
+                string text = unsaved ? "* " + title : title;
+                if (page.Text != text)
+                {
+                    page.Text = text;
+                }
+            }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Ctrl+1..Ctrl+9 select the first nine visible tabs.
+            Keys key = keyData & Keys.KeyCode;
+            if ((keyData & Keys.Modifiers) == Keys.Control)
+            {
+                int index = key is >= Keys.D1 and <= Keys.D9 ? key - Keys.D1
+                    : key is >= Keys.NumPad1 and <= Keys.NumPad9 ? key - Keys.NumPad1
+                    : -1;
+
+                if (index >= 0 && index < TabPanel.TabCount)
+                {
+                    TabPanel.SelectedIndex = index;
+                    return true;
+                }
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
