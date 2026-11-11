@@ -167,8 +167,9 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            int xDelta = Math.Min(OriginalMap.Width, (int)(e.X / _zoom) + Round(hScrollBar.Value));
-            int yDelta = Math.Min(OriginalMap.Height, (int)(e.Y / _zoom) + Round(vScrollBar.Value));
+            // OnPaint draws from the exact scroll position, so don't round to a block.
+            int xDelta = Math.Min(OriginalMap.Width, (int)(e.X / _zoom) + hScrollBar.Value);
+            int yDelta = Math.Min(OriginalMap.Height, (int)(e.Y / _zoom) + vScrollBar.Value);
 
             CoordsLabel.Text = $"Coords: {xDelta},{yDelta}";
 
