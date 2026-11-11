@@ -61,6 +61,12 @@ namespace UoFiddler.Plugin.Compare.UserControls
             _selected = 0;
             _bmp1 = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             _bmp2 = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+            if (!_loaded)
+            {
+                ControlEvents.HueChangeEvent += OnHueChangeEvent;
+                ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+            }
+
             _loaded = true;
             _row = pictureBox1.Height / _itemHeight;
             contextMenuStrip1.Opening += (s, ev) =>
@@ -71,6 +77,31 @@ namespace UoFiddler.Plugin.Compare.UserControls
                     : "Apply Hue to left";
             };
             PaintBox1();
+        }
+
+        // The event carries no id, so drop every cached result.
+        private void OnHueChangeEvent()
+        {
+            _compare.Clear();
+            PaintBox1();
+            if (_hue2Loaded)
+            {
+                PaintBox2();
+            }
+        }
+
+        private void OnFilePathChangeEvent()
+        {
+            _compare.Clear();
+            _multiSelected.Clear();
+            _selected = 0;
+            vScrollBar.Maximum = Hues.List.Length;
+            vScrollBar.Value = 0;
+            PaintBox1();
+            if (_hue2Loaded)
+            {
+                PaintBox2();
+            }
         }
 
         private int GetIndex(int y)
@@ -276,6 +307,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
 
             SecondHue.Initialize(file);
             _hue2Loaded = true;
+            _compare.Clear();
             vScrollBar.Value = 0;
             _selected = 0;
             PaintBox1();
