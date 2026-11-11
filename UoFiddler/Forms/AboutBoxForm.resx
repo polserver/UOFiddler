@@ -118,7 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.24.1
+    <value>Version 4.25.0
+- Hue editor reworked: select a range of cells on the strip (drag or Shift+click) and apply tools to it, or to the whole hue
+- Hue editor tools: gradient between two colors with a choice of curve, build shades from one base color, and adjust hue, saturation, lightness and R/G/B
+- Hue editor color picker with a saturation/brightness square, R/G/B and H/S/V sliders, typed values, a hex box and recent colors. Colors are snapped to what a hue can store
+- Hue editor history: undo and redo (Ctrl+Z, Ctrl+Y), a list of every step to jump back to, and Revert to the hue as opened
+- Hue editor copy and paste of colors as text (#RRGGBB, r,g,b or 0x7FFF), and Edit as text for all 32 colors at once
+- Hue editor live preview on an item, a gump and an animation, with ready-made presets, typed ids, a facing control and partial hue (only grey pixels)
+- Hue editor preview graphics can be picked from a grid of thumbnails, filtered by id or name
+
+Version 4.24.1
 - Fixed a crash when preloading gumps on clients with verdata-patched gumps
 - Fixed possible crashes on corrupt or unusual gump and item art entries
 - Faster texture browsing: textures are now cached instead of decoded on every access
