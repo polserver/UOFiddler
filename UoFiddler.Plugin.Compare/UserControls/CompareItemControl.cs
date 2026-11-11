@@ -426,13 +426,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidStatic(i))
+            Bitmap bmp = SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.bmp");
-            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Bmp);
+            bmp.Save(fileName, ImageFormat.Bmp);
 
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
         }
@@ -446,13 +447,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidStatic(i))
+            Bitmap bmp = SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.tiff");
-            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Tiff);
+            bmp.Save(fileName, ImageFormat.Tiff);
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
         }
 
@@ -465,13 +467,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidStatic(i))
+            Bitmap bmp = SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.jpg");
-            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Jpeg);
+            bmp.Save(fileName, ImageFormat.Jpeg);
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
         }
 
@@ -484,13 +487,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
             }
 
             int i = _displayIndices[focusIdx];
-            if (!SecondArt.IsValidStatic(i))
+            Bitmap bmp = SecondArt.IsValidStatic(i) ? SecondArt.GetStatic(i) : null;
+            if (bmp == null)
             {
                 return;
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"Item(Sec) {UoFiddler.Controls.Classes.Utils.FormatExportId(i)}.png");
-            SecondArt.GetStatic(i).Save(fileName, ImageFormat.Png);
+            bmp.Save(fileName, ImageFormat.Png);
             FileSavedDialog.Show(FindForm(), fileName, "Item saved successfully.");
         }
 
@@ -521,7 +525,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         continue;
                     }
 
-                    Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
+                    // Can still fail to decode.
+                    Bitmap source = SecondArt.GetStatic(i);
+                    if (source == null)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(source);
                     Art.ReplaceStatic(i, copy);
                     ControlEvents.FireItemChangeEvent(this, i);
                     _compare[i] = true;
@@ -586,7 +597,14 @@ namespace UoFiddler.Plugin.Compare.UserControls
                         continue;
                     }
 
-                    Bitmap copy = new Bitmap(SecondArt.GetStatic(i));
+                    // Can still fail to decode.
+                    Bitmap source = SecondArt.GetStatic(i);
+                    if (source == null)
+                    {
+                        continue;
+                    }
+
+                    Bitmap copy = new Bitmap(source);
                     Art.ReplaceStatic(i, copy);
                     ControlEvents.FireItemChangeEvent(this, i);
                     _compare[i] = true;
