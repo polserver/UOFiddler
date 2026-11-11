@@ -179,6 +179,20 @@ namespace UoFiddler.Plugin.Compare.Classes
 
             Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
+            // Don't keep the file open if the UOP is invalid.
+            try
+            {
+                ReadTable(path, uopEntryExtension, length, hasExtra);
+            }
+            catch
+            {
+                Stream.Dispose();
+                throw;
+            }
+        }
+
+        private void ReadTable(string path, string uopEntryExtension, int length, bool hasExtra)
+        {
             var fileInfo = new FileInfo(path);
             string uopPattern = fileInfo.Name.Replace(fileInfo.Extension, "").ToLowerInvariant();
 
