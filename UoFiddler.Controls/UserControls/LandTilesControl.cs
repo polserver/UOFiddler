@@ -508,7 +508,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     Bitmap bitmap = new Bitmap(bmpTemp);
 
-                    if (dialog.FileName.Contains(".bmp"))
+                    if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
@@ -572,7 +572,7 @@ namespace UoFiddler.Controls.UserControls
                         {
                             Bitmap bitmap = new Bitmap(bmpTemp);
 
-                            if (files[i].Contains(".bmp"))
+                            if (files[i].EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                             {
                                 bitmap = Utils.ConvertBmp(bitmap);
                             }
@@ -665,7 +665,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     Bitmap bitmap = new Bitmap(bmpTemp);
 
-                    if (dialog.FileName.Contains(".bmp"))
+                    if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
@@ -1185,7 +1185,7 @@ namespace UoFiddler.Controls.UserControls
             {
                 Bitmap bitmap = new Bitmap(bmpTemp);
 
-                if (fileName.Contains(".bmp"))
+                if (fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                 {
                     bitmap = Utils.ConvertBmp(bitmap);
                 }

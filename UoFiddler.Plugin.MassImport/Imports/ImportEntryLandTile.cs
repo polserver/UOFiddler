@@ -27,7 +27,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
                 {
                     Bitmap bitmap = new Bitmap(bmpTemp);
 
-                    if (File.Contains(".bmp"))
+                    if (File.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
                     {
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
