@@ -156,7 +156,7 @@ namespace UoFiddler.Controls.UserControls
             int lightStartY = 30 + (bit.Height / 2) - (lightHeight / 2);
 
             int lightEndX = lightStartX + lightWidth;
-            int lightEndY = lightStartY + lightWidth;
+            int lightEndY = lightStartY + lightHeight;
 
             for (int y = 0; y < bd.Height; ++y)
             {
@@ -170,7 +170,8 @@ namespace UoFiddler.Controls.UserControls
 
                     if (x >= lightStartX && x < lightEndX && y >= lightStartY && y < lightEndY)
                     {
-                        int offset = ((y - lightStartY) * lightHeight) + (x - lightStartX);
+                        // Light data is stored row by row, lightWidth bytes per row.
+                        int offset = ((y - lightStartY) * lightWidth) + (x - lightStartX);
                         if (offset < light.Length)
                         {
                             lightC = light[offset];
@@ -187,9 +188,9 @@ namespace UoFiddler.Controls.UserControls
                     r /= 3;
                     g /= 3;
                     b /= 3;
-                    r += (byte)(r * lightC);
-                    g += (byte)(g * lightC);
-                    b += (byte)(b * lightC);
+                    r = (byte)Math.Min(255, r + (r * lightC));
+                    g = (byte)Math.Min(255, g + (g * lightC));
+                    b = (byte)Math.Min(255, b + (b * lightC));
 
                     *imgPtr++ = b;
                     *imgPtr++ = g;
