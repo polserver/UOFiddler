@@ -425,7 +425,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     Textures.Replace(_selectedTextureId, bitmap);
@@ -499,7 +499,7 @@ namespace UoFiddler.Controls.UserControls
 
                             if (files[i].EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                             {
-                                bitmap = Utils.ConvertBmp(bitmap);
+                                bitmap = Utils.ConvertBmpAndDispose(bitmap);
                             }
 
                             bitmaps.Add(bitmap);
@@ -578,7 +578,7 @@ namespace UoFiddler.Controls.UserControls
 
                         if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                         {
-                            bitmap = Utils.ConvertBmp(bitmap);
+                            bitmap = Utils.ConvertBmpAndDispose(bitmap);
                         }
 
                         Textures.Replace(index, bitmap);
@@ -939,7 +939,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     Textures.Replace(index, bitmap);

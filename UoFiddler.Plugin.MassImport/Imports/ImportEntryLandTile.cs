@@ -29,7 +29,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
                     if (File.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     Ultima.Art.ReplaceLand(Index, bitmap);

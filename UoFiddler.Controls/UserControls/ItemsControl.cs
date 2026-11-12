@@ -625,7 +625,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     // Validate image size before replacing
@@ -702,7 +702,7 @@ namespace UoFiddler.Controls.UserControls
 
                             if (files[i].EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                             {
-                                bitmap = Utils.ConvertBmp(bitmap);
+                                bitmap = Utils.ConvertBmpAndDispose(bitmap);
                             }
 
                             if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
@@ -1737,7 +1737,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if (fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                 {
-                    bitmap = Utils.ConvertBmp(bitmap);
+                    bitmap = Utils.ConvertBmpAndDispose(bitmap);
                 }
 
                 // Checked before anything changes, so a failed file leaves the list as it was.

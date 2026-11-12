@@ -710,7 +710,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     int i = SelectedGumpId;
@@ -853,7 +853,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     Gumps.ReplaceGump(index, bitmap);
@@ -1165,7 +1165,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if (fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                 {
-                    bitmap = Utils.ConvertBmp(bitmap);
+                    bitmap = Utils.ConvertBmpAndDispose(bitmap);
                 }
 
                 Gumps.ReplaceGump(index, bitmap);

@@ -254,7 +254,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     int i = (int)listViewLights.SelectedItems[0].Tag;
