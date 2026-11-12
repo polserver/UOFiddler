@@ -19,20 +19,31 @@ namespace Ultima
                     return _skillEntries;
                 }
 
-                _skillEntries = new List<SkillInfo>();
-                for (int i = 0; i < _fileIndex.IndexLength; ++i)
-                {
-                    SkillInfo info = GetSkill(i);
-                    if (info == null)
-                    {
-                        break;
-                    }
-
-                    _skillEntries.Add(info);
-                }
+                _skillEntries = LoadEntries();
                 return _skillEntries;
             }
             set { _skillEntries = value; }
+        }
+
+        /// <summary>
+        /// Reads every slot. The list position is the skill id, so an empty slot is kept as a
+        /// placeholder with no name (see <see cref="SkillInfo.IsEmpty"/>) instead of ending the list.
+        /// Empty slots after the last skill are left out; Save writes them back.
+        /// </summary>
+        private static List<SkillInfo> LoadEntries()
+        {
+            var entries = new List<SkillInfo>();
+            for (int i = 0; i < _fileIndex.IndexLength; ++i)
+            {
+                entries.Add(GetSkill(i) ?? new SkillInfo(i, string.Empty, false, 0));
+            }
+
+            while (entries.Count > 0 && entries[^1].IsEmpty)
+            {
+                entries.RemoveAt(entries.Count - 1);
+            }
+
+            return entries;
         }
 
         /// <summary>
@@ -42,17 +53,7 @@ namespace Ultima
         {
             _fileIndex?.Dispose();
             _fileIndex = new FileIndex("skills.idx", "skills.mul", 16);
-            _skillEntries = new List<SkillInfo>();
-            for (int i = 0; i < _fileIndex.IndexLength; ++i)
-            {
-                SkillInfo info = GetSkill(i);
-                if (info == null)
-                {
-                    break;
-                }
-
-                _skillEntries.Add(info);
-            }
+            _skillEntries = LoadEntries();
         }
 
         /// <summary>
@@ -73,7 +74,8 @@ namespace Ultima
                 return null;
             }
 
-            using (var bin = new BinaryReader(stream))
+            // leaveOpen: the stream is the index's shared file stream.
+            using (var bin = new BinaryReader(stream, Encoding.Latin1, leaveOpen: true))
             {
                 bool action = bin.ReadBoolean();
                 string name = ReadNameString(bin, length - 1);
@@ -81,20 +83,19 @@ namespace Ultima
             }
         }
 
-        private static readonly byte[] _stringBuffer = new byte[1024];
-
         private static string ReadNameString(BinaryReader bin, int length)
         {
-            bin.Read(_stringBuffer, 0, length);
-            int count;
-            for (count = 0; count < length && _stringBuffer[count] != 0; ++count)
+            byte[] bytes = bin.ReadBytes(length);
+
+            // The name ends at the first null byte.
+            int count = System.Array.IndexOf(bytes, (byte)0);
+            if (count < 0)
             {
-                // TODO: this loop is weird
-                //;
+                count = bytes.Length;
             }
 
             // Names are single bytes; Latin-1 keeps every byte as loaded so saving writes it back unchanged
-            return Encoding.Latin1.GetString(_stringBuffer, 0, count);
+            return Encoding.Latin1.GetString(bytes, 0, count);
         }
 
         public static void Save(string path)
@@ -112,7 +113,7 @@ namespace Ultima
                 for (int i = 0; i < count; ++i)
                 {
                     SkillInfo skill = (i < entries.Count) ? entries[i] : null;
-                    if (skill == null)
+                    if (skill == null || skill.IsEmpty)
                     {
                         binidx.Write(-1); // lookup
                         binidx.Write(0);  // length
@@ -155,6 +156,12 @@ namespace Ultima
         }
 
         public int Extra { get; }
+
+        /// <summary>
+        /// An empty slot: a skill without a name is saved as an unused entry.
+        /// </summary>
+        [System.ComponentModel.Browsable(false)]
+        public bool IsEmpty => string.IsNullOrEmpty(_name);
 
         public SkillInfo(int nr, string name, bool action, int extra)
         {
