@@ -1389,16 +1389,19 @@ namespace UoFiddler.Controls.UserControls
             ProgressBar.Step = 1;
             ProgressBar.Value = 1;
             ProgressBar.Visible = true;
-            PreLoader.RunWorkerAsync();
+
+            // The worker gets its own copy: the list can change while it runs.
+            PreLoader.RunWorkerAsync(_itemList.ToArray());
         }
 
         private void PreLoaderDoWork(object sender, DoWorkEventArgs e)
         {
-            int total = _itemList.Count;
+            var items = (int[])e.Argument;
+            int total = items.Length;
             int reportEvery = Math.Max(1, total / 200);
             int sinceReport = 0;
             int done = 0;
-            foreach (int item in _itemList)
+            foreach (int item in items)
             {
                 Art.GetStatic(item);
                 ++done;
@@ -1419,6 +1422,11 @@ namespace UoFiddler.Controls.UserControls
         private void PreLoaderCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             ProgressBar.Visible = false;
+
+            if (e.Error != null)
+            {
+                MessageBox.Show($"Preloading items stopped: {e.Error.Message}", "Preload", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void ItemsTileView_DrawItem(object sender, TileViewControl.DrawTileListItemEventArgs e)
