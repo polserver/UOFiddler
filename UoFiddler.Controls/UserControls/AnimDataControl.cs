@@ -37,6 +37,7 @@ namespace UoFiddler.Controls.UserControls
 
         private static AnimDataControl _refMarker;
         private static bool _loaded;
+        private bool _eventsSubscribed;
         private Animdata.AnimdataEntry _selAnimdataEntry;
         private int _currentSelect;
         private int _currentFrame;
@@ -246,18 +247,24 @@ namespace UoFiddler.Controls.UserControls
 
                 treeView1.EndUpdate();
 
+                // Loaded before the first selection, so CurrentSelect fills the frame list and points
+                // the editor at an entry of the file that was just read.
+                _loaded = true;
+                _currentSelect = -1;
+                _selAnimdataEntry = null;
+                treeViewFrames.Nodes.Clear();
+
                 if (treeView1.Nodes.Count > 0)
                 {
                     treeView1.SelectedNode = treeView1.Nodes[0];
-                    _currentSelect = (int)treeView1.Nodes[0].Tag;
+                    CurrentSelect = (int)treeView1.Nodes[0].Tag;
                 }
 
-                if (!_loaded)
+                if (!_eventsSubscribed)
                 {
                     ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                    _eventsSubscribed = true;
                 }
-
-                _loaded = true;
             }
         }
 
@@ -495,7 +502,21 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            _selAnimdataEntry.FrameData[_selAnimdataEntry.FrameCount] = (sbyte)(index - CurrentSelect);
+            // A record holds 64 frames, each stored as a signed byte offset from the base graphic.
+            if (_selAnimdataEntry.FrameCount >= _selAnimdataEntry.FrameData.Length)
+            {
+                MessageBox.Show($"An entry can hold at most {_selAnimdataEntry.FrameData.Length} frames.", "Add Frame", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int offset = index - CurrentSelect;
+            if (offset < sbyte.MinValue || offset > sbyte.MaxValue)
+            {
+                MessageBox.Show($"Frames must be within {sbyte.MinValue} to {sbyte.MaxValue} ids of the base graphic.", "Add Frame", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _selAnimdataEntry.FrameData[_selAnimdataEntry.FrameCount] = (sbyte)offset;
             _selAnimdataEntry.FrameCount++;
 
             TreeNode node = new TreeNode
