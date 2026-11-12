@@ -553,6 +553,7 @@ namespace UoFiddler.Controls.UserControls
             if (!File.Exists(file))
             {
                 MessageBox.Show("Invalid Filename", "Add/Replace", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                return;
             }
 
             if (name.Length > 32)
