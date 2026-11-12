@@ -143,6 +143,7 @@ namespace UoFiddler.Controls.Forms
             Add("NoShadow",      "Disallow shadow on this tile, light source? lava?",                                 "flags");
             Add("PixelBleed",    "Let pixels bleed in to other tiles? Is this Disabling Texture Clamp?",              "flags");
             Add("PlayAnimOnce",  "Play tile animation once.",                                                         "flags");
+            Add("MissileFrames", "Read when the client builds a missile gump, to pick which animdata field sets the frame speed.", "flags");
             Add("MultiMovable",  "Movable multi? Cool ships and vehicles etc? Something related to the masts.",       "flags");
             Add("Unused10",      "Unused or unknown yet.",                                                            "flags");
             Add("Unused11",      "Unused or unknown yet.",                                                            "flags");

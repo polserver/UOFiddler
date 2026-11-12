@@ -88,9 +88,16 @@ namespace UoFiddler.Plugin.MassImport.Imports
         /// </summary>
         protected int ItemValueColumn { get; private set; } = -1;
 
+        /// <summary>
+        /// Flag columns named in the header of the CSV last read by <see cref="GetTileDataInfo"/>, or
+        /// null when it has no header, so flags are read by position.
+        /// </summary>
+        protected Dictionary<int, Ultima.TileFlag> FlagColumns { get; private set; }
+
         protected bool GetTileDataInfo(string fileName, ref string message, ref string[] tiledata)
         {
             ItemValueColumn = -1;
+            FlagColumns = null;
             try
             {
                 using (StreamReader sr = Ultima.TileData.OpenCsv(fileName))
@@ -107,6 +114,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
                         if (line.StartsWith("ID;"))
                         {
                             ItemValueColumn = Ultima.TileData.FindItemValueColumn(line);
+                            FlagColumns = Ultima.TileData.FindFlagColumns(line);
                             continue;
                         }
 
