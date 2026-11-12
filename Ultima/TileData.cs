@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -53,11 +54,25 @@ namespace Ultima
         /// </summary>
         public TileFlag Flags { get; set; }
 
-        public void ReadData(string[] split)
+        /// <summary>
+        /// Reads a CSV row from <see cref="TileData.ExportLandDataToCsv"/>.
+        /// </summary>
+        /// <param name="split">The row's columns.</param>
+        /// <param name="flagColumns">
+        /// Flag columns found from the CSV header (<see cref="TileData.FindFlagColumns"/>). Null reads the
+        /// flags by position in the column order used before flag 39 was named.
+        /// </param>
+        public void ReadData(string[] split, IReadOnlyDictionary<int, TileFlag> flagColumns = null)
         {
             int i = 1;
             Name = split[i++];
             TextureId = (ushort)TileDataHelpers.ConvertStringToInt(split[i++]);
+
+            if (flagColumns != null)
+            {
+                Flags = TileData.ReadFlagColumns(split, flagColumns, Flags);
+                return;
+            }
 
             Flags = 0;
             int temp = Convert.ToByte(split[i++]);
@@ -637,7 +652,11 @@ namespace Ultima
         /// Column of the Value field, found from the CSV header; it comes after the flags. -1 for a CSV
         /// without one, which leaves <see cref="Value"/> unchanged.
         /// </param>
-        public void ReadData(string[] split, int valueColumn = -1)
+        /// <param name="flagColumns">
+        /// Flag columns found from the CSV header (<see cref="TileData.FindFlagColumns"/>). Null reads the
+        /// flags by position in the column order used before flag 39 was named.
+        /// </param>
+        public void ReadData(string[] split, int valueColumn = -1, IReadOnlyDictionary<int, TileFlag> flagColumns = null)
         {
             if (valueColumn > 0 && valueColumn < split.Length)
             {
@@ -659,6 +678,12 @@ namespace Ultima
             MiscData = Convert.ToInt16(split[i++]);
             Unk2 = Convert.ToByte(split[i++]);
             Unk3 = Convert.ToByte(split[i++]);
+
+            if (flagColumns != null)
+            {
+                Flags = TileData.ReadFlagColumns(split, flagColumns, Flags);
+                return;
+            }
 
             Flags = 0;
             int temp = Convert.ToByte(split[i++]);
@@ -1223,6 +1248,11 @@ namespace Ultima
         /// </summary>
         PlayAnimOnce = 0x4000000000,
         /// <summary>
+        /// Read by the client when it builds a missile gump, to pick which animdata.mul field sets the
+        /// frame speed (client decompilation). Set on items from 7.0.65.4 on.
+        /// </summary>
+        MissileFrames = 0x8000000000,
+        /// <summary>
         /// Movable multi? Cool ships and vehicles etc? Something related to the masts ???
         /// </summary>
         MultiMovable = 0x10000000000,
@@ -1580,6 +1610,61 @@ namespace Ultima
         }
 
         /// <summary>
+        /// Flag columns of a CSV header row, matched by flag name: column index to flag. Null when the
+        /// header names no flag, so the caller falls back to reading flags by position.
+        /// </summary>
+        public static Dictionary<int, TileFlag> FindFlagColumns(string headerLine)
+        {
+            string[] flagNames = Enum.GetNames<TileFlag>();
+            TileFlag[] flagValues = Enum.GetValues<TileFlag>();
+            var byName = new Dictionary<string, TileFlag>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < flagNames.Length; ++i)
+            {
+                if (flagValues[i] != TileFlag.None)
+                {
+                    byName[flagNames[i]] = flagValues[i];
+                }
+            }
+
+            var columns = new Dictionary<int, TileFlag>();
+            string[] names = headerLine.Split(';');
+            for (int i = 1; i < names.Length; ++i)
+            {
+                if (byName.TryGetValue(names[i].Trim(), out TileFlag flag))
+                {
+                    columns[i] = flag;
+                }
+            }
+
+            return columns.Count > 0 ? columns : null;
+        }
+
+        /// <summary>
+        /// Flags of a CSV row read by header. A flag without a column, as in a CSV from before it was
+        /// named, keeps its value from <paramref name="current"/>.
+        /// </summary>
+        internal static TileFlag ReadFlagColumns(string[] split, IReadOnlyDictionary<int, TileFlag> columns, TileFlag current)
+        {
+            TileFlag covered = TileFlag.None;
+            TileFlag set = TileFlag.None;
+            foreach (KeyValuePair<int, TileFlag> column in columns)
+            {
+                if (column.Key >= split.Length)
+                {
+                    continue;
+                }
+
+                covered |= column.Value;
+                if (Convert.ToByte(split[column.Key]) != 0)
+                {
+                    set |= column.Value;
+                }
+            }
+
+            return (current & ~covered) | set;
+        }
+
+        /// <summary>
         /// Header name of the item CSV column that holds <see cref="ItemData.Value"/>.
         /// </summary>
         public const string ItemValueColumnName = "Value";
@@ -1660,6 +1745,7 @@ namespace Ultima
             using (StreamReader sr = OpenCsv(fileName))
             {
                 int valueColumn = -1;
+                Dictionary<int, TileFlag> flagColumns = null;
                 while (sr.ReadLine() is { } line)
                 {
                     line = line.Trim();
@@ -1672,6 +1758,7 @@ namespace Ultima
                     if (line.StartsWith("ID;"))
                     {
                         valueColumn = FindItemValueColumn(line);
+                        flagColumns = FindFlagColumns(line);
                         continue;
                     }
 
@@ -1689,7 +1776,7 @@ namespace Ultima
 
                     try
                     {
-                        ItemTable[id].ReadData(split, valueColumn);
+                        ItemTable[id].ReadData(split, valueColumn, flagColumns);
                     }
                     catch
                     {
@@ -1708,6 +1795,7 @@ namespace Ultima
 
             using (StreamReader sr = OpenCsv(fileName))
             {
+                Dictionary<int, TileFlag> flagColumns = null;
                 while (sr.ReadLine() is { } line)
                 {
                     line = line.Trim();
@@ -1719,6 +1807,7 @@ namespace Ultima
 
                     if (line.StartsWith("ID;"))
                     {
+                        flagColumns = FindFlagColumns(line);
                         continue;
                     }
 
@@ -1736,7 +1825,7 @@ namespace Ultima
 
                     try
                     {
-                        LandTable[id].ReadData(split);
+                        LandTable[id].ReadData(split, flagColumns);
                     }
                     catch
                     {

@@ -1323,15 +1323,7 @@ namespace UoFiddler.Controls.UserControls
                     item.Unk3 = byteRes;
                 }
 
-                item.Flags = TileFlag.None;
-                Array enumValues = Enum.GetValues(typeof(TileFlag));
-                for (int i = 0; i < checkedListBox1.Items.Count; ++i)
-                {
-                    if (checkedListBox1.GetItemChecked(i))
-                    {
-                        item.Flags |= (TileFlag)enumValues.GetValue(i + 1);
-                    }
-                }
+                item.Flags = ApplyCheckedFlags(item.Flags, checkedListBox1);
 
                 TileData.ItemTable[index] = item;
                 MarkItemModified(index);
@@ -1372,15 +1364,7 @@ namespace UoFiddler.Controls.UserControls
                     land.TextureId = shortRes;
                 }
 
-                land.Flags = TileFlag.None;
-                Array enumValues = Enum.GetValues(typeof(TileFlag));
-                for (int i = 0; i < checkedListBox2.Items.Count; ++i)
-                {
-                    if (checkedListBox2.GetItemChecked(i))
-                    {
-                        land.Flags |= (TileFlag)enumValues.GetValue(i + 1);
-                    }
-                }
+                land.Flags = ApplyCheckedFlags(land.Flags, checkedListBox2);
 
                 TileData.LandTable[index] = land;
                 Options.ChangedUltimaClass["TileData"] = true;
@@ -1441,6 +1425,16 @@ namespace UoFiddler.Controls.UserControls
             edit.ClearFlags = clearFlags;
 
             return edit;
+        }
+
+        /// <summary>
+        /// The flags a single-tile save writes: what the list shows, as checked, and every bit the list
+        /// doesn't show (high bits on pre-HS clients, unnamed bits) as it was.
+        /// </summary>
+        private static TileFlag ApplyCheckedFlags(TileFlag current, CheckedListBox checkedListBox)
+        {
+            ReadFlagMasks(checkedListBox, out TileFlag setFlags, out TileFlag clearFlags);
+            return (current & ~(setFlags | clearFlags)) | setFlags;
         }
 
         private static void ReadFlagMasks(CheckedListBox checkedListBox, out TileFlag setFlags, out TileFlag clearFlags)

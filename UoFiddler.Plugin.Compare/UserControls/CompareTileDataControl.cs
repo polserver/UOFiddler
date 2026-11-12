@@ -75,7 +75,7 @@ namespace UoFiddler.Plugin.Compare.UserControls
             ("PlayAnimOnce", TileFlag.PlayAnimOnce),
             ("MultiMovable", TileFlag.MultiMovable),
             ("Unused8",      TileFlag.Unused8),
-            ("Bit 39",       (TileFlag)0x8000000000),
+            ("MissileFrames", TileFlag.MissileFrames),
         });
 
         private static (string Name, TileFlag Flag)[] WithOtherBits((string Name, TileFlag Flag)[] named)
