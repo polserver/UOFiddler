@@ -223,8 +223,15 @@ namespace Ultima
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bmp"></param>
+        /// <exception cref="ArgumentException">Thrown when the bitmap is not 44x44</exception>
         public static void ReplaceLand(int index, Bitmap bmp)
         {
+            // Save encodes land as a fixed 44x44 block straight from the bitmap's memory.
+            if (bmp != null && (bmp.Width != 44 || bmp.Height != 44))
+            {
+                throw new ArgumentException($"Land tiles must be 44x44 pixels, got {bmp.Width}x{bmp.Height}.", nameof(bmp));
+            }
+
             index &= 0x3FFF;
             _replaced[index] = bmp;
             _cache.Remove(index);
