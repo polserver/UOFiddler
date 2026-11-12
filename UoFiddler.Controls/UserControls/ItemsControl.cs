@@ -1546,7 +1546,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            SelectedGraphicId = itemIndex < 0 || itemIndex > _itemList.Count
+            SelectedGraphicId = itemIndex < 0 || itemIndex >= _itemList.Count
                 ? _itemList[0]
                 : _itemList[itemIndex];
         }
