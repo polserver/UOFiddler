@@ -533,9 +533,11 @@ namespace UoFiddler.Forms
                 }
             }
 
+            // RestoreBounds holds the normal size and position while the form is maximized or minimized.
+            Rectangle bounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
             FiddlerOptions.MaximisedForm = WindowState == FormWindowState.Maximized;
-            FiddlerOptions.FormPosition = Location;
-            FiddlerOptions.FormSize = Size;
+            FiddlerOptions.FormPosition = bounds.Location;
+            FiddlerOptions.FormSize = bounds.Size;
 
             _log.LogInformation("MainForm - OnClosing - unloading plugins");
             GlobalPlugins.Plugins.ClosePlugins();
@@ -545,17 +547,17 @@ namespace UoFiddler.Forms
 
         private static bool IsOkFormStateLocation(Point loc, Size size)
         {
-            if (loc.X < 0 || loc.Y < 0)
+            // Any screen will do, so a window closed on a second monitor opens there again.
+            var bounds = new Rectangle(loc, size);
+            foreach (Screen screen in Screen.AllScreens)
             {
-                return false;
+                if (screen.WorkingArea.Contains(bounds))
+                {
+                    return true;
+                }
             }
 
-            if (loc.X + size.Width > Screen.PrimaryScreen.WorkingArea.Width)
-            {
-                return false;
-            }
-
-            return loc.Y + size.Height <= Screen.PrimaryScreen.WorkingArea.Height;
+            return false;
         }
 
         private void ToggleView(object sender, EventArgs e)
