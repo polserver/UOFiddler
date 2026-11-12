@@ -269,14 +269,19 @@ namespace Ultima
                 entries[i].Extra = bin.ReadInt32();
             }
 
-            foreach (Entry3D entry in entries)
+            for (int i = 0; i < entries.Length; ++i, ++index)
             {
+                Entry3D entry = entries[i];
                 if ((entry.Lookup > 0) && (entry.Lookup < bin.BaseStream.Length) && (entry.Length > 0))
                 {
                     bin.BaseStream.Seek(entry.Lookup, SeekOrigin.Begin);
                     cache[index] = new AnimIdx(bin, entry.Extra);
                 }
-                ++index;
+                else
+                {
+                    // Empty in the .vd: drop what the body had there, as LoadActionFromVD does.
+                    GetAnimation(fileType, body, i / 5, i % 5).ClearFrames();
+                }
             }
         }
 
