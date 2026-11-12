@@ -178,11 +178,18 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            // A cross-tab Select loads the tab before its own Load event fires.
+            if (IsLoaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))
+            {
+                return;
+            }
+
             using (new WaitCursorScope(this))
             {
                 Options.LoadedUltimaClass["TileData"] = true;
                 Options.LoadedUltimaClass["Art"] = true;
 
+                _tileList.Clear();
                 _showFreeSlots = false;
                 showFreeSlotsToolStripMenuItem.Checked = false;
 

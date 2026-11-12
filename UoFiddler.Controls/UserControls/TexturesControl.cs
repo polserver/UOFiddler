@@ -104,7 +104,7 @@ namespace UoFiddler.Controls.UserControls
 
             _selectedTextureId = -1;
 
-            OnLoad(this, EventArgs.Empty);
+            OnLoad(this, new MyEventArgs(MyEventArgs.Types.ForceReload));
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -114,9 +114,17 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            // A cross-tab Select loads the tab before its own Load event fires.
+            if (_loaded && (!(e is MyEventArgs args) || args.Type != MyEventArgs.Types.ForceReload))
+            {
+                return;
+            }
+
             using (new WaitCursorScope(this))
             {
                 Options.LoadedUltimaClass["Texture"] = true;
+
+                _textureList.Clear();
 
                 for (int i = 0; i < Textures.GetIdxLength(); ++i)
                 {
