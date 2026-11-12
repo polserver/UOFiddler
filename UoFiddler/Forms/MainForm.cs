@@ -155,6 +155,19 @@ namespace UoFiddler.Forms
 
         private void ReloadFiles(object sender, EventArgs e)
         {
+            string unsavedFiles = GetUnsavedFiles();
+            if (unsavedFiles.Length > 0)
+            {
+                DialogResult result =
+                    MessageBox.Show($"Reload files and discard unsaved changes?\r\n\r\nThere are unsaved files:\r\n{unsavedFiles}",
+                        "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2);
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
             // Order matters: art has to be reloaded before tiledata for the latter to load properly.
             var steps = new (string Label, bool Run, Action Reload)[]
             {
@@ -202,6 +215,13 @@ namespace UoFiddler.Forms
 
                 SetStatus("Refreshing tabs...");
                 ControlEvents.FireFilePathChangeEvent();
+
+                // Every tab has re-read its data from disk, so nothing is unsaved any more.
+                foreach (string key in Options.ChangedUltimaClass.Keys.ToList())
+                {
+                    Options.ChangedUltimaClass[key] = false;
+                }
+                UpdateUnsavedTabMarkers();
 
                 _statusProgress.Visible = false;
                 SetStatus("Files reloaded.");
@@ -485,12 +505,20 @@ namespace UoFiddler.Forms
             _pluginsFormForm.Show();
         }
 
+        /// <summary>
+        /// Lists the files with unsaved changes, one "- name" line each, or returns an empty string.
+        /// </summary>
+        private static string GetUnsavedFiles()
+        {
+            return Options.ChangedUltimaClass
+                          .Where(key => key.Value)
+                          .Aggregate(string.Empty, (current, key) => current + $"- {key.Key} \r\n");
+        }
+
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
             _log.LogInformation("MainForm - OnClosing - start");
-            string files = Options.ChangedUltimaClass
-                                    .Where(key => key.Value)
-                                    .Aggregate(string.Empty, (current, key) => current + $"- {key.Key} \r\n");
+            string files = GetUnsavedFiles();
 
             if (files.Length > 0)
             {
