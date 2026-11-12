@@ -165,6 +165,13 @@ namespace Ultima
                     int x = blockId / matrix.BlockHeight;
                     int y = blockId % matrix.BlockHeight;
 
+                    // A diff for a block outside the configured map size is skipped, not applied.
+                    if (blockId < 0 || x >= matrix.BlockWidth)
+                    {
+                        fsData.Seek(4 + (64 * 3), SeekOrigin.Current);
+                        continue;
+                    }
+
                     fsData.Seek(4, SeekOrigin.Current);
 
                     var tiles = new Tile[64];
@@ -215,6 +222,12 @@ namespace Ultima
                     int length = lookupReader.ReadInt32();
 
                     lookupReader.ReadInt32(); // Extra
+
+                    // A diff for a block outside the configured map size is skipped, not applied.
+                    if (blockId < 0 || blockX >= matrix.BlockWidth)
+                    {
+                        continue;
+                    }
 
                     if (offset < 0 || length <= 0)
                     {
