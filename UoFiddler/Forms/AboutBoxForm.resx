@@ -118,7 +118,40 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.26.0
+    <value>Version 4.27.0
+- Animations: pack an action's frames, or every action of a body, into a sprite sheet with a Json descriptor, and import sheets back into an action or a whole body. Directions 5-7 can be packed and are flipped back on import
+- Items: export and import item ranges as sprite sheets
+- Animations: export frames aligned on one canvas, centered like the Gif export, with a transparent background for Png and Tiff
+- Animations: import, export and copy a single action as a .vd file. Removed the unimplemented Replace item from the tree menu
+- Animations: GIF import keeps near-white and near-grey pixels (they turned transparent), adds every frame instead of empty ones, builds the palette from all frames and no longer recolors existing frames. Bmp and Jpg frames export on white
+- Animations: All directions add can replace an action from its exported images, keeping each frame's center
+- Animations: palette import starts at slot 0 (exported palettes came back shifted by one), and a .vd import clears the directions it leaves empty
+- Animations: a frame center that puts pixels more than 512 pixels away is refused; Save and .vd export check every frame first and write nothing if one doesn't fit
+- Fixed UOP animation frame header bounds and a frame center off by one
+- Skill groups editor reworked: removing a group moves its skills to Misc, saving never drops entries, and the tab shows the client's 12 group and 58 skill limits
+- Skills: an empty skill slot no longer ends the list, which made a save drop every skill after it. Skills save even when the tab was never opened
+- Ctrl+F (name) and Ctrl+G (id) search on Items, Land Tiles, Textures and Hues, F3 finds the next hue, and Ctrl+1-9 switch tabs
+- Tabs with unsaved changes are marked with *, Reload Files shows its progress and asks before discarding unsaved changes
+- Error dialog has Copy, Open log folder and Report on GitHub buttons. Options flags a missing output folder and confirms Apply
+- TileData: saving no longer changes item names. Item 0xA387 "lion’s_mane_jelly" (7.0.98.1 and later) was saved as "lion???s_mane_jelly"; unchanged names are now written back byte for byte
+- TileData: flag 0x8000000000 is named MissileFrames and shown in the tab. It was cleared when an item carrying it was edited, and lost on CSV export
+- TileData: item CSV export includes Value. Imports find the flags and Value by their column names, so older CSVs still import
+- Gump 9834 is written with its 8 digit UOP name, so it no longer disappears after saving gumpartLegacyMUL.uop
+- Fixed saves losing data: the AnimData tail and empty records, speech entries longer than 128 bytes, statics with equal pixels but different sizes sharing one image, and RadarCol CSV imports shrinking the table or skipping item colors
+- Land tiles must be 44x44 and textures 64x64 or 128x128 on every add and replace path; other sizes were saved as garbage. Oversized item images are skipped with a message instead of leaving a batch half done
+- Adding an item into an empty slot no longer overwrites the next item in the list
+- Verdata patches: gumps read at the same time no longer come out wrong or crash, and patches over compressed UOP entries decode
+- Maps: a missing map UOP chunk no longer shifts the blocks after it, and map diff blocks outside the map size are skipped
+- Changing to a client that lacks some files no longer keeps showing the previous client's fonts, body conversions or tiledata, and the previous client's files are closed on reload
+- Profiles: Enter loads the chosen profile, and profiles with missing attributes or no plugins folder still load. The window opens at its saved size and position on any screen
+- Fixed: Gumps and AnimData tabs adding their event handlers again on every reload, Land Tiles and Textures listing every entry twice after a cross-tab select, Hue replace tying two hues together, Cliloc not refreshing after delete and insert, the light preview size and brightness, and adding a sound continuing after an invalid file
+- Image file extensions are matched case-insensitively
+- Plugins: disabled plugins no longer add menu items, and Manage Plugins shows the profile's plugin choice
+- Multi Editor: All Tiles node and a tile filter by name or 0x id
+- Multi Editor: the tile extra field is kept on save and on copy and paste, Z is clamped on every add, the selection is cleared after undo, redo and open, the marquee follows zoom, shortcuts leave text boxes alone, and Dynamic flag changes and undo jumps can be undone
+- Mass Import: file paths are relative to the XML file, missing attributes are tolerated, and the hue, texture and multi index limits are fixed
+
+Version 4.26.0
 - New Tile Groups tab for the client's building lists (walls, floors, roof, doors, misc, stairs and teleporters): browse categories and styles with art previews and cliloc names, change tile ids, add, rename and delete categories and styles, and save the files to the output folder
 - Compare plugin: Pixel diff option on the Items, Land, Textures and Gumps tabs. Changed pixels keep their colors inside a magenta outline while unchanged ones fade, with tolerance and fade settings. Art stored at a different spot in its canvas is lined up before comparing
 - Compare plugin: fixed control layout in the Hues tab
