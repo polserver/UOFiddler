@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ env.Asset_Name }}.zip
-          path: ./UOFiddler/bin/Release/
+          path: ./UoFiddler/bin/Release/
 
   release:
     name: Release
