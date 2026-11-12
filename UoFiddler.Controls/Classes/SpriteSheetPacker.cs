@@ -86,6 +86,18 @@ namespace UoFiddler.Controls.Classes
     {
         public const string ImageFormatName = "RGBA8888";
 
+        private static string _lastFolder;
+
+        /// <summary>
+        /// Folder of the last sheet saved or opened in this session, shared by all sheet dialogs so an
+        /// import starts where the export went. Starts in the profile's output path.
+        /// </summary>
+        public static string LastFolder
+        {
+            get => string.IsNullOrEmpty(_lastFolder) ? Options.OutputPath : _lastFolder;
+            set => _lastFolder = value;
+        }
+
         private static readonly JsonSerializerOptions _writeOptions = new JsonSerializerOptions { WriteIndented = true };
 
         // Case-insensitive so item sheets written by the original PR (PascalCase names) still load

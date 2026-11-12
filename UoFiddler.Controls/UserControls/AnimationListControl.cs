@@ -1457,12 +1457,14 @@ namespace UoFiddler.Controls.UserControls
             {
                 Description = "Select the folder to save the packed sheets in",
                 ShowNewFolderButton = true,
-                SelectedPath = Options.OutputPath
+                SelectedPath = SpriteSheetPacker.LastFolder
             };
             if (folderDialog.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }
+
+            SpriteSheetPacker.LastFolder = folderDialog.SelectedPath;
 
             string outDir = folderDialog.SelectedPath;
             int body = _currentSelect;
@@ -1670,6 +1672,7 @@ namespace UoFiddler.Controls.UserControls
 
             using var fileDialog = new OpenFileDialog
             {
+                InitialDirectory = SpriteSheetPacker.LastFolder,
                 Filter = "Packed sheet (*.json)|*.json|All files (*.*)|*.*",
                 Title = "Select the Json file of a packed sheet"
             };
@@ -1677,6 +1680,8 @@ namespace UoFiddler.Controls.UserControls
             {
                 return;
             }
+
+            SpriteSheetPacker.LastFolder = Path.GetDirectoryName(fileDialog.FileName);
 
             string what = $"Import {Path.GetFileName(fileDialog.FileName)} into body {body}, action {action}?";
             if (TryParsePackedAnimationName(fileDialog.FileName, out int packedBody, out int packedAction) &&
@@ -1725,12 +1730,14 @@ namespace UoFiddler.Controls.UserControls
             {
                 Description = $"Select the folder holding the packed sheets anim_{body}_<action>.json",
                 ShowNewFolderButton = false,
-                SelectedPath = Options.OutputPath
+                SelectedPath = SpriteSheetPacker.LastFolder
             };
             if (folderDialog.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }
+
+            SpriteSheetPacker.LastFolder = folderDialog.SelectedPath;
 
             // Only sheets of the selected body are imported; their actions come from the file names
             var sheets = new SortedDictionary<int, string>();
