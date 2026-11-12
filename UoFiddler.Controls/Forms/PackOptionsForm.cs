@@ -22,10 +22,20 @@ namespace UoFiddler.Controls.Forms
     public partial class PackOptionsForm : Form
     {
         /// <summary>
-        /// Directions stored in the anim files. 5-7 are drawn by mirroring 3-1 and are not offered,
-        /// since frames packed from them could not be imported back.
+        /// Directions 0-4 are stored in the anim files; 5-7 are drawn by mirroring 3-1.
         /// </summary>
-        public static readonly string[] DirectionNames = { "South", "South West", "West", "North West", "North" };
+        public static readonly string[] DirectionNames =
+        {
+            "South", "South West", "West", "North West", "North", "North East", "East", "South East"
+        };
+
+        /// <summary>Number of directions stored in the anim files.</summary>
+        public const int StoredDirections = 5;
+
+        /// <summary>
+        /// The stored direction <paramref name="direction"/> (5-7) is mirrored from.
+        /// </summary>
+        public static int GetMirroredSource(int direction) => 8 - direction;
 
         public PackOptionsForm()
         {
@@ -35,7 +45,11 @@ namespace UoFiddler.Controls.Forms
 
             for (int i = 0; i < DirectionNames.Length; ++i)
             {
-                DirectionsListBox.Items.Add($"{i} {DirectionNames[i]}", true);
+                // Mirrored directions are off by default: they import back into their stored direction
+                string text = i < StoredDirections
+                    ? $"{i} {DirectionNames[i]}"
+                    : $"{i} {DirectionNames[i]} (mirror of {GetMirroredSource(i)})";
+                DirectionsListBox.Items.Add(text, i < StoredDirections);
             }
         }
 

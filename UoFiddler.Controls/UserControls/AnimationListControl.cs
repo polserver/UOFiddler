@@ -1712,7 +1712,7 @@ namespace UoFiddler.Controls.UserControls
 
             Options.ChangedUltimaClass["Animations"] = true;
 
-            MessageBox.Show($"Imported {result.Frames} frames in {result.Directions} direction(s) into body {body}, action {action}.{result.Notes}\n\n{SaveAnimationsHint}",
+            MessageBox.Show($"Imported {result.Frames} frames in {result.Directions} direction(s) into body {body}, action {action}.{result.Info}{result.Notes}\n\n{SaveAnimationsHint}",
                 title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -1827,6 +1827,9 @@ namespace UoFiddler.Controls.UserControls
 
             /// <summary>What was skipped, each line starting with a line break; empty if nothing was.</summary>
             public string Notes { get; set; } = string.Empty;
+
+            /// <summary>Other remarks, such as mirrored directions flipped back, formatted like <see cref="Notes"/>.</summary>
+            public string Info { get; set; } = string.Empty;
         }
 
         /// <summary>
@@ -1852,9 +1855,17 @@ namespace UoFiddler.Controls.UserControls
             }
 
             var result = new UnpackResult();
-            var skippedDirections = new SortedSet<int>();
+            var invalidDirections = new SortedSet<int>();
+            var unflippedDirections = new SortedSet<int>();
+            var shadowedDirections = new SortedSet<int>();
             int skippedFrames = 0;
-            var directions = new SortedDictionary<int, List<(Bitmap Bitmap, PackedPoint Center)>>();
+            var directions = new SortedDictionary<int, List<(Bitmap Bitmap, int CenterX, int CenterY)>>();
+
+            // A mirrored direction (5-7) is only imported when the sheet does not also hold the stored one
+            var storedOnSheet = packed.Frames
+                .Where(entry => entry != null && entry.Direction >= 0 && entry.Direction < PackOptionsForm.StoredDirections)
+                .Select(entry => entry.Direction)
+                .ToHashSet();
 
             try
             {
@@ -1862,10 +1873,17 @@ namespace UoFiddler.Controls.UserControls
                 {
                     foreach (PackedFrameEntry entry in packed.Frames.Where(entry => entry != null).OrderBy(entry => entry.Index))
                     {
-                        // 5-7 are drawn mirrored from 3-1 and are not stored
                         if (entry.Direction < 0 || entry.Direction >= PackOptionsForm.DirectionNames.Length)
                         {
-                            skippedDirections.Add(entry.Direction);
+                            invalidDirections.Add(entry.Direction);
+                            continue;
+                        }
+
+                        bool mirrored = entry.Direction >= PackOptionsForm.StoredDirections;
+                        int target = mirrored ? PackOptionsForm.GetMirroredSource(entry.Direction) : entry.Direction;
+                        if (mirrored && storedOnSheet.Contains(target))
+                        {
+                            shadowedDirections.Add(entry.Direction);
                             continue;
                         }
 
@@ -1875,12 +1893,21 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        if (!directions.TryGetValue(entry.Direction, out var frames))
+                        if (!directions.TryGetValue(target, out var frames))
                         {
-                            directions[entry.Direction] = frames = new List<(Bitmap, PackedPoint)>();
+                            directions[target] = frames = new List<(Bitmap, int, int)>();
                         }
 
-                        frames.Add((SpriteSheetPacker.CropAnimationFrame(sheet, entry.Frame), entry.Center));
+                        // The client draws 5-7 by flipping 3-1 and mirroring the center: undo both
+                        int centerX = entry.Center?.X ?? 0;
+                        int centerY = entry.Center?.Y ?? 0;
+                        if (mirrored)
+                        {
+                            centerX = entry.Frame.W - centerX;
+                            unflippedDirections.Add(entry.Direction);
+                        }
+
+                        frames.Add((SpriteSheetPacker.CropAnimationFrame(sheet, entry.Frame, mirrored), centerX, centerY));
                     }
                 }
 
@@ -1905,9 +1932,9 @@ namespace UoFiddler.Controls.UserControls
 
                     // One palette for the whole direction, fitted next to any frames that stay
                     edit.FitPalette(frames.Select(frame => frame.Bitmap));
-                    foreach (var (bitmap, center) in frames)
+                    foreach (var (bitmap, centerX, centerY) in frames)
                     {
-                        edit.AddFrame(bitmap, center?.X ?? 0, center?.Y ?? 0);
+                        edit.AddFrame(bitmap, centerX, centerY);
                     }
 
                     result.Frames += frames.Count;
@@ -1918,16 +1945,28 @@ namespace UoFiddler.Controls.UserControls
             {
                 foreach (var frames in directions.Values)
                 {
-                    foreach (var (bitmap, _) in frames)
+                    foreach (var (bitmap, _, _) in frames)
                     {
                         bitmap.Dispose();
                     }
                 }
             }
 
-            if (skippedDirections.Count > 0)
+            if (unflippedDirections.Count > 0)
             {
-                result.Notes += $"\nSkipped direction(s) {string.Join(", ", skippedDirections)}: only 0-4 are stored.";
+                result.Info += $"\nDirection(s) {string.Join(", ", unflippedDirections)} flipped back into " +
+                                $"{string.Join(", ", unflippedDirections.Select(PackOptionsForm.GetMirroredSource))}.";
+            }
+
+            if (shadowedDirections.Count > 0)
+            {
+                result.Notes += $"\nSkipped mirrored direction(s) {string.Join(", ", shadowedDirections)}: the sheet also holds " +
+                                $"{string.Join(", ", shadowedDirections.Select(PackOptionsForm.GetMirroredSource))}.";
+            }
+
+            if (invalidDirections.Count > 0)
+            {
+                result.Notes += $"\nSkipped invalid direction(s) {string.Join(", ", invalidDirections)}.";
             }
 
             if (skippedFrames > 0)
