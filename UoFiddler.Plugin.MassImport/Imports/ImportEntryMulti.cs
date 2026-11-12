@@ -19,7 +19,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 {
     internal class ImportEntryMulti : ImportEntry
     {
-        public override int MaxIndex => Multis.MaximumMultiIndex;
+        public override int MaxIndex => Multis.MaximumMultiIndex - 1;
 
         public override string Name => "Multi";
 
