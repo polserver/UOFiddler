@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -1595,6 +1596,351 @@ namespace UoFiddler.Controls.UserControls
                 {
                     image.Dispose();
                 }
+            }
+        }
+
+        private const string SaveAnimationsHint =
+            "Save with Settings > Animation Edit > Misc > Save; this tab shows the new frames after the files are reloaded.";
+
+        private static readonly Regex _packedAnimationFileName = new Regex(@"^anim_(\d+)_(\d+)$", RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Body and action from a packed sheet file name <c>anim_{body}_{action}.json</c>.
+        /// </summary>
+        private static bool TryParsePackedAnimationName(string fileName, out int body, out int action)
+        {
+            body = action = 0;
+            Match match = _packedAnimationFileName.Match(Path.GetFileNameWithoutExtension(fileName));
+            return match.Success &&
+                   int.TryParse(match.Groups[1].Value, out body) &&
+                   int.TryParse(match.Groups[2].Value, out action);
+        }
+
+        private bool CanUnpackInto(int body, string title)
+        {
+            if (body == 0)
+            {
+                MessageBox.Show("No animation selected.", title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
+            }
+
+            // AnimationEdit only writes the anim.mul files
+            if (Animations.IsUopBody(body))
+            {
+                MessageBox.Show($"Body {body} is stored in a UOP file. Frames can only be imported into bodies from the anim.mul files.",
+                    title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <returns>True to replace the existing frames, false to append, null to cancel.</returns>
+        private static bool? AskReplaceFrames(string title, string what)
+        {
+            DialogResult result = MessageBox.Show(
+                $"{what}\n\nYes = replace the existing frames\nNo = append to the existing frames\nCancel = abort",
+                title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+
+            return result switch
+            {
+                DialogResult.Yes => true,
+                DialogResult.No => false,
+                _ => null
+            };
+        }
+
+        private static bool IsUnpackException(Exception ex)
+        {
+            // Bitmap reports an unreadable image as ArgumentException or OutOfMemoryException
+            return ex is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or
+                OutOfMemoryException or System.Runtime.InteropServices.ExternalException;
+        }
+
+        private void OnClickUnpackFrames(object sender, EventArgs e)
+        {
+            const string title = "Unpack Frames";
+
+            int body = _currentSelect;
+            int action = _currentSelectAction;
+            if (!CanUnpackInto(body, title))
+            {
+                return;
+            }
+
+            using var fileDialog = new OpenFileDialog
+            {
+                Filter = "Packed sheet (*.json)|*.json|All files (*.*)|*.*",
+                Title = "Select the Json file of a packed sheet"
+            };
+            if (fileDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string what = $"Import {Path.GetFileName(fileDialog.FileName)} into body {body}, action {action}?";
+            if (TryParsePackedAnimationName(fileDialog.FileName, out int packedBody, out int packedAction) &&
+                (packedBody != body || packedAction != action))
+            {
+                what += $"\nThe sheet was packed from body {packedBody}, action {packedAction}.";
+            }
+
+            bool? replace = AskReplaceFrames(title, what);
+            if (replace == null)
+            {
+                return;
+            }
+
+            UnpackResult result;
+            try
+            {
+                using (new WaitCursorScope(this))
+                {
+                    result = UnpackAnimation(fileDialog.FileName, body, action, replace.Value);
+                }
+            }
+            catch (Exception ex) when (IsUnpackException(ex))
+            {
+                MessageBox.Show($"Failed to import frames: {ex.Message}", title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Options.ChangedUltimaClass["Animations"] = true;
+
+            MessageBox.Show($"Imported {result.Frames} frames in {result.Directions} direction(s) into body {body}, action {action}.{result.Notes}\n\n{SaveAnimationsHint}",
+                title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void OnClickBulkUnpackFrames(object sender, EventArgs e)
+        {
+            const string title = "Bulk Unpack Frames";
+
+            int body = _currentSelect;
+            if (!CanUnpackInto(body, title))
+            {
+                return;
+            }
+
+            using var folderDialog = new FolderBrowserDialog
+            {
+                Description = $"Select the folder holding the packed sheets anim_{body}_<action>.json",
+                ShowNewFolderButton = false,
+                SelectedPath = Options.OutputPath
+            };
+            if (folderDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            // Only sheets of the selected body are imported; their actions come from the file names
+            var sheets = new SortedDictionary<int, string>();
+            int otherFiles = 0;
+            foreach (string file in Directory.GetFiles(folderDialog.SelectedPath, "*.json"))
+            {
+                if (TryParsePackedAnimationName(file, out int packedBody, out int packedAction) && packedBody == body)
+                {
+                    sheets[packedAction] = file;
+                }
+                else
+                {
+                    otherFiles++;
+                }
+            }
+
+            if (sheets.Count == 0)
+            {
+                MessageBox.Show($"No packed sheets anim_{body}_<action>.json found in {folderDialog.SelectedPath}.",
+                    title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            bool? replace = AskReplaceFrames(title, $"Import {sheets.Count} packed sheet(s) into body {body}, actions {string.Join(", ", sheets.Keys)}?");
+            if (replace == null)
+            {
+                return;
+            }
+
+            int imported = 0;
+            int frames = 0;
+            var errors = new List<string>();
+            using (new WaitCursorScope(this))
+            {
+                foreach (var (action, file) in sheets)
+                {
+                    try
+                    {
+                        UnpackResult result = UnpackAnimation(file, body, action, replace.Value);
+                        imported++;
+                        frames += result.Frames;
+                        if (result.Notes.Length > 0)
+                        {
+                            errors.Add($"{Path.GetFileName(file)}:{result.Notes.Replace('\n', ' ')}");
+                        }
+                    }
+                    catch (Exception ex) when (IsUnpackException(ex))
+                    {
+                        errors.Add($"{Path.GetFileName(file)}: {ex.Message}");
+                    }
+                }
+            }
+
+            if (imported > 0)
+            {
+                Options.ChangedUltimaClass["Animations"] = true;
+            }
+
+            string message = $"Imported {imported} of {sheets.Count} sheet(s), {frames} frames, into body {body}.";
+            if (otherFiles > 0)
+            {
+                message += $"\nIgnored {otherFiles} other Json file(s).";
+            }
+
+            if (errors.Count > 0)
+            {
+                const int maxShown = 10;
+                message += "\n\n" + string.Join("\n", errors.Take(maxShown));
+                if (errors.Count > maxShown)
+                {
+                    message += $"\n... and {errors.Count - maxShown} more.";
+                }
+            }
+
+            if (imported > 0)
+            {
+                message += $"\n\n{SaveAnimationsHint}";
+            }
+
+            MessageBox.Show(message, title, MessageBoxButtons.OK, errors.Count > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+        }
+
+        private sealed class UnpackResult
+        {
+            public int Frames { get; set; }
+            public int Directions { get; set; }
+
+            /// <summary>What was skipped, each line starting with a line break; empty if nothing was.</summary>
+            public string Notes { get; set; } = string.Empty;
+        }
+
+        /// <summary>
+        /// Imports a packed sheet into <paramref name="action"/> of <paramref name="body"/> (a MUL body).
+        /// The sheet is read and checked before anything changes, so a failure leaves the animation as it was.
+        /// </summary>
+        /// <param name="replace">Replace each imported direction's frames instead of appending to them.</param>
+        private static UnpackResult UnpackAnimation(string jsonFile, int body, int action, bool replace)
+        {
+            string name = Path.GetFileName(jsonFile);
+            PackedAnimation packed = SpriteSheetPacker.ReadJson<PackedAnimation>(jsonFile);
+            if (packed.Frames == null || packed.Frames.Count == 0)
+            {
+                throw new InvalidDataException($"{name} lists no frames.");
+            }
+
+            int fileBody = body;
+            Animations.Translate(ref fileBody);
+            int fileType = BodyConverter.Convert(ref fileBody);
+            if (action < 0 || action >= Animations.GetActionCapacity(fileBody, fileType))
+            {
+                throw new InvalidDataException($"Body {body} has no action {action}.");
+            }
+
+            var result = new UnpackResult();
+            var skippedDirections = new SortedSet<int>();
+            int skippedFrames = 0;
+            var directions = new SortedDictionary<int, List<(Bitmap Bitmap, PackedPoint Center)>>();
+
+            try
+            {
+                using (Bitmap sheet = SpriteSheetPacker.LoadSheet(jsonFile, packed.Meta))
+                {
+                    foreach (PackedFrameEntry entry in packed.Frames.Where(entry => entry != null).OrderBy(entry => entry.Index))
+                    {
+                        // 5-7 are drawn mirrored from 3-1 and are not stored
+                        if (entry.Direction < 0 || entry.Direction >= PackOptionsForm.DirectionNames.Length)
+                        {
+                            skippedDirections.Add(entry.Direction);
+                            continue;
+                        }
+
+                        if (!SpriteSheetPacker.IsInside(entry.Frame, sheet))
+                        {
+                            skippedFrames++;
+                            continue;
+                        }
+
+                        if (!directions.TryGetValue(entry.Direction, out var frames))
+                        {
+                            directions[entry.Direction] = frames = new List<(Bitmap, PackedPoint)>();
+                        }
+
+                        frames.Add((SpriteSheetPacker.CropAnimationFrame(sheet, entry.Frame), entry.Center));
+                    }
+                }
+
+                if (directions.Count == 0)
+                {
+                    throw new InvalidDataException($"No frame of {name} could be imported.");
+                }
+
+                var targets = new Dictionary<int, AnimIdx>();
+                foreach (int direction in directions.Keys)
+                {
+                    targets[direction] = GetAnimationEditTarget(fileType, fileBody, action, direction, body);
+                }
+
+                foreach (var (direction, frames) in directions)
+                {
+                    AnimIdx edit = targets[direction];
+                    if (replace)
+                    {
+                        edit.ClearFrames();
+                    }
+
+                    // One palette for the whole direction, fitted next to any frames that stay
+                    edit.FitPalette(frames.Select(frame => frame.Bitmap));
+                    foreach (var (bitmap, center) in frames)
+                    {
+                        edit.AddFrame(bitmap, center?.X ?? 0, center?.Y ?? 0);
+                    }
+
+                    result.Frames += frames.Count;
+                    result.Directions++;
+                }
+            }
+            finally
+            {
+                foreach (var frames in directions.Values)
+                {
+                    foreach (var (bitmap, _) in frames)
+                    {
+                        bitmap.Dispose();
+                    }
+                }
+            }
+
+            if (skippedDirections.Count > 0)
+            {
+                result.Notes += $"\nSkipped direction(s) {string.Join(", ", skippedDirections)}: only 0-4 are stored.";
+            }
+
+            if (skippedFrames > 0)
+            {
+                result.Notes += $"\nSkipped {skippedFrames} frame(s) outside the sheet image.";
+            }
+
+            return result;
+        }
+
+        private static AnimIdx GetAnimationEditTarget(int fileType, int fileBody, int action, int direction, int body)
+        {
+            try
+            {
+                return AnimationEdit.GetAnimation(fileType, fileBody, action, direction);
+            }
+            catch (Exception ex) when (ex is NullReferenceException or IndexOutOfRangeException)
+            {
+                // The anim file of this body is missing or too short for it
+                throw new InvalidDataException($"Body {body} (anim{(fileType == 1 ? string.Empty : fileType.ToString())}.mul body {fileBody}) has no entry for action {action}, direction {direction}.", ex);
             }
         }
     }
