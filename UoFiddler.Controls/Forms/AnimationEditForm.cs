@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -1651,14 +1652,16 @@ namespace UoFiddler.Controls.Forms
                             continue;
                         }
 
-                        i++;
-
                         if (i >= Animations.PaletteCapacity)
                         {
                             break;
                         }
 
-                        palette[i] = ushort.Parse(line);
+                        if (!ushort.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out palette[i]))
+                        {
+                            MessageBox.Show($"Invalid palette value \"{line}\".", "Import Palette", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
 
                         // My Soulblighter Modification
                         // Convert color 0,0,0 to 0,0,8
@@ -1668,6 +1671,8 @@ namespace UoFiddler.Controls.Forms
                             palette[i] = 32769;
                         }
                         // End of Soulblighter Modification
+
+                        i++;
                     }
 
                     edit.ReplacePalette(palette);
