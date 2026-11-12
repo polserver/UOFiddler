@@ -390,6 +390,7 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _cliloc.Entries.RemoveAt(dataGridView1.SelectedCells[0].OwningRow.Index);
+            _source.ResetBindings(false);
             dataGridView1.Invalidate();
             Options.ChangedUltimaClass["CliLoc"] = true;
         }
@@ -510,6 +511,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     _cliloc.Entries.Insert(index, new StringEntry(number, "", StringEntry.CliLocFlag.Custom));
 
+                    _source.ResetBindings(false);
                     dataGridView1.Invalidate();
                     dataGridView1.Rows[index].Selected = true;
                     dataGridView1.FirstDisplayedScrollingRowIndex = index;
@@ -591,14 +593,17 @@ namespace UoFiddler.Controls.UserControls
 
                         try
                         {
-                            string[] split = line.Split(';');
-                            if (split.Length < 3)
+                            // Number;Text;Flag - the text itself can contain ';', so it is everything
+                            // between the first and the last separator.
+                            int first = line.IndexOf(';');
+                            int last = line.LastIndexOf(';');
+                            if (first < 0 || last <= first)
                             {
                                 continue;
                             }
 
-                            int id = int.Parse(split[0].Trim());
-                            string text = split[1].Trim();
+                            int id = int.Parse(line.AsSpan(0, first).Trim());
+                            string text = line.Substring(first + 1, last - first - 1).Trim();
 
                             int index = 0;
                             bool handled = false;
