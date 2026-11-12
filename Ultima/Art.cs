@@ -40,7 +40,8 @@ namespace Ultima
         // the previous List<ImageData> + SHA256-bytes-in-each-entry layout,
         // which made CompareSaveImages an O(n²) linear scan.
         private static Dictionary<UInt128, ImageData> _landImageData;
-        private static Dictionary<UInt128, ImageData> _staticImageData;
+        // Keyed by size as well: the pixel hash alone matches images of different sizes with the same bytes.
+        private static Dictionary<(UInt128 Hash, int Width, int Height), ImageData> _staticImageData;
 
         static Art()
         {
@@ -933,7 +934,7 @@ namespace Ultima
         public static unsafe void Save(string path)
         {
             _landImageData = new Dictionary<UInt128, ImageData>();
-            _staticImageData = new Dictionary<UInt128, ImageData>();
+            _staticImageData = new Dictionary<(UInt128 Hash, int Width, int Height), ImageData>();
 
             string idx = Path.Combine(path, "artidx.mul");
             string mul = Path.Combine(path, "art.mul");
@@ -1044,7 +1045,7 @@ namespace Ultima
                             try
                             {
                                 UInt128 hash = bd.Hash128();
-                                if (_staticImageData.TryGetValue(hash, out ImageData existing))
+                                if (_staticImageData.TryGetValue((hash, bmp.Width, bmp.Height), out ImageData existing))
                                 {
                                     binidx.Write(existing.Position); // lookup
                                     binidx.Write(existing.Length);
@@ -1064,7 +1065,7 @@ namespace Ultima
                                 int width = 0;
                                 for (int i = 0; i < bmp.Height; ++i) // fill lookup
                                 {
-                                    binmul.Write(width);
+                                    binmul.Write((ushort)width);
                                 }
 
                                 for (int y = 0; y < bmp.Height; ++y, line += delta)
@@ -1072,7 +1073,7 @@ namespace Ultima
                                     ushort* cur = line;
                                     width = (int)(binmul.BaseStream.Position - streamLoc) / 2;
                                     binmul.BaseStream.Seek(lookup + (y * 2), SeekOrigin.Begin);
-                                    binmul.Write(width);
+                                    binmul.Write((ushort)width);
                                     binmul.BaseStream.Seek(streamLoc + (width * 2), SeekOrigin.Begin);
                                     int i = 0;
                                     int x = 0;
@@ -1127,7 +1128,7 @@ namespace Ultima
                                 binidx.Write(length);
                                 binidx.Write(0);
 
-                                _staticImageData[hash] = new ImageData
+                                _staticImageData[(hash, bmp.Width, bmp.Height)] = new ImageData
                                 {
                                     Position = start,
                                     Length = length,
