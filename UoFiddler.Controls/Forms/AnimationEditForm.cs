@@ -1181,12 +1181,7 @@ namespace UoFiddler.Controls.Forms
                             }
 
                             string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, a, i, j, menu.Tag, _fileType);
-                            string file = Path.Combine(path, filename);
-
-                            using (Bitmap bit = new Bitmap(bits[j]))
-                            {
-                                bit.Save(file, format);
-                            }
+                            SaveFrameImage(bits[j], Path.Combine(path, filename), format);
                         }
                     }
                 }
@@ -1210,17 +1205,40 @@ namespace UoFiddler.Controls.Forms
                         }
 
                         string filename = string.Format("anim{5}_{0}_{1}_{2}_{3}{4}", body, action, i, j, menu.Tag, _fileType);
-                        string file = Path.Combine(path, filename);
-
-                        using (Bitmap bit = new Bitmap(bits[j]))
-                        {
-                            bit.Save(file, format);
-                        }
+                        SaveFrameImage(bits[j], Path.Combine(path, filename), format);
                     }
                 }
             }
 
             FileSavedDialog.Show(FindForm(), path, "Frames saved successfully.");
+        }
+
+        /// <summary>
+        /// Saves a frame. Bmp and Jpg have no transparency, so they get a white background, which import
+        /// removes again; saved as is, the background turned black and came back as a black box.
+        /// </summary>
+        private static void SaveFrameImage(Bitmap frame, string file, ImageFormat format)
+        {
+            if (!format.Equals(ImageFormat.Bmp) && !format.Equals(ImageFormat.Jpeg))
+            {
+                using (var bit = new Bitmap(frame))
+                {
+                    bit.Save(file, format);
+                }
+
+                return;
+            }
+
+            using (var bit = new Bitmap(frame.Width, frame.Height, PixelFormat.Format24bppRgb))
+            {
+                using (Graphics g = Graphics.FromImage(bit))
+                {
+                    g.Clear(Color.White);
+                    g.DrawImage(frame, 0, 0, frame.Width, frame.Height);
+                }
+
+                bit.Save(file, format);
+            }
         }
 
         private void OnClickRemoveAction(object sender, EventArgs e)
