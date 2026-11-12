@@ -7,15 +7,21 @@ namespace Ultima
 {
     public sealed class Animdata
     {
+        private const int _recordSize = 64 + 4;
+
         private static int[] _header;
         private static byte[] _unknown;
+
+        // Records with a frame count of 0 that still hold data. They are not entries, but Save writes
+        // them back unchanged.
+        private static Dictionary<int, byte[]> _emptyRecords = new Dictionary<int, byte[]>();
 
         public static Dictionary<int, AnimdataEntry> AnimData { get; set; }
 
         /// <summary>
-        /// Entry slots in the loaded file, 8 per chunk.
+        /// Entry slots in the loaded file, 8 per chunk. The last chunk can be short.
         /// </summary>
-        public static int SlotCount => (_header?.Length ?? 0) * 8;
+        public static int SlotCount { get; private set; }
 
         static Animdata()
         {
@@ -28,6 +34,10 @@ namespace Ultima
         public static void Initialize()
         {
             AnimData = new Dictionary<int, AnimdataEntry>();
+            _emptyRecords = new Dictionary<int, byte[]>();
+            _header = [];
+            _unknown = null;
+            SlotCount = 0;
 
             string path = Files.GetFilePath("animdata.mul");
             if (path == null)
@@ -35,56 +45,54 @@ namespace Ultima
                 return;
             }
 
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var bin = new BinaryReader(fs))
+            byte[] file = File.ReadAllBytes(path);
+            var headers = new List<int>();
+            int pos = 0;
+            int id = 0;
+
+            // Chunks are a 4 byte header and 8 records. The last chunk can hold fewer records,
+            // and can end in a part of a record, which is kept as is.
+            while (file.Length - pos >= 4 + _recordSize)
             {
-                unsafe
+                headers.Add(BitConverter.ToInt32(file, pos));
+                pos += 4;
+
+                for (int i = 0; i < 8 && file.Length - pos >= _recordSize; ++i, ++id)
                 {
-                    int id = 0;
-                    int h = 0;
-
-                    _header = new int[bin.BaseStream.Length / (4 + (8 * (64 + 4)))];
-
-                    while (h < _header.Length)
-                    {
-                        _header[h++] = bin.ReadInt32(); // chunk header
-
-                        // Read 8 tiles
-                        byte[] buffer = bin.ReadBytes(544);
-
-                        fixed (byte* buf = buffer)
-                        {
-                            byte* data = buf;
-
-                            for (int i = 0; i < 8; ++i, ++id)
-                            {
-                                sbyte[] frame = new sbyte[64];
-
-                                for (int j = 0; j < 64; ++j)
-                                {
-                                    frame[j] = (sbyte)*data++;
-                                }
-
-                                byte unk = *data++;
-                                byte frameCount = *data++;
-                                byte frameInterval = *data++;
-                                byte frameStart = *data++;
-
-                                if (frameCount > 0)
-                                {
-                                    AnimData[id] = new AnimdataEntry(frame, unk, frameCount, frameInterval, frameStart);
-                                }
-                            }
-                        }
-                    }
-
-                    var remaining = (int)(bin.BaseStream.Length - bin.BaseStream.Position);
-                    if (remaining > 0)
-                    {
-                        _unknown = bin.ReadBytes(remaining);
-                    }
+                    ReadRecord(file, pos, id);
+                    pos += _recordSize;
                 }
             }
+
+            _header = headers.ToArray();
+            SlotCount = id;
+
+            if (pos < file.Length)
+            {
+                _unknown = file.AsSpan(pos).ToArray();
+            }
+        }
+
+        private static void ReadRecord(byte[] file, int pos, int id)
+        {
+            byte frameCount = file[pos + 65];
+            if (frameCount == 0)
+            {
+                if (file.AsSpan(pos, _recordSize).ContainsAnyExcept((byte)0))
+                {
+                    _emptyRecords[id] = file.AsSpan(pos, _recordSize).ToArray();
+                }
+
+                return;
+            }
+
+            sbyte[] frame = new sbyte[64];
+            for (int j = 0; j < 64; ++j)
+            {
+                frame[j] = (sbyte)file[pos + j];
+            }
+
+            AnimData[id] = new AnimdataEntry(frame, file[pos + 64], frameCount, file[pos + 66], file[pos + 67]);
         }
 
         /// <summary>
@@ -100,49 +108,54 @@ namespace Ultima
         {
             string fileName = Path.Combine(path, "animdata.mul");
 
+            int maxId = AnimData.Count > 0 ? AnimData.Keys.Max() : -1;
+
+            // Keep the loaded slot count, including a short last chunk. Growing the file rounds it up
+            // to whole chunks, and the partial record that ended the old file no longer fits.
+            int slots = SlotCount;
+            bool grown = maxId >= slots;
+            if (grown)
+            {
+                slots = (maxId + 8) & ~7;
+            }
+
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
-                int id = 0;
                 int h = 0;
-                int maxId = AnimData.Keys.Max();
-                while (id <= maxId)
+                for (int id = 0; id < slots; ++id)
                 {
-                    int headerChunk = h < _header.Length ? _header[h++] : Random.Shared.Next();
-                    bin.Write(headerChunk);
-                    for (int i = 0; i < 8; ++i, ++id)
+                    if ((id & 7) == 0)
                     {
-                        AnimdataEntry animdataEntry = GetAnimData(id);
+                        int headerChunk = h < _header.Length ? _header[h] : Random.Shared.Next();
+                        ++h;
+                        bin.Write(headerChunk);
+                    }
+
+                    AnimdataEntry animdataEntry = GetAnimData(id);
+                    if (animdataEntry != null)
+                    {
                         for (int j = 0; j < 64; ++j)
                         {
-                            if (animdataEntry != null)
-                            {
-                                bin.Write(animdataEntry.FrameData[j]);
-                            }
-                            else
-                            {
-                                bin.Write((sbyte)0);
-                            }
+                            bin.Write(animdataEntry.FrameData[j]);
                         }
 
-                        if (animdataEntry != null)
-                        {
-                            bin.Write(animdataEntry.Unknown);
-                            bin.Write(animdataEntry.FrameCount);
-                            bin.Write(animdataEntry.FrameInterval);
-                            bin.Write(animdataEntry.FrameStart);
-                        }
-                        else
-                        {
-                            bin.Write((byte)0);
-                            bin.Write((byte)0);
-                            bin.Write((byte)0);
-                            bin.Write((byte)0);
-                        }
+                        bin.Write(animdataEntry.Unknown);
+                        bin.Write(animdataEntry.FrameCount);
+                        bin.Write(animdataEntry.FrameInterval);
+                        bin.Write(animdataEntry.FrameStart);
+                    }
+                    else if (_emptyRecords.TryGetValue(id, out byte[] raw))
+                    {
+                        bin.Write(raw);
+                    }
+                    else
+                    {
+                        bin.Write(new byte[_recordSize]);
                     }
                 }
 
-                if (_unknown != null)
+                if (_unknown != null && !grown)
                 {
                     bin.Write(_unknown);
                 }
