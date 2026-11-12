@@ -30,6 +30,7 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
+            _fileIndex?.Dispose();
             _fileIndex = new FileIndex("Texidx.mul", "Texmaps.mul", 0x4000, 10);
             _cache = new Bitmap[0x4000];
             _removed = new bool[0x4000];

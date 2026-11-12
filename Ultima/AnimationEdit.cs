@@ -65,6 +65,13 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
+            _fileIndex?.Dispose();
+            _fileIndex2?.Dispose();
+            _fileIndex3?.Dispose();
+            _fileIndex4?.Dispose();
+            _fileIndex5?.Dispose();
+            _fileIndex6?.Dispose();
+
             _fileIndex = new FileIndex("Anim.idx", "Anim.mul", 6);
             _fileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", -1);
             _fileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", -1);
