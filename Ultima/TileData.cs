@@ -21,15 +21,22 @@ namespace Ultima
         {
             TextureId = mulStruct.texID;
             Flags = (TileFlag)mulStruct.flags;
-            Name = TileDataHelpers.ReadNameString(mulStruct.name);
+            RawName = new ReadOnlySpan<byte>(mulStruct.name, 20).ToArray();
+            Name = RawNameText = TileDataHelpers.DecodeName(RawName);
         }
 
         public unsafe LandData(OldLandTileDataMul mulStruct)
         {
             TextureId = mulStruct.texID;
             Flags = (TileFlag)mulStruct.flags;
-            Name = TileDataHelpers.ReadNameString(mulStruct.name);
+            RawName = new ReadOnlySpan<byte>(mulStruct.name, 20).ToArray();
+            Name = RawNameText = TileDataHelpers.DecodeName(RawName);
         }
+
+        // The name field as loaded and its decoded text. While Name is unchanged, Save writes these
+        // bytes back, so the encoding and any bytes after the NUL survive.
+        internal byte[] RawName;
+        internal string RawNameText;
 
         /// <summary>
         /// Gets the name of this land tile.
@@ -455,7 +462,8 @@ namespace Ultima
     {
         public unsafe ItemData(NewItemTileDataMul mulStruct)
         {
-            Name = TileDataHelpers.ReadNameString(mulStruct.name);
+            RawName = new ReadOnlySpan<byte>(mulStruct.name, 20).ToArray();
+            Name = RawNameText = TileDataHelpers.DecodeName(RawName);
             Flags = (TileFlag)mulStruct.flags;
             Weight = mulStruct.weight;
             Quality = mulStruct.quality;
@@ -472,7 +480,8 @@ namespace Ultima
 
         public unsafe ItemData(OldItemTileDataMul mulStruct)
         {
-            Name = TileDataHelpers.ReadNameString(mulStruct.name);
+            RawName = new ReadOnlySpan<byte>(mulStruct.name, 20).ToArray();
+            Name = RawNameText = TileDataHelpers.DecodeName(RawName);
             Flags = (TileFlag)mulStruct.flags;
             Weight = mulStruct.weight;
             Quality = mulStruct.quality;
@@ -486,6 +495,11 @@ namespace Ultima
             Unk2 = mulStruct.unk2;
             Unk3 = mulStruct.unk3;
         }
+
+        // The name field as loaded and its decoded text. While Name is unchanged, Save writes these
+        // bytes back, so the encoding and any bytes after the NUL survive.
+        internal byte[] RawName;
+        internal string RawNameText;
 
         /// <summary>
         /// Gets the name of this item.
@@ -1461,19 +1475,7 @@ namespace Ultima
                     }
 
                     bin.Write(LandTable[i].TextureId);
-                    var b = new byte[20];
-                    if (LandTable[i].Name != null)
-                    {
-                        byte[] bb = Encoding.ASCII.GetBytes(LandTable[i].Name);
-                        if (bb.Length > 20)
-                        {
-                            Array.Resize(ref bb, 20);
-                        }
-
-                        bb.CopyTo(b, 0);
-                    }
-
-                    bin.Write(b);
+                    WriteName(bin, LandTable[i].Name, LandTable[i].RawName, LandTable[i].RawNameText);
                 }
 
                 j = 0;
@@ -1505,22 +1507,25 @@ namespace Ultima
                     bin.Write(ItemTable[i].StackingOffset); // unk4
                     bin.Write(ItemTable[i].Value); // unk5
                     bin.Write(ItemTable[i].Height);
-
-                    var b = new byte[20];
-                    if (ItemTable[i].Name != null)
-                    {
-                        byte[] bb = Encoding.ASCII.GetBytes(ItemTable[i].Name);
-                        if (bb.Length > 20)
-                        {
-                            Array.Resize(ref bb, 20);
-                        }
-
-                        bb.CopyTo(b, 0);
-                    }
-
-                    bin.Write(b);
+                    WriteName(bin, ItemTable[i].Name, ItemTable[i].RawName, ItemTable[i].RawNameText);
                 }
             }
+        }
+
+        /// <summary>
+        /// Writes the 20-byte name field: the loaded bytes while the name is unchanged, else the name encoded.
+        /// </summary>
+        private static void WriteName(BinaryWriter bin, string name, byte[] rawName, string rawNameText)
+        {
+            if (rawName?.Length == 20 && name == rawNameText)
+            {
+                bin.Write(rawName);
+                return;
+            }
+
+            Span<byte> field = stackalloc byte[20];
+            TileDataHelpers.EncodeName(name, field);
+            bin.Write(field);
         }
 
         /// <summary>
@@ -1563,6 +1568,15 @@ namespace Ultima
                     tex.Write("\r\n");
                 }
             }
+        }
+
+        /// <summary>
+        /// Opens a tiledata CSV in the encoding the exports write (Windows-1252), unless the file starts
+        /// with a byte order mark, as one saved from a spreadsheet as UTF-8 does.
+        /// </summary>
+        public static StreamReader OpenCsv(string fileName)
+        {
+            return new StreamReader(fileName, Encoding.GetEncoding(1252), detectEncodingFromByteOrderMarks: true);
         }
 
         /// <summary>
@@ -1643,7 +1657,7 @@ namespace Ultima
                 return;
             }
 
-            using (var sr = new StreamReader(fileName))
+            using (StreamReader sr = OpenCsv(fileName))
             {
                 int valueColumn = -1;
                 while (sr.ReadLine() is { } line)
@@ -1692,7 +1706,7 @@ namespace Ultima
                 return;
             }
 
-            using (var sr = new StreamReader(fileName))
+            using (StreamReader sr = OpenCsv(fileName))
             {
                 while (sr.ReadLine() is { } line)
                 {

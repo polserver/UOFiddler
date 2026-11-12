@@ -93,7 +93,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
             ItemValueColumn = -1;
             try
             {
-                using (StreamReader sr = new StreamReader(fileName))
+                using (StreamReader sr = Ultima.TileData.OpenCsv(fileName))
                 {
                     while (sr.ReadLine() is { } line)
                     {
