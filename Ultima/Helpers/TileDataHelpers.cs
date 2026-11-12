@@ -43,6 +43,40 @@ namespace Ultima.Helpers
         }
 
         /// <summary>
+        /// Decodes a NUL-terminated tiledata name field. Shipped names are ASCII apart from a few in UTF-8
+        /// (item 0xA387 "lion’s_mane_jelly" from 7.0.98.1 on), so valid UTF-8 is read as UTF-8 and
+        /// anything else byte for byte as Latin-1.
+        /// </summary>
+        public static string DecodeName(ReadOnlySpan<byte> field)
+        {
+            int length = field.IndexOf((byte)0);
+            ReadOnlySpan<byte> text = length < 0 ? field : field[..length];
+
+            return System.Text.Unicode.Utf8.IsValid(text) ? Encoding.UTF8.GetString(text) : Encoding.Latin1.GetString(text);
+        }
+
+        /// <summary>
+        /// Encodes a name into a NUL-padded field as UTF-8, cut at a character boundary when too long.
+        /// </summary>
+        public static void EncodeName(string name, Span<byte> field)
+        {
+            field.Clear();
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(name);
+            int length = Math.Min(bytes.Length, field.Length);
+            while (length > 0 && length < bytes.Length && (bytes[length] & 0xC0) == 0x80)
+            {
+                --length;
+            }
+
+            bytes.AsSpan(0, length).CopyTo(field);
+        }
+
+        /// <summary>
         /// Reads a NUL-padded ASCII name from the start of <paramref name="buffer"/>,
         /// up to 20 bytes. Lets callers avoid pinning + Marshal.PtrToStructure.
         /// </summary>
