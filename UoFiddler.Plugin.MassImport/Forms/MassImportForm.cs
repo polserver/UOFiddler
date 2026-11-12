@@ -174,6 +174,9 @@ namespace UoFiddler.Plugin.MassImport.Forms
 
             int currBoxLength = 0;
 
+            // Relative file paths are relative to the XML file, not to the working directory.
+            string baseDirectory = Path.GetDirectoryName(Path.GetFullPath(fileName));
+
             foreach (XmlNode xNode in dom.SelectSingleNode("MassImport"))
             {
                 if (xNode.NodeType == XmlNodeType.Comment)
@@ -213,13 +216,14 @@ namespace UoFiddler.Plugin.MassImport.Forms
                         break;
                 }
 
-                entry.File = xNode.Attributes["file"].InnerText;
+                // A missing attribute reads as empty: no file, an invalid index, or not a removal.
+                entry.File = xNode.Attributes?["file"]?.InnerText ?? string.Empty;
                 if (!string.IsNullOrEmpty(entry.File))
                 {
-                    entry.File = Path.GetFullPath(entry.File);
+                    entry.File = Path.GetFullPath(entry.File, baseDirectory);
                 }
 
-                if (Utils.ConvertStringToInt(xNode.Attributes["index"].InnerText, out int temp))
+                if (Utils.ConvertStringToInt(xNode.Attributes?["index"]?.InnerText ?? string.Empty, out int temp))
                 {
                     entry.Index = temp;
                 }
@@ -228,7 +232,7 @@ namespace UoFiddler.Plugin.MassImport.Forms
                     entry.Index = -1;
                 }
 
-                entry.Remove = bool.Parse(xNode.Attributes["remove"].InnerText);
+                entry.Remove = bool.TryParse(xNode.Attributes?["remove"]?.InnerText, out bool remove) && remove;
                 entry.Valid = true;
 
                 string message = entry.Test();
