@@ -834,7 +834,14 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
-                AddSingleItem(dialog.FileName, index);
+                try
+                {
+                    AddSingleItem(dialog.FileName, index);
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show($"{Path.GetFileName(dialog.FileName)}: {ex.Message}\n\nNo changes made.", "Insert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
         }
 
@@ -1675,14 +1682,27 @@ namespace UoFiddler.Controls.UserControls
                     return;
                 }
 
+                var failed = new List<string>();
                 for (int i = 0; i < dialog.FileNames.Length; i++)
                 {
                     var currentIdx = index + i;
 
                     if (IsIndexValid(currentIdx))
                     {
-                        AddSingleItem(dialog.FileNames[i], currentIdx);
+                        try
+                        {
+                            AddSingleItem(dialog.FileNames[i], currentIdx);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            failed.Add($"0x{currentIdx:X4} {Path.GetFileName(dialog.FileNames[i])}: {ex.Message}");
+                        }
                     }
+                }
+
+                if (failed.Count > 0)
+                {
+                    MessageBox.Show($"Skipped {failed.Count} file(s):\n\n{string.Join("\n", failed)}", "Replace", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 ItemsTileView.VirtualListSize = _itemList.Count;
@@ -1700,6 +1720,7 @@ namespace UoFiddler.Controls.UserControls
         /// </summary>
         /// <param name="fileName">Filename of the image to add.</param>
         /// <param name="index">Index where the static item will be added.</param>
+        /// <exception cref="ArgumentException">Thrown when the image is too large for the MUL format</exception>
         private void AddSingleItem(string fileName, int index)
         {
             using (var bmpTemp = new Bitmap(fileName))
@@ -1709,6 +1730,14 @@ namespace UoFiddler.Controls.UserControls
                 if (fileName.Contains(".bmp"))
                 {
                     bitmap = Utils.ConvertBmp(bitmap);
+                }
+
+                // Checked before anything changes, so a failed file leaves the list as it was.
+                if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                {
+                    string size = $"{bitmap.Width}x{bitmap.Height}";
+                    bitmap.Dispose();
+                    throw new ArgumentException($"image too large: {size}, {estimatedSize:N0} of 65,535 ushorts");
                 }
 
                 Art.ReplaceStatic(index, bitmap);
@@ -1822,6 +1851,10 @@ namespace UoFiddler.Controls.UserControls
                 {
                     AddSingleItem(file, index);
                     replacedLines.Add($"  0x{index:X4}  {name}");
+                }
+                catch (ArgumentException ex)
+                {
+                    skippedLines.Add($"  {name}  ({ex.Message})");
                 }
                 catch
                 {
