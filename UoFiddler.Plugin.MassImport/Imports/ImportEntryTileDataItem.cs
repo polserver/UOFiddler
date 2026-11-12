@@ -28,7 +28,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
         protected override void TestFile(ref string message)
         {
-            if (!File.Contains(".csv"))
+            if (!File.EndsWith(".csv", System.StringComparison.OrdinalIgnoreCase))
             {
                 message += " Invalid File format";
                 Valid = false;

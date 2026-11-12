@@ -22,7 +22,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
         protected override void TestFile(ref string message)
         {
-            if (!File.Contains(".txt"))
+            if (!File.EndsWith(".txt", System.StringComparison.OrdinalIgnoreCase))
             {
                 message += " Invalid file format";
                 Valid = false;
