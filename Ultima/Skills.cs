@@ -40,6 +40,7 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
+            _fileIndex?.Dispose();
             _fileIndex = new FileIndex("skills.idx", "skills.mul", 16);
             _skillEntries = new List<SkillInfo>();
             for (int i = 0; i < _fileIndex.IndexLength; ++i)
@@ -106,9 +107,11 @@ namespace Ultima
             using (var binidx = new BinaryWriter(fsidx))
             using (var binmul = new BinaryWriter(fsmul))
             {
-                for (int i = 0; i < _fileIndex.IndexLength; ++i)
+                List<SkillInfo> entries = SkillEntries;
+                long count = System.Math.Max(_fileIndex.IndexLength, entries.Count);
+                for (int i = 0; i < count; ++i)
                 {
-                    SkillInfo skill = (i < _skillEntries.Count) ? _skillEntries[i] : null;
+                    SkillInfo skill = (i < entries.Count) ? entries[i] : null;
                     if (skill == null)
                     {
                         binidx.Write(-1); // lookup
