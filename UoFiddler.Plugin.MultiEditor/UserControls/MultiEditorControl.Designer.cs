@@ -48,6 +48,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             DummyContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             pictureBoxDrawTiles = new System.Windows.Forms.PictureBox();
             vScrollBarDrawTiles = new System.Windows.Forms.VScrollBar();
+            textBoxDrawTilesFilter = new System.Windows.Forms.TextBox();
             designTab = new System.Windows.Forms.TabPage();
             groupBox1 = new System.Windows.Forms.GroupBox();
             BTN_CreateBlank = new System.Windows.Forms.Button();
@@ -199,6 +200,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             // 
             splitContainer4.Panel2.Controls.Add(pictureBoxDrawTiles);
             splitContainer4.Panel2.Controls.Add(vScrollBarDrawTiles);
+            splitContainer4.Panel2.Controls.Add(textBoxDrawTilesFilter);
             splitContainer4.Size = new System.Drawing.Size(264, 250);
             splitContainer4.SplitterDistance = 112;
             splitContainer4.SplitterWidth = 5;
@@ -246,6 +248,16 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             vScrollBarDrawTiles.Size = new System.Drawing.Size(17, 133);
             vScrollBarDrawTiles.TabIndex = 0;
             vScrollBarDrawTiles.Scroll += VScrollBarDrawTiles_Scroll;
+            // 
+            // textBoxDrawTilesFilter
+            // 
+            textBoxDrawTilesFilter.Dock = System.Windows.Forms.DockStyle.Top;
+            textBoxDrawTilesFilter.Location = new System.Drawing.Point(0, 0);
+            textBoxDrawTilesFilter.Name = "textBoxDrawTilesFilter";
+            textBoxDrawTilesFilter.PlaceholderText = "Filter by name or 0x id";
+            textBoxDrawTilesFilter.Size = new System.Drawing.Size(264, 23);
+            textBoxDrawTilesFilter.TabIndex = 1;
+            textBoxDrawTilesFilter.TextChanged += TextBoxDrawTilesFilter_TextChanged;
             // 
             // designTab
             // 
@@ -1177,6 +1189,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private System.Windows.Forms.NumericUpDown numericUpDown_Size_Width;
         private System.Windows.Forms.NumericUpDown numericUpDown_Z;
         private System.Windows.Forms.PictureBox pictureBoxDrawTiles;
+        private System.Windows.Forms.TextBox textBoxDrawTilesFilter;
         private System.Windows.Forms.PictureBox pictureBoxMulti;
         private System.Windows.Forms.ToolStripMenuItem removeAllTransToolStripMenuItem;
         private System.Windows.Forms.TabPage Save;
