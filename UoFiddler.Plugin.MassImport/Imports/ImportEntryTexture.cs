@@ -17,7 +17,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 {
     public class ImportEntryTexture : ImportEntry
     {
-        public override int MaxIndex => Ultima.Textures.GetIdxLength();
+        public override int MaxIndex => Ultima.Textures.GetIdxLength() - 1;
 
         public override string Name => "Texture";
 

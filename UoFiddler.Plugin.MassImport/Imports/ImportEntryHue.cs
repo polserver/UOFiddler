@@ -16,7 +16,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 {
     public class ImportEntryHue : ImportEntry
     {
-        public override int MaxIndex => 3000;
+        public override int MaxIndex => Ultima.Hues.List.Length - 1;
 
         public override string Name => "Hue";
 
