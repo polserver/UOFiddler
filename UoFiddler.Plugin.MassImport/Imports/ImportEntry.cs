@@ -82,8 +82,15 @@ namespace UoFiddler.Plugin.MassImport.Imports
             return message;
         }
 
+        /// <summary>
+        /// Column of the item Value field in the CSV last read by <see cref="GetTileDataInfo"/>, or -1
+        /// when its header has none.
+        /// </summary>
+        protected int ItemValueColumn { get; private set; } = -1;
+
         protected bool GetTileDataInfo(string fileName, ref string message, ref string[] tiledata)
         {
+            ItemValueColumn = -1;
             try
             {
                 using (StreamReader sr = new StreamReader(fileName))
@@ -99,6 +106,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
                         if (line.StartsWith("ID;"))
                         {
+                            ItemValueColumn = Ultima.TileData.FindItemValueColumn(line);
                             continue;
                         }
 

@@ -615,8 +615,24 @@ namespace Ultima
             get { return (Flags & TileFlag.Wearable) != 0; }
         }
 
-        public void ReadData(string[] split)
+        /// <summary>
+        /// Reads a CSV row from <see cref="TileData.ExportItemDataToCsv"/>.
+        /// </summary>
+        /// <param name="split">The row's columns.</param>
+        /// <param name="valueColumn">
+        /// Column of the Value field, found from the CSV header; it comes after the flags. -1 for a CSV
+        /// without one, which leaves <see cref="Value"/> unchanged.
+        /// </param>
+        public void ReadData(string[] split, int valueColumn = -1)
         {
+            if (valueColumn > 0 && valueColumn < split.Length)
+            {
+                Value = Convert.ToByte(split[valueColumn]);
+
+                // The flags end where the Value column starts.
+                split = split[..valueColumn];
+            }
+
             int i = 1;
             Name = split[i++];
             Weight = Convert.ToByte(split[i++]);
@@ -1517,8 +1533,9 @@ namespace Ultima
             {
                 tex.Write("ID;Name;Weight/Quantity;Layer/Quality;Gump/AnimID;Height;Hue;Class/Quantity;StackingOffset;miscData;Unknown2;Unknown3");
 
+                // Value goes after the flags, so CSVs and readers that count columns by position still work.
                 string columnNames = GetTileFlagColumnNames();
-                tex.Write($"{columnNames}\r\n");
+                tex.Write($"{columnNames};{ItemValueColumnName}\r\n");
 
                 for (int i = 0; i < ItemTable.Length; ++i)
                 {
@@ -1542,9 +1559,32 @@ namespace Ultima
                     {
                         tex.Write($";{((tile.Flags & (TileFlag)enumValues.GetValue(t)) != 0 ? "1" : "0")}");
                     }
+                    tex.Write($";{tile.Value}");
                     tex.Write("\r\n");
                 }
             }
+        }
+
+        /// <summary>
+        /// Header name of the item CSV column that holds <see cref="ItemData.Value"/>.
+        /// </summary>
+        public const string ItemValueColumnName = "Value";
+
+        /// <summary>
+        /// Column of <see cref="ItemValueColumnName"/> in an item CSV header row, or -1 when it has none.
+        /// </summary>
+        public static int FindItemValueColumn(string headerLine)
+        {
+            string[] names = headerLine.Split(';');
+            for (int i = 1; i < names.Length; ++i)
+            {
+                if (string.Equals(names[i].Trim(), ItemValueColumnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private static string GetTileFlagColumnNames()
@@ -1605,6 +1645,7 @@ namespace Ultima
 
             using (var sr = new StreamReader(fileName))
             {
+                int valueColumn = -1;
                 while (sr.ReadLine() is { } line)
                 {
                     line = line.Trim();
@@ -1616,6 +1657,7 @@ namespace Ultima
 
                     if (line.StartsWith("ID;"))
                     {
+                        valueColumn = FindItemValueColumn(line);
                         continue;
                     }
 
@@ -1633,7 +1675,7 @@ namespace Ultima
 
                     try
                     {
-                        ItemTable[id].ReadData(split);
+                        ItemTable[id].ReadData(split, valueColumn);
                     }
                     catch
                     {

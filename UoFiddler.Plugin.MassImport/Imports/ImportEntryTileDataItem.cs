@@ -45,7 +45,7 @@ namespace UoFiddler.Plugin.MassImport.Imports
 
         public override void Import(bool direct, ref Dictionary<string, bool> changedClasses)
         {
-            Ultima.TileData.ItemTable[Index].ReadData(_tiledata);
+            Ultima.TileData.ItemTable[Index].ReadData(_tiledata, ItemValueColumn);
             if (!direct)
             {
                 Options.ChangedUltimaClass["TileData"] = true;
