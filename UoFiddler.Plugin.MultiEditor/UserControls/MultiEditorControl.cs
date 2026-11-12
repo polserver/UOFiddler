@@ -916,7 +916,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
             else if (_isMarqueeDragging)
             {
-                _marqueeEnd = new Point(e.X + hScrollBar.Value, e.Y + vScrollBar.Value);
+                // Same zoom-aware space as the tiles, so the rectangle selects what it covers.
+                _marqueeEnd = ToScrolledSpace(e.Location);
             }
             else if (_isRectFillDragging && _compList != null)
             {
@@ -955,7 +956,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 {
                     // Start marquee drag over empty space
                     _isMarqueeDragging = true;
-                    _marqueeStart = new Point(e.X + hScrollBar.Value, e.Y + vScrollBar.Value);
+                    _marqueeStart = ToScrolledSpace(e.Location);
                     _marqueeEnd = _marqueeStart;
                 }
             }
