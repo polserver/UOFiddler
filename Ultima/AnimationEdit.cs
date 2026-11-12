@@ -285,10 +285,32 @@ namespace Ultima
             }
         }
 
+        /// <summary>
+        /// Throws before anything is written when a frame of <paramref name="anim"/> can't be stored.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">A frame does not fit its run headers.</exception>
+        private static void EnsureFramesFit(AnimIdx anim, string where)
+        {
+            int frame = anim?.FindFrameOutsideRunHeaders() ?? -1;
+            if (frame >= 0)
+            {
+                throw new InvalidOperationException(
+                    $"{where}, frame {frame}: pixels lie more than {FrameEdit.MaxCenterDistance} pixels from the frame center, " +
+                    "which the animation format can't store. Move the center closer or crop the frame. Nothing was written.");
+            }
+        }
+
         public static void ExportToVD(int fileType, int body, string file)
         {
             AnimIdx[] cache = GetCache(fileType);
             GetFileIndex(body, fileType, 0, 0, out FileIndex fileIndex, out int index);
+
+            int bodyLength = Animations.GetAnimLength(body, fileType) * 5;
+            for (int i = 0; i < bodyLength && cache != null && index + i < cache.Length; ++i)
+            {
+                EnsureFramesFit(cache[index + i], $"Body {body}, action {i / 5}, direction {i % 5}");
+            }
+
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
@@ -357,6 +379,11 @@ namespace Ultima
         /// </summary>
         public static void ExportActionToVD(int fileType, int body, int action, string file)
         {
+            for (int dir = 0; dir < 5; ++dir)
+            {
+                EnsureFramesFit(GetAnimation(fileType, body, action, dir), $"Body {body}, action {action}, direction {dir}");
+            }
+
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
@@ -469,6 +496,12 @@ namespace Ultima
 
             string idx = Path.Combine(path, filename + ".idx");
             string mul = Path.Combine(path, filename + ".mul");
+
+            // Checked first, so a frame that can't be stored leaves the files untouched.
+            for (int i = 0; cache != null && i < cache.Length; ++i)
+            {
+                EnsureFramesFit(cache[i], $"{filename} entry {i}");
+            }
 
             using (var fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -1052,6 +1085,22 @@ namespace Ultima
             }
         }
 
+        /// <summary>
+        /// Index of the first frame that does not fit its run headers, or -1 when all of them do.
+        /// </summary>
+        public int FindFrameOutsideRunHeaders()
+        {
+            for (int i = 0; Frames != null && i < Frames.Count; ++i)
+            {
+                if (Frames[i]?.FitsRunHeaders == false)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         public void ReplacePalette(ushort[] palette)
         {
             Palette = palette;
@@ -1295,8 +1344,57 @@ namespace Ultima
             bit.UnlockBits(bd);
         }
 
+        // A run header stores each offset in 10 bits, biased by 512 (so -512..511 around the center),
+        // and the run length in 12 bits.
+        private const int _maxOffset = 0x3FF;
+        private const int _maxRun = 0xFFF;
+
+        /// <summary>
+        /// Most pixels a frame can have on either side of its center, per axis.
+        /// </summary>
+        public const int MaxCenterDistance = 512;
+
+        /// <summary>
+        /// True when every run fits a run header. A frame that does not would be saved with its
+        /// offsets wrapped into the neighbouring header fields.
+        /// </summary>
+        public bool FitsRunHeaders => CanCenterAt(Center.X, Center.Y);
+
+        /// <summary>
+        /// True when the frame can be moved to center (<paramref name="x"/>, <paramref name="y"/>)
+        /// and still fit its run headers.
+        /// </summary>
+        public bool CanCenterAt(int x, int y)
+        {
+            if (RawData == null)
+            {
+                return true;
+            }
+
+            int dx = Center.X - x;
+            int dy = Center.Y - y;
+            foreach (Raw raw in RawData)
+            {
+                int offsetX = raw.offsetX + dx;
+                int offsetY = raw.offsetY + dy;
+                if (offsetX < 0 || offsetX > _maxOffset || offsetY < 0 || offsetY > _maxOffset || raw.run < 0 || raw.run > _maxRun)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">The frame would not fit its run headers at that center.</exception>
         public void ChangeCenter(int x, int y)
         {
+            if (!CanCenterAt(x, y))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x),
+                    $"Center {x},{y} puts pixels more than {MaxCenterDistance} pixels from the center, which a frame can't store.");
+            }
+
             for (int i = 0; i < RawData.Length; i++)
             {
                 RawData[i].offsetX += Center.X;

@@ -1075,6 +1075,13 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
+                if (!frame.CanCenterAt((int)CenterXNumericUpDown.Value, frame.Center.Y))
+                {
+                    ShowCenterOutOfRange((int)CenterXNumericUpDown.Value, frame.Center.Y);
+                    CenterXNumericUpDown.Value = frame.Center.X;
+                    return;
+                }
+
                 frame.ChangeCenter((int)CenterXNumericUpDown.Value, frame.Center.Y);
                 Options.ChangedUltimaClass["Animations"] = true;
                 AnimationPictureBox.Invalidate();
@@ -1104,6 +1111,13 @@ namespace UoFiddler.Controls.Forms
                 FrameEdit frame = edit.Frames[FramesTrackBar.Value];
                 if (CenterYNumericUpDown.Value == frame.Center.Y)
                 {
+                    return;
+                }
+
+                if (!frame.CanCenterAt(frame.Center.X, (int)CenterYNumericUpDown.Value))
+                {
+                    ShowCenterOutOfRange(frame.Center.X, (int)CenterYNumericUpDown.Value);
+                    CenterYNumericUpDown.Value = frame.Center.Y;
                     return;
                 }
 
@@ -1329,7 +1343,11 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            AnimationEdit.Save(_fileType, Options.OutputPath);
+            if (!TryRunAnimationWrite(() => AnimationEdit.Save(_fileType, Options.OutputPath), "Save"))
+            {
+                return;
+            }
+
             Options.ChangedUltimaClass["Animations"] = false;
 
             MessageBox.Show($"AnimationFile saved to {Options.OutputPath}", "Saved", MessageBoxButtons.OK,
@@ -1785,7 +1803,10 @@ namespace UoFiddler.Controls.Forms
 
             string path = Options.OutputPath;
             string fileName = Path.Combine(path, $"anim{_fileType}_{Utils.FormatExportId(_currentBody)}.vd");
-            AnimationEdit.ExportToVD(_fileType, _currentBody, fileName);
+            if (!TryRunAnimationWrite(() => AnimationEdit.ExportToVD(_fileType, _currentBody, fileName), "Export"))
+            {
+                return;
+            }
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
         }
@@ -1821,7 +1842,10 @@ namespace UoFiddler.Controls.Forms
             }
 
             string fileName = Path.Combine(Options.OutputPath, $"anim{_fileType}_{Utils.FormatExportId(body)}_action{action}.vd");
-            AnimationEdit.ExportActionToVD(_fileType, body, action, fileName);
+            if (!TryRunAnimationWrite(() => AnimationEdit.ExportActionToVD(_fileType, body, action, fileName), "Export"))
+            {
+                return;
+            }
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Action saved successfully.");
         }
@@ -1984,6 +2008,14 @@ namespace UoFiddler.Controls.Forms
                 AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
                 if (edit == null || edit.Frames.Count < FramesTrackBar.Value)
                 {
+                    return;
+                }
+
+                int centerX = (int)CenterXNumericUpDown.Value;
+                int centerY = (int)CenterYNumericUpDown.Value;
+                if (edit.Frames.Any(f => !f.CanCenterAt(centerX, centerY)))
+                {
+                    ShowCenterOutOfRange(centerX, centerY);
                     return;
                 }
 
@@ -3123,7 +3155,10 @@ namespace UoFiddler.Controls.Forms
                     }
 
                     string fileName = Path.Combine(dialog.SelectedPath, $"anim{_fileType}_{Utils.FormatExportId(index)}.vd");
-                    AnimationEdit.ExportToVD(_fileType, index, fileName);
+                    if (!TryRunAnimationWrite(() => AnimationEdit.ExportToVD(_fileType, index, fileName), "Export"))
+                    {
+                        return;
+                    }
                 }
 
                 MessageBox.Show($"All Animations saved to {dialog.SelectedPath}",
@@ -3180,6 +3215,7 @@ namespace UoFiddler.Controls.Forms
         {
             DirectionTrackBar.Value = 0;
             DirectionTrackBar.Enabled = false;
+            var outOfRange = new List<int>();
             for (int i = 0; i <= DirectionTrackBar.Maximum; i++)
             {
                 try
@@ -3187,7 +3223,13 @@ namespace UoFiddler.Controls.Forms
                     if (_fileType != 0)
                     {
                         AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                        if (edit != null && edit.Frames.Count >= FramesTrackBar.Value)
+                        if (edit != null && edit.Frames.Count >= FramesTrackBar.Value &&
+                            edit.Frames.Any(f => !f.CanCenterAt(_animCx[i], _animCy[i])))
+                        {
+                            // Left as it was: the saved center can't hold this direction's frames.
+                            outOfRange.Add(i);
+                        }
+                        else if (edit != null && edit.Frames.Count >= FramesTrackBar.Value)
                         {
                             foreach (var editFrame in edit.Frames)
                             {
@@ -3215,6 +3257,36 @@ namespace UoFiddler.Controls.Forms
                 }
             }
             DirectionTrackBar.Enabled = true;
+
+            if (outOfRange.Count > 0)
+            {
+                MessageBox.Show(
+                    $"Directions {string.Join(", ", outOfRange)} were left unchanged: their saved center would put pixels " +
+                    $"more than {FrameEdit.MaxCenterDistance} pixels from the center, which the animation format can't store.",
+                    "Center", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private static void ShowCenterOutOfRange(int x, int y)
+        {
+            MessageBox.Show(
+                $"Center {x},{y} would put pixels more than {FrameEdit.MaxCenterDistance} pixels from the center, " +
+                "which the animation format can't store.",
+                "Center", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private static bool TryRunAnimationWrite(Action write, string title)
+        {
+            try
+            {
+                write();
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
         }
 
         // Add Directions with Canvas ( CV5 style GIF )
