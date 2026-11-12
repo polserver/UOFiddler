@@ -59,13 +59,13 @@ namespace UoFiddler.Controls.Forms
             DirectionsListBox.IntegralHeight = false;
             DirectionsListBox.Location = new System.Drawing.Point(12, 30);
             DirectionsListBox.Name = "DirectionsListBox";
-            DirectionsListBox.Size = new System.Drawing.Size(140, 100);
+            DirectionsListBox.Size = new System.Drawing.Size(190, 140);
             DirectionsListBox.TabIndex = 0;
             //
             // MaxWidthLabel
             //
             MaxWidthLabel.AutoSize = true;
-            MaxWidthLabel.Location = new System.Drawing.Point(170, 12);
+            MaxWidthLabel.Location = new System.Drawing.Point(212, 12);
             MaxWidthLabel.Name = "MaxWidthLabel";
             MaxWidthLabel.Size = new System.Drawing.Size(98, 15);
             MaxWidthLabel.Text = "Max sheet width:";
@@ -73,7 +73,7 @@ namespace UoFiddler.Controls.Forms
             // MaxWidthUpDown
             //
             MaxWidthUpDown.Increment = new decimal(new int[] { 64, 0, 0, 0 });
-            MaxWidthUpDown.Location = new System.Drawing.Point(170, 30);
+            MaxWidthUpDown.Location = new System.Drawing.Point(212, 30);
             MaxWidthUpDown.Maximum = new decimal(new int[] { 8192, 0, 0, 0 });
             MaxWidthUpDown.Minimum = new decimal(new int[] { 256, 0, 0, 0 });
             MaxWidthUpDown.Name = "MaxWidthUpDown";
@@ -84,7 +84,7 @@ namespace UoFiddler.Controls.Forms
             //
             // Preset1024Button
             //
-            Preset1024Button.Location = new System.Drawing.Point(170, 59);
+            Preset1024Button.Location = new System.Drawing.Point(212, 59);
             Preset1024Button.Name = "Preset1024Button";
             Preset1024Button.Size = new System.Drawing.Size(50, 25);
             Preset1024Button.TabIndex = 2;
@@ -94,7 +94,7 @@ namespace UoFiddler.Controls.Forms
             //
             // Preset2048Button
             //
-            Preset2048Button.Location = new System.Drawing.Point(226, 59);
+            Preset2048Button.Location = new System.Drawing.Point(268, 59);
             Preset2048Button.Name = "Preset2048Button";
             Preset2048Button.Size = new System.Drawing.Size(50, 25);
             Preset2048Button.TabIndex = 3;
@@ -104,7 +104,7 @@ namespace UoFiddler.Controls.Forms
             //
             // Preset4096Button
             //
-            Preset4096Button.Location = new System.Drawing.Point(282, 59);
+            Preset4096Button.Location = new System.Drawing.Point(324, 59);
             Preset4096Button.Name = "Preset4096Button";
             Preset4096Button.Size = new System.Drawing.Size(50, 25);
             Preset4096Button.TabIndex = 4;
@@ -115,14 +115,14 @@ namespace UoFiddler.Controls.Forms
             // SpacingLabel
             //
             SpacingLabel.AutoSize = true;
-            SpacingLabel.Location = new System.Drawing.Point(170, 92);
+            SpacingLabel.Location = new System.Drawing.Point(212, 92);
             SpacingLabel.Name = "SpacingLabel";
             SpacingLabel.Size = new System.Drawing.Size(52, 15);
             SpacingLabel.Text = "Spacing:";
             //
             // SpacingUpDown
             //
-            SpacingUpDown.Location = new System.Drawing.Point(170, 110);
+            SpacingUpDown.Location = new System.Drawing.Point(212, 110);
             SpacingUpDown.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
             SpacingUpDown.Name = "SpacingUpDown";
             SpacingUpDown.Size = new System.Drawing.Size(80, 23);
@@ -131,7 +131,7 @@ namespace UoFiddler.Controls.Forms
             // OneRowPerDirectionCheckBox
             //
             OneRowPerDirectionCheckBox.AutoSize = true;
-            OneRowPerDirectionCheckBox.Location = new System.Drawing.Point(12, 142);
+            OneRowPerDirectionCheckBox.Location = new System.Drawing.Point(12, 182);
             OneRowPerDirectionCheckBox.Name = "OneRowPerDirectionCheckBox";
             OneRowPerDirectionCheckBox.Size = new System.Drawing.Size(146, 19);
             OneRowPerDirectionCheckBox.TabIndex = 6;
@@ -142,7 +142,7 @@ namespace UoFiddler.Controls.Forms
             // ExportAllActionsCheckBox
             //
             ExportAllActionsCheckBox.AutoSize = true;
-            ExportAllActionsCheckBox.Location = new System.Drawing.Point(12, 167);
+            ExportAllActionsCheckBox.Location = new System.Drawing.Point(12, 207);
             ExportAllActionsCheckBox.Name = "ExportAllActionsCheckBox";
             ExportAllActionsCheckBox.Size = new System.Drawing.Size(209, 19);
             ExportAllActionsCheckBox.TabIndex = 7;
@@ -151,7 +151,7 @@ namespace UoFiddler.Controls.Forms
             //
             // OkButton
             //
-            OkButton.Location = new System.Drawing.Point(176, 200);
+            OkButton.Location = new System.Drawing.Point(218, 240);
             OkButton.Name = "OkButton";
             OkButton.Size = new System.Drawing.Size(75, 25);
             OkButton.TabIndex = 8;
@@ -162,7 +162,7 @@ namespace UoFiddler.Controls.Forms
             // CancelDialogButton
             //
             CancelDialogButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            CancelDialogButton.Location = new System.Drawing.Point(257, 200);
+            CancelDialogButton.Location = new System.Drawing.Point(299, 240);
             CancelDialogButton.Name = "CancelDialogButton";
             CancelDialogButton.Size = new System.Drawing.Size(75, 25);
             CancelDialogButton.TabIndex = 9;
@@ -173,7 +173,7 @@ namespace UoFiddler.Controls.Forms
             //
             AcceptButton = OkButton;
             CancelButton = CancelDialogButton;
-            ClientSize = new System.Drawing.Size(344, 237);
+            ClientSize = new System.Drawing.Size(386, 277);
             Controls.Add(DirectionsLabel);
             Controls.Add(DirectionsListBox);
             Controls.Add(MaxWidthLabel);

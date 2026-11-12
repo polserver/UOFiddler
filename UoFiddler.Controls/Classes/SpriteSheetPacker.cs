@@ -195,7 +195,8 @@ namespace UoFiddler.Controls.Classes
         /// Pixels under half alpha become transparent; black is kept visible as 0,0,8 because 0,0,0 is
         /// transparent in the client (same rule as the Animation Editor import).
         /// </summary>
-        public static unsafe Bitmap CropAnimationFrame(Bitmap sheet, PackedRect rect)
+        /// <param name="mirror">Flip the frame horizontally.</param>
+        public static unsafe Bitmap CropAnimationFrame(Bitmap sheet, PackedRect rect, bool mirror = false)
         {
             var frame = new Bitmap(rect.W, rect.H, PixelFormat.Format16bppArgb1555);
 
@@ -210,15 +211,16 @@ namespace UoFiddler.Controls.Classes
 
                     for (int x = 0; x < rect.W; ++x)
                     {
+                        int dstX = mirror ? rect.W - 1 - x : x;
                         uint argb = srcLine[x];
                         if ((argb >> 24) < 0x80)
                         {
-                            dstLine[x] = 0;
+                            dstLine[dstX] = 0;
                             continue;
                         }
 
                         int color = 0x8000 | (int)(((argb >> 9) & 0x7C00) | ((argb >> 6) & 0x03E0) | ((argb >> 3) & 0x001F));
-                        dstLine[x] = (ushort)(color == 0x8000 ? 0x8001 : color);
+                        dstLine[dstX] = (ushort)(color == 0x8000 ? 0x8001 : color);
                     }
                 }
             }
