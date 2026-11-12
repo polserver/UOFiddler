@@ -402,6 +402,17 @@ namespace UoFiddler.Controls.UserControls
 
                 using (var bmpTemp = new Bitmap(dialog.FileName))
                 {
+                    if (!IsValidTextureSize(bmpTemp))
+                    {
+                        MessageBox.Show(
+                            $"Invalid texture dimensions!\n\n" +
+                            $"File: {Path.GetFileName(dialog.FileName)} ({bmpTemp.Width}x{bmpTemp.Height})\n" +
+                            $"Textures must be 64x64 or 128x128 pixels.\n\n" +
+                            "No changes made.",
+                            "Invalid Size", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     Bitmap bitmap = new Bitmap(bmpTemp);
 
                     if (dialog.FileName.Contains(".bmp"))
