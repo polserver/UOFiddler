@@ -150,13 +150,29 @@ namespace Ultima.Uop
         /// Total payload bytes the container holds. Divided by 196 this is the number of map blocks
         /// it carries, which is normally one more than the facet actually has.
         /// </summary>
+        /// <remarks>
+        /// An absent chunk before the last present one counts as a full chunk, as the reader in
+        /// TileMatrix addresses it. Absent chunks at the end add nothing.
+        /// </remarks>
         public static long TotalPayloadLength(MapUopEntry[] entries)
         {
+            int fullChunk = 0;
+            int lastPresent = -1;
+
+            for (int i = 0; i < entries.Length; i++)
+            {
+                if (entries[i].IsPresent)
+                {
+                    fullChunk = Math.Max(fullChunk, entries[i].Length);
+                    lastPresent = i;
+                }
+            }
+
             long total = 0;
 
-            foreach (MapUopEntry entry in entries)
+            for (int i = 0; i <= lastPresent; i++)
             {
-                total += entry.Length;
+                total += entries[i].IsPresent ? entries[i].Length : fullChunk;
             }
 
             return total;
