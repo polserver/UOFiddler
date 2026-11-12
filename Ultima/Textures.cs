@@ -58,8 +58,15 @@ namespace Ultima
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bmp"></param>
+        /// <exception cref="ArgumentException">Thrown when the bitmap is not 64x64 or 128x128</exception>
         public static void Replace(int index, Bitmap bmp)
         {
+            // Save writes the raw pixels and flags the size as 64 or 128; other sizes would be misread.
+            if (bmp != null && !((bmp.Width == 64 && bmp.Height == 64) || (bmp.Width == 128 && bmp.Height == 128)))
+            {
+                throw new ArgumentException($"Textures must be 64x64 or 128x128 pixels, got {bmp.Width}x{bmp.Height}.", nameof(bmp));
+            }
+
             _cache[index] = bmp;
             _removed[index] = false;
             _patched.Remove(index);
