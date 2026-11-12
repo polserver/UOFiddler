@@ -8,6 +8,9 @@ namespace Ultima
 {
     public sealed class RadarCol
     {
+        // 0x4000 land colors followed by one color per item id up to 0xFFFF.
+        private const int _maxColorIndex = 0x4000 + 0x10000 - 1;
+
         static RadarCol()
         {
             Initialize();
@@ -109,7 +112,7 @@ namespace Ultima
                         continue;
                     }
 
-                    if (id < 0 || id > 0xFFFF)
+                    if (id < 0 || id > _maxColorIndex)
                     {
                         continue;
                     }
