@@ -361,19 +361,29 @@ namespace Ultima
         private void ReadUOPFiles(string pattern)
         {
             UOPFiles = MapUopReader.ReadEntryTable(_map, pattern);
+
+            _uopFullChunk = 0;
+            foreach (MapUopEntry t in UOPFiles)
+            {
+                _uopFullChunk = Math.Max(_uopFullChunk, t.Length);
+            }
         }
+
+        private long _uopFullChunk;
 
         private long CalculateOffsetFromUOP(long offset)
         {
             long pos = 0;
 
+            // An absent chunk still covers its blocks: give it the size of a full chunk so the blocks
+            // after it keep their place, and read the ones inside it as empty.
             foreach (MapUopEntry t in UOPFiles)
             {
-                long currentPosition = pos + t.Length;
+                long currentPosition = pos + (t.IsPresent ? t.Length : _uopFullChunk);
 
                 if (offset < currentPosition)
                 {
-                    return t.Offset + (offset - pos);
+                    return t.IsPresent ? t.Offset + (offset - pos) : UOPLength;
                 }
 
                 pos = currentPosition;
