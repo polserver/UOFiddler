@@ -1096,12 +1096,14 @@ namespace UoFiddler.Controls.UserControls
             {
                 Description = "Select the folder to save the packed sheet in",
                 ShowNewFolderButton = true,
-                SelectedPath = Options.OutputPath
+                SelectedPath = SpriteSheetPacker.LastFolder
             };
             if (folderDialog.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }
+
+            SpriteSheetPacker.LastFolder = folderDialog.SelectedPath;
 
             string baseName;
             int count;
@@ -1204,6 +1206,7 @@ namespace UoFiddler.Controls.UserControls
 
             using var fileDialog = new OpenFileDialog
             {
+                InitialDirectory = SpriteSheetPacker.LastFolder,
                 Filter = "Packed sheet (*.json)|*.json|All files (*.*)|*.*",
                 Title = "Select the Json file of a packed item sheet"
             };
@@ -1211,6 +1214,8 @@ namespace UoFiddler.Controls.UserControls
             {
                 return;
             }
+
+            SpriteSheetPacker.LastFolder = Path.GetDirectoryName(fileDialog.FileName);
 
             // Read and check the whole sheet before anything is replaced
             var items = new List<(int Id, Bitmap Bitmap)>();
